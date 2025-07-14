@@ -1,0 +1,27 @@
+{
+  "id": "osp-houserules",
+  "manifest": "systems/osp-houserules/system.json",
+  "download": "systems/osp-houserules/system.json",
+  "name": "osp-houserules",
+  "title": "OSP's House Rules",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "13.0.0",
+    "verified": "13.0.0"
+  },
+  "author": "Old School Player",
+  "esmodules": ["dist/ose.js"],
+  "styles": ["dist/ose.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "actorTypes": ["character", "monster"],
+  "packs": [],
+  "scripts": [],
+  "relationships": {},
+  "url": ""
+}

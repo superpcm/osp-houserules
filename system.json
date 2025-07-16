@@ -1,7 +1,7 @@
 {
   "id": "osp-houserules",
-  "manifest": "systems/osp-houserules/system.json",
-  "download": "systems/osp-houserules/system.json",
+  "manifest": "https://github.com/superpcm/osp-houserules/system.json",
+  "download": "https://github.com/superpcm/osp-houserules/archive/refs/heads/main.zip",
   "name": "osp-houserules",
   "title": "OSP's House Rules",
   "version": "1.0.0",
@@ -20,7 +20,6 @@
       "path": "lang/en.json"
     }
   ],
-  "actorTypes": ["character", "monster"],
   "packs": [],
   "scripts": [],
   "relationships": {},

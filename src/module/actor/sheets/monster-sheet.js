@@ -1,6 +1,4 @@
-const ActorSheet = foundry?.app?.ActorSheet || foundry?.appv1?.sheets?.ActorSheet;
-
-export class OspActorSheetMonster extends (ActorSheet || class {}) {
+export class OspActorSheetMonster extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "monster"],
@@ -11,8 +9,12 @@ export class OspActorSheetMonster extends (ActorSheet || class {}) {
     });
   }
 
-  getData() {
-    const data = super.getData();
-    return data;
+  getData(options) {
+    const context = super.getData(options);
+    return context;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
   }
 }

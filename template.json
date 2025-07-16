@@ -1,0 +1,13 @@
+{
+  "Actor": {
+    "types": ["character", "monster"],
+    "character": {
+      "templates": [],
+      "system": {}
+    },
+    "monster": {
+      "templates": [],
+      "system": {}
+    }
+  }
+}

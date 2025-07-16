@@ -3,11 +3,19 @@
     "types": ["character", "monster"],
     "character": {
       "templates": [],
-      "system": {}
+      "system": {
+        "hitpoints": 0,
+        "class": "",
+        "alignment": ""
+      }
     },
     "monster": {
       "templates": [],
-      "system": {}
+      "system": {
+        "hitdice": "",
+        "thaco": 0,
+        "special": ""
+      }
     }
   }
 }

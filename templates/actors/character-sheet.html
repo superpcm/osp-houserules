@@ -1,10 +1,19 @@
-
-
 <form class="osp sheet actor character" autocomplete="off">
   <header class="sheet-header">
     <h1>Character Sheet</h1>
   </header>
   <section class="sheet-body">
-    <p>This is the OSP Character Sheet template.</p>
+    <div class="form-group">
+      <label for="system.hitpoints">Hit Points:</label>
+      <input type="number" name="system.hitpoints" value="{{system.hitpoints}}" />
+    </div>
+    <div class="form-group">
+      <label for="system.class">Class:</label>
+      <input type="text" name="system.class" value="{{system.class}}" />
+    </div>
+    <div class="form-group">
+      <label for="system.alignment">Alignment:</label>
+      <input type="text" name="system.alignment" value="{{system.alignment}}" />
+    </div>
   </section>
 </form>

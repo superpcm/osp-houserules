@@ -1,10 +1,19 @@
-
-
 <form class="osp sheet actor monster" autocomplete="off">
   <header class="sheet-header">
     <h1>Monster Sheet</h1>
   </header>
   <section class="sheet-body">
-    <p>This is the OSP Monster Sheet template.</p>
+    <div class="form-group">
+      <label for="system.hitdice">Hit Dice:</label>
+      <input type="text" name="system.hitdice" value="{{system.hitdice}}" />
+    </div>
+    <div class="form-group">
+      <label for="system.thaco">THAC0:</label>
+      <input type="number" name="system.thaco" value="{{system.thaco}}" />
+    </div>
+    <div class="form-group">
+      <label for="system.special">Special:</label>
+      <input type="text" name="system.special" value="{{system.special}}" />
+    </div>
   </section>
 </form>

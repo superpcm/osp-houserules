@@ -12,6 +12,7 @@
   "author": "Old School Player",
   "esmodules": ["dist/ose.js"],
   "styles": ["dist/ose.css"],
+  "template": "template.json",
   "languages": [
     {
       "lang": "en",

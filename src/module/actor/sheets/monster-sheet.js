@@ -11,6 +11,7 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
 
   getData(options) {
     const context = super.getData(options);
+    context.system = this.actor.system;
     return context;
   }
 

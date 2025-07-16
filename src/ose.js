@@ -7,12 +7,12 @@ import { OspActor } from "./module/actor/actor.js";
 
 Hooks.once("init", () => {
   CONFIG.Actor.documentClass = OspActor;
-  Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("osp-houserules", OspActorSheetCharacter, {
+  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+  foundry.documents.collections.Actors.registerSheet("osp-houserules", OspActorSheetCharacter, {
     types: ["character"],
     makeDefault: true
   });
-  Actors.registerSheet("osp-houserules", OspActorSheetMonster, {
+  foundry.documents.collections.Actors.registerSheet("osp-houserules", OspActorSheetMonster, {
     types: ["monster"],
     makeDefault: true
   });

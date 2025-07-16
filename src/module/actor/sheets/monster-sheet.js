@@ -1,6 +1,6 @@
-export class OspActorSheetMonster extends ActorSheet {
+export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "monster"],
       template: "systems/osp-houserules/templates/actors/monster-sheet.html",
       width: 600,

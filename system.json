@@ -4,7 +4,7 @@
   "download": "https://github.com/superpcm/osp-houserules/archive/refs/heads/main.zip",
   "name": "osp-houserules",
   "title": "OSP's House Rules",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": {
     "minimum": "13.0.0",
     "verified": "13.0.0"

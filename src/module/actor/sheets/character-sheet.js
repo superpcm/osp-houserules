@@ -4,7 +4,7 @@ export class OspActorSheetCharacter extends foundry.appv1.sheets.ActorSheet {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
       width: 600,
-      height: 400,
+      height: 500,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
     });
   }
@@ -17,5 +17,25 @@ export class OspActorSheetCharacter extends foundry.appv1.sheets.ActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html);
+
+    const raceClasses = [
+      "Elf", "Dwarf", "Gnome", "Hobbit", "Half-Elf", "Half-Orc"
+    ];
+
+    const $classSelect = html.find('select[name="system.class"]');
+    const $raceSelect = html.find('select[name="system.race"]');
+
+    function syncRaceField() {
+      const selectedClass = $classSelect.val();
+      if (raceClasses.includes(selectedClass)) {
+        $raceSelect.val(selectedClass);
+        $raceSelect.prop("disabled", true);
+      } else {
+        $raceSelect.prop("disabled", false);
+      }
+    }
+
+    $classSelect.on("change", syncRaceField);
+    syncRaceField();
   }
 }

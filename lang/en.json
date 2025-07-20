@@ -1,11 +1,12 @@
 {
-  "OSP": {
+  "osp-houserules": {
     "Name": "OSP House Rules",
     "Description": "Old School Essentials with custom house rules",
     "ChooseType": "Choose Type",
 
     "Actor": {
       "Type": {
+        "documentLabel": "Character",
         "character": "Player",
         "monster": "Monster"
       },

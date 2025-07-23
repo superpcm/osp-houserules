@@ -354,6 +354,12 @@ class OspActor extends Actor {
     
     // Calculate saving throws
     this._calculateSavingThrows();
+    
+    // Calculate next level XP
+    this._calculateNextLevelXP();
+    
+    // Calculate XP modifier
+    this._calculateXPModifier();
   }
 
     /**
@@ -410,10 +416,42 @@ class OspActor extends Actor {
       }
     };
 
-    // Default to fighter if class not found or not set
-    const saveTable = savingThrowTables[characterClass.toLowerCase()] || savingThrowTables['fighter'];
-    console.log(`OSP Debug: Using save table for: ${characterClass.toLowerCase() || 'fighter (default)'}`);
-    
+    // Map additional classes to their saving throw patterns
+    const classMapping = {
+      // Core OSE classes
+      'fighter': 'fighter',
+      'cleric': 'cleric', 
+      'magic-user': 'magic-user',
+      'thief': 'thief',
+      
+      // Advanced Fantasy classes - map to appropriate base class tables
+      'assassin': 'thief',          // Assassins use thief saves
+      'barbarian': 'fighter',       // Barbarians use fighter saves
+      'bard': 'thief',              // Bards use thief saves
+      'beast master': 'fighter',    // Beast Masters use fighter saves
+      'druid': 'cleric',            // Druids use cleric saves
+      'knight': 'fighter',          // Knights use fighter saves
+      'paladin': 'cleric',          // Paladins use cleric saves
+      'ranger': 'fighter',          // Rangers use fighter saves
+      'warden': 'fighter',          // Wardens use fighter saves
+      
+      // Magic users and variants
+      'illusionist': 'magic-user',  // Illusionists use magic-user saves
+      'mage': 'magic-user',         // Mages use magic-user saves
+      
+      // Race-as-class options
+      'dwarf': 'fighter',           // Dwarf class uses fighter saves
+      'elf': 'fighter',             // Elf class uses fighter saves (with some magic-user features)
+      'gnome': 'cleric',            // Gnome class uses cleric saves
+      'half-elf': 'fighter',        // Half-Elf class uses fighter saves
+      'half-orc': 'fighter',        // Half-Orc class uses fighter saves
+      'hobbit': 'thief'             // Hobbit class uses thief saves
+    };
+
+    // Get the appropriate save table for this class
+    const mappedClass = classMapping[characterClass.toLowerCase()] || 'fighter';
+    const saveTable = savingThrowTables[mappedClass];
+    console.log(`OSP Debug: Using save table for: ${characterClass.toLowerCase()} -> ${mappedClass}`);
     const levelIndex = Math.min(Math.max(level - 1, 0), 14); // Levels 1-15, array index 0-14
     console.log(`OSP Debug: Level index: ${levelIndex}`);
 
@@ -440,6 +478,144 @@ class OspActor extends Actor {
       
       this.system.saves[saveType].value = finalValue;
     });
+  }
+
+  /**
+   * Calculate next level XP based on class and current level
+   * @private
+   */
+  _calculateNextLevelXP() {
+    const characterClass = this.system.class || '';
+    const level = parseInt(this.system.level) || 1;
+    
+    // OSE XP progression tables
+    const xpTables = {
+      // Fighter progression (and similar classes)
+      'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
+      
+      // Cleric progression
+      'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
+      
+      // Magic-User progression (higher requirements)
+      'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
+      
+      // Thief progression
+      'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
+    };
+
+    // Map additional classes to their XP patterns (same as saving throw mapping)
+    const classXPMapping = {
+      // Core OSE classes
+      'fighter': 'fighter',
+      'cleric': 'cleric', 
+      'magic-user': 'magic-user',
+      'thief': 'thief',
+      
+      // Advanced Fantasy classes - map to appropriate base class XP tables
+      'assassin': 'thief',          // Assassins use thief XP
+      'barbarian': 'fighter',       // Barbarians use fighter XP
+      'bard': 'thief',              // Bards use thief XP
+      'beast master': 'fighter',    // Beast Masters use fighter XP
+      'druid': 'cleric',            // Druids use cleric XP
+      'knight': 'fighter',          // Knights use fighter XP
+      'paladin': 'cleric',          // Paladins use cleric XP
+      'ranger': 'fighter',          // Rangers use fighter XP
+      'warden': 'fighter',          // Wardens use fighter XP
+      
+      // Magic users and variants
+      'illusionist': 'magic-user',  // Illusionists use magic-user XP
+      'mage': 'magic-user',         // Mages use magic-user XP
+      
+      // Race-as-class options
+      'dwarf': 'fighter',           // Dwarf class uses fighter XP
+      'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
+      'gnome': 'cleric',            // Gnome class uses cleric XP
+      'half-elf': 'fighter',        // Half-Elf class uses fighter XP
+      'half-orc': 'fighter',        // Half-Orc class uses fighter XP
+      'hobbit': 'thief'             // Hobbit class uses thief XP
+    };
+
+    // Get the appropriate XP table for this class
+    const mappedClass = classXPMapping[characterClass.toLowerCase()] || 'fighter';
+    const xpTable = xpTables[mappedClass];
+    
+    // Calculate next level XP (if max level, show current level requirement)
+    const nextLevel = Math.min(level + 1, 15); // Max level 15
+    const nextLevelIndex = nextLevel - 1; // Convert to array index
+    
+    this.system.nextLevelXP = xpTable[nextLevelIndex] || xpTable[14]; // Use max level XP if beyond table
+  }
+
+  /**
+   * Calculate XP modifier based on class prime requisites
+   * @private
+   */
+  _calculateXPModifier() {
+    const characterClass = this.system.class || '';
+    const attributes = this.system.attributes || {};
+    
+    // Prime requisite mapping for each class
+    const primeRequisites = {
+      // Core OSE classes
+      'fighter': ['str'],
+      'cleric': ['wis'], 
+      'magic-user': ['int'],
+      'thief': ['dex'],
+      
+      // Advanced Fantasy classes
+      'assassin': ['str', 'dex'],       // Assassins need both STR and DEX
+      'barbarian': ['str', 'con'],      // Barbarians need STR and CON
+      'bard': ['dex', 'cha'],           // Bards need DEX and CHA
+      'beast master': ['str', 'wis'],   // Beast Masters need STR and WIS
+      'druid': ['wis'],                 // Druids use WIS like clerics
+      'knight': ['str'],                // Knights use STR like fighters
+      'paladin': ['str', 'cha'],        // Paladins need STR and CHA
+      'ranger': ['str', 'wis'],         // Rangers need STR and WIS
+      'warden': ['str', 'con'],         // Wardens need STR and CON
+      
+      // Magic users and variants
+      'illusionist': ['int'],           // Illusionists use INT
+      'mage': ['int'],                  // Mages use INT like magic-users
+      
+      // Race-as-class options (these often have multiple requirements)
+      'dwarf': ['str'],                 // Dwarf class uses STR
+      'elf': ['int', 'str'],            // Elf class needs INT and STR
+      'gnome': ['int'],                 // Gnome class uses INT
+      'half-elf': ['str', 'int'],       // Half-Elf class needs STR and INT
+      'half-orc': ['str'],              // Half-Orc class uses STR
+      'hobbit': ['dex', 'str']          // Hobbit class needs DEX and STR
+    };
+
+    const classReqs = primeRequisites[characterClass.toLowerCase()] || ['str'];
+    
+    // OSE XP modifier table based on ability scores
+    const getXPModifier = (score) => {
+      const numScore = parseInt(score) || 10;
+      if (numScore <= 8) return -10;      // 3-8: -10%
+      if (numScore <= 12) return 0;       // 9-12: No modifier
+      if (numScore <= 15) return 5;       // 13-15: +5%
+      if (numScore <= 17) return 10;      // 16-17: +10%
+      return 15;                          // 18: +15%
+    };
+
+    let totalModifier = 0;
+    
+    if (classReqs.length === 1) {
+      // Single prime requisite
+      const reqScore = attributes[classReqs[0]]?.value || 10;
+      totalModifier = getXPModifier(reqScore);
+    } else {
+      // Multiple prime requisites - use average or most restrictive approach
+      // For OSE, typically the average of both is used
+      let modifierSum = 0;
+      for (const req of classReqs) {
+        const reqScore = attributes[req]?.value || 10;
+        modifierSum += getXPModifier(reqScore);
+      }
+      totalModifier = Math.round(modifierSum / classReqs.length);
+    }
+
+    this.system.xpModifier = totalModifier;
   }
 
   /** @override */
@@ -799,6 +975,176 @@ Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, l
   }
   
   return Math.max(baseValue - racialBonus, 2); // Minimum save of 2
+});
+
+// Register a Handlebars helper for next level XP calculation
+Handlebars.registerHelper('getNextLevelXP', function(characterClass, level) {
+  const classLower = (characterClass || '').toLowerCase();
+  const currentLevel = parseInt(level) || 1;
+  
+  // OSE XP progression tables
+  const xpTables = {
+    // Fighter progression (and similar classes)
+    'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
+    
+    // Cleric progression
+    'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
+    
+    // Magic-User progression (higher requirements)
+    'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
+    
+    // Thief progression
+    'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
+  };
+
+  // Map additional classes to their XP patterns
+  const classXPMapping = {
+    // Core OSE classes
+    'fighter': 'fighter',
+    'cleric': 'cleric', 
+    'magic-user': 'magic-user',
+    'thief': 'thief',
+    
+    // Advanced Fantasy classes - map to appropriate base class XP tables
+    'assassin': 'thief',          // Assassins use thief XP
+    'barbarian': 'fighter',       // Barbarians use fighter XP
+    'bard': 'thief',              // Bards use thief XP
+    'beast master': 'fighter',    // Beast Masters use fighter XP
+    'druid': 'cleric',            // Druids use cleric XP
+    'knight': 'fighter',          // Knights use fighter XP
+    'paladin': 'cleric',          // Paladins use cleric XP
+    'ranger': 'fighter',          // Rangers use fighter XP
+    'warden': 'fighter',          // Wardens use fighter XP
+    
+    // Magic users and variants
+    'illusionist': 'magic-user',  // Illusionists use magic-user XP
+    'mage': 'magic-user',         // Mages use magic-user XP
+    
+    // Race-as-class options
+    'dwarf': 'fighter',           // Dwarf class uses fighter XP
+    'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
+    'gnome': 'cleric',            // Gnome class uses cleric XP
+    'half-elf': 'fighter',        // Half-Elf class uses fighter XP
+    'half-orc': 'fighter',        // Half-Orc class uses fighter XP
+    'hobbit': 'thief'             // Hobbit class uses thief XP
+  };
+
+  // Get the appropriate XP table for this class
+  const mappedClass = classXPMapping[classLower] || 'fighter';
+  const xpTable = xpTables[mappedClass];
+  
+  // Calculate next level XP (if max level, show current level requirement)
+  const nextLevel = Math.min(currentLevel + 1, 15); // Max level 15
+  const nextLevelIndex = nextLevel - 1; // Convert to array index
+  
+  return xpTable[nextLevelIndex] || xpTable[14]; // Use max level XP if beyond table
+});
+
+// Register a Handlebars helper for XP modifier calculation
+Handlebars.registerHelper('getXPModifier', function(characterClass, attributes) {
+  const classLower = (characterClass || '').toLowerCase();
+  const attrs = attributes || {};
+  
+  // Prime requisite mapping for each class
+  const primeRequisites = {
+    // Core OSE classes
+    'fighter': ['str'],
+    'cleric': ['wis'], 
+    'magic-user': ['int'],
+    'thief': ['dex'],
+    
+    // Advanced Fantasy classes
+    'assassin': ['str', 'dex'],       // Assassins need both STR and DEX
+    'barbarian': ['str', 'con'],      // Barbarians need STR and CON
+    'bard': ['dex', 'cha'],           // Bards need DEX and CHA
+    'beast master': ['str', 'wis'],   // Beast Masters need STR and WIS
+    'druid': ['wis'],                 // Druids use WIS like clerics
+    'knight': ['str'],                // Knights use STR like fighters
+    'paladin': ['str', 'cha'],        // Paladins need STR and CHA
+    'ranger': ['str', 'wis'],         // Rangers need STR and WIS
+    'warden': ['str', 'con'],         // Wardens need STR and CON
+    
+    // Magic users and variants
+    'illusionist': ['int'],           // Illusionists use INT
+    'mage': ['int'],                  // Mages use INT like magic-users
+    
+    // Race-as-class options
+    'dwarf': ['str'],                 // Dwarf class uses STR
+    'elf': ['int', 'str'],            // Elf class needs INT and STR
+    'gnome': ['int'],                 // Gnome class uses INT
+    'half-elf': ['str', 'int'],       // Half-Elf class needs STR and INT
+    'half-orc': ['str'],              // Half-Orc class uses STR
+    'hobbit': ['dex', 'str']          // Hobbit class needs DEX and STR
+  };
+
+  const classReqs = primeRequisites[classLower] || ['str'];
+  
+  // OSE XP modifier table based on ability scores
+  const getXPModifier = (score) => {
+    const numScore = parseInt(score) || 10;
+    if (numScore <= 8) return -10;      // 3-8: -10%
+    if (numScore <= 12) return 0;       // 9-12: No modifier
+    if (numScore <= 15) return 5;       // 13-15: +5%
+    if (numScore <= 17) return 10;      // 16-17: +10%
+    return 15;                          // 18: +15%
+  };
+
+  let totalModifier = 0;
+  
+  if (classReqs.length === 1) {
+    // Single prime requisite
+    const reqScore = attrs[classReqs[0]]?.value || 10;
+    totalModifier = getXPModifier(reqScore);
+  } else {
+    // Multiple prime requisites - use average
+    let modifierSum = 0;
+    for (const req of classReqs) {
+      const reqScore = attrs[req]?.value || 10;
+      modifierSum += getXPModifier(reqScore);
+    }
+    totalModifier = Math.round(modifierSum / classReqs.length);
+  }
+
+  return totalModifier;
+});
+
+// Register a Handlebars helper to display prime requisites for a class
+Handlebars.registerHelper('getPrimeRequisites', function(characterClass) {
+  const classLower = (characterClass || '').toLowerCase();
+  
+  const primeRequisites = {
+    // Core OSE classes
+    'fighter': ['STR'],
+    'cleric': ['WIS'], 
+    'magic-user': ['INT'],
+    'thief': ['DEX'],
+    
+    // Advanced Fantasy classes
+    'assassin': ['STR', 'DEX'],
+    'barbarian': ['STR', 'CON'],
+    'bard': ['DEX', 'CHA'],
+    'beast master': ['STR', 'WIS'],
+    'druid': ['WIS'],
+    'knight': ['STR'],
+    'paladin': ['STR', 'CHA'],
+    'ranger': ['STR', 'WIS'],
+    'warden': ['STR', 'CON'],
+    
+    // Magic users and variants
+    'illusionist': ['INT'],
+    'mage': ['INT'],
+    
+    // Race-as-class options
+    'dwarf': ['STR'],
+    'elf': ['INT', 'STR'],
+    'gnome': ['INT'],
+    'half-elf': ['STR', 'INT'],
+    'half-orc': ['STR'],
+    'hobbit': ['DEX', 'STR']
+  };
+
+  const classReqs = primeRequisites[classLower] || ['STR'];
+  return classReqs.join(', ');
 });
 
 // Register a Handlebars helper for path resolution

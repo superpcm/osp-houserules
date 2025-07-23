@@ -58,8 +58,9 @@
                 <label for="char-class" style="margin-bottom: 2px; text-align: center;">Class</label>
                 <select class="char-class" id="char-class" name="system.class" style="width: 120px; height: 2em; text-align: center;">
                   <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
-                  <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
                   <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
+                  <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
+                  <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
                   <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
                   <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
                   <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
@@ -114,11 +115,17 @@
               </div>
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-next-level" style="margin-bottom: 2px; text-align: center;">Next Level</label>
-                <input class="char-next-level" id="char-next-level" name="system.nextLevel" type="number" value="{{system.nextLevel}}" style="width: 100px; height: 2em; text-align: center;" />
+                <div class="char-next-level" style="width: 100px; height: 2em; text-align: center; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 3px;">
+                  {{getNextLevelXP system.class system.level}}
+                </div>
               </div>
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-xp-mod" style="margin-bottom: 2px; text-align: center;">XP Mod %</label>
-                <input class="char-xp-mod" id="char-xp-mod" name="system.xpMod" type="number" value="{{system.xpMod}}" style="width: 80px; height: 2em; text-align: center;" />
+                <div class="char-xp-mod" style="width: 80px; height: 2em; text-align: center; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 3px;">
+                  {{#with (getXPModifier system.class system.attributes)}}
+                    {{#if (eq this 0)}}0{{else}}{{#if (gt this 0)}}+{{this}}{{else}}{{this}}{{/if}}{{/if}}%
+                  {{/with}}
+                </div>
               </div>
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-background" style="margin-bottom: 2px; text-align: center;">Background</label>

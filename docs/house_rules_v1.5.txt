@@ -1,0 +1,3584 @@
+General Rules
+
+Character Races
+
+Miscellaneous Changes
+
+Playable Race Adjustments
+
+Ability Score Generation
+For each ability score (STR, INT, WIS,
+DEX, CON, CHA) roll 4d6 in order,
+dropping the lowest die.
+
+Playable Races
+Only the Dwarf, Elf, Gnome, Half-Elf,
+Hobbit, Half-Orc, & Human are playable.
+
+Alignment
+fAlignment languages will not be used.
+
+Dwarf (Size S)
+fIncludes the Hill and Mountain Dwarf.
+fInfravision replaced by Dimvision.
+
+Dimvision
+Character can see in dim light as if bright
+light.
+
+Elf (Size M)
+fNo Infravision.
+fIncludes the Grey, Wood, and High Elf.
+
+First Level HP
+All characters begin first level at max hit
+points plus CON bonus, if any.
+
+Gnome (Size S)
+fInfravision replaced by Dimvision.
+
+Infravision
+Infravision is replaced by Dimvision for
+playable races.
+Racial Ability Score Bonuses
+Racial bonuses to ability scores will be
+used.
+Silver Standard
+Rather than gold, the silver coin will be the
+standard coin of the realm. The platinum
+and electrum coin will not be used.
+Coin
+
+Slang
+
+Value*
+
+Copper
+Silver
+Gold
+
+Penny
+Sovereign
+Crown
+
+5
+1
+0.1
+
+*Value using the Sovereign as the standard.
+
+Half-Elf (Size M)
+fNo Infravision.
+Half-Orc (Size M)
+fInfravision replaced by Dimvision.
+Hobbit (Size S)
+fIncludes the Lightfoot, Tallfellow, and
+Stout.
+Human (Size M)
+fReceive a +1 to CHA and CON.
+fNo Blessed or Decisiveness abilities.
+fGain Leadership ability.
+fIncludes the Baklunish, Flannae (Flan),
+Oeridian, Olman, Rhennee, Suloise
+(Suel), and Touv.
+
+Unrestricted Weapon Use
+Any class may use any weapon, but using
+a weapon outside a classes proficiency
+suffers a -2 penalty to hit and the maximum
+damage of the weapon is equal to the
+classes HD. Clerics employing non-blunted
+weapons risk angering their diety.
+
+2
+
+House Rules v.1.5
+
+Class Options
+
+Fighter
+fUses Combat Talents.
+fGain an extra attack at 4th and 9th level.
+
+Class Availability & Limits
+Banned & Optional Classes
+fThe Acrobat class is not allowed.
+fThe Beast Master, Mage, & Warden
+classes are allowed.
+
+Knight
+fNot subject to armor STR requirement.
+fGain Weapon Specialization at 1st level.
+fGain dedicated Squire at 3rd level.
+fGain an extra attack at 5th level.
+
+Class & Level Limits
+Race-based class and level limits will be
+enforced.
+
+Mage
+fAdd INT to DM, OC, RF, RM, & SU.
+
+Following the Old Ways
+Race as class is allowed.
+Multiclassing
+Multiclassing is not allowed.
+
+Class Adjustments
+Assassin
+fUses d6 Thief Skills for associated skills.
+fMust have a Disguise Kit to use the
+Disguise ability.
+Barbarian
+fUses d6 Thief Skills for associated skills.
+Bard
+fGain Inspiring Words ability at 1st level
+and Viscious Mockery at 4th level.
+Cleric
+fGain bonus spells based on WIS.
+fIgnores “Proof of Faith” requirement if
+WIS >= 15, receiving spells starting at 1st
+level instead of 2nd.
+Druid
+fGain bonus spells based on WIS.
+
+Magic-User/Illusionist
+fAutomatically gain Read Magic spell.
+fGain bonus spells based on INT.
+Paladin
+fGain spells one level sooner per point of
+WIS > 15.
+fGain Weapon Specialization at 1st level.
+fGain an extra attack at 5th level.
+Ranger
+fAdd WIS score to Tracking chance.
+fGain spells one level sooner per point of
+WIS > 15.
+fMay choose Weapon Specialization or
+Two-Weapon Fighting at 1st level.
+fGain an extra attack at 5th level.
+Thief
+fNo Read Languages/Scroll Use ability.
+fUses d6 Thief Skills.
+Warden
+fAdd WIS score to Tracking chance.
+fMay choose Weapon Specialization or
+Two-Weapon Fighting at 1st level.
+fGain an extra attack at 5th level.
+
+House Rules v.1.5
+
+3
+
+Beast Master
+
+Requirements
+Type of animals: Both wild and domestic
+animals may be companions. Giant or
+magical animals may be companions at
+the referee’s discretion.
+
+Requirements: None
+Prime requisite: STR and WIS
+Hit Dice: 1d6
+Maximum level: 14
+Armour: Leather, chainmail, shields
+Weapons: Any
+Languages: Alignment, Common
+
+Maximum companions: A beast master
+may have up to one animal companion
+per experience level. The total Hit Dice of
+companions may not exceed the character’s
+experience level.
+
+Beast masters are adventurers with a special
+connection to animals. They are often
+accompanied by one or more loyal beasts.
+Prime requisites: A beast master with at
+least 13 in one prime requisite gets +5% to
+XP. If both STR and WIS are 16 or higher,
+the character gets a +10% bonus.”
+
+Animal Companions
+A beast master may attempt to forge a
+bond with an encountered animal. If the
+attempt succeeds, the animal becomes the
+beast master’s loyal companion.
+Establishing a Connection
+The beast master must approach the
+animal in a peaceful manner. The referee
+makes a reaction roll. If the result is 8
+or greater, the animal becomes the beast
+master’s companion.
+
+Death or dismissal: If an animal
+companion dies or is dismissed, the beast
+master may attempt to forge a connection
+with a new animal.
+
+Clairvoyance
+After reaching 5th level, a beast master
+can see through the eyes of their animal
+companions, wherever they may be. This
+requires deep concentration.
+
+Combat
+Beast masters can use all types of weapons
+and can use leather armour, chainmail,and
+shields.
+
+Companions’ Behaviour
+Once a connection is successfully
+established, the animal companion will
+follow the beast master everywhere. It
+obeys basic commands from the beast
+master and will fight to defend the beast
+master, never checking morale.
+
+4
+
+House Rules v.1.5
+
+Beast Master Level Progression
+Saving Throws
+Level
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+
+XP
+
+HD
+
+0
+1d6
+1,800
+2d6
+3,600
+3d6
+7,250
+4d6
+15,000
+5d6
+30,000
+6d6
+60,000
+7d6
+120,000
+8d6
+240,000
+9d6
+360,000 9d6+2*
+480,000 9d6+4*
+600,000 9d6+6*
+720,000 9d6+8*
+840,000 9d6+10*
+
+THAC0
+
+D
+
+W
+
+P
+
+B
+
+S
+
+19[0]
+19[0]
+19[0]
+19[0]
+17[+2]
+17[+2]
+17[+2]
+17[+2]
+14[+5]
+14[+5]
+14[+5]
+14[+5]
+12[+7]
+12[+7]
+
+11
+11
+11
+11
+9
+9
+9
+9
+7
+7
+7
+7
+5
+5
+
+12
+12
+12
+12
+10
+10
+10
+10
+8
+8
+8
+8
+6
+6
+
+12
+12
+12
+12
+10
+10
+10
+10
+8
+8
+8
+8
+6
+6
+
+15
+15
+15
+15
+13
+13
+13
+13
+11
+11
+11
+11
+9
+9
+
+16
+16
+16
+16
+14
+14
+14
+14
+12
+12
+12
+12
+10
+10
+
+THAC0: Attack matrix row to use.
+(Ascending AC attack bonus in [].)
+*: Modifiers from CON no longer apply.
+
+D: Death / poison; W: Wands;
+P: Paralysis / petrify; B: Breath attacks;
+S: Spells / rods / staves.
+
+Reaction Modifier
+
+After Reaching 9th Level
+
+A beast master gains a +1 bonus to reaction
+rolls made when interacting with animals,
+in addition to their CHA modifier. (See
+Encounters in Old-School Essentials.)
+
+A beast master may construct a stronghold
+in the wilderness. Animals within a 5
+mile radius of the stronghold will become
+friends with the beast master. They may
+warn of intruders, carry messages and
+news, and so on. In exchange for this
+friendship, the beast master must protect
+the animals from harm.
+
+Speak with Animals
+Animals understand the basic meaning
+behind a beast master’s words.
+▶ From 2nd level: The beast master can
+also understand the speech of animals.
+▶ From 4th level: The beast master can
+communicate empathically with animals,
+without the need for words.
+Communication with animals is always
+commensurate to their intelligence.
+
+Identify Tracks
+A beast master can identify the tracks and
+spoor of animals in the wild.
+House Rules v.1.5
+
+5
+
+Mage
+
+Healing
+Once per day, a mage may spend 1 turn to
+heal an ally. This either cures 1hp per level
+or allows another save against a negative
+effect (e.g. a curse or poison).
+
+Requirements: None
+Prime requisite: INT and WIS
+Hit Dice: 1d6
+Maximum level: 14
+Armor: None
+Weapons: Dagger, shortsword, staff,
+longsword
+Languages: Common
+
+Mage Skills
+Mages can use the following skills on
+targets within 30’:
+▶ Detect magic (DM): Requires 1 turn of
+concentration on an object. Failed checks
+may always be re-attempted.
+
+Mages are adventurers who study the
+secrets of deep magic, making them
+powerful allies.
+Prime requisites: A mage with at least 13
+INT and WIS gains a 5% bonus to
+experience. A mage with an INT of at least
+16 and a WIS of at least 13 receives a +10%
+XP bonus.
+
+Arcane Magic
+See Magic in Old-School Essentials for
+full details on arcane magic.
+Magical research: A mage of any level
+may spend time and money on magical
+research. This allows them to scribe
+scrolls of arcane spells (see Scribing
+Scrolls) or to research other magical
+effects. From 9th level, a mage may also
+create magic items of other kinds.
+Using magic items: Mages are able to
+cast spells from arcane scrolls and use any
+items that may only be used by arcane
+spell casters (e.g. magic wands).
+
+Combat
+
+▶ Rally (RY): Rally counters magical fear
+effects. This skill may be used once per
+turn.
+▶ Read magic (RM): Allows the mage
+to decipher magical scripts and runes.
+Failed attempts cannot be retried until
+the mage gains a level.
+▶ Suggestion (SU): The mage’s words take
+on a supernatural potency. Up to one HD
+of persons per level must save versus spells
+or follow the mage’s suggestion for 1 round
+per level. (If the suggestion would endanger
+a subject, that subject automatically saves).
+Afterwards,
+subjects realise they have been tricked.
+This skill may be used once per turn.
+
+Mage’s Staff
+
+Mages can use staves and one-handed
+blades, but cannot use armor.
+
+Mage Armor
+A mage’s connection with deep magic
+grants them a +2 bonus to Armor Class.
+
+6
+
+▶ Open/close (OC): Magically opens or
+pushes closed an unlocked door, portal,
+lid, etc. and holds it open/closed for 1
+round per level. May only be attempted
+once per portal.
+
+Invulnerable monsters: The mage’s staff
+can harm creatures that are immune to
+mundane attacks.
+Light: Once per day, the mage may cause
+their staff to radiate light in a 30’ radius
+for 1 turn per level.
+
+House Rules v.1.5
+
+Mage Level Progression
+Saving Throws
+Level
+
+XP
+
+HD
+
+THAC0
+
+D
+
+W
+
+P
+
+B
+
+S
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+
+0
+2,800
+5,600
+12,000
+24,000
+48,000
+100,000
+200,000
+400,000
+460,000
+620,000
+880,000
+1,040,000
+1,200,000
+
+1d6
+2d6
+3d6
+4d6
+5d6
+6d6
+7d6
+8d6
+9d6
+9d6+1*
+9d6+2*
+9d6+3*
+9d6+4*
+9d6+5*
+
+19[0]
+19[0]
+19[0]
+19[0]
+19[0]
+17[+2]
+17[+2]
+17[+2]
+17[+2]
+17[+2]
+14[+5]
+14[+5]
+14[+5]
+14[+5]
+
+12
+12
+12
+12
+12
+10
+10
+10
+10
+10
+7
+7
+7
+7
+
+13
+13
+13
+13
+13
+11
+11
+11
+11
+11
+8
+8
+8
+8
+
+12
+12
+12
+12
+12
+10
+10
+10
+10
+10
+7
+7
+7
+7
+
+15
+15
+15
+15
+15
+13
+13
+13
+13
+13
+10
+10
+10
+10
+
+14
+14
+14
+14
+14
+11
+11
+11
+11
+11
+7
+7
+7
+7
+
+THAC0: Attack matrix row to use.
+(Ascending AC attack bonus in [].)
+*: Modifiers from CON no longer apply.
+
+D: Death / poison; W: Wands;
+P: Paralysis / petrify; B: Breath attacks;
+S: Spells / rods / staves.
+Mage Skills Chance of Success
+
+Scribing Spells
+Mages of any level can create scrolls of arcane spells, per the standard rules for magical research (see Old-School Essentials).
+
+After Reaching 11th Level
+A mage may build a stronghold, often a
+great tower. 1d6 apprentices of levels 1–3
+will arrive to study under the mage.
+
+Rolling Skill Checks
+All skills are rolled on d%, with a result of
+less than or equal to the listed percentage
+indicating success.
+Player Knowledge
+The referee should roll for detect magic
+on the player’s behalf, as the mage does
+not always know whether the object being
+scanned is magical or not.
+
+Level
+
+DM
+
+OC
+
+RY
+
+RM
+
+SU
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+
+75
+80
+83
+85
+87
+90
+92
+93
+94
+95
+96
+97
+98
+99
+
+30
+35
+40
+45
+50
+55
+60
+65
+70
+75
+80
+85
+90
+95
+
+20
+23
+25
+26
+35
+45
+55
+65
+70
+75
+80
+85
+90
+95
+
+50
+55
+60
+65
+70
+75
+80
+83
+86
+90
+92
+95
+98
+99
+
+20
+23
+25
+26
+35
+45
+55
+65
+70
+75
+80
+85
+90
+95
+
+House Rules v.1.5
+
+7
+
+Warden
+
+Foraging and Hunting
+A party with a warden succeeds at foraging
+with a 2-in-6 chance and finds prey
+when hunting with a 5-in-6 chance (see
+Wilderness Adventuring in Old-School
+Essentials).
+
+Requirements: Minimum CON 9,
+minimum WIS 9
+Prime requisite: STR
+Hit Dice: 1d8
+Maximum level: 14
+Armor: Leather, chain mail, shields
+Weapons: Any
+Languages: Common
+
+Limited Possessions
+
+Wardens are members of a secret society
+which protects their native lands from
+invasion and the influence of evil. They
+are skilled warriors who are adapted to
+life in the wilds.
+Alignment: As protectors, wardens may
+only be good or neutral alignment. If a
+warden ever changes alignment to evil, they
+lose all special class abilities and become a
+fighter of the same level. The character may
+be able to regain their status as a warden by
+performing a special quest.
+
+Awareness
+Wardens are only surprised on a roll of
+1. This may mean that a warden is able
+to act in the surprise round while their
+companions are surprised.
+
+A warden may only keep wealth and possessions that can be kept on their person
+or mount. Excess must be donated to
+worthy causes (not other PCs!).
+
+Pursuit
+When the warden’s party pursues an
+opposing group in the wilderness (see
+Evasion and Pursuit in Old-School
+Essentials), the chance of evasion is
+reduced by 10%.
+
+Surprise Attack
+In the wilderness, a warden has a 3-in-6
+chance of going unnoticed when sneaking
+up on a target. If the warden goes unnoticed, the target may be surprised (see
+Surprise under Encounters in Old-School
+Essentials).
+
+Combat
+Wardens can use all types of weapons and
+can use leather armors, chain mail, and
+shields. Because of their need for stealth,
+they cannot use plate mail.
+
+8
+
+House Rules v.1.5
+
+Warden Level Progression
+Saving Throws
+Level
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+
+XP
+
+HD
+
+0
+1d8
+2,000
+2d8
+4,000
+3d8
+8,000
+4d8
+16,000
+5d8
+32,000
+6d8
+64,000
+7d8
+120,000
+8d8
+240,000
+9d8
+360,000 9d8+2*
+480,000 9d8+4*
+600,000 9d8+6*
+720,000 9d8+8*
+840,000 9d8+10*
+
+THAC0
+
+D
+
+W
+
+P
+
+B
+
+S
+
+19[0]
+19[0]
+19[0]
+17[+2]
+17[+2]
+17[+2]
+14[+5]
+14[+5]
+14[+5]
+12[+7]
+12[+7]
+12[+7]
+10[+9]
+10[+9]
+
+12
+12
+12
+10
+10
+10
+8
+8
+8
+6
+6
+6
+4
+4
+
+13
+13
+13
+11
+11
+11
+9
+9
+9
+7
+7
+7
+5
+5
+
+14
+14
+14
+12
+12
+12
+10
+10
+10
+8
+8
+8
+6
+6
+
+15
+15
+15
+13
+13
+13
+10
+10
+10
+8
+8
+8
+5
+5
+
+16
+16
+16
+14
+14
+14
+12
+12
+12
+10
+10
+10
+8
+8
+
+THAC0: Attack matrix row to use.
+(Ascending AC attack bonus in [].)
+*: Modifiers from CON no longer apply.
+
+D: Death / poison; W: Wands;
+P: Paralysis / petrify; B: Breath attacks;
+S: Spells / rods / staves.
+Warden Tarcking Chance of Success
+
+Tracking
+Wardens can identify and follow tracks.
+Success may be modified by the following
+factors:
+▶ Soft/hard ground: +20% to –50%.
+▶ Size of group being tracked: +2% per
+creature beyond the first.
+▶ Passing through an area where other
+tracks mingle: –50%.
+▶ Age of tracks: –5% per 12 hours.
+▶ Rainfall: –25% per hour.
+▶ Efforts made to hide tracks: –25%.
+
+Level
+
+Tracking
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10+
+
+20%
+30%
+40%
+50%
+60%
+70%
+80%
+90%
+100%
+110%
+
+After Reaching 10th Level
+2d12 beings will join the warden as
+followers. The nature of these followers is
+up to the referee. If any of the followers die,
+they are not replaced.
+
+House Rules v.1.5
+
+9
+
+Class Abilities
+Combat Talents
+Fighters may choose one of the following
+talents at 1st level:
+Weapon Specialization
+Fighters choose a melee or ranged weapon
+to specialize in.
+Level
+
+Attack Bonus
+
+Damage Bonus
+
+1
+
++1
+
++1
+
+4
+
++1
+
++2
+
+10
+
++1
+
++3
+
+13
+
++1
+
++5
+
+Slayer
+The fighter gains a +1 bonus to attack and
+damage rolls when in combat with foes of
+a specific type. The type of enemy must be
+chosen when this talent is selected.
+
+Bard Abilities
+
+Two-Weapon Fighting
+Fighters have reduced penalties for fighting
+with two weapons.
+Level
+
+Primary
+
+Offhand
+
+1
+
+-1
+
+-3
+
+3
+
+-1
+
+-2
+
+6
+
+0
+
+-1
+
+9
+
+0
+
+0
+
+fThe secondary (offhand) weapon must
+be a dagger, hand axe, hammer, or club.
+fTwo short swords may be used.
+
+Additional Combat Talents
+At 3rd and 7th level, Fighters may choose an
+additional talent from these four options:
+Cleave
+When in melee with multiple foes, if the
+fighter strikes a killing blow, they may
+immediately make another attack against a
+second foe at a –2 penalty.
+Defender
+When the fighter is in melee with a foe, any
+attacks the foe makes at characters other
+than the fighter are penalised at –2.
+
+10
+
+Leader
+Mercenaries or retainers under the fighter’s
+command and within 60’ gain a +1 bonus
+to morale/loyalty All the fighter’s allies
+within 60’ gain a +1 bonus to saves against
+fear effects.
+
+Inspiring Words
+A Bard may use inspiring words in order to
+assist their allies in the accomplishment of
+a specific, situational action.
+fGrants a +1 bonus to an attack, save,
+ability check, etc.
+fCan be used once per day per 3 levels
+starting at 1st.
+Viscious Mockery
+A Bard may call upon his command of
+language and cutting wit to unleash a
+torrent of insults which both unnerve and
+distract an opponent.
+fTarget must be able to both hear and
+understand the Bard.
+fTarget must Save vs. Spells or suffer a -1
+on attack rolls and saving throws.
+fThe effect ends if the Bard:
+• is hit by or makes an attack, unless
+the target of the attack is the same as
+the target being mocked.
+• intentionally ceases the mocking
+action.
+• uses Inspiring Words.
+fCan be used once per day starting at 3rd
+level, gaining one additional use each 3
+levels beyond that until 9th level.
+
+House Rules v.1.5
+
+Armor
+
+Healing & Death
+
+Categories of Armor
+Armor will consist of three main types:
+Light, Medium, and Heavy. The category
+of armor has a direct affect on how
+nimble the wearer can be. Heavier, bulkier
+armor limits the wearer’s flexibility and
+movement, thereby affecting the wearer’s
+max Dexterity modifier.
+Armor Adjustments
+Armor
+
+AC
+
+DEX Mod
+
+Type
+
+Padded
+
+11
+
++3
+
+Light
+
+Leather
+
+11
+
++3
+
+Light
+
+Studded Leather
+
+12
+
++3
+
+Light
+
+Furs/Hides
+
+13
+
++2
+
+Medium
+
+Scale Mail
+
+14
+
++2
+
+Medium
+
+Brigandine
+
+14
+
++2
+
+Medium
+
+Half Plate
+
+15
+
++2
+
+Medium
+
+Chain Mail
+
+16
+
+0
+
+Heavy
+
+Splint/Banded
+
+17
+
+0
+
+Heavy
+
+Full Plate
+
+18
+
+0
+
+Heavy
+
+Usage of Armor Types
+
+Natural Healing
+fNatural healing is at a rate of 1d4 hit
+points per day.
+fCON bonus/penalty applies.
+fThere is a 1 hit point per day minimum
+healing, regardless of CON modifier.
+
+Death & Dying
+Character Death
+fA character dies when falling below 0 hit
+points.
+fA character reduced to exactly 0 hit
+points must save vs. Death or die
+instantly.
+fA successful save results in the character
+being Incapacitated. A character who
+is incapacitated will “bleed out” and
+die in 1d3 (1d4-1) turns unless healed
+through magic (spell, potion, or ability)
+or stabilized with a Healer’s Kit.
+fA character who survives incapacitation
+may end up with a permament reminder
+of their brush with death (scarring,
+missing eye, limp, etc.) at the DM’s
+discretion.
+
+fClasses that can use leather can also use
+padded, studded leather, and furs/hides.
+fClasses that can use chain mail can
+also use studded leather, scale mail and
+brigandine.
+fCharacters that can use full plate can also
+use half plate, banded and splint.
+
+Armor Effects on D6 Thief Skills
+Any class using D6 Thief Skills, who dons
+any armor besides leather, padded or furs/
+hides, has their chance of Climb sheer surfaces (CS) and Move silenty (MS) reduced
+by 1-in-6.
+House Rules v.1.5
+
+11
+
+Combat
+
+Bombing
+Chance to hit suffers a -1 penalty to hit for
+each 50’ beyond the first 50’.
+
+Combat Sequence Per Round
+
+Charging into Melee
+Optional Charging into Melee rules will
+be used.
+fThe combatant must be able to move 20’
+in a straight line, unhindered, to charge.
+fThe charger attacks at +2 during the
+round.
+fAny attacks against the charger are at +1
+during the round.
+fAttacker may charge repeatedly in the
+same encounter.
+fRegardless of total Encounter Speed, all
+movement is used up by the charge.
+
+Determine Surprise if appropriate.
+1. Declare intention to cast a spell or to flee/
+retreat/surrender.
+2. Roll individual Initiative.
+3. Roll Morale checks (Monsters & NPCs).
+4. Combat Movement.
+5. Missiles/Melee/Spells and other actions.
+6. Remaining Movement at end of round.
+
+Random Initiative Rounds
+Initiative will be handled through
+randomization.
+fDEX bonuses/penalties are applied to the
+randomization.
+fIntiative order will be randomized each
+round of combat.
+
+Attacking
+Aiming
+A combatant using a ranged weapon
+forgoes attacking and movement in order
+to gain an +2 to attack next round.
+Attacking with Two Weapons
+Optional Attacking with Two Weapons
+rules will be used.
+Blind Fighting
+fA blinded combatant cannot attack.
+fAttacks against a blinded combatant gain
+a +4 bonus to hit.
+fA blinded combatant can only move at
+half Encounter Speed.
+fA blinded combatant fails all saving
+throws unless the DM rules otherwise.
+fAny spell that requires the caster to see to
+be effective is not possible.
+
+12
+
+Delayed Attack
+A combatant may choose to withhold an
+attack until later in the round.
+fApplies to both weapons and spells.
+fThe reason for the delay must be specific
+and defined.
+Fighting Withdrawal
+A combatant tactically backs away from an
+opponent within melee range.
+fMovement is at half the withdrawer’s
+Encounter Speed.
+fThe withdrawer may still attack.
+fIf the pursuer’s movement brings them
+back within melee range, the withdrawer
+may attack first as long as the withdrawer
+has an available attack.
+Mounted Attacks
+Attacks made while mounted against any
+opponent on foot are made at +2.
+fSmaller weapons, such as a dagger or
+club, do not gain this bonus. The bonus
+does not apply to ranged attacks.
+
+House Rules v.1.5
+
+Attacking (cont.)
+Natural 20/1 Attack Rolls
+fNatural 20 attack rolls always hit (within
+reason), and the Critical Hit chart will
+be consulted for additional effects.
+fNatural 1 attack rolls always miss and the
+Critical Miss chart will be consulted for
+additional consequences.
+Opportunity Attacks
+During movement, a combatant that passes
+into and then out of melee range of an
+opponent, triggers an Opportunity Attack.
+fThe Opportunity Attack happens
+immediately and out of turn order.
+fThe opponent must have an available
+attack, this does not provide a free or
+additional attack.
+Parry/Dodge
+A combatant may choose to forgo attacking
+and moving and instead focus on parrying/
+dodging blows. All attacks against such a
+combatant are made at a -2 penalty.
+
+Splash Weapons
+Optional Splash Weapons rules will be
+used.
+fWhen a splash attack misses, the attack
+lands in an adjacent area. On a square
+grid, roll 1d8 to determine direction.
+
+Targets Behind Cover
+Combatants behind cover are more difficult
+to hit.
+f¼ cover provides a +1 to AC.
+f½ cover provides a +2 to AC.
+f¾ cover provides a +4 to AC.
+fCombatants behind full cover cannot be
+hit by direct attacks.
+
+Ranged Attacks
+fRanged attacks cannot be made if there
+is an opponent within melee range of the
+attacker.
+Second Rank Attacks
+Combatants using weapons with the Reach
+property may attack through allied squares.
+fAttackers one size larger than the ally
+suffer no attack penalty.
+fIf both the attacker and the ally are of the
+same size, or the attacker is a size smaller
+than the ally, the attack is at a -2 penalty
+to hit.
+
+House Rules v.1.5
+
+13
+
+Combat Movement
+5’ Squares
+Only one combatant may occupy a 5’
+square.
+fCombatants may pass through an ally
+occupied square at twice the movement
+cost, but may not pass through an
+opponent’s square.
+fCombatants may pass through the square
+of any deceased ally/opponent at twice
+the movement cost.
+fCombatants may occupy the square of
+any deceased ally or opponent.
+Combat Movement Speed
+Movement in combat consists of two types:
+Encounter Speed and Running Speed.
+fEncounter Speed is the distance a
+combatant may move and still engage
+in combat (i.e. melee or ranged). Base
+Encounter Speed is 30’ for all races.
+fRunning Speed is the maximum
+distance a combatant may travel if they
+forgo attacking. This distance is equal to
+twice the combatant’s Encounter Speed.
+Melee Range
+A combatant is considered within melee
+range if they are within 5’ of an opponent,
+or within 10’ of an opponent using a
+weapon with the Reach property.
+
+Miscellaneous Combat
+Ascending Armor Class
+Optional Ascending Armor Class (AAC)
+rules will be used.
+Changing Weapons & Attacking
+A combatant engaged in melee may only
+switch weapons and attack if the current
+weapon is dropped.
+
+14
+
+Helpless Opponents
+Any opponent who is bound, frozen,
+unconscious, etc., is hit automatically for
+maximum damage by any melee attack.
+Morale
+Optional Morale rules will be used.
+Oil and Fire
+Unless prepared ahead of time, oil flasks
+cannot be lit and thrown in the same
+round.
+fThe first round includes grabbing
+the flask, removing the stopper, and
+preparing the wick.
+fThe second round includes lighting the
+wick and throwing the flask.
+fOn a successful hit, the opponent takes
+1d4 points of damage.
+fThe next round the opponent will take an
+additional 1d4 damage.
+Ranged Attacks on Targets in Melee
+Due to the unpredictability of combatants
+engaged melee, firing ranged weapons into
+melee is risky. If a combatant fires into
+melee and misses the target, the reverse
+of the roll is taken (e.g. a 2 becomes an
+18, a 5 becomes a 15, etc.) and applied
+against the other combatants, friend or
+foe. If the reverse of the roll is equal to or
+greater than the AC of another combatant,
+that combatant is hit. If there are multiple
+combatants with the same AC, a random
+roll will determine which is struck.
+Slow Weapons
+Slow Weapon rules will not be used.
+Variable Weapon Damage
+Optional Variable Weapon Damage rules
+will be used.
+
+House Rules v.1.5
+
+Combat Conditions
+Prone
+A prone combatant:
+•Must spend half their Encounter Speed
+standing up.
+•Is attacked at a +2 advantage until they
+stand up.
+•Has a -2 penalty to all attacks until they
+stand up.
+Unconscious
+An unconscious combatant:
+•Cannot move or speak.
+•Is unaware of their surroundings.
+•Falls prone.
+•Drops whatever they are holding.
+•Is “Helpless” (see Combat rules).
+
+Spells
+Bonus Spells
+Spellcasters receive bonus spells based on
+their Prime Requisite.
+PR
+13-14
+
+1st
+1
+
+2nd
+0
+
+3rd
+0
+
+15-16
+
+1
+
+1
+
+0
+
+17-18
+
+1
+
+1
+
+1
+
+fDoes not apply to the Bard, Paladin, or
+Ranger.
+
+Spellbooks
+
+Incapacitated
+An incapacitated combatant:
+•Cannot attack or cast spells.
+• Falls prone and can only move by
+dragging their body at a speed of 5’ per
+round.
+•Suffers a -4 penalty on all saving
+throws.
+•Is always attacked at a +4 advantage.
+•May drink a potion.
+
+All arcane spells must be stored in a
+spellbook. Each spell requires one page/
+level. If a spellbook is lost or destroyed, the
+caster can no longer memorize their spells.
+
+Spellcasting Focus
+Spellcasters of any type require an object
+which helps to create and focus their
+mystical energies (e.g. staff, wand, crystal,
+instrument, or holy symbol). Without it,
+the spellcaster cannot guide their mystic
+energies to create the spell.
+
+Wild Magic
+Magic is a powerful and sometimes
+unpredictable force. When casting a spell,
+whether Arcane or Divine, a “to-hit” roll
+must be made.
+• On a roll of 20, the spell results in
+a Boon. A Boon is some additional,
+powerful, or and helpful result.
+• On a roll of 1, the spell results
+in a Bane. A Bane is some wild,
+unpredicatble, or possibly even
+harmful result.
+• Wild Magic affects all forms of magic
+across all character classes.
+
+House Rules v.1.5
+
+15
+
+Adventuring Gear & Equipment
+Armor
+
+Cost
+
+CW
+
+AC
+
+DEX
+
+Properties
+
+[Light Armor]
+Padded
+
+5sp
+
+80
+
+11
+
++3
+
+Leather
+
+10sp
+
+100
+
+11
+
++3
+
+Studded Leather
+
+45sp
+
+130
+
+12
+
++3
+
+Furs/Hide
+
+10sp
+
+120
+
+13
+
++2
+
+Scale
+
+50sp
+
+450
+
+14
+
++2
+
+Brigandine
+
+100sp
+
+300
+
+14
+
++2
+
+Half Plate
+
+250sp
+
+400
+
+15
+
++2
+
+Chain Mail
+
+75sp
+
+400
+
+16
+
+0
+
+STR13
+
+Splint/Banded
+
+200sp
+
+600
+
+17
+
+0
+
+STR15
+
+Full Plate
+
+500sp
+
+650
+
+18
+
+0
+
+STR15
+
+Small Shield
+
+10sp
+
+60
+
++1
+
++3
+
+Large Shield
+
+30sp
+
+80
+
++2
+
++1
+
+!GH
+
+Cost
+
+CW
+
+DMG
+
+Range
+
+Properties
+
+Bastard Sword
+
+8sp
+
+30
+
+1d6*
+
+2GH
+
+Battleaxe
+
+10sp
+
+40
+
+1d8
+
+2GH
+
+Brass Knuckles
+
+5cp
+
+5
+
+1d4
+
+Club
+
+5cp
+
+20
+
+1d4
+
+Dagger
+
+3sp
+
+10
+
+1d4
+
+Flail
+
+10sp
+
+20
+
+1d8
+
+Glaive
+
+10sp
+
+60
+
+1d8
+
+!GH,R,2
+
+Greataxe
+
+30sp
+
+70
+
+1d10
+
+!GH,2,STR13
+
+Greatclub
+
+1sp
+
+100
+
+1d10
+
+!GH,2,STR15
+
+Greatsword
+
+50sp
+
+75
+
+2d6
+
+!GH,2,STR13
+
+Halberd
+
+20sp
+
+60
+
+1d8*
+
+!GH,R,2
+
+Hand Axe
+
+4sp
+
+20
+
+[Medium Armor]
+
+[Heavy Armor]
+
+[Shield]
+
+Weapon
+[Melee]
+
+2GH
+2
+!GH
+R
+
+16
+
+Gnomes and Hobbits must wield with two hands.
+Two-Handed. Weapon must be used with 2 hands.
+Cannot be used by Gnomes and Hobbits.
+Reach. Weapon can attack opponents 10’ away.
+
+1d4
+T
+R1
+R2
+STR#
+
+House Rules v.1.5
+
+10/20/30
+
+T
+2GH
+
+10/20/30
+
+T
+
+Thrown. Weapon can be thrown in combat.
+Reload and movement cannot be done in the same round.
+Reload takes one full round and no movement is possible.
+Minimum Strength required to use effectively.
+
+Weapon
+
+Cost
+
+CW
+
+DMG
+
+Range
+
+Properties
+
+Hammer
+
+2sp
+
+20
+
+1d4
+
+10/20/30
+
+T
+
+Javelin
+
+7sp
+
+20
+
+1d6
+
+30/60/90
+
+T
+
+Lance
+
+20sp
+
+80
+
+1d10
+
+!GH,R,STR13
+
+Longsword
+
+15sp
+
+40
+
+1d8
+
+2GH
+
+[Melee cont.]
+
+Mace
+
+5sp
+
+40
+
+1d6
+
+Maul
+
+10sp
+
+100
+
+2d6
+
+!GH,2,STR15
+
+Morningstar
+
+15sp
+
+40
+
+1d8
+
+2GH
+
+Pike
+
+7sp
+
+100
+
+1d12
+
+!GH,R,2,STR15
+
+Quarterstaff
+
+1sp
+
+40
+
+1d4
+
+2
+
+Rapier
+
+25sp
+
+20
+
+1d6
+
+Scimitar
+
+25sp
+
+30
+
+1d6
+
+Scythe
+
+2sp
+
+40
+
+2d4
+
+Shortsword
+
+10sp
+
+20
+
+1d6
+
+Spear
+
+2sp
+
+30
+
+1d6
+
+20/40/60
+
+T
+
+Trident
+
+5sp
+
+40
+
+1d6
+
+20/40/60
+
+T
+
+Warhammer
+
+15sp
+
+20
+
+1d8
+
+2GH
+
+Whip
+
+10sp
+
+30
+
+1d4
+
+R
+
+Blowgun
+
+3sp
+
+5
+
+0
+
+25/50
+
+Crossbow, Hand
+
+75sp
+
+30
+
+1d4
+
+30/60/120
+
+Crossbow, Heavy
+
+50sp
+
+180
+
+1d10
+
+100/250/400
+
+!GH,2,R2
+
+Crossbow, Light
+
+25sp
+
+50
+
+1d6
+
+80/160/240
+
+2,R1
+
+Dart
+
+3sp
+
+5
+
+1d4
+
+10/20/60
+
+T
+
+Shortbow
+
+25sp
+
+15
+
+1d6
+
+50/100/150
+
+2
+
+Sling
+
+5sp
+
+1
+
+1d4
+
+40/80/160
+
+Longbow
+
+50sp
+
+20
+
+1d8
+
+70/140/210
+
+Arrows (20)
+
+5sp
+
+10
+
+Needles (50)
+
+1sp
+
+10
+
+Bolts, Hand (30)
+
+7sp
+
+10
+
+Bolts, Light (30)
+
+10sp
+
+15
+
+Bolts, Heavy (30)
+
+15sp
+
+20
+
+Sling Bullets (20)
+
+1sp
+
+15
+
+!GH,2
+
+[Ranged]
+
+!GH,2
+
+[Ammunition]
+
+House Rules v.1.5
+
+17
+
+Item
+
+Cost
+
+CW
+
+Details
+
+Acid
+
+25sp
+
+10
+
+Glass vial. 2d6 damage when thrown.
+
+Backpack
+
+2sp
+
+50
+
+Ball Bearings
+
+1sp
+
+20
+
+Bedroll
+
+1sp
+
+70
+
+[Gear]
+
+18
+
+Bag of 1,000.
+
+Bell
+
+5cp
+
+1
+
+Block & Tackle
+
+11sp
+
+50
+
+2 pulleys and 50’ rope.
+
+Book, Spell
+
+50sp
+
+30
+
+100 pages.
+
+Bucket
+
+5cp
+
+20
+
+Holds 2 gallons of liquid.
+
+Caltrops
+
+1sp
+
+20
+
+Quantity of 20.
+
+Candles
+
+1cp
+
+1
+
+Bundle of 3.
+
+Case, Crossbow Bolt
+
+1sp
+
+10
+
+Holds 30 bolts.
+
+Chain
+
+5sp
+
+100
+
+10’ length.
+
+Chalk
+
+3cp
+
+1
+
+3 pieces.
+
+Climber’s Kit
+
+25sp
+
+120
+
+Boot tips, hammer, 10 pitons, harness
+
+Clothes, Cloak
+
+2sp
+
+30
+
+Clothes, Lined Cloak
+
+4sp
+
+50
+
+Clothes, Common
+
+5cp
+
+20
+
+Clothes, Fine
+
+15sp
+
+25
+
+Clothes, Traveler’s
+
+2sp
+
+30
+
+Clothes, Robes
+
+1sp
+
+30
+
+Clothes, Fine Robes
+
+25sp
+
+35
+
+Crowbar
+
+2sp
+
+50
+
+Disguise Kit
+
+25sp
+
+30
+
+Wig, beard, mustache, spirit gum, etc.
+
+Fishing Tackle
+
+1sp
+
+40
+
+Pole, line, hooks.
+
+Flask or Tankard
+
+2cp
+
+10
+
+Grappling Hook
+
+2sp
+
+40
+
+3 prongs.
+
+Healer’s Kit
+
+5sp
+
+30
+
+Enough healing supplies for 2 uses.
+
+Holy Symbol
+
+10sp
+
+10
+
+Holy Water
+
+5sp
+
+10
+
+Glass flask.
+
+Hourglass
+
+25sp
+
+10
+
+Sand counts down 1 hour.
+
+Incense
+
+1cp
+
+1
+
+Per 1” cube.
+
+Ink
+
+10sp
+
+1
+
+Per ounce.
+
+Ink Pen
+
+3sp
+
+1
+House Rules v.1.5
+
+Item
+
+Cost
+
+CW
+
+Details
+
+Journal
+
+7sp
+
+50
+
+Contains 25 sheets.
+
+Lantern, Bullseye
+
+10sp
+
+20
+
+Can be closed to block light.
+
+Lantern, Hooded
+
+7sp
+
+20
+
+Can be closed to block light.
+
+Lock
+
+10sp
+
+10
+
+Manacles
+
+2sp
+
+60
+
+Mess Kit
+
+2cp
+
+10
+
+Mirror, Steel
+
+5sp
+
+5
+
+Oil
+
+1cp
+
+10
+
+Glass flask.
+
+Paper
+
+2cp
+
+-
+
+Per sheet.
+
+Parchment
+
+1cp
+
+-
+
+Per sheet.
+
+Pick, Miner’s
+
+2sp
+
+10
+
+Piton
+
+5cp
+
+2
+
+Quantity 20.
+
+Perfume
+
+5sp
+
+1
+
+Glass vial.
+
+Poison, Basic
+
+100sp
+
+1
+
+Glass vial.
+
+Pole
+
+5cp
+
+70
+
+10’
+
+Pouch
+
+5cp
+
+1
+
+Pot, Iron
+
+2sp
+
+100
+
+Quiver
+
+1sp
+
+10
+
+Holds 20 arrows.
+
+Rations, Iron
+
+1sp
+
+10
+
+7 day supply of dry, preserved foods.
+
+Rations, Standard
+
+3sp
+
+20
+
+7 day supply of fresh foods.
+
+Rope, Hempen
+
+1sp
+
+100
+
+50’ length.
+
+Rope, Silk
+
+10sp
+
+50
+
+50’ length.
+
+Sack, Large
+
+2cp
+
+5
+
+Sack, Small
+
+1cp
+
+2
+
+Shovel
+
+1sp
+
+50
+
+Sidesack
+
+1sp
+
+30
+
+Spikes, Iron
+
+1sp
+
+50
+
+Spyglass
+
+1,000sp
+
+10
+
+Tent 1-person
+
+1sp
+
+200
+
+Thieve’s Tools
+
+25sp
+
+10
+
+Tinderbox
+
+1cp
+
+10
+
+Torch
+
+1cp
+
+10
+
+Quantity 3. Burns for 1 hour (6 turns)
+
+Waterskin
+
+2cp
+
+50
+
+Holds 4 pints (half gallon)
+
+[Gear cont.]
+
+Tin box with cup and cutlery.
+
+Quantity 10.
+
+House Rules v.1.5
+
+19
+
+Item
+
+Cost
+
+CW
+
+Details
+
+Drum
+
+6sp
+
+30
+
+Dulcimer
+
+25sp
+
+100
+
+Flute
+
+2sp
+
+10
+
+Horn
+
+3sp
+
+20
+
+Lute
+
+35sp
+
+20
+
+A plucked, string instrument.
+
+Lyre
+
+30sp
+
+20
+
+A small, harp-like string instrument.
+
+Pan Flute
+
+12sp
+
+20
+
+Shawm
+
+3sp
+
+10
+
+[Instruments]
+A trapezoidal, string instrument.
+
+A double-reed wind instrument.
+
+[Mounts & Animals]
+Donkey/Mule
+
+8sp
+
+40’ Tactical speed. 420 lb. capacity.
+
+Horse, Draft
+
+50sp
+
+40’ Tactical speed. 540 lb. capacity.
+
+Horse, Riding
+
+75sp
+
+60’ Tactical speed. 480 lb. capacity.
+
+Horse, War
+
+400sp
+
+60’ Tactical speed. 540 lb. capacity.
+
+Pony
+
+30sp
+
+40’ Tactical speed. 225 lb. capacity.
+
+Barding
+
+4x
+
+Cost is 4x humanoid armor cost.
+
+Bit & Bridle
+
+2sp
+
+Carriage
+
+100sp
+
+Cart
+
+15sp
+
+Chariot
+
+250sp
+
+[Tack & Drawn Vehicles]
+
+Feed
+
+5cp
+
+Saddle
+
+10sp
+
+250
+
+Enough to feed one animal per day.
+
+Saddlebags
+
+4sp
+
+80
+
+Sled
+
+20sp
+
+Wagon
+
+35sp
+
+[Waterborne Vehicles]
+
+20
+
+Canoe
+
+20sp
+
+Galley
+
+30,000sp
+
+Keelboat
+
+3,000sp
+
+Longship
+
+10,000sp
+
+Rowboat
+
+50sp
+
+Sailing Ship
+
+10,000sp
+
+Warship
+
+25,000sp
+House Rules v.1.5
+
+Encumbrance
+
+Strength Adjustments to Encumbrance
+
+We will use Detailed Encumbrance based
+on Coin Weights (CW). Coin Weight is an
+abstract combination of physical weight
+and bulk. As a rough estimate, 10 coins
+regardless of their material (gold, silver, or
+copper), weigh approximately 1lb.
+
+A character’s Strength (STR) score will
+have an effect on the amount of weapons,
+armor, and equipment they can carry. A
+stronger character can obviously carry
+more than their weaker counterparts.
+Strength (STR)
+
+Bonus/Penalty (Coins)
+
+18
+
++500
+
+Detailed Encumbrance
+
+16-17
+
++300
+
+Treasure: The weight of coins and other
+treasure carried is tracked.
+
+13-15
+
++150
+
+6-8
+
+-150
+
+4-5
+
+-300
+
+3
+
+-500
+
+Equipment: The weight of the character’s
+armor, weapons, and miscellaneous
+adventuring gear (backpack, spikes, sacks,
+etc.) will be tracked.
+Movement rate: The character’s movement
+rate is based on the total weight of all
+significant items carried, including
+treasure, weapons, armor, and equipment.
+
+Base Encumbered Movement Rates
+Encumbrance (CW)
+
+Movement Rate (Ex/En)
+
+<=400
+
+120/40
+
+<=800
+
+90/30
+
+<=1200
+
+60/20
+
+>1600
+
+0
+
+Lifting & Dragging
+A character can:
+flift a weight equal to their maximum
+encumbrace overhead.
+flift a weight equal to twice their
+maximum encumbrace off the ground
+and move it short distances.
+fdrag or push a weight equal to three
+times their maximum encumbrance.
+
+House Rules v.1.5
+
+21
+
+Critical Hits
+d100
+
+Effect
+
+01-30
+
+Roll damage dice twice and then add any damage modifiers.
+
+31-40
+
+Roll damage dice twice and then add any damage modifiers. The attack breaks a strap or binding
+from a piece of equipment (armor, belt, shield, backpack, etc.), causing it to fall to the ground. Potential to affect AC or other advantageous affect for the attacker. DM’s discretion.
+
+41-50
+
+Roll damage dice twice and then add any damage modifiers. Opponent is knocked back 5’ in a
+direction chosen by the attacker.
+
+51-60
+
+Roll damage dice twice and then add any damage modifiers. If the attacker has the inititiave over the
+opponent next round, the attacker will have a +2 to hit.
+
+61-70
+
+Roll damage dice twice and then add any damage modifiers. Opponent must make a Moderate (0)
+DEX check or have their weapon knocked into an adjacent square. Use Splash Weapons rules to
+determine the direction.
+
+71-80
+
+Roll damage dice twice then add any damage modifiers. Opponent is knocked Prone.
+
+81-82
+
+Roll damage dice twice then add any damage modifiers. The nature of the blow causes the opponent
+to fumble his weapon 10’ away. Use Splash Weapons rules to determine the direction.
+
+83-84
+
+Roll damage dice twice then add any damage modifiers. Opponent must succeed on a Morale check
+or flee the attacker.
+
+85-86
+
+Roll damage dice twice then add any damage modifiers. Opponent is Incapacitated for the
+remainder of the current round and the next.
+
+87-89
+
+Roll damage dice twice, re-roll any 1’s, then add any damage modifiers.
+
+90-94
+
+Roll damage dice twice then add any damage modifiers. Roll on the Minor Injury chart.
+
+95-98
+
+Roll damage dice twice then add any damage modifiers. Roll on the Major Injury chart.
+
+Roll damage dice twice then add any damage modifiers. Roll on the Major Injury chart and add
+
+99-100 your Melee bonus to the result.
+
+22
+
+House Rules v.1.5
+
+Critical Hits: Injuries
+[Minor Injury]
+d100
+01-19
+20-39
+40-59
+60-89
+90-95
+
+Effect
+Hand Injury: Randomly determine which hand. Any item in the hand is dropped. Any action
+requiring the injured hand is at a -2 penalty until the wound is tended after combat or the combatant
+is healed magically.
+Groin Injury: Opponent is Incapacitated for the remainder of the current round and the next.
+Upon recovery all rolls are at a -2 penalty until the wound is tended after combat or the combatant is
+healed magically.
+Leg Injury: Randomly determine which leg. Cannot jump. Any action requiring the leg is at a -2
+penalty and Encounter and Running speed is reduced by half until the wound is tended after combat or the combatant is healed magically.
+Arm Injury: Randomly determine which arm. Any item being carried or supported by that arm is
+dropped. Any action requiring the arm is at a -2 penalty until the wound is tended after combat or
+the combatant is healed magically.
+Torso Injury: Combatant is Incapacitated for the remainder of the current round and the next.
+Upon recovery all rolls are at a -2 penalty until the wound is tended after combat or the combatant is
+healed magically.
+Head Injury: Sharp blow to the head Incapacitates opponent for the remainder of the current round
+
+96-100 and the next. Upon recovery combatant will be subject to Blind Fighting rules for 1d4 rounds.
+
+[Major Injury]
+d100
+
+Effect
+
+01-19
+
+Catastrophic hand injury! Randomly determine which hand. Any item in the hand falls to the
+ground. Bleed-out begins at rate of 1d4 hit points per round until stabilized. Cannot be restored by
+non-magical means.
+
+20-39
+
+Catastrophic groin injury! Opponent is Incapacitated until healed. Bleed-out begins at rate of 1d4
+hit points per round until stabilized. Cannot be restored by non-magical means.
+
+40-59
+60-89
+90-95
+
+Catastrophic arm injury! Randomly determine which arm. Any item being carried falls to the
+ground. Bleed-out begins at rate of 1d6 hit points per round until stabilized. Cannot be restored by
+non-magical means.
+Catastrophic leg injury! Randomly determine which leg. Opponent is Incapacitated until healed.
+Bleed-out begins at rate of 1d8 hit points per round until stabilized. Cannot be restored by non-magical means.
+Catastrophic torso injury! Opponent is Incapacitated and must make a Challenging (+2) CON save
+or die instantly. Bleed-out begins at rate of 1d8 hit points per round. Stabilization can only occur
+through magical means (i.e. spell, potion, etc.).
+Catastrophic head injury! Opponent is killed instantly via traumatic head wound (e.g. decapitation,
+
+96-100 crushed skull, arrow through brain, etc.).
+
+*All injuries and effects are at the DM’s discretion due to the nature of fantastical creatures and the differences
+in non-humanoid anatomy.
+House Rules v.1.5
+
+23
+
+Critical Misses
+d100 Effect
+01-20
+
+Clumsy footwork has caused the combatant to injure a knee or ankle (or other mobility appendage).
+Encounter and Running speeds are cut in half until the next day unless healed through magic.
+
+21-30
+
+The attacker must make a Moderate DEX check or fumble their weapon into an adjacent square.
+Use Splash Weapons rules to determine the direction.
+
+31-40
+
+The combatant overextends, opening its defenses to a counter attack. Attacks from any opponent are
+at +2 for the remainder of the current round.
+
+41-50
+
+Awkward foot placement during the attack puts the combatant off balance. Make a Moderate DEX
+check or fall Prone. If the combatant has movement remaining and chooses to stand, it provokes an
+Opportunity Attack from any opponent within 5’.
+
+51-60
+
+The combatant’s overexertion causes them to lose control of their bowels. Roll d100. On a 75 or less
+it’s only pee. The combatant’s square is now difficult terrian.
+
+61-70
+
+The combatant’s erratic manuevering causes an item (backpack, scabbard, ammo container, etc.) in
+their posession to dislodge and fall to the ground. The combatant’s square is now difficult terrain.
+
+71-75
+
+The opponent has trapped the attacker’s weapon. Next turn the attacker may attempt to free it by
+making a Moderate STR check. The opponent has +2 on attacks until weapon is freed. If the attacker
+is using a ranged weapon, the weapon has become entangled in their personal gear.
+
+76-80
+
+While repositioning, the combatant slips on a banana peel and falls to the floor. Roll a Moderate
+CON check or be knocked Unconscious for the remainder of the current round and the next. On a
+successful check, the combatant is Incapacitated for the remainder of the current round.
+
+81-85
+
+Something gets in the attacker’s eyes (sweat, dirt, blood, etc.) making it impossible to see clearly. The
+combatant is subject to Blind Fighting rules for the remainder of the current round and the next.
+
+86-90
+
+Weapon breaks. If the weapon is magical/enchanted, roll a d20. On a roll of 1 the weapon breaks. An
+enchanted weapon that breaks releases magical energy causing 1d4 damage to all combatants within
+10’.
+
+91-95
+
+The combatant’s attack is errant. If a friendly combatant is within 5’ of the intended target, roll to hit
+them as normal. If no friendly combatant is within 5’, the attacker rolls to hit itself.
+
+96-99
+
+The combatant’s attack is reckless. If a friendly combatant is within 5’ of the intended target, roll
+to hit them. If the attack is successful, automatically roll on the Critical Hits chart. If no friendly
+combatant is within 5’, the attacker rolls to hit itself, with a successful attack resulting in a critical hit.
+
+100
+
+The combatant’s wild attack critically strikes a friendly combatant within 5’ of the intended target,
+roll on the Critical Hits chart. If no friendly is within 5’, the attacker critically hits itself.
+
+24
+
+House Rules v.1.5
+
+Occupations
+Random Occupation Table
+1. Entertainer
+
+26. Herdsman
+
+51. Engraver
+
+76. Clerk
+
+2. Cobbler
+
+27. Glassblower
+
+52. Cartographer
+
+77. Bricklayer
+
+3. Serf
+
+28. Tobacconist
+
+53. Laborer
+
+78. Glover
+
+4. Musician
+
+29. Winemaker
+
+54. Courier
+
+79. Trapper
+
+5. Brewer
+
+30. Merchant
+
+55. Squire
+
+80. Porter
+
+6. Innkeeper
+
+31. Farmer
+
+56. Rag & Bone
+
+81. Mortician
+
+7. Bouncer
+
+32. Tailor
+
+57. Stonecutter
+
+82. Ne’er-do-well
+
+8. Librarian
+
+33. Philosopher
+
+58. Guard
+
+83. Gong Farmer
+
+9. Artisan
+
+34. Millwright
+
+59. Carpenter
+
+84. Juggler
+
+10. Cook
+
+35. Wainwright
+
+60. Joiner
+
+85. Painter
+
+11. Weaver
+
+36. Thatcher
+
+61. Dyer
+
+86. Ratter
+
+12. Furrier
+
+37. Tanner
+
+62. Washer
+
+87. Page
+
+13. Runaway Slave
+
+38. Printer
+
+63. Distiller
+
+88. Fishmonger
+
+14. Armorer
+
+39. Launderer
+
+64. Potter
+
+89. Jailer
+
+15. Dairyboy
+
+40. Barber
+
+65. Falconer
+
+90. Stablehand
+
+16. Wheelwright
+
+41. Fuller
+
+66. Coachman
+
+91. Caretaker
+
+17. Ditch Digger
+
+42. Houndsman
+
+67. Tallow Chandler 92. Miller
+
+18. Woodcutter
+
+43. Beggar
+
+68. Blacksmith
+
+93. Jester
+
+19. Maid/Butler
+
+44. Baker
+
+69. Prostitute
+
+94. Butcher
+
+20. Bookbinder
+
+45. Barkeep
+
+70. Sexton
+
+95. Fletcher
+
+21. Mason
+
+46. Charcoal Maker
+
+71. Banker
+
+96. Scholar
+
+22. Actor
+
+47. Hatmaker
+
+72. Lector
+
+97. Glazier
+
+23. Street Sweeper
+
+48. Ferrier
+
+73. Messenger
+
+98. Gravedigger
+
+24. Bowyer
+
+49. Lumberjack
+
+74. Crier
+
+99. Server
+
+25. Cooper
+
+50. Scavenger
+
+75. Groom
+
+100. Gardener
+
+House Rules v.1.5
+
+25
+
+D6 Thief Skills
+
+Miscellaneous
+
+Thief Skills
+
+Turning Undead
+
+All thief skill checks will be rolled on a d6
+rather than with percentile dice. All thief
+skills, including those shared with the
+Assassin and the Barbarian, function as
+described in the Players Tome, with the
+exception of Pick Pockets.
+
+Limits on Turning Undead
+fFrequency and Duration rules will be
+used.
+fMixed groups of undead rules will be
+used, but the turning attempts must
+be sequential. If the turning attempt
+is interrupted (by a successful attack
+or some other external event), or the
+character performs a different action the
+following round, the effect ends and can’t
+be attempted again that encounter.
+
+Pick Pockets
+The chance of success is reduced by 1-in-6
+per three levels of the victim (e.g. a 6th level
+victim reduces success by 2-in-6). A roll of
+6 means that the attempted theft
+is noticed. The DM determines the reaction
+of the victim.
+
+Mechanics
+Base chance of success: All skills begin
+with a 1-in-6 chance of success.
+
+Trade Tongue
+The common language of the realm is a
+hybrid language consisting of Old Oeridian
+and Ancient Baklunish. It is known as the
+“Trade Tongue” of the Flanaess.
+
+Expertise points: Each class using d6 Thief
+Skills will gain expertise points to improve
+their chance of success with their skills.
+Each point allocated to a skill improves the
+chance of success by 1-in-6. Multiple points
+may be allocated to a skill, further increasing the chance of success. For example, if
+2 points are allocated to a skill, the chance
+of success is raised to 3-in-6 (from the base
+1-in-6 chance of success).
+Class
+Assassin
+
++ Points at 1st
+3
+
++ Points/Level
+1½
+
+Barbarian
+
+2
+
+½
+
+Thief
+
+4
+
+2
+
+Maximum chance of success: No skill
+may be raised above 5-in-6.
+
+26
+
+House Rules v.1.5
+
+House Rules v.1.5
+
+27
+
+

@@ -1,0 +1,64 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{img}}" data-edit="img" title="{{name}}" />
+    <div class="header-col">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{name}}" placeholder="Armor Name" />
+      </h1>
+      <div class="details">
+        <div class="form-group">
+          <label>Cost (gp)</label>
+          <input type="number" name="system.cost" value="{{system.cost}}" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Weight</label>
+          <input type="number" name="system.weight" value="{{system.weight}}" min="0" step="0.1" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sheet-body">
+    <div class="flexrow">
+      <div class="stats">
+        <div class="form-group">
+          <label>Armor Class</label>
+          <input type="number" name="system.ac.value" value="{{system.ac.value}}" min="0" max="10" />
+        </div>
+        
+        <div class="form-group">
+          <label>Ascending AC</label>
+          <input type="number" name="system.aac.value" value="{{system.aac.value}}" min="0" max="20" />
+        </div>
+
+        <div class="form-group">
+          <label>Armor Type</label>
+          <select name="system.type">
+            <option value="">Select Type</option>
+            <option value="light" {{#if (eq system.type "light")}}selected{{/if}}>Light</option>
+            <option value="medium" {{#if (eq system.type "medium")}}selected{{/if}}>Medium</option>
+            <option value="heavy" {{#if (eq system.type "heavy")}}selected{{/if}}>Heavy</option>
+            <option value="shield" {{#if (eq system.type "shield")}}selected{{/if}}>Shield</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
+            Equipped
+          </label>
+        </div>
+      </div>
+
+      <div class="description">
+        <label>Description</label>
+        <textarea name="system.description" placeholder="Armor description...">{{system.description}}</textarea>
+      </div>
+    </div>
+  </section>
+</form>

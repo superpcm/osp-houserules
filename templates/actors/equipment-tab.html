@@ -1,0 +1,265 @@
+<section class="equipment-tab">
+  {{!-- Weapons Section --}}
+  <div class="item-category">
+    <div class="item-category-title flexrow">
+      <div class="category-caret"><i class="fas fa-caret-down"></i></div>
+      <div class="category-name">Weapons</div>
+      <div class="field-short">Damage</div>
+      <div class="field-short">Weight</div>
+      <div class="item-controls">
+        <a class="item-control item-create" data-type="weapon" title="Add Weapon">
+          <i class="fa fa-plus"></i>
+        </a>
+      </div>
+    </div>
+    <ol class="item-list">
+      {{#each weapons as |item|}}
+      <li class="item-entry item" data-item-id="{{item.id}}">
+        <div class="item-header flexrow {{#if item.isWeapon}}item-rollable{{/if}}">
+          <div class="item-image" style="background-image: url({{item.img}})"></div>
+          <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+          <div class="field-short">{{item.system.damage}}</div>
+          <div class="field-short">{{item.system.weight}}</div>
+          <div class="item-controls">
+            {{#if @root.owner}}
+            <a class="item-control item-show" title="Show Item">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">
+              <i class="fas fa-hand"></i>
+            </a>
+            <a class="item-control item-edit" title="Edit Item">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a class="item-control item-delete" title="Delete Item">
+              <i class="fas fa-trash"></i>
+            </a>
+            {{/if}}
+          </div>
+        </div>
+        <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
+          {{#if item.system.description}}
+          <div class="item-description">{{item.system.description}}</div>
+          {{/if}}
+          {{#if item.displayTags}}
+          <div class="item-tags">
+            {{#each item.displayTags as |tag|}}
+            <span class="tag">{{tag.value}}</span>
+            {{/each}}
+          </div>
+          {{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+  </div>
+
+  {{!-- Armor Section --}}
+  <div class="item-category">
+    <div class="item-category-title flexrow">
+      <div class="category-caret"><i class="fas fa-caret-down"></i></div>
+      <div class="category-name">Armor</div>
+      <div class="field-short">AC</div>
+      <div class="field-short">Weight</div>
+      <div class="item-controls">
+        <a class="item-control item-create" data-type="armor" title="Add Armor">
+          <i class="fa fa-plus"></i>
+        </a>
+      </div>
+    </div>
+    <ol class="item-list">
+      {{#each armor as |item|}}
+      <li class="item-entry item" data-item-id="{{item.id}}">
+        <div class="item-header flexrow">
+          <div class="item-image" style="background-image: url({{item.img}})"></div>
+          <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+          <div class="field-short">{{item.system.ac.value}}</div>
+          <div class="field-short">{{item.system.weight}}</div>
+          <div class="item-controls">
+            {{#if @root.owner}}
+            <a class="item-control item-show" title="Show Item">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">
+              <i class="fas fa-tshirt"></i>
+            </a>
+            <a class="item-control item-edit" title="Edit Item">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a class="item-control item-delete" title="Delete Item">
+              <i class="fas fa-trash"></i>
+            </a>
+            {{/if}}
+          </div>
+        </div>
+        <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
+          {{#if item.system.description}}
+          <div class="item-description">{{item.system.description}}</div>
+          {{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+  </div>
+
+  {{!-- Containers Section --}}
+  <div class="item-category">
+    <div class="item-category-title flexrow">
+      <div class="category-caret"><i class="fas fa-caret-down"></i></div>
+      <div class="category-name">Containers</div>
+      <div class="field-short">Capacity</div>
+      <div class="field-short">Weight</div>
+      <div class="item-controls">
+        <a class="item-control item-create" data-type="container" title="Add Container">
+          <i class="fa fa-plus"></i>
+        </a>
+      </div>
+    </div>
+    <ol class="item-list">
+      {{#each containers as |item|}}
+      <li class="item-entry item" data-item-id="{{item.id}}">
+        <div class="item-header flexrow">
+          <div class="item-image" style="background-image: url({{item.img}})"></div>
+          <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+          <div class="field-short">{{item.system.capacity.value}}/{{item.system.capacity.max}}</div>
+          <div class="field-short">{{item.system.weight}}</div>
+          <div class="item-controls">
+            {{#if @root.owner}}
+            <a class="item-control item-show" title="Show Item">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">
+              <i class="fas fa-hand"></i>
+            </a>
+            <a class="item-control item-edit" title="Edit Item">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a class="item-control item-delete" title="Delete Item">
+              <i class="fas fa-trash"></i>
+            </a>
+            {{/if}}
+          </div>
+        </div>
+        <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
+          {{#if item.system.description}}
+          <div class="item-description">{{item.system.description}}</div>
+          {{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+  </div>
+
+  {{!-- General Items Section --}}
+  <div class="item-category">
+    <div class="item-category-title flexrow">
+      <div class="category-caret"><i class="fas fa-caret-down"></i></div>
+      <div class="category-name">Items</div>
+      <div class="field-short">Qty</div>
+      <div class="field-short">Weight</div>
+      <div class="item-controls">
+        <a class="item-control item-create" data-type="item" title="Add Item">
+          <i class="fa fa-plus"></i>
+        </a>
+      </div>
+    </div>
+    <ol class="item-list">
+      {{#each items as |item|}}
+      <li class="item-entry item" data-item-id="{{item.id}}">
+        <div class="item-header flexrow">
+          <div class="item-image" style="background-image: url({{item.img}})"></div>
+          <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+          <div class="field-short quantity">
+            <input 
+              value="{{item.system.quantity.value}}" 
+              type="number" 
+              min="0" 
+              data-field="system.quantity.value"
+              data-item-id="{{item.id}}"
+            />
+            {{#if item.system.quantity.max}}
+            <span>/{{item.system.quantity.max}}</span>
+            {{/if}}
+          </div>
+          <div class="field-short">{{multiply item.system.weight item.system.quantity.value}}</div>
+          <div class="item-controls">
+            {{#if @root.owner}}
+            <a class="item-control item-show" title="Show Item">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">
+              <i class="fas fa-hand"></i>
+            </a>
+            <a class="item-control item-edit" title="Edit Item">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a class="item-control item-delete" title="Delete Item">
+              <i class="fas fa-trash"></i>
+            </a>
+            {{/if}}
+          </div>
+        </div>
+        <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
+          {{#if item.system.description}}
+          <div class="item-description">{{item.system.description}}</div>
+          {{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+  </div>
+
+  {{!-- Treasure Section --}}
+  <div class="item-category">
+    <div class="item-category-title flexrow">
+      <div class="category-caret"><i class="fas fa-caret-down"></i></div>
+      <div class="category-name">Treasure</div>
+      <div class="field-short">Value</div>
+      <div class="field-short">Weight</div>
+      <div class="item-controls">
+        <a class="item-control item-create" data-type="item" data-treasure="true" title="Add Treasure">
+          <i class="fa fa-plus"></i>
+        </a>
+      </div>
+    </div>
+    <ol class="item-list">
+      {{#each treasures as |item|}}
+      <li class="item-entry item" data-item-id="{{item.id}}">
+        <div class="item-header flexrow">
+          <div class="item-image" style="background-image: url({{item.img}})"></div>
+          <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+          <div class="field-short">{{item.system.cumulativeCost}} gp</div>
+          <div class="field-short">{{item.system.cumulativeWeight}}</div>
+          <div class="item-controls">
+            {{#if @root.owner}}
+            <a class="item-control item-show" title="Show Item">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a class="item-control item-edit" title="Edit Item">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a class="item-control item-delete" title="Delete Item">
+              <i class="fas fa-trash"></i>
+            </a>
+            {{/if}}
+          </div>
+        </div>
+        <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
+          {{#if item.system.description}}
+          <div class="item-description">{{item.system.description}}</div>
+          {{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+  </div>
+
+  {{!-- Encumbrance Bar --}}
+  <section class="encumbrance-section">
+    <div class="encumbrance-label">Encumbrance</div>
+    <div class="encumbrance-bar-container">
+      <div class="encumbrance-bar" style="width: {{encumbrancePercentage}}%"></div>
+      <span class="encumbrance-text">{{totalWeight}} / {{maxWeight}} lbs</span>
+    </div>
+  </section>
+</section>

@@ -1,0 +1,353 @@
+/* Equipment Tab Styles */
+.equipment-tab {
+  padding: 8px;
+}
+
+.item-category {
+  margin-bottom: 16px;
+  border: 1px solid #bcbcbc;
+  border-radius: 4px;
+}
+
+.item-category-title {
+  background: #f0f0f0;
+  border-bottom: 1px solid #bcbcbc;
+  padding: 8px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.item-category-title:hover {
+  background: #e8e8e8;
+}
+
+.category-caret {
+  width: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.category-name {
+  flex: 1;
+}
+
+.field-short {
+  width: 80px;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.field-long {
+  width: 120px;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.item-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.item-control {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #666;
+  text-decoration: none;
+}
+
+.item-control:hover {
+  background: #f0f0f0;
+  color: #000;
+}
+
+.item-control.item-unequipped {
+  opacity: 0.5;
+}
+
+.item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item-entry {
+  border-bottom: 1px solid #eee;
+}
+
+.item-entry:last-child {
+  border-bottom: none;
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.item-header:hover {
+  background: #f8f8f8;
+}
+
+.item-header.item-rollable:hover {
+  background: #e8f4e8;
+}
+
+.item-image {
+  width: 32px;
+  height: 32px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.item-name {
+  flex: 1;
+  margin: 0;
+  font-size: 1em;
+  font-weight: normal;
+}
+
+.quantity input {
+  width: 40px;
+  border: none;
+  background: none;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.item-summary {
+  display: none;
+  padding: 8px 12px;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+  font-size: 0.9em;
+}
+
+.item-summary.expanded {
+  display: block;
+}
+
+.item-description {
+  margin-bottom: 8px;
+}
+
+.item-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: #e0e0e0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+/* Encumbrance Section */
+.encumbrance-section {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #bcbcbc;
+  border-radius: 4px;
+  background: #f9f9f9;
+}
+
+.encumbrance-label {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.encumbrance-bar-container {
+  position: relative;
+  height: 20px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.encumbrance-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50 0%, #FFC107 50%, #F44336 100%);
+  transition: width 0.3s ease;
+}
+
+.encumbrance-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #333;
+  text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
+}
+
+/* Item Sheet Styles */
+.osp.sheet.item {
+  min-width: 400px;
+}
+
+.osp.sheet.item .sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+}
+
+.osp.sheet.item .profile-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.osp.sheet.item .header-col {
+  flex: 1;
+}
+
+.osp.sheet.item .charname {
+  margin: 0 0 8px 0;
+}
+
+.osp.sheet.item .charname input {
+  font-size: 1.25em;
+  font-weight: bold;
+  border: none;
+  background: none;
+  width: 100%;
+}
+
+.osp.sheet.item .details {
+  display: flex;
+  gap: 16px;
+}
+
+.osp.sheet.item .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.osp.sheet.item .form-group label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.osp.sheet.item .flexrow {
+  display: flex;
+  gap: 16px;
+}
+
+.osp.sheet.item .stats {
+  min-width: 200px;
+}
+
+.osp.sheet.item .description {
+  flex: 1;
+}
+
+.osp.sheet.item .description textarea {
+  width: 100%;
+  height: 200px;
+  resize: vertical;
+}
+
+.range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.range-inputs input {
+  width: 60px;
+}
+
+.tag-input {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.tag-input input {
+  flex: 1;
+}
+
+.tag-input button {
+  width: 32px;
+  height: 32px;
+}
+
+.tag-list {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.tag-list .tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #e0e0e0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.tag-list .tag button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  width: auto;
+  height: auto;
+  padding: 0;
+  font-size: 1em;
+}
+
+.tag-list .tag button:hover {
+  color: #c00;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .item-category-title,
+  .item-header {
+    font-size: 0.9em;
+  }
+  
+  .field-short {
+    width: 60px;
+  }
+  
+  .item-controls {
+    gap: 2px;
+  }
+  
+  .item-control {
+    width: 20px;
+    height: 20px;
+    font-size: 0.8em;
+  }
+}

@@ -6,7 +6,33 @@
       "system": {
         "hitpoints": 0,
         "class": "",
-        "alignment": ""
+        "race": "",
+        "alignment": "",
+        "level": 1,
+        "height": "",
+        "weight": "",
+        "sex": "",
+        "age": "",
+        "xp": 0,
+        "nextLevel": 0,
+        "xpMod": 0,
+        "background": "",
+        "languages": "",
+        "attributes": {
+          "str": { "value": 0 },
+          "dex": { "value": 0 },
+          "con": { "value": 0 },
+          "int": { "value": 0 },
+          "wis": { "value": 0 },
+          "cha": { "value": 0 }
+        },
+        "saves": {
+          "death": { "value": 0 },
+          "wands": { "value": 0 },
+          "paralysis": { "value": 0 },
+          "breath": { "value": 0 },
+          "spells": { "value": 0 }
+        }
       }
     },
     "monster": {
@@ -15,6 +41,65 @@
         "hitdice": "",
         "thaco": 0,
         "special": ""
+      }
+    }
+  },
+  "Item": {
+    "types": ["weapon", "armor", "item", "container"],
+    "templates": {
+      "base": {
+        "description": "",
+        "cost": 0,
+        "weight": 0,
+        "quantity": {
+          "value": 1,
+          "max": 0
+        },
+        "equipped": false
+      }
+    },
+    "weapon": {
+      "templates": ["base"],
+      "system": {
+        "damage": "",
+        "bonus": 0,
+        "tags": [],
+        "melee": true,
+        "missile": false,
+        "slow": false,
+        "range": {
+          "short": 0,
+          "medium": 0,
+          "long": 0
+        }
+      }
+    },
+    "armor": {
+      "templates": ["base"],
+      "system": {
+        "ac": {
+          "value": 9
+        },
+        "aac": {
+          "value": 10
+        },
+        "type": ""
+      }
+    },
+    "item": {
+      "templates": ["base"],
+      "system": {
+        "treasure": false
+      }
+    },
+    "container": {
+      "templates": ["base"],
+      "system": {
+        "capacity": {
+          "type": "weight",
+          "value": 0,
+          "max": 100
+        }
       }
     }
   }

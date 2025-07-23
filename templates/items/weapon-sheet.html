@@ -1,0 +1,112 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{img}}" data-edit="img" title="{{name}}" />
+    <div class="header-col">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{name}}" placeholder="Weapon Name" />
+      </h1>
+      <div class="details">
+        <div class="form-group">
+          <label>Cost (gp)</label>
+          <input type="number" name="system.cost" value="{{system.cost}}" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Weight</label>
+          <input type="number" name="system.weight" value="{{system.weight}}" min="0" step="0.1" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sheet-body">
+    <div class="flexrow">
+      <div class="stats">
+        <div class="form-group">
+          <label>Damage</label>
+          <input type="text" name="system.damage" value="{{system.damage}}" placeholder="1d6" />
+        </div>
+        
+        <div class="form-group">
+          <label>Attack Bonus</label>
+          <input type="number" name="system.bonus" value="{{system.bonus}}" />
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
+        </div>
+
+        <div class="form-group">
+          <label>Max Uses (0 = unlimited)</label>
+          <input type="number" name="system.quantity.max" value="{{system.quantity.max}}" min="0" />
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
+            Equipped
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="system.melee" {{checked system.melee}} />
+            Melee Weapon
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="system.missile" {{checked system.missile}} />
+            Missile Weapon
+          </label>
+        </div>
+
+        {{#if system.missile}}
+        <div class="form-group">
+          <label>Range (Short/Medium/Long)</label>
+          <div class="range-inputs">
+            <input type="number" name="system.range.short" value="{{system.range.short}}" placeholder="30" />
+            <span>/</span>
+            <input type="number" name="system.range.medium" value="{{system.range.medium}}" placeholder="60" />
+            <span>/</span>
+            <input type="number" name="system.range.long" value="{{system.range.long}}" placeholder="90" />
+          </div>
+        </div>
+        {{/if}}
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="system.slow" {{checked system.slow}} />
+            Slow Weapon
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>Tags</label>
+          <div class="tag-input">
+            <input type="text" placeholder="Enter tag" />
+            <button type="button" class="tag-control" data-action="add">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="tag-list">
+            {{#each system.tags as |tag|}}
+            <span class="tag">
+              {{tag}}
+              <button type="button" class="tag-control" data-action="remove" data-tag="{{tag}}">
+                <i class="fas fa-times"></i>
+              </button>
+            </span>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+
+      <div class="description">
+        <label>Description</label>
+        <textarea name="system.description" placeholder="Weapon description...">{{system.description}}</textarea>
+      </div>
+    </div>
+  </section>
+</form>

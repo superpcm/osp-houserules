@@ -2,48 +2,31 @@
   "osp-houserules": {
     "Name": "OSP House Rules",
     "Description": "Old School Essentials with custom house rules",
-    "ChooseType": "Choose Type",
-
     "Actor": {
       "Type": {
-        "documentLabel": "Character",
-        "character": "Player",
+        "character": "Character",
         "monster": "Monster"
       },
       "Sheet": {
         "character": "Character Sheet",
         "monster": "Monster Sheet"
+      },
+      "documentLabel": "Actor"
+    },
+    "Item": {
+      "Type": {
+        "weapon": "Weapon",
+        "armor": "Armor", 
+        "item": "Item",
+        "container": "Container"
+      },
+      "Sheet": {
+        "weapon": "Weapon Sheet",
+        "armor": "Armor Sheet",
+        "item": "Item Sheet",
+        "container": "Container Sheet"
       }
     },
-
-    "Attributes": {
-      "STR": "Strength",
-      "DEX": "Dexterity",
-      "CON": "Constitution",
-      "INT": "Intelligence",
-      "WIS": "Wisdom",
-      "CHA": "Charisma"
-    },
-
-    "Saves": {
-      "death": "Death & Wands",
-      "wands": "Wands",
-      "paralysis": "Paralysis & Petrification",
-      "breath": "Breath Weapons",
-      "spells": "Spells"
-    },
-
-    "Buttons": {
-      "save": "Save Changes",
-      "roll": "Roll",
-      "toggle": "Toggle"
-    },
-
-    "Settings": {
-      "autoRollHP": {
-        "name": "Auto‐roll HP on Level Up",
-        "hint": "If enabled, HP will be rolled automatically when a character gains a level."
-      }
-    }
+    "ChooseType": "Choose Type"
   }
 }

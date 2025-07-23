@@ -1,0 +1,61 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{img}}" data-edit="img" title="{{name}}" />
+    <div class="header-col">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{name}}" placeholder="Container Name" />
+      </h1>
+      <div class="details">
+        <div class="form-group">
+          <label>Cost (gp)</label>
+          <input type="number" name="system.cost" value="{{system.cost}}" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Weight</label>
+          <input type="number" name="system.weight" value="{{system.weight}}" min="0" step="0.1" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sheet-body">
+    <div class="flexrow">
+      <div class="stats">
+        <div class="form-group">
+          <label>Capacity Type</label>
+          <select name="system.capacity.type">
+            <option value="weight" {{#if (eq system.capacity.type "weight")}}selected{{/if}}>Weight</option>
+            <option value="items" {{#if (eq system.capacity.type "items")}}selected{{/if}}>Items</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Current Capacity</label>
+          <input type="number" name="system.capacity.value" value="{{system.capacity.value}}" min="0" readonly />
+        </div>
+
+        <div class="form-group">
+          <label>Max Capacity</label>
+          <input type="number" name="system.capacity.max" value="{{system.capacity.max}}" min="0" />
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
+            Equipped/Carried
+          </label>
+        </div>
+      </div>
+
+      <div class="description">
+        <label>Description</label>
+        <textarea name="system.description" placeholder="Container description...">{{system.description}}</textarea>
+      </div>
+    </div>
+  </section>
+</form>

@@ -1,2 +1,53 @@
 // Import equipment styles
 @import 'equipment';
+
+// Character name font styling - using Council font discovered in Foundry
+// Using maximum specificity approach based on debug findings
+form.osp.sheet.actor.character input#char-name.char-name[name="name"] {
+  font-family: Council, serif !important;
+  font-weight: bold !important;
+}
+
+// Backup selectors with high specificity
+.application.window-app.sheet.actor.character.osp input[name="name"],
+form.osp.sheet.actor.character .character-name-section input#char-name,
+.osp.sheet.actor.character input#char-name {
+  font-family: Council, serif !important;
+  font-weight: bold !important;
+}
+
+// Character image styles
+.character-image-container {
+  .character-image {
+    transition: box-shadow 0.2s ease;
+    
+    &.dragging {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  .character-portrait {
+    transition: cursor 0.1s ease;
+  }
+  
+  .resize-handle {
+    transition: opacity 0.2s ease;
+    z-index: 10;
+    
+    &:hover {
+      background: #2d3748 !important;
+    }
+  }
+  
+  .image-controls {
+    z-index: 11;
+    
+    button {
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background: #2d3748 !important;
+      }
+    }
+  }
+}

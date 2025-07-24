@@ -18,6 +18,12 @@
         "xp": 0,
         "background": "",
         "languages": "",
+        "imageTransform": {
+          "translateX": 0,
+          "translateY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
         "attributes": {
           "str": { "value": 0 },
           "dex": { "value": 0 },

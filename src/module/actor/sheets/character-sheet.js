@@ -2,6 +2,7 @@ import { RaceClassHandler } from './handlers/race-class-handler.js';
 import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
+import { ImageHandler } from './handlers/image-handler.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -46,8 +47,6 @@ export class OspActorSheetCharacter extends ActorSheet {
       spells: { value: 0 }
     };
 
-    console.log("osp-houserules Debug: Saving throws in template context:", context.saves);
-
     return context;
   }
 
@@ -57,8 +56,34 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Only initialize handlers if sheet is editable
     if (!this.options.editable) return;
 
+    // Apply Council font to character name after sheet is ready
+    this.applyCouncilFont(html);
+
     // Initialize all handlers
     this.initializeHandlers(html);
+  }
+
+  /**
+   * Apply Council font to character name field
+   * Using the approach discovered during debugging
+   */
+  applyCouncilFont(html) {
+    // Wait for fonts to be ready, then apply Council font
+    document.fonts.ready.then(() => {
+      const nameInput = html.find('#char-name')[0] || html.find('.char-name')[0] || html.find('input[name="name"]')[0];
+      if (nameInput) {
+        // Apply font using multiple approaches for maximum compatibility
+        nameInput.style.setProperty('font-family', 'Council, serif', 'important');
+        nameInput.style.setProperty('font-weight', 'bold', 'important');
+        
+        // Double-check after a brief delay to ensure it sticks
+        setTimeout(() => {
+          if (window.getComputedStyle(nameInput).fontFamily.includes('Signika')) {
+            nameInput.style.fontFamily = 'Council, serif';
+          }
+        }, 100);
+      }
+    });
   }
 
   /**
@@ -73,7 +98,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       { name: 'raceClass', Handler: RaceClassHandler },
       { name: 'language', Handler: LanguageHandler },
       { name: 'item', Handler: ItemHandler },
-      { name: 'ui', Handler: UIHandler }
+      { name: 'ui', Handler: UIHandler },
+      { name: 'image', Handler: ImageHandler }
     ];
 
     handlerConfigs.forEach(({ name, Handler }) => {

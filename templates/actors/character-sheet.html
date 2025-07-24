@@ -10,16 +10,30 @@
     <!-- Tab Contents -->
     <div class="sheet-body">
       <section class="tab" data-group="primary" data-tab="main">
-        <!-- Character Name at top, centered, full width -->
-        <div class="character-name-section" style="margin-bottom: 1rem;">
-          <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Character Name" style="font-size: 1.5rem; font-weight: bold; width: 100%; text-align: center; border: 2px solid #4a5568; border-radius: 8px; padding: 0.5rem; background-color: #f7fafc;"/>
-        </div>
-        
         <div class="sheet-header" style="display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
-          <div class="character-image" style="flex-shrink: 0;">
-            <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}" data-edit="img" style="cursor:pointer; width: 160px; height: 160px; object-fit: cover; border: none;" />
+          <div class="character-image-container" style="position: relative; flex-shrink: 0;">
+            <div class="character-image" style="position: relative; width: 160px; height: 160px; border: 2px solid #ccc; border-radius: 8px; overflow: hidden; background: #f5f5f5;">
+              <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}"
+                   class="character-portrait" 
+                   style="cursor: move; position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none;" 
+                   draggable="false" />
+              <!-- Resize handles -->
+              <div class="resize-handle resize-se" style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: #4a5568; cursor: se-resize; border-radius: 2px; display: none;"></div>
+              <div class="resize-handle resize-sw" style="position: absolute; bottom: 0; left: 0; width: 12px; height: 12px; background: #4a5568; cursor: sw-resize; border-radius: 2px; display: none;"></div>
+              <div class="resize-handle resize-ne" style="position: absolute; top: 0; right: 0; width: 12px; height: 12px; background: #4a5568; cursor: ne-resize; border-radius: 2px; display: none;"></div>
+              <div class="resize-handle resize-nw" style="position: absolute; top: 0; left: 0; width: 12px; height: 12px; background: #4a5568; cursor: nw-resize; border-radius: 2px; display: none;"></div>
+            </div>
+            <!-- Control buttons -->
+            <div class="image-controls" style="position: absolute; top: -8px; right: -8px; display: none; gap: 4px;">
+              <button type="button" class="reset-image" title="Reset Position & Size" style="width: 24px; height: 24px; border: none; border-radius: 50%; background: #4a5568; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">↻</button>
+              <button type="button" class="fit-image" title="Fit to Container" style="width: 24px; height: 24px; border: none; border-radius: 50%; background: #4a5568; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">⌂</button>
+            </div>
           </div>
           <div class="character-info" style="display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; min-width: 200px;">
+            <!-- Character Name next to portrait, top-aligned -->
+            <div class="character-name-section">
+              <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="font-size: 1.5rem; font-weight: bold; border: none; background: transparent; padding: 0; text-align: left; width: 100%;"/>
+            </div>
             <div class="char-details" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-race" style="margin-bottom: 2px; text-align: center;">Race</label>

@@ -5,6 +5,8 @@
       "templates": [],
       "system": {
         "hitpoints": 0,
+        "maxhitpoints": 0,
+        "ac": 9,
         "class": "",
         "race": "",
         "alignment": "",

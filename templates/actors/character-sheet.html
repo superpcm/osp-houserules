@@ -10,15 +10,16 @@
     <!-- Tab Contents -->
     <div class="sheet-body">
       <section class="tab" data-group="primary" data-tab="main">
+        <!-- Character Name at top, centered, full width -->
+        <div class="character-name-section" style="margin-bottom: 1rem;">
+          <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Character Name" style="font-size: 1.5rem; font-weight: bold; width: 100%; text-align: center; border: 2px solid #4a5568; border-radius: 8px; padding: 0.5rem; background-color: #f7fafc;"/>
+        </div>
+        
         <div class="sheet-header" style="display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
           <div class="character-image" style="flex-shrink: 0;">
-            <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}" data-edit="img" style="cursor:pointer; width: 96px; height: 96px; object-fit: cover; border: none;" />
+            <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}" data-edit="img" style="cursor:pointer; width: 160px; height: 160px; object-fit: cover; border: none;" />
           </div>
           <div class="character-info" style="display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; min-width: 200px;">
-            <div class="char-field-group" style="margin-bottom: 0.5rem;">
-              <label for="char-name" style="margin-bottom: 2px; text-align: left;">Character Name</label>
-              <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Character Name" style="font-size: 1.25rem; font-weight: bold; width: 100%;"/>
-            </div>
             <div class="char-details" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-race" style="margin-bottom: 2px; text-align: center;">Race</label>
@@ -249,6 +250,28 @@
       </section>
       <section class="tab" data-group="primary" data-tab="combat">
         <div class="combat-section">
+          <h3>Combat Stats</h3>
+          <div class="combat-stats" style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
+            <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
+              <label for="char-ac" style="margin-bottom: 0.5rem; font-weight: bold; font-size: 1.1rem;">Armor Class</label>
+              <input class="char-ac" id="char-ac" name="system.ac" type="number" value="{{system.ac}}" min="0" max="20" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; font-weight: bold; border: 2px solid #4a5568; border-radius: 8px;" />
+            </div>
+            <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
+              <label style="margin-bottom: 0.5rem; font-weight: bold; font-size: 1.1rem;">Unarmored AC</label>
+              <div style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; font-weight: bold; border: 2px solid #4a5568; border-radius: 8px; background-color: #f7fafc; display: flex; align-items: center; justify-content: center;">
+                {{unarmoredAC system.attributes.dex.value}}
+              </div>
+            </div>
+            <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
+              <label for="char-hp" style="margin-bottom: 0.5rem; font-weight: bold; font-size: 1.1rem;">Current HP</label>
+              <input class="char-hp" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; font-weight: bold; border: 2px solid #4a5568; border-radius: 8px;" />
+            </div>
+            <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
+              <label for="char-max-hp" style="margin-bottom: 0.5rem; font-weight: bold; font-size: 1.1rem;">Max HP</label>
+              <input class="char-max-hp" id="char-max-hp" name="system.maxhitpoints" type="number" value="{{system.maxhitpoints}}" min="0" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; font-weight: bold; border: 2px solid #4a5568; border-radius: 8px;" />
+            </div>
+          </div>
+
           <h3>Ability Scores</h3>
           <div class="abilities" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
             <div class="ability" style="flex: 1 1 60px; display: flex; flex-direction: column; align-items: center;">

@@ -111,6 +111,24 @@ Handlebars.registerHelper('abilityMod', function(score) {
   return modifier >= 0 ? `+${modifier}` : `${modifier}`;
 });
 
+// Register helper for calculating unarmored AC (10 + DEX modifier)
+Handlebars.registerHelper('unarmoredAC', function(dexScore) {
+  const numScore = parseInt(dexScore, 10);
+  if (isNaN(numScore)) return 10;
+  
+  let modifier;
+  if (numScore === 3) modifier = -3;
+  else if (numScore >= 4 && numScore <= 5) modifier = -2;
+  else if (numScore >= 6 && numScore <= 8) modifier = -1;
+  else if (numScore >= 9 && numScore <= 12) modifier = 0;
+  else if (numScore >= 13 && numScore <= 15) modifier = +1;
+  else if (numScore >= 16 && numScore <= 17) modifier = +2;
+  else if (numScore === 18) modifier = +3;
+  else modifier = 0; // fallback for scores outside normal range
+  
+  return 10 + modifier;
+});
+
 // Register helpers for calculating saving throws
 Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, level, race) {
   const classLower = (characterClass || '').toLowerCase();

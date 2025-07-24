@@ -1,6 +1,400 @@
+/**
+ * Handles race and class synchronization logic
+ */
+class RaceClassHandler {
+  constructor(html, actor) {
+    this.html = html;
+    this.actor = actor;
+    this.raceClasses = ["Elf", "Dwarf", "Gnome", "Hobbit", "Half-Elf", "Half-Orc"];
+    this.classSelect = html.find('select[name="system.class"]');
+    this.raceSelect = html.find('select[name="system.race"]');
+  }
+
+  /**
+   * Initialize race/class synchronization
+   */
+  initialize() {
+    this.classSelect.on("change", this.syncRaceField.bind(this));
+    this.syncRaceField();
+  }
+
+  /**
+   * Synchronize race field based on class selection
+   */
+  syncRaceField() {
+    const selectedClass = this.classSelect.val();
+    if (this.raceClasses.includes(selectedClass)) {
+      this.raceSelect.val(selectedClass);
+      this.raceSelect.prop("disabled", true);
+    } else {
+      this.raceSelect.prop("disabled", false);
+    }
+  }
+
+  /**
+   * Cleanup event listeners
+   */
+  destroy() {
+    this.classSelect.off("change");
+  }
+}
+
+/**
+ * Handles language management functionality
+ */
+class LanguageHandler {
+  constructor(html, actor) {
+    this.html = html;
+    this.actor = actor;
+    this.tags = html.find('.languages-tags');
+    this.hidden = html.find('.char-languages');
+    this.openDialog = html.find('.open-language-dialog');
+    this.standardLanguages = ["Dwarvish", "Elvish", "Gnomish", "Hobbitish", "Humanish", "Orcish"];
+    
+    // Initialize languages with Common as default
+    this.languages = (this.hidden.val() || "").split(",")
+      .map(l => l.trim())
+      .filter(l => l && l !== "Common");
+    this.languages.unshift("Common");
+  }
+
+  /**
+   * Initialize language management
+   */
+  initialize() {
+    this.renderTags();
+    this.tags.on('click', '.remove-lang', this.onRemoveLanguage.bind(this));
+    this.openDialog.on('click', this.onOpenDialog.bind(this));
+  }
+
+  /**
+   * Render language tags
+   */
+  renderTags() {
+    this.tags.empty();
+    this.languages.forEach(lang => {
+      const canRemove = lang !== "Common";
+      const tagHtml = `
+        <span class="lang-tag">
+          ${lang}
+          ${canRemove ? `<button type="button" class="remove-lang" data-lang="${lang}" aria-label="Remove ${lang}">&times;</button>` : ""}
+        </span>
+      `;
+      this.tags.append(tagHtml);
+    });
+    this.hidden.val(this.languages.join(", "));
+  }
+
+  /**
+   * Handle removing a language
+   */
+  onRemoveLanguage(event) {
+    const lang = $(event.currentTarget).data('lang');
+    this.languages = this.languages.filter(l => l !== lang && l !== "Common");
+    this.languages.unshift("Common");
+    this.renderTags();
+  }
+
+  /**
+   * Handle opening the language selection dialog
+   */
+  async onOpenDialog(event) {
+    const dialogContent = this.buildDialogContent();
+    
+    new Dialog({
+      title: "Add Language",
+      content: dialogContent,
+      buttons: {
+        ok: {
+          label: "Add",
+          callback: this.onDialogSubmit.bind(this)
+        },
+        cancel: { label: "Cancel" }
+      },
+      default: "ok"
+    }).render(true);
+  }
+
+  /**
+   * Build dialog content HTML
+   */
+  buildDialogContent() {
+    return `<form>
+      <div style="margin-bottom:8px;">
+        <label><b>Select Languages:</b></label><br/>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+          ${this.standardLanguages.map(lang =>
+            `<label style="display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" name="lang" value="${lang}" ${this.languages.includes(lang) ? "checked disabled" : ""}/>
+              <span>${lang}</span>
+            </label>`
+          ).join("")}
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <label><b>Custom Language:</b></label><br/>
+        <input type="text" name="custom" style="width: 80%;" placeholder="Enter custom language"/>
+      </div>
+    </form>`;
+  }
+
+  /**
+   * Handle dialog submission
+   */
+  onDialogSubmit(htmlDialog) {
+    // Add checked standard languages
+    htmlDialog.find('input[name="lang"]:checked:not(:disabled)').each((i, el) => {
+      const val = $(el).val();
+      if (val && !this.languages.includes(val)) {
+        this.languages.push(val);
+      }
+    });
+
+    // Add custom language
+    const custom = htmlDialog.find('input[name="custom"]').val().trim();
+    if (custom && !this.languages.includes(custom)) {
+      this.languages.push(custom);
+    }
+
+    this.renderTags();
+  }
+
+  /**
+   * Cleanup event listeners
+   */
+  destroy() {
+    this.tags.off('click', '.remove-lang');
+    this.openDialog.off('click');
+  }
+}
+
+/**
+ * Handles item management operations (CRUD, equipment, etc.)
+ */
+class ItemHandler {
+  constructor(html, actor) {
+    this.html = html;
+    this.actor = actor;
+  }
+
+  /**
+   * Initialize item management
+   */
+  initialize() {
+    if (!this.actor.isOwner) return;
+
+    // Bind all item-related event handlers
+    this.html.find('.item-create').click(this.onItemCreate.bind(this));
+    this.html.find('.item-edit').click(this.onItemEdit.bind(this));
+    this.html.find('.item-delete').click(this.onItemDelete.bind(this));
+    this.html.find('.item-toggle').click(this.onItemToggle.bind(this));
+    this.html.find('.item-show').click(this.onItemShow.bind(this));
+    this.html.find('.item-rollable').click(this.onItemRoll.bind(this));
+    this.html.find('.quantity input').change(this.onQuantityChange.bind(this));
+  }
+
+  /**
+   * Handle creating a new item
+   */
+  async onItemCreate(event) {
+    event.preventDefault();
+    const header = event.currentTarget;
+    const type = header.dataset.type;
+    const isTreasure = header.dataset.treasure === "true";
+    
+    const itemData = {
+      name: `New ${type.capitalize()}`,
+      type: type,
+      system: {}
+    };
+
+    if (type === "item" && isTreasure) {
+      itemData.system.treasure = true;
+    }
+
+    const cls = getDocumentClass("Item");
+    return cls.create(itemData, {parent: this.actor});
+  }
+
+  /**
+   * Handle editing an item
+   */
+  onItemEdit(event) {
+    event.preventDefault();
+    const item = this.getItemFromEvent(event);
+    if (item) {
+      item.sheet.render(true);
+    }
+  }
+
+  /**
+   * Handle deleting an item
+   */
+  onItemDelete(event) {
+    event.preventDefault();
+    const li = $(event.currentTarget).parents(".item-entry");
+    const item = this.getItemFromEvent(event);
+    if (item) {
+      item.delete();
+      li.slideUp(200, () => this.actor.sheet.render(false));
+    }
+  }
+
+  /**
+   * Handle toggling item equipment status
+   */
+  onItemToggle(event) {
+    event.preventDefault();
+    const item = this.getItemFromEvent(event);
+    if (item) {
+      const equipped = !item.system.equipped;
+      item.update({"system.equipped": equipped});
+    }
+  }
+
+  /**
+   * Handle showing item details in chat
+   */
+  onItemShow(event) {
+    event.preventDefault();
+    const item = this.getItemFromEvent(event);
+    if (!item) return;
+    
+    const chatData = {
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: this.buildItemChatContent(item)
+    };
+    
+    ChatMessage.create(chatData);
+  }
+
+  /**
+   * Handle rolling for an item
+   */
+  onItemRoll(event) {
+    event.preventDefault();
+    const item = this.getItemFromEvent(event);
+    
+    if (item && item.type === "weapon") {
+      const roll = new Roll("1d20");
+      roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        flavor: `${item.name} Attack Roll`
+      });
+    }
+  }
+
+  /**
+   * Handle changing item quantities
+   */
+  onQuantityChange(event) {
+    event.preventDefault();
+    const input = event.currentTarget;
+    const itemId = input.dataset.itemId;
+    const field = input.dataset.field;
+    const value = parseInt(input.value) || 0;
+    
+    const item = this.actor.items.get(itemId);
+    if (item) {
+      item.update({[field]: value});
+    }
+  }
+
+  /**
+   * Get item from event target
+   */
+  getItemFromEvent(event) {
+    const li = $(event.currentTarget).parents(".item-entry");
+    const itemId = li.data("item-id");
+    return this.actor.items.get(itemId);
+  }
+
+  /**
+   * Build chat content for item display
+   */
+  buildItemChatContent(item) {
+    let content = `<div class="item-card"><h3>${item.name}</h3>`;
+    
+    if (item.system.description) {
+      content += `<p>${item.system.description}</p>`;
+    }
+    
+    if (item.type === "weapon" && item.system.damage) {
+      content += `<p><strong>Damage:</strong> ${item.system.damage}</p>`;
+    }
+    
+    if (item.type === "armor" && item.system.ac?.value) {
+      content += `<p><strong>AC:</strong> ${item.system.ac.value}</p>`;
+    }
+    
+    if (item.system.weight) {
+      content += `<p><strong>Weight:</strong> ${item.system.weight} lbs</p>`;
+    }
+    
+    content += `</div>`;
+    return content;
+  }
+
+  /**
+   * Cleanup event listeners
+   */
+  destroy() {
+    this.html.find('.item-create').off('click');
+    this.html.find('.item-edit').off('click');
+    this.html.find('.item-delete').off('click');
+    this.html.find('.item-toggle').off('click');
+    this.html.find('.item-show').off('click');
+    this.html.find('.item-rollable').off('click');
+    this.html.find('.quantity input').off('change');
+  }
+}
+
+/**
+ * Handles UI state management (category toggles, etc.)
+ */
+class UIHandler {
+  constructor(html, actor) {
+    this.html = html;
+    this.actor = actor;
+  }
+
+  /**
+   * Initialize UI state management
+   */
+  initialize() {
+    this.html.find('.category-caret').click(this.onCategoryToggle.bind(this));
+  }
+
+  /**
+   * Handle toggling category visibility
+   */
+  onCategoryToggle(event) {
+    event.preventDefault();
+    const caret = event.currentTarget;
+    const category = $(caret).closest('.item-category');
+    const list = category.find('.item-list');
+    
+    list.slideToggle(200);
+    $(caret).find('i').toggleClass('fa-caret-down fa-caret-right');
+  }
+
+  /**
+   * Cleanup event listeners
+   */
+  destroy() {
+    this.html.find('.category-caret').off('click');
+  }
+}
+
 const { ActorSheet } = foundry.appv1.sheets;
 
 class OspActorSheetCharacter extends ActorSheet {
+  constructor(...args) {
+    super(...args);
+    this.handlers = new Map();
+  }
+
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "character"],
@@ -44,273 +438,70 @@ class OspActorSheetCharacter extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    // --- Race/Class logic (leave unchanged) ---
-    const raceClasses = [
-      "Elf", "Dwarf", "Gnome", "Hobbit", "Half-Elf", "Half-Orc"
-    ];
-
-    const $classSelect = html.find('select[name="system.class"]');
-    const $raceSelect = html.find('select[name="system.race"]');
-
-    function syncRaceField() {
-      const selectedClass = $classSelect.val();
-      if (raceClasses.includes(selectedClass)) {
-        $raceSelect.val(selectedClass);
-        $raceSelect.prop("disabled", true);
-      } else {
-        $raceSelect.prop("disabled", false);
-      }
-    }
-
-    $classSelect.on("change", syncRaceField);
-    syncRaceField();
-
-    // --- Languages tag input logic ---
-    const $tags = html.find('.languages-tags');
-    const $hidden = html.find('.char-languages');
-    const $openDialog = html.find('.open-language-dialog');
-
-    // Always include "Common" as the first tag
-    let languages = ($hidden.val() || "").split(",").map(l => l.trim()).filter(l => l && l !== "Common");
-    languages.unshift("Common");
-
-    function renderTags() {
-      $tags.empty();
-      languages.forEach(lang => {
-        const $tag = $(`
-          <span class="lang-tag">
-            ${lang}
-            ${lang !== "Common" ? `<button type="button" class="remove-lang" data-lang="${lang}" aria-label="Remove ${lang}">&times;</button>` : ""}
-          </span>
-        `);
-        $tags.append($tag);
-      });
-      $hidden.val(languages.join(", "));
-    }
-
-    renderTags();
-
-    $tags.on('click', '.remove-lang', function() {
-      const lang = $(this).data('lang');
-      languages = languages.filter(l => l !== lang && l !== "Common");
-      languages.unshift("Common");
-      renderTags();
-    });
-
-    // Dialog for adding languages
-    $openDialog.on('click', async function() {
-      // List of standard languages
-      const allLangs = ["Dwarvish", "Elvish", "Gnomish", "Hobbitish", "Humanish", "Orcish"];
-      let dialogContent = `<form>
-        <div style="margin-bottom:8px;">
-          <label><b>Select Languages:</b></label><br/>
-          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
-            ${allLangs.map(lang =>
-              `<label style="display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" name="lang" value="${lang}" ${languages.includes(lang) ? "checked disabled" : ""}/>
-                <span>${lang}</span>
-              </label>`
-            ).join("")}
-          </div>
-        </div>
-        <div style="text-align: center;">
-          <label><b>Custom Language:</b></label><br/>
-          <input type="text" name="custom" style="width: 80%;" placeholder="Enter custom language"/>
-        </div>
-      </form>`;
-
-      new Dialog({
-        title: "Add Language",
-        content: dialogContent,
-        buttons: {
-          ok: {
-            label: "Add",
-            callback: htmlDialog => {
-              // Add checked standard languages
-              htmlDialog.find('input[name="lang"]:checked:not(:disabled)').each(function() {
-                const val = $(this).val();
-                if (val && !languages.includes(val)) languages.push(val);
-              });
-              // Add custom language
-              const custom = htmlDialog.find('input[name="custom"]').val().trim();
-              if (custom && !languages.includes(custom)) languages.push(custom);
-              renderTags();
-            }
-          },
-          cancel: { label: "Cancel" }
-        },
-        default: "ok"
-      }).render(true);
-    });
-
-    // --- Item Controls ---
+    // Only initialize handlers if sheet is editable
     if (!this.options.editable) return;
 
-    // Create Item
-    html.find('.item-create').click(this._onItemCreate.bind(this));
-
-    // Update Item
-    html.find('.item-edit').click(this._onItemEdit.bind(this));
-
-    // Delete Item
-    html.find('.item-delete').click(this._onItemDelete.bind(this));
-
-    // Toggle Equipment
-    html.find('.item-toggle').click(this._onItemToggle.bind(this));
-
-    // Show Item
-    html.find('.item-show').click(this._onItemShow.bind(this));
-
-    // Rollable Items
-    html.find('.item-rollable').click(this._onItemRoll.bind(this));
-
-    // Item Quantity Changes
-    html.find('.quantity input').change(this._onQuantityChange.bind(this));
-
-    // Category Toggles
-    html.find('.category-caret').click(this._onCategoryToggle.bind(this));
+    // Initialize all handlers
+    this.initializeHandlers(html);
   }
 
   /**
-   * Handle creating a new Owned Item for the actor using the item creation dialog
-   * @param {Event} event   The originating click event
-   * @private
+   * Initialize all event handlers
    */
-  async _onItemCreate(event) {
-    event.preventDefault();
-    const header = event.currentTarget;
-    const type = header.dataset.type;
-    const isTreasure = header.dataset.treasure === "true";
-    
-    const itemData = {
-      name: `New ${type.capitalize()}`,
-      type: type,
-      system: {}
-    };
+  initializeHandlers(html) {
+    // Clean up existing handlers
+    this.destroyHandlers();
 
-    if (type === "item" && isTreasure) {
-      itemData.system.treasure = true;
-    }
+    // Create and initialize new handlers
+    const handlerConfigs = [
+      { name: 'raceClass', Handler: RaceClassHandler },
+      { name: 'language', Handler: LanguageHandler },
+      { name: 'item', Handler: ItemHandler },
+      { name: 'ui', Handler: UIHandler }
+    ];
 
-    const cls = getDocumentClass("Item");
-    return cls.create(itemData, {parent: this.actor});
+    handlerConfigs.forEach(({ name, Handler }) => {
+      try {
+        const handler = new Handler(html, this.actor);
+        handler.initialize();
+        this.handlers.set(name, handler);
+      } catch (error) {
+        console.error(`Failed to initialize ${name} handler:`, error);
+      }
+    });
   }
 
   /**
-   * Handle editing an Owned Item for the Actor
-   * @param {Event} event   The originating click event
-   * @private
+   * Clean up all handlers
    */
-  _onItemEdit(event) {
-    event.preventDefault();
-    const li = $(event.currentTarget).parents(".item-entry");
-    const item = this.actor.items.get(li.data("item-id"));
-    item.sheet.render(true);
+  destroyHandlers() {
+    this.handlers.forEach((handler, name) => {
+      try {
+        if (typeof handler.destroy === 'function') {
+          handler.destroy();
+        }
+      } catch (error) {
+        console.error(`Failed to destroy ${name} handler:`, error);
+      }
+    });
+    this.handlers.clear();
   }
 
   /**
-   * Handle deleting an Owned Item for the Actor
-   * @param {Event} event   The originating click event
-   * @private
+   * Override close to clean up handlers
    */
-  _onItemDelete(event) {
-    event.preventDefault();
-    const li = $(event.currentTarget).parents(".item-entry");
-    const item = this.actor.items.get(li.data("item-id"));
-    item.delete();
-    li.slideUp(200, () => this.render(false));
+  async close(options = {}) {
+    this.destroyHandlers();
+    return super.close(options);
   }
 
   /**
-   * Handle toggling an item's equipped status
-   * @param {Event} event   The originating click event
-   * @private
+   * Get a specific handler instance
+   * @param {string} name - Handler name
+   * @returns {Object|null} Handler instance
    */
-  _onItemToggle(event) {
-    event.preventDefault();
-    const li = $(event.currentTarget).parents(".item-entry");
-    const item = this.actor.items.get(li.data("item-id"));
-    const equipped = !item.system.equipped;
-    item.update({"system.equipped": equipped});
-  }
-
-  /**
-   * Handle showing an item's details in chat
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  _onItemShow(event) {
-    event.preventDefault();
-    const li = $(event.currentTarget).parents(".item-entry");
-    const item = this.actor.items.get(li.data("item-id"));
-    
-    // Create a chat message with item details
-    const chatData = {
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: `<div class="item-card">
-        <h3>${item.name}</h3>
-        ${item.system.description ? `<p>${item.system.description}</p>` : ""}
-        ${item.type === "weapon" ? `<p><strong>Damage:</strong> ${item.system.damage}</p>` : ""}
-        ${item.type === "armor" ? `<p><strong>AC:</strong> ${item.system.ac.value}</p>` : ""}
-        <p><strong>Weight:</strong> ${item.system.weight} lbs</p>
-      </div>`
-    };
-    
-    ChatMessage.create(chatData);
-  }
-
-  /**
-   * Handle rolling for an item (weapons)
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  _onItemRoll(event) {
-    event.preventDefault();
-    const li = $(event.currentTarget).parents(".item-entry");
-    const item = this.actor.items.get(li.data("item-id"));
-    
-    if (item.type === "weapon") {
-      // Roll attack
-      const roll = new Roll("1d20");
-      roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: `${item.name} Attack Roll`
-      });
-    }
-  }
-
-  /**
-   * Handle changing item quantities
-   * @param {Event} event   The originating change event
-   * @private
-   */
-  _onQuantityChange(event) {
-    event.preventDefault();
-    const input = event.currentTarget;
-    const itemId = input.dataset.itemId;
-    const field = input.dataset.field;
-    const value = parseInt(input.value) || 0;
-    
-    const item = this.actor.items.get(itemId);
-    if (item) {
-      item.update({[field]: value});
-    }
-  }
-
-  /**
-   * Handle toggling category visibility
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  _onCategoryToggle(event) {
-    event.preventDefault();
-    const caret = event.currentTarget;
-    const category = $(caret).closest('.item-category');
-    const list = category.find('.item-list');
-    
-    list.slideToggle(200);
-    $(caret).find('i').toggleClass('fa-caret-down fa-caret-right');
+  getHandler(name) {
+    return this.handlers.get(name);
   }
 }
 
@@ -921,6 +1112,24 @@ Handlebars.registerHelper('abilityMod', function(score) {
   else modifier = 0; // fallback for scores outside normal range
   
   return modifier >= 0 ? `+${modifier}` : `${modifier}`;
+});
+
+// Register helper for calculating unarmored AC (10 + DEX modifier)
+Handlebars.registerHelper('unarmoredAC', function(dexScore) {
+  const numScore = parseInt(dexScore, 10);
+  if (isNaN(numScore)) return 10;
+  
+  let modifier;
+  if (numScore === 3) modifier = -3;
+  else if (numScore >= 4 && numScore <= 5) modifier = -2;
+  else if (numScore >= 6 && numScore <= 8) modifier = -1;
+  else if (numScore >= 9 && numScore <= 12) modifier = 0;
+  else if (numScore >= 13 && numScore <= 15) modifier = +1;
+  else if (numScore >= 16 && numScore <= 17) modifier = +2;
+  else if (numScore === 18) modifier = +3;
+  else modifier = 0; // fallback for scores outside normal range
+  
+  return 10 + modifier;
 });
 
 // Register helpers for calculating saving throws

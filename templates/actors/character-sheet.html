@@ -30,9 +30,40 @@
             </div>
           </div>
           <div class="character-info" style="display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; min-width: 200px;">
-            <!-- Character Name next to portrait, top-aligned -->
-            <div class="character-name-section">
-              <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="font-size: 1.5rem; font-weight: bold; border: none; background: transparent; padding: 0; text-align: left; width: 100%;"/>
+            <!-- Character Name and XP Progress Bar Row -->
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <!-- Character Name Section -->
+              <div class="character-name-section">
+                <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="border: none; background: transparent; padding: 0; text-align: left; width: 100%;"/>
+              </div>
+              
+              <!-- XP Progress Bar Section -->
+              <div class="char-field-group xp-progress-section" style="display: flex; flex-direction: column; align-items: center; min-width: 200px;">
+                <!-- XP Input / Next Level Display -->
+                <div class="xp-display" style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 4px; font-size: 14px; width: 100%;">
+                  <input class="char-xp" id="char-xp" name="system.xp" type="number" value="{{system.xp}}" style="width: 80px; height: 1.8em; text-align: center; border: 1px solid #ccc; border-radius: 3px;" />
+                  <span>/</span>
+                  <span class="next-level-xp">{{getNextLevelXP system.class system.level}}</span>
+                </div>
+                
+                <!-- XP Progress Bar -->
+                <div class="xp-progress-container" style="width: 200px; height: 25px; border: 1px solid #ccc; background-color: #999999; position: relative;">
+                  <div class="xp-progress-bar" style="height: 100%; background-color: #22c55e; width: 0%; transition: width 0.3s ease;"></div>
+                  <div class="xp-progress-label" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; color: #000; text-shadow: 1px 1px 1px rgba(255,255,255,0.8);">
+                    XP (<span class="xp-percentage">0</span>%)
+                  </div>
+                </div>
+                
+                <!-- XP Mod % Below Progress Bar -->
+                <div class="xp-mod-display" style="margin-top: 4px; font-size: 12px; color: #666; text-align: center;">
+                  <span>XP Mod: </span>
+                  <span class="char-xp-mod">
+                    {{#with (getXPModifier system.class system.attributes)}}
+                      {{#if (eq this 0)}}0{{else}}{{#if (gt this 0)}}+{{this}}{{else}}{{this}}{{/if}}{{/if}}%
+                    {{/with}}
+                  </span>
+                </div>
+              </div>
             </div>
             <div class="char-details" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
@@ -124,24 +155,6 @@
               </div>
             </div>
             <div class="char-details" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-xp" style="margin-bottom: 2px; text-align: center;">XP</label>
-                <input class="char-xp" id="char-xp" name="system.xp" type="number" value="{{system.xp}}" style="width: 100px; height: 2em; text-align: center;" />
-              </div>
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-next-level" style="margin-bottom: 2px; text-align: center;">Next Level</label>
-                <div class="char-next-level" style="width: 100px; height: 2em; text-align: center; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 3px;">
-                  {{getNextLevelXP system.class system.level}}
-                </div>
-              </div>
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-xp-mod" style="margin-bottom: 2px; text-align: center;">XP Mod %</label>
-                <div class="char-xp-mod" style="width: 80px; height: 2em; text-align: center; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 3px;">
-                  {{#with (getXPModifier system.class system.attributes)}}
-                    {{#if (eq this 0)}}0{{else}}{{#if (gt this 0)}}+{{this}}{{else}}{{this}}{{/if}}{{/if}}%
-                  {{/with}}
-                </div>
-              </div>
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-background" style="margin-bottom: 2px; text-align: center;">Background</label>
                 <select class="char-background" id="char-background" name="system.background" style="width: 140px; height: 2em; text-align: center; font-size: 12px;">

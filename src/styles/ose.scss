@@ -2,18 +2,39 @@
 @import 'equipment';
 
 // Character name font styling - using Council font discovered in Foundry
-// Using maximum specificity approach based on debug findings
-form.osp.sheet.actor.character input#char-name.char-name[name="name"] {
+// Maximum specificity approach to override all Foundry defaults
+form.osp.sheet.actor.character input#char-name.char-name[name="name"][type="text"] {
   font-family: Council, serif !important;
-  font-weight: bold !important;
+  font-weight: normal !important;
+  font-size: 3rem !important;
+  height: auto !important;
+  min-height: 1.2em !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.03em !important;
+  width: auto !important;
+  min-width: 150px !important;
+  max-width: 400px !important;
+  transition: width 0.2s ease !important;
 }
 
-// Backup selectors with high specificity
-.application.window-app.sheet.actor.character.osp input[name="name"],
-form.osp.sheet.actor.character .character-name-section input#char-name,
-.osp.sheet.actor.character input#char-name {
+// Multiple backup selectors with maximum specificity
+.application.window-app.sheet.actor.character.osp input[name="name"][type="text"],
+form.osp.sheet.actor.character .character-name-section input#char-name.char-name,
+.osp.sheet.actor.character input#char-name[name="name"],
+.window-app.sheet.actor.character.osp input#char-name,
+.sheet.actor.character.osp input.char-name[name="name"],
+input#char-name.char-name[name="name"][type="text"] {
   font-family: Council, serif !important;
-  font-weight: bold !important;
+  font-weight: normal !important;
+  font-size: 3rem !important;
+  height: auto !important;
+  min-height: 1.2em !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.03em !important;
+  width: auto !important;
+  min-width: 150px !important;
+  max-width: 400px !important;
+  transition: width 0.2s ease !important;
 }
 
 // Character image styles
@@ -50,4 +71,43 @@ form.osp.sheet.actor.character .character-name-section input#char-name,
       }
     }
   }
+}
+
+// Layout system styles
+.draggable-field {
+  transition: opacity 0.2s ease, z-index 0.2s ease;
+  
+  &.dragging {
+    opacity: 0.8;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .drag-handle {
+    transition: opacity 0.2s ease;
+  }
+}
+
+.layout-controls {
+  .layout-btn {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    
+    &:hover {
+      background: #2d3748 !important;
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+.grid-overlay {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

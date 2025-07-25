@@ -3,6 +3,9 @@ import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
 import { ImageHandler } from './handlers/image-handler.js';
+import { LayoutHandler } from './handlers/layout-handler.js';
+import { CharacterNameHandler } from './handlers/character-name-handler.js';
+import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -56,34 +59,34 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Only initialize handlers if sheet is editable
     if (!this.options.editable) return;
 
-    // Apply Council font to character name after sheet is ready
-    this.applyCouncilFont(html);
+    // Apply Council font as fallback if CSS doesn't work
+    this.ensureCouncilFont(html);
 
     // Initialize all handlers
     this.initializeHandlers(html);
   }
 
   /**
-   * Apply Council font to character name field
-   * Using the approach discovered during debugging
+   * Ensure Council font is applied - minimal fallback if CSS fails
    */
-  applyCouncilFont(html) {
-    // Wait for fonts to be ready, then apply Council font
-    document.fonts.ready.then(() => {
-      const nameInput = html.find('#char-name')[0] || html.find('.char-name')[0] || html.find('input[name="name"]')[0];
-      if (nameInput) {
-        // Apply font using multiple approaches for maximum compatibility
-        nameInput.style.setProperty('font-family', 'Council, serif', 'important');
-        nameInput.style.setProperty('font-weight', 'bold', 'important');
-        
-        // Double-check after a brief delay to ensure it sticks
-        setTimeout(() => {
-          if (window.getComputedStyle(nameInput).fontFamily.includes('Signika')) {
-            nameInput.style.fontFamily = 'Council, serif';
-          }
-        }, 100);
-      }
-    });
+  ensureCouncilFont(html) {
+    const nameInput = html.find('#char-name')[0];
+    if (nameInput) {
+      // Check if CSS applied correctly after a brief delay
+      setTimeout(() => {
+        const computedStyle = window.getComputedStyle(nameInput);
+        if (!computedStyle.fontFamily.includes('Council')) {
+          // CSS failed, apply via JavaScript as fallback
+          nameInput.style.setProperty('font-family', 'Council, serif', 'important');
+          nameInput.style.setProperty('font-weight', 'normal', 'important');
+          nameInput.style.setProperty('font-size', '3rem', 'important');
+          nameInput.style.setProperty('height', 'auto', 'important');
+          nameInput.style.setProperty('min-height', '1.2em', 'important');
+          nameInput.style.setProperty('line-height', '1.2', 'important');
+          nameInput.style.setProperty('letter-spacing', '0.03em', 'important');
+        }
+      }, 50);
+    }
   }
 
   /**
@@ -93,22 +96,50 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Clean up existing handlers
     this.destroyHandlers();
 
-    // Create and initialize new handlers
+    // Create and initialize new handlers with proper dependencies
     const handlerConfigs = [
       { name: 'raceClass', Handler: RaceClassHandler },
       { name: 'language', Handler: LanguageHandler },
       { name: 'item', Handler: ItemHandler },
       { name: 'ui', Handler: UIHandler },
-      { name: 'image', Handler: ImageHandler }
+      { name: 'layout', Handler: LayoutHandler }, // Create layout handler first
+      { name: 'characterName', Handler: CharacterNameHandler },
+      { name: 'xpProgress', Handler: XPProgressHandler }
     ];
 
+    // Initialize layout handler first
     handlerConfigs.forEach(({ name, Handler }) => {
-      try {
-        const handler = new Handler(html, this.actor);
-        handler.initialize();
-        this.handlers.set(name, handler);
-      } catch (error) {
-        console.error(`Failed to initialize ${name} handler:`, error);
+      if (name === 'layout') {
+        try {
+          const handler = new Handler(html, this.actor);
+          handler.initialize();
+          this.handlers.set(name, handler);
+        } catch (error) {
+          console.error(`Failed to initialize ${name} handler:`, error);
+        }
+      }
+    });
+
+    // Initialize image handler with layout handler reference
+    try {
+      const layoutHandler = this.handlers.get('layout');
+      const imageHandler = new ImageHandler(html, this.actor, layoutHandler);
+      imageHandler.initialize();
+      this.handlers.set('image', imageHandler);
+    } catch (error) {
+      console.error('Failed to initialize image handler:', error);
+    }
+
+    // Initialize remaining handlers
+    handlerConfigs.forEach(({ name, Handler }) => {
+      if (name !== 'layout') { // Skip layout (already done) and image (done above)
+        try {
+          const handler = new Handler(html, this.actor);
+          handler.initialize();
+          this.handlers.set(name, handler);
+        } catch (error) {
+          console.error(`Failed to initialize ${name} handler:`, error);
+        }
       }
     });
   }

@@ -1,7 +1,8 @@
 export class ImageHandler {
-  constructor(html, actor) {
+  constructor(html, actor, layoutHandler = null) {
     this.html = html;
     this.actor = actor;
+    this.layoutHandler = layoutHandler;
     this._isDragging = false;
     this._isResizing = false;
     this.startX = 0;
@@ -275,6 +276,11 @@ export class ImageHandler {
   }
 
   saveImageTransform() {
+    // Notify layout handler to prevent auto-loading during image save
+    if (this.layoutHandler) {
+      this.layoutHandler.temporarilyPreventLoad(2000);
+    }
+    
     const image = this.html.find('.character-portrait');
     const transform = this.getTransformValues(image);
     

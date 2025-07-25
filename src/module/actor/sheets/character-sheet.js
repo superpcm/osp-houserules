@@ -176,4 +176,14 @@ export class OspActorSheetCharacter extends ActorSheet {
   getHandler(name) {
     return this.handlers.get(name);
   }
+
+  /**
+   * Reset all draggable fields to their original positions
+   */
+  resetAllFieldsToVisible() {
+    const layoutHandler = this.getHandler('layout');
+    if (layoutHandler) {
+      layoutHandler.resetAllFieldsToVisible();
+    }
+  }
 }

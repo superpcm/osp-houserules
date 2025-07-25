@@ -1,18 +1,15 @@
 <form class="osp sheet actor character" autocomplete="off">
   <div class="sheet-background">
-    <!-- Tabs -->
-    <nav class="sheet-tabs tabs" data-group="primary">
-      <a class="item" data-tab="main">Main</a>
-      <a class="item" data-tab="combat">Combat</a>
-      <a class="item" data-tab="skills">Skills</a>
-      <a class="item" data-tab="equipment">Equipment</a>
-    </nav>
-    <!-- Tab Contents -->
-    <div class="sheet-body">
-      <section class="tab" data-group="primary" data-tab="main">
-        <div class="sheet-header" style="display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
-          <div class="character-image-container" style="position: relative; flex-shrink: 0;">
-            <div class="character-image" style="position: relative; width: 160px; height: 160px; border: 2px solid #ccc; border-radius: 8px; overflow: hidden; background: #f5f5f5;">
+    <!-- Static Header Section -->
+    <div class="static-header" style="padding: 2rem; background: #f8f9fa; border-bottom: 1px solid #ddd; min-height: 200px;">
+      <div style="display: flex; flex-direction: column; gap: 2rem; max-width: 100%; margin: 0 auto; align-items: center; justify-content: center;">
+        
+        <!-- All Fields Centered for Easy Dragging -->
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; align-items: center;">
+          
+          <!-- Character Image -->
+          <div class="character-image-container char-field-group" style="position: relative; flex-shrink: 0;">
+            <div class="character-image" style="position: relative; width: 100px; height: 100px; border: 2px solid #ccc; border-radius: 8px; overflow: hidden; background: #f5f5f5; cursor: move;">
               <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}"
                    class="character-portrait" 
                    style="cursor: move; position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none;" 
@@ -29,253 +26,115 @@
               <button type="button" class="fit-image" title="Fit to Container" style="width: 24px; height: 24px; border: none; border-radius: 50%; background: #4a5568; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">⌂</button>
             </div>
           </div>
-          <div class="character-info" style="display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; min-width: 200px;">
-            <!-- Character Name and XP Progress Bar Row -->
-            <div style="display: flex; gap: 1rem; align-items: flex-start;">
-              <!-- Character Name Section -->
-              <div class="character-name-section">
-                <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="border: none; background: transparent; padding: 0; text-align: left; width: 100%;"/>
-              </div>
-              
-              <!-- XP Progress Bar Section -->
-              <div class="char-field-group xp-progress-section" style="display: flex; flex-direction: column; align-items: center; min-width: 200px;">
-                <!-- XP Input / Next Level Display -->
-                <div class="xp-display" style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 4px; font-size: 14px; width: 100%;">
-                  <input class="char-xp" id="char-xp" name="system.xp" type="number" value="{{system.xp}}" style="width: 80px; height: 1.8em; text-align: center; border: 1px solid #ccc; border-radius: 3px;" />
-                  <span>/</span>
-                  <span class="next-level-xp">{{getNextLevelXP system.class system.level}}</span>
-                </div>
-                
-                <!-- XP Progress Bar -->
-                <div class="xp-progress-container" style="width: 200px; height: 25px; border: 1px solid #ccc; background-color: #999999; position: relative;">
-                  <div class="xp-progress-bar" style="height: 100%; background-color: #22c55e; width: 0%; transition: width 0.3s ease;"></div>
-                  <div class="xp-progress-label" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; color: #000; text-shadow: 1px 1px 1px rgba(255,255,255,0.8);">
-                    XP (<span class="xp-percentage">0</span>%)
-                  </div>
-                </div>
-                
-                <!-- XP Mod % Below Progress Bar -->
-                <div class="xp-mod-display" style="margin-top: 4px; font-size: 12px; color: #666; text-align: center;">
-                  <span>XP Mod: </span>
-                  <span class="char-xp-mod">
-                    {{#with (getXPModifier system.class system.attributes)}}
-                      {{#if (eq this 0)}}0{{else}}{{#if (gt this 0)}}+{{this}}{{else}}{{this}}{{/if}}{{/if}}%
-                    {{/with}}
-                  </span>
-                </div>
+
+          <!-- Character Name -->
+          <div class="character-name-section char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+            <label style="margin-bottom: 0.5rem; font-weight: bold;">Character Name</label>
+            <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="border: 1px solid #ccc; background: white; padding: 0.5rem; text-align: center; width: 250px; font-size: 1.2rem; font-weight: bold; border-radius: 4px;"/>
+          </div>
+          
+          <!-- XP Progress Section -->
+          <div class="char-field-group xp-progress-section" style="display: flex; flex-direction: column; align-items: center;">
+            <label style="margin-bottom: 0.5rem; font-weight: bold;">Experience Points</label>
+            <div class="xp-display" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px; font-size: 14px; font-weight: bold;">
+              <input class="char-xp" id="char-xp" name="system.xp" type="number" value="{{system.xp}}" style="width: 80px; height: 2.5em; text-align: center; border: 1px solid #ccc; border-radius: 3px;" />
+              <span>/</span>
+              <span class="next-level-xp">{{getNextLevelXP system.class system.level}}</span>
+            </div>
+            <div class="xp-progress-container" style="width: 160px; height: 20px; border: 1px solid #ccc; background-color: #999999; position: relative; border-radius: 3px;">
+              <div class="xp-progress-bar" style="height: 100%; background-color: #22c55e; width: 0%; transition: width 0.3s ease; border-radius: 2px;"></div>
+              <div class="xp-progress-label" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 11px; color: #000; text-shadow: 1px 1px 1px rgba(255,255,255,0.8);">
+                XP (<span class="xp-percentage">0</span>%)
               </div>
             </div>
-            <div class="char-details" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-race" style="margin-bottom: 2px; text-align: center;">Race</label>
-                <select class="char-race" id="char-race" name="system.race" style="width: 80px; height: 2em; text-align: center;">
-                  <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
-                  <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
-                  <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
-                  <option value="Half-Elf" {{#if (eq system.race "Half-Elf")}}selected{{/if}}>Half-Elf</option>
-                  <option value="Half-Orc" {{#if (eq system.race "Half-Orc")}}selected{{/if}}>Half-Orc</option>
-                  <option value="Hobbit" {{#if (eq system.race "Hobbit")}}selected{{/if}}>Hobbit</option>
-                  <option value="Human" {{#if (eq system.race "Human")}}selected{{/if}}>Human</option>
-                </select>
-              </div>
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-sex" style="margin-bottom: 2px; text-align: center;">Sex</label>
-                <select class="char-sex" id="char-sex" name="system.sex" style="width: 70px; height: 2em; text-align: center;">
-                  <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>Male</option>
-                  <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>Female</option>
-                  <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>Other</option>
-                </select>
-              </div>
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-age" style="margin-bottom: 2px; text-align: center;">Age</label>
-                <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 60px; height: 2em; text-align: center;" />
-              </div>
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-height" style="margin-bottom: 2px; text-align: center;">Height</label>
-                <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 70px; height: 2em; text-align: center;" />
-              </div>
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-weight" style="margin-bottom: 2px; text-align: center;">Weight</label>
-                <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 70px; height: 2em; text-align: center;" />
-              </div>
-            </div>
-            <div class="char-details" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-class" style="margin-bottom: 2px; text-align: center;">Class</label>
-                <select class="char-class" id="char-class" name="system.class" style="width: 120px; height: 2em; text-align: center;">
-                  <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
-                  <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
-                  <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
-                  <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
-                  <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
-                  <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
-                  <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
-                  <option value="Elf" {{#if (eq system.class "Elf")}}selected{{/if}}>Elf</option>
-                  <option value="Fighter" {{#if (eq system.class "Fighter")}}selected{{/if}}>Fighter</option>
-                  <option value="Gnome" {{#if (eq system.class "Gnome")}}selected{{/if}}>Gnome</option>
-                  <option value="Half-Elf" {{#if (eq system.class "Half-Elf")}}selected{{/if}}>Half-Elf</option>
-                  <option value="Half-Orc" {{#if (eq system.class "Half-Orc")}}selected{{/if}}>Half-Orc</option>
-                  <option value="Hobbit" {{#if (eq system.class "Hobbit")}}selected{{/if}}>Hobbit</option>
-                  <option value="Illusionist" {{#if (eq system.class "Illusionist")}}selected{{/if}}>Illusionist</option>
-                  <option value="Knight" {{#if (eq system.class "Knight")}}selected{{/if}}>Knight</option>
-                  <option value="Mage" {{#if (eq system.class "Mage")}}selected{{/if}}>Mage</option>
-                  <option value="Magic-User" {{#if (eq system.class "Magic-User")}}selected{{/if}}>Magic-User</option>
-                  <option value="Paladin" {{#if (eq system.class "Paladin")}}selected{{/if}}>Paladin</option>
-                  <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
-                  <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
-                  <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
-                </select>
-              </div>
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-align" style="margin-bottom: 2px; text-align: center;">Alignment</label>
-                <select class="char-align" id="char-align" name="system.alignment" style="width: 120px; height: 2em; text-align: center;">
-                  <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
-                  <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
-                  <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
-                </select>
-              </div>
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-level" style="margin-bottom: 2px; text-align: center;">Level</label>
-                <select class="char-level" id="char-level" name="system.level" style="width: 60px; height: 2em; text-align: center;">
-                  <option value="1" {{#if (eq system.level "1")}}selected{{/if}}>1</option>
-                  <option value="2" {{#if (eq system.level "2")}}selected{{/if}}>2</option>
-                  <option value="3" {{#if (eq system.level "3")}}selected{{/if}}>3</option>
-                  <option value="4" {{#if (eq system.level "4")}}selected{{/if}}>4</option>
-                  <option value="5" {{#if (eq system.level "5")}}selected{{/if}}>5</option>
-                  <option value="6" {{#if (eq system.level "6")}}selected{{/if}}>6</option>
-                  <option value="7" {{#if (eq system.level "7")}}selected{{/if}}>7</option>
-                  <option value="8" {{#if (eq system.level "8")}}selected{{/if}}>8</option>
-                  <option value="9" {{#if (eq system.level "9")}}selected{{/if}}>9</option>
-                  <option value="10" {{#if (eq system.level "10")}}selected{{/if}}>10</option>
-                  <option value="11" {{#if (eq system.level "11")}}selected{{/if}}>11</option>
-                  <option value="12" {{#if (eq system.level "12")}}selected{{/if}}>12</option>
-                  <option value="13" {{#if (eq system.level "13")}}selected{{/if}}>13</option>
-                  <option value="14" {{#if (eq system.level "14")}}selected{{/if}}>14</option>
-                </select>
-              </div>
-            </div>
-            <div class="char-details" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-background" style="margin-bottom: 2px; text-align: center;">Background</label>
-                <select class="char-background" id="char-background" name="system.background" style="width: 140px; height: 2em; text-align: center; font-size: 12px;">
-                  <option value="" {{#unless system.background}}selected{{/unless}}>-- Select --</option>
-                  <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
-                  <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
-                  <option value="Artisan" {{#if (eq system.background "Artisan")}}selected{{/if}}>Artisan</option>
-                  <option value="Baker" {{#if (eq system.background "Baker")}}selected{{/if}}>Baker</option>
-                  <option value="Banker" {{#if (eq system.background "Banker")}}selected{{/if}}>Banker</option>
-                  <option value="Barber" {{#if (eq system.background "Barber")}}selected{{/if}}>Barber</option>
-                  <option value="Barkeep" {{#if (eq system.background "Barkeep")}}selected{{/if}}>Barkeep</option>
-                  <option value="Beggar" {{#if (eq system.background "Beggar")}}selected{{/if}}>Beggar</option>
-                  <option value="Blacksmith" {{#if (eq system.background "Blacksmith")}}selected{{/if}}>Blacksmith</option>
-                  <option value="Bookbinder" {{#if (eq system.background "Bookbinder")}}selected{{/if}}>Bookbinder</option>
-                  <option value="Bouncer" {{#if (eq system.background "Bouncer")}}selected{{/if}}>Bouncer</option>
-                  <option value="Bowyer" {{#if (eq system.background "Bowyer")}}selected{{/if}}>Bowyer</option>
-                  <option value="Brewer" {{#if (eq system.background "Brewer")}}selected{{/if}}>Brewer</option>
-                  <option value="Bricklayer" {{#if (eq system.background "Bricklayer")}}selected{{/if}}>Bricklayer</option>
-                  <option value="Butcher" {{#if (eq system.background "Butcher")}}selected{{/if}}>Butcher</option>
-                  <option value="Caretaker" {{#if (eq system.background "Caretaker")}}selected{{/if}}>Caretaker</option>
-                  <option value="Carpenter" {{#if (eq system.background "Carpenter")}}selected{{/if}}>Carpenter</option>
-                  <option value="Cartographer" {{#if (eq system.background "Cartographer")}}selected{{/if}}>Cartographer</option>
-                  <option value="Charcoal Maker" {{#if (eq system.background "Charcoal Maker")}}selected{{/if}}>Charcoal Maker</option>
-                  <option value="Clerk" {{#if (eq system.background "Clerk")}}selected{{/if}}>Clerk</option>
-                  <option value="Coachman" {{#if (eq system.background "Coachman")}}selected{{/if}}>Coachman</option>
-                  <option value="Cobbler" {{#if (eq system.background "Cobbler")}}selected{{/if}}>Cobbler</option>
-                  <option value="Cook" {{#if (eq system.background "Cook")}}selected{{/if}}>Cook</option>
-                  <option value="Cooper" {{#if (eq system.background "Cooper")}}selected{{/if}}>Cooper</option>
-                  <option value="Courier" {{#if (eq system.background "Courier")}}selected{{/if}}>Courier</option>
-                  <option value="Crier" {{#if (eq system.background "Crier")}}selected{{/if}}>Crier</option>
-                  <option value="Dairyboy" {{#if (eq system.background "Dairyboy")}}selected{{/if}}>Dairyboy</option>
-                  <option value="Distiller" {{#if (eq system.background "Distiller")}}selected{{/if}}>Distiller</option>
-                  <option value="Ditch Digger" {{#if (eq system.background "Ditch Digger")}}selected{{/if}}>Ditch Digger</option>
-                  <option value="Dyer" {{#if (eq system.background "Dyer")}}selected{{/if}}>Dyer</option>
-                  <option value="Engraver" {{#if (eq system.background "Engraver")}}selected{{/if}}>Engraver</option>
-                  <option value="Entertainer" {{#if (eq system.background "Entertainer")}}selected{{/if}}>Entertainer</option>
-                  <option value="Falconer" {{#if (eq system.background "Falconer")}}selected{{/if}}>Falconer</option>
-                  <option value="Farmer" {{#if (eq system.background "Farmer")}}selected{{/if}}>Farmer</option>
-                  <option value="Ferrier" {{#if (eq system.background "Ferrier")}}selected{{/if}}>Ferrier</option>
-                  <option value="Fishmonger" {{#if (eq system.background "Fishmonger")}}selected{{/if}}>Fishmonger</option>
-                  <option value="Fletcher" {{#if (eq system.background "Fletcher")}}selected{{/if}}>Fletcher</option>
-                  <option value="Fuller" {{#if (eq system.background "Fuller")}}selected{{/if}}>Fuller</option>
-                  <option value="Furrier" {{#if (eq system.background "Furrier")}}selected{{/if}}>Furrier</option>
-                  <option value="Gardener" {{#if (eq system.background "Gardener")}}selected{{/if}}>Gardener</option>
-                  <option value="Glassblower" {{#if (eq system.background "Glassblower")}}selected{{/if}}>Glassblower</option>
-                  <option value="Glazier" {{#if (eq system.background "Glazier")}}selected{{/if}}>Glazier</option>
-                  <option value="Glover" {{#if (eq system.background "Glover")}}selected{{/if}}>Glover</option>
-                  <option value="Gong Farmer" {{#if (eq system.background "Gong Farmer")}}selected{{/if}}>Gong Farmer</option>
-                  <option value="Gravedigger" {{#if (eq system.background "Gravedigger")}}selected{{/if}}>Gravedigger</option>
-                  <option value="Groom" {{#if (eq system.background "Groom")}}selected{{/if}}>Groom</option>
-                  <option value="Guard" {{#if (eq system.background "Guard")}}selected{{/if}}>Guard</option>
-                  <option value="Hatmaker" {{#if (eq system.background "Hatmaker")}}selected{{/if}}>Hatmaker</option>
-                  <option value="Herdsman" {{#if (eq system.background "Herdsman")}}selected{{/if}}>Herdsman</option>
-                  <option value="Houndsman" {{#if (eq system.background "Houndsman")}}selected{{/if}}>Houndsman</option>
-                  <option value="Innkeeper" {{#if (eq system.background "Innkeeper")}}selected{{/if}}>Innkeeper</option>
-                  <option value="Jailer" {{#if (eq system.background "Jailer")}}selected{{/if}}>Jailer</option>
-                  <option value="Jester" {{#if (eq system.background "Jester")}}selected{{/if}}>Jester</option>
-                  <option value="Joiner" {{#if (eq system.background "Joiner")}}selected{{/if}}>Joiner</option>
-                  <option value="Juggler" {{#if (eq system.background "Juggler")}}selected{{/if}}>Juggler</option>
-                  <option value="Laborer" {{#if (eq system.background "Laborer")}}selected{{/if}}>Laborer</option>
-                  <option value="Launderer" {{#if (eq system.background "Launderer")}}selected{{/if}}>Launderer</option>
-                  <option value="Lector" {{#if (eq system.background "Lector")}}selected{{/if}}>Lector</option>
-                  <option value="Librarian" {{#if (eq system.background "Librarian")}}selected{{/if}}>Librarian</option>
-                  <option value="Lumberjack" {{#if (eq system.background "Lumberjack")}}selected{{/if}}>Lumberjack</option>
-                  <option value="Maid/Butler" {{#if (eq system.background "Maid/Butler")}}selected{{/if}}>Maid/Butler</option>
-                  <option value="Mason" {{#if (eq system.background "Mason")}}selected{{/if}}>Mason</option>
-                  <option value="Merchant" {{#if (eq system.background "Merchant")}}selected{{/if}}>Merchant</option>
-                  <option value="Messenger" {{#if (eq system.background "Messenger")}}selected{{/if}}>Messenger</option>
-                  <option value="Miller" {{#if (eq system.background "Miller")}}selected{{/if}}>Miller</option>
-                  <option value="Millwright" {{#if (eq system.background "Millwright")}}selected{{/if}}>Millwright</option>
-                  <option value="Mortician" {{#if (eq system.background "Mortician")}}selected{{/if}}>Mortician</option>
-                  <option value="Musician" {{#if (eq system.background "Musician")}}selected{{/if}}>Musician</option>
-                  <option value="Ne'er-do-well" {{#if (eq system.background "Ne'er-do-well")}}selected{{/if}}>Ne'er-do-well</option>
-                  <option value="Page" {{#if (eq system.background "Page")}}selected{{/if}}>Page</option>
-                  <option value="Painter" {{#if (eq system.background "Painter")}}selected{{/if}}>Painter</option>
-                  <option value="Philosopher" {{#if (eq system.background "Philosopher")}}selected{{/if}}>Philosopher</option>
-                  <option value="Porter" {{#if (eq system.background "Porter")}}selected{{/if}}>Porter</option>
-                  <option value="Potter" {{#if (eq system.background "Potter")}}selected{{/if}}>Potter</option>
-                  <option value="Printer" {{#if (eq system.background "Printer")}}selected{{/if}}>Printer</option>
-                  <option value="Prostitute" {{#if (eq system.background "Prostitute")}}selected{{/if}}>Prostitute</option>
-                  <option value="Rag & Bone" {{#if (eq system.background "Rag & Bone")}}selected{{/if}}>Rag & Bone</option>
-                  <option value="Ratter" {{#if (eq system.background "Ratter")}}selected{{/if}}>Ratter</option>
-                  <option value="Runaway Slave" {{#if (eq system.background "Runaway Slave")}}selected{{/if}}>Runaway Slave</option>
-                  <option value="Scavenger" {{#if (eq system.background "Scavenger")}}selected{{/if}}>Scavenger</option>
-                  <option value="Scholar" {{#if (eq system.background "Scholar")}}selected{{/if}}>Scholar</option>
-                  <option value="Serf" {{#if (eq system.background "Serf")}}selected{{/if}}>Serf</option>
-                  <option value="Server" {{#if (eq system.background "Server")}}selected{{/if}}>Server</option>
-                  <option value="Sexton" {{#if (eq system.background "Sexton")}}selected{{/if}}>Sexton</option>
-                  <option value="Squire" {{#if (eq system.background "Squire")}}selected{{/if}}>Squire</option>
-                  <option value="Stablehand" {{#if (eq system.background "Stablehand")}}selected{{/if}}>Stablehand</option>
-                  <option value="Stonecutter" {{#if (eq system.background "Stonecutter")}}selected{{/if}}>Stonecutter</option>
-                  <option value="Street Sweeper" {{#if (eq system.background "Street Sweeper")}}selected{{/if}}>Street Sweeper</option>
-                  <option value="Tailor" {{#if (eq system.background "Tailor")}}selected{{/if}}>Tailor</option>
-                  <option value="Tallow Chandler" {{#if (eq system.background "Tallow Chandler")}}selected{{/if}}>Tallow Chandler</option>
-                  <option value="Tanner" {{#if (eq system.background "Tanner")}}selected{{/if}}>Tanner</option>
-                  <option value="Thatcher" {{#if (eq system.background "Thatcher")}}selected{{/if}}>Thatcher</option>
-                  <option value="Tobacconist" {{#if (eq system.background "Tobacconist")}}selected{{/if}}>Tobacconist</option>
-                  <option value="Trapper" {{#if (eq system.background "Trapper")}}selected{{/if}}>Trapper</option>
-                  <option value="Wainwright" {{#if (eq system.background "Wainwright")}}selected{{/if}}>Wainwright</option>
-                  <option value="Washer" {{#if (eq system.background "Washer")}}selected{{/if}}>Washer</option>
-                  <option value="Weaver" {{#if (eq system.background "Weaver")}}selected{{/if}}>Weaver</option>
-                  <option value="Wheelwright" {{#if (eq system.background "Wheelwright")}}selected{{/if}}>Wheelwright</option>
-                  <option value="Winemaker" {{#if (eq system.background "Winemaker")}}selected{{/if}}>Winemaker</option>
-                  <option value="Woodcutter" {{#if (eq system.background "Woodcutter")}}selected{{/if}}>Woodcutter</option>
-                </select>
-              </div>
-              <div class="char-field-group">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <label for="char-languages" style="margin-bottom: 2px; text-align: left;">Languages</label>
-                  <button type="button" class="open-language-dialog" title="Add Language"></button>
-                </div>
-                <div class="languages-row">
-                  <div class="languages-tags"></div>
-                </div>
-                <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
-              </div>
+            <div class="xp-mod-display" style="margin-top: 4px; font-size: 11px; color: #666; text-align: center;">
+              <span>XP Mod: </span>
+              <span class="char-xp-mod">
+                {{#with (getXPModifier system.class system.attributes)}}
+                  {{#if (eq this 0)}}0{{else}}{{#if (gt this 0)}}+{{this}}{{else}}{{this}}{{/if}}{{/if}}%
+                {{/with}}
+              </span>
             </div>
           </div>
+
+          <!-- Character Class -->
+          <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+            <label for="char-class" style="margin-bottom: 0.5rem; text-align: center; font-weight: bold;">Class</label>
+            <select class="char-class" id="char-class" name="system.class" style="width: 120px; height: 2.5em; text-align: center; font-size: 14px;">
+              <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
+              <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
+              <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
+              <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
+              <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
+              <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
+              <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
+              <option value="Elf" {{#if (eq system.class "Elf")}}selected{{/if}}>Elf</option>
+              <option value="Fighter" {{#if (eq system.class "Fighter")}}selected{{/if}}>Fighter</option>
+              <option value="Gnome" {{#if (eq system.class "Gnome")}}selected{{/if}}>Gnome</option>
+              <option value="Half-Elf" {{#if (eq system.class "Half-Elf")}}selected{{/if}}>Half-Elf</option>
+              <option value="Half-Orc" {{#if (eq system.class "Half-Orc")}}selected{{/if}}>Half-Orc</option>
+              <option value="Hobbit" {{#if (eq system.class "Hobbit")}}selected{{/if}}>Hobbit</option>
+              <option value="Illusionist" {{#if (eq system.class "Illusionist")}}selected{{/if}}>Illusionist</option>
+              <option value="Knight" {{#if (eq system.class "Knight")}}selected{{/if}}>Knight</option>
+              <option value="Mage" {{#if (eq system.class "Mage")}}selected{{/if}}>Mage</option>
+              <option value="Magic-User" {{#if (eq system.class "Magic-User")}}selected{{/if}}>Magic-User</option>
+              <option value="Paladin" {{#if (eq system.class "Paladin")}}selected{{/if}}>Paladin</option>
+              <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
+              <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
+              <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
+            </select>
+          </div>
+          
+          <!-- Character Alignment -->
+          <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+            <label for="char-align" style="margin-bottom: 0.5rem; text-align: center; font-weight: bold;">Alignment</label>
+            <select class="char-align" id="char-align" name="system.alignment" style="width: 100px; height: 2.5em; text-align: center; font-size: 14px;">
+              <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
+              <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
+              <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
+            </select>
+          </div>
+          
+          <!-- Character Level -->
+          <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+            <label for="char-level" style="margin-bottom: 0.5rem; text-align: center; font-weight: bold;">Level</label>
+            <select class="char-level" id="char-level" name="system.level" style="width: 80px; height: 2.5em; text-align: center; font-size: 14px;">
+              <option value="1" {{#if (eq system.level "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.level "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.level "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.level "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.level "5")}}selected{{/if}}>5</option>
+              <option value="6" {{#if (eq system.level "6")}}selected{{/if}}>6</option>
+              <option value="7" {{#if (eq system.level "7")}}selected{{/if}}>7</option>
+              <option value="8" {{#if (eq system.level "8")}}selected{{/if}}>8</option>
+              <option value="9" {{#if (eq system.level "9")}}selected{{/if}}>9</option>
+              <option value="10" {{#if (eq system.level "10")}}selected{{/if}}>10</option>
+              <option value="11" {{#if (eq system.level "11")}}selected{{/if}}>11</option>
+              <option value="12" {{#if (eq system.level "12")}}selected{{/if}}>12</option>
+              <option value="13" {{#if (eq system.level "13")}}selected{{/if}}>13</option>
+              <option value="14" {{#if (eq system.level "14")}}selected{{/if}}>14</option>
+            </select>
+          </div>
+          
         </div>
-      </section>
-      <section class="tab" data-group="primary" data-tab="combat">
+        
+      </div>
+    </div>
+
+    <!-- Beveled Separator Bar -->
+    <div class="separator-bar" style="height: 6px; background: linear-gradient(to bottom, #c0c0c0, #808080, #404040, #808080, #c0c0c0); border-top: 1px solid #e0e0e0; border-bottom: 1px solid #606060; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.3);"></div>
+
+    <!-- Tabs -->
+    <nav class="sheet-tabs tabs" data-group="primary" style="padding: 0.5rem 1rem 0 1rem; background: #f0f0f0;">
+      <a class="item" data-tab="combat">Combat</a>
+      <a class="item" data-tab="skills">Skills</a>
+      <a class="item" data-tab="equipment">Equipment</a>
+      <a class="item" data-tab="bio">Bio</a>
+    </nav>
+    
+    <!-- Tab Contents -->
+    <div class="sheet-body">
+      <section class="tab active" data-group="primary" data-tab="combat">
         <div class="combat-section">
           <h3>Combat Stats</h3>
           <div class="combat-stats" style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
@@ -685,6 +544,213 @@
             </div>
           </section>
         </section>
+      </section>
+
+      <!-- Bio Tab -->
+      <section class="tab" data-group="primary" data-tab="bio">
+        <div class="bio-content" style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+          
+          <!-- Physical Characteristics Section -->
+          <div class="bio-section">
+            <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Physical Characteristics</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start; min-height: 60px; padding: 10px;">
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+                <label for="char-race" style="margin-bottom: 2px; text-align: center; font-size: 14px; font-weight: bold;">Race</label>
+                <select class="char-race" id="char-race" name="system.race" style="width: 80px; height: 2.5em; text-align: center;">
+                  <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
+                  <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
+                  <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
+                  <option value="Half-Elf" {{#if (eq system.race "Half-Elf")}}selected{{/if}}>Half-Elf</option>
+                  <option value="Half-Orc" {{#if (eq system.race "Half-Orc")}}selected{{/if}}>Half-Orc</option>
+                  <option value="Hobbit" {{#if (eq system.race "Hobbit")}}selected{{/if}}>Hobbit</option>
+                  <option value="Human" {{#if (eq system.race "Human")}}selected{{/if}}>Human</option>
+                </select>
+              </div>
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+                <label for="char-sex" style="margin-bottom: 2px; text-align: center; font-size: 14px; font-weight: bold;">Sex</label>
+                <select class="char-sex" id="char-sex" name="system.sex" style="width: 70px; height: 2.5em; text-align: center;">
+                  <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>Male</option>
+                  <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>Female</option>
+                  <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>Other</option>
+                </select>
+              </div>
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+                <label for="char-age" style="margin-bottom: 2px; text-align: center; font-size: 14px; font-weight: bold;">Age</label>
+                <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 60px; height: 2.5em; text-align: center;" />
+              </div>
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+                <label for="char-height" style="margin-bottom: 2px; text-align: center; font-size: 14px; font-weight: bold;">Height</label>
+                <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 70px; height: 2.5em; text-align: center;" />
+              </div>
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
+                <label for="char-weight" style="margin-bottom: 2px; text-align: center; font-size: 14px; font-weight: bold;">Weight</label>
+                <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 70px; height: 2.5em; text-align: center;" />
+              </div>
+            </div>
+          </div>
+          
+          <!-- Background and Languages Section -->
+          <div class="bio-section">
+            <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Background & Languages</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start;">
+              <!-- Background Field -->
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: flex-start;">
+                <label for="char-background" style="margin-bottom: 0.5rem; font-weight: bold;">Background</label>
+                <select class="char-background" id="char-background" name="system.background" style="width: 180px; height: 2.5em; text-align: left; font-size: 14px; padding: 0.25rem;">
+                  <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
+                  <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
+                  <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
+                  <option value="Artisan" {{#if (eq system.background "Artisan")}}selected{{/if}}>Artisan</option>
+                  <option value="Baker" {{#if (eq system.background "Baker")}}selected{{/if}}>Baker</option>
+                  <option value="Banker" {{#if (eq system.background "Banker")}}selected{{/if}}>Banker</option>
+                  <option value="Barber" {{#if (eq system.background "Barber")}}selected{{/if}}>Barber</option>
+                  <option value="Barkeep" {{#if (eq system.background "Barkeep")}}selected{{/if}}>Barkeep</option>
+                  <option value="Beggar" {{#if (eq system.background "Beggar")}}selected{{/if}}>Beggar</option>
+                  <option value="Blacksmith" {{#if (eq system.background "Blacksmith")}}selected{{/if}}>Blacksmith</option>
+                  <option value="Bookbinder" {{#if (eq system.background "Bookbinder")}}selected{{/if}}>Bookbinder</option>
+                  <option value="Bouncer" {{#if (eq system.background "Bouncer")}}selected{{/if}}>Bouncer</option>
+                  <option value="Bowyer" {{#if (eq system.background "Bowyer")}}selected{{/if}}>Bowyer</option>
+                  <option value="Brewer" {{#if (eq system.background "Brewer")}}selected{{/if}}>Brewer</option>
+                  <option value="Bricklayer" {{#if (eq system.background "Bricklayer")}}selected{{/if}}>Bricklayer</option>
+                  <option value="Butcher" {{#if (eq system.background "Butcher")}}selected{{/if}}>Butcher</option>
+                  <option value="Caretaker" {{#if (eq system.background "Caretaker")}}selected{{/if}}>Caretaker</option>
+                  <option value="Carpenter" {{#if (eq system.background "Carpenter")}}selected{{/if}}>Carpenter</option>
+                  <option value="Cartographer" {{#if (eq system.background "Cartographer")}}selected{{/if}}>Cartographer</option>
+                  <option value="Charcoal Maker" {{#if (eq system.background "Charcoal Maker")}}selected{{/if}}>Charcoal Maker</option>
+                  <option value="Clerk" {{#if (eq system.background "Clerk")}}selected{{/if}}>Clerk</option>
+                  <option value="Coachman" {{#if (eq system.background "Coachman")}}selected{{/if}}>Coachman</option>
+                  <option value="Cobbler" {{#if (eq system.background "Cobbler")}}selected{{/if}}>Cobbler</option>
+                  <option value="Cook" {{#if (eq system.background "Cook")}}selected{{/if}}>Cook</option>
+                  <option value="Cooper" {{#if (eq system.background "Cooper")}}selected{{/if}}>Cooper</option>
+                  <option value="Courier" {{#if (eq system.background "Courier")}}selected{{/if}}>Courier</option>
+                  <option value="Crier" {{#if (eq system.background "Crier")}}selected{{/if}}>Crier</option>
+                  <option value="Dairyboy" {{#if (eq system.background "Dairyboy")}}selected{{/if}}>Dairyboy</option>
+                  <option value="Distiller" {{#if (eq system.background "Distiller")}}selected{{/if}}>Distiller</option>
+                  <option value="Ditch Digger" {{#if (eq system.background "Ditch Digger")}}selected{{/if}}>Ditch Digger</option>
+                  <option value="Dyer" {{#if (eq system.background "Dyer")}}selected{{/if}}>Dyer</option>
+                  <option value="Engraver" {{#if (eq system.background "Engraver")}}selected{{/if}}>Engraver</option>
+                  <option value="Entertainer" {{#if (eq system.background "Entertainer")}}selected{{/if}}>Entertainer</option>
+                  <option value="Falconer" {{#if (eq system.background "Falconer")}}selected{{/if}}>Falconer</option>
+                  <option value="Farmer" {{#if (eq system.background "Farmer")}}selected{{/if}}>Farmer</option>
+                  <option value="Ferrier" {{#if (eq system.background "Ferrier")}}selected{{/if}}>Ferrier</option>
+                  <option value="Fishmonger" {{#if (eq system.background "Fishmonger")}}selected{{/if}}>Fishmonger</option>
+                  <option value="Fletcher" {{#if (eq system.background "Fletcher")}}selected{{/if}}>Fletcher</option>
+                  <option value="Fuller" {{#if (eq system.background "Fuller")}}selected{{/if}}>Fuller</option>
+                  <option value="Furrier" {{#if (eq system.background "Furrier")}}selected{{/if}}>Furrier</option>
+                  <option value="Gardener" {{#if (eq system.background "Gardener")}}selected{{/if}}>Gardener</option>
+                  <option value="Glassblower" {{#if (eq system.background "Glassblower")}}selected{{/if}}>Glassblower</option>
+                  <option value="Glazier" {{#if (eq system.background "Glazier")}}selected{{/if}}>Glazier</option>
+                  <option value="Glover" {{#if (eq system.background "Glover")}}selected{{/if}}>Glover</option>
+                  <option value="Gong Farmer" {{#if (eq system.background "Gong Farmer")}}selected{{/if}}>Gong Farmer</option>
+                  <option value="Gravedigger" {{#if (eq system.background "Gravedigger")}}selected{{/if}}>Gravedigger</option>
+                  <option value="Groom" {{#if (eq system.background "Groom")}}selected{{/if}}>Groom</option>
+                  <option value="Guard" {{#if (eq system.background "Guard")}}selected{{/if}}>Guard</option>
+                  <option value="Hatmaker" {{#if (eq system.background "Hatmaker")}}selected{{/if}}>Hatmaker</option>
+                  <option value="Herdsman" {{#if (eq system.background "Herdsman")}}selected{{/if}}>Herdsman</option>
+                  <option value="Houndsman" {{#if (eq system.background "Houndsman")}}selected{{/if}}>Houndsman</option>
+                  <option value="Innkeeper" {{#if (eq system.background "Innkeeper")}}selected{{/if}}>Innkeeper</option>
+                  <option value="Jailer" {{#if (eq system.background "Jailer")}}selected{{/if}}>Jailer</option>
+                  <option value="Jester" {{#if (eq system.background "Jester")}}selected{{/if}}>Jester</option>
+                  <option value="Joiner" {{#if (eq system.background "Joiner")}}selected{{/if}}>Joiner</option>
+                  <option value="Juggler" {{#if (eq system.background "Juggler")}}selected{{/if}}>Juggler</option>
+                  <option value="Laborer" {{#if (eq system.background "Laborer")}}selected{{/if}}>Laborer</option>
+                  <option value="Launderer" {{#if (eq system.background "Launderer")}}selected{{/if}}>Launderer</option>
+                  <option value="Lector" {{#if (eq system.background "Lector")}}selected{{/if}}>Lector</option>
+                  <option value="Librarian" {{#if (eq system.background "Librarian")}}selected{{/if}}>Librarian</option>
+                  <option value="Lumberjack" {{#if (eq system.background "Lumberjack")}}selected{{/if}}>Lumberjack</option>
+                  <option value="Maid/Butler" {{#if (eq system.background "Maid/Butler")}}selected{{/if}}>Maid/Butler</option>
+                  <option value="Mason" {{#if (eq system.background "Mason")}}selected{{/if}}>Mason</option>
+                  <option value="Merchant" {{#if (eq system.background "Merchant")}}selected{{/if}}>Merchant</option>
+                  <option value="Messenger" {{#if (eq system.background "Messenger")}}selected{{/if}}>Messenger</option>
+                  <option value="Miller" {{#if (eq system.background "Miller")}}selected{{/if}}>Miller</option>
+                  <option value="Millwright" {{#if (eq system.background "Millwright")}}selected{{/if}}>Millwright</option>
+                  <option value="Mortician" {{#if (eq system.background "Mortician")}}selected{{/if}}>Mortician</option>
+                  <option value="Musician" {{#if (eq system.background "Musician")}}selected{{/if}}>Musician</option>
+                  <option value="Ne'er-do-well" {{#if (eq system.background "Ne'er-do-well")}}selected{{/if}}>Ne'er-do-well</option>
+                  <option value="Page" {{#if (eq system.background "Page")}}selected{{/if}}>Page</option>
+                  <option value="Painter" {{#if (eq system.background "Painter")}}selected{{/if}}>Painter</option>
+                  <option value="Philosopher" {{#if (eq system.background "Philosopher")}}selected{{/if}}>Philosopher</option>
+                  <option value="Porter" {{#if (eq system.background "Porter")}}selected{{/if}}>Porter</option>
+                  <option value="Potter" {{#if (eq system.background "Potter")}}selected{{/if}}>Potter</option>
+                  <option value="Printer" {{#if (eq system.background "Printer")}}selected{{/if}}>Printer</option>
+                  <option value="Prostitute" {{#if (eq system.background "Prostitute")}}selected{{/if}}>Prostitute</option>
+                  <option value="Rag & Bone" {{#if (eq system.background "Rag & Bone")}}selected{{/if}}>Rag & Bone</option>
+                  <option value="Ratter" {{#if (eq system.background "Ratter")}}selected{{/if}}>Ratter</option>
+                  <option value="Runaway Slave" {{#if (eq system.background "Runaway Slave")}}selected{{/if}}>Runaway Slave</option>
+                  <option value="Scavenger" {{#if (eq system.background "Scavenger")}}selected{{/if}}>Scavenger</option>
+                  <option value="Scholar" {{#if (eq system.background "Scholar")}}selected{{/if}}>Scholar</option>
+                  <option value="Serf" {{#if (eq system.background "Serf")}}selected{{/if}}>Serf</option>
+                  <option value="Server" {{#if (eq system.background "Server")}}selected{{/if}}>Server</option>
+                  <option value="Sexton" {{#if (eq system.background "Sexton")}}selected{{/if}}>Sexton</option>
+                  <option value="Squire" {{#if (eq system.background "Squire")}}selected{{/if}}>Squire</option>
+                  <option value="Stablehand" {{#if (eq system.background "Stablehand")}}selected{{/if}}>Stablehand</option>
+                  <option value="Stonecutter" {{#if (eq system.background "Stonecutter")}}selected{{/if}}>Stonecutter</option>
+                  <option value="Street Sweeper" {{#if (eq system.background "Street Sweeper")}}selected{{/if}}>Street Sweeper</option>
+                  <option value="Tailor" {{#if (eq system.background "Tailor")}}selected{{/if}}>Tailor</option>
+                  <option value="Tallow Chandler" {{#if (eq system.background "Tallow Chandler")}}selected{{/if}}>Tallow Chandler</option>
+                  <option value="Tanner" {{#if (eq system.background "Tanner")}}selected{{/if}}>Tanner</option>
+                  <option value="Thatcher" {{#if (eq system.background "Thatcher")}}selected{{/if}}>Thatcher</option>
+                  <option value="Tobacconist" {{#if (eq system.background "Tobacconist")}}selected{{/if}}>Tobacconist</option>
+                  <option value="Trapper" {{#if (eq system.background "Trapper")}}selected{{/if}}>Trapper</option>
+                  <option value="Wainwright" {{#if (eq system.background "Wainwright")}}selected{{/if}}>Wainwright</option>
+                  <option value="Washer" {{#if (eq system.background "Washer")}}selected{{/if}}>Washer</option>
+                  <option value="Weaver" {{#if (eq system.background "Weaver")}}selected{{/if}}>Weaver</option>
+                  <option value="Wheelwright" {{#if (eq system.background "Wheelwright")}}selected{{/if}}>Wheelwright</option>
+                  <option value="Winemaker" {{#if (eq system.background "Winemaker")}}selected{{/if}}>Winemaker</option>
+                  <option value="Woodcutter" {{#if (eq system.background "Woodcutter")}}selected{{/if}}>Woodcutter</option>
+                </select>
+              </div>
+              
+              <!-- Languages Field -->
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: flex-start; min-width: 250px;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.5rem;">
+                  <label for="char-languages" style="font-weight: bold;">Languages</label>
+                  <button type="button" class="open-language-dialog" title="Add Language"></button>
+                </div>
+                <div class="languages-row" style="border: 1px solid #ccc; border-radius: 3px; padding: 0.5rem; min-height: 2.5em; width: 100%; background: white;">
+                  <div class="languages-tags"></div>
+                </div>
+                <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
+              </div>
+            </div>
+          </div>
+          
+          <!-- Character Appearance -->
+          <div class="bio-section">
+            <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Appearance</h3>
+            <textarea name="system.bio.appearance" placeholder="Describe your character's physical appearance..." 
+                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.appearance}}</textarea>
+          </div>
+
+          <!-- Character Personality -->
+          <div class="bio-section">
+            <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Personality</h3>
+            <textarea name="system.bio.personality" placeholder="Describe your character's personality, traits, and mannerisms..." 
+                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.personality}}</textarea>
+          </div>
+
+          <!-- Character Background/History -->
+          <div class="bio-section">
+            <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Background & History</h3>
+            <textarea name="system.bio.history" placeholder="Tell your character's story, background, and important life events..." 
+                      style="width: 100%; min-height: 120px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.history}}</textarea>
+          </div>
+
+          <!-- Character Goals & Motivations -->
+          <div class="bio-section">
+            <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Goals & Motivations</h3>
+            <textarea name="system.bio.goals" placeholder="What drives your character? What are their goals and motivations..." 
+                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.goals}}</textarea>
+          </div>
+
+          <!-- Additional Notes -->
+          <div class="bio-section">
+            <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Additional Notes</h3>
+            <textarea name="system.bio.notes" placeholder="Any additional notes, relationships, or important details..." 
+                      style="width: 100%; min-height: 100px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.notes}}</textarea>
+          </div>
+
+        </div>
       </section>
     </div>
   </div>

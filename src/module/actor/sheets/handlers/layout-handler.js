@@ -34,8 +34,9 @@ export class LayoutHandler {
    * Make form fields draggable
    */
   makeFieldsDraggable() {
-    // Target individual draggable elements in the main tab
+    // Target individual draggable elements in all tabs AND static header
     const draggableSelectors = [
+      '.character-image-container',
       '.character-name-section',
       '.xp-progress-section', // XP progress bar section
       '.char-field-group', // Individual fields only, not their parent containers
@@ -44,12 +45,14 @@ export class LayoutHandler {
       '.character-stats'
     ];
 
-    const mainTab = this.html.find('[data-tab="main"]');
+    // Apply to all tabs AND the static header
+    const allContainers = this.html.find('.tab, .static-header');
     
     draggableSelectors.forEach(selector => {
-      const elements = mainTab.find(selector);
+      const elements = allContainers.find(selector);
       elements.each((index, element) => {
-        this.makeDraggable($(element));
+        const $element = $(element);
+        this.makeDraggable($element);
       });
     });
   }
@@ -65,46 +68,140 @@ export class LayoutHandler {
       'user-select': 'none'
     });
 
-    // Add drag handles (optional visual indicator)
+    // Add extra padding to char-field-group elements to create more clickable area
+    if ($element.hasClass('char-field-group')) {
+      $element.css({
+        'padding': '4px 8px',
+        'margin': '2px',
+        'border': '1px solid transparent',
+        'border-radius': '3px'
+      });
+      
+      // Add hover effect to show draggable area
+      $element.off('mouseenter.fieldgroup mouseleave.fieldgroup')
+        .on('mouseenter.fieldgroup', function() {
+          $(this).css('border-color', '#ddd');
+        })
+        .on('mouseleave.fieldgroup', function() {
+          if (!$(this).hasClass('dragging')) {
+            $(this).css('border-color', 'transparent');
+          }
+        });
+    }
+
+    // Add drag handles (optional visual indicator) with better positioning
     if (!$element.find('.drag-handle').length) {
       const dragHandle = $('<div class="drag-handle" title="Drag to move">⋮⋮</div>');
+      
+      // Better positioning for drag handles
+      const isCharNameSection = $element.hasClass('character-name-section');
+      const isXPSection = $element.hasClass('xp-progress-section');
+      const isCharFieldGroup = $element.hasClass('char-field-group');
+      
       dragHandle.css({
         'position': 'absolute',
-        'top': '2px',
-        'right': '2px',
+        'top': isCharNameSection || isXPSection ? '5px' : (isCharFieldGroup ? '-2px' : '2px'),
+        'right': isCharNameSection || isXPSection ? '5px' : (isCharFieldGroup ? '-2px' : '2px'),
         'font-size': '12px',
         'color': '#666',
         'cursor': 'move',
-        'opacity': '0.3',
+        'opacity': '0.6',
         'z-index': '10',
-        'pointer-events': 'none'
+        'pointer-events': 'auto',
+        'font-weight': 'bold',
+        'text-shadow': '1px 1px 1px rgba(255,255,255,0.8)',
+        'background': 'rgba(255,255,255,0.9)',
+        'border': '1px solid #ccc',
+        'border-radius': '2px',
+        'padding': '1px 2px',
+        'line-height': '1',
+        'width': '14px',
+        'height': '14px',
+        'display': 'flex',
+        'align-items': 'center',
+        'justify-content': 'center'
       });
       $element.append(dragHandle);
     }
 
-    // Bind drag events
-    $element.off('mousedown.layout').on('mousedown.layout', (e) => {
-      // Don't interfere with input interactions
-      if ($(e.target).is('input, select, textarea, button')) return;
-      
-      // Special handling for character name - only drag from drag handle or container edges
-      if ($element.hasClass('character-name-section') || $element.find('#char-name').length) {
-        const isOnDragHandle = $(e.target).hasClass('drag-handle');
-        const isOnEdge = this.isClickOnElementEdge(e, $element);
-        if (!isOnDragHandle && !isOnEdge) return;
-      }
-
+    // Make labels clickable for dragging with explicit event handler
+    $element.find('label').css({
+      'cursor': 'move',
+      'user-select': 'none'
+    }).off('mousedown.label').on('mousedown.label', (e) => {
+      e.stopPropagation();
       this.startDrag(e, $element);
     });
 
-    // Show/hide drag handle on hover
+    // Special styling for character name section to make it more obviously draggable
+    if ($element.hasClass('character-name-section')) {
+      $element.css({
+        'padding': '8px',
+        'border': '1px dashed transparent',
+        'min-height': '40px' // Ensure minimum height for drag handle visibility
+      });
+      
+      // Add hover effect to show it's draggable
+      $element.off('mouseenter.charname mouseleave.charname')
+        .on('mouseenter.charname', function() {
+          $(this).css('border-color', '#ccc');
+          $(this).find('.drag-handle').css('opacity', '1');
+        })
+        .on('mouseleave.charname', function() {
+          if (!$(this).hasClass('dragging')) {
+            $(this).css('border-color', 'transparent');
+            $(this).find('.drag-handle').css('opacity', '0.6');
+          }
+        });
+    }
+
+    // Bind drag events
+    $element.off('mousedown.layout').on('mousedown.layout', (e) => {
+      // Allow dragging from labels, drag handles, and container areas
+      const isOnLabel = $(e.target).is('label') || $(e.target).closest('label').length > 0;
+      const isOnDragHandle = $(e.target).hasClass('drag-handle');
+      const isOnContainer = $(e.target).is($element) && !$(e.target).is('input, select, textarea, button');
+      const isOnInput = $(e.target).is('input, select, textarea, button');
+      
+      // Debug logging for Weight field specifically
+      if ($element.find('#char-weight').length > 0) {
+        console.log('Weight field click:', {
+          target: e.target.tagName + (e.target.className ? '.' + e.target.className.replace(/\s+/g, '.') : ''),
+          isOnLabel,
+          isOnDragHandle,
+          isOnContainer,
+          isOnInput,
+          elementClass: $element[0].className,
+          targetParent: e.target.parentElement?.tagName + (e.target.parentElement?.className ? '.' + e.target.parentElement.className.replace(/\s+/g, '.') : '')
+        });
+      }
+      
+      // Don't start drag if clicking directly on form inputs
+      if (isOnInput) {
+        return;
+      }
+      
+      // Allow dragging from labels, drag handles, or container areas
+      if (isOnLabel || isOnDragHandle || isOnContainer) {
+        console.log('Starting drag for:', $element[0].className);
+        this.startDrag(e, $element);
+      }
+    });
+
+    // Make drag handles directly clickable
+    $element.find('.drag-handle').off('mousedown.draghandle').on('mousedown.draghandle', (e) => {
+      this.startDrag(e, $element);
+      e.stopPropagation();
+    });
+
+    // Show/hide drag handle on hover for all draggable elements
     $element.off('mouseenter.layout mouseleave.layout')
       .on('mouseenter.layout', () => {
-        $element.find('.drag-handle').css('opacity', '0.7');
+        $element.find('.drag-handle').css('opacity', '1');
       })
       .on('mouseleave.layout', () => {
         if (!this.isDragging) {
-          $element.find('.drag-handle').css('opacity', '0.3');
+          $element.find('.drag-handle').css('opacity', '0.6');
         }
       });
 
@@ -166,6 +263,34 @@ export class LayoutHandler {
     }
 
     e.preventDefault();
+  }
+
+  /**
+   * Calculate boundaries for dragging within the visible window
+   */
+  getBoundaries($element) {
+    // Get the main sheet container (the actual sheet window)
+    const sheetContainer = this.html.closest('.window-content');
+    if (!sheetContainer.length) return { left: -9999, top: -9999, right: 9999, bottom: 9999 };
+    
+    const containerRect = sheetContainer[0].getBoundingClientRect();
+    const elementRect = $element[0].getBoundingClientRect();
+    
+    // Calculate safe margins (padding from edges)
+    const margin = 10;
+    
+    // Calculate the maximum translation values to keep element within bounds
+    const minX = margin - (elementRect.left - containerRect.left);
+    const maxX = (containerRect.right - margin) - elementRect.right;
+    const minY = margin - (elementRect.top - containerRect.top);
+    const maxY = (containerRect.bottom - margin) - elementRect.bottom;
+    
+    return {
+      left: minX,
+      right: maxX,
+      top: minY,
+      bottom: maxY
+    };
   }
 
   /**
@@ -428,6 +553,13 @@ export class LayoutHandler {
     this.html.find('.draggable-field').css('transform', '');
     this.actor.unsetFlag('osp-houserules', 'layout');
     ui.notifications.info('Layout reset to defaults');
+  }
+
+  /**
+   * Reset all fields to visible area - public method for external use
+   */
+  resetAllFieldsToVisible() {
+    this.resetLayout();
   }
 
   /**

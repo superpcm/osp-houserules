@@ -364,4 +364,33 @@ Hooks.once("ready", () => {
     game.togglePause();
     console.log("osp-houserules: Game automatically unpaused on startup");
   }
+
+  // Add global utility function to reset all character sheet fields
+  window.resetAllCharacterFields = function() {
+    let resetCount = 0;
+    
+    // Find all open character sheets
+    Object.values(ui.windows).forEach(window => {
+      if (window instanceof OspActorSheetCharacter) {
+        try {
+          window.resetAllFieldsToVisible();
+          resetCount++;
+        } catch (error) {
+          console.error('Failed to reset fields for character sheet:', error);
+        }
+      }
+    });
+    
+    if (resetCount > 0) {
+      ui.notifications.info(`Reset fields for ${resetCount} character sheet(s)`);
+      console.log(`osp-houserules: Reset fields for ${resetCount} character sheet(s)`);
+    } else {
+      ui.notifications.warn('No open character sheets found to reset');
+      console.log('osp-houserules: No open character sheets found to reset');
+    }
+    
+    return resetCount;
+  };
+  
+  console.log("osp-houserules: Global utility functions registered. Use resetAllCharacterFields() to reset all draggable fields.");
 });

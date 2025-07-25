@@ -388,9 +388,10 @@ class UIHandler {
 }
 
 class ImageHandler {
-  constructor(html, actor) {
+  constructor(html, actor, layoutHandler = null) {
     this.html = html;
     this.actor = actor;
+    this.layoutHandler = layoutHandler;
     this._isDragging = false;
     this._isResizing = false;
     this.startX = 0;
@@ -664,6 +665,11 @@ class ImageHandler {
   }
 
   saveImageTransform() {
+    // Notify layout handler to prevent auto-loading during image save
+    if (this.layoutHandler) {
+      this.layoutHandler.temporarilyPreventLoad(2000);
+    }
+    
     const image = this.html.find('.character-portrait');
     const transform = this.getTransformValues(image);
     
@@ -699,6 +705,960 @@ class ImageHandler {
     $(document).off('mousemove.imageHandlerResize');
     $(document).off('mouseup.imageHandlerResize');
     console.log('ImageHandler: Destroyed and cleaned up all event listeners');
+  }
+}
+
+/**
+ * LayoutHandler - Manages draggable fields and layout export/import
+ */
+class LayoutHandler {
+  constructor(html, actor) {
+    this.html = html;
+    this.actor = actor;
+    this.isDragging = false;
+    this.currentDragElement = null;
+    this.snapToGrid = false;
+    this.gridSize = 10;
+    this.gridOverlay = null;
+
+    // Store original positions for reset functionality
+    this.originalPositions = new Map();
+    
+    // Flag to prevent loading during manual operations
+    this.preventLoad = false;
+    
+    // Timestamp of last manual save to prevent conflicts
+    this.lastManualSave = 0;
+  }
+
+  /**
+   * Initialize the layout handler
+   */
+  initialize() {
+    this.makeFieldsDraggable();
+    this.addLayoutControls();
+    this.loadSavedLayout();
+  }
+
+  /**
+   * Make form fields draggable
+   */
+  makeFieldsDraggable() {
+    // Target individual draggable elements in the main tab
+    const draggableSelectors = [
+      '.character-name-section',
+      '.xp-progress-section', // XP progress bar section
+      '.char-field-group', // Individual fields only, not their parent containers
+      '.ability-scores',
+      '.saving-throws',
+      '.character-stats'
+    ];
+
+    const mainTab = this.html.find('[data-tab="main"]');
+    
+    draggableSelectors.forEach(selector => {
+      const elements = mainTab.find(selector);
+      elements.each((index, element) => {
+        this.makeDraggable($(element));
+      });
+    });
+  }
+
+  /**
+   * Make a single element draggable
+   */
+  makeDraggable($element) {
+    $element.addClass('draggable-field');
+    $element.css({
+      'position': 'relative',
+      'cursor': 'move',
+      'user-select': 'none'
+    });
+
+    // Add drag handles (optional visual indicator)
+    if (!$element.find('.drag-handle').length) {
+      const dragHandle = $('<div class="drag-handle" title="Drag to move">⋮⋮</div>');
+      dragHandle.css({
+        'position': 'absolute',
+        'top': '2px',
+        'right': '2px',
+        'font-size': '12px',
+        'color': '#666',
+        'cursor': 'move',
+        'opacity': '0.3',
+        'z-index': '10',
+        'pointer-events': 'none'
+      });
+      $element.append(dragHandle);
+    }
+
+    // Bind drag events
+    $element.off('mousedown.layout').on('mousedown.layout', (e) => {
+      // Don't interfere with input interactions
+      if ($(e.target).is('input, select, textarea, button')) return;
+      
+      // Special handling for character name - only drag from drag handle or container edges
+      if ($element.hasClass('character-name-section') || $element.find('#char-name').length) {
+        const isOnDragHandle = $(e.target).hasClass('drag-handle');
+        const isOnEdge = this.isClickOnElementEdge(e, $element);
+        if (!isOnDragHandle && !isOnEdge) return;
+      }
+
+      this.startDrag(e, $element);
+    });
+
+    // Show/hide drag handle on hover
+    $element.off('mouseenter.layout mouseleave.layout')
+      .on('mouseenter.layout', () => {
+        $element.find('.drag-handle').css('opacity', '0.7');
+      })
+      .on('mouseleave.layout', () => {
+        if (!this.isDragging) {
+          $element.find('.drag-handle').css('opacity', '0.3');
+        }
+      });
+
+    // Store original position for reset functionality
+    const originalPosition = {
+      x: 0,
+      y: 0
+    };
+    this.originalPositions.set(this.getElementId($element), originalPosition);
+  }
+
+  /**
+   * Check if click is on element edge (for character name special handling)
+   */
+  isClickOnElementEdge(e, $element) {
+    const rect = $element[0].getBoundingClientRect();
+    const edgeThreshold = 10; // pixels from edge
+    
+    const isNearLeft = e.clientX - rect.left < edgeThreshold;
+    const isNearRight = rect.right - e.clientX < edgeThreshold;
+    const isNearTop = e.clientY - rect.top < edgeThreshold;
+    const isNearBottom = rect.bottom - e.clientY < edgeThreshold;
+    
+    return isNearLeft || isNearRight || isNearTop || isNearBottom;
+  }
+
+  /**
+   * Start drag operation
+   */
+  startDrag(e, $element) {
+    this.isDragging = true;
+    this.currentDragElement = $element;
+    this.dragStartPos = { x: e.clientX, y: e.clientY };
+    
+    // Get current transform values
+    const transform = $element.css('transform');
+    let currentX = 0, currentY = 0;
+    if (transform && transform !== 'none') {
+      const matrix = new DOMMatrix(transform);
+      currentX = matrix.m41;
+      currentY = matrix.m42;
+    }
+    this.elementStartPos = { x: currentX, y: currentY };
+
+    // Visual feedback
+    $element.addClass('dragging');
+    $element.css({
+      'z-index': '1000',
+      'opacity': '0.8'
+    });
+
+    // Bind global events
+    $(document).on('mousemove.layout', (e) => this.onDrag(e));
+    $(document).on('mouseup.layout', () => this.endDrag());
+
+    // Show grid if snap is enabled
+    if (this.snapToGrid) {
+      this.showGrid();
+    }
+
+    e.preventDefault();
+  }
+
+  /**
+   * Handle drag movement
+   */
+  onDrag(e) {
+    if (!this.isDragging || !this.currentDragElement) return;
+
+    const deltaX = e.clientX - this.dragStartPos.x;
+    const deltaY = e.clientY - this.dragStartPos.y;
+
+    let newX = this.elementStartPos.x + deltaX;
+    let newY = this.elementStartPos.y + deltaY;
+
+    // Snap to grid if enabled
+    if (this.snapToGrid) {
+      newX = Math.round(newX / this.gridSize) * this.gridSize;
+      newY = Math.round(newY / this.gridSize) * this.gridSize;
+    }
+
+    // Apply transform
+    this.currentDragElement.css('transform', `translate(${newX}px, ${newY}px)`);
+  }
+
+  /**
+   * End dragging
+   */
+  endDrag() {
+    if (!this.isDragging) return;
+
+    this.isDragging = false;
+
+    if (this.currentDragElement) {
+      this.currentDragElement.removeClass('dragging');
+      this.currentDragElement.css({
+        'z-index': '',
+        'opacity': ''
+      });
+    }
+
+    // Unbind global events
+    $(document).off('mousemove.layout mouseup.layout');
+
+    // Hide grid
+    this.hideGrid();
+
+    // Save layout with debounce to prevent conflicts
+    this.preventLoad = true; // Prevent auto-load during manual save
+    this.lastManualSave = Date.now();
+    
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+    this.saveTimeout = setTimeout(() => {
+      this.saveCurrentLayout();
+      // Re-enable auto-load after a delay
+      setTimeout(() => {
+        this.preventLoad = false;
+      }, 500);
+    }, 150);
+
+    this.currentDragElement = null;
+  }
+
+  /**
+   * Add layout control buttons
+   */
+  addLayoutControls() {
+    const controlsHtml = `
+      <div class="layout-controls" style="position: absolute; top: 5px; right: 5px; z-index: 1001; display: flex; gap: 5px;">
+        <button type="button" class="layout-btn export-layout" title="Export Layout">📁</button>
+        <button type="button" class="layout-btn import-layout" title="Import Layout">📂</button>
+        <button type="button" class="layout-btn reset-layout" title="Reset Layout">↺</button>
+        <button type="button" class="layout-btn toggle-grid" title="Toggle Grid">⊞</button>
+        <button type="button" class="layout-btn toggle-snap" title="Toggle Snap">🧲</button>
+      </div>
+    `;
+
+    // Remove existing controls
+    this.html.find('.layout-controls').remove();
+    
+    // Add to window content
+    this.html.find('.window-content').prepend(controlsHtml);
+
+    // Style buttons
+    this.html.find('.layout-btn').css({
+      'width': '24px',
+      'height': '24px',
+      'border': 'none',
+      'border-radius': '3px',
+      'background': '#4a5568',
+      'color': 'white',
+      'font-size': '12px',
+      'cursor': 'pointer',
+      'display': 'flex',
+      'align-items': 'center',
+      'justify-content': 'center'
+    });
+
+    // Bind events
+    this.html.find('.export-layout').on('click', () => this.exportLayout());
+    this.html.find('.import-layout').on('click', () => this.importLayout());
+    this.html.find('.reset-layout').on('click', () => this.resetLayout());
+    this.html.find('.toggle-grid').on('click', () => this.toggleGrid());
+    this.html.find('.toggle-snap').on('click', () => this.toggleSnap());
+  }
+
+  /**
+   * Show grid overlay
+   */
+  showGrid() {
+    this.hideGrid(); // Remove existing grid
+
+    this.html.find('[data-tab="main"]')[0].getBoundingClientRect();
+    
+    this.gridOverlay = $('<div class="grid-overlay"></div>');
+    this.gridOverlay.css({
+      'position': 'absolute',
+      'top': '0',
+      'left': '0',
+      'width': '100%',
+      'height': '100%',
+      'pointer-events': 'none',
+      'z-index': '999',
+      'background-image': `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+      'background-size': `${this.gridSize}px ${this.gridSize}px`
+    });
+
+    this.html.find('[data-tab="main"]').append(this.gridOverlay);
+  }
+
+  /**
+   * Hide grid overlay
+   */
+  hideGrid() {
+    if (this.gridOverlay) {
+      this.gridOverlay.remove();
+      this.gridOverlay = null;
+    }
+  }
+
+  /**
+   * Toggle grid visibility
+   */
+  toggleGrid() {
+    const button = this.html.find('.toggle-grid');
+    
+    if (this.gridOverlay) {
+      this.hideGrid();
+      button.css('background', '#4a5568');
+    } else {
+      this.showGrid();
+      button.css('background', '#2d3748');
+    }
+  }
+
+  /**
+   * Toggle snap to grid
+   */
+  toggleSnap() {
+    this.snapToGrid = !this.snapToGrid;
+    const button = this.html.find('.toggle-snap');
+    
+    if (this.snapToGrid) {
+      button.css('background', '#2d3748');
+      if (!this.gridOverlay) {
+        this.showGrid();
+      }
+    } else {
+      button.css('background', '#4a5568');
+    }
+  }
+
+  /**
+   * Export current layout
+   */
+  exportLayout() {
+    const positions = {};
+    
+    this.html.find('.draggable-field').each((index, element) => {
+      const $element = $(element);
+      const elementId = this.getElementId($element);
+      
+      const transform = $element.css('transform');
+      let x = 0, y = 0;
+      
+      if (transform && transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        x = matrix.m41;
+        y = matrix.m42;
+      }
+
+      positions[elementId] = { x, y };
+    });
+
+    const layoutData = {
+      version: "1.0",
+      timestamp: new Date().toISOString(),
+      actorId: this.actor.id,
+      actorName: this.actor.name,
+      positions: positions
+    };
+
+    const dataStr = JSON.stringify(layoutData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = `layout-${this.actor.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
+    link.click();
+  }
+
+  /**
+   * Import layout from file
+   */
+  importLayout() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const layoutData = JSON.parse(e.target.result);
+            this.applyLayout(layoutData);
+          } catch (error) {
+            ui.notifications.error('Invalid layout file');
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+    
+    input.click();
+  }
+
+  /**
+   * Apply layout from data
+   */
+  applyLayout(layoutData) {
+    if (!layoutData.positions) return;
+
+    Object.entries(layoutData.positions).forEach(([elementId, position]) => {
+      const $element = this.getElementById(elementId);
+      if ($element && $element.length) {
+        $element.css('transform', `translate(${position.x}px, ${position.y}px)`);
+      }
+    });
+
+    ui.notifications.info('Layout applied successfully');
+  }
+
+  /**
+   * Reset layout to original positions
+   */
+  resetLayout() {
+    this.html.find('.draggable-field').css('transform', '');
+    this.actor.unsetFlag('osp-houserules', 'layout');
+    ui.notifications.info('Layout reset to defaults');
+  }
+
+  /**
+   * Save current layout to actor data
+   */
+  saveCurrentLayout() {
+    const positions = {};
+    
+    this.html.find('.draggable-field').each((index, element) => {
+      const $element = $(element);
+      const elementId = this.getElementId($element);
+      
+      const transform = $element.css('transform');
+      let x = 0, y = 0;
+      
+      if (transform && transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        x = matrix.m41;
+        y = matrix.m42;
+      }
+
+      positions[elementId] = { x, y };
+    });
+
+    // Save to actor flags
+    this.actor.setFlag('osp-houserules', 'layout', positions);
+  }
+
+  /**
+   * Load saved layout from actor data
+   */
+  loadSavedLayout() {
+    // Skip if currently dragging, prevented, or recently saved manually
+    if (this.isDragging || this.preventLoad || (Date.now() - this.lastManualSave < 1000)) {
+      console.log('Skipping layout load:', { 
+        isDragging: this.isDragging, 
+        preventLoad: this.preventLoad, 
+        recentSave: Date.now() - this.lastManualSave < 1000 
+      });
+      return;
+    }
+    
+    const savedLayout = this.actor.getFlag('osp-houserules', 'layout');
+    if (savedLayout) {
+      // Delay application to ensure DOM is ready and not conflicting with other operations
+      if (this.loadTimeout) {
+        clearTimeout(this.loadTimeout);
+      }
+      this.loadTimeout = setTimeout(() => {
+        // Double-check we're not dragging or prevented before applying
+        if (!this.isDragging && !this.preventLoad) {
+          console.log('Applying saved layout');
+          this.applyLayout({ positions: savedLayout });
+        }
+      }, 100);
+    }
+  }
+
+  /**
+   * Get unique ID for an element
+   */
+  getElementId($element) {
+    // Try to find a unique identifier
+    const id = $element.attr('id');
+    if (id) return id;
+
+    const className = $element.attr('class');
+    const index = this.html.find('.' + className.split(' ')[0]).index($element);
+    
+    return `${className.split(' ')[0]}-${index}`;
+  }
+
+  /**
+   * Get element by ID
+   */
+  getElementById(elementId) {
+    // First try direct ID match
+    let $element = this.html.find(`#${elementId}`);
+    if ($element.length) return $element;
+
+    // Try class-based match with index
+    const parts = elementId.split('-');
+    if (parts.length >= 2) {
+      const index = parseInt(parts[parts.length - 1]);
+      const className = parts.slice(0, -1).join('-');
+      $element = this.html.find(`.${className}`).eq(index);
+    }
+
+    return $element;
+  }
+
+  /**
+   * Cleanup handler
+   */
+  destroy() {
+    // Clear any pending timeouts
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+    if (this.loadTimeout) {
+      clearTimeout(this.loadTimeout);
+    }
+    
+    // Remove event listeners
+    this.html.find('.draggable-field').off('.layout');
+    this.html.find('.layout-controls').remove();
+    $(document).off('.layout');
+    
+    // Hide grid
+    this.hideGrid();
+  }
+
+  /**
+   * Temporarily prevent auto-loading (for external operations like image handler)
+   */
+  temporarilyPreventLoad(duration = 1000) {
+    this.preventLoad = true;
+    this.lastManualSave = Date.now();
+    setTimeout(() => {
+      this.preventLoad = false;
+    }, duration);
+  }
+}
+
+/**
+ * CharacterNameHandler - Manages dynamic character name field sizing and behavior
+ */
+class CharacterNameHandler {
+  constructor(html, actor) {
+    this.html = html;
+    this.actor = actor;
+    this.nameInput = null;
+    this.minWidth = 150; // minimum width in pixels
+    this.maxWidth = 400; // maximum width in pixels
+    this.padding = 20; // extra padding for comfortable typing
+  }
+
+  /**
+   * Initialize the character name handler
+   */
+  initialize() {
+    this.nameInput = this.html.find('#char-name');
+    if (this.nameInput.length) {
+      this.setupDynamicWidth();
+      this.bindEvents();
+      this.adjustWidth(); // Initial adjustment
+      
+      // Ensure drag handle is visible for character name container
+      this.ensureDragHandle();
+    }
+  }
+
+  /**
+   * Ensure drag handle is visible and interactive on character name container
+   */
+  ensureDragHandle() {
+    // Use a slight delay to ensure DOM is fully rendered
+    setTimeout(() => {
+      const container = this.nameInput.closest('.character-name-section');
+      if (container.length) {
+        // Make sure container has relative positioning for drag handle
+        if (container.css('position') !== 'relative') {
+          container.css('position', 'relative');
+        }
+        
+        // Check if drag handle already exists (from layout handler)
+        let dragHandle = container.find('.drag-handle');
+        
+        if (dragHandle.length) {
+          // Update existing drag handle to make it interactive
+          dragHandle.css({
+            'pointer-events': 'auto', // Override layout handler's 'none'
+            'opacity': '0.3',
+            'z-index': '10'
+          });
+          console.log('Character name drag handle updated to be interactive');
+        } else {
+          // Create new drag handle if none exists
+          dragHandle = $('<div class="drag-handle" title="Drag to move">⋮⋮</div>');
+          dragHandle.css({
+            'position': 'absolute',
+            'top': '2px',
+            'right': '2px',
+            'font-size': '12px',
+            'color': '#666',
+            'cursor': 'move',
+            'opacity': '0.3',
+            'z-index': '10',
+            'pointer-events': 'auto', // Enable pointer events for drag handle
+            'user-select': 'none',
+            'line-height': '1'
+          });
+          container.append(dragHandle);
+          console.log('Character name drag handle created');
+        }
+        
+        // Ensure hover effects work (remove any existing handlers first)
+        container.off('mouseenter.charname mouseleave.charname');
+        container.on('mouseenter.charname', () => {
+          dragHandle.css('opacity', '0.7');
+        }).on('mouseleave.charname', () => {
+          dragHandle.css('opacity', '0.3');
+        });
+      }
+    }, 300); // Increased delay to ensure layout handler has finished
+  }
+
+  /**
+   * Setup dynamic width functionality
+   */
+  setupDynamicWidth() {
+    // Create a hidden span to measure text width
+    this.measureSpan = $('<span></span>');
+    this.measureSpan.css({
+      'visibility': 'hidden',
+      'position': 'absolute',
+      'white-space': 'nowrap',
+      'font-family': this.nameInput.css('font-family'),
+      'font-size': this.nameInput.css('font-size'),
+      'font-weight': this.nameInput.css('font-weight'),
+      'letter-spacing': this.nameInput.css('letter-spacing')
+    });
+    
+    // Add to DOM for measurement
+    $('body').append(this.measureSpan);
+
+    // Set initial CSS properties for the input
+    this.nameInput.css({
+      'width': 'auto',
+      'min-width': `${this.minWidth}px`,
+      'max-width': `${this.maxWidth}px`,
+      'box-sizing': 'border-box'
+    });
+  }
+
+  /**
+   * Bind events for dynamic width adjustment
+   */
+  bindEvents() {
+    // Adjust width on input, keyup, paste, and focus
+    this.nameInput.on('input keyup paste focus blur', () => {
+      setTimeout(() => this.adjustWidth(), 0);
+    });
+
+    // Also adjust when font properties change (from Council font handler)
+    const observer = new MutationObserver(() => {
+      this.updateMeasureSpanFont();
+      this.adjustWidth();
+    });
+
+    observer.observe(this.nameInput[0], {
+      attributes: true,
+      attributeFilter: ['style']
+    });
+
+    // Store observer for cleanup
+    this.fontObserver = observer;
+  }
+
+  /**
+   * Update measure span font properties to match input
+   */
+  updateMeasureSpanFont() {
+    if (this.measureSpan) {
+      this.measureSpan.css({
+        'font-family': this.nameInput.css('font-family'),
+        'font-size': this.nameInput.css('font-size'),
+        'font-weight': this.nameInput.css('font-weight'),
+        'letter-spacing': this.nameInput.css('letter-spacing')
+      });
+    }
+  }
+
+  /**
+   * Adjust the width of the input based on content
+   */
+  adjustWidth() {
+    if (!this.nameInput || !this.measureSpan) return;
+
+    const text = this.nameInput.val() || this.nameInput.attr('placeholder') || '';
+    
+    // Use the longer of actual text or placeholder for measurement
+    const measureText = text.length > 0 ? text : (this.nameInput.attr('placeholder') || 'Character Name');
+    
+    // Set text in measure span and get width
+    this.measureSpan.text(measureText);
+    let textWidth = this.measureSpan.width();
+
+    // Add padding and constrain to min/max
+    let newWidth = Math.max(textWidth + this.padding, this.minWidth);
+    newWidth = Math.min(newWidth, this.maxWidth);
+
+    // Apply the new width
+    this.nameInput.css('width', `${newWidth}px`);
+
+    // Trigger a custom event for other handlers that might need to know about size changes
+    this.nameInput.trigger('characterNameResize', { width: newWidth, textWidth: textWidth });
+  }
+
+  /**
+   * Set minimum and maximum width constraints
+   */
+  setWidthConstraints(minWidth, maxWidth) {
+    this.minWidth = minWidth;
+    this.maxWidth = maxWidth;
+    
+    this.nameInput.css({
+      'min-width': `${this.minWidth}px`,
+      'max-width': `${this.maxWidth}px`
+    });
+    
+    this.adjustWidth();
+  }
+
+  /**
+   * Get current width information
+   */
+  getWidthInfo() {
+    const currentWidth = this.nameInput.width();
+    const text = this.nameInput.val() || '';
+    
+    return {
+      currentWidth: currentWidth,
+      textLength: text.length,
+      minWidth: this.minWidth,
+      maxWidth: this.maxWidth,
+      isAtMin: currentWidth <= this.minWidth,
+      isAtMax: currentWidth >= this.maxWidth
+    };
+  }
+
+  /**
+   * Force a width adjustment (useful after external changes)
+   */
+  refresh() {
+    this.updateMeasureSpanFont();
+    this.adjustWidth();
+  }
+
+  /**
+   * Cleanup handler
+   */
+  destroy() {
+    if (this.nameInput) {
+      this.nameInput.off('input keyup paste focus blur');
+    }
+    
+    if (this.measureSpan) {
+      this.measureSpan.remove();
+    }
+    
+    if (this.fontObserver) {
+      this.fontObserver.disconnect();
+    }
+  }
+}
+
+/**
+ * XPProgressHandler - Manages XP progress bar functionality and display
+ */
+class XPProgressHandler {
+  constructor(html, actor) {
+    this.html = html;
+    this.actor = actor;
+    this.xpInput = null;
+    this.progressBar = null;
+    this.nextLevelDisplay = null;
+  }
+
+  /**
+   * Initialize the XP progress handler
+   */
+  initialize() {
+    this.xpInput = this.html.find('#char-xp');
+    this.progressBar = this.html.find('.xp-progress-bar');
+    this.nextLevelDisplay = this.html.find('.next-level-xp');
+    this.percentageDisplay = this.html.find('.xp-percentage');
+    
+    if (this.xpInput.length && this.progressBar.length) {
+      this.bindEvents();
+      this.updateProgressBar();
+    }
+  }
+
+  /**
+   * Bind events for XP input changes
+   */
+  bindEvents() {
+    // Update progress bar when XP changes
+    this.xpInput.on('input change', () => {
+      setTimeout(() => this.updateProgressBar(), 0);
+    });
+
+    // Also listen for external updates (like from other handlers)
+    this.html.on('xpChanged', () => {
+      this.updateProgressBar();
+    });
+  }
+
+  /**
+   * Update the progress bar based on current XP and next level requirements
+   */
+  updateProgressBar() {
+    if (!this.xpInput.length || !this.progressBar.length) return;
+
+    const currentXP = parseInt(this.xpInput.val()) || 0;
+    const nextLevelXP = this.getNextLevelXP();
+    const currentLevelXP = this.getCurrentLevelXP();
+    
+    // Calculate progress within current level
+    const xpInCurrentLevel = currentXP - currentLevelXP;
+    const xpNeededForNextLevel = nextLevelXP - currentLevelXP;
+    
+    // Calculate percentage (0-100%)
+    let progressPercentage = 0;
+    if (xpNeededForNextLevel > 0) {
+      progressPercentage = Math.min(100, Math.max(0, (xpInCurrentLevel / xpNeededForNextLevel) * 100));
+    }
+
+    // Update progress bar width
+    this.progressBar.css('width', `${progressPercentage}%`);
+
+    // Update next level display
+    this.nextLevelDisplay.text(nextLevelXP);
+
+    // Update percentage display
+    if (this.percentageDisplay.length) {
+      this.percentageDisplay.text(Math.round(progressPercentage));
+    }
+
+    // Optional: Change bar color if at max level or over XP requirement
+    if (currentXP >= nextLevelXP) {
+      this.progressBar.css('background-color', '#16a34a'); // Darker green when complete
+    } else {
+      this.progressBar.css('background-color', '#22c55e'); // Bright green
+    }
+  }
+
+  /**
+   * Get XP required for next level based on class and current level
+   */
+  getNextLevelXP() {
+    const characterClass = this.actor.system.class;
+    const currentLevel = parseInt(this.actor.system.level) || 1;
+    
+    // XP requirements table - you may need to adjust these based on your system
+    const xpTables = {
+      'Fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000],
+      'Cleric': [0, 1500, 3000, 6000, 13000, 27000, 55000, 110000, 225000, 450000, 675000, 900000, 1125000, 1350000],
+      'Magic-User': [0, 2500, 5000, 10000, 22500, 40000, 60000, 90000, 135000, 250000, 375000, 750000, 1125000, 1500000],
+      'Mage': [0, 2500, 5000, 10000, 22500, 40000, 60000, 90000, 135000, 250000, 375000, 750000, 1125000, 1500000],
+      'Thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000],
+      'Dwarf': [0, 2200, 4400, 8800, 17000, 35000, 70000, 140000, 270000, 400000, 530000, 660000, 790000, 920000],
+      'Elf': [0, 4000, 8000, 16000, 32000, 64000, 120000, 250000, 400000, 600000, 900000, 1200000, 1500000, 1800000],
+      'Hobbit': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000]
+    };
+
+    const table = xpTables[characterClass] || xpTables['Fighter']; // Default to Fighter
+    const nextLevel = Math.min(currentLevel + 1, table.length - 1);
+    
+    return table[nextLevel] || table[table.length - 1];
+  }
+
+  /**
+   * Get XP required for current level
+   */
+  getCurrentLevelXP() {
+    const characterClass = this.actor.system.class;
+    const currentLevel = parseInt(this.actor.system.level) || 1;
+    
+    // Same XP table as above
+    const xpTables = {
+      'Fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000],
+      'Cleric': [0, 1500, 3000, 6000, 13000, 27000, 55000, 110000, 225000, 450000, 675000, 900000, 1125000, 1350000],
+      'Magic-User': [0, 2500, 5000, 10000, 22500, 40000, 60000, 90000, 135000, 250000, 375000, 750000, 1125000, 1500000],
+      'Mage': [0, 2500, 5000, 10000, 22500, 40000, 60000, 90000, 135000, 250000, 375000, 750000, 1125000, 1500000],
+      'Thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000],
+      'Dwarf': [0, 2200, 4400, 8800, 17000, 35000, 70000, 140000, 270000, 400000, 530000, 660000, 790000, 920000],
+      'Elf': [0, 4000, 8000, 16000, 32000, 64000, 120000, 250000, 400000, 600000, 900000, 1200000, 1500000, 1800000],
+      'Hobbit': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000]
+    };
+
+    const table = xpTables[characterClass] || xpTables['Fighter']; // Default to Fighter
+    const levelIndex = Math.max(0, Math.min(currentLevel - 1, table.length - 1));
+    
+    return table[levelIndex] || 0;
+  }
+
+  /**
+   * Get current progress information
+   */
+  getProgressInfo() {
+    const currentXP = parseInt(this.xpInput.val()) || 0;
+    const nextLevelXP = this.getNextLevelXP();
+    const currentLevelXP = this.getCurrentLevelXP();
+    
+    return {
+      currentXP: currentXP,
+      nextLevelXP: nextLevelXP,
+      currentLevelXP: currentLevelXP,
+      progressPercentage: Math.min(100, Math.max(0, ((currentXP - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100))
+    };
+  }
+
+  /**
+   * Force a progress bar update (useful after external changes)
+   */
+  refresh() {
+    this.updateProgressBar();
+  }
+
+  /**
+   * Cleanup handler
+   */
+  destroy() {
+    if (this.xpInput) {
+      this.xpInput.off('input change');
+    }
+    if (this.html) {
+      this.html.off('xpChanged');
+    }
   }
 }
 
@@ -754,34 +1714,34 @@ class OspActorSheetCharacter extends ActorSheet {
     // Only initialize handlers if sheet is editable
     if (!this.options.editable) return;
 
-    // Apply Council font to character name after sheet is ready
-    this.applyCouncilFont(html);
+    // Apply Council font as fallback if CSS doesn't work
+    this.ensureCouncilFont(html);
 
     // Initialize all handlers
     this.initializeHandlers(html);
   }
 
   /**
-   * Apply Council font to character name field
-   * Using the approach discovered during debugging
+   * Ensure Council font is applied - minimal fallback if CSS fails
    */
-  applyCouncilFont(html) {
-    // Wait for fonts to be ready, then apply Council font
-    document.fonts.ready.then(() => {
-      const nameInput = html.find('#char-name')[0] || html.find('.char-name')[0] || html.find('input[name="name"]')[0];
-      if (nameInput) {
-        // Apply font using multiple approaches for maximum compatibility
-        nameInput.style.setProperty('font-family', 'Council, serif', 'important');
-        nameInput.style.setProperty('font-weight', 'bold', 'important');
-        
-        // Double-check after a brief delay to ensure it sticks
-        setTimeout(() => {
-          if (window.getComputedStyle(nameInput).fontFamily.includes('Signika')) {
-            nameInput.style.fontFamily = 'Council, serif';
-          }
-        }, 100);
-      }
-    });
+  ensureCouncilFont(html) {
+    const nameInput = html.find('#char-name')[0];
+    if (nameInput) {
+      // Check if CSS applied correctly after a brief delay
+      setTimeout(() => {
+        const computedStyle = window.getComputedStyle(nameInput);
+        if (!computedStyle.fontFamily.includes('Council')) {
+          // CSS failed, apply via JavaScript as fallback
+          nameInput.style.setProperty('font-family', 'Council, serif', 'important');
+          nameInput.style.setProperty('font-weight', 'normal', 'important');
+          nameInput.style.setProperty('font-size', '3rem', 'important');
+          nameInput.style.setProperty('height', 'auto', 'important');
+          nameInput.style.setProperty('min-height', '1.2em', 'important');
+          nameInput.style.setProperty('line-height', '1.2', 'important');
+          nameInput.style.setProperty('letter-spacing', '0.03em', 'important');
+        }
+      }, 50);
+    }
   }
 
   /**
@@ -791,22 +1751,50 @@ class OspActorSheetCharacter extends ActorSheet {
     // Clean up existing handlers
     this.destroyHandlers();
 
-    // Create and initialize new handlers
+    // Create and initialize new handlers with proper dependencies
     const handlerConfigs = [
       { name: 'raceClass', Handler: RaceClassHandler },
       { name: 'language', Handler: LanguageHandler },
       { name: 'item', Handler: ItemHandler },
       { name: 'ui', Handler: UIHandler },
-      { name: 'image', Handler: ImageHandler }
+      { name: 'layout', Handler: LayoutHandler }, // Create layout handler first
+      { name: 'characterName', Handler: CharacterNameHandler },
+      { name: 'xpProgress', Handler: XPProgressHandler }
     ];
 
+    // Initialize layout handler first
     handlerConfigs.forEach(({ name, Handler }) => {
-      try {
-        const handler = new Handler(html, this.actor);
-        handler.initialize();
-        this.handlers.set(name, handler);
-      } catch (error) {
-        console.error(`Failed to initialize ${name} handler:`, error);
+      if (name === 'layout') {
+        try {
+          const handler = new Handler(html, this.actor);
+          handler.initialize();
+          this.handlers.set(name, handler);
+        } catch (error) {
+          console.error(`Failed to initialize ${name} handler:`, error);
+        }
+      }
+    });
+
+    // Initialize image handler with layout handler reference
+    try {
+      const layoutHandler = this.handlers.get('layout');
+      const imageHandler = new ImageHandler(html, this.actor, layoutHandler);
+      imageHandler.initialize();
+      this.handlers.set('image', imageHandler);
+    } catch (error) {
+      console.error('Failed to initialize image handler:', error);
+    }
+
+    // Initialize remaining handlers
+    handlerConfigs.forEach(({ name, Handler }) => {
+      if (name !== 'layout') { // Skip layout (already done) and image (done above)
+        try {
+          const handler = new Handler(html, this.actor);
+          handler.initialize();
+          this.handlers.set(name, handler);
+        } catch (error) {
+          console.error(`Failed to initialize ${name} handler:`, error);
+        }
       }
     });
   }

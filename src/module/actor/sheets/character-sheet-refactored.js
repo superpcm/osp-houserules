@@ -15,9 +15,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
-      width: 600,
+      width: 700,
       height: 500,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main" }],
+      resizable: false,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],
     });
   }
 
@@ -54,11 +55,150 @@ export class OspActorSheetCharacter extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Manual tab handling
+    this.setupTabSystem(html);
+
     // Only initialize handlers if sheet is editable
     if (!this.options.editable) return;
 
     // Initialize all handlers
     this.initializeHandlers(html);
+  }
+
+  /**
+   * Setup manual tab system
+   */
+  setupTabSystem(html) {
+    console.log('CHARACTER-SHEET-REFACTORED.JS: Setting up tab system...');
+    const tabLinks = html.find('.sheet-tabs a.item');
+    const tabSections = html.find('.sheet-body .tab');
+    
+    console.log('CHARACTER-SHEET-REFACTORED.JS: Found tab links:', tabLinks.length);
+    console.log('CHARACTER-SHEET-REFACTORED.JS: Found tab sections:', tabSections.length);
+
+    // Set initial active tab
+    this.activateTab(html, 'combat');
+
+    // Event delegation from the form level
+    html.on('click', '.sheet-tabs a.item', (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const tabName = $(event.currentTarget).data('tab');
+      console.log('CHARACTER-SHEET-REFACTORED.JS: Tab clicked (delegation):', tabName);
+      this.activateTab(html, tabName);
+    });
+
+    // Native DOM events as backup
+    tabLinks.each((i, el) => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const tabName = $(event.currentTarget).data('tab');
+        console.log('CHARACTER-SHEET-REFACTORED.JS: Tab clicked (native):', tabName);
+        this.activateTab(html, tabName);
+      }, true);
+    });
+    
+    console.log('CHARACTER-SHEET-REFACTORED.JS: Tab system setup complete');
+  }
+
+  /**
+   * Activate a specific tab
+   */
+  activateTab(html, tabName) {
+    const tabLinks = html.find('.sheet-tabs a.item');
+    const tabSections = html.find('.sheet-body .tab');
+
+    // Remove active class from all tabs and sections
+    tabLinks.removeClass('active');
+    tabSections.removeClass('active').hide();
+
+    // Add active class to clicked tab and show corresponding section
+    const activeLink = tabLinks.filter(`[data-tab="${tabName}"]`);
+    const activeSection = tabSections.filter(`[data-tab="${tabName}"]`);
+    
+    activeLink.addClass('active');
+    activeSection.addClass('active').show();
+  }
+
+  /**
+   * Setup manual tab system
+   */
+  setupTabSystem(html) {
+    console.log('Setting up tab system...');
+    const tabLinks = html.find('.sheet-tabs a.item');
+    const tabSections = html.find('.sheet-body .tab');
+    
+    console.log('Found tab links:', tabLinks.length);
+    console.log('Found tab sections:', tabSections.length);
+    
+    tabLinks.each((i, el) => {
+      console.log('Tab link:', $(el).data('tab'), $(el).text());
+    });
+    
+    tabSections.each((i, el) => {
+      console.log('Tab section:', $(el).data('tab'));
+    });
+
+    // Set initial active tab
+    this.activateTab(html, 'combat');
+
+    // Add click handlers to tab links with multiple event binding approaches
+    tabLinks.off('click.tabs'); // Remove any existing handlers
+    
+    // Method 1: Direct jQuery click
+    tabLinks.on('click.tabs', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const tabName = $(event.currentTarget).data('tab');
+      console.log('Tab clicked (jQuery):', tabName);
+      this.activateTab(html, tabName);
+    });
+    
+    // Method 2: Native DOM events
+    tabLinks.each((i, el) => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const tabName = $(event.currentTarget).data('tab');
+        console.log('Tab clicked (native):', tabName);
+        this.activateTab(html, tabName);
+      });
+      
+      // Add visual feedback for debugging
+      el.addEventListener('mousedown', () => {
+        console.log('Tab mousedown detected on:', $(el).data('tab'));
+      });
+    });
+    
+    console.log('Tab system setup complete');
+  }
+
+  /**
+   * Activate a specific tab
+   */
+  activateTab(html, tabName) {
+    console.log('Activating tab:', tabName);
+    const tabLinks = html.find('.sheet-tabs a.item');
+    const tabSections = html.find('.sheet-body .tab');
+
+    console.log('Deactivating all tabs...');
+    // Remove active class from all tabs and sections
+    tabLinks.removeClass('active');
+    tabSections.removeClass('active').hide();
+
+    console.log('Activating tab:', tabName);
+    // Add active class to clicked tab and show corresponding section
+    const activeLink = tabLinks.filter(`[data-tab="${tabName}"]`);
+    const activeSection = tabSections.filter(`[data-tab="${tabName}"]`);
+    
+    console.log('Active link found:', activeLink.length);
+    console.log('Active section found:', activeSection.length);
+    
+    activeLink.addClass('active');
+    activeSection.addClass('active').show();
+    
+    console.log('Tab activation complete');
   }
 
   /**

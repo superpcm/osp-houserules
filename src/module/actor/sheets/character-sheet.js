@@ -3,7 +3,6 @@ import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
 import { ImageHandler } from './handlers/image-handler.js';
-import { LayoutHandler } from './handlers/layout-handler.js';
 import { CharacterNameHandler } from './handlers/character-name-handler.js';
 import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 
@@ -19,9 +18,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
-      width: 600,
+      width: 700,
       height: 500,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "main" }],
+      resizable: false,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],
     });
   }
 
@@ -64,6 +64,149 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Initialize all handlers
     this.initializeHandlers(html);
+
+    // Set up tab system AFTER all other handlers to ensure it has priority
+    setTimeout(() => {
+      this.setupTabSystem(html);
+    }, 100);
+
+    // Add broad click detection for debugging
+    html.on('click', '*', (event) => {
+      if ($(event.target).closest('.sheet-tabs').length > 0) {
+        console.log('CHARACTER-SHEET.JS: Click detected in tab area:', event.target.tagName, event.target.className);
+        console.log('CHARACTER-SHEET.JS: Target data-tab:', $(event.target).data('tab'));
+      }
+    });
+  }
+
+  /**
+   * Setup manual tab system
+   */
+  setupTabSystem(html) {
+    console.log('CHARACTER-SHEET.JS: Setting up tab system...');
+    const tabLinks = html.find('.sheet-tabs a.item');
+    const tabSections = html.find('.sheet-body .tab');
+    
+    console.log('CHARACTER-SHEET.JS: Found tab links:', tabLinks.length);
+    console.log('CHARACTER-SHEET.JS: Found tab sections:', tabSections.length);
+    
+    // Debug: Log each tab link found
+    tabLinks.each((i, el) => {
+      console.log('CHARACTER-SHEET.JS: Tab link element:', el, 'data-tab:', $(el).data('tab'), 'text:', $(el).text().trim());
+    });
+
+    // Force CSS to ensure tabs are always clickable
+    html.find('.sheet-tabs').css({
+      'position': 'relative',
+      'z-index': '9999',
+      'pointer-events': 'auto'
+    });
+    
+    tabLinks.css({
+      'position': 'relative',
+      'z-index': '10000',
+      'pointer-events': 'auto',
+      'cursor': 'pointer'
+    });
+
+    // Set initial active tab
+    this.activateTab(html, 'combat');
+
+    // SUPER AGGRESSIVE APPROACH: Multiple layers of event capture
+    
+    // Method 1: Body-level capture (even higher than document)
+    $('body').off('click.tabsystem').on('click.tabsystem', (event) => {
+      const $target = $(event.target);
+      const $tabItem = $target.closest('.sheet-tabs a.item');
+      if ($tabItem.length > 0 && $tabItem.closest(html).length > 0) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const tabName = $tabItem.data('tab');
+        console.log('CHARACTER-SHEET.JS: Tab clicked (body capture):', tabName);
+        this.activateTab(html, tabName);
+        return false;
+      }
+    });
+
+    // Method 2: Direct element binding with capture phase
+    tabLinks.each((i, el) => {
+      // Override any CSS that might block clicks
+      $(el).css('pointer-events', 'auto !important');
+      
+      // Remove any existing listeners first
+      el.removeEventListener('click', this._handleTabClick, true);
+      el.removeEventListener('click', this._handleTabClick, false);
+      
+      // Create bound handler
+      this._handleTabClick = (event) => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const tabName = $(event.target).data('tab');
+        console.log('CHARACTER-SHEET.JS: Tab clicked (direct capture):', tabName);
+        this.activateTab(html, tabName);
+        return false;
+      };
+      
+      // Bind with capture = true (highest priority)
+      el.addEventListener('click', this._handleTabClick, true);
+      
+      // Also bind as many event types as possible
+      ['mouseup', 'mousedown', 'pointerup', 'touchend'].forEach(eventType => {
+        el.addEventListener(eventType, (event) => {
+          if (eventType === 'mouseup' || eventType === 'pointerup' || eventType === 'touchend') {
+            const tabName = $(event.target).data('tab');
+            console.log(`CHARACTER-SHEET.JS: Tab ${eventType}:`, tabName);
+            this.activateTab(html, tabName);
+          }
+        }, true);
+      });
+    });
+
+    // Method 3: Timer-based activation as ultimate fallback
+    tabLinks.on('mousedown touchstart', (event) => {
+      const $target = $(event.currentTarget);
+      const tabName = $target.data('tab');
+      console.log('CHARACTER-SHEET.JS: Setting timer for tab:', tabName);
+      
+      // Clear any existing timer
+      if (this._tabTimer) clearTimeout(this._tabTimer);
+      
+      // Activate after short delay
+      this._tabTimer = setTimeout(() => {
+        console.log('CHARACTER-SHEET.JS: Timer activation for tab:', tabName);
+        this.activateTab(html, tabName);
+      }, 100);
+    });
+    
+    // Method 4: Form delegation as backup
+    html.off('click.tabsystem').on('click.tabsystem', '.sheet-tabs a.item', (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const tabName = $(event.currentTarget).data('tab');
+      console.log('CHARACTER-SHEET.JS: Tab clicked (form delegation):', tabName);
+      this.activateTab(html, tabName);
+    });
+    
+    console.log('CHARACTER-SHEET.JS: Tab system setup complete');
+  }
+
+  /**
+   * Activate a specific tab
+   */
+  activateTab(html, tabName) {
+    const tabLinks = html.find('.sheet-tabs a.item');
+    const tabSections = html.find('.sheet-body .tab');
+
+    // Remove active class from all tabs and sections
+    tabLinks.removeClass('active');
+    tabSections.removeClass('active').hide();
+
+    // Add active class to clicked tab and show corresponding section
+    const activeLink = tabLinks.filter(`[data-tab="${tabName}"]`);
+    const activeSection = tabSections.filter(`[data-tab="${tabName}"]`);
+    
+    activeLink.addClass('active');
+    activeSection.addClass('active').show();
   }
 
   /**
@@ -102,46 +245,29 @@ export class OspActorSheetCharacter extends ActorSheet {
       { name: 'language', Handler: LanguageHandler },
       { name: 'item', Handler: ItemHandler },
       { name: 'ui', Handler: UIHandler },
-      { name: 'layout', Handler: LayoutHandler }, // Create layout handler first
       { name: 'characterName', Handler: CharacterNameHandler },
       { name: 'xpProgress', Handler: XPProgressHandler }
     ];
 
-    // Initialize layout handler first
+    // Initialize handlers
     handlerConfigs.forEach(({ name, Handler }) => {
-      if (name === 'layout') {
-        try {
-          const handler = new Handler(html, this.actor);
-          handler.initialize();
-          this.handlers.set(name, handler);
-        } catch (error) {
-          console.error(`Failed to initialize ${name} handler:`, error);
-        }
+      try {
+        const handler = new Handler(html, this.actor);
+        handler.initialize();
+        this.handlers.set(name, handler);
+      } catch (error) {
+        console.error(`Failed to initialize ${name} handler:`, error);
       }
     });
 
-    // Initialize image handler with layout handler reference
+    // Initialize image handler without layout handler dependency
     try {
-      const layoutHandler = this.handlers.get('layout');
-      const imageHandler = new ImageHandler(html, this.actor, layoutHandler);
+      const imageHandler = new ImageHandler(html, this.actor, null);
       imageHandler.initialize();
       this.handlers.set('image', imageHandler);
     } catch (error) {
       console.error('Failed to initialize image handler:', error);
     }
-
-    // Initialize remaining handlers
-    handlerConfigs.forEach(({ name, Handler }) => {
-      if (name !== 'layout') { // Skip layout (already done) and image (done above)
-        try {
-          const handler = new Handler(html, this.actor);
-          handler.initialize();
-          this.handlers.set(name, handler);
-        } catch (error) {
-          console.error(`Failed to initialize ${name} handler:`, error);
-        }
-      }
-    });
   }
 
   /**
@@ -165,6 +291,16 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   async close(options = {}) {
     this.destroyHandlers();
+    // Clean up all tab-related event handlers
+    $(document).off('click.tabsystem');
+    $('body').off('click.tabsystem');
+    
+    // Clear any pending timers
+    if (this._tabTimer) {
+      clearTimeout(this._tabTimer);
+      this._tabTimer = null;
+    }
+    
     return super.close(options);
   }
 

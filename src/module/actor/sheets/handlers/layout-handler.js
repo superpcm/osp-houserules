@@ -155,8 +155,13 @@ export class LayoutHandler {
         });
     }
 
-    // Bind drag events
+    // Bind drag events (but exclude tabs)
     $element.off('mousedown.layout').on('mousedown.layout', (e) => {
+      // Skip if clicking on tabs
+      if ($(e.target).closest('.sheet-tabs').length > 0) {
+        return; // Let tab clicks through
+      }
+      
       // Allow dragging from labels, drag handles, and container areas
       const isOnLabel = $(e.target).is('label') || $(e.target).closest('label').length > 0;
       const isOnDragHandle = $(e.target).hasClass('drag-handle');
@@ -404,7 +409,10 @@ export class LayoutHandler {
   showGrid() {
     this.hideGrid(); // Remove existing grid
 
-    const bounds = this.html.find('[data-tab="main"]')[0].getBoundingClientRect();
+    const combatTab = this.html.find('[data-tab="combat"]')[0];
+    if (!combatTab) return; // Exit if combat tab not found
+    
+    const bounds = combatTab.getBoundingClientRect();
     
     this.gridOverlay = $('<div class="grid-overlay"></div>');
     this.gridOverlay.css({
@@ -419,7 +427,7 @@ export class LayoutHandler {
       'background-size': `${this.gridSize}px ${this.gridSize}px`
     });
 
-    this.html.find('[data-tab="main"]').append(this.gridOverlay);
+    this.html.find('[data-tab="combat"]').append(this.gridOverlay);
   }
 
   /**

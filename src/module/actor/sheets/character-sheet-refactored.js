@@ -2,6 +2,7 @@ import { RaceClassHandler } from './handlers/race-class-handler.js';
 import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
+import { ImageHandler } from './handlers/image-handler.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -16,8 +17,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
       width: 700,
-      height: 500,
-      resizable: false,
+      height: 700,
+      resizable: true,
+      minimizable: true,
+      maximizable: false,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],
     });
   }
@@ -213,7 +216,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       { name: 'raceClass', Handler: RaceClassHandler },
       { name: 'language', Handler: LanguageHandler },
       { name: 'item', Handler: ItemHandler },
-      { name: 'ui', Handler: UIHandler }
+      { name: 'ui', Handler: UIHandler },
+      { name: 'image', Handler: ImageHandler }
     ];
 
     handlerConfigs.forEach(({ name, Handler }) => {

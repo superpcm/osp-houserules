@@ -1,0 +1,39 @@
+/* Temporary Grid Overlay for Positioning Help */
+/* Add this to your character-sheet.html <style> section temporarily */
+
+.ability-scores-section.debug-mode::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(255,0,0,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,0,0,0.3) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.ability-scores-section.debug-mode .abilities-overlay {
+  z-index: 1001;
+}
+
+/* Add numbered markers at key positions */
+.ability-scores-section.debug-mode::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background-image: 
+    radial-gradient(circle at 16.66% 50%, red 2px, transparent 3px),
+    radial-gradient(circle at 33.33% 50%, red 2px, transparent 3px),
+    radial-gradient(circle at 50% 50%, red 2px, transparent 3px),
+    radial-gradient(circle at 66.66% 50%, red 2px, transparent 3px),
+    radial-gradient(circle at 83.33% 50%, red 2px, transparent 3px);
+  pointer-events: none;
+  z-index: 1002;
+}

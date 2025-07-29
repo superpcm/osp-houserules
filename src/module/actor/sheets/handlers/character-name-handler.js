@@ -21,64 +21,30 @@ export class CharacterNameHandler {
       this.bindEvents();
       this.adjustWidth(); // Initial adjustment
       
-      // Ensure drag handle is visible for character name container
+      // Remove any drag handle from character name container
       this.ensureDragHandle();
     }
   }
 
   /**
-   * Ensure drag handle is visible and interactive on character name container
+   * Remove any drag handle from character name container
    */
   ensureDragHandle() {
     // Use a slight delay to ensure DOM is fully rendered
     setTimeout(() => {
       const container = this.nameInput.closest('.character-name-section');
       if (container.length) {
-        // Make sure container has relative positioning for drag handle
-        if (container.css('position') !== 'relative') {
-          container.css('position', 'relative');
-        }
-        
-        // Check if drag handle already exists (from layout handler)
-        let dragHandle = container.find('.drag-handle');
-        
+        // Remove any existing drag handle
+        const dragHandle = container.find('.drag-handle');
         if (dragHandle.length) {
-          // Update existing drag handle to make it interactive
-          dragHandle.css({
-            'pointer-events': 'auto', // Override layout handler's 'none'
-            'opacity': '0.3',
-            'z-index': '10'
-          });
-          console.log('Character name drag handle updated to be interactive');
-        } else {
-          // Create new drag handle if none exists
-          dragHandle = $('<div class="drag-handle" title="Drag to move">⋮⋮</div>');
-          dragHandle.css({
-            'position': 'absolute',
-            'top': '2px',
-            'right': '2px',
-            'font-size': '12px',
-            'color': '#666',
-            'cursor': 'move',
-            'opacity': '0.3',
-            'z-index': '10',
-            'pointer-events': 'auto', // Enable pointer events for drag handle
-            'user-select': 'none',
-            'line-height': '1'
-          });
-          container.append(dragHandle);
-          console.log('Character name drag handle created');
+          dragHandle.remove();
+          console.log('Character name drag handle removed');
         }
         
-        // Ensure hover effects work (remove any existing handlers first)
+        // Remove any drag-related event handlers
         container.off('mouseenter.charname mouseleave.charname');
-        container.on('mouseenter.charname', () => {
-          dragHandle.css('opacity', '0.7');
-        }).on('mouseleave.charname', () => {
-          dragHandle.css('opacity', '0.3');
-        });
       }
-    }, 300); // Increased delay to ensure layout handler has finished
+    }, 300);
   }
 
   /**

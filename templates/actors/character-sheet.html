@@ -176,8 +176,8 @@
           <div style="display: flex; gap: 0.75rem; justify-content: center; align-items: end;">
             <!-- Character Class -->
             <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-              <label for="char-class" style="margin-bottom: 0.25rem; font-size: 12px;">Class</label>
-              <select class="char-class" id="char-class" name="system.class" style="width: 100px; height: 2em; text-align: center; font-size: 12px;">
+              <label for="char-class" style="font-size: 18px; font-family: 'Futura Condensed', sans-serif;">Class</label>
+              <select class="char-class" id="char-class" name="system.class" style="width: 90px; height: 1.5em; text-align: center; font-size: 18px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 3px 0 0 0; margin: 0;">
                 <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
                 <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
                 <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
@@ -204,8 +204,8 @@
             
             <!-- Character Level -->
             <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-              <label for="char-level" style="margin-bottom: 0.25rem; font-size: 12px;">Level</label>
-              <select class="char-level" id="char-level" name="system.level" style="width: 60px; height: 2em; text-align: center; font-size: 12px;">
+              <label for="char-level" style="font-size: 18px; font-family: 'Futura Condensed', sans-serif;">Level</label>
+              <select class="char-level" id="char-level" name="system.level" style="width: 50px; height: 50px; text-align: center; font-size: 36px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 0 0 0; margin: 0;">
                 <option value="1" {{#if (eq system.level "1")}}selected{{/if}}>1</option>
                 <option value="2" {{#if (eq system.level "2")}}selected{{/if}}>2</option>
                 <option value="3" {{#if (eq system.level "3")}}selected{{/if}}>3</option>
@@ -225,18 +225,88 @@
             
             <!-- Character Alignment -->
             <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-              <label for="char-align" style="margin-bottom: 0.25rem; font-size: 12px;">Alignment</label>
-              <select class="char-align" id="char-align" name="system.alignment" style="width: 80px; height: 2em; text-align: center; font-size: 12px;">
+              <label for="char-align" style="font-size: 18px; font-family: 'Futura Condensed', sans-serif;">Alignment</label>
+              <select class="char-align" id="char-align" name="system.alignment" style="width: 65px; height: 1.5em; text-align: center; font-size: 18px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 3px 0 0 0; margin: 0;">
                 <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
                 <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
                 <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
               </select>
             </div>
           </div>
+          
+          <!-- Ability Scores Row -->
+          <div class="ability-scores-section" style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+              <label style="font-size: 30px; font-family: 'Council', serif; letter-spacing: 0.03em;">STR</label>
+              <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 50px; height: 50px; text-align: center; font-size: 36px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(3px);">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
+              <div style="margin-top: -8px; font-size: 10px; color: #ffffff; border: 1px solid #000; border-radius: 50%; width: 25px; height: 20px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+                {{abilityMod system.attributes.str.value}}
+              </div>
+            </div>
+            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+              <label style="font-size: 30px; font-family: 'Council', serif; letter-spacing: 0.03em;">DEX</label>
+              <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 50px; height: 50px; text-align: center; font-size: 36px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(3px);">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
+              <div style="margin-top: -8px; font-size: 10px; color: #ffffff; border: 1px solid #000; border-radius: 50%; width: 25px; height: 20px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+                {{abilityMod system.attributes.dex.value}}
+              </div>
+            </div>
+            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+              <label style="font-size: 30px; font-family: 'Council', serif; letter-spacing: 0.03em;">CON</label>
+              <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 50px; height: 50px; text-align: center; font-size: 36px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(3px);">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
+              <div style="margin-top: -8px; font-size: 10px; color: #ffffff; border: 1px solid #000; border-radius: 50%; width: 25px; height: 20px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+                {{abilityMod system.attributes.con.value}}
+              </div>
+            </div>
+            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+              <label style="font-size: 30px; font-family: 'Council', serif; letter-spacing: 0.03em;">INT</label>
+              <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 50px; height: 50px; text-align: center; font-size: 36px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(3px);">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
+              <div style="margin-top: -8px; font-size: 10px; color: #ffffff; border: 1px solid #000; border-radius: 50%; width: 25px; height: 20px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+                {{abilityMod system.attributes.int.value}}
+              </div>
+            </div>
+            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+              <label style="font-size: 30px; font-family: 'Council', serif; letter-spacing: 0.03em;">WIS</label>
+              <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 50px; height: 50px; text-align: center; font-size: 36px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(3px);">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
+              <div style="margin-top: -8px; font-size: 10px; color: #ffffff; border: 1px solid #000; border-radius: 50%; width: 25px; height: 20px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+                {{abilityMod system.attributes.wis.value}}
+              </div>
+            </div>
+            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+              <label style="font-size: 30px; font-family: 'Council', serif; letter-spacing: 0.03em;">CHA</label>
+              <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 50px; height: 50px; text-align: center; font-size: 36px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(3px);">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
+              <div style="margin-top: -8px; font-size: 10px; color: #ffffff; border: 1px solid #000; border-radius: 50%; width: 25px; height: 20px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+                {{abilityMod system.attributes.cha.value}}
+              </div>
+            </div>
+          </div>
         </div>
         
         <!-- Right Side: XP Progress -->
-        <div class="char-field-group xp-progress-section" style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; line-height: 1;">>
+        <div class="char-field-group xp-progress-section" style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; line-height: 1;">
           <div style="display: flex; align-items: center; margin-bottom: -2px; line-height: 1;">
             <button class="xp-award-btn" type="button" title="Award XP" style="border: none; background: none; color: #333; font-size: 12px; cursor: pointer; padding: 0; margin-right: 1px; line-height: 1; position: relative; top: -1px;">+</button>
             <div class="xp-display" style="display: flex; align-items: center; font-size: 10px; line-height: 1;">
@@ -310,76 +380,6 @@
             <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
               <label for="char-max-hp" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Max HP</label>
               <input class="char-max-hp" id="char-max-hp" name="system.maxhitpoints" type="number" value="{{system.maxhitpoints}}" min="0" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;" />
-            </div>
-          </div>
-
-          <h3>Ability Scores</h3>
-          <div class="ability-scores" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
-            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">STR</label>
-              <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 60px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-              <div style="margin-top: 0.25rem; font-size: 10px;">
-                Mod: {{abilityMod system.attributes.str.value}}
-              </div>
-            </div>
-            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">DEX</label>
-              <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 60px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-              <div style="margin-top: 0.25rem; font-size: 10px;">
-                Mod: {{abilityMod system.attributes.dex.value}}
-              </div>
-            </div>
-            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">CON</label>
-              <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 60px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-              <div style="margin-top: 0.25rem; font-size: 10px;">
-                Mod: {{abilityMod system.attributes.con.value}}
-              </div>
-            </div>
-            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">INT</label>
-              <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 60px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-              <div style="margin-top: 0.25rem; font-size: 10px;">
-                Mod: {{abilityMod system.attributes.int.value}}
-              </div>
-            </div>
-            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">WIS</label>
-              <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 60px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-              <div style="margin-top: 0.25rem; font-size: 10px;">
-                Mod: {{abilityMod system.attributes.wis.value}}
-              </div>
-            </div>
-            <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">CHA</label>
-              <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 60px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-              <div style="margin-top: 0.25rem; font-size: 10px;">
-                Mod: {{abilityMod system.attributes.cha.value}}
-              </div>
             </div>
           </div>
 

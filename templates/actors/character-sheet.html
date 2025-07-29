@@ -43,54 +43,11 @@
       background: transparent !important;
     }
     
-    /* Form field background color */
-    form.osp.sheet.actor.character input,
-    form.osp.sheet.actor.character textarea,
-    form.osp.sheet.actor.character select,
-    .osp.sheet.actor.character input,
-    .osp.sheet.actor.character textarea,
-    .osp.sheet.actor.character select {
-      background-color: #dae9d4 !important;
-    }
-    
-    /* Calculated field background color */
-    form.osp.sheet.actor.character .calculated-field,
-    form.osp.sheet.actor.character input[readonly],
-    form.osp.sheet.actor.character input[disabled],
-    form.osp.sheet.actor.character .calculated-value,
-    form.osp.sheet.actor.character .auto-calculated,
-    .osp.sheet.actor.character .calculated-field,
-    .osp.sheet.actor.character input[readonly],
-    .osp.sheet.actor.character input[disabled],
-    .osp.sheet.actor.character .calculated-value,
-    .osp.sheet.actor.character .auto-calculated {
-      background-color: #dae9d4 !important;
-    }
-    
-    /* XP bar background color */
-    form.osp.sheet.actor.character .xp-progress-container,
-    .osp.sheet.actor.character .xp-progress-container {
-      background-color: #dae9d4 !important;
-    }
-    
+  
     /* XP progress bar should be visible with different color */
     form.osp.sheet.actor.character .xp-progress-bar,
     .osp.sheet.actor.character .xp-progress-bar {
       background-color: #4a90e2 !important;
-    }
-    
-    /* Unarmored AC background color */
-    form.osp.sheet.actor.character .combat-stat div[style*="border: 2px solid #4a5568"],
-    .osp.sheet.actor.character .combat-stat div[style*="border: 2px solid #4a5568"] {
-      background-color: #dae9d4 !important;
-    }
-    
-    /* Saving throw fields background color */
-    form.osp.sheet.actor.character .save div[style*="border: 2px solid #4a5568"],
-    form.osp.sheet.actor.character .saving-throws .save div,
-    .osp.sheet.actor.character .save div[style*="border: 2px solid #4a5568"],
-    .osp.sheet.actor.character .saving-throws .save div {
-      background-color: #dae9d4 !important;
     }
     
     /* Tab system styles */
@@ -172,7 +129,7 @@
             <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="border: none; background: transparent; padding: 0; text-align: center; width: 100%; font-size: 1.4rem; font-weight: bold; outline: none; box-shadow: none;"/>
           </div>
           
-          <!-- Class, Level, Alignment Row -->
+          <!-- Class, Alignment Row -->
           <div style="display: flex; gap: 0.75rem; justify-content: center; align-items: end;">
             <!-- Character Class -->
             <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
@@ -199,27 +156,6 @@
                 <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
                 <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
                 <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
-              </select>
-            </div>
-            
-            <!-- Character Level -->
-            <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-              <label for="char-level" style="font-size: 18px; font-family: 'Futura Condensed', sans-serif;">Level</label>
-              <select class="char-level" id="char-level" name="system.level" style="width: 50px; height: 50px; text-align: center; font-size: 36px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 0 0 0; margin: 0;">
-                <option value="1" {{#if (eq system.level "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.level "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.level "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.level "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.level "5")}}selected{{/if}}>5</option>
-                <option value="6" {{#if (eq system.level "6")}}selected{{/if}}>6</option>
-                <option value="7" {{#if (eq system.level "7")}}selected{{/if}}>7</option>
-                <option value="8" {{#if (eq system.level "8")}}selected{{/if}}>8</option>
-                <option value="9" {{#if (eq system.level "9")}}selected{{/if}}>9</option>
-                <option value="10" {{#if (eq system.level "10")}}selected{{/if}}>10</option>
-                <option value="11" {{#if (eq system.level "11")}}selected{{/if}}>11</option>
-                <option value="12" {{#if (eq system.level "12")}}selected{{/if}}>12</option>
-                <option value="13" {{#if (eq system.level "13")}}selected{{/if}}>13</option>
-                <option value="14" {{#if (eq system.level "14")}}selected{{/if}}>14</option>
               </select>
             </div>
             
@@ -307,6 +243,26 @@
         
         <!-- Right Side: XP Progress -->
         <div class="char-field-group xp-progress-section" style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; line-height: 1;">
+          <!-- Character Level -->
+          <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5rem;">
+            <label for="char-level" style="font-size: 18px; font-family: 'Futura Condensed', sans-serif;">Level</label>
+            <select class="char-level" id="char-level" name="system.level" style="width: 50px; height: 50px; text-align: center; font-size: 36px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 0 0 0; margin: 0;">
+              <option value="1" {{#if (eq system.level "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.level "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.level "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.level "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.level "5")}}selected{{/if}}>5</option>
+              <option value="6" {{#if (eq system.level "6")}}selected{{/if}}>6</option>
+              <option value="7" {{#if (eq system.level "7")}}selected{{/if}}>7</option>
+              <option value="8" {{#if (eq system.level "8")}}selected{{/if}}>8</option>
+              <option value="9" {{#if (eq system.level "9")}}selected{{/if}}>9</option>
+              <option value="10" {{#if (eq system.level "10")}}selected{{/if}}>10</option>
+              <option value="11" {{#if (eq system.level "11")}}selected{{/if}}>11</option>
+              <option value="12" {{#if (eq system.level "12")}}selected{{/if}}>12</option>
+              <option value="13" {{#if (eq system.level "13")}}selected{{/if}}>13</option>
+              <option value="14" {{#if (eq system.level "14")}}selected{{/if}}>14</option>
+            </select>
+          </div>
           <div style="display: flex; align-items: center; margin-bottom: -2px; line-height: 1;">
             <button class="xp-award-btn" type="button" title="Award XP" style="border: none; background: none; color: #333; font-size: 12px; cursor: pointer; padding: 0; margin-right: 1px; line-height: 1; position: relative; top: -1px;">+</button>
             <div class="xp-display" style="display: flex; align-items: center; font-size: 10px; line-height: 1;">
@@ -365,21 +321,21 @@
           <div class="combat-stats" style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
             <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
               <label for="char-ac" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Armor Class</label>
-              <input class="char-ac" id="char-ac" name="system.ac" type="number" value="{{system.ac}}" min="0" max="20" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;" />
+              <input class="char-ac" id="char-ac" name="system.ac" type="number" value="{{system.ac}}" min="0" max="20" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; background-color: white;" />
             </div>
             <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
               <label style="margin-bottom: 0.5rem; font-size: 1.1rem;">Unarmored AC</label>
-              <div style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              <div style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white;">
                 {{unarmoredAC system.attributes.dex.value}}
               </div>
             </div>
             <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
               <label for="char-hp" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Current HP</label>
-              <input class="char-hp" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;" />
+              <input class="char-hp" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; background-color: white;" />
             </div>
             <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
               <label for="char-max-hp" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Max HP</label>
-              <input class="char-max-hp" id="char-max-hp" name="system.maxhitpoints" type="number" value="{{system.maxhitpoints}}" min="0" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px;" />
+              <input class="char-max-hp" id="char-max-hp" name="system.maxhitpoints" type="number" value="{{system.maxhitpoints}}" min="0" style="width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; background-color: white;" />
             </div>
           </div>
 
@@ -387,31 +343,31 @@
           <div class="saving-throws" style="display: flex; gap: 1rem; flex-wrap: wrap;">
             <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
               <label style="margin-bottom: 0.25rem;">Death Ray / Poison</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
                 {{saves.death.value}}
               </div>
             </div>
             <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
               <label style="margin-bottom: 0.25rem;">Magic Wands</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
                 {{saves.wands.value}}
               </div>
             </div>
             <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
               <label style="margin-bottom: 0.25rem;">Paralysis / Turn to Stone</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
                 {{saves.paralysis.value}}
               </div>
             </div>
             <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
               <label style="margin-bottom: 0.25rem;">Dragon Breath</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
                 {{saves.breath.value}}
               </div>
             </div>
             <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
               <label style="margin-bottom: 0.25rem;">Rod / Staff / Spell</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
                 {{saves.spells.value}}
               </div>
             </div>
@@ -699,7 +655,7 @@
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start; min-height: 60px; padding: 10px;">
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-race" style="margin-bottom: 2px; text-align: center; font-size: 14px;">Race</label>
-                <select class="char-race" id="char-race" name="system.race" style="width: 80px; height: 2.5em; text-align: center;">
+                <select class="char-race" id="char-race" name="system.race" style="width: 80px; height: 2.5em; text-align: center; background-color: white;">
                   <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
                   <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
                   <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
@@ -711,7 +667,7 @@
               </div>
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-sex" style="margin-bottom: 2px; text-align: center; font-size: 14px;">Sex</label>
-                <select class="char-sex" id="char-sex" name="system.sex" style="width: 70px; height: 2.5em; text-align: center;">
+                <select class="char-sex" id="char-sex" name="system.sex" style="width: 70px; height: 2.5em; text-align: center; background-color: white;">
                   <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>Male</option>
                   <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>Female</option>
                   <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>Other</option>
@@ -719,15 +675,15 @@
               </div>
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-age" style="margin-bottom: 2px; text-align: center; font-size: 14px;">Age</label>
-                <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 60px; height: 2.5em; text-align: center;" />
+                <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 60px; height: 2.5em; text-align: center; background-color: white;" />
               </div>
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-height" style="margin-bottom: 2px; text-align: center; font-size: 14px;">Height</label>
-                <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 70px; height: 2.5em; text-align: center;" />
+                <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 70px; height: 2.5em; text-align: center; background-color: white;" />
               </div>
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-weight" style="margin-bottom: 2px; text-align: center; font-size: 14px;">Weight</label>
-                <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 70px; height: 2.5em; text-align: center;" />
+                <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 70px; height: 2.5em; text-align: center; background-color: white;" />
               </div>
             </div>
           </div>
@@ -739,7 +695,7 @@
               <!-- Background Field -->
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: flex-start;">
                 <label for="char-background" style="margin-bottom: 0.5rem;">Background</label>
-                <select class="char-background" id="char-background" name="system.background" style="width: 180px; height: 2.5em; text-align: left; font-size: 14px; padding: 0.25rem;">
+                <select class="char-background" id="char-background" name="system.background" style="width: 180px; height: 2.5em; text-align: left; font-size: 14px; padding: 0.25rem; background-color: white;">
                   <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
                   <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
                   <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
@@ -850,7 +806,7 @@
                   <label for="char-languages">Languages</label>
                   <button type="button" class="open-language-dialog" title="Add Language"></button>
                 </div>
-                <div class="languages-row" style="border: 1px solid #ccc; border-radius: 3px; padding: 0.5rem; min-height: 2.5em; width: 100%;">
+                <div class="languages-row" style="border: 1px solid #ccc; border-radius: 3px; padding: 0.5rem; min-height: 2.5em; width: 100%; background-color: white;">
                   <div class="languages-tags"></div>
                 </div>
                 <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
@@ -862,35 +818,35 @@
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Appearance</h3>
             <textarea name="system.bio.appearance" placeholder="Describe your character's physical appearance..." 
-                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.appearance}}</textarea>
+                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.appearance}}</textarea>
           </div>
 
           <!-- Character Personality -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Personality</h3>
             <textarea name="system.bio.personality" placeholder="Describe your character's personality, traits, and mannerisms..." 
-                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.personality}}</textarea>
+                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.personality}}</textarea>
           </div>
 
           <!-- Character Background/History -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Background & History</h3>
             <textarea name="system.bio.history" placeholder="Tell your character's story, background, and important life events..." 
-                      style="width: 100%; min-height: 120px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.history}}</textarea>
+                      style="width: 100%; min-height: 120px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.history}}</textarea>
           </div>
 
           <!-- Character Goals & Motivations -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Goals & Motivations</h3>
             <textarea name="system.bio.goals" placeholder="What drives your character? What are their goals and motivations..." 
-                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.goals}}</textarea>
+                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.goals}}</textarea>
           </div>
 
           <!-- Additional Notes -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Additional Notes</h3>
             <textarea name="system.bio.notes" placeholder="Any additional notes, relationships, or important details..." 
-                      style="width: 100%; min-height: 100px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit;">{{system.bio.notes}}</textarea>
+                      style="width: 100%; min-height: 100px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.notes}}</textarea>
           </div>
 
         </div>

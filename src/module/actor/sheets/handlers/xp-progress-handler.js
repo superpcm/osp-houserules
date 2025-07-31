@@ -18,12 +18,27 @@ export class XPProgressHandler {
     this.xpDisplay = this.html.find('.char-xp');
     this.xpAwardBtn = this.html.find('.xp-award-btn');
     this.progressBar = this.html.find('.xp-progress-bar');
+    this.levelXpProgress = this.html.find('.level-xp-progress');
     this.nextLevelDisplay = this.html.find('.next-level-xp');
     this.percentageDisplay = this.html.find('.xp-percentage');
     
-    if (this.progressBar.length) {
-      this.bindEvents();
-      this.updateProgressBar();
+    console.log('XP Progress Handler - Elements found:', {
+      xpDisplay: this.xpDisplay.length,
+      xpAwardBtn: this.xpAwardBtn.length,
+      progressBar: this.progressBar.length,
+      levelXpProgress: this.levelXpProgress.length,
+      nextLevelDisplay: this.nextLevelDisplay.length,
+      percentageDisplay: this.percentageDisplay.length
+    });
+    
+    this.bindEvents();
+    
+    // Update both progress bars if they exist
+    if (this.progressBar.length || this.levelXpProgress.length) {
+      // Force immediate update with delay to ensure DOM is ready
+      setTimeout(() => {
+        this.updateProgressBar();
+      }, 250);
     }
   }
 
@@ -43,6 +58,18 @@ export class XPProgressHandler {
     this.html.on('xpChanged', () => {
       this.updateProgressBar();
     });
+
+    // Listen for changes to the XP field directly
+    this.html.on('change', '.char-xp', () => {
+      console.log('XP field changed, updating progress bar...');
+      setTimeout(() => this.updateProgressBar(), 50);
+    });
+
+    // Listen for changes to the level field
+    this.html.on('change', '.char-level', () => {
+      console.log('Level field changed, updating progress bar...');
+      setTimeout(() => this.updateProgressBar(), 50);
+    });
   }
 
   /**
@@ -50,6 +77,7 @@ export class XPProgressHandler {
    */
   async showXPAwardDialog() {
     const currentXP = parseInt(this.actor.system.xp) || 0;
+    const nextLevelXP = this.getNextLevelXP();
     const xpMod = this.getXPModifier();
     
     // Create dialog content
@@ -58,6 +86,9 @@ export class XPProgressHandler {
         <div style="flex: 1;">
           <div style="margin-bottom: 10px;">
             <strong>Current XP:</strong> ${currentXP}
+          </div>
+          <div style="margin-bottom: 10px;">
+            <strong>Next Level XP:</strong> ${nextLevelXP}
           </div>
           <div style="margin-bottom: 10px;">
             <strong>XP Modifier:</strong> ${xpMod >= 0 ? '+' : ''}${xpMod}%
@@ -229,8 +260,6 @@ export class XPProgressHandler {
    * Update the progress bar based on current XP and next level requirements
    */
   updateProgressBar() {
-    if (!this.progressBar.length) return;
-
     const currentXP = parseInt(this.actor.system.xp) || 0;
     const nextLevelXP = this.getNextLevelXP();
     const currentLevelXP = this.getCurrentLevelXP();
@@ -245,27 +274,67 @@ export class XPProgressHandler {
       progressPercentage = Math.min(100, Math.max(0, (xpInCurrentLevel / xpNeededForNextLevel) * 100));
     }
 
-    // Update progress bar width
-    this.progressBar.css('width', `${progressPercentage}%`);
+    console.log('XP Progress Debug:', {
+      currentXP,
+      nextLevelXP,
+      currentLevelXP,
+      xpInCurrentLevel,
+      xpNeededForNextLevel,
+      progressPercentage,
+      levelXpProgressFound: this.levelXpProgress.length
+    });
+
+    // Update horizontal progress bar (if it exists)
+    if (this.progressBar.length) {
+      this.progressBar.css('width', `${progressPercentage}%`);
+      
+      // Optional: Change bar color if at max level or over XP requirement
+      if (currentXP >= nextLevelXP) {
+        this.progressBar.css('background-color', '#16a34a'); // Darker green when complete
+      } else {
+        this.progressBar.css('background-color', '#22c55e'); // Bright green
+      }
+    }
+
+    // Update vertical level field progress bar (if it exists)
+    if (this.levelXpProgress.length) {
+      console.log('Updating level XP progress bar height to:', `${progressPercentage}%`);
+      this.levelXpProgress.css('height', `${progressPercentage}%`);
+      
+      // Calculate top border radius based on progress (gradual transition starting at 90%)
+      let topRadius = 0;
+      if (progressPercentage >= 90) {
+        // Linear interpolation: at 90% = 0px, at 100% = 9px
+        const radiusProgress = (progressPercentage - 90) / 10; // 0 to 1 scale
+        topRadius = Math.min(9, radiusProgress * 9); // 0px to 9px
+      }
+      
+      // Update the CSS custom property for top border radius
+      this.levelXpProgress.css('--progress-top-radius', `${topRadius}px`);
+      
+      // Set background color based on progress
+      if (currentXP >= nextLevelXP) {
+        this.levelXpProgress.css('background', 'linear-gradient(to top, #16a34a 0%, #22c55e 100%)'); // Darker green when complete
+      } else {
+        this.levelXpProgress.css('background', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)'); // Green gradient
+      }
+    } else {
+      console.log('Level XP progress element not found!');
+    }
 
     // Update next level display
-    this.nextLevelDisplay.text(nextLevelXP);
+    if (this.nextLevelDisplay.length) {
+      this.nextLevelDisplay.text(nextLevelXP);
+    }
 
     // Update percentage display
     if (this.percentageDisplay.length) {
-      this.percentageDisplay.text(Math.round(progressPercentage));
+      this.percentageDisplay.text(Math.round(progressPercentage) + '%');
     }
 
     // Update XP display if it exists
     if (this.xpDisplay.length) {
       this.xpDisplay.text(currentXP);
-    }
-
-    // Optional: Change bar color if at max level or over XP requirement
-    if (currentXP >= nextLevelXP) {
-      this.progressBar.css('background-color', '#16a34a'); // Darker green when complete
-    } else {
-      this.progressBar.css('background-color', '#22c55e'); // Bright green
     }
   }
 
@@ -340,6 +409,20 @@ export class XPProgressHandler {
    */
   refresh() {
     this.updateProgressBar();
+  }
+
+  /**
+   * Test the progress bar with a specific percentage (for debugging)
+   */
+  testProgressBar(percentage = 50) {
+    console.log(`Testing progress bar with ${percentage}%`);
+    if (this.levelXpProgress.length) {
+      this.levelXpProgress.css('height', `${percentage}%`);
+      this.levelXpProgress.css('background', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
+      console.log(`Progress bar height set to ${percentage}%`);
+    } else {
+      console.log('Level XP progress element not found for testing');
+    }
   }
 
   /**

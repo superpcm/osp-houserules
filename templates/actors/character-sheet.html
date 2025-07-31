@@ -128,15 +128,15 @@
           <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem; min-width: 200px;">
             <!-- Character Name -->
             <div class="character-name-section" style="text-align: center;">
-              <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="border: none; background: transparent; padding: 0; text-align: center; width: 100%; font-size: 1.4rem; font-weight: bold; outline: none; box-shadow: none;"/>
+              <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="border: none; background: transparent; padding: 0; text-align: center; width: 100%; font-size: 45px; font-weight: bold; outline: none; box-shadow: none;"/>
             </div>
             
             <!-- Class, Alignment, Level Row -->
             <div style="display: flex; gap: 0.75rem; justify-content: center; align-items: end; flex-wrap: wrap;">
               <!-- Character Class -->
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-                <label for="char-class" style="font-size: 18px; font-family: 'Futura Condensed', sans-serif;">Class</label>
-                <select class="char-class" id="char-class" name="system.class" style="width: 90px; height: 1.5em; text-align: center; font-size: 18px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 3px 0 0 0; margin: 0;">
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
+                <label for="char-class" style="font-size: 25px; font-family: 'Council', serif; letter-spacing: 0.03em; margin-bottom: -2px;">Class</label>
+                <select class="char-class" id="char-class" name="system.class" style="width: 110px; height: 32px; text-align: center; font-size: 18px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 5px 8px 3px 8px; margin: 0; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); font-weight: bold;">
                 <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
                 <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
                 <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
@@ -162,53 +162,64 @@
             </div>
             
             <!-- Character Alignment -->
-            <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-              <label for="char-align" style="font-size: 18px; font-family: 'Futura Condensed', sans-serif;">Alignment</label>
-              <select class="char-align" id="char-align" name="system.alignment" style="width: 65px; height: 1.5em; text-align: center; font-size: 18px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 3px 0 0 0; margin: 0;">
+            <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
+              <label for="char-align" style="font-size: 25px; font-family: 'Council', serif; letter-spacing: 0.03em; margin-bottom: -2px;">Alignment</label>
+              <select class="char-align" id="char-align" name="system.alignment" style="width: 80px; height: 32px; text-align: center; font-size: 18px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 5px 8px 3px 8px; margin: 0; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); font-weight: bold;">
                 <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
                 <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
                 <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
               </select>
             </div>
             
-            <!-- Character Level -->
-            <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
-              <label for="char-level" style="font-size: 18px; font-family: 'Futura Condensed', sans-serif;">Level</label>
-              <select class="char-level" id="char-level" name="system.level" style="width: 40px; height: 1.5em; text-align: center; font-size: 18px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 3px 0 0 0; margin: 0;">
-                <option value="1" {{#if (eq system.level "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.level "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.level "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.level "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.level "5")}}selected{{/if}}>5</option>
-                <option value="6" {{#if (eq system.level "6")}}selected{{/if}}>6</option>
-                <option value="7" {{#if (eq system.level "7")}}selected{{/if}}>7</option>
-                <option value="8" {{#if (eq system.level "8")}}selected{{/if}}>8</option>
-                <option value="9" {{#if (eq system.level "9")}}selected{{/if}}>9</option>
-                <option value="10" {{#if (eq system.level "10")}}selected{{/if}}>10</option>
-                <option value="11" {{#if (eq system.level "11")}}selected{{/if}}>11</option>
-                <option value="12" {{#if (eq system.level "12")}}selected{{/if}}>12</option>
-                <option value="13" {{#if (eq system.level "13")}}selected{{/if}}>13</option>
-                <option value="14" {{#if (eq system.level "14")}}selected{{/if}}>14</option>
-              </select>
+            <!-- Character Level with XP Progress -->
+            <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
+              <label for="char-level" style="font-size: 25px; font-family: 'Council', serif; letter-spacing: 0.03em; margin-bottom: -2px;">Level</label>
+              <div style="position: relative; width: 75px; height: 75px; transform: translateY(4px);">
+                <!-- White Background Layer (bottom) -->
+                <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background-color: white; border-radius: 9px; z-index: 1;"></div>
+                <!-- XP Progress Bar (middle) -->
+                <div class="level-xp-progress" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: #22c55e; transition: height 0.3s ease, border-radius 0.3s ease; z-index: 2; border-bottom-left-radius: 9px; border-bottom-right-radius: 9px; border-top-left-radius: var(--progress-top-radius, 0px); border-top-right-radius: var(--progress-top-radius, 0px); --progress-top-radius: 0px;"></div>
+                <!-- Level Dropdown (on top) -->
+                <select class="char-level" id="char-level" name="system.level" style="position: relative; z-index: 3; width: 100%; height: 100%; text-align: center; font-size: 54px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; margin: 0; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); color: #000; font-weight: bold;">
+                  <option value="1" {{#if (eq system.level "1")}}selected{{/if}} style="background-color: white; color: black;">1</option>
+                  <option value="2" {{#if (eq system.level "2")}}selected{{/if}} style="background-color: white; color: black;">2</option>
+                  <option value="3" {{#if (eq system.level "3")}}selected{{/if}} style="background-color: white; color: black;">3</option>
+                  <option value="4" {{#if (eq system.level "4")}}selected{{/if}} style="background-color: white; color: black;">4</option>
+                  <option value="5" {{#if (eq system.level "5")}}selected{{/if}} style="background-color: white; color: black;">5</option>
+                  <option value="6" {{#if (eq system.level "6")}}selected{{/if}} style="background-color: white; color: black;">6</option>
+                  <option value="7" {{#if (eq system.level "7")}}selected{{/if}} style="background-color: white; color: black;">7</option>
+                  <option value="8" {{#if (eq system.level "8")}}selected{{/if}} style="background-color: white; color: black;">8</option>
+                  <option value="9" {{#if (eq system.level "9")}}selected{{/if}} style="background-color: white; color: black;">9</option>
+                  <option value="10" {{#if (eq system.level "10")}}selected{{/if}} style="background-color: white; color: black;">10</option>
+                  <option value="11" {{#if (eq system.level "11")}}selected{{/if}} style="background-color: white; color: black;">11</option>
+                  <option value="12" {{#if (eq system.level "12")}}selected{{/if}} style="background-color: white; color: black;">12</option>
+                  <option value="13" {{#if (eq system.level "13")}}selected{{/if}} style="background-color: white; color: black;">13</option>
+                  <option value="14" {{#if (eq system.level "14")}}selected{{/if}} style="background-color: white; color: black;">14</option>
+                </select>
+              </div>
+              <!-- XP Progress Percentage Circle (clickable for XP award) -->
+              <div class="xp-percentage xp-award-btn" style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; cursor: pointer;" title="Award XP">
+                0%
+              </div>
             </div>
           </div>
           
           <!-- Ability Scores Row -->
           <div class="ability-scores-section" style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
             <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-              <label style="font-size: 36px; font-family: 'Council', serif; letter-spacing: 0.03em;">STR</label>
-              <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 60px; height: 60px; text-align: center; font-size: 42px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border: 3px solid #ccc; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">STR</label>
+              <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
               </select>
-              <div style="margin-top: -10px; font-size: 12px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 30px; height: 24px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
                 {{abilityMod system.attributes.str.value}}
               </div>
             </div>
             <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
               <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">DEX</label>
-              <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border: 3px solid #ccc; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
@@ -219,7 +230,7 @@
             </div>
             <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
               <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CON</label>
-              <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border: 3px solid #ccc; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
@@ -230,7 +241,7 @@
             </div>
             <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
               <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">INT</label>
-              <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border: 3px solid #ccc; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
@@ -241,7 +252,7 @@
             </div>
             <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
               <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">WIS</label>
-              <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border: 3px solid #ccc; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
@@ -252,7 +263,7 @@
             </div>
             <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
               <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CHA</label>
-              <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border: 3px solid #ccc; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
@@ -261,63 +272,6 @@
                 {{abilityMod system.attributes.cha.value}}
               </div>
             </div>
-          </div>
-        </div>
-        
-        <!-- Right Side: XP Progress -->
-        <div class="char-field-group xp-progress-section" style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; line-height: 1;">
-          <!-- Character Level -->
-          <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5rem;">
-            <label for="char-level" style="font-size: 27px; font-family: 'Futura Condensed', sans-serif;">Level</label>
-            <select class="char-level" id="char-level" name="system.level" style="width: 75px; height: 75px; text-align: center; font-size: 54px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 9px 0 0 0; margin: 0;">
-              <option value="1" {{#if (eq system.level "1")}}selected{{/if}}>1</option>
-              <option value="2" {{#if (eq system.level "2")}}selected{{/if}}>2</option>
-              <option value="3" {{#if (eq system.level "3")}}selected{{/if}}>3</option>
-              <option value="4" {{#if (eq system.level "4")}}selected{{/if}}>4</option>
-              <option value="5" {{#if (eq system.level "5")}}selected{{/if}}>5</option>
-              <option value="6" {{#if (eq system.level "6")}}selected{{/if}}>6</option>
-              <option value="7" {{#if (eq system.level "7")}}selected{{/if}}>7</option>
-              <option value="8" {{#if (eq system.level "8")}}selected{{/if}}>8</option>
-              <option value="9" {{#if (eq system.level "9")}}selected{{/if}}>9</option>
-              <option value="10" {{#if (eq system.level "10")}}selected{{/if}}>10</option>
-              <option value="11" {{#if (eq system.level "11")}}selected{{/if}}>11</option>
-              <option value="12" {{#if (eq system.level "12")}}selected{{/if}}>12</option>
-              <option value="13" {{#if (eq system.level "13")}}selected{{/if}}>13</option>
-              <option value="14" {{#if (eq system.level "14")}}selected{{/if}}>14</option>
-            </select>
-          </div>
-          <div style="display: flex; align-items: center; margin-bottom: -2px; line-height: 1;">
-            <button class="xp-award-btn" type="button" title="Award XP" style="border: none; background: none; color: #333; font-size: 12px; cursor: pointer; padding: 0; margin-right: 1px; line-height: 1; position: relative; top: -1px;">+</button>
-            <div class="xp-display" style="display: flex; align-items: center; font-size: 10px; line-height: 1;">
-              <span class="char-xp" style="text-align: center; font-family: 'Minion Pro', serif;">{{system.xp}}</span>
-              <span style="margin: 0 1px; font-weight: normal;"> / </span>
-              <span class="next-level-xp" style="font-family: 'Minion Pro', serif;">{{getNextLevelXP system.class system.level}}</span>
-            </div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 0; margin-bottom: 1px; line-height: 1;">
-            <span style="font-size: 12px; margin-right: 6px;">{{system.level}}</span>
-            <div class="xp-progress-container" style="width: 120px; height: 25px; border: 1px solid #ccc; position: relative; border-radius: 3px;">
-              <div class="xp-progress-bar" style="height: 100%; width: 0%; transition: width 0.3s ease; border-radius: 2px;"></div>
-              <div class="xp-progress-label" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 9px; color: #000; text-shadow: 1px 1px 1px rgba(255,255,255,0.8);">
-                XP (<span class="xp-percentage">0</span>%)
-              </div>
-            </div>
-            <span style="font-size: 12px; margin-left: 6px;">
-              {{#if (eq system.level "1")}}2{{/if}}
-              {{#if (eq system.level "2")}}3{{/if}}
-              {{#if (eq system.level "3")}}4{{/if}}
-              {{#if (eq system.level "4")}}5{{/if}}
-              {{#if (eq system.level "5")}}6{{/if}}
-              {{#if (eq system.level "6")}}7{{/if}}
-              {{#if (eq system.level "7")}}8{{/if}}
-              {{#if (eq system.level "8")}}9{{/if}}
-              {{#if (eq system.level "9")}}10{{/if}}
-              {{#if (eq system.level "10")}}11{{/if}}
-              {{#if (eq system.level "11")}}12{{/if}}
-              {{#if (eq system.level "12")}}13{{/if}}
-              {{#if (eq system.level "13")}}14{{/if}}
-              {{#if (eq system.level "14")}}—{{/if}}
-            </span>
           </div>
         </div>
         

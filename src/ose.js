@@ -131,56 +131,126 @@ Handlebars.registerHelper('unarmoredAC', function(dexScore) {
 
 // Register helpers for calculating saving throws
 Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, level, race) {
-  const classLower = (characterClass || '').toLowerCase();
-  const raceLower = (race || '').toLowerCase();
-  const charLevel = parseInt(level, 10) || 1;
-  
-  // OSE Saving Throw tables by class
-  const savingThrows = {
-    'fighter': {
-      'death': [12, 11, 10, 10, 8, 8, 6, 6, 4, 4, 2, 2, 2, 2],
-      'wands': [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2],
-      'paralysis': [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2],
-      'breath': [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2],
-      'spells': [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3]
+  // Column index per save type
+  const COL = { death: 0, wands: 1, paralysis: 2, breath: 3, spells: 4 };
+
+  // Map aliases to groups
+  const GROUP_FOR_CLASS = {
+    // Core / AF classes (grouped)
+    'fighter': 'fighter', 'knight': 'fighter', 'ranger': 'fighter',
+    'paladin': 'paladin',
+    'barbarian': 'barbarian',
+    'cleric': 'cleric', 'druid': 'cleric',
+    'magic-user': 'magicUser', 'illusionist': 'magicUser',
+    'thief': 'thief', 'assassin': 'thief', 'acrobat': 'thief', 'bard': 'thief',
+
+    // House rules bespoke
+    'beast master': 'beastmaster_bespoke',
+    'mage': 'mage_bespoke',
+    'warden': 'warden_bespoke'
+  };
+
+  // Tiered group tables from AF v1.3 (values are D/W/P/B/S)
+  const GROUP_TABLES = {
+    fighter: [
+      [1, 3,  [12,13,14,15,16]],
+      [4, 6,  [10,11,12,13,14]],
+      [7, 9,  [ 8, 9,10,10,12]],
+      [10,12, [ 6, 7, 8, 8,10]],
+      [13,14, [ 4, 5, 6, 5, 8]]
+    ],
+    paladin: [
+      [1, 3,  [10,11,12,13,14]],
+      [4, 6,  [ 8, 9,10,11,12]],
+      [7, 9,  [ 6, 7, 8, 8,10]],
+      [10,12, [ 4, 5, 6, 6, 8]],
+      [13,14, [ 2, 3, 4, 3, 6]]
+    ],
+    barbarian: [
+      [1, 3,  [10,13,12,15,16]],
+      [4, 6,  [ 8,11,10,13,13]],
+      [7, 9,  [ 6, 9, 8,10,10]],
+      [10,12, [ 4, 7, 6, 8, 7]],
+      [13,14, [ 3, 5, 4, 5, 5]]
+    ],
+    cleric: [
+      [1, 4,  [11,12,14,16,15]],
+      [5, 8,  [ 9,10,12,14,12]],
+      [9, 12, [ 6, 7, 9,11, 9]],
+      [13,14, [ 3, 5, 7, 8, 7]]
+    ],
+    magicUser: [
+      [1, 5,  [13,14,13,16,15]],
+      [6, 10, [11,12,11,14,12]],
+      [11,14, [ 8, 9, 8,11, 8]]
+    ],
+    thief: [
+      [1, 4,  [13,14,13,16,15]],
+      [5, 8,  [12,13,11,14,13]],
+      [9, 12, [10,11, 9,12,10]],
+      [13,14, [ 8, 9, 7,10, 8]]
+    ]
+  };
+
+  // Bespoke tables (per-level arrays), columns D/W/P/B/S; levels 1–14
+  const BESPOKE = {
+    beastmaster_bespoke: {
+      death:     [11,11,11,11, 9,9,9,9, 7,7,7,7, 5,5],
+      wands:     [12,12,12,12,10,10,10,10, 8,8,8,8, 6,6],
+      paralysis: [12,12,12,12,10,10,10,10, 8,8,8,8, 6,6],
+      breath:    [15,15,15,15,13,13,13,13,11,11,11,11, 9,9],
+      spells:    [16,16,16,16,14,14,14,14,12,12,12,12,10,10]
     },
-    'cleric': {
-      'death': [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2],
-      'wands': [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 2],
-      'paralysis': [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2],
-      'breath': [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3],
-      'spells': [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+    mage_bespoke: {
+      death:     [12,12,12,12,12,10,10,10,10,10, 7, 7, 7, 7],
+      wands:     [13,13,13,13,13,11,11,11,11,11, 8, 8, 8, 8],
+      paralysis: [12,12,12,12,12,10,10,10,10,10, 7, 7, 7, 7],
+      breath:    [15,15,15,15,15,13,13,13,13,13,10,10,10,10],
+      spells:    [14,14,14,14,14,11,11,11,11,11, 7, 7, 7, 7]
     },
-    'thief': {
-      'death': [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2],
-      'wands': [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2],
-      'paralysis': [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2],
-      'breath': [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3],
-      'spells': [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
-    },
-    'magic-user': {
-      'death': [13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 6],
-      'wands': [14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 7],
-      'paralysis': [13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 6],
-      'breath': [16, 16, 15, 15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 9],
-      'spells': [15, 15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 8]
+    warden_bespoke: {
+      death:     [12,12,12,10,10,10, 8, 8, 8, 6, 6, 6, 4, 4],
+      wands:     [13,13,13,11,11,11, 9, 9, 9, 7, 7, 7, 5, 5],
+      paralysis: [14,14,14,12,12,12,10,10,10, 8, 8, 8, 6, 6],
+      breath:    [15,15,15,13,13,13,10,10,10, 8, 8, 8, 5, 5],
+      spells:    [16,16,16,14,14,14,12,12,12,10,10,10, 8, 8]
     }
   };
-  
-  // Default to fighter if class not found
-  const saveTable = savingThrows[classLower] || savingThrows['fighter'];
-  const levelIndex = Math.min(Math.max(charLevel - 1, 0), 13);
-  let baseValue = saveTable[saveType] ? saveTable[saveType][levelIndex] : 15;
-  
-  // Apply racial bonuses
-  let racialBonus = 0;
-  if (raceLower === 'dwarf' && (saveType === 'wands' || saveType === 'spells' || saveType === 'paralysis' || saveType === 'death')) {
-    racialBonus = 4; // Dwarves get +4 vs magic
-  } else if (raceLower === 'hobbit' && (saveType === 'wands' || saveType === 'spells' || saveType === 'paralysis' || saveType === 'death')) {
-    racialBonus = 4; // Hobbits get +4 vs magic
+
+  // Find row for a level within a tiered table
+  function findTierRow(tiers, level) {
+    for (const [lo, hi, arr] of tiers) {
+      if (level >= lo && level <= hi) return arr;
+    }
+    return tiers[0][2];
   }
-  
-  return Math.max(baseValue - racialBonus, 2); // Minimum save of 2
+
+  const st = String(saveType || '').toLowerCase().trim();
+  if (!(st in COL)) return 15;
+
+  const lvl = Math.max(1, Math.min(parseInt(level, 10) || 1, 14));
+  const cls = String(characterClass || '').toLowerCase().trim();
+  const raceLower = String(race || '').toLowerCase().trim();
+
+  const groupKey = GROUP_FOR_CLASS[cls] || 'fighter';
+  let base;
+
+  if (groupKey.endsWith('_bespoke')) {
+    const t = BESPOKE[groupKey];
+    base = t[st][lvl - 1] || 15;
+  } else {
+    const tiers = GROUP_TABLES[groupKey] || GROUP_TABLES['fighter'];
+    const row = findTierRow(tiers, lvl);
+    base = row[COL[st]];
+  }
+
+  // Racial magic resistance for dwarves & halflings/hobbits: +4 vs D/W/P/S (not Breath)
+  const isMagicSave = st !== 'breath';
+  const raceIsDwarfOrHalfling =
+    raceLower === 'dwarf' || raceLower === 'halfling' || raceLower === 'hobbit';
+  if (raceIsDwarfOrHalfling && isMagicSave) base = Math.max(2, base - 4);
+
+  return base;
 });
 
 // Register a Handlebars helper for next level XP calculation

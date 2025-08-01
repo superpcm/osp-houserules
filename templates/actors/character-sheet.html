@@ -102,7 +102,16 @@
       border: none !important;
     }
   </style>
-  
+  <script>
+    // Set encumbrance bar width after rendering
+    document.addEventListener("DOMContentLoaded", function() {
+      const bar = document.querySelector('.encumbrance-bar[data-encumbrance]');
+      if (bar) {
+        const percent = bar.getAttribute('data-encumbrance');
+        bar.style.width = percent + '%';
+      }
+    });
+  </script>
   <!-- Static Header Section - Absolutely fixed at top -->
     <div class="static-header" style="padding: 0.75rem; height: 380px; flex-shrink: 0; position: relative; z-index: 10;">
       <div style="display: flex; flex-direction: column; height: 100%; gap: 0.75rem;">
@@ -179,23 +188,12 @@
                 <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background-color: white; border-radius: 9px; z-index: 1;"></div>
                 <!-- XP Progress Bar (middle) -->
                 <div class="level-xp-progress" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: #22c55e; transition: height 0.3s ease, border-radius 0.3s ease; z-index: 2; border-bottom-left-radius: 9px; border-bottom-right-radius: 9px; border-top-left-radius: var(--progress-top-radius, 0px); border-top-right-radius: var(--progress-top-radius, 0px); --progress-top-radius: 0px;"></div>
-                <!-- Level Dropdown (on top) -->
-                <select class="char-level" id="char-level" name="system.level" style="position: relative; z-index: 3; width: 100%; height: 100%; text-align: center; font-size: 54px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; margin: 0; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); color: #000; font-weight: bold;">
-                  <option value="1" {{#if (eq system.level "1")}}selected{{/if}} style="background-color: white; color: black;">1</option>
-                  <option value="2" {{#if (eq system.level "2")}}selected{{/if}} style="background-color: white; color: black;">2</option>
-                  <option value="3" {{#if (eq system.level "3")}}selected{{/if}} style="background-color: white; color: black;">3</option>
-                  <option value="4" {{#if (eq system.level "4")}}selected{{/if}} style="background-color: white; color: black;">4</option>
-                  <option value="5" {{#if (eq system.level "5")}}selected{{/if}} style="background-color: white; color: black;">5</option>
-                  <option value="6" {{#if (eq system.level "6")}}selected{{/if}} style="background-color: white; color: black;">6</option>
-                  <option value="7" {{#if (eq system.level "7")}}selected{{/if}} style="background-color: white; color: black;">7</option>
-                  <option value="8" {{#if (eq system.level "8")}}selected{{/if}} style="background-color: white; color: black;">8</option>
-                  <option value="9" {{#if (eq system.level "9")}}selected{{/if}} style="background-color: white; color: black;">9</option>
-                  <option value="10" {{#if (eq system.level "10")}}selected{{/if}} style="background-color: white; color: black;">10</option>
-                  <option value="11" {{#if (eq system.level "11")}}selected{{/if}} style="background-color: white; color: black;">11</option>
-                  <option value="12" {{#if (eq system.level "12")}}selected{{/if}} style="background-color: white; color: black;">12</option>
-                  <option value="13" {{#if (eq system.level "13")}}selected{{/if}} style="background-color: white; color: black;">13</option>
-                  <option value="14" {{#if (eq system.level "14")}}selected{{/if}} style="background-color: white; color: black;">14</option>
-                </select>
+                <!-- Level Display (on top) - Changed from dropdown to static display -->
+                <div class="char-level-display" style="position: relative; z-index: 3; width: 100%; height: 100%; text-align: center; font-size: 54px; background-color: transparent !important; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; margin: 0; border-radius: 9px; border: 1px solid #000; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); color: #000; font-weight: bold;">
+                  {{system.level}}
+                </div>
+                <!-- Hidden level input for form submission -->
+                <input type="hidden" name="system.level" value="{{system.level}}" />
               </div>
               <!-- XP Progress Percentage Circle (clickable for XP award) -->
               <div class="xp-percentage xp-award-btn" style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; cursor: pointer;" title="Award XP">
@@ -213,7 +211,7 @@
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
               </select>
-              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; text-indent: -1px;">
                 {{abilityMod system.attributes.str.value}}
               </div>
             </div>
@@ -224,7 +222,7 @@
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
               </select>
-              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; text-indent: -1px;">
                 {{abilityMod system.attributes.dex.value}}
               </div>
             </div>
@@ -235,7 +233,7 @@
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
               </select>
-              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; text-indent: -1px;">
                 {{abilityMod system.attributes.con.value}}
               </div>
             </div>
@@ -246,7 +244,7 @@
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
               </select>
-              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; text-indent: -1px;">
                 {{abilityMod system.attributes.int.value}}
               </div>
             </div>
@@ -257,7 +255,7 @@
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
               </select>
-              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; text-indent: -1px;">
                 {{abilityMod system.attributes.wis.value}}
               </div>
             </div>
@@ -268,7 +266,7 @@
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
                 {{/each}}
               </select>
-              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000;">
+              <div style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; text-indent: -1px;">
                 {{abilityMod system.attributes.cha.value}}
               </div>
             </div>
@@ -617,7 +615,7 @@
           <section class="encumbrance-section">
             <div class="encumbrance-label">Encumbrance</div>
             <div class="encumbrance-bar-container">
-              <div class="encumbrance-bar" style="width: {{encumbrancePercentage}}%"></div>
+              <div class="encumbrance-bar" style="width: {{encumbrancePercentage}}%;"></div>
               <span class="encumbrance-text">{{totalWeight}} / {{maxWeight}} lbs</span>
             </div>
           </section>

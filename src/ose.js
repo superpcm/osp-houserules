@@ -96,7 +96,7 @@ Handlebars.registerHelper('multiply', function(a, b) {
 // Register a Handlebars helper for calculating ability modifiers (OSE rules)
 Handlebars.registerHelper('abilityMod', function(score) {
   const numScore = parseInt(score, 10);
-  if (isNaN(numScore)) return '+0';
+  if (isNaN(numScore)) return '0';
   
   let modifier;
   if (numScore === 3) modifier = -3;
@@ -108,7 +108,7 @@ Handlebars.registerHelper('abilityMod', function(score) {
   else if (numScore === 18) modifier = +3;
   else modifier = 0; // fallback for scores outside normal range
   
-  return modifier >= 0 ? `+${modifier}` : `${modifier}`;
+  return modifier > 0 ? `+${modifier}` : `${modifier}`;
 });
 
 // Register helper for calculating unarmored AC (10 + DEX modifier)

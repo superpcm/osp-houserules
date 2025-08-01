@@ -1,5 +1,10 @@
 /**
- * XPProgressHandler - Manages XP progress bar functionality and XP award system
+ * XPProgressHandler - Manages XP progress bar functionalit    // Listen for changes to XP field
+    this.html.on('change', 'input[name="system.xp"]', () => {
+      console.log('XP field changed, updating progress bar...');
+      setTimeout(() => this.updateProgressBar(), 50);
+    });
+  }rd system
  */
 export class XPProgressHandler {
   constructor(html, actor) {
@@ -15,12 +20,14 @@ export class XPProgressHandler {
    * Initialize the XP progress handler
    */
   initialize() {
-    this.xpDisplay = this.html.find('.char-xp');
-    this.xpAwardBtn = this.html.find('.xp-award-btn');
-    this.progressBar = this.html.find('.xp-progress-bar');
+    // Initialize DOM elements
+    this.progressBar = this.html.find('.xp-progress');
     this.levelXpProgress = this.html.find('.level-xp-progress');
-    this.nextLevelDisplay = this.html.find('.next-level-xp');
     this.percentageDisplay = this.html.find('.xp-percentage');
+    this.xpDisplay = this.html.find('.xp-display');
+    this.nextLevelDisplay = this.html.find('.next-level-xp');
+    this.xpAwardBtn = this.html.find('.xp-award-btn');
+    this.levelDisplay = this.html.find('.char-level-display');
     
     console.log('XP Progress Handler - Elements found:', {
       xpDisplay: this.xpDisplay.length,
@@ -28,7 +35,8 @@ export class XPProgressHandler {
       progressBar: this.progressBar.length,
       levelXpProgress: this.levelXpProgress.length,
       nextLevelDisplay: this.nextLevelDisplay.length,
-      percentageDisplay: this.percentageDisplay.length
+      percentageDisplay: this.percentageDisplay.length,
+      levelDisplay: this.levelDisplay.length
     });
     
     this.bindEvents();
@@ -79,14 +87,40 @@ export class XPProgressHandler {
     const currentXP = parseInt(this.actor.system.xp) || 0;
     const nextLevelXP = this.getNextLevelXP();
     const xpMod = this.getXPModifier();
+    const currentLevel = parseInt(this.actor.system.level) || 1;
+    
+    // Check if user is a GM
+    const isGM = game.user.isGM;
     
     // Create dialog content
     const content = `
       <div style="padding: 10px; display: flex; gap: 20px;">
         <div style="flex: 1;">
-          <div style="margin-bottom: 10px;">
-            <strong>Current XP:</strong> ${currentXP}
+          <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <label for="current-xp-display"><strong>Current XP:</strong></label>
+            ${isGM ? `<input type="number" id="current-xp-input" value="${currentXP}" min="0" max="999999" style="width: 80px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center;" />` : `<span id="current-xp-display">${currentXP}</span>`}
           </div>
+          ${isGM ? `
+          <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <label for="level-input"><strong>Level:</strong></label>
+            <select id="level-input" style="width: 60px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none;">
+              <option value="1" ${currentLevel === 1 ? 'selected' : ''}>1</option>
+              <option value="2" ${currentLevel === 2 ? 'selected' : ''}>2</option>
+              <option value="3" ${currentLevel === 3 ? 'selected' : ''}>3</option>
+              <option value="4" ${currentLevel === 4 ? 'selected' : ''}>4</option>
+              <option value="5" ${currentLevel === 5 ? 'selected' : ''}>5</option>
+              <option value="6" ${currentLevel === 6 ? 'selected' : ''}>6</option>
+              <option value="7" ${currentLevel === 7 ? 'selected' : ''}>7</option>
+              <option value="8" ${currentLevel === 8 ? 'selected' : ''}>8</option>
+              <option value="9" ${currentLevel === 9 ? 'selected' : ''}>9</option>
+              <option value="10" ${currentLevel === 10 ? 'selected' : ''}>10</option>
+              <option value="11" ${currentLevel === 11 ? 'selected' : ''}>11</option>
+              <option value="12" ${currentLevel === 12 ? 'selected' : ''}>12</option>
+              <option value="13" ${currentLevel === 13 ? 'selected' : ''}>13</option>
+              <option value="14" ${currentLevel === 14 ? 'selected' : ''}>14</option>
+            </select>
+          </div>
+          ` : ''}
           <div style="margin-bottom: 10px;">
             <strong>Next Level XP:</strong> ${nextLevelXP}
           </div>
@@ -95,7 +129,7 @@ export class XPProgressHandler {
           </div>
           <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
             <label for="xp-award-input"><strong>XP to Award:</strong></label>
-            <input type="number" id="xp-award-input" value="" min="0" max="9999" style="width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 3px;" />
+            <input type="number" id="xp-award-input" value="" min="0" max="9999" style="width: 60px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center;" />
           </div>
         </div>
         <div id="xp-preview" style="flex: 1; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none;">
@@ -114,8 +148,29 @@ export class XPProgressHandler {
         ok: {
           icon: '<i class="fas fa-check"></i>',
           label: "OK",
-          callback: (html) => {
+          callback: async (html) => {
             const awardedXP = parseInt(html.find('#xp-award-input').val()) || 0;
+            
+            // Handle GM-only editable fields
+            if (isGM) {
+              const newCurrentXP = parseInt(html.find('#current-xp-input').val()) || 0;
+              const newLevel = parseInt(html.find('#level-input').val()) || 1;
+              
+              // Update current XP and level if changed
+              const updateData = {};
+              if (newCurrentXP !== currentXP) {
+                updateData['system.xp'] = newCurrentXP;
+              }
+              if (newLevel !== currentLevel) {
+                updateData['system.level'] = newLevel;
+              }
+              
+              if (Object.keys(updateData).length > 0) {
+                await this.actor.update(updateData);
+              }
+            }
+            
+            // Award XP if specified
             if (awardedXP > 0) {
               this.awardXP(awardedXP);
             }
@@ -128,18 +183,50 @@ export class XPProgressHandler {
       },
       default: "ok",
       render: (html) => {
+        // Apply character sheet background styling to dialog
+        const dialogWindow = html.closest('.app.window-app');
+        if (dialogWindow.length) {
+          dialogWindow.css({
+            'background': 'transparent',
+            'background-image': 'url("systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg")',
+            'background-repeat': 'no-repeat',
+            'background-size': 'cover',
+            'background-position': 'center'
+          });
+          
+          // Style the window header to be black
+          const windowHeader = dialogWindow.find('.window-header');
+          if (windowHeader.length) {
+            windowHeader.css({
+              'background': 'black',
+              'background-color': 'black'
+            });
+          }
+          
+          // Also style the window content
+          const windowContent = dialogWindow.find('.window-content');
+          if (windowContent.length) {
+            windowContent.css({
+              'background': 'transparent',
+              'background-color': 'transparent'
+            });
+          }
+        }
+        
         // Update preview when input changes
         const input = html.find('#xp-award-input');
         const preview = html.find('#xp-preview');
         const baseXPSpan = html.find('#base-xp');
         const modifiedXPSpan = html.find('#modified-xp');
         const newTotalSpan = html.find('#new-total');
+        const currentXPInput = html.find('#current-xp-input');
 
-        input.on('input', () => {
+        const updatePreview = () => {
           const baseXP = parseInt(input.val()) || 0;
           if (baseXP > 0) {
+            const currentXPValue = isGM ? (parseInt(currentXPInput.val()) || 0) : currentXP;
             const modifiedXP = Math.floor(baseXP * (1 + xpMod / 100));
-            const newTotal = currentXP + modifiedXP;
+            const newTotal = currentXPValue + modifiedXP;
             
             baseXPSpan.text(baseXP);
             modifiedXPSpan.text(modifiedXP);
@@ -148,7 +235,14 @@ export class XPProgressHandler {
           } else {
             preview.hide();
           }
-        });
+        };
+
+        input.on('input', updatePreview);
+        
+        // Update preview when GM changes current XP
+        if (isGM) {
+          currentXPInput.on('input', updatePreview);
+        }
 
         // Focus the input
         input.focus();
@@ -327,6 +421,11 @@ export class XPProgressHandler {
       this.nextLevelDisplay.text(nextLevelXP);
     }
 
+    // Update level display
+    if (this.levelDisplay.length) {
+      this.levelDisplay.text(this.actor.system.level || 1);
+    }
+
     // Update percentage display
     if (this.percentageDisplay.length) {
       this.percentageDisplay.text(Math.round(progressPercentage) + '%');
@@ -343,7 +442,7 @@ export class XPProgressHandler {
    */
   getNextLevelXP() {
     const characterClass = this.actor.system.class;
-    const currentLevel = parseInt(this.actor.system.level) || 1;
+    const currentXP = parseInt(this.actor.system.xp) || 0;
     
     // XP requirements table - you may need to adjust these based on your system
     const xpTables = {
@@ -358,9 +457,22 @@ export class XPProgressHandler {
     };
 
     const table = xpTables[characterClass] || xpTables['Fighter']; // Default to Fighter
-    const nextLevel = Math.min(currentLevel + 1, table.length - 1);
     
-    return table[nextLevel] || table[table.length - 1];
+    // Find the current level based on actual XP
+    let currentLevel = 1;
+    for (let i = 0; i < table.length; i++) {
+      if (currentXP >= table[i]) {
+        currentLevel = i + 1; // Level is index + 1
+      } else {
+        break;
+      }
+    }
+    
+    // Get next level XP (currentLevel index = nextLevel - 1)
+    const nextLevel = Math.min(currentLevel + 1, table.length);
+    const nextLevelIndex = Math.min(nextLevel - 1, table.length - 1);
+    
+    return table[nextLevelIndex] || table[table.length - 1];
   }
 
   /**
@@ -368,7 +480,7 @@ export class XPProgressHandler {
    */
   getCurrentLevelXP() {
     const characterClass = this.actor.system.class;
-    const currentLevel = parseInt(this.actor.system.level) || 1;
+    const currentXP = parseInt(this.actor.system.xp) || 0;
     
     // Same XP table as above
     const xpTables = {
@@ -383,8 +495,19 @@ export class XPProgressHandler {
     };
 
     const table = xpTables[characterClass] || xpTables['Fighter']; // Default to Fighter
-    const levelIndex = Math.max(0, Math.min(currentLevel - 1, table.length - 1));
     
+    // Find the highest level the character qualifies for based on their current XP
+    let currentLevel = 1;
+    for (let i = 0; i < table.length; i++) {
+      if (currentXP >= table[i]) {
+        currentLevel = i + 1; // Level is index + 1
+      } else {
+        break;
+      }
+    }
+    
+    // Get XP requirement for the current level (level - 1 = index)
+    const levelIndex = Math.max(0, Math.min(currentLevel - 1, table.length - 1));
     return table[levelIndex] || 0;
   }
 

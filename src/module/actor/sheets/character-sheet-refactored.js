@@ -42,6 +42,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.encumbrancePercentage = this.actor.system.encumbrance?.percentage || 0;
 
     // Ensure saving throws are available
+    console.log("OSP DEBUG: Actor system saves:", this.actor.system.saves);
     context.saves = this.actor.system.saves || {
       death: { value: 0 },
       wands: { value: 0 },
@@ -49,6 +50,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       breath: { value: 0 },
       spells: { value: 0 }
     };
+
+    console.log("OSP DEBUG: Context saves:", context.saves);
 
     console.log("osp-houserules Debug: Saving throws in template context:", context.saves);
 
@@ -245,6 +248,29 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     });
     this.handlers.clear();
+  }
+
+  /**
+   * Handle form submission and ensure derived data is recalculated
+   * @param {Event} event - The form submission event
+   * @param {Object} formData - The form data being submitted
+   */
+  async _updateObject(event, formData) {
+    console.log("OSP Debug: Character sheet _updateObject called with:", formData);
+    
+    // Call the parent class update method
+    const result = await super._updateObject(event, formData);
+    
+    // Force the actor to recalculate derived data
+    if (this.actor) {
+      console.log("OSP Debug: Forcing actor derived data recalculation");
+      this.actor.prepareDerivedData();
+      
+      // Re-render the sheet to show updated values
+      this.render(false);
+    }
+    
+    return result;
   }
 
   /**

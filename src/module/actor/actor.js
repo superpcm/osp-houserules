@@ -1,27 +1,7 @@
 export class OspActor extends Actor {
-  /**
-   * Prepare Character type specific data
-   * @private
-   */
-  _prepareCharacterData() {
-    // Organize items by type
-    this.system.weapons = this.items.filter(item => item.type === "weapon");
-    this.system.armor = this.items.filter(item => item.type === "armor");
-    this.system.containers = this.items.filter(item => item.type === "container");
-    this.system.items = this.items.filter(item => item.type === "item" && !item.system.treasure);
-    this.system.treasures = this.items.filter(item => item.type === "item" && item.system.treasure);
-
-    // Calculate encumbrance
-    this._calculateEncumbrance();
-    
-    // Calculate saving throws
-    this._calculateSavingThrows();
-    
-    // Calculate next level XP
-    this._calculateNextLevelXP();
-    
-    // Calculate XP modifier
-    this._calculateXPModifier();
+  constructor(data, context) {
+    console.log("OSP DEBUG: OspActor constructor called!");
+    super(data, context);
   }
 
     /**
@@ -29,6 +9,8 @@ export class OspActor extends Actor {
    * @private
    */
   _calculateSavingThrows() {
+    console.log("OSP DEBUG: _calculateSavingThrows method called!");
+    
     // Initialize saves structure if it doesn't exist
     if (!this.system.saves) {
       this.system.saves = {
@@ -49,34 +31,92 @@ export class OspActor extends Actor {
     // OSE saving throw tables by class
     const savingThrowTables = {
       'fighter': {
-        death: [12, 11, 10, 10, 8, 8, 6, 6, 4, 4, 2, 2, 2, 2, 2],
-        wands: [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 2],
-        paralysis: [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2],
-        breath: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2],
-        spells: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4],
+        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5],
+        paralysis: [14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6],
+        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8, 5, 5],
+        spells: [16, 16, 16, 14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8]
       },
       'cleric': {
-        death: [11, 10, 9, 8, 7, 6, 5, 4, 2, 2, 2, 2, 2, 2, 2],
-        wands: [12, 11, 10, 9, 8, 7, 6, 5, 3, 2, 2, 2, 2, 2, 2],
-        paralysis: [14, 13, 12, 11, 10, 9, 8, 7, 5, 4, 3, 2, 2, 2, 2],
-        breath: [16, 15, 14, 13, 12, 11, 10, 9, 7, 6, 5, 4, 3, 2, 2],
-        spells: [15, 14, 13, 12, 11, 10, 9, 8, 6, 5, 4, 3, 2, 2, 2]
+        death: [11, 10, 9, 8, 7, 6, 5, 4, 2, 2, 2, 2, 2, 2],
+        wands: [12, 11, 10, 9, 8, 7, 6, 5, 3, 3, 3, 3, 2, 2],
+        paralysis: [14, 13, 12, 11, 10, 9, 8, 7, 5, 4, 3, 2, 2, 2],
+        breath: [16, 15, 14, 13, 12, 11, 10, 9, 7, 6, 5, 4, 2, 2],
+        spells: [15, 14, 13, 12, 11, 10, 9, 8, 6, 5, 4, 3, 2, 2]
       },
       'magic-user': {
-        death: [13, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 6],
-        wands: [14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7],
-        paralysis: [13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 7, 6],
-        breath: [16, 15, 15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 8],
-        spells: [15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 7]
+        death: [13, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7],
+        wands: [14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8],
+        paralysis: [13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 7],
+        breath: [16, 15, 15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9],
+        spells: [15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8]
       },
       'thief': {
-        death: [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 2, 2, 2, 2, 2],
-        wands: [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 3, 2, 2, 2, 2],
-        paralysis: [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 2, 2, 2, 2, 2],
-        breath: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 5, 4, 3, 2, 2],
-        spells: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 4, 3, 2, 2, 2]
+        death: [13, 13, 13, 13, 12, 12, 12, 12, 10, 10, 10, 10, 8, 8],
+        wands: [14, 14, 14, 14, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
+        paralysis: [13, 13, 13, 13, 11, 11, 11, 11, 9, 9, 9, 9, 7, 7],
+        breath: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10],
+        spells: [15, 15, 15, 15, 13, 13, 13, 13, 10, 10, 10, 10, 8, 8]
+      },
+      'barbarian': {
+        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 3, 3],
+        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5],
+        paralysis: [14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 6, 4, 4],
+        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8, 5, 5],
+        spells: [16, 16, 16, 13, 13, 13, 10, 10, 10, 7, 7, 7, 5, 5]
+      },
+      'assassin': {
+        death: [13, 13, 13, 13, 12, 12, 12, 12, 10, 10, 10, 10, 8, 8],
+        wands: [14, 14, 14, 14, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
+        paralysis: [13, 13, 13, 13, 11, 11, 11, 11, 9, 9, 9, 9, 7, 7],
+        breath: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10],
+        spells: [15, 15, 15, 15, 13, 13, 13, 13, 10, 10, 10, 10, 8, 8]
+      },
+      'mage': {
+        death: [11, 11, 11, 11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
+        wands: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
+        paralysis: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
+        breath: [15, 15, 15, 15, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
+        spells: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10]
+      },
+      'warden': {
+        death: [11, 11, 11, 11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
+        wands: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
+        paralysis: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
+        breath: [15, 15, 15, 15, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
+        spells: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10]
+      },
+      'beast master': {
+        death: [11, 11, 11, 11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
+        wands: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
+        paralysis: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
+        breath: [15, 15, 15, 15, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
+        spells: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10]
+      },
+      'dwarf': {
+        death: [8, 8, 8, 6, 6, 6, 4, 4, 4, 2, 2, 2],
+        wands: [9, 9, 9, 7, 7, 7, 5, 5, 5, 3, 3, 3],
+        paralysis: [10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4, 4],
+        breath: [13, 13, 13, 10, 10, 10, 7, 7, 7, 4, 4, 4],
+        spells: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6]
+      },
+      'hobbit': {
+        death: [8, 8, 8, 6, 6, 6, 4, 4],
+        wands: [9, 9, 9, 7, 7, 7, 5, 5],
+        paralysis: [10, 10, 10, 8, 8, 8, 6, 6],
+        breath: [13, 13, 13, 10, 10, 10, 7, 7],
+        spells: [12, 12, 12, 10, 10, 10, 8, 8]
+      },
+      'half-orc': {
+        death: [13, 13, 13, 13, 12, 12, 12, 12],
+        wands: [14, 14, 14, 14, 13, 13, 13, 13],
+        paralysis: [13, 13, 13, 13, 11, 11, 11, 11],
+        breath: [16, 16, 16, 16, 14, 14, 14, 14],
+        spells: [15, 15, 15, 15, 13, 13, 13, 13]
       }
     };
+
+    console.log(`OSP Debug: Full fighter table breath array:`, savingThrowTables.fighter.breath);
 
     // Map additional classes to their saving throw patterns
     const classMapping = {
@@ -86,36 +126,40 @@ export class OspActor extends Actor {
       'magic-user': 'magic-user',
       'thief': 'thief',
       
-      // Advanced Fantasy classes - map to appropriate base class tables
-      'assassin': 'thief',          // Assassins use thief saves
-      'barbarian': 'fighter',       // Barbarians use fighter saves
-      'bard': 'thief',              // Bards use thief saves
-      'beast master': 'fighter',    // Beast Masters use fighter saves
-      'druid': 'cleric',            // Druids use cleric saves
-      'knight': 'fighter',          // Knights use fighter saves
-      'paladin': 'cleric',          // Paladins use cleric saves
-      'ranger': 'fighter',          // Rangers use fighter saves
-      'warden': 'fighter',          // Wardens use fighter saves
+      // Advanced Fantasy classes with specific tables
+      'assassin': 'assassin',          // Assassins have their own progression
+      'barbarian': 'barbarian',        // Barbarians have their own progression  
+      'bard': 'thief',                 // Bards use thief saves
+      'beast master': 'beast master',  // Beast Masters have their own progression
+      'druid': 'cleric',               // Druids use cleric saves
+      'knight': 'fighter',             // Knights use fighter saves
+      'paladin': 'cleric',             // Paladins use cleric saves
+      'ranger': 'fighter',             // Rangers use fighter saves
+      'warden': 'warden',              // Wardens have their own progression
       
       // Magic users and variants
-      'illusionist': 'magic-user',  // Illusionists use magic-user saves
-      'mage': 'magic-user',         // Mages use magic-user saves
+      'illusionist': 'magic-user',     // Illusionists use magic-user saves
+      'mage': 'mage',                  // Mages have their own progression
       
-      // Race-as-class options
-      'dwarf': 'fighter',           // Dwarf class uses fighter saves
-      'elf': 'fighter',             // Elf class uses fighter saves (with some magic-user features)
-      'gnome': 'cleric',            // Gnome class uses cleric saves
-      'half-elf': 'fighter',        // Half-Elf class uses fighter saves
-      'half-orc': 'fighter',        // Half-Orc class uses fighter saves
-      'hobbit': 'thief'             // Hobbit class uses thief saves
+      // Race-as-class options with specific tables
+      'dwarf': 'dwarf',                // Dwarf class has its own progression
+      'elf': 'fighter',                // Elf class uses fighter saves (with some magic-user features)
+      'gnome': 'cleric',               // Gnome class uses cleric saves
+      'half-elf': 'fighter',           // Half-Elf class uses fighter saves
+      'half-orc': 'half-orc',          // Half-Orc class has its own progression
+      'hobbit': 'hobbit'               // Hobbit class has its own progression
     };
 
     // Get the appropriate save table for this class
     const mappedClass = classMapping[characterClass.toLowerCase()] || 'fighter';
     const saveTable = savingThrowTables[mappedClass];
     console.log(`OSP Debug: Using save table for: ${characterClass.toLowerCase()} -> ${mappedClass}`);
+    console.log(`OSP Debug: Original level: ${level}, Character class: "${characterClass}"`);
     const levelIndex = Math.min(Math.max(level - 1, 0), 14); // Levels 1-15, array index 0-14
     console.log(`OSP Debug: Level index: ${levelIndex}`);
+    console.log(`OSP Debug: Save table keys:`, Object.keys(saveTable));
+    console.log(`OSP Debug: Fighter breath array:`, savingThrowTables.fighter.breath);
+    console.log(`OSP Debug: Current save table breath array:`, saveTable.breath);
 
     // Calculate each saving throw
     ['death', 'wands', 'paralysis', 'breath', 'spells'].forEach(saveType => {
@@ -125,13 +169,29 @@ export class OspActor extends Actor {
       }
       
       let baseValue = saveTable[saveType] ? saveTable[saveType][levelIndex] : 15;
-      console.log(`OSP Debug: ${saveType} base value: ${baseValue}`);
+      console.log(`OSP Debug: ${saveType} base value: ${baseValue} (from index ${levelIndex} of array [${saveTable[saveType]?.slice(0,5).join(',')}...])`);
       
       // Apply racial bonuses
       let racialBonus = 0;
-      if (race === 'dwarf' && (saveType === 'wands' || saveType === 'spells' || saveType === 'paralysis' || saveType === 'death')) {
-        racialBonus = 4; // Dwarves get +4 vs magic
-      } else if (race === 'hobbit' && (saveType === 'wands' || saveType === 'spells' || saveType === 'paralysis' || saveType === 'death')) {
+      
+      // Dwarf racial bonus - CON-based bonus vs poison, spells, wands/rods/staves
+      if (race === 'dwarf' && (saveType === 'death' || saveType === 'spells' || saveType === 'wands')) {
+        const conScore = parseInt(this.system.abilities?.con?.value) || 10;
+        if (conScore <= 6) {
+          racialBonus = 0; // No bonus
+        } else if (conScore >= 7 && conScore <= 10) {
+          racialBonus = 2; // +2 bonus
+        } else if (conScore >= 11 && conScore <= 14) {
+          racialBonus = 3; // +3 bonus
+        } else if (conScore >= 15 && conScore <= 17) {
+          racialBonus = 4; // +4 bonus
+        } else if (conScore >= 18) {
+          racialBonus = 5; // +5 bonus
+        }
+        console.log(`OSP Debug: Dwarf CON ${conScore} grants +${racialBonus} bonus to ${saveType}`);
+      } 
+      // Hobbit racial bonus (keeping old system for now)
+      else if (race === 'hobbit' && (saveType === 'wands' || saveType === 'spells' || saveType === 'paralysis' || saveType === 'death')) {
         racialBonus = 4; // Hobbits get +4 vs magic
       }
       
@@ -250,31 +310,37 @@ export class OspActor extends Actor {
 
     const classReqs = primeRequisites[characterClass.toLowerCase()] || ['str'];
     
-    // OSE XP modifier table based on ability scores
-    const getXPModifier = (score) => {
-      const numScore = parseInt(score) || 10;
-      if (numScore <= 8) return -10;      // 3-8: -10%
-      if (numScore <= 12) return 0;       // 9-12: No modifier
-      if (numScore <= 15) return 5;       // 13-15: +5%
-      if (numScore <= 17) return 10;      // 16-17: +10%
-      return 15;                          // 18: +15%
-    };
-
+    // Get all prime requisite scores
+    const primeScores = classReqs.map(req => parseInt(attributes[req]?.value) || 10);
+    
+    // Standard AF/OSE XP modifier rules:
+    // - If ANY prime requisite ≤ 8 → −10% XP
+    // - Else if ALL prime requisites ≥ 18 → +15% XP  
+    // - Else if ALL prime requisites ≥ 16 → +10% XP
+    // - Else if ALL prime requisites ≥ 13 → +5% XP
+    // - Else → 0%
+    
     let totalModifier = 0;
     
-    if (classReqs.length === 1) {
-      // Single prime requisite
-      const reqScore = attributes[classReqs[0]]?.value || 10;
-      totalModifier = getXPModifier(reqScore);
-    } else {
-      // Multiple prime requisites - use average or most restrictive approach
-      // For OSE, typically the average of both is used
-      let modifierSum = 0;
-      for (const req of classReqs) {
-        const reqScore = attributes[req]?.value || 10;
-        modifierSum += getXPModifier(reqScore);
-      }
-      totalModifier = Math.round(modifierSum / classReqs.length);
+    // Check if ANY prime is ≤ 8
+    if (primeScores.some(score => score <= 8)) {
+      totalModifier = -10;
+    }
+    // Check if ALL primes are ≥ 18
+    else if (primeScores.every(score => score >= 18)) {
+      totalModifier = 15;
+    }
+    // Check if ALL primes are ≥ 16
+    else if (primeScores.every(score => score >= 16)) {
+      totalModifier = 10;
+    }
+    // Check if ALL primes are ≥ 13
+    else if (primeScores.every(score => score >= 13)) {
+      totalModifier = 5;
+    }
+    // Otherwise, no modifier
+    else {
+      totalModifier = 0;
     }
 
     this.system.xpModifier = totalModifier;
@@ -298,10 +364,12 @@ export class OspActor extends Actor {
 
   /** @override */
   prepareDerivedData() {
+    console.log("OSP DEBUG: prepareDerivedData called for actor type:", this.type);
     super.prepareDerivedData();
     
     // Prepare character-specific data
     if (this.type === "character") {
+      console.log("OSP DEBUG: Calling _prepareCharacterData for character");
       this._prepareCharacterData();
     }
   }
@@ -311,6 +379,8 @@ export class OspActor extends Actor {
    * @private
    */
   _prepareCharacterData() {
+    console.log("OSP DEBUG: _prepareCharacterData called");
+    
     // Organize items by type
     this.system.weapons = this.items.filter(item => item.type === "weapon");
     this.system.armor = this.items.filter(item => item.type === "armor");
@@ -323,6 +393,12 @@ export class OspActor extends Actor {
     
     // Calculate saving throws
     this._calculateSavingThrows();
+    
+    // Calculate next level XP
+    this._calculateNextLevelXP();
+    
+    // Calculate XP modifier
+    this._calculateXPModifier();
   }
 
   /**

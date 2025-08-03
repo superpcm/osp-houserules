@@ -130,6 +130,8 @@ Handlebars.registerHelper('unarmoredAC', function(dexScore) {
 });
 
 // Register helpers for calculating saving throws
+// TEMPORARILY DISABLED - using actor.js calculation only
+/*
 Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, level, race) {
   // Column index per save type
   const COL = { death: 0, wands: 1, paralysis: 2, breath: 3, spells: 4 };
@@ -137,12 +139,20 @@ Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, l
   // Map aliases to groups
   const GROUP_FOR_CLASS = {
     // Core / AF classes (grouped)
-    'fighter': 'fighter', 'knight': 'fighter', 'ranger': 'fighter',
-    'paladin': 'paladin',
+    'fighter': 'fighter', 'knight': 'knight', 'ranger': 'fighter',
+    'paladin': 'cleric',
     'barbarian': 'barbarian',
     'cleric': 'cleric', 'druid': 'cleric',
     'magic-user': 'magicUser', 'illusionist': 'magicUser',
-    'thief': 'thief', 'assassin': 'thief', 'acrobat': 'thief', 'bard': 'thief',
+    'thief': 'thief', 'assassin': 'assassin', 'acrobat': 'thief', 'bard': 'thief',
+    
+    // Race-as-class with specific tables
+    'dwarf': 'dwarf',
+    'hobbit': 'hobbit', 
+    'half-orc': 'half-orc',
+    'elf': 'fighter',
+    'gnome': 'cleric',
+    'half-elf': 'fighter',
 
     // House rules bespoke
     'beast master': 'beastmaster_bespoke',
@@ -157,63 +167,101 @@ Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, l
       [4, 6,  [10,11,12,13,14]],
       [7, 9,  [ 8, 9,10,10,12]],
       [10,12, [ 6, 7, 8, 8,10]],
-      [13,14, [ 4, 5, 6, 5, 8]]
-    ],
-    paladin: [
-      [1, 3,  [10,11,12,13,14]],
-      [4, 6,  [ 8, 9,10,11,12]],
-      [7, 9,  [ 6, 7, 8, 8,10]],
-      [10,12, [ 4, 5, 6, 6, 8]],
-      [13,14, [ 2, 3, 4, 3, 6]]
+      [13,14, [ 4, 5, 6, 6, 8]]
     ],
     barbarian: [
-      [1, 3,  [10,13,12,15,16]],
-      [4, 6,  [ 8,11,10,13,13]],
-      [7, 9,  [ 6, 9, 8,10,10]],
-      [10,12, [ 4, 7, 6, 8, 7]],
+      [1, 3,  [12,13,14,15,16]],
+      [4, 6,  [10,11,12,13,13]],
+      [7, 9,  [ 8, 9,10,10,10]],
+      [10,12, [ 6, 7, 8, 8, 7]],
       [13,14, [ 3, 5, 4, 5, 5]]
     ],
     cleric: [
-      [1, 4,  [11,12,14,16,15]],
-      [5, 8,  [ 9,10,12,14,12]],
-      [9, 12, [ 6, 7, 9,11, 9]],
-      [13,14, [ 3, 5, 7, 8, 7]]
+      [1, 1,  [11,12,14,16,15]],
+      [2, 2,  [10,11,13,15,14]],
+      [3, 3,  [ 9,10,12,14,13]],
+      [4, 4,  [ 8, 9,11,13,12]],
+      [5, 5,  [ 7, 8,10,12,11]],
+      [6, 6,  [ 6, 7, 9,11,10]],
+      [7, 7,  [ 5, 6, 8,10, 9]],
+      [8, 8,  [ 4, 5, 7, 9, 8]],
+      [9, 12, [ 2, 3, 5, 7, 6]],
+      [13,14, [ 2, 2, 2, 2, 2]]
     ],
     magicUser: [
-      [1, 5,  [13,14,13,16,15]],
-      [6, 10, [11,12,11,14,12]],
-      [11,14, [ 8, 9, 8,11, 8]]
+      [1, 1,  [13,14,13,16,15]],
+      [2, 2,  [13,14,13,15,14]],
+      [3, 3,  [13,13,12,15,14]],
+      [4, 4,  [12,13,12,14,13]],
+      [5, 5,  [12,12,11,14,13]],
+      [6, 6,  [11,12,11,13,12]],
+      [7, 7,  [11,11,10,13,12]],
+      [8, 8,  [10,11,10,12,11]],
+      [9, 9,  [10,10, 9,12,11]],
+      [10,10, [ 9,10, 9,11,10]],
+      [11,11, [ 9, 9, 8,11,10]],
+      [12,12, [ 8, 9, 8,10, 9]],
+      [13,13, [ 8, 8, 7,10, 9]],
+      [14,14, [ 7, 8, 7, 9, 8]]
     ],
     thief: [
       [1, 4,  [13,14,13,16,15]],
       [5, 8,  [12,13,11,14,13]],
       [9, 12, [10,11, 9,12,10]],
       [13,14, [ 8, 9, 7,10, 8]]
+    ],
+    assassin: [
+      [1, 4,  [13,14,13,16,15]],
+      [5, 8,  [12,13,11,14,13]],
+      [9, 12, [10,11, 9,12,10]],
+      [13,14, [ 8, 9, 7,10, 8]]
+    ],
+    knight: [
+      [1, 3,  [12,13,14,15,16]],
+      [4, 6,  [10,11,12,13,14]],
+      [7, 9,  [ 8, 9,10,10,12]],
+      [10,12, [ 6, 7, 8, 8,10]],
+      [13,14, [ 4, 5, 6, 6, 8]]
+    ],
+    dwarf: [
+      [1, 3,  [ 8, 9,10,13,12]],
+      [4, 6,  [ 6, 7, 8,10,10]],
+      [7, 9,  [ 4, 5, 6, 7, 8]],
+      [10,12, [ 2, 3, 4, 4, 6]]
+    ],
+    hobbit: [
+      [1, 3,  [ 8, 9,10,13,12]],
+      [4, 6,  [ 6, 7, 8,10,10]],
+      [7, 8,  [ 4, 5, 6, 7, 8]]
+    ],
+    'half-orc': [
+      [1, 4,  [13,14,13,16,15]],
+      [5, 8,  [12,13,11,14,13]]
     ]
   };
 
   // Bespoke tables (per-level arrays), columns D/W/P/B/S; levels 1–14
   const BESPOKE = {
     beastmaster_bespoke: {
-      death:     [11,11,11,11, 9,9,9,9, 7,7,7,7, 5,5],
-      wands:     [12,12,12,12,10,10,10,10, 8,8,8,8, 6,6],
-      paralysis: [12,12,12,12,10,10,10,10, 8,8,8,8, 6,6],
-      breath:    [15,15,15,15,13,13,13,13,11,11,11,11, 9,9],
+      death:     [11,11,11,11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
+      wands:     [12,12,12,12,10,10,10,10, 8, 8, 8, 8, 6, 6],
+      paralysis: [12,12,12,12,10,10,10,10, 8, 8, 8, 8, 6, 6],
+      breath:    [15,15,15,15,13,13,13,13,11,11,11,11, 9, 9],
       spells:    [16,16,16,16,14,14,14,14,12,12,12,12,10,10]
     },
     mage_bespoke: {
-      death:     [12,12,12,12,12,10,10,10,10,10, 7, 7, 7, 7],
-      wands:     [13,13,13,13,13,11,11,11,11,11, 8, 8, 8, 8],
-      paralysis: [12,12,12,12,12,10,10,10,10,10, 7, 7, 7, 7],
-      breath:    [15,15,15,15,15,13,13,13,13,13,10,10,10,10],
-      spells:    [14,14,14,14,14,11,11,11,11,11, 7, 7, 7, 7]
+      death:     [11,11,11,11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
+      wands:     [12,12,12,12,10,10,10,10, 8, 8, 8, 8, 6, 6],
+      paralysis: [12,12,12,12,10,10,10,10, 8, 8, 8, 8, 6, 6],
+      breath:    [15,15,15,15,13,13,13,13,11,11,11,11, 9, 9],
+      spells:    [16,16,16,16,14,14,14,14,12,12,12,12,10,10]
     },
     warden_bespoke: {
-      death:     [12,12,12,10,10,10, 8, 8, 8, 6, 6, 6, 4, 4],
-      wands:     [13,13,13,11,11,11, 9, 9, 9, 7, 7, 7, 5, 5],
-      paralysis: [14,14,14,12,12,12,10,10,10, 8, 8, 8, 6, 6],
-      breath:    [15,15,15,13,13,13,10,10,10, 8, 8, 8, 5, 5],
-      spells:    [16,16,16,14,14,14,12,12,12,10,10,10, 8, 8]
+      death:     [11,11,11,11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
+      wands:     [12,12,12,12,10,10,10,10, 8, 8, 8, 8, 6, 6],
+      paralysis: [12,12,12,12,10,10,10,10, 8, 8, 8, 8, 6, 6],
+      breath:    [15,15,15,15,13,13,13,13,11,11,11,11, 9, 9],
+      spells:    [16,16,16,16,14,14,14,14,12,12,12,12,10,10]
     }
   };
 
@@ -252,6 +300,7 @@ Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, l
 
   return base;
 });
+*/
 
 // Register a Handlebars helper for next level XP calculation
 Handlebars.registerHelper('getNextLevelXP', function(characterClass, level) {
@@ -355,33 +404,38 @@ Handlebars.registerHelper('getXPModifier', function(characterClass, attributes) 
 
   const classReqs = primeRequisites[classLower] || ['str'];
   
-  // OSE XP modifier table based on ability scores
-  const getXPModifier = (score) => {
-    const numScore = parseInt(score) || 10;
-    if (numScore <= 8) return -10;      // 3-8: -10%
-    if (numScore <= 12) return 0;       // 9-12: No modifier
-    if (numScore <= 15) return 5;       // 13-15: +5%
-    if (numScore <= 17) return 10;      // 16-17: +10%
-    return 15;                          // 18: +15%
-  };
-
-  let totalModifier = 0;
+  // Get all prime requisite scores
+  const primeScores = classReqs.map(req => parseInt(attrs[req]?.value) || 10);
   
-  if (classReqs.length === 1) {
-    // Single prime requisite
-    const reqScore = attrs[classReqs[0]]?.value || 10;
-    totalModifier = getXPModifier(reqScore);
-  } else {
-    // Multiple prime requisites - use average
-    let modifierSum = 0;
-    for (const req of classReqs) {
-      const reqScore = attrs[req]?.value || 10;
-      modifierSum += getXPModifier(reqScore);
-    }
-    totalModifier = Math.round(modifierSum / classReqs.length);
+  // Standard AF/OSE XP modifier rules:
+  // - If ANY prime requisite ≤ 8 → −10% XP
+  // - Else if ALL prime requisites ≥ 18 → +15% XP  
+  // - Else if ALL prime requisites ≥ 16 → +10% XP
+  // - Else if ALL prime requisites ≥ 13 → +5% XP
+  // - Else → 0%
+  
+  // Check if ANY prime is ≤ 8
+  if (primeScores.some(score => score <= 8)) {
+    return -10;
   }
-
-  return totalModifier;
+  
+  // Check if ALL primes are ≥ 18
+  if (primeScores.every(score => score >= 18)) {
+    return 15;
+  }
+  
+  // Check if ALL primes are ≥ 16
+  if (primeScores.every(score => score >= 16)) {
+    return 10;
+  }
+  
+  // Check if ALL primes are ≥ 13
+  if (primeScores.every(score => score >= 13)) {
+    return 5;
+  }
+  
+  // Otherwise, no modifier
+  return 0;
 });
 
 // Register a Handlebars helper to display prime requisites for a class

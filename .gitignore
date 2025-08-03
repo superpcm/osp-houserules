@@ -63,3 +63,4 @@ nyc_output/
 # Diagnostic files and helpers
 build-and-restart.sh
 docs/
+TESTING_CHARACTER_NAME.md

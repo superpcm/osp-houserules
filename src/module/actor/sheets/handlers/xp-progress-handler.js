@@ -73,9 +73,17 @@ export class XPProgressHandler {
       setTimeout(() => this.updateProgressBar(), 50);
     });
 
-    // Listen for changes to the level field
-    this.html.on('change', '.char-level', () => {
-      console.log('Level field changed, updating progress bar...');
+    // Listen for actor updates (since level is now managed through dialog)
+    if (this.actor) {
+      this.actor.on?.('update', () => {
+        console.log('Actor updated, refreshing progress bar...');
+        setTimeout(() => this.updateProgressBar(), 50);
+      });
+    }
+
+    // Listen for changes to XP field
+    this.html.on('change', 'input[name="system.xp"]', () => {
+      console.log('XP field changed, updating progress bar...');
       setTimeout(() => this.updateProgressBar(), 50);
     });
   }
@@ -122,7 +130,7 @@ export class XPProgressHandler {
           </div>
           ` : ''}
           <div style="margin-bottom: 10px;">
-            <strong>Next Level XP:</strong> ${nextLevelXP}
+            <strong>Next Level XP:</strong> <span id="next-level-xp-display">${nextLevelXP}</span>
           </div>
           <div style="margin-bottom: 10px;">
             <strong>XP Modifier:</strong> ${xpMod >= 0 ? '+' : ''}${xpMod}%
@@ -150,6 +158,7 @@ export class XPProgressHandler {
           label: "OK",
           callback: async (html) => {
             const awardedXP = parseInt(html.find('#xp-award-input').val()) || 0;
+            let updateData = {};
             
             // Handle GM-only editable fields
             if (isGM) {
@@ -157,7 +166,6 @@ export class XPProgressHandler {
               const newLevel = parseInt(html.find('#level-input').val()) || 1;
               
               // Update current XP and level if changed
-              const updateData = {};
               if (newCurrentXP !== currentXP) {
                 updateData['system.xp'] = newCurrentXP;
               }
@@ -166,13 +174,19 @@ export class XPProgressHandler {
               }
               
               if (Object.keys(updateData).length > 0) {
+                console.log('Updating actor with:', updateData);
                 await this.actor.update(updateData);
+                // Force progress bar update after level/XP change
+                setTimeout(() => this.updateProgressBar(), 100);
               }
             }
             
             // Award XP if specified
             if (awardedXP > 0) {
               this.awardXP(awardedXP);
+            } else if (Object.keys(updateData).length > 0) {
+              // If we only changed level/XP without awarding, still refresh the progress bar
+              setTimeout(() => this.updateProgressBar(), 100);
             }
           }
         },
@@ -183,6 +197,8 @@ export class XPProgressHandler {
       },
       default: "ok",
       render: (html) => {
+        const self = this; // Capture the XPProgressHandler instance
+        
         // Apply character sheet background styling to dialog
         const dialogWindow = html.closest('.app.window-app');
         if (dialogWindow.length) {
@@ -220,6 +236,8 @@ export class XPProgressHandler {
         const modifiedXPSpan = html.find('#modified-xp');
         const newTotalSpan = html.find('#new-total');
         const currentXPInput = html.find('#current-xp-input');
+        const levelInput = html.find('#level-input');
+        const nextLevelXPDisplay = html.find('#next-level-xp-display');
 
         const updatePreview = () => {
           const baseXP = parseInt(input.val()) || 0;
@@ -242,6 +260,15 @@ export class XPProgressHandler {
         // Update preview when GM changes current XP
         if (isGM) {
           currentXPInput.on('input', updatePreview);
+          
+          // Update Next Level XP when level changes
+          levelInput.on('change', () => {
+            const selectedLevel = parseInt(levelInput.val()) || 1;
+            const newNextLevelXP = self.getNextLevelXPForLevel(selectedLevel);
+            console.log(`Level changed to ${selectedLevel}, Next Level XP: ${newNextLevelXP}`);
+            nextLevelXPDisplay.text(newNextLevelXP);
+            updatePreview(); // Also update the preview in case XP award is set
+          });
         }
 
         // Focus the input
@@ -321,33 +348,38 @@ export class XPProgressHandler {
 
     const classReqs = primeRequisites[characterClass.toLowerCase()] || ['str'];
     
-    // OSE XP modifier table based on ability scores (matches ose.js and actor.js)
-    const getXPModifier = (score) => {
-      const numScore = parseInt(score) || 10;
-      if (numScore <= 8) return -10;      // 3-8: -10%
-      if (numScore <= 12) return 0;       // 9-12: No modifier
-      if (numScore <= 15) return 5;       // 13-15: +5%
-      if (numScore <= 17) return 10;      // 16-17: +10%
-      return 15;                          // 18: +15%
-    };
-
-    let totalModifier = 0;
+    // Get all prime requisite scores
+    const primeScores = classReqs.map(req => parseInt(attributes[req]?.value) || 10);
     
-    if (classReqs.length === 1) {
-      // Single prime requisite
-      const reqScore = attributes[classReqs[0]]?.value || 10;
-      totalModifier = getXPModifier(reqScore);
-    } else {
-      // Multiple prime requisites - use average
-      let modifierSum = 0;
-      for (const req of classReqs) {
-        const reqScore = attributes[req]?.value || 10;
-        modifierSum += getXPModifier(reqScore);
-      }
-      totalModifier = Math.round(modifierSum / classReqs.length);
+    // Standard AF/OSE XP modifier rules:
+    // - If ANY prime requisite ≤ 8 → −10% XP
+    // - Else if ALL prime requisites ≥ 18 → +15% XP  
+    // - Else if ALL prime requisites ≥ 16 → +10% XP
+    // - Else if ALL prime requisites ≥ 13 → +5% XP
+    // - Else → 0%
+    
+    // Check if ANY prime is ≤ 8
+    if (primeScores.some(score => score <= 8)) {
+      return -10;
     }
-
-    return totalModifier;
+    
+    // Check if ALL primes are ≥ 18
+    if (primeScores.every(score => score >= 18)) {
+      return 15;
+    }
+    
+    // Check if ALL primes are ≥ 16
+    if (primeScores.every(score => score >= 16)) {
+      return 10;
+    }
+    
+    // Check if ALL primes are ≥ 13
+    if (primeScores.every(score => score >= 13)) {
+      return 5;
+    }
+    
+    // Otherwise, no modifier
+    return 0;
   }
 
   /**
@@ -355,26 +387,27 @@ export class XPProgressHandler {
    */
   updateProgressBar() {
     const currentXP = parseInt(this.actor.system.xp) || 0;
+    const currentLevel = parseInt(this.actor.system.level) || 1;
+    const characterClass = this.actor.system.class || 'Fighter';
     const nextLevelXP = this.getNextLevelXP();
     const currentLevelXP = this.getCurrentLevelXP();
     
-    // Calculate progress within current level
-    const xpInCurrentLevel = currentXP - currentLevelXP;
-    const xpNeededForNextLevel = nextLevelXP - currentLevelXP;
-    
-    // Calculate percentage (0-100%)
+    // Calculate progress toward next level as a total percentage
+    // This shows: "How much of the XP needed for next level do I have?"
     let progressPercentage = 0;
-    if (xpNeededForNextLevel > 0) {
-      progressPercentage = Math.min(100, Math.max(0, (xpInCurrentLevel / xpNeededForNextLevel) * 100));
+    if (nextLevelXP > 0) {
+      progressPercentage = Math.min(100, Math.max(0, (currentXP / nextLevelXP) * 100));
     }
 
     console.log('XP Progress Debug:', {
       currentXP,
+      currentLevel,
+      characterClass,
       nextLevelXP,
       currentLevelXP,
-      xpInCurrentLevel,
-      xpNeededForNextLevel,
-      progressPercentage,
+      progressPercentage: Math.round(progressPercentage),
+      calculation: `${currentXP} / ${nextLevelXP} = ${(currentXP / nextLevelXP * 100).toFixed(1)}%`,
+      oldCalculationWouldBe: `(${currentXP} - ${currentLevelXP}) / (${nextLevelXP} - ${currentLevelXP}) = ${((currentXP - currentLevelXP) / (nextLevelXP - currentLevelXP) * 100).toFixed(1)}%`,
       levelXpProgressFound: this.levelXpProgress.length
     });
 
@@ -438,41 +471,119 @@ export class XPProgressHandler {
   }
 
   /**
+   * Get XP required for next level based on class and specified level
+   */
+  getNextLevelXPForLevel(level) {
+    const characterClass = this.actor.system.class;
+    const currentLevel = parseInt(level) || 1;
+    
+    // XP requirements table - matches ose.js
+    const xpTables = {
+      'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
+      'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
+      'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
+      'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
+    };
+
+    // Map additional classes to their XP patterns - matches ose.js
+    const classXPMapping = {
+      // Core OSE classes
+      'fighter': 'fighter',
+      'cleric': 'cleric', 
+      'magic-user': 'magic-user',
+      'thief': 'thief',
+      
+      // Advanced Fantasy classes - map to appropriate base class XP tables
+      'assassin': 'thief',          // Assassins use thief XP
+      'barbarian': 'fighter',       // Barbarians use fighter XP
+      'bard': 'thief',              // Bards use thief XP
+      'beast master': 'fighter',    // Beast Masters use fighter XP
+      'druid': 'cleric',            // Druids use cleric XP
+      'knight': 'fighter',          // Knights use fighter XP
+      'paladin': 'cleric',          // Paladins use cleric XP
+      'ranger': 'fighter',          // Rangers use fighter XP
+      'warden': 'fighter',          // Wardens use fighter XP
+      
+      // Magic users and variants
+      'illusionist': 'magic-user',  // Illusionists use magic-user XP
+      'mage': 'magic-user',         // Mages use magic-user XP
+      
+      // Race-as-class options
+      'dwarf': 'fighter',           // Dwarf class uses fighter XP
+      'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
+      'gnome': 'cleric',            // Gnome class uses cleric XP
+      'half-elf': 'fighter',        // Half-Elf class uses fighter XP
+      'half-orc': 'fighter',        // Half-Orc class uses fighter XP
+      'hobbit': 'thief'             // Hobbit class uses thief XP
+    };
+
+    // Get the appropriate XP table for this class
+    const mappedClass = classXPMapping[characterClass?.toLowerCase()] || 'fighter';
+    const table = xpTables[mappedClass];
+    
+    // Get next level XP (currentLevel index = nextLevel - 1)
+    const nextLevel = Math.min(currentLevel + 1, 15); // Max level 15
+    const nextLevelIndex = nextLevel - 1; // Convert to array index
+    
+    return table[nextLevelIndex] || table[14]; // Use max level XP if beyond table
+  }
+
+  /**
    * Get XP required for next level based on class and current level
    */
   getNextLevelXP() {
     const characterClass = this.actor.system.class;
-    const currentXP = parseInt(this.actor.system.xp) || 0;
+    const currentLevel = parseInt(this.actor.system.level) || 1; // Use actual level field, not calculated from XP
     
-    // XP requirements table - you may need to adjust these based on your system
+    // XP requirements table - matches ose.js
     const xpTables = {
-      'Fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000],
-      'Cleric': [0, 1500, 3000, 6000, 13000, 27000, 55000, 110000, 225000, 450000, 675000, 900000, 1125000, 1350000],
-      'Magic-User': [0, 2500, 5000, 10000, 22500, 40000, 60000, 90000, 135000, 250000, 375000, 750000, 1125000, 1500000],
-      'Mage': [0, 2500, 5000, 10000, 22500, 40000, 60000, 90000, 135000, 250000, 375000, 750000, 1125000, 1500000],
-      'Thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000],
-      'Dwarf': [0, 2200, 4400, 8800, 17000, 35000, 70000, 140000, 270000, 400000, 530000, 660000, 790000, 920000],
-      'Elf': [0, 4000, 8000, 16000, 32000, 64000, 120000, 250000, 400000, 600000, 900000, 1200000, 1500000, 1800000],
-      'Hobbit': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000]
+      'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
+      'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
+      'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
+      'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
     };
 
-    const table = xpTables[characterClass] || xpTables['Fighter']; // Default to Fighter
-    
-    // Find the current level based on actual XP
-    let currentLevel = 1;
-    for (let i = 0; i < table.length; i++) {
-      if (currentXP >= table[i]) {
-        currentLevel = i + 1; // Level is index + 1
-      } else {
-        break;
-      }
-    }
+    // Map additional classes to their XP patterns - matches ose.js
+    const classXPMapping = {
+      // Core OSE classes
+      'fighter': 'fighter',
+      'cleric': 'cleric', 
+      'magic-user': 'magic-user',
+      'thief': 'thief',
+      
+      // Advanced Fantasy classes - map to appropriate base class XP tables
+      'assassin': 'thief',          // Assassins use thief XP
+      'barbarian': 'fighter',       // Barbarians use fighter XP
+      'bard': 'thief',              // Bards use thief XP
+      'beast master': 'fighter',    // Beast Masters use fighter XP
+      'druid': 'cleric',            // Druids use cleric XP
+      'knight': 'fighter',          // Knights use fighter XP
+      'paladin': 'cleric',          // Paladins use cleric XP
+      'ranger': 'fighter',          // Rangers use fighter XP
+      'warden': 'fighter',          // Wardens use fighter XP
+      
+      // Magic users and variants
+      'illusionist': 'magic-user',  // Illusionists use magic-user XP
+      'mage': 'magic-user',         // Mages use magic-user XP
+      
+      // Race-as-class options
+      'dwarf': 'fighter',           // Dwarf class uses fighter XP
+      'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
+      'gnome': 'cleric',            // Gnome class uses cleric XP
+      'half-elf': 'fighter',        // Half-Elf class uses fighter XP
+      'half-orc': 'fighter',        // Half-Orc class uses fighter XP
+      'hobbit': 'thief'             // Hobbit class uses thief XP
+    };
+
+    // Get the appropriate XP table for this class
+    const mappedClass = classXPMapping[characterClass?.toLowerCase()] || 'fighter';
+    const table = xpTables[mappedClass];
     
     // Get next level XP (currentLevel index = nextLevel - 1)
-    const nextLevel = Math.min(currentLevel + 1, table.length);
-    const nextLevelIndex = Math.min(nextLevel - 1, table.length - 1);
+    const nextLevel = Math.min(currentLevel + 1, 15); // Max level 15
+    const nextLevelIndex = nextLevel - 1; // Convert to array index
     
-    return table[nextLevelIndex] || table[table.length - 1];
+    return table[nextLevelIndex] || table[14]; // Use max level XP if beyond table
   }
 
   /**
@@ -480,31 +591,51 @@ export class XPProgressHandler {
    */
   getCurrentLevelXP() {
     const characterClass = this.actor.system.class;
-    const currentXP = parseInt(this.actor.system.xp) || 0;
+    const currentLevel = parseInt(this.actor.system.level) || 1; // Use actual level field, not calculated from XP
     
-    // Same XP table as above
+    // XP requirements table - matches ose.js
     const xpTables = {
-      'Fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000],
-      'Cleric': [0, 1500, 3000, 6000, 13000, 27000, 55000, 110000, 225000, 450000, 675000, 900000, 1125000, 1350000],
-      'Magic-User': [0, 2500, 5000, 10000, 22500, 40000, 60000, 90000, 135000, 250000, 375000, 750000, 1125000, 1500000],
-      'Mage': [0, 2500, 5000, 10000, 22500, 40000, 60000, 90000, 135000, 250000, 375000, 750000, 1125000, 1500000],
-      'Thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000],
-      'Dwarf': [0, 2200, 4400, 8800, 17000, 35000, 70000, 140000, 270000, 400000, 530000, 660000, 790000, 920000],
-      'Elf': [0, 4000, 8000, 16000, 32000, 64000, 120000, 250000, 400000, 600000, 900000, 1200000, 1500000, 1800000],
-      'Hobbit': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000]
+      'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
+      'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
+      'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
+      'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
     };
 
-    const table = xpTables[characterClass] || xpTables['Fighter']; // Default to Fighter
-    
-    // Find the highest level the character qualifies for based on their current XP
-    let currentLevel = 1;
-    for (let i = 0; i < table.length; i++) {
-      if (currentXP >= table[i]) {
-        currentLevel = i + 1; // Level is index + 1
-      } else {
-        break;
-      }
-    }
+    // Map additional classes to their XP patterns - matches ose.js
+    const classXPMapping = {
+      // Core OSE classes
+      'fighter': 'fighter',
+      'cleric': 'cleric', 
+      'magic-user': 'magic-user',
+      'thief': 'thief',
+      
+      // Advanced Fantasy classes - map to appropriate base class XP tables
+      'assassin': 'thief',          // Assassins use thief XP
+      'barbarian': 'fighter',       // Barbarians use fighter XP
+      'bard': 'thief',              // Bards use thief XP
+      'beast master': 'fighter',    // Beast Masters use fighter XP
+      'druid': 'cleric',            // Druids use cleric XP
+      'knight': 'fighter',          // Knights use fighter XP
+      'paladin': 'cleric',          // Paladins use cleric XP
+      'ranger': 'fighter',          // Rangers use fighter XP
+      'warden': 'fighter',          // Wardens use fighter XP
+      
+      // Magic users and variants
+      'illusionist': 'magic-user',  // Illusionists use magic-user XP
+      'mage': 'magic-user',         // Mages use magic-user XP
+      
+      // Race-as-class options
+      'dwarf': 'fighter',           // Dwarf class uses fighter XP
+      'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
+      'gnome': 'cleric',            // Gnome class uses cleric XP
+      'half-elf': 'fighter',        // Half-Elf class uses fighter XP
+      'half-orc': 'fighter',        // Half-Orc class uses fighter XP
+      'hobbit': 'thief'             // Hobbit class uses thief XP
+    };
+
+    // Get the appropriate XP table for this class
+    const mappedClass = classXPMapping[characterClass?.toLowerCase()] || 'fighter';
+    const table = xpTables[mappedClass];
     
     // Get XP requirement for the current level (level - 1 = index)
     const levelIndex = Math.max(0, Math.min(currentLevel - 1, table.length - 1));

@@ -334,7 +334,45 @@
         </div>
       </div>
       <!-- Skills Tab -->
-      <div class="tab" data-group="primary" data-tab="skills">
+      <div class="tab" data-group="primary" data-tab="skills" style="position: relative; min-height: 400px;">
+        <!-- Level Progress Ring - Top Left -->
+        <div class="level-progress-ring-container" style="position: absolute; top: 10px; left: 10px; width: 77px; height: 77px; z-index: 10;">
+          <!-- SVG Progress Ring -->
+          <svg width="77" height="77" style="position: absolute; top: 0; left: 0; transform: rotate(-90deg);">
+            <!-- Background ring -->
+            <circle cx="38.5" cy="38.5" r="32.5" fill="none" stroke="white" stroke-width="10" stroke-opacity="1" />
+            <!-- Progress ring -->
+            <circle cx="38.5" cy="38.5" r="32.5" fill="none" stroke="#22c55e" stroke-width="10" 
+                    stroke-dasharray="204.2" stroke-dashoffset="204.2" 
+                    class="skills-level-progress-ring" 
+                    style="transition: stroke-dashoffset 0.3s ease; stroke-opacity: 1;" />
+            <!-- Outline ring - outer edge -->
+            <circle cx="38.5" cy="38.5" r="37.5" fill="none" stroke="#000" stroke-width="1" stroke-opacity="0.75" />
+            <!-- Outline ring - inner edge -->
+            <circle cx="38.5" cy="38.5" r="27.5" fill="none" stroke="#000" stroke-width="1" stroke-opacity="0.75" />
+          </svg>
+          <!-- Center circle with inset shadow styling like Level field -->
+          <div style="position: absolute; top: 11px; left: 11px; width: 55px; height: 55px; border-radius: 50%; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); z-index: 11;"></div>
+          <!-- Level display in center -->
+          <div class="skills-level-display" style="
+            position: absolute; 
+            top: 11px; 
+            left: 11px; 
+            width: 55px; 
+            height: 55px; 
+            font-size: 54px; 
+            font-weight: bold; 
+            color: #000; 
+            cursor: pointer; 
+            z-index: 12; 
+            border-radius: 50%;
+            line-height: 1;
+            font-family: 'Minion Pro', serif;
+            padding-top: 5px;
+            text-align: center;
+            box-sizing: border-box;
+          " title="Award XP">{{system.level}}</div>
+        </div>
         <!-- Skills tab content (blank for now) -->
       </div>
       <!-- Equipment Tab -->

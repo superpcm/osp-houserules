@@ -28,6 +28,8 @@ export class XPProgressHandler {
     this.nextLevelDisplay = this.html.find('.next-level-xp');
     this.xpAwardBtn = this.html.find('.xp-award-btn');
     this.levelDisplay = this.html.find('.char-level-display');
+    this.skillsLevelProgressRing = this.html.find('.skills-level-progress-ring');
+    this.skillsLevelDisplay = this.html.find('.skills-level-display');
     
     console.log('XP Progress Handler - Elements found:', {
       xpDisplay: this.xpDisplay.length,
@@ -36,13 +38,15 @@ export class XPProgressHandler {
       levelXpProgress: this.levelXpProgress.length,
       nextLevelDisplay: this.nextLevelDisplay.length,
       percentageDisplay: this.percentageDisplay.length,
-      levelDisplay: this.levelDisplay.length
+      levelDisplay: this.levelDisplay.length,
+      skillsLevelProgressRing: this.skillsLevelProgressRing.length,
+      skillsLevelDisplay: this.skillsLevelDisplay.length
     });
     
     this.bindEvents();
     
-    // Update both progress bars if they exist
-    if (this.progressBar.length || this.levelXpProgress.length) {
+    // Update all progress displays if they exist
+    if (this.progressBar.length || this.levelXpProgress.length || this.skillsLevelProgressRing.length) {
       // Force immediate update with delay to ensure DOM is ready
       setTimeout(() => {
         this.updateProgressBar();
@@ -57,6 +61,14 @@ export class XPProgressHandler {
     // Bind XP award button click
     if (this.xpAwardBtn.length) {
       this.xpAwardBtn.on('click', (e) => {
+        e.preventDefault();
+        this.showXPAwardDialog();
+      });
+    }
+
+    // Bind skills level display click (for XP award)
+    if (this.skillsLevelDisplay.length) {
+      this.skillsLevelDisplay.on('click', (e) => {
         e.preventDefault();
         this.showXPAwardDialog();
       });
@@ -467,6 +479,28 @@ export class XPProgressHandler {
     // Update XP display if it exists
     if (this.xpDisplay.length) {
       this.xpDisplay.text(currentXP);
+    }
+
+    // Update skills tab progress ring (if it exists)
+    if (this.skillsLevelProgressRing.length) {
+      console.log('Updating skills level progress ring to:', `${progressPercentage}%`);
+      
+      // Calculate stroke-dashoffset for progress ring
+      const circumference = 2 * Math.PI * 32.5; // 2πr where r = 32.5
+      const offset = circumference - (progressPercentage / 100) * circumference;
+      
+      this.skillsLevelProgressRing.css('stroke-dashoffset', offset);
+      
+      console.log('Skills ring progress:', {
+        circumference: circumference.toFixed(1),
+        progressPercentage: progressPercentage.toFixed(1),
+        offset: offset.toFixed(1)
+      });
+    }
+
+    // Update skills level display
+    if (this.skillsLevelDisplay.length) {
+      this.skillsLevelDisplay.text(this.actor.system.level || 1);
     }
   }
 

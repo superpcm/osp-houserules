@@ -30,6 +30,8 @@ export class XPProgressHandler {
     this.levelDisplay = this.html.find('.char-level-display');
     this.skillsLevelProgressRing = this.html.find('.skills-level-progress-ring');
     this.skillsLevelDisplay = this.html.find('.skills-level-display');
+    this.staticLevelDisplay = this.html.find('.level-display'); // Static area level display
+    this.staticLevelProgressRing = this.html.find('.level-progress-ring'); // Static area progress ring
     
     console.log('XP Progress Handler - Elements found:', {
       xpDisplay: this.xpDisplay.length,
@@ -40,17 +42,59 @@ export class XPProgressHandler {
       percentageDisplay: this.percentageDisplay.length,
       levelDisplay: this.levelDisplay.length,
       skillsLevelProgressRing: this.skillsLevelProgressRing.length,
-      skillsLevelDisplay: this.skillsLevelDisplay.length
+      skillsLevelDisplay: this.skillsLevelDisplay.length,
+      staticLevelDisplay: this.staticLevelDisplay.length,
+      staticLevelProgressRing: this.staticLevelProgressRing.length
     });
     
     this.bindEvents();
     
-    // Update all progress displays if they exist
-    if (this.progressBar.length || this.levelXpProgress.length || this.skillsLevelProgressRing.length) {
-      // Force immediate update with delay to ensure DOM is ready
-      setTimeout(() => {
-        this.updateProgressBar();
-      }, 250);
+    // Update all progress displays if they exist, with retry for DOM readiness
+    setTimeout(() => {
+      // Re-find elements to ensure DOM is ready
+      this.refreshElements();
+      this.updateProgressBar();
+    }, 250);
+  }
+
+  /**
+   * Refresh element references (useful for DOM readiness)
+   */
+  refreshElements() {
+    // Re-initialize DOM elements
+    this.progressBar = this.html.find('.xp-progress');
+    this.levelXpProgress = this.html.find('.level-xp-progress');
+    this.percentageDisplay = this.html.find('.xp-percentage');
+    this.xpDisplay = this.html.find('.xp-display');
+    this.nextLevelDisplay = this.html.find('.next-level-xp');
+    this.xpAwardBtn = this.html.find('.xp-award-btn');
+    this.levelDisplay = this.html.find('.char-level-display');
+    this.skillsLevelProgressRing = this.html.find('.skills-level-progress-ring');
+    this.skillsLevelDisplay = this.html.find('.skills-level-display');
+    this.staticLevelDisplay = this.html.find('.level-display'); // Static area level display
+    this.staticLevelProgressRing = this.html.find('.level-progress-ring'); // Static area progress ring
+    
+    console.log('XP Progress Handler - Elements refreshed:', {
+      xpDisplay: this.xpDisplay.length,
+      xpAwardBtn: this.xpAwardBtn.length,
+      progressBar: this.progressBar.length,
+      levelXpProgress: this.levelXpProgress.length,
+      nextLevelDisplay: this.nextLevelDisplay.length,
+      percentageDisplay: this.percentageDisplay.length,
+      levelDisplay: this.levelDisplay.length,
+      skillsLevelProgressRing: this.skillsLevelProgressRing.length,
+      skillsLevelDisplay: this.skillsLevelDisplay.length,
+      staticLevelDisplay: this.staticLevelDisplay.length,
+      staticLevelProgressRing: this.staticLevelProgressRing.length
+    });
+    
+    // Bind static level display click now that we have the element
+    if (this.staticLevelDisplay.length) {
+      this.staticLevelDisplay.off('click').on('click', (e) => {
+        e.preventDefault();
+        this.showXPAwardDialog();
+      });
+      console.log('Static level display click event bound successfully');
     }
   }
 
@@ -69,6 +113,14 @@ export class XPProgressHandler {
     // Bind skills level display click (for XP award)
     if (this.skillsLevelDisplay.length) {
       this.skillsLevelDisplay.on('click', (e) => {
+        e.preventDefault();
+        this.showXPAwardDialog();
+      });
+    }
+
+    // Bind static level display click (for XP award)
+    if (this.staticLevelDisplay.length) {
+      this.staticLevelDisplay.on('click', (e) => {
         e.preventDefault();
         this.showXPAwardDialog();
       });
@@ -398,14 +450,15 @@ export class XPProgressHandler {
    * Update the progress bar based on current XP and next level requirements
    */
   updateProgressBar() {
+    console.log('=== XP Progress Bar Update Started ===');
     const currentXP = parseInt(this.actor.system.xp) || 0;
     const currentLevel = parseInt(this.actor.system.level) || 1;
     const characterClass = this.actor.system.class || 'Fighter';
     const nextLevelXP = this.getNextLevelXP();
     const currentLevelXP = this.getCurrentLevelXP();
     
-    // Calculate progress toward next level as a total percentage
-    // This shows: "How much of the XP needed for next level do I have?"
+    // Calculate progress toward next level as simple percentage
+    // This shows: "How close am I to reaching the next level's XP requirement?"
     let progressPercentage = 0;
     if (nextLevelXP > 0) {
       progressPercentage = Math.min(100, Math.max(0, (currentXP / nextLevelXP) * 100));
@@ -416,11 +469,9 @@ export class XPProgressHandler {
       currentLevel,
       characterClass,
       nextLevelXP,
-      currentLevelXP,
       progressPercentage: Math.round(progressPercentage),
-      calculation: `${currentXP} / ${nextLevelXP} = ${(currentXP / nextLevelXP * 100).toFixed(1)}%`,
-      oldCalculationWouldBe: `(${currentXP} - ${currentLevelXP}) / (${nextLevelXP} - ${currentLevelXP}) = ${((currentXP - currentLevelXP) / (nextLevelXP - currentLevelXP) * 100).toFixed(1)}%`,
-      levelXpProgressFound: this.levelXpProgress.length
+      calculation: `${currentXP} / ${nextLevelXP} = ${progressPercentage.toFixed(1)}%`,
+      simple: `${currentXP} XP out of ${nextLevelXP} XP needed for level ${currentLevel + 1}`
     });
 
     // Update horizontal progress bar (if it exists)
@@ -501,6 +552,32 @@ export class XPProgressHandler {
     // Update skills level display
     if (this.skillsLevelDisplay.length) {
       this.skillsLevelDisplay.text(this.actor.system.level || 1);
+    }
+
+    // Update static level progress ring (if it exists)
+    console.log('Checking for static level progress ring...', {
+      staticLevelProgressRingFound: this.staticLevelProgressRing.length,
+      progressPercentage: progressPercentage.toFixed(1)
+    });
+    if (this.staticLevelProgressRing.length) {
+      console.log('Updating static level progress ring to:', `${progressPercentage}%`);
+      
+      // Calculate stroke-dashoffset for progress ring
+      const circumference = 2 * Math.PI * 32.5; // 2πr where r = 32.5
+      const offset = circumference - (progressPercentage / 100) * circumference;
+      
+      this.staticLevelProgressRing.css('stroke-dashoffset', offset);
+      
+      console.log('Static ring progress:', {
+        circumference: circumference.toFixed(1),
+        progressPercentage: progressPercentage.toFixed(1),
+        offset: offset.toFixed(1)
+      });
+    }
+
+    // Update static level display
+    if (this.staticLevelDisplay.length) {
+      this.staticLevelDisplay.text(this.actor.system.level || 1);
     }
   }
 

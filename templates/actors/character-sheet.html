@@ -137,24 +137,55 @@
       </div>
       
       <!-- Character Level - Absolute positioned -->
-      <div class="char-field-group" style="position: absolute; left: 500px; top: 12px; display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-        <label for="char-level" style="font-size: 25px; font-family: 'Council', serif; letter-spacing: 0.03em; margin-bottom: -2px;">Level</label>
-        <div style="position: relative; width: 75px; height: 75px; transform: translateY(4px);">
-          <!-- White Background Layer (bottom) -->
-          <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background-color: white; border-radius: 9px; z-index: 1;"></div>
-          <!-- XP Progress Bar (middle) -->
-          <div class="level-xp-progress" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: #22c55e; transition: height 0.3s ease, border-radius 0.3s ease; z-index: 2; border-bottom-left-radius: 9px; border-bottom-right-radius: 9px; border-top-left-radius: var(--progress-top-radius, 0px); border-top-right-radius: var(--progress-top-radius, 0px); --progress-top-radius: 0px;"></div>
-          <!-- Level Display (on top) - Changed from dropdown to static display -->
-          <div class="char-level-display" style="position: relative; z-index: 3; width: 100%; height: 100%; text-align: center; font-size: 54px; background-color: transparent !important; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; margin: 0; border-radius: 9px; border: 1px solid #000; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); color: #000; font-weight: bold;">
-            {{system.level}}
-          </div>
-          <!-- Hidden level input for form submission -->
-          <input type="hidden" name="system.level" value="{{system.level}}" />
-        </div>
-        <!-- XP Progress Percentage Circle (clickable for XP award) -->
-        <div class="xp-percentage xp-award-btn" style="margin-top: -12px; font-size: 15px; color: #ffffff; border: 2px solid #000; border-radius: 50%; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background-color: #000000; cursor: pointer;" title="Award XP">
-          0%
-        </div>
+      <div class="level-progress-ring-container" style="position: absolute; left: 500px; top: 12px; width: 100px; height: 120px; z-index: 10;">
+        <!-- Independent Curved Level Title -->
+        <svg width="100" height="40" style="position: absolute; top: 12px; left: 0; z-index: 15; pointer-events: none; overflow: visible;">
+          <defs>
+            <!-- Define the path for curved title text - matches progress ring arc -->
+            <path id="titleTextPath" d="M 17.5,35 A 32.5,32.5 0 0,1 82.5,35" stroke="none" fill="none"/>
+          </defs>
+          <text style="font-family: 'Council', serif; font-size: 25px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
+            <textPath href="#titleTextPath" startOffset="50%" text-anchor="middle">
+              Level
+            </textPath>
+          </text>
+        </svg>
+        
+        <!-- SVG Progress Ring -->
+        <svg width="100" height="120" style="position: absolute; top: 0; left: 0; transform: rotate(-90deg);">
+          <!-- Background ring -->
+          <circle cx="50" cy="60" r="32.5" fill="none" stroke="white" stroke-width="10" stroke-opacity="1" />
+          <!-- Progress ring -->
+          <circle cx="50" cy="60" r="32.5" fill="none" stroke="#22c55e" stroke-width="10" 
+                  stroke-dasharray="204.2" stroke-dashoffset="204.2" 
+                  class="level-progress-ring" 
+                  style="transition: stroke-dashoffset 0.3s ease; stroke-opacity: 1;" />
+          <!-- Outline ring - outer edge -->
+          <circle cx="50" cy="60" r="37.5" fill="none" stroke="#000" stroke-width="1" stroke-opacity="0.75" />
+          <!-- Outline ring - inner edge -->
+          <circle cx="50" cy="60" r="27.5" fill="none" stroke="#000" stroke-width="1" stroke-opacity="0.75" />
+        </svg>
+        <!-- Center circle with inset shadow styling like Level field -->
+        <div style="position: absolute; top: 32.5px; left: 22.5px; width: 55px; height: 55px; border-radius: 50%; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); z-index: 11;"></div>
+        <!-- Level display in center -->
+        <div class="level-display" style="
+          position: absolute; 
+          top: 34px; 
+          left: 21px; 
+          width: 55px; 
+          height: 55px; 
+          font-size: 48px; 
+          font-weight: bold; 
+          color: #000; 
+          cursor: pointer; 
+          z-index: 12; 
+          border-radius: 50%;
+          line-height: 1;
+          font-family: 'Minion Pro', serif;
+          padding-top: 5px;
+          text-align: center;
+          box-sizing: border-box;
+        " title="Award XP">{{system.level}}</div>
       </div>
       
       <!-- Character Class & Alignment - Centered under name as one element -->
@@ -201,7 +232,7 @@
       <!-- STR Ability Score - Absolute positioned -->
       <div class="ability" style="position: absolute; left: 25px; top: 150px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">STR</label>
-        <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -211,7 +242,7 @@
       <!-- DEX Ability Score - Absolute positioned -->
       <div class="ability" style="position: absolute; left: 120px; top: 150px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">DEX</label>
-        <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -221,7 +252,7 @@
       <!-- CON Ability Score - Absolute positioned -->
       <div class="ability" style="position: absolute; left: 215px; top: 150px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CON</label>
-        <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -231,7 +262,7 @@
       <!-- INT Ability Score - Absolute positioned -->
       <div class="ability" style="position: absolute; left: 310px; top: 150px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">INT</label>
-        <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -241,7 +272,7 @@
       <!-- WIS Ability Score - Absolute positioned -->
       <div class="ability" style="position: absolute; left: 405px; top: 150px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">WIS</label>
-        <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -251,7 +282,7 @@
       <!-- CHA Ability Score - Absolute positioned -->
       <div class="ability" style="position: absolute; left: 500px; top: 150px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CHA</label>
-        <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 54px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -335,57 +366,6 @@
       </div>
       <!-- Skills Tab -->
       <div class="tab" data-group="primary" data-tab="skills" style="position: relative; min-height: 400px;">
-        <!-- Level Progress Ring - Top Left -->
-        <div class="level-progress-ring-container" style="position: absolute; top: 10px; left: 10px; width: 100px; height: 120px; z-index: 10;">
-          <!-- Independent Curved Level Title -->
-          <svg width="100" height="40" style="position: absolute; top: 15px; left: 0; z-index: 15; pointer-events: none; overflow: visible;">
-            <defs>
-              <!-- Define the path for curved title text - matches progress ring arc -->
-              <path id="titleTextPath" d="M 17.5,35 A 32.5,32.5 0 0,1 82.5,35" stroke="none" fill="none"/>
-            </defs>
-            <text style="font-family: 'Council', serif; font-size: 25px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
-              <textPath href="#titleTextPath" startOffset="50%" text-anchor="middle">
-                Level
-              </textPath>
-            </text>
-          </svg>
-          
-          <!-- SVG Progress Ring -->
-          <svg width="100" height="120" style="position: absolute; top: 0; left: 0; transform: rotate(-90deg);">
-            <!-- Background ring -->
-            <circle cx="50" cy="60" r="32.5" fill="none" stroke="white" stroke-width="10" stroke-opacity="1" />
-            <!-- Progress ring -->
-            <circle cx="50" cy="60" r="32.5" fill="none" stroke="#22c55e" stroke-width="10" 
-                    stroke-dasharray="204.2" stroke-dashoffset="204.2" 
-                    class="skills-level-progress-ring" 
-                    style="transition: stroke-dashoffset 0.3s ease; stroke-opacity: 1;" />
-            <!-- Outline ring - outer edge -->
-            <circle cx="50" cy="60" r="37.5" fill="none" stroke="#000" stroke-width="1" stroke-opacity="0.75" />
-            <!-- Outline ring - inner edge -->
-            <circle cx="50" cy="60" r="27.5" fill="none" stroke="#000" stroke-width="1" stroke-opacity="0.75" />
-          </svg>
-          <!-- Center circle with inset shadow styling like Level field -->
-          <div style="position: absolute; top: 32.5px; left: 22.5px; width: 55px; height: 55px; border-radius: 50%; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); z-index: 11;"></div>
-          <!-- Level display in center -->
-          <div class="skills-level-display" style="
-            position: absolute; 
-            top: 32.5px; 
-            left: 22.5px; 
-            width: 55px; 
-            height: 55px; 
-            font-size: 54px; 
-            font-weight: bold; 
-            color: #000; 
-            cursor: pointer; 
-            z-index: 12; 
-            border-radius: 50%;
-            line-height: 1;
-            font-family: 'Minion Pro', serif;
-            padding-top: 5px;
-            text-align: center;
-            box-sizing: border-box;
-          " title="Award XP">{{system.level}}</div>
-        </div>
         <!-- Skills tab content (blank for now) -->
       </div>
       <!-- Equipment Tab -->

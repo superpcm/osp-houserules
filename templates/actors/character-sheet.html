@@ -104,8 +104,13 @@
     }
   </style>
   <script>
-    // Set encumbrance bar width after rendering
-    document.addEventListener("DOMContentLoaded", function() {
+    console.log('Character sheet script loaded');
+    
+    // Function to run when DOM is ready
+    function initializeCharacterSheet() {
+      console.log('Initializing character sheet...');
+      
+      // Set encumbrance bar width after rendering
       const bar = document.querySelector('.encumbrance-bar[data-encumbrance]');
       if (bar) {
         const percent = bar.getAttribute('data-encumbrance');
@@ -179,7 +184,411 @@
         classAlignmentXInput.value = currentLeft;
         classAlignmentYInput.value = currentTop;
       }
-    });
+      
+      // Character Name Position Control System
+      const characterNameContainer = document.getElementById('character-name-container');
+      const charNameXInput = document.getElementById('char-name-x-coord');
+      const charNameYInput = document.getElementById('char-name-y-coord');
+      const charNameApplyButton = document.getElementById('apply-char-name-position');
+      
+      if (characterNameContainer && charNameXInput && charNameYInput && charNameApplyButton) {
+        // Function to update Character Name position
+        function updateCharacterNamePosition() {
+          const x = parseInt(charNameXInput.value) || 0;
+          const y = parseInt(charNameYInput.value) || 0;
+          
+          characterNameContainer.style.left = x + 'px';
+          characterNameContainer.style.top = y + 'px';
+          
+          console.log(`Character Name position updated to: X=${x}, Y=${y}`);
+        }
+        
+        // Apply button click handler
+        charNameApplyButton.addEventListener('click', updateCharacterNamePosition);
+        
+        // Real-time updates as you type (optional)
+        charNameXInput.addEventListener('input', updateCharacterNamePosition);
+        charNameYInput.addEventListener('input', updateCharacterNamePosition);
+        
+        // Initialize with current values
+        const currentStyle = window.getComputedStyle(characterNameContainer);
+        const currentLeft = parseInt(currentStyle.left) || 330;
+        const currentTop = parseInt(currentStyle.top) || 12;
+        
+        charNameXInput.value = currentLeft;
+        charNameYInput.value = currentTop;
+      }
+      
+      // Character Portrait Image Resize and Position System
+      console.log('Looking for image elements...');
+      
+      // Try multiple selector strategies
+      const imageContainer = document.querySelector('.character-image-container') || 
+                            document.querySelector('[class*="character-image-container"]');
+      const portrait = document.querySelector('.character-portrait') || 
+                      document.querySelector('img.character-portrait') ||
+                      document.querySelector('.character-image img');
+      const imageControls = document.querySelector('.image-controls');
+      const resetButton = document.querySelector('.reset-image');
+      const fitButton = document.querySelector('.fit-image');
+      
+      console.log('Image elements found:', {
+        imageContainer: !!imageContainer,
+        portrait: !!portrait,
+        imageControls: !!imageControls,
+        resetButton: !!resetButton,
+        fitButton: !!fitButton
+      });
+      
+      if (imageContainer) {
+        console.log('Image container found, classes:', imageContainer.className);
+      }
+      if (portrait) {
+        console.log('Portrait found, classes:', portrait.className);
+      }
+      
+      if (imageContainer && portrait) {
+        console.log('Setting up image resize functionality...');
+        
+        // Check if image already has a transform and preserve it
+        const existingTransform = portrait.style.transform;
+        console.log('Existing transform:', existingTransform);
+        
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        
+        // Parse existing transform if it exists
+        if (existingTransform) {
+          const scaleMatch = existingTransform.match(/scale\(([^)]+)\)/);
+          const translateMatch = existingTransform.match(/translate\(([^,]+)px,\s*([^)]+)px\)/);
+          
+          if (scaleMatch) {
+            scale = parseFloat(scaleMatch[1]);
+            console.log('Preserved scale:', scale);
+          }
+          if (translateMatch) {
+            translateX = parseFloat(translateMatch[1]);
+            translateY = parseFloat(translateMatch[2]);
+            console.log('Preserved translate:', translateX, translateY);
+          }
+        }
+        
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let dragStartTranslate = { x: 0, y: 0 };
+        
+        // Function to apply transform
+        function updateTransform() {
+          const transformString = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+          portrait.style.transform = transformString;
+          console.log(`Transform applied: ${transformString}`);
+        }
+        
+        // Show/hide controls (only if they exist)
+        if (imageControls) {
+          imageContainer.addEventListener('mouseenter', () => {
+            imageControls.style.display = 'flex';
+          });
+          
+          imageContainer.addEventListener('mouseleave', () => {
+            if (!isDragging) {
+              imageControls.style.display = 'none';
+            }
+          });
+        }
+        
+        // Mouse wheel for scaling
+        const handleWheel = (e) => {
+          console.log('Wheel event detected!', e.deltaY);
+          e.preventDefault();
+          e.stopPropagation();
+          const delta = e.deltaY > 0 ? -0.1 : 0.1;
+          const newScale = Math.max(0.1, Math.min(3, scale + delta));
+          if (newScale !== scale) {
+            scale = newScale;
+            updateTransform();
+            console.log(`Image scale: ${scale.toFixed(2)}`);
+          }
+        };
+        
+        // Add wheel event to both container and portrait for better coverage
+        imageContainer.addEventListener('wheel', handleWheel, { passive: false });
+        portrait.addEventListener('wheel', handleWheel, { passive: false });
+        
+        console.log('Wheel events attached to image elements');
+        
+        // Mouse drag for positioning
+        portrait.addEventListener('mousedown', (e) => {
+          if (e.button === 0) { // Left mouse button
+            console.log(`Starting drag. Current scale: ${scale}, translate: ${translateX}, ${translateY}`);
+            isDragging = true;
+            dragStart.x = e.clientX;
+            dragStart.y = e.clientY;
+            dragStartTranslate.x = translateX;
+            dragStartTranslate.y = translateY;
+            portrait.style.cursor = 'grabbing';
+            if (imageControls) imageControls.style.display = 'flex';
+            e.preventDefault();
+          }
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+          if (isDragging) {
+            const deltaX = e.clientX - dragStart.x;
+            const deltaY = e.clientY - dragStart.y;
+            translateX = dragStartTranslate.x + deltaX;
+            translateY = dragStartTranslate.y + deltaY;
+            updateTransform();
+          }
+        });
+        
+        document.addEventListener('mouseup', () => {
+          if (isDragging) {
+            console.log(`Ending drag. Final scale: ${scale}, translate: ${translateX}, ${translateY}`);
+            isDragging = false;
+            portrait.style.cursor = 'grab';
+            if (imageControls) {
+              setTimeout(() => {
+                if (!imageContainer.matches(':hover')) {
+                  imageControls.style.display = 'none';
+                }
+              }, 100);
+            }
+          }
+        });
+        
+        // Reset button functionality (only if it exists)
+        if (resetButton) {
+          resetButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateTransform();
+          });
+        }
+        
+        // Fit button functionality (only if it exists)
+        if (fitButton) {
+          fitButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateTransform();
+          });
+        }
+        
+        // Set initial cursor
+        portrait.style.cursor = 'grab';
+        
+        // Initialize transform
+        updateTransform();
+        
+        console.log('Image resize system initialized successfully');
+      } else {
+        console.log('Required image elements not found - resize functionality disabled');
+      }
+      
+      // Ability Score Tooltips System
+      const TOOLTIP_DELAY = 800; // Configurable delay in milliseconds
+      
+      const abilityScoreData = {
+        "Strength": [
+          { "score_range": "3", "melee": -3, "open_doors": "1-in-6" },
+          { "score_range": "4-5", "melee": -2, "open_doors": "1-in-6" },
+          { "score_range": "6-8", "melee": -1, "open_doors": "1-in-6" },
+          { "score_range": "9-12", "melee": 0, "open_doors": "2-in-6" },
+          { "score_range": "13-15", "melee": 1, "open_doors": "3-in-6" },
+          { "score_range": "16-17", "melee": 2, "open_doors": "4-in-6" },
+          { "score_range": "18", "melee": 3, "open_doors": "5-in-6" }
+        ],
+        "Intelligence": [
+          { "score_range": "3", "languages": "Native (broken speech)", "literacy": "Illiterate" },
+          { "score_range": "4-5", "languages": "Native", "literacy": "Illiterate" },
+          { "score_range": "6-8", "languages": "Native", "literacy": "Basic" },
+          { "score_range": "9-12", "languages": "Native", "literacy": "Literate" },
+          { "score_range": "13-15", "languages": "Native +1 additional", "literacy": "Literate" },
+          { "score_range": "16-17", "languages": "Native +2 additional", "literacy": "Literate" },
+          { "score_range": "18", "languages": "Native +3 additional", "literacy": "Literate" }
+        ],
+        "Wisdom": [
+          { "score_range": "3", "magic_saves": -3 },
+          { "score_range": "4-5", "magic_saves": -2 },
+          { "score_range": "6-8", "magic_saves": -1 },
+          { "score_range": "9-12", "magic_saves": 0 },
+          { "score_range": "13-15", "magic_saves": 1 },
+          { "score_range": "16-17", "magic_saves": 2 },
+          { "score_range": "18", "magic_saves": 3 }
+        ],
+        "Dexterity": [
+          { "score_range": "3", "ac": -3, "missile": -3, "initiative": -2 },
+          { "score_range": "4-5", "ac": -2, "missile": -2, "initiative": -1 },
+          { "score_range": "6-8", "ac": -1, "missile": -1, "initiative": -1 },
+          { "score_range": "9-12", "ac": 0, "missile": 0, "initiative": 0 },
+          { "score_range": "13-15", "ac": 1, "missile": 1, "initiative": 1 },
+          { "score_range": "16-17", "ac": 2, "missile": 2, "initiative": 1 },
+          { "score_range": "18", "ac": 3, "missile": 3, "initiative": 2 }
+        ],
+        "Constitution": [
+          { "score_range": "3", "hit_points": -3 },
+          { "score_range": "4-5", "hit_points": -2 },
+          { "score_range": "6-8", "hit_points": -1 },
+          { "score_range": "9-12", "hit_points": 0 },
+          { "score_range": "13-15", "hit_points": 1 },
+          { "score_range": "16-17", "hit_points": 2 },
+          { "score_range": "18", "hit_points": 3 }
+        ],
+        "Charisma": [
+          { "score_range": "3", "npc_reactions": -2, "max_retainers": 1, "loyalty": 4 },
+          { "score_range": "4-5", "npc_reactions": -1, "max_retainers": 2, "loyalty": 5 },
+          { "score_range": "6-8", "npc_reactions": -1, "max_retainers": 3, "loyalty": 6 },
+          { "score_range": "9-12", "npc_reactions": 0, "max_retainers": 4, "loyalty": 7 },
+          { "score_range": "13-15", "npc_reactions": 1, "max_retainers": 5, "loyalty": 8 },
+          { "score_range": "16-17", "npc_reactions": 1, "max_retainers": 6, "loyalty": 9 },
+          { "score_range": "18", "npc_reactions": 2, "max_retainers": 7, "loyalty": 10 }
+        ]
+      };
+      
+      // Helper function to format modifier values
+      function formatModifier(value) {
+        if (typeof value === 'number') {
+          return value > 0 ? `+${value}` : value.toString();
+        }
+        return value;
+      }
+      
+      // Helper function to find score data based on ability score
+      function getScoreData(abilityName, score) {
+        const data = abilityScoreData[abilityName];
+        if (!data) return null;
+        
+        for (const entry of data) {
+          const range = entry.score_range;
+          if (range.includes('-')) {
+            const [min, max] = range.split('-').map(Number);
+            if (score >= min && score <= max) return entry;
+          } else {
+            if (score === parseInt(range)) return entry;
+          }
+        }
+        return null;
+      }
+      
+      // Helper function to create tooltip content
+      function createTooltipContent(abilityName, scoreData) {
+        if (!scoreData) return '';
+        
+        const lines = [];
+        
+        if (abilityName === 'Strength') {
+          lines.push(`Melee: ${formatModifier(scoreData.melee)}`);
+          lines.push(`Open Doors: ${scoreData.open_doors}`);
+        } else if (abilityName === 'Intelligence') {
+          lines.push(`Languages: ${scoreData.languages}`);
+          lines.push(`Literacy: ${scoreData.literacy}`);
+        } else if (abilityName === 'Wisdom') {
+          lines.push(`Magic Saves: ${formatModifier(scoreData.magic_saves)}`);
+        } else if (abilityName === 'Dexterity') {
+          lines.push(`AC: ${formatModifier(scoreData.ac)}`);
+          lines.push(`Missile: ${formatModifier(scoreData.missile)}`);
+          lines.push(`Initiative: ${formatModifier(scoreData.initiative)}`);
+        } else if (abilityName === 'Constitution') {
+          lines.push(`HP: ${formatModifier(scoreData.hit_points)}`);
+        } else if (abilityName === 'Charisma') {
+          lines.push(`NPC Reactions: ${formatModifier(scoreData.npc_reactions)}`);
+          lines.push(`Max Retainers: ${scoreData.max_retainers}`);
+          lines.push(`Loyalty: ${scoreData.loyalty}`);
+        }
+        
+        return lines.join('<br>');
+      }
+      
+      // Create tooltip element
+      const tooltip = document.createElement('div');
+      tooltip.id = 'ability-tooltip';
+      tooltip.style.cssText = `
+        position: absolute;
+        background: #333;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        line-height: 1.4;
+        z-index: 1000;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(tooltip);
+      
+      let tooltipTimeout;
+      
+      // Setup tooltips for ability scores
+      const abilityMappings = [
+        { selector: '.attr-str', name: 'Strength' },
+        { selector: '.attr-dex', name: 'Dexterity' },
+        { selector: '.attr-con', name: 'Constitution' },
+        { selector: '.attr-int', name: 'Intelligence' },
+        { selector: '.attr-wis', name: 'Wisdom' },
+        { selector: '.attr-cha', name: 'Charisma' }
+      ];
+      
+      abilityMappings.forEach(({ selector, name }) => {
+        const element = document.querySelector(selector);
+        if (element) {
+          element.addEventListener('mouseenter', (e) => {
+            clearTimeout(tooltipTimeout);
+            tooltipTimeout = setTimeout(() => {
+              const score = parseInt(element.value);
+              const scoreData = getScoreData(name, score);
+              const content = createTooltipContent(name, scoreData);
+              
+              if (content) {
+                tooltip.innerHTML = content;
+                
+                // Position tooltip above the element
+                const rect = element.getBoundingClientRect();
+                const tooltipRect = tooltip.getBoundingClientRect();
+                
+                tooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
+                tooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
+                tooltip.style.opacity = '1';
+              }
+            }, TOOLTIP_DELAY);
+          });
+          
+          element.addEventListener('mouseleave', () => {
+            clearTimeout(tooltipTimeout);
+            tooltip.style.opacity = '0';
+          });
+          
+          // Update tooltip when value changes
+          element.addEventListener('change', () => {
+            if (tooltip.style.opacity === '1') {
+              const score = parseInt(element.value);
+              const scoreData = getScoreData(name, score);
+              const content = createTooltipContent(name, scoreData);
+              if (content) {
+                tooltip.innerHTML = content;
+              }
+            }
+          });
+        }
+      });
+    }
+    
+    // Check if DOM is already ready or wait for it
+    if (document.readyState === 'loading') {
+      console.log('DOM still loading, waiting for DOMContentLoaded...');
+      document.addEventListener('DOMContentLoaded', initializeCharacterSheet);
+    } else {
+      console.log('DOM already ready, initializing immediately...');
+      // DOM is already ready, run immediately
+      setTimeout(initializeCharacterSheet, 0);
+    }
   </script>
   <!-- Static Header Section - Absolute Positioning Layout -->
     <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10;">
@@ -189,7 +598,7 @@
         <div class="character-image" style="position: relative; width: 130px; height: 130px; border: 1px solid #000; border-radius: 9px; overflow: hidden;">
           <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}"
                class="character-portrait" 
-               style="position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none;" 
+               style="position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none; pointer-events: auto;" 
                draggable="false" />
         </div>
         <!-- Control buttons -->
@@ -200,7 +609,7 @@
       </div>
       
       <!-- Character Name - Centered positioning -->
-      <div class="character-name-section" style="position: absolute; left: calc(50% + 30px); top: 12px; transform: translateX(-50%);">
+      <div class="character-name-section" id="character-name-container" style="position: absolute; left: 195px; top: 12px;">
         <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="text-align: center; font-size: 45px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; padding: 3px; margin: 0; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); font-weight: bold; border: 1px solid #000; outline: none; min-height: 1.1em;"/>
       </div>
       
@@ -235,6 +644,22 @@
           <span style="font-size: 10px;">px</span>
         </div>
         <button type="button" id="apply-class-alignment-position" style="font-size: 10px; padding: 3px 6px; margin-top: 3px;">Apply</button>
+      </div>
+      
+      <!-- Character Name Position Controls (for development/positioning) -->
+      <div class="character-name-position-controls" style="position: absolute; left: 620px; top: 290px; display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.9); padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; z-index: 20;">
+        <div style="font-weight: bold; margin-bottom: 5px;">Character Name Position Controls</div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <label for="char-name-x-coord" style="font-size: 11px;">X:</label>
+          <input type="number" id="char-name-x-coord" value="330" min="0" max="600" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
+          <span style="font-size: 10px;">px</span>
+        </div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <label for="char-name-y-coord" style="font-size: 11px;">Y:</label>
+          <input type="number" id="char-name-y-coord" value="12" min="0" max="300" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
+          <span style="font-size: 10px;">px</span>
+        </div>
+        <button type="button" id="apply-char-name-position" style="font-size: 10px; padding: 3px 6px; margin-top: 3px;">Apply</button>
       </div>
       
       <div class="level-progress-ring-container" style="position: absolute; left: 487px; top: 24px; width: 100px; height: 120px; z-index: 10;" id="level-container">
@@ -293,7 +718,7 @@
         <!-- Character Class -->
         <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
           <label for="char-class" style="font-size: 24px; font-family: 'Council', serif; letter-spacing: 0.03em; margin-bottom: -2px;">Class</label>
-          <select class="char-class" id="char-class" name="system.class" style="width: 140px; height: 34px; text-align: center; font-size: 24px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 5px; margin: 0; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); font-weight: bold;">
+          <select class="char-class" id="char-class" name="system.class" style="width: 140px; height: 34px; text-align: center; font-size: 24px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 5px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); font-weight: bold;">
           <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
           <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
           <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
@@ -321,7 +746,7 @@
         <!-- Character Alignment -->
         <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
           <label for="char-align" style="font-size: 24px; font-family: 'Council', serif; letter-spacing: 0.03em; margin-bottom: -2px;">Alignment</label>
-          <select class="char-align" id="char-align" name="system.alignment" style="width: 100px; height: 34px; text-align: center; font-size: 24px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 5px; margin: 0; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); font-weight: bold;">
+          <select class="char-align" id="char-align" name="system.alignment" style="width: 100px; height: 34px; text-align: center; font-size: 24px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 5px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); font-weight: bold;">
             <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
             <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
             <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>

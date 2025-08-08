@@ -111,10 +111,78 @@
         const percent = bar.getAttribute('data-encumbrance');
         bar.style.width = percent + '%';
       }
+      
+      // Level Position Control System
+      const levelContainer = document.getElementById('level-container');
+      const xInput = document.getElementById('level-x-coord');
+      const yInput = document.getElementById('level-y-coord');
+      const applyButton = document.getElementById('apply-level-position');
+      
+      if (levelContainer && xInput && yInput && applyButton) {
+        // Function to update Level position
+        function updateLevelPosition() {
+          const x = parseInt(xInput.value) || 0;
+          const y = parseInt(yInput.value) || 0;
+          
+          levelContainer.style.left = x + 'px';
+          levelContainer.style.top = y + 'px';
+          
+          console.log(`Level position updated to: X=${x}, Y=${y}`);
+        }
+        
+        // Apply button click handler
+        applyButton.addEventListener('click', updateLevelPosition);
+        
+        // Real-time updates as you type (optional)
+        xInput.addEventListener('input', updateLevelPosition);
+        yInput.addEventListener('input', updateLevelPosition);
+        
+        // Initialize with current values
+        const currentStyle = window.getComputedStyle(levelContainer);
+        const currentLeft = parseInt(currentStyle.left) || 500;
+        const currentTop = parseInt(currentStyle.top) || 12;
+        
+        xInput.value = currentLeft;
+        yInput.value = currentTop;
+      }
+      
+      // Class/Alignment Position Control System
+      const classAlignmentContainer = document.getElementById('class-alignment-container');
+      const classAlignmentXInput = document.getElementById('class-alignment-x-coord');
+      const classAlignmentYInput = document.getElementById('class-alignment-y-coord');
+      const classAlignmentApplyButton = document.getElementById('apply-class-alignment-position');
+      
+      if (classAlignmentContainer && classAlignmentXInput && classAlignmentYInput && classAlignmentApplyButton) {
+        // Function to update Class/Alignment position
+        function updateClassAlignmentPosition() {
+          const x = parseInt(classAlignmentXInput.value) || 0;
+          const y = parseInt(classAlignmentYInput.value) || 0;
+          
+          classAlignmentContainer.style.left = x + 'px';
+          classAlignmentContainer.style.top = y + 'px';
+          
+          console.log(`Class/Alignment position updated to: X=${x}, Y=${y}`);
+        }
+        
+        // Apply button click handler
+        classAlignmentApplyButton.addEventListener('click', updateClassAlignmentPosition);
+        
+        // Real-time updates as you type (optional)
+        classAlignmentXInput.addEventListener('input', updateClassAlignmentPosition);
+        classAlignmentYInput.addEventListener('input', updateClassAlignmentPosition);
+        
+        // Initialize with current values
+        const currentStyle = window.getComputedStyle(classAlignmentContainer);
+        const currentLeft = parseInt(currentStyle.left) || 330;
+        const currentTop = parseInt(currentStyle.top) || 72;
+        
+        classAlignmentXInput.value = currentLeft;
+        classAlignmentYInput.value = currentTop;
+      }
     });
   </script>
   <!-- Static Header Section - Absolute Positioning Layout -->
-    <div class="static-header" style="height: 280px; flex-shrink: 0; position: relative; z-index: 10;">
+    <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10;">
       
       <!-- Character Image - Absolute positioned -->
       <div class="character-image-container char-field-group" style="position: absolute; left: 25px; top: 12px;">
@@ -137,9 +205,41 @@
       </div>
       
       <!-- Character Level - Absolute positioned -->
-      <div class="level-progress-ring-container" style="position: absolute; left: 500px; top: 12px; width: 100px; height: 120px; z-index: 10;">
+      <!-- Level Position Controls (for development/positioning) -->
+      <div class="level-position-controls" style="position: absolute; left: 620px; top: 12px; display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.9); padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; z-index: 20;">
+        <div style="font-weight: bold; margin-bottom: 5px;">Level Position Controls</div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <label for="level-x-coord" style="font-size: 11px;">X:</label>
+          <input type="number" id="level-x-coord" value="500" min="0" max="600" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
+          <span style="font-size: 10px;">px</span>
+        </div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <label for="level-y-coord" style="font-size: 11px;">Y:</label>
+          <input type="number" id="level-y-coord" value="12" min="0" max="300" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
+          <span style="font-size: 10px;">px</span>
+        </div>
+        <button type="button" id="apply-level-position" style="font-size: 10px; padding: 3px 6px; margin-top: 3px;">Apply</button>
+      </div>
+      
+      <!-- Class/Alignment Position Controls (for development/positioning) -->
+      <div class="class-alignment-position-controls" style="position: absolute; left: 620px; top: 150px; display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.9); padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; z-index: 20;">
+        <div style="font-weight: bold; margin-bottom: 5px;">Class/Alignment Position Controls</div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <label for="class-alignment-x-coord" style="font-size: 11px;">X:</label>
+          <input type="number" id="class-alignment-x-coord" value="330" min="0" max="600" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
+          <span style="font-size: 10px;">px</span>
+        </div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <label for="class-alignment-y-coord" style="font-size: 11px;">Y:</label>
+          <input type="number" id="class-alignment-y-coord" value="72" min="0" max="300" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
+          <span style="font-size: 10px;">px</span>
+        </div>
+        <button type="button" id="apply-class-alignment-position" style="font-size: 10px; padding: 3px 6px; margin-top: 3px;">Apply</button>
+      </div>
+      
+      <div class="level-progress-ring-container" style="position: absolute; left: 487px; top: 24px; width: 100px; height: 120px; z-index: 10;" id="level-container">
         <!-- Independent Curved Level Title -->
-        <svg width="100" height="40" style="position: absolute; top: 12px; left: 0; z-index: 15; pointer-events: none; overflow: visible;">
+        <svg width="100" height="40" style="position: absolute; top: 13px; left: 0; z-index: 15; pointer-events: none; overflow: visible;">
           <defs>
             <!-- Define the path for curved title text - matches progress ring arc -->
             <path id="titleTextPath" d="M 17.5,35 A 32.5,32.5 0 0,1 82.5,35" stroke="none" fill="none"/>
@@ -189,7 +289,7 @@
       </div>
       
       <!-- Character Class & Alignment - Centered under name as one element -->
-      <div class="class-alignment-group" style="position: absolute; left: calc(50% + 30px); top: 72px; transform: translateX(-50%); display: flex; gap: 10px; align-items: flex-end;">
+      <div class="class-alignment-group" id="class-alignment-container" style="position: absolute; left: 204px; top: 82px; display: flex; gap: 10px; align-items: flex-end;">
         <!-- Character Class -->
         <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
           <label for="char-class" style="font-size: 24px; font-family: 'Council', serif; letter-spacing: 0.03em; margin-bottom: -2px;">Class</label>
@@ -230,9 +330,9 @@
       </div>
       
       <!-- STR Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 25px; top: 150px; display: flex; flex-direction: column; align-items: center;">
+      <div class="ability" style="position: absolute; left: 25px; top: 160px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">STR</label>
-        <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -240,9 +340,9 @@
       </div>
       
       <!-- DEX Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 120px; top: 150px; display: flex; flex-direction: column; align-items: center;">
+      <div class="ability" style="position: absolute; left: 120px; top: 160px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">DEX</label>
-        <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -250,9 +350,9 @@
       </div>
       
       <!-- CON Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 215px; top: 150px; display: flex; flex-direction: column; align-items: center;">
+      <div class="ability" style="position: absolute; left: 215px; top: 160px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CON</label>
-        <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -260,9 +360,9 @@
       </div>
       
       <!-- INT Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 310px; top: 150px; display: flex; flex-direction: column; align-items: center;">
+      <div class="ability" style="position: absolute; left: 310px; top: 160px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">INT</label>
-        <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -270,9 +370,9 @@
       </div>
       
       <!-- WIS Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 405px; top: 150px; display: flex; flex-direction: column; align-items: center;">
+      <div class="ability" style="position: absolute; left: 405px; top: 160px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">WIS</label>
-        <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}
@@ -280,9 +380,9 @@
       </div>
       
       <!-- CHA Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 500px; top: 150px; display: flex; flex-direction: column; align-items: center;">
+      <div class="ability" style="position: absolute; left: 500px; top: 160px; display: flex; flex-direction: column; align-items: center;">
         <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CHA</label>
-        <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 0 0 0; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+        <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
           {{#each (range 3 18) as |val|}}
             <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
           {{/each}}

@@ -854,40 +854,85 @@
             </div>
           </div>
 
-          <!-- Individual Saving Throws with absolute positioning -->
-          <div class="save death-save" style="position: absolute; left: 50px; top: 450px; display: flex; flex-direction: column; align-items: center;">
-            <label style="margin-bottom: 0.25rem;">Death Ray / Poison</label>
-            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+          <!-- Individual Saving Throws with absolute positioning and curved text -->
+          <div class="save death-save" style="position: absolute; left: 50px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
               {{saves.death.value}}
             </div>
+            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
+              <defs>
+                <path id="deathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+              </defs>
+              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
+                <textPath href="#deathTextPath" startOffset="50%" text-anchor="middle">
+                  Death Ray / Poison
+                </textPath>
+              </text>
+            </svg>
           </div>
           
-          <div class="save wands-save" style="position: absolute; left: 150px; top: 450px; display: flex; flex-direction: column; align-items: center;">
-            <label style="margin-bottom: 0.25rem;">Magic Wands</label>
-            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+          <div class="save wands-save" style="position: absolute; left: 150px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
               {{saves.wands.value}}
             </div>
+            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
+              <defs>
+                <path id="wandsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+              </defs>
+              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.8px;">
+                <textPath href="#wandsTextPath" startOffset="50%" text-anchor="middle">
+                  Magic Wands
+                </textPath>
+              </text>
+            </svg>
           </div>
           
-          <div class="save paralysis-save" style="position: absolute; left: 250px; top: 450px; display: flex; flex-direction: column; align-items: center;">
-            <label style="margin-bottom: 0.25rem;">Paralysis / Turn to Stone</label>
-            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+          <div class="save paralysis-save" style="position: absolute; left: 250px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
               {{saves.paralysis.value}}
             </div>
+            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
+              <defs>
+                <path id="paralysisTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+              </defs>
+              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.3px;">
+                <textPath href="#paralysisTextPath" startOffset="50%" text-anchor="middle">
+                  Paralysis / Turn to Stone
+                </textPath>
+              </text>
+            </svg>
           </div>
           
-          <div class="save breath-save" style="position: absolute; left: 350px; top: 450px; display: flex; flex-direction: column; align-items: center;">
-            <label style="margin-bottom: 0.25rem;">Dragon Breath</label>
-            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+          <div class="save breath-save" style="position: absolute; left: 350px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
               {{saves.breath.value}}
             </div>
+            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
+              <defs>
+                <path id="breathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+              </defs>
+              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.8px;">
+                <textPath href="#breathTextPath" startOffset="50%" text-anchor="middle">
+                  Dragon Breath
+                </textPath>
+              </text>
+            </svg>
           </div>
           
-          <div class="save spells-save" style="position: absolute; left: 450px; top: 450px; display: flex; flex-direction: column; align-items: center;">
-            <label style="margin-bottom: 0.25rem;">Rod / Staff / Spell</label>
-            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+          <div class="save spells-save" style="position: absolute; left: 450px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
               {{saves.spells.value}}
             </div>
+            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
+              <defs>
+                <path id="spellsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+              </defs>
+              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
+                <textPath href="#spellsTextPath" startOffset="50%" text-anchor="middle">
+                  Rod / Staff / Spell
+                </textPath>
+              </text>
+            </svg>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-<form class="osp sheet actor character" autocomplete="off" style="height: 100%; display: flex; flex-direction: column; overflow: hidden; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; max-width: 600px;">
+<form class="osp sheet actor character" autocomplete="off" style="height: 100%; display: flex; flex-direction: column; overflow: visible; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; max-width: 600px;">
   <style>
     /* Single Background Image System */
     form.osp.sheet.actor.character {
@@ -854,37 +854,39 @@
             </div>
           </div>
 
-          <h3>Saving Throws</h3>
-          <div class="saving-throws" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">Death Ray / Poison</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
-                {{saves.death.value}}
-              </div>
+          <!-- Individual Saving Throws with absolute positioning -->
+          <div class="save death-save" style="position: absolute; left: 50px; top: 450px; display: flex; flex-direction: column; align-items: center;">
+            <label style="margin-bottom: 0.25rem;">Death Ray / Poison</label>
+            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+              {{saves.death.value}}
             </div>
-            <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">Magic Wands</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
-                {{saves.wands.value}}
-              </div>
+          </div>
+          
+          <div class="save wands-save" style="position: absolute; left: 150px; top: 450px; display: flex; flex-direction: column; align-items: center;">
+            <label style="margin-bottom: 0.25rem;">Magic Wands</label>
+            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+              {{saves.wands.value}}
             </div>
-            <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">Paralysis / Turn to Stone</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
-                {{saves.paralysis.value}}
-              </div>
+          </div>
+          
+          <div class="save paralysis-save" style="position: absolute; left: 250px; top: 450px; display: flex; flex-direction: column; align-items: center;">
+            <label style="margin-bottom: 0.25rem;">Paralysis / Turn to Stone</label>
+            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+              {{saves.paralysis.value}}
             </div>
-            <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">Dragon Breath</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
-                {{saves.breath.value}}
-              </div>
+          </div>
+          
+          <div class="save breath-save" style="position: absolute; left: 350px; top: 450px; display: flex; flex-direction: column; align-items: center;">
+            <label style="margin-bottom: 0.25rem;">Dragon Breath</label>
+            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+              {{saves.breath.value}}
             </div>
-            <div class="save" style="flex: 1 1 80px; display: flex; flex-direction: column; align-items: center;">
-              <label style="margin-bottom: 0.25rem;">Rod / Staff / Spell</label>
-              <div style="width: 40px; height: 40px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background-color: white;">
-                {{saves.spells.value}}
-              </div>
+          </div>
+          
+          <div class="save spells-save" style="position: absolute; left: 450px; top: 450px; display: flex; flex-direction: column; align-items: center;">
+            <label style="margin-bottom: 0.25rem;">Rod / Staff / Spell</label>
+            <div style="width: 55px; height: 55px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; background-color: white;">
+              {{saves.spells.value}}
             </div>
           </div>
         </div>

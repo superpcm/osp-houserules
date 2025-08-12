@@ -578,6 +578,150 @@
           });
         }
       });
+
+      // Saving Throw Tooltips System
+      function initializeSavingThrowTooltips() {
+        console.log('Initializing saving throw tooltips...');
+        
+        // Get character data
+        const race = (document.querySelector('#char-race')?.value || '').toLowerCase().trim();
+        const characterClass = (document.querySelector('#char-class')?.value || '').toLowerCase().trim();
+        const conScore = parseInt(document.querySelector('[name="system.abilities.con.value"]')?.value) || 10;
+        
+        console.log(`Character: Race="${race}", Class="${characterClass}", CON=${conScore}`);
+        
+        // Check if character is an elf (race or class)
+        const isElf = race === 'elf' || characterClass === 'elf';
+        
+        // Only show CON-based racial tooltips if race is different from class (race+class combo, not race-as-class)
+        const showRacialBonuses = race && race !== characterClass;
+        
+        if (!showRacialBonuses && !isElf) {
+          console.log('No tooltips needed');
+          return;
+        }
+        
+        // Calculate racial bonuses and special abilities
+        function getRacialBonus(race, characterClass, saveType, conScore) {
+          let bonus = 0;
+          let description = '';
+          
+          // Elf paralysis immunity (works for race or class)
+          const isElf = race === 'elf' || characterClass === 'elf';
+          if (isElf && saveType === 'paralysis') {
+            description = 'Unaffected by the paralysis that ghouls can inflict.';
+            return { bonus, description };
+          }
+          
+          // CON-based racial bonuses (only for race+class combinations, not race-as-class)
+          if (!race || race === characterClass) {
+            return { bonus, description };
+          }
+          
+          if (race === 'dwarf') {
+            if (saveType === 'death') { // Death Ray/Poison - only poison part
+              if (conScore <= 6) bonus = 0;
+              else if (conScore >= 7 && conScore <= 10) bonus = 2;
+              else if (conScore >= 11 && conScore <= 14) bonus = 3;
+              else if (conScore >= 15 && conScore <= 17) bonus = 4;
+              else if (conScore >= 18) bonus = 5;
+              description = '+' + bonus + ' vs Poison';
+            } else if (saveType === 'wands' || saveType === 'spells') {
+              if (conScore <= 6) bonus = 0;
+              else if (conScore >= 7 && conScore <= 10) bonus = 2;
+              else if (conScore >= 11 && conScore <= 14) bonus = 3;
+              else if (conScore >= 15 && conScore <= 17) bonus = 4;
+              else if (conScore >= 18) bonus = 5;
+              description = '+' + bonus + ' vs Magic';
+            }
+          } else if (race === 'gnome') {
+            if (saveType === 'wands' || saveType === 'spells') {
+              if (conScore <= 6) bonus = 0;
+              else if (conScore >= 7 && conScore <= 10) bonus = 2;
+              else if (conScore >= 11 && conScore <= 14) bonus = 3;
+              else if (conScore >= 15 && conScore <= 17) bonus = 4;
+              else if (conScore >= 18) bonus = 5;
+              description = '+' + bonus + ' vs Magic';
+            }
+          } else if (race === 'hobbit' || race === 'halfling') {
+            if (saveType === 'death') { // Death Ray/Poison - only poison part
+              bonus = 4;
+              description = '+4 vs Poison';
+            } else if (saveType === 'wands' || saveType === 'spells') {
+              if (conScore <= 6) bonus = 0;
+              else if (conScore >= 7 && conScore <= 10) bonus = 2;
+              else if (conScore >= 11 && conScore <= 14) bonus = 3;
+              else if (conScore >= 15 && conScore <= 17) bonus = 4;
+              else if (conScore >= 18) bonus = 5;
+              description = '+' + bonus + ' vs Magic';
+            }
+          }
+          
+          return { bonus, description };
+        }
+        
+        // Create tooltip element for saving throws
+        let saveTooltip = document.getElementById('save-tooltip');
+        if (!saveTooltip) {
+          saveTooltip = document.createElement('div');
+          saveTooltip.id = 'save-tooltip';
+          saveTooltip.style.cssText = `
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+          `;
+          document.body.appendChild(saveTooltip);
+        }
+        
+        let saveTooltipTimeout;
+        
+        // Setup tooltips for each saving throw
+        const saveTypes = ['death', 'wands', 'paralysis', 'breath', 'spells'];
+        
+        saveTypes.forEach(saveType => {
+          const saveElement = document.querySelector(`.save-group-${saveType} .save span`);
+          if (!saveElement) return;
+          
+          const racialData = getRacialBonus(race, characterClass, saveType, conScore);
+          
+          // Show tooltip if there's a racial bonus OR if it's elf paralysis immunity
+          if (racialData.bonus > 0 || racialData.description) {
+            console.log(`Adding tooltip to ${saveType}: ${racialData.description}`);
+            
+            saveElement.addEventListener('mouseenter', () => {
+              clearTimeout(saveTooltipTimeout);
+              saveTooltipTimeout = setTimeout(() => {
+                saveTooltip.innerHTML = racialData.description;
+                saveTooltip.style.opacity = '1';
+                
+                // Position tooltip above the saving throw circle
+                const rect = saveElement.getBoundingClientRect();
+                const tooltipRect = saveTooltip.getBoundingClientRect();
+                
+                saveTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
+                saveTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
+              }, TOOLTIP_DELAY);
+            });
+            
+            saveElement.addEventListener('mouseleave', () => {
+              clearTimeout(saveTooltipTimeout);
+              saveTooltip.style.opacity = '0';
+            });
+          }
+        });
+      }
+      
+      // Initialize saving throw tooltips after ability tooltips
+      setTimeout(initializeSavingThrowTooltips, 100);
     }
     
     // Check if DOM is already ready or wait for it
@@ -854,85 +998,110 @@
             </div>
           </div>
 
-          <!-- Individual Saving Throws with absolute positioning and curved text -->
-          <div class="save death-save" style="position: absolute; left: 50px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
-            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
-              {{saves.death.value}}
+          <!-- Saving Throw Groups - Each pair moves together -->
+          <!-- Death Ray/Poison Group - Position: (50, 450) -->
+          <div class="save-group-death" style="position: absolute; left: 25px; top: 500px;">
+            <div class="save death-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+              <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.death.value}}</span>
+              </div>
             </div>
-            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
-              <defs>
-                <path id="deathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-              </defs>
-              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
-                <textPath href="#deathTextPath" startOffset="50%" text-anchor="middle">
-                  Death Ray / Poison
-                </textPath>
-              </text>
-            </svg>
+            <div class="save-label-death" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+              <svg width="400" height="60" style="overflow: visible;">
+                <defs>
+                  <path id="deathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+                </defs>
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
+                  <textPath href="#deathTextPath" startOffset="50%" text-anchor="middle">
+                    Death / Poison
+                  </textPath>
+                </text>
+              </svg>
+            </div>
           </div>
-          
-          <div class="save wands-save" style="position: absolute; left: 150px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
-            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
-              {{saves.wands.value}}
+
+          <!-- Wands Group - Position: (150, 450) -->
+          <div class="save-group-wands" style="position: absolute; left: 140px; top: 500px;">
+            <div class="save wands-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+              <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.wands.value}}</span>
+              </div>
             </div>
-            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
-              <defs>
-                <path id="wandsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-              </defs>
-              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.8px;">
-                <textPath href="#wandsTextPath" startOffset="50%" text-anchor="middle">
-                  Magic Wands
-                </textPath>
-              </text>
-            </svg>
+            <div class="save-label-wands" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+              <svg width="400" height="60" style="overflow: visible;">
+                <defs>
+                  <path id="wandsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+                </defs>
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.8px;">
+                  <textPath href="#wandsTextPath" startOffset="50%" text-anchor="middle">
+                    Wands
+                  </textPath>
+                </text>
+              </svg>
+            </div>
           </div>
-          
-          <div class="save paralysis-save" style="position: absolute; left: 250px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
-            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
-              {{saves.paralysis.value}}
+
+          <!-- Paralysis Group - Position: (250, 450) -->
+          <div class="save-group-paralysis" style="position: absolute; left: 262px; top: 500px;">
+            <div class="save paralysis-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+              <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.paralysis.value}}</span>
+              </div>
             </div>
-            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
-              <defs>
-                <path id="paralysisTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-              </defs>
-              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.3px;">
-                <textPath href="#paralysisTextPath" startOffset="50%" text-anchor="middle">
-                  Paralysis / Turn to Stone
-                </textPath>
-              </text>
-            </svg>
+            <div class="save-label-paralysis" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+              <svg width="400" height="60" style="overflow: visible;">
+                <defs>
+                  <path id="paralysisTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+                </defs>
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.3px;">
+                  <textPath href="#paralysisTextPath" startOffset="50%" text-anchor="middle">
+                    Paralysis / Petrification
+                  </textPath>
+                </text>
+              </svg>
+            </div>
           </div>
-          
-          <div class="save breath-save" style="position: absolute; left: 350px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
-            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
-              {{saves.breath.value}}
+
+          <!-- Breath Attacks Group - Position: (350, 450) -->
+          <div class="save-group-breath" style="position: absolute; left: 377px; top: 500px;">
+            <div class="save breath-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+              <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.breath.value}}</span>
+              </div>
             </div>
-            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
-              <defs>
-                <path id="breathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-              </defs>
-              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.8px;">
-                <textPath href="#breathTextPath" startOffset="50%" text-anchor="middle">
-                  Dragon Breath
-                </textPath>
-              </text>
-            </svg>
+            <div class="save-label-breath" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+              <svg width="400" height="60" style="overflow: visible;">
+                <defs>
+                  <path id="breathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+                </defs>
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.8px;">
+                  <textPath href="#breathTextPath" startOffset="50%" text-anchor="middle">
+                    Breath Attacks
+                  </textPath>
+                </text>
+              </svg>
+            </div>
           </div>
-          
-          <div class="save spells-save" style="position: absolute; left: 450px; top: 450px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
-            <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: bold; background-color: white;">
-              {{saves.spells.value}}
+
+          <!-- Spells/Rods/Staves Group - Position: (450, 450) -->
+          <div class="save-group-spells" style="position: absolute; left: 497px; top: 500px;">
+            <div class="save spells-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+              <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.spells.value}}</span>
+              </div>
             </div>
-            <svg width="400" height="60" style="position: absolute; top: 35px; left: -172px; z-index: 15; pointer-events: none; overflow: visible;">
-              <defs>
-                <path id="spellsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-              </defs>
-              <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
-                <textPath href="#spellsTextPath" startOffset="50%" text-anchor="middle">
-                  Rod / Staff / Spell
-                </textPath>
-              </text>
-            </svg>
+            <div class="save-label-spells" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+              <svg width="400" height="60" style="overflow: visible;">
+                <defs>
+                  <path id="spellsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
+                </defs>
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
+                  <textPath href="#spellsTextPath" startOffset="50%" text-anchor="middle">
+                    Spells / Rods / Staves
+                  </textPath>
+                </text>
+              </svg>
+            </div>
           </div>
         </div>
       </div>

@@ -108,24 +108,8 @@ input#char-name.char-name[name="name"][type="text"] {
   to { opacity: 1; }
 }
 
-// Tab system CSS to ensure tabs are always clickable
-.sheet-tabs {
-  position: relative !important;
-  z-index: 9999 !important;
+// Ensure tab items are clickable
+.sheet-tabs .item {
   pointer-events: auto !important;
-  
-  .item {
-    position: relative !important;
-    z-index: 10000 !important;
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    
-    &:hover {
-      pointer-events: auto !important;
-    }
-    
-    &:active {
-      pointer-events: auto !important;
-    }
-  }
+  cursor: pointer !important;
 }

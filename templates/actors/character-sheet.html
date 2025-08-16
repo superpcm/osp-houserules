@@ -1,4 +1,4 @@
-<form class="osp sheet actor character" autocomplete="off" style="height: 100%; display: flex; flex-direction: column; overflow: visible; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; max-width: 600px;">
+<form class="osp sheet actor character" autocomplete="off" style="height: 700px; position: relative; overflow: visible; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; max-width: 600px;">
   <style>
     /* Single Background Image System */
     form.osp.sheet.actor.character {
@@ -20,6 +20,11 @@
       background-color: transparent !important;
     }
     
+    /* Ensure the application window allows tabs to extend beyond right edge */
+    .application.window-app.sheet.actor.character.osp {
+      overflow: visible !important; /* Allow tabs to extend beyond window */
+    }
+    
     /* Also override the window content wrapper */
     .application.window-app.sheet.actor.character.osp .window-content,
     .osp .window-content {
@@ -27,6 +32,7 @@
       background-image: none !important;
       background-color: transparent !important;
       padding: 0 !important;
+      overflow: visible !important; /* Allow tabs to show beyond content area */
     }
     
     /* Keep character name with its original styling */
@@ -51,23 +57,71 @@
       background-color: #4a90e2 !important;
     }
     
-    /* Tab system styles */
-    .sheet-tabs a.item {
-      padding: 0.25rem 0.75rem;
-      margin-right: 0.25rem;
-      cursor: pointer;
-      text-decoration: none;
-      color: #333;
-      display: inline-block;
-      position: relative;
-      z-index: 100;
+    /* Tab system styles - Individual absolute positioned tabs */
+    .sheet-tabs {
+      position: absolute;
+      left: 600px; /* Position tabs to extend from right edge */
+      top: 50px; /* Starting position */
+      width: 30px; /* Container width */
+      height: 400px; /* Container height to accommodate all tabs */
+      z-index: -1; /* Behind other content */
       pointer-events: auto;
-      user-select: none;
-      font-family: 'Futura Condensed', 'Futura-CondensedMedium', 'Futura PT Condensed', 'Arial Narrow', 'Helvetica Condensed', sans-serif;
     }
-    .sheet-tabs a.item.active {
-      border-bottom: 1px solid transparent;
+
+    .sheet-tabs a.item {
+      position: absolute;
+      width: 32px; /* Tab width (becomes height after rotation) */
+      height: 80px; /* Tab height (becomes width after rotation) */
+      background-image: url('systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg');
+      background-repeat: no-repeat;
+      background-size: 100px 100px;
+      background-position: center;
+      border: 1px solid #8b7355;
+      color: #4a3a1a;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Minion Pro', serif;
+      font-size: 15px;
       font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      border-radius: 0 10px 10px 0;
+      transform-origin: center center;
+      transition: all 0.2s ease;
+      writing-mode: vertical-rl; /* Rotate text 90 degrees */
+      text-orientation: mixed; /* Keep letters upright */
+    }
+
+    /* Position each tab individually with precise spacing */
+    .sheet-tabs a.item:nth-child(1) { top: -220px; left: -8px; } /* Adjusted to fit the background */
+    .sheet-tabs a.item:nth-child(2) { top: -141px; left: -42px; } /* 30px height + 1px gap */
+    .sheet-tabs a.item:nth-child(3) { top: -62px; left: -76px; }
+    .sheet-tabs a.item:nth-child(4) { top: 17px; left: -110px; }
+
+    .sheet-tabs a.item:hover {
+      background-image: url('systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg');
+      background-repeat: no-repeat;
+      background-size: 600px 700px;
+      background-position: center;
+      color: #3a2915; /* Darker brown */
+      border-color: #6b4112; /* Darker brown border */
+      /* Add slight overlay for hover effect */
+      box-shadow: inset 0 0 0 1000px rgba(237, 228, 179, 0.2);
+    }
+
+    .sheet-tabs a.item.active {
+      background-image: url('systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg');
+      background-repeat: no-repeat;
+      background-size: 600px 700px;
+      background-position: center;
+      color: #2d1f0f; /* Darkest brown text */
+      border-color: #5a3508; /* Darkest border */
+      /* Add slight overlay for active effect */
+      box-shadow: inset 0 0 0 1000px rgba(232, 226, 213, 0.3), inset 1px 1px 2px rgba(0,0,0,0.1);
+      font-weight: bold;
+      z-index: 1; /* Bring active tab forward */
     }
     .sheet-body .tab {
       display: none;
@@ -115,108 +169,6 @@
       if (bar) {
         const percent = bar.getAttribute('data-encumbrance');
         bar.style.width = percent + '%';
-      }
-      
-      // Level Position Control System
-      const levelContainer = document.getElementById('level-container');
-      const xInput = document.getElementById('level-x-coord');
-      const yInput = document.getElementById('level-y-coord');
-      const applyButton = document.getElementById('apply-level-position');
-      
-      if (levelContainer && xInput && yInput && applyButton) {
-        // Function to update Level position
-        function updateLevelPosition() {
-          const x = parseInt(xInput.value) || 0;
-          const y = parseInt(yInput.value) || 0;
-          
-          levelContainer.style.left = x + 'px';
-          levelContainer.style.top = y + 'px';
-          
-          console.log(`Level position updated to: X=${x}, Y=${y}`);
-        }
-        
-        // Apply button click handler
-        applyButton.addEventListener('click', updateLevelPosition);
-        
-        // Real-time updates as you type (optional)
-        xInput.addEventListener('input', updateLevelPosition);
-        yInput.addEventListener('input', updateLevelPosition);
-        
-        // Initialize with current values
-        const currentStyle = window.getComputedStyle(levelContainer);
-        const currentLeft = parseInt(currentStyle.left) || 500;
-        const currentTop = parseInt(currentStyle.top) || 12;
-        
-        xInput.value = currentLeft;
-        yInput.value = currentTop;
-      }
-      
-      // Class/Alignment Position Control System
-      const classAlignmentContainer = document.getElementById('class-alignment-container');
-      const classAlignmentXInput = document.getElementById('class-alignment-x-coord');
-      const classAlignmentYInput = document.getElementById('class-alignment-y-coord');
-      const classAlignmentApplyButton = document.getElementById('apply-class-alignment-position');
-      
-      if (classAlignmentContainer && classAlignmentXInput && classAlignmentYInput && classAlignmentApplyButton) {
-        // Function to update Class/Alignment position
-        function updateClassAlignmentPosition() {
-          const x = parseInt(classAlignmentXInput.value) || 0;
-          const y = parseInt(classAlignmentYInput.value) || 0;
-          
-          classAlignmentContainer.style.left = x + 'px';
-          classAlignmentContainer.style.top = y + 'px';
-          
-          console.log(`Class/Alignment position updated to: X=${x}, Y=${y}`);
-        }
-        
-        // Apply button click handler
-        classAlignmentApplyButton.addEventListener('click', updateClassAlignmentPosition);
-        
-        // Real-time updates as you type (optional)
-        classAlignmentXInput.addEventListener('input', updateClassAlignmentPosition);
-        classAlignmentYInput.addEventListener('input', updateClassAlignmentPosition);
-        
-        // Initialize with current values
-        const currentStyle = window.getComputedStyle(classAlignmentContainer);
-        const currentLeft = parseInt(currentStyle.left) || 330;
-        const currentTop = parseInt(currentStyle.top) || 72;
-        
-        classAlignmentXInput.value = currentLeft;
-        classAlignmentYInput.value = currentTop;
-      }
-      
-      // Character Name Position Control System
-      const characterNameContainer = document.getElementById('character-name-container');
-      const charNameXInput = document.getElementById('char-name-x-coord');
-      const charNameYInput = document.getElementById('char-name-y-coord');
-      const charNameApplyButton = document.getElementById('apply-char-name-position');
-      
-      if (characterNameContainer && charNameXInput && charNameYInput && charNameApplyButton) {
-        // Function to update Character Name position
-        function updateCharacterNamePosition() {
-          const x = parseInt(charNameXInput.value) || 0;
-          const y = parseInt(charNameYInput.value) || 0;
-          
-          characterNameContainer.style.left = x + 'px';
-          characterNameContainer.style.top = y + 'px';
-          
-          console.log(`Character Name position updated to: X=${x}, Y=${y}`);
-        }
-        
-        // Apply button click handler
-        charNameApplyButton.addEventListener('click', updateCharacterNamePosition);
-        
-        // Real-time updates as you type (optional)
-        charNameXInput.addEventListener('input', updateCharacterNamePosition);
-        charNameYInput.addEventListener('input', updateCharacterNamePosition);
-        
-        // Initialize with current values
-        const currentStyle = window.getComputedStyle(characterNameContainer);
-        const currentLeft = parseInt(currentStyle.left) || 330;
-        const currentTop = parseInt(currentStyle.top) || 12;
-        
-        charNameXInput.value = currentLeft;
-        charNameYInput.value = currentTop;
       }
       
       // Character Portrait Image Resize and Position System
@@ -880,54 +832,6 @@
       </div>
       
       <!-- Character Level - Absolute positioned -->
-      <!-- Level Position Controls (for development/positioning) -->
-      <div class="level-position-controls" style="position: absolute; left: 620px; top: 12px; display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.9); padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; z-index: 20;">
-        <div style="font-weight: bold; margin-bottom: 5px;">Level Position Controls</div>
-        <div style="display: flex; gap: 5px; align-items: center;">
-          <label for="level-x-coord" style="font-size: 11px;">X:</label>
-          <input type="number" id="level-x-coord" value="500" min="0" max="600" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
-          <span style="font-size: 10px;">px</span>
-        </div>
-        <div style="display: flex; gap: 5px; align-items: center;">
-          <label for="level-y-coord" style="font-size: 11px;">Y:</label>
-          <input type="number" id="level-y-coord" value="12" min="0" max="300" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
-          <span style="font-size: 10px;">px</span>
-        </div>
-        <button type="button" id="apply-level-position" style="font-size: 10px; padding: 3px 6px; margin-top: 3px;">Apply</button>
-      </div>
-      
-      <!-- Class/Alignment Position Controls (for development/positioning) -->
-      <div class="class-alignment-position-controls" style="position: absolute; left: 620px; top: 150px; display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.9); padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; z-index: 20;">
-        <div style="font-weight: bold; margin-bottom: 5px;">Class/Alignment Position Controls</div>
-        <div style="display: flex; gap: 5px; align-items: center;">
-          <label for="class-alignment-x-coord" style="font-size: 11px;">X:</label>
-          <input type="number" id="class-alignment-x-coord" value="330" min="0" max="600" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
-          <span style="font-size: 10px;">px</span>
-        </div>
-        <div style="display: flex; gap: 5px; align-items: center;">
-          <label for="class-alignment-y-coord" style="font-size: 11px;">Y:</label>
-          <input type="number" id="class-alignment-y-coord" value="72" min="0" max="300" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
-          <span style="font-size: 10px;">px</span>
-        </div>
-        <button type="button" id="apply-class-alignment-position" style="font-size: 10px; padding: 3px 6px; margin-top: 3px;">Apply</button>
-      </div>
-      
-      <!-- Character Name Position Controls (for development/positioning) -->
-      <div class="character-name-position-controls" style="position: absolute; left: 620px; top: 290px; display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.9); padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; z-index: 20;">
-        <div style="font-weight: bold; margin-bottom: 5px;">Character Name Position Controls</div>
-        <div style="display: flex; gap: 5px; align-items: center;">
-          <label for="char-name-x-coord" style="font-size: 11px;">X:</label>
-          <input type="number" id="char-name-x-coord" value="330" min="0" max="600" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
-          <span style="font-size: 10px;">px</span>
-        </div>
-        <div style="display: flex; gap: 5px; align-items: center;">
-          <label for="char-name-y-coord" style="font-size: 11px;">Y:</label>
-          <input type="number" id="char-name-y-coord" value="12" min="0" max="300" style="width: 50px; height: 20px; font-size: 11px; padding: 2px;" />
-          <span style="font-size: 10px;">px</span>
-        </div>
-        <button type="button" id="apply-char-name-position" style="font-size: 10px; padding: 3px 6px; margin-top: 3px;">Apply</button>
-      </div>
-      
       <div class="level-progress-ring-container" style="position: absolute; left: 487px; top: 24px; width: 100px; height: 120px; z-index: 10;" id="level-container">
         <!-- Independent Curved Level Title -->
         <svg width="100" height="40" style="position: absolute; top: 13px; left: 0; z-index: 15; pointer-events: none; overflow: visible;">
@@ -1082,19 +986,16 @@
       
     </div>
 
-    <!-- Scrollable Content Area -->
-    <div class="scrollable-content" style="flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0;">
-      
-      <!-- Sheet Tab Navigation -->
-      <nav class="sheet-tabs tabs" data-group="primary" style="display: flex; margin: 0; padding: 0.5rem 0.75rem 0; gap: 0.25rem; background: transparent; flex-shrink: 0;">
-        <a class="item" data-tab="combat">Combat</a>
-        <a class="item" data-tab="skills">Skills</a>
-        <a class="item" data-tab="equipment">Equipment</a>
-        <a class="item" data-tab="bio">Bio</a>
-      </nav>
+    <!-- Right-side Tab Navigation -->
+    <nav class="sheet-tabs tabs" data-group="primary">
+      <a class="item" data-tab="combat">Combat</a>
+      <a class="item" data-tab="skills">Skills</a>
+      <a class="item" data-tab="equipment">Equipment</a>
+      <a class="item" data-tab="bio">Bio</a>
+    </nav>
 
-      <!-- Sheet Body -->
-      <section class="sheet-body" style="padding: 1rem 0.75rem; flex: 1;">
+    <!-- Sheet Body - Tab Content Area -->
+    <section class="sheet-body" style="position: absolute; top: 250px; left: 0; right: 0; bottom: 0; padding: 1rem 0.75rem; overflow-y: auto;">
       <!-- Combat Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
         <div class="combat-section">
@@ -1120,10 +1021,10 @@
             </div>
           </div>
 
-          <!-- Saving Throw Groups - Each pair moves together -->
-          <!-- Death Ray/Poison Group - Position: (50, 450) -->
-          <div class="save-group-death" style="position: absolute; left: 25px; top: 500px;">
-            <div class="save death-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+          <!-- Saving Throw Groups - Positioned relative to combat section -->
+          <!-- Death Ray/Poison Group -->
+          <div class="save-group-death" style="position: relative; display: inline-block; margin: 0 10px;">
+            <div class="save death-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.death.value}}</span>
               </div>
@@ -1142,9 +1043,9 @@
             </div>
           </div>
 
-          <!-- Wands Group - Position: (150, 450) -->
-          <div class="save-group-wands" style="position: absolute; left: 140px; top: 500px;">
-            <div class="save wands-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+          <!-- Wands Group -->
+          <div class="save-group-wands" style="position: relative; display: inline-block; margin: 0 10px;">
+            <div class="save wands-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.wands.value}}</span>
               </div>
@@ -1163,9 +1064,9 @@
             </div>
           </div>
 
-          <!-- Paralysis Group - Position: (250, 450) -->
-          <div class="save-group-paralysis" style="position: absolute; left: 262px; top: 500px;">
-            <div class="save paralysis-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+          <!-- Paralysis Group -->
+          <div class="save-group-paralysis" style="position: relative; display: inline-block; margin: 0 10px;">
+            <div class="save paralysis-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.paralysis.value}}</span>
               </div>
@@ -1184,9 +1085,9 @@
             </div>
           </div>
 
-          <!-- Breath Attacks Group - Position: (350, 450) -->
-          <div class="save-group-breath" style="position: absolute; left: 377px; top: 500px;">
-            <div class="save breath-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+          <!-- Breath Attacks Group -->
+          <div class="save-group-breath" style="position: relative; display: inline-block; margin: 0 10px;">
+            <div class="save breath-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.breath.value}}</span>
               </div>
@@ -1205,9 +1106,9 @@
             </div>
           </div>
 
-          <!-- Spells/Rods/Staves Group - Position: (450, 450) -->
-          <div class="save-group-spells" style="position: absolute; left: 497px; top: 500px;">
-            <div class="save spells-save" style="position: relative; left: 0px; top: 0px; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
+          <!-- Spells/Rods/Staves Group -->
+          <div class="save-group-spells" style="position: relative; display: inline-block; margin: 0 10px;">
+            <div class="save spells-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.spells.value}}</span>
               </div>

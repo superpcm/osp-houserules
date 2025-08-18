@@ -1,14 +1,8 @@
 <form class="osp sheet actor character" autocomplete="off" style="height: 700px; position: relative; overflow: visible; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; max-width: 600px;">
   <style>
-    /* Single Background Image System */
+    /* Single Background Image System - Applied to window instead of form */
     form.osp.sheet.actor.character {
       position: relative;
-      background: transparent !important;
-      background-image: url('systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg') !important;
-      background-repeat: no-repeat !important;
-      background-size: 600px 700px !important;
-      background-position: center !important;
-      background-color: transparent !important;
     }
     
     /* Override any Foundry default backgrounds */
@@ -17,7 +11,6 @@
     .window-content form.osp.sheet.actor.character,
     .window-content .osp.sheet.actor.character,
     .window-content .window-content form.osp.sheet.actor.character {
-      background-color: transparent !important;
     }
     
     /* Ensure the application window allows tabs to extend beyond right edge */
@@ -28,9 +21,7 @@
     /* Also override the window content wrapper */
     .application.window-app.sheet.actor.character.osp .window-content,
     .osp .window-content {
-      background: transparent !important;
       background-image: none !important;
-      background-color: transparent !important;
       padding: 0 !important;
       overflow: visible !important; /* Allow tabs to show beyond content area */
     }
@@ -57,6 +48,12 @@
       background-color: #4a90e2 !important;
     }
     
+    /* Static header background image override - use existing file */
+    form.osp.sheet.actor.character .static-header {
+      background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat center/contain !important;
+      background-color: transparent !important;
+    }
+    
     /* Tab system styles - Individual absolute positioned tabs */
     .sheet-tabs {
       position: absolute;
@@ -72,10 +69,7 @@
       position: absolute;
       width: 32px; /* Tab width (becomes height after rotation) */
       height: 80px; /* Tab height (becomes width after rotation) */
-      background-image: url('systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg');
-      background-repeat: no-repeat;
-      background-size: 100px 100px;
-      background-position: center;
+      background: #b5dcb8; /* Matching green background */
       border: 1px solid #8b7355;
       color: #4a3a1a;
       text-decoration: none;
@@ -92,34 +86,50 @@
       transition: all 0.2s ease;
       writing-mode: vertical-rl; /* Rotate text 90 degrees */
       text-orientation: mixed; /* Keep letters upright */
+      
+      /* Remove any default focus/outline styles */
+      outline: none !important;
+      /* Remove any text shadows */
+      text-shadow: none !important;
+      
+      /* Shading for inactive tabs */
+      box-shadow: inset 0 0 0 1000px rgba(139, 115, 85, 0.3); /* Brown overlay for inactive state */
+      opacity: 0.7; /* Slightly reduce overall opacity */
+    }
+
+    /* Remove red highlighting on focus */
+    .sheet-tabs a.item:focus {
+      outline: none !important;
+      text-shadow: none !important;
+      box-shadow: inset 0 0 0 1000px rgba(139, 115, 85, 0.3); /* Maintain same styling as default */
     }
 
     /* Position each tab individually with precise spacing */
-    .sheet-tabs a.item:nth-child(1) { top: -220px; left: -8px; } /* Adjusted to fit the background */
-    .sheet-tabs a.item:nth-child(2) { top: -141px; left: -42px; } /* 30px height + 1px gap */
-    .sheet-tabs a.item:nth-child(3) { top: -62px; left: -76px; }
-    .sheet-tabs a.item:nth-child(4) { top: 17px; left: -110px; }
+    .sheet-tabs a.item:nth-child(1) { top: -219px; left: -8px; } /* Adjusted to fit the background */
+    .sheet-tabs a.item:nth-child(2) { top: -140px; left: -42px; } /* 30px height + 1px gap */
+    .sheet-tabs a.item:nth-child(3) { top: -61px; left: -76px; }
+    .sheet-tabs a.item:nth-child(4) { top: 18px; left: -110px; }
 
     .sheet-tabs a.item:hover {
-      background-image: url('systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg');
-      background-repeat: no-repeat;
-      background-size: 600px 700px;
-      background-position: center;
+      background: #a0d1a3; /* Slightly darker green on hover */
       color: #3a2915; /* Darker brown */
       border-color: #6b4112; /* Darker brown border */
-      /* Add slight overlay for hover effect */
-      box-shadow: inset 0 0 0 1000px rgba(237, 228, 179, 0.2);
+      text-shadow: none !important; /* Remove any text shadows */
+      /* Reduce shading on hover to show interaction */
+      box-shadow: inset 0 0 0 1000px rgba(139, 115, 85, 0.15); /* Lighter brown overlay */
+      opacity: 0.9; /* Slightly higher opacity on hover */
     }
 
     .sheet-tabs a.item.active {
-      background-image: url('systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg');
-      background-repeat: no-repeat;
-      background-size: 600px 700px;
-      background-position: center;
+      background: #c9e7cc; /* Lighter green background for active tab */
       color: #2d1f0f; /* Darkest brown text */
       border-color: #5a3508; /* Darkest border */
-      /* Add slight overlay for active effect */
-      box-shadow: inset 0 0 0 1000px rgba(232, 226, 213, 0.3), inset 1px 1px 2px rgba(0,0,0,0.1);
+      text-shadow: none !important; /* Remove any text shadows */
+      /* Remove shading for active tab */
+      box-shadow: none; /* No overlay for active state */
+      opacity: 1; /* Full opacity for active tab */
+      /* Add slight inset shadow for depth */
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
       font-weight: bold;
       z-index: 1; /* Bring active tab forward */
     }
@@ -341,6 +351,246 @@
         console.log('Image resize system initialized successfully');
       } else {
         console.log('Required image elements not found - resize functionality disabled');
+      }
+      
+      // Portrait Container Positioning System with Moveable Dialog
+      const positionContainer = document.querySelector('.character-image-container');
+      
+      if (positionContainer) {
+        console.log('Setting up portrait positioning system with moveable dialog...');
+        
+        // Get current position from data attributes or defaults
+        let currentX = parseInt(positionContainer.getAttribute('data-x')) || 25;
+        let currentY = parseInt(positionContainer.getAttribute('data-y')) || 12;
+        
+        // Global positioning dialog reference
+        let positionDialog = null;
+        
+        // Function to update position
+        function updatePosition(x, y) {
+          // Constrain to static header area (0 to 600-130 width, 0 to 300-130 height)
+          x = Math.max(0, Math.min(470, x)); // 600 - 130 = 470
+          y = Math.max(0, Math.min(170, y)); // 300 - 130 = 170
+          
+          currentX = x;
+          currentY = y;
+          
+          // Update position
+          positionContainer.style.left = x + 'px';
+          positionContainer.style.top = y + 'px';
+          positionContainer.setAttribute('data-x', x);
+          positionContainer.setAttribute('data-y', y);
+          
+          // Update dialog fields if dialog is open
+          if (positionDialog && positionDialog.element) {
+            const xInput = positionDialog.element.find('.x-input')[0];
+            const yInput = positionDialog.element.find('.y-input')[0];
+            const xCoord = positionDialog.element.find('.x-coord')[0];
+            const yCoord = positionDialog.element.find('.y-coord')[0];
+            
+            if (xInput) xInput.value = x;
+            if (yInput) yInput.value = y;
+            if (xCoord) xCoord.textContent = x;
+            if (yCoord) yCoord.textContent = y;
+          }
+          
+          // Save to actor data
+          const form = positionContainer.closest('form');
+          if (form) {
+            // Update hidden input fields
+            const xInput = form.querySelector('[name="system.portraitPosition.x"]');
+            const yInput = form.querySelector('[name="system.portraitPosition.y"]');
+            if (xInput) xInput.value = x;
+            if (yInput) yInput.value = y;
+            
+            // If this is a Foundry actor sheet, save immediately
+            if (form.closest('.character-sheet') && this.actor) {
+              this.actor.update({
+                'system.portraitPosition.x': x,
+                'system.portraitPosition.y': y
+              });
+            }
+          }
+        }
+        
+        // Function to create and show the positioning dialog
+        function showPositionDialog() {
+          if (positionDialog) {
+            positionDialog.bringToTop();
+            return;
+          }
+          
+          const dialogContent = `
+            <div class="portrait-position-dialog" style="padding: 10px;">
+              <div style="margin-bottom: 10px;">
+                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #333;">Portrait Position Controls</h3>
+              </div>
+              
+              <!-- Manual Coordinate Entry -->
+              <div class="coordinates-entry" style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px; padding: 8px; background: #f0f0f0; border-radius: 4px;">
+                <label style="font-size: 12px; font-weight: bold;">X:</label>
+                <input type="number" class="x-input" min="0" max="470" style="width: 50px; height: 24px; font-size: 11px; text-align: center; border: 1px solid #ccc; border-radius: 3px;" value="${currentX}" />
+                <label style="font-size: 12px; font-weight: bold;">Y:</label>
+                <input type="number" class="y-input" min="0" max="170" style="width: 50px; height: 24px; font-size: 11px; text-align: center; border: 1px solid #ccc; border-radius: 3px;" value="${currentY}" />
+                <button type="button" class="apply-coords" title="Apply Coordinates" style="width: 28px; height: 24px; border: none; background: #10b981; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px;">✓</button>
+              </div>
+              
+              <!-- Current Position Display -->
+              <div class="coordinates-display" style="text-align: center; font-size: 12px; margin-bottom: 15px; padding: 5px; background: #e8f4f8; border-radius: 3px;">
+                <strong>Current Position: X: <span class="x-coord">${currentX}</span>, Y: <span class="y-coord">${currentY}</span></strong>
+              </div>
+              
+              <!-- Arrow Controls -->
+              <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; margin-bottom: 5px;">
+                  <!-- Top row -->
+                  <div></div>
+                  <button type="button" class="move-up" title="Move Up (1px)" style="width: 32px; height: 32px; border: none; background: #4a5568; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px;">↑</button>
+                  <div></div>
+                  
+                  <!-- Middle row -->
+                  <button type="button" class="move-left" title="Move Left (1px)" style="width: 32px; height: 32px; border: none; background: #4a5568; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px;">←</button>
+                  <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #e2e8f0; border-radius: 4px; font-size: 14px;">⊕</div>
+                  <button type="button" class="move-right" title="Move Right (1px)" style="width: 32px; height: 32px; border: none; background: #4a5568; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px;">→</button>
+                  
+                  <!-- Bottom row -->
+                  <div></div>
+                  <button type="button" class="move-down" title="Move Down (1px)" style="width: 32px; height: 32px; border: none; background: #4a5568; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px;">↓</button>
+                  <div></div>
+                </div>
+                <div style="font-size: 10px; color: #666; text-align: center;">Use arrow buttons for 1-pixel precision</div>
+              </div>
+              
+              <!-- Save Button -->
+              <button type="button" class="save-position-permanent" title="Save Position as Default for New Characters" style="width: 100%; height: 32px; border: none; background: #f59e0b; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; margin-bottom: 10px;">💾 SAVE AS DEFAULT</button>
+              
+              <div style="font-size: 10px; color: #666; text-align: center; line-height: 1.3;">
+                Right-click the portrait again to close this dialog<br>
+                Dialog can be moved by dragging the title bar
+              </div>
+            </div>
+          `;
+          
+          positionDialog = new Dialog({
+            title: "Portrait Position Controller",
+            content: dialogContent,
+            buttons: {
+              close: {
+                icon: '<i class="fas fa-times"></i>',
+                label: "Close",
+                callback: () => {
+                  positionDialog = null;
+                }
+              }
+            },
+            close: () => {
+              positionDialog = null;
+            },
+            render: (html) => {
+              // Setup event handlers for the dialog controls
+              const $html = $(html);
+              
+              // Arrow button controls
+              $html.find('.move-up').click(() => updatePosition(currentX, currentY - 1));
+              $html.find('.move-down').click(() => updatePosition(currentX, currentY + 1));
+              $html.find('.move-left').click(() => updatePosition(currentX - 1, currentY));
+              $html.find('.move-right').click(() => updatePosition(currentX + 1, currentY));
+              
+              // Manual coordinate entry
+              $html.find('.apply-coords').click(() => {
+                const newX = parseInt($html.find('.x-input').val()) || 0;
+                const newY = parseInt($html.find('.y-input').val()) || 0;
+                updatePosition(newX, newY);
+                console.log('Applied manual coordinates:', newX, newY);
+              });
+              
+              // Enter key support for coordinate inputs
+              $html.find('.x-input, .y-input').keypress((e) => {
+                if (e.which === 13) { // Enter key
+                  $html.find('.apply-coords').click();
+                }
+              });
+              
+              // Save as default functionality
+              $html.find('.save-position-permanent').click(async () => {
+                try {
+                  const button = $html.find('.save-position-permanent')[0];
+                  const originalText = button.textContent;
+                  button.textContent = '💾 SAVING...';
+                  button.disabled = true;
+                  
+                  // Show confirmation dialog
+                  const confirmed = await Dialog.confirm({
+                    title: "Save Portrait Position as Default",
+                    content: `<p>This will set the default portrait position to X: ${currentX}, Y: ${currentY} for all NEW characters.</p><p><strong>Existing characters will keep their current positions unless reset.</strong></p>`,
+                    yes: () => true,
+                    no: () => false
+                  });
+                  
+                  if (confirmed) {
+                    await game.settings.set('osp-houserules', 'defaultPortraitPosition', {
+                      x: currentX,
+                      y: currentY,
+                      timestamp: Date.now()
+                    });
+                    
+                    button.textContent = '✓ SAVED!';
+                    button.style.background = '#10b981';
+                    setTimeout(() => {
+                      button.textContent = originalText;
+                      button.style.background = '#f59e0b';
+                      button.disabled = false;
+                    }, 2000);
+                    
+                    ui.notifications.info(`Default portrait position saved: X:${currentX}, Y:${currentY}`);
+                    console.log('Default portrait position saved:', currentX, currentY);
+                  } else {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                  }
+                } catch (error) {
+                  console.error('Failed to save default position:', error);
+                  const button = $html.find('.save-position-permanent')[0];
+                  button.textContent = '❌ FAILED';
+                  button.style.background = '#dc2626';
+                  setTimeout(() => {
+                    button.textContent = '💾 SAVE AS DEFAULT';
+                    button.style.background = '#f59e0b';
+                    button.disabled = false;
+                  }, 2000);
+                  ui.notifications.error('Failed to save default portrait position.');
+                }
+              });
+            }
+          }, {
+            width: 300,
+            height: 480,
+            resizable: true,
+            top: 100,
+            left: 200
+          });
+          
+          positionDialog.render(true);
+        }
+        
+        // Right-click to open positioning dialog
+        positionContainer.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          if (positionDialog) {
+            positionDialog.close();
+            positionDialog = null;
+          } else {
+            showPositionDialog();
+          }
+          console.log('Portrait positioning dialog toggled');
+        });
+        
+        // Initialize position
+        updatePosition(currentX, currentY);
+        
+        console.log('Portrait positioning system with moveable dialog initialized');
+      } else {
+        console.log('Portrait container not found - positioning system disabled');
       }
       
       // Ability Score Tooltips System
@@ -809,16 +1059,17 @@
     }
   </script>
   <!-- Static Header Section - Absolute Positioning Layout -->
-    <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10;">
+    <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat center/contain !important;">
       
-      <!-- Character Image - Absolute positioned -->
-      <div class="character-image-container char-field-group" style="position: absolute; left: 25px; top: 12px;">
+      <!-- Character Image - Absolute positioned with positioning controls -->
+      <div class="character-image-container char-field-group" style="position: absolute; left: {{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}px; top: {{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}px;" data-x="{{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}" data-y="{{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}">
         <div class="character-image" style="position: relative; width: 130px; height: 130px; border: 1px solid #000; border-radius: 9px; overflow: hidden;">
           <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}"
                class="character-portrait" 
                style="position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none; pointer-events: auto;" 
                draggable="false" />
         </div>
+        
         <!-- Control buttons -->
         <div class="image-controls" style="position: absolute; top: -8px; right: -8px; display: none; gap: 4px;">
           <button type="button" class="reset-image" title="Reset Position & Size" style="width: 24px; height: 24px; border: none; border-radius: 50%; background: #4a5568; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">↻</button>
@@ -830,6 +1081,10 @@
       <div class="character-name-section" id="character-name-container" style="position: absolute; left: 195px; top: 12px;">
         <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="text-align: center; font-size: 45px; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; padding: 3px; margin: 0; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); font-weight: bold; border: 1px solid #000; outline: none; min-height: 1.1em;"/>
       </div>
+      
+      <!-- Hidden inputs for portrait position data -->
+      <input type="hidden" name="system.portraitPosition.x" value="{{system.portraitPosition.x}}" />
+      <input type="hidden" name="system.portraitPosition.y" value="{{system.portraitPosition.y}}" />
       
       <!-- Character Level - Absolute positioned -->
       <div class="level-progress-ring-container" style="position: absolute; left: 487px; top: 24px; width: 100px; height: 120px; z-index: 10;" id="level-container">
@@ -924,65 +1179,8 @@
         </div>
       </div>
       
-      <!-- STR Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 25px; top: 160px; display: flex; flex-direction: column; align-items: center;">
-        <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">STR</label>
-        <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
-          {{#each (range 3 18) as |val|}}
-            <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
-          {{/each}}
-        </select>
-      </div>
-      
-      <!-- DEX Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 120px; top: 160px; display: flex; flex-direction: column; align-items: center;">
-        <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">DEX</label>
-        <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
-          {{#each (range 3 18) as |val|}}
-            <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
-          {{/each}}
-        </select>
-      </div>
-      
-      <!-- CON Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 215px; top: 160px; display: flex; flex-direction: column; align-items: center;">
-        <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CON</label>
-        <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
-          {{#each (range 3 18) as |val|}}
-            <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
-          {{/each}}
-        </select>
-      </div>
-      
-      <!-- INT Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 310px; top: 160px; display: flex; flex-direction: column; align-items: center;">
-        <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">INT</label>
-        <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
-          {{#each (range 3 18) as |val|}}
-            <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
-          {{/each}}
-        </select>
-      </div>
-      
-      <!-- WIS Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 405px; top: 160px; display: flex; flex-direction: column; align-items: center;">
-        <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">WIS</label>
-        <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
-          {{#each (range 3 18) as |val|}}
-            <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
-          {{/each}}
-        </select>
-      </div>
-      
-      <!-- CHA Ability Score - Absolute positioned -->
-      <div class="ability" style="position: absolute; left: 500px; top: 160px; display: flex; flex-direction: column; align-items: center;">
-        <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CHA</label>
-        <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
-          {{#each (range 3 18) as |val|}}
-            <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
-          {{/each}}
-        </select>
-      </div>
+      <!-- Horizontal separator line at bottom of static header -->
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background-color: #000; z-index: 15;"></div>
       
     </div>
 
@@ -995,11 +1193,10 @@
     </nav>
 
     <!-- Sheet Body - Tab Content Area -->
-    <section class="sheet-body" style="position: absolute; top: 250px; left: 0; right: 0; bottom: 0; padding: 1rem 0.75rem; overflow-y: auto;">
+    <section class="sheet-body" style="position: absolute; top: 350px; left: 0; right: 0; bottom: 0; padding: 1rem 0.75rem; overflow-y: auto;">
       <!-- Combat Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
         <div class="combat-section">
-          <h3>Combat Stats</h3>
           <div class="combat-stats" style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
             <div class="combat-stat" style="display: flex; flex-direction: column; align-items: center;">
               <label for="char-ac" style="margin-bottom: 0.5rem; font-size: 1.1rem;">Armor Class</label>
@@ -1130,7 +1327,73 @@
       </div>
       <!-- Skills Tab -->
       <div class="tab" data-group="primary" data-tab="skills" style="position: relative; min-height: 400px;">
-        <!-- Skills tab content (blank for now) -->
+        <!-- Ability Scores Section -->
+        <div class="ability-scores-section" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
+          
+          <!-- STR Ability Score -->
+          <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">STR</label>
+            <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              {{#each (range 3 18) as |val|}}
+                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
+              {{/each}}
+            </select>
+          </div>
+          
+          <!-- DEX Ability Score -->
+          <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">DEX</label>
+            <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              {{#each (range 3 18) as |val|}}
+                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
+              {{/each}}
+            </select>
+          </div>
+          
+          <!-- CON Ability Score -->
+          <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CON</label>
+            <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              {{#each (range 3 18) as |val|}}
+                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
+              {{/each}}
+            </select>
+          </div>
+          
+          <!-- INT Ability Score -->
+          <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">INT</label>
+            <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              {{#each (range 3 18) as |val|}}
+                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
+              {{/each}}
+            </select>
+          </div>
+          
+          <!-- WIS Ability Score -->
+          <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">WIS</label>
+            <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              {{#each (range 3 18) as |val|}}
+                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
+              {{/each}}
+            </select>
+          </div>
+          
+          <!-- CHA Ability Score -->
+          <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
+            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CHA</label>
+            <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+              {{#each (range 3 18) as |val|}}
+                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
+              {{/each}}
+            </select>
+          </div>
+          
+        </div>
+        
+        <!-- Additional Skills content can go here -->
+        
       </div>
       <!-- Equipment Tab -->
       <div class="tab" data-group="primary" data-tab="equipment">

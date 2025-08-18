@@ -1,5 +1,19 @@
-<form class="osp sheet actor character" autocomplete="off" style="height: 700px; position: relative; overflow: visible; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; max-width: 600px;">
+<form class="osp sheet actor character" autocomplete="off" style="height: 700px; position: relative; overflow: visible; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; max-width: 600px; background: white; background-color: white;">
   <style>
+    /* White Background Override - Apply to entire sheet and window */
+    form.osp.sheet.actor.character,
+    .osp.sheet.actor.character,
+    .application.window-app.sheet.actor.character.osp,
+    .application.window-app.sheet.actor.character.osp .window-content,
+    .window-content form.osp.sheet.actor.character,
+    .window-content .osp.sheet.actor.character,
+    .window-content .window-content form.osp.sheet.actor.character,
+    .osp .window-content {
+      background: white !important;
+      background-color: white !important;
+      background-image: none !important;
+    }
+    
     /* Single Background Image System - Applied to window instead of form */
     form.osp.sheet.actor.character {
       position: relative;
@@ -11,6 +25,9 @@
     .window-content form.osp.sheet.actor.character,
     .window-content .osp.sheet.actor.character,
     .window-content .window-content form.osp.sheet.actor.character {
+      background: white !important;
+      background-color: white !important;
+      background-image: none !important;
     }
     
     /* Ensure the application window allows tabs to extend beyond right edge */
@@ -21,6 +38,8 @@
     /* Also override the window content wrapper */
     .application.window-app.sheet.actor.character.osp .window-content,
     .osp .window-content {
+      background: white !important;
+      background-color: white !important;
       background-image: none !important;
       padding: 0 !important;
       overflow: visible !important; /* Allow tabs to show beyond content area */
@@ -353,11 +372,19 @@
         console.log('Required image elements not found - resize functionality disabled');
       }
       
-      // Portrait Container Positioning System with Moveable Dialog
-      const positionContainer = document.querySelector('.character-image-container');
-      
-      if (positionContainer) {
-        console.log('Setting up portrait positioning system with moveable dialog...');
+      // Portrait Container Positioning System with Moveable Dialog - Enhanced Initialization
+      function initializePortraitPositioning() {
+        console.log('Attempting to initialize portrait positioning system...');
+        const positionContainer = document.querySelector('.character-image-container');
+        
+        if (!positionContainer) {
+          console.log('Portrait container not found, retrying in 100ms...');
+          setTimeout(initializePortraitPositioning, 100);
+          return;
+        }
+        
+        console.log('Portrait container found, setting up positioning system...');
+        console.log('Container element:', positionContainer);
         
         // Get current position from data attributes or defaults
         let currentX = parseInt(positionContainer.getAttribute('data-x')) || 25;
@@ -657,11 +684,18 @@
 
               // Z-index control functionality
               function updateZIndex(zIndex) {
+                console.log('updateZIndex called with:', zIndex);
+                console.log('positionContainer element:', positionContainer);
+                
                 // Ensure value is within valid range
                 zIndex = Math.max(-10, Math.min(50, zIndex || 5));
                 
+                console.log('Setting z-index to:', zIndex);
                 positionContainer.style.zIndex = zIndex;
                 positionContainer.setAttribute('data-z', zIndex);
+                
+                console.log('Updated style.zIndex:', positionContainer.style.zIndex);
+                console.log('Updated data-z attribute:', positionContainer.getAttribute('data-z'));
                 
                 // Update hidden input field
                 const form = positionContainer.closest('form');
@@ -1023,25 +1057,108 @@
           positionDialog.render(true);
         }
         
-        // Right-click to open positioning dialog
-        positionContainer.addEventListener('contextmenu', (e) => {
+        // Right-click to open positioning dialog - Enhanced with z-index debugging and global capture
+        console.log('Adding contextmenu event listener to:', positionContainer);
+        console.log('Container z-index:', positionContainer.style.zIndex);
+        console.log('Container pointer-events:', window.getComputedStyle(positionContainer).pointerEvents);
+        
+        // Check for z-index blocking elements
+        const staticHeader = document.querySelector('.static-header');
+        if (staticHeader) {
+          console.log('Static header z-index:', window.getComputedStyle(staticHeader).zIndex);
+          console.log('Static header position:', window.getComputedStyle(staticHeader).position);
+        }
+        
+        // Enhanced event handler function
+        function handleRightClick(e, source) {
+          console.log(`Right-click detected on ${source}!`, e);
+          console.log('Event target:', e.target);
+          console.log('Current target:', e.currentTarget);
           e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          
           if (positionDialog) {
+            console.log('Closing existing dialog');
             positionDialog.close();
             positionDialog = null;
           } else {
+            console.log('Opening positioning dialog');
             showPositionDialog();
           }
           console.log('Portrait positioning dialog toggled');
-        });
+        }
+        
+        // Add to the container with multiple event listeners for better coverage
+        positionContainer.addEventListener('contextmenu', (e) => handleRightClick(e, 'container'), true);
+        positionContainer.addEventListener('contextmenu', (e) => handleRightClick(e, 'container-bubble'), false);
+        
+        // Also add to the character-image div
+        const characterImage = positionContainer.querySelector('.character-image');
+        if (characterImage) {
+          console.log('Adding contextmenu event listener to character-image div:', characterImage);
+          characterImage.addEventListener('contextmenu', (e) => handleRightClick(e, 'character-image'), true);
+          characterImage.addEventListener('contextmenu', (e) => handleRightClick(e, 'character-image-bubble'), false);
+        }
+        
+        // Also add to the portrait image directly
+        const portraitImg = positionContainer.querySelector('.character-portrait');
+        if (portraitImg) {
+          console.log('Adding contextmenu event listener to portrait image:', portraitImg);
+          portraitImg.addEventListener('contextmenu', (e) => handleRightClick(e, 'portrait-image'), true);
+          portraitImg.addEventListener('contextmenu', (e) => handleRightClick(e, 'portrait-image-bubble'), false);
+        } else {
+          // Try alternative selectors for the image
+          const altImg = positionContainer.querySelector('img');
+          if (altImg) {
+            console.log('Adding contextmenu event listener to alternative img:', altImg);
+            altImg.addEventListener('contextmenu', (e) => handleRightClick(e, 'alt-image'), true);
+            altImg.addEventListener('contextmenu', (e) => handleRightClick(e, 'alt-image-bubble'), false);
+          }
+        }
+        
+        // CRITICAL: Add global event listener to capture right-clicks on portrait area regardless of z-index
+        document.addEventListener('contextmenu', (e) => {
+          // Get portrait container bounds
+          const containerRect = positionContainer.getBoundingClientRect();
+          const clickX = e.clientX;
+          const clickY = e.clientY;
+          
+          // Check if click is within portrait bounds
+          const isWithinPortrait = clickX >= containerRect.left && 
+                                  clickX <= containerRect.right && 
+                                  clickY >= containerRect.top && 
+                                  clickY <= containerRect.bottom;
+          
+          if (isWithinPortrait) {
+            console.log('Global contextmenu captured for portrait area!');
+            console.log('Click coordinates:', {x: clickX, y: clickY});
+            console.log('Portrait bounds:', containerRect);
+            console.log('Clicked element:', e.target);
+            console.log('Portrait container element:', positionContainer);
+            
+            // Check if the clicked element is part of the portrait or blocking it
+            const isPortraitElement = positionContainer.contains(e.target);
+            const isStaticHeader = e.target.closest('.static-header');
+            
+            console.log('Is portrait element:', isPortraitElement);
+            console.log('Is static header:', !!isStaticHeader);
+            
+            // Handle the right-click even if it hit a blocking element
+            handleRightClick(e, 'global-portrait-area');
+          }
+        }, true);
+        
+        console.log('Contextmenu event listeners attached successfully');
         
         // Initialize position
         updatePosition(currentX, currentY);
         
         console.log('Portrait positioning system with moveable dialog initialized');
-      } else {
-        console.log('Portrait container not found - positioning system disabled');
       }
+      
+      // Call the initialization function
+      initializePortraitPositioning();
       
       // Ability Score Tooltips System
       const TOOLTIP_DELAY = 800; // Configurable delay in milliseconds
@@ -1508,37 +1625,42 @@
       setTimeout(initializeCharacterSheet, 0);
     }
   </script>
+
+  <!-- Portrait positioning wrapper - maintains same coordinate system as static-header -->
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 300px; pointer-events: none; z-index: 5;">
+    <!-- Portrait container with independent z-index -->
+    <div class="character-image-container char-field-group" 
+         style="position: absolute; 
+                left: {{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}px; 
+                top: {{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}px;
+                z-index: {{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}5{{/if}};
+                pointer-events: auto;" 
+         data-x="{{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}" 
+         data-y="{{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}" 
+         data-z="{{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}5{{/if}}">
+      <div class="character-image" 
+           style="position: relative; 
+                  width: {{#if system.portraitFrame.width}}{{system.portraitFrame.width}}{{else}}130{{/if}}px; 
+                  height: {{#if system.portraitFrame.height}}{{system.portraitFrame.height}}{{else}}130{{/if}}px; 
+                  border: {{#if system.portraitBorder.enabled}}{{#if system.portraitBorder.size}}{{system.portraitBorder.size}}{{else}}1{{/if}}px solid {{#if system.portraitBorder.color}}{{system.portraitBorder.color}}{{else}}#000{{/if}}{{else}}none{{/if}}; 
+                  border-radius: 9px; 
+                  overflow: hidden;">
+        <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}"
+             class="character-portrait" 
+             style="position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none; pointer-events: auto;" 
+             draggable="false" />
+      </div>
+      
+      <!-- Control buttons -->
+      <div class="image-controls" style="position: absolute; top: -8px; right: -8px; display: none; gap: 4px;">
+        <button type="button" class="reset-image" title="Reset Position & Size" style="width: 24px; height: 24px; border: none; border-radius: 50%; background: #4a5568; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">↻</button>
+        <button type="button" class="fit-image" title="Fit to Container" style="width: 24px; height: 24px; border: none; border-radius: 50%; background: #4a5568; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">⌂</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Static Header Section - Absolute Positioning Layout -->
     <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat center/contain !important;">
-      
-      <!-- Character Image - Absolute positioned with positioning and border controls -->
-      <div class="character-image-container char-field-group" 
-           style="position: absolute; 
-                  left: {{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}px; 
-                  top: {{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}px;
-                  z-index: {{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}5{{/if}};" 
-           data-x="{{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}" 
-           data-y="{{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}" 
-           data-z="{{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}5{{/if}}">
-        <div class="character-image" 
-             style="position: relative; 
-                    width: {{#if system.portraitFrame.width}}{{system.portraitFrame.width}}{{else}}130{{/if}}px; 
-                    height: {{#if system.portraitFrame.height}}{{system.portraitFrame.height}}{{else}}130{{/if}}px; 
-                    border: {{#if system.portraitBorder.enabled}}{{#if system.portraitBorder.size}}{{system.portraitBorder.size}}{{else}}1{{/if}}px solid {{#if system.portraitBorder.color}}{{system.portraitBorder.color}}{{else}}#000{{/if}}{{else}}none{{/if}}; 
-                    border-radius: 9px; 
-                    overflow: hidden;">
-          <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}"
-               class="character-portrait" 
-               style="position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none; pointer-events: auto;" 
-               draggable="false" />
-        </div>
-        
-        <!-- Control buttons -->
-        <div class="image-controls" style="position: absolute; top: -8px; right: -8px; display: none; gap: 4px;">
-          <button type="button" class="reset-image" title="Reset Position & Size" style="width: 24px; height: 24px; border: none; border-radius: 50%; background: #4a5568; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">↻</button>
-          <button type="button" class="fit-image" title="Fit to Container" style="width: 24px; height: 24px; border: none; border-radius: 50%; background: #4a5568; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">⌂</button>
-        </div>
-      </div>
       
       <!-- Character Name - Centered positioning -->
       <div class="character-name-section" id="character-name-container" style="position: absolute; left: 195px; top: 12px;">

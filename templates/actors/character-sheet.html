@@ -404,11 +404,8 @@
             if (yInput) yInput.value = y;
             
             // If this is a Foundry actor sheet, save immediately
-            if (form.closest('.character-sheet') && this.actor) {
-              this.actor.update({
-                'system.portraitPosition.x': x,
-                'system.portraitPosition.y': y
-              });
+            if (form.closest('.character-sheet')) {
+              console.log('Position updated:', x, y);
             }
           }
         }
@@ -420,10 +417,36 @@
             return;
           }
           
+          // Get current border settings
+          const characterImage = positionContainer.querySelector('.character-image');
+          const form = positionContainer.closest('form');
+          let currentBorderEnabled = true;
+          let currentBorderSize = 1;
+          let currentBorderColor = '#000000';
+          let currentFrameWidth = 130;
+          let currentFrameHeight = 130;
+          let currentZIndex = 5;
+          
+          if (form) {
+            const enabledInput = form.querySelector('[name="system.portraitBorder.enabled"]');
+            const sizeInput = form.querySelector('[name="system.portraitBorder.size"]');
+            const colorInput = form.querySelector('[name="system.portraitBorder.color"]');
+            const widthInput = form.querySelector('[name="system.portraitFrame.width"]');
+            const heightInput = form.querySelector('[name="system.portraitFrame.height"]');
+            const zIndexInput = form.querySelector('[name="system.portraitPosition.zIndex"]');
+            
+            if (enabledInput && enabledInput.value) currentBorderEnabled = enabledInput.value === 'true';
+            if (sizeInput && sizeInput.value) currentBorderSize = parseInt(sizeInput.value) || 1;
+            if (colorInput && colorInput.value) currentBorderColor = colorInput.value;
+            if (widthInput && widthInput.value) currentFrameWidth = parseInt(widthInput.value) || 130;
+            if (heightInput && heightInput.value) currentFrameHeight = parseInt(heightInput.value) || 130;
+            if (zIndexInput && zIndexInput.value) currentZIndex = parseInt(zIndexInput.value) || 5;
+          }
+          
           const dialogContent = `
             <div class="portrait-position-dialog" style="padding: 10px;">
               <div style="margin-bottom: 10px;">
-                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #333;">Portrait Position Controls</h3>
+                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #333;">Portrait Position & Border Controls</h3>
               </div>
               
               <!-- Manual Coordinate Entry -->
@@ -438,6 +461,76 @@
               <!-- Current Position Display -->
               <div class="coordinates-display" style="text-align: center; font-size: 12px; margin-bottom: 15px; padding: 5px; background: #e8f4f8; border-radius: 3px;">
                 <strong>Current Position: X: <span class="x-coord">${currentX}</span>, Y: <span class="y-coord">${currentY}</span></strong>
+              </div>
+              
+              <!-- Border Controls -->
+              <div class="border-controls" style="margin-bottom: 15px; padding: 8px; background: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
+                <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #333;">Border Settings</h4>
+                
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                  <label style="display: flex; align-items: center; gap: 4px; font-size: 11px;">
+                    <input type="checkbox" class="border-enabled" ${currentBorderEnabled ? 'checked' : ''} />
+                    Enable Border
+                  </label>
+                </div>
+                
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                  <label style="font-size: 11px; font-weight: bold;">Size:</label>
+                  <input type="number" class="border-size" min="0" max="10" style="width: 40px; height: 20px; font-size: 10px; text-align: center; border: 1px solid #ccc; border-radius: 2px;" value="${currentBorderSize}" />
+                  <span style="font-size: 10px; color: #666;">px</span>
+                  
+                  <label style="font-size: 11px; font-weight: bold; margin-left: 8px;">Color:</label>
+                  <input type="color" class="border-color" style="width: 30px; height: 20px; border: 1px solid #ccc; border-radius: 2px; cursor: pointer;" value="${currentBorderColor}" />
+                </div>
+                
+                <button type="button" class="apply-border" title="Apply Border Settings" style="width: 100%; height: 24px; border: none; background: #8b5cf6; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px; margin-bottom: 4px;">Apply Border</button>
+                
+                <button type="button" class="save-border-default" title="Save Border as Default for New Characters" style="width: 100%; height: 24px; border: none; background: #3b82f6; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px;">💾 Save Border Default</button>
+              </div>
+              
+              <!-- Frame Size Controls -->
+              <div class="frame-controls" style="margin-bottom: 15px; padding: 8px; background: #f5f5f5; border-radius: 4px; border: 1px solid #ddd;">
+                <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #333;">Frame Size</h4>
+                
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                  <label style="font-size: 11px; font-weight: bold;">Width:</label>
+                  <input type="number" class="frame-width" min="50" max="300" style="width: 50px; height: 20px; font-size: 10px; text-align: center; border: 1px solid #ccc; border-radius: 2px;" value="${currentFrameWidth}" />
+                  <span style="font-size: 10px; color: #666;">px</span>
+                  
+                  <label style="font-size: 11px; font-weight: bold; margin-left: 8px;">Height:</label>
+                  <input type="number" class="frame-height" min="50" max="300" style="width: 50px; height: 20px; font-size: 10px; text-align: center; border: 1px solid #ccc; border-radius: 2px;" value="${currentFrameHeight}" />
+                  <span style="font-size: 10px; color: #666;">px</span>
+                </div>
+                
+                <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                  <button type="button" class="frame-square" title="Make Square" style="flex: 1; height: 20px; border: none; background: #6b7280; color: white; font-size: 9px; cursor: pointer; border-radius: 2px;">Square</button>
+                  <button type="button" class="frame-reset" title="Reset to 130x130" style="flex: 1; height: 20px; border: none; background: #6b7280; color: white; font-size: 9px; cursor: pointer; border-radius: 2px;">Reset</button>
+                </div>
+                
+                <button type="button" class="apply-frame" title="Apply Frame Size" style="width: 100%; height: 24px; border: none; background: #059669; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px; margin-bottom: 4px;">Apply Frame Size</button>
+                
+                <button type="button" class="save-frame-default" title="Save Frame Size as Default for New Characters" style="width: 100%; height: 24px; border: none; background: #7c3aed; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px;">💾 Save Frame Default</button>
+              </div>
+              
+              <!-- Z-Index Controls -->
+              <div style="border-top: 1px solid #e5e7eb; padding-top: 10px; margin-top: 10px;">
+                <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #333;">Layer (Z-Index)</h4>
+                
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                  <label style="font-size: 11px; font-weight: bold;">Z-Index:</label>
+                  <input type="number" class="z-index" min="-10" max="50" style="width: 50px; height: 20px; font-size: 10px; text-align: center; border: 1px solid #ccc; border-radius: 2px;" value="${currentZIndex}" />
+                  <span style="font-size: 10px; color: #666;">(-10 to 50)</span>
+                </div>
+                
+                <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                  <button type="button" class="z-behind" title="Send Behind (z-index: -1)" style="flex: 1; height: 20px; border: none; background: #6b7280; color: white; font-size: 9px; cursor: pointer; border-radius: 2px;">Behind</button>
+                  <button type="button" class="z-front" title="Bring to Front (z-index: 20)" style="flex: 1; height: 20px; border: none; background: #6b7280; color: white; font-size: 9px; cursor: pointer; border-radius: 2px;">Front</button>
+                  <button type="button" class="z-reset" title="Reset to Default (z-index: 5)" style="flex: 1; height: 20px; border: none; background: #6b7280; color: white; font-size: 9px; cursor: pointer; border-radius: 2px;">Default</button>
+                </div>
+                
+                <button type="button" class="apply-zindex" title="Apply Z-Index" style="width: 100%; height: 24px; border: none; background: #059669; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px; margin-bottom: 4px;">Apply Z-Index</button>
+                
+                <button type="button" class="save-zindex-default" title="Save Z-Index as Default for New Characters" style="width: 100%; height: 24px; border: none; background: #dc2626; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px;">💾 Save Z-Index Default</button>
               </div>
               
               <!-- Arrow Controls -->
@@ -511,6 +604,363 @@
                 }
               });
               
+              // Border control functionality
+              function updateBorder(enabled, size, color) {
+                const characterImage = positionContainer.querySelector('.character-image');
+                if (characterImage) {
+                  if (enabled && size > 0) {
+                    characterImage.style.border = `${size}px solid ${color}`;
+                  } else {
+                    characterImage.style.border = 'none';
+                  }
+                  
+                  // Update hidden input fields
+                  const form = positionContainer.closest('form');
+                  if (form) {
+                    const enabledInput = form.querySelector('[name="system.portraitBorder.enabled"]');
+                    const sizeInput = form.querySelector('[name="system.portraitBorder.size"]');
+                    const colorInput = form.querySelector('[name="system.portraitBorder.color"]');
+                    
+                    if (enabledInput) enabledInput.value = enabled ? 'true' : 'false';
+                    if (sizeInput) sizeInput.value = size;
+                    if (colorInput) colorInput.value = color;
+                    
+                    console.log('Border updated:', enabled, size, color);
+                  }
+                }
+              }
+
+              // Frame size control functionality
+              function updateFrameSize(width, height) {
+                const characterImage = positionContainer.querySelector('.character-image');
+                if (characterImage) {
+                  // Ensure values are within valid range
+                  width = Math.max(50, Math.min(300, width || 130));
+                  height = Math.max(50, Math.min(300, height || 130));
+                  
+                  characterImage.style.width = `${width}px`;
+                  characterImage.style.height = `${height}px`;
+                  
+                  // Update hidden input fields
+                  const form = positionContainer.closest('form');
+                  if (form) {
+                    const widthInput = form.querySelector('[name="system.portraitFrame.width"]');
+                    const heightInput = form.querySelector('[name="system.portraitFrame.height"]');
+                    
+                    if (widthInput) widthInput.value = width;
+                    if (heightInput) heightInput.value = height;
+                    
+                    console.log('Frame size updated:', width, height);
+                  }
+                }
+              }
+
+              // Z-index control functionality
+              function updateZIndex(zIndex) {
+                // Ensure value is within valid range
+                zIndex = Math.max(-10, Math.min(50, zIndex || 5));
+                
+                positionContainer.style.zIndex = zIndex;
+                positionContainer.setAttribute('data-z', zIndex);
+                
+                // Update hidden input field
+                const form = positionContainer.closest('form');
+                if (form) {
+                  const zIndexInput = form.querySelector('[name="system.portraitPosition.zIndex"]');
+                  
+                  if (zIndexInput) zIndexInput.value = zIndex;
+                  
+                  console.log('Z-index updated:', zIndex);
+                }
+              }
+              
+              // Border control event handlers
+              $html.find('.apply-border').click(() => {
+                const enabled = $html.find('.border-enabled').is(':checked');
+                const size = parseInt($html.find('.border-size').val()) || 0;
+                const color = $html.find('.border-color').val() || '#000000';
+                updateBorder(enabled, size, color);
+                console.log('Applied border settings:', { enabled, size, color });
+              });
+              
+              // Real-time border preview
+              $html.find('.border-enabled, .border-size, .border-color').on('change input', () => {
+                const enabled = $html.find('.border-enabled').is(':checked');
+                const size = parseInt($html.find('.border-size').val()) || 0;
+                const color = $html.find('.border-color').val() || '#000000';
+                updateBorder(enabled, size, color);
+              });
+              
+              // Save border as default functionality
+              $html.find('.save-border-default').click(async () => {
+                try {
+                  const button = $html.find('.save-border-default')[0];
+                  const originalText = button.textContent;
+                  button.textContent = '💾 SAVING...';
+                  button.disabled = true;
+                  
+                  const enabled = $html.find('.border-enabled').is(':checked');
+                  const size = parseInt($html.find('.border-size').val()) || 0;
+                  const color = $html.find('.border-color').val() || '#000000';
+                  
+                  // Show confirmation dialog
+                  const confirmed = await Dialog.confirm({
+                    title: "Save Border Settings as Default",
+                    content: `<p>This will set the default border settings for all NEW characters:</p><ul><li>Enabled: ${enabled ? 'Yes' : 'No'}</li><li>Size: ${size}px</li><li>Color: ${color}</li></ul><p><strong>Existing characters will keep their current border settings unless reset.</strong></p>`,
+                    yes: () => true,
+                    no: () => false
+                  });
+                  
+                  if (confirmed) {
+                    await game.settings.set('osp-houserules', 'defaultPortraitBorder', {
+                      enabled: enabled,
+                      size: size,
+                      color: color,
+                      timestamp: Date.now()
+                    });
+                    
+                    button.textContent = '✓ SAVED!';
+                    button.style.background = '#10b981';
+                    setTimeout(() => {
+                      button.textContent = originalText;
+                      button.style.background = '#3b82f6';
+                      button.disabled = false;
+                    }, 2000);
+                    
+                    ui.notifications.info(`Default border settings saved: ${enabled ? 'Enabled' : 'Disabled'}, ${size}px, ${color}`);
+                    console.log('Default border settings saved:', { enabled, size, color });
+                  } else {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                  }
+                } catch (error) {
+                  console.error('Failed to save default border settings:', error);
+                  const button = $html.find('.save-border-default')[0];
+                  button.textContent = '❌ FAILED';
+                  button.style.background = '#dc2626';
+                  setTimeout(() => {
+                    button.textContent = '💾 Save Border Default';
+                    button.style.background = '#3b82f6';
+                    button.disabled = false;
+                  }, 2000);
+                  ui.notifications.error('Failed to save default border settings.');
+                }
+              });
+              
+              // Frame size control event handlers
+              $html.find('.apply-frame').click(() => {
+                const widthInput = $html.find('.frame-width')[0];
+                const heightInput = $html.find('.frame-height')[0];
+                
+                if (widthInput && heightInput) {
+                  const width = Math.max(50, Math.min(300, parseInt(widthInput.value) || 130));
+                  const height = Math.max(50, Math.min(300, parseInt(heightInput.value) || 130));
+                  
+                  updateFrameSize(width, height);
+                  
+                  // Update dialog inputs to show constrained values
+                  widthInput.value = width;
+                  heightInput.value = height;
+                  
+                  // Update current frame variables
+                  currentFrameWidth = width;
+                  currentFrameHeight = height;
+                }
+              });
+              
+              // Square button functionality
+              $html.find('.frame-square').click(() => {
+                const widthInput = $html.find('.frame-width')[0];
+                const heightInput = $html.find('.frame-height')[0];
+                
+                if (widthInput && heightInput) {
+                  const size = Math.max(50, Math.min(300, parseInt(widthInput.value) || 130));
+                  
+                  updateFrameSize(size, size);
+                  
+                  widthInput.value = size;
+                  heightInput.value = size;
+                  
+                  currentFrameWidth = size;
+                  currentFrameHeight = size;
+                }
+              });
+              
+              // Reset frame button functionality
+              $html.find('.frame-reset').click(() => {
+                const defaultFrame = game.settings.get('osp-houserules', 'defaultPortraitFrame') || { width: 130, height: 130 };
+                
+                updateFrameSize(defaultFrame.width, defaultFrame.height);
+                
+                $html.find('.frame-width')[0].value = defaultFrame.width;
+                $html.find('.frame-height')[0].value = defaultFrame.height;
+                
+                currentFrameWidth = defaultFrame.width;
+                currentFrameHeight = defaultFrame.height;
+              });
+              
+              // Frame size enter key handling
+              $html.find('.frame-width, .frame-height').keypress((e) => {
+                if (e.which === 13) { // Enter key
+                  $html.find('.apply-frame').click();
+                }
+              });
+              
+              // Save frame default functionality
+              $html.find('.save-frame-default').click(async () => {
+                try {
+                  const button = $html.find('.save-frame-default')[0];
+                  const originalText = button.textContent;
+                  button.textContent = '💾 SAVING...';
+                  button.disabled = true;
+                  
+                  const width = currentFrameWidth;
+                  const height = currentFrameHeight;
+                  
+                  // Show confirmation dialog
+                  const confirmed = await Dialog.confirm({
+                    title: "Save Frame Size as Default",
+                    content: `<p>This will set the default frame size for all NEW characters:</p><ul><li>Width: ${width}px</li><li>Height: ${height}px</li></ul><p><strong>Existing characters will keep their current frame sizes unless reset.</strong></p>`,
+                    yes: () => true,
+                    no: () => false
+                  });
+                  
+                  if (confirmed) {
+                    await game.settings.set('osp-houserules', 'defaultPortraitFrame', {
+                      width: width,
+                      height: height,
+                      timestamp: Date.now()
+                    });
+                    
+                    button.textContent = '✓ SAVED!';
+                    button.style.background = '#10b981';
+                    setTimeout(() => {
+                      button.textContent = originalText;
+                      button.style.background = '#3b82f6';
+                      button.disabled = false;
+                    }, 2000);
+                    
+                    ui.notifications.info(`Default frame size saved: ${width}px x ${height}px`);
+                    console.log('Default frame size saved:', { width, height });
+                  } else {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                  }
+                } catch (error) {
+                  console.error('Failed to save default frame size:', error);
+                  const button = $html.find('.save-frame-default')[0];
+                  button.textContent = '❌ FAILED';
+                  button.style.background = '#dc2626';
+                  setTimeout(() => {
+                    button.textContent = '💾 Save Frame Default';
+                    button.style.background = '#3b82f6';
+                    button.disabled = false;
+                  }, 2000);
+                  ui.notifications.error('Failed to save default frame size.');
+                }
+              });
+              
+              // Z-index control event handlers
+              $html.find('.apply-zindex').click(() => {
+                const zIndexInput = $html.find('.z-index')[0];
+                
+                if (zIndexInput) {
+                  const zIndex = Math.max(-10, Math.min(50, parseInt(zIndexInput.value) || 5));
+                  
+                  updateZIndex(zIndex);
+                  
+                  // Update dialog input to show constrained value
+                  zIndexInput.value = zIndex;
+                  
+                  // Update current z-index variable
+                  currentZIndex = zIndex;
+                }
+              });
+              
+              // Z-index helper buttons
+              $html.find('.z-behind').click(() => {
+                updateZIndex(-1);
+                $html.find('.z-index')[0].value = -1;
+                currentZIndex = -1;
+              });
+              
+              $html.find('.z-front').click(() => {
+                updateZIndex(20);
+                $html.find('.z-index')[0].value = 20;
+                currentZIndex = 20;
+              });
+              
+              $html.find('.z-reset').click(() => {
+                const defaultPosition = game.settings.get('osp-houserules', 'defaultPortraitPosition') || { x: 25, y: 12, zIndex: 5 };
+                const defaultZIndex = defaultPosition.zIndex || 5;
+                
+                updateZIndex(defaultZIndex);
+                $html.find('.z-index')[0].value = defaultZIndex;
+                currentZIndex = defaultZIndex;
+              });
+              
+              // Z-index enter key handling
+              $html.find('.z-index').keypress((e) => {
+                if (e.which === 13) { // Enter key
+                  $html.find('.apply-zindex').click();
+                }
+              });
+              
+              // Save z-index default functionality
+              $html.find('.save-zindex-default').click(async () => {
+                try {
+                  const button = $html.find('.save-zindex-default')[0];
+                  const originalText = button.textContent;
+                  button.textContent = '💾 SAVING...';
+                  button.disabled = true;
+                  
+                  const zIndex = currentZIndex;
+                  
+                  // Show confirmation dialog
+                  const confirmed = await Dialog.confirm({
+                    title: "Save Z-Index as Default",
+                    content: `<p>This will set the default z-index for all NEW characters:</p><ul><li>Z-Index: ${zIndex}</li></ul><p><strong>Existing characters will keep their current z-index unless reset.</strong></p>`,
+                    yes: () => true,
+                    no: () => false
+                  });
+                  
+                  if (confirmed) {
+                    const currentDefaults = game.settings.get('osp-houserules', 'defaultPortraitPosition') || { x: 25, y: 12, zIndex: 5 };
+                    await game.settings.set('osp-houserules', 'defaultPortraitPosition', {
+                      x: currentDefaults.x,
+                      y: currentDefaults.y,
+                      zIndex: zIndex,
+                      timestamp: Date.now()
+                    });
+                    
+                    button.textContent = '✓ SAVED!';
+                    button.style.background = '#10b981';
+                    setTimeout(() => {
+                      button.textContent = originalText;
+                      button.style.background = '#dc2626';
+                      button.disabled = false;
+                    }, 2000);
+                    
+                    ui.notifications.info(`Default z-index saved: ${zIndex}`);
+                    console.log('Default z-index saved:', zIndex);
+                  } else {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                  }
+                } catch (error) {
+                  console.error('Failed to save default z-index:', error);
+                  const button = $html.find('.save-zindex-default')[0];
+                  button.textContent = '❌ FAILED';
+                  button.style.background = '#7f1d1d';
+                  setTimeout(() => {
+                    button.textContent = '💾 Save Z-Index Default';
+                    button.style.background = '#dc2626';
+                    button.disabled = false;
+                  }, 2000);
+                  ui.notifications.error('Failed to save default z-index.');
+                }
+              });
+              
               // Save as default functionality
               $html.find('.save-position-permanent').click(async () => {
                 try {
@@ -563,8 +1013,8 @@
               });
             }
           }, {
-            width: 300,
-            height: 480,
+            width: 320,
+            height: 680,
             resizable: true,
             top: 100,
             left: 200
@@ -1061,9 +1511,22 @@
   <!-- Static Header Section - Absolute Positioning Layout -->
     <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat center/contain !important;">
       
-      <!-- Character Image - Absolute positioned with positioning controls -->
-      <div class="character-image-container char-field-group" style="position: absolute; left: {{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}px; top: {{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}px;" data-x="{{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}" data-y="{{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}">
-        <div class="character-image" style="position: relative; width: 130px; height: 130px; border: 1px solid #000; border-radius: 9px; overflow: hidden;">
+      <!-- Character Image - Absolute positioned with positioning and border controls -->
+      <div class="character-image-container char-field-group" 
+           style="position: absolute; 
+                  left: {{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}px; 
+                  top: {{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}px;
+                  z-index: {{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}5{{/if}};" 
+           data-x="{{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}" 
+           data-y="{{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}" 
+           data-z="{{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}5{{/if}}">
+        <div class="character-image" 
+             style="position: relative; 
+                    width: {{#if system.portraitFrame.width}}{{system.portraitFrame.width}}{{else}}130{{/if}}px; 
+                    height: {{#if system.portraitFrame.height}}{{system.portraitFrame.height}}{{else}}130{{/if}}px; 
+                    border: {{#if system.portraitBorder.enabled}}{{#if system.portraitBorder.size}}{{system.portraitBorder.size}}{{else}}1{{/if}}px solid {{#if system.portraitBorder.color}}{{system.portraitBorder.color}}{{else}}#000{{/if}}{{else}}none{{/if}}; 
+                    border-radius: 9px; 
+                    overflow: hidden;">
           <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}"
                class="character-portrait" 
                style="position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none; pointer-events: auto;" 
@@ -1085,6 +1548,16 @@
       <!-- Hidden inputs for portrait position data -->
       <input type="hidden" name="system.portraitPosition.x" value="{{system.portraitPosition.x}}" />
       <input type="hidden" name="system.portraitPosition.y" value="{{system.portraitPosition.y}}" />
+      <input type="hidden" name="system.portraitPosition.zIndex" value="{{system.portraitPosition.zIndex}}" />
+      
+      <!-- Hidden inputs for portrait border data -->
+      <input type="hidden" name="system.portraitBorder.enabled" value="{{system.portraitBorder.enabled}}" />
+      <input type="hidden" name="system.portraitBorder.size" value="{{system.portraitBorder.size}}" />
+      <input type="hidden" name="system.portraitBorder.color" value="{{system.portraitBorder.color}}" />
+      
+      <!-- Hidden inputs for portrait frame size data -->
+      <input type="hidden" name="system.portraitFrame.width" value="{{system.portraitFrame.width}}" />
+      <input type="hidden" name="system.portraitFrame.height" value="{{system.portraitFrame.height}}" />
       
       <!-- Character Level - Absolute positioned -->
       <div class="level-progress-ring-container" style="position: absolute; left: 487px; top: 24px; width: 100px; height: 120px; z-index: 10;" id="level-container">

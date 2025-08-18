@@ -43,6 +43,16 @@ Hooks.once("init", () => {
     monster: game.i18n.localize("osp-houserules.Actor.Type.monster")
   };
 
+  // Register game settings
+  game.settings.register("osp-houserules", "defaultPortraitPosition", {
+    name: "Default Portrait Position",
+    hint: "Default X,Y coordinates for character portrait placement",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: { x: 25, y: 12, timestamp: 0 }
+  });
+
   Hooks.on("renderActorConfig", (app, html, data) => {
     const $html = $(html);
     const $select = $html.find('select[name="type"]');

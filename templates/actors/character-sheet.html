@@ -69,7 +69,12 @@
     
     /* Static header background image override - use existing file */
     form.osp.sheet.actor.character .static-header {
-      background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat center/contain !important;
+  background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat !important;
+  background-position: left top !important;
+  background-size: contain !important;
+  background-color: transparent !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
       background-color: transparent !important;
     }
     
@@ -1660,7 +1665,7 @@
   </div>
 
   <!-- Static Header Section - Absolute Positioning Layout -->
-    <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat center/contain !important;">
+  <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important;">
       
       <!-- Character Name - Centered positioning -->
       <div class="character-name-section" id="character-name-container" style="position: absolute; left: 195px; top: 12px;">

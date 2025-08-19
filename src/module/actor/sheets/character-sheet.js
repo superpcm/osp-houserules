@@ -225,8 +225,8 @@ export class OspActorSheetCharacter extends ActorSheet {
           // CSS failed, apply via JavaScript as fallback
           nameInput.style.setProperty('font-family', 'Council, serif', 'important');
           nameInput.style.setProperty('font-weight', 'normal', 'important');
-          nameInput.style.setProperty('font-size', '3rem', 'important');
-          nameInput.style.setProperty('min-height', '1.2em', 'important');
+          // font-size intentionally not set here; use inline style in HTML for px control
+    // min-height removed for full manual control
           nameInput.style.setProperty('letter-spacing', '0.03em', 'important');
         }
       }, 50);

@@ -69,8 +69,6 @@ export class CharacterNameHandler {
     // Set initial CSS properties for the input
     this.nameInput.css({
       'width': 'auto',
-      'min-width': `${this.minWidth}px`,
-      'max-width': `${this.maxWidth}px`,
       'box-sizing': 'border-box'
     });
   }
@@ -147,8 +145,6 @@ export class CharacterNameHandler {
     this.maxWidth = maxWidth;
     
     this.nameInput.css({
-      'min-width': `${this.minWidth}px`,
-      'max-width': `${this.maxWidth}px`
     });
     
     this.adjustWidth();

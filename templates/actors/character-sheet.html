@@ -1,4 +1,4 @@
-<form class="osp sheet actor character" autocomplete="off" style="height: 700px; position: relative; overflow: visible; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; max-width: 600px; background: white; background-color: white;">
+<form class="osp sheet actor character" autocomplete="off" style="height: 700px; position: relative; overflow: visible; font-family: 'Minion Pro', serif; font-weight: normal; width: 600px; background: white; background-color: white;">
   <style>
     /* White Background Override - Apply to entire sheet and window */
     form.osp.sheet.actor.character,
@@ -47,8 +47,9 @@
     
     /* Keep character name with its original styling */
     .char-name {
-      font-family: inherit !important;
-      font-weight: bold !important;
+  font-family: inherit !important;
+  font-weight: bold !important;
+  /* font-size intentionally unset here; set via inline style in HTML for px control */
     }
     
     /* Character name background should be transparent */
@@ -355,235 +356,7 @@
           });
         }
         
-        // Fit button functionality (only if it exists)
-        if (fitButton) {
-          fitButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            scale = 1;
-            translateX = 0;
-            translateY = 0;
-            updateTransform();
-          });
-        }
-        
-        // Set initial cursor
-        portrait.style.cursor = 'grab';
-        
-        // Initialize transform
-        updateTransform();
-        
-        console.log('Image resize system initialized successfully');
-      } else {
-        console.log('Required image elements not found - resize functionality disabled');
-      }
-      
-      // Universal Field Positioning System with Moveable Dialog
-      function initializeUniversalPositioning() {
-        // List of fields to make positionable
-        const fields = [
-          {
-            selector: '.character-image-container',
-            name: 'Portrait',
-            storage: {
-              x: 'system.portraitPosition.x',
-              y: 'system.portraitPosition.y',
-              z: 'system.portraitPosition.zIndex'
-            },
-            {
-              selector: '.character-image-container',
-              name: 'Portrait',
-              storage: {
-                x: 'system.portraitPosition.x',
-                y: 'system.portraitPosition.y',
-                z: 'system.portraitPosition.zIndex'
-              },
-              defaultX: 25,
-              defaultY: 12,
-              defaultZ: 5
-            },
-            {
-              selector: '#character-name-container',
-              name: 'Name',
-              storage: {
-                x: 'system.namePosition.x',
-                y: 'system.namePosition.y',
-                z: 'system.namePosition.zIndex'
-              },
-              defaultX: 195,
-              defaultY: 12,
-              defaultZ: 10
-            },
-            {
-              selector: '#level-container',
-              name: 'Level',
-              storage: {
-                x: 'system.levelPosition.x',
-                y: 'system.levelPosition.y',
-                z: 'system.levelPosition.zIndex'
-              },
-              defaultX: 487,
-              defaultY: 24,
-              defaultZ: 10
-            },
-            {
-              selector: '#class-alignment-container',
-              name: 'Class/Alignment',
-              storage: {
-                x: 'system.classAlignPosition.x',
-                y: 'system.classAlignPosition.y',
-                z: 'system.classAlignPosition.zIndex'
-              },
-              defaultX: 204,
-              defaultY: 82,
-              defaultZ: 10
-            }
-        ];
-
-        let positionDialog = null;
-
-        fields.forEach(field => {
-          const el = document.querySelector(field.selector);
-          if (!el) return;
-
-          // Ensure data-x/y/z attributes exist
-          if (!el.hasAttribute('data-x')) el.setAttribute('data-x', field.defaultX);
-          if (!el.hasAttribute('data-y')) el.setAttribute('data-y', field.defaultY);
-          if (!el.hasAttribute('data-z')) el.setAttribute('data-z', field.defaultZ);
-
-          // Get current position from data attributes or defaults
-          let currentX = parseInt(el.getAttribute('data-x')) || field.defaultX;
-          let currentY = parseInt(el.getAttribute('data-y')) || field.defaultY;
-          let currentZ = parseInt(el.getAttribute('data-z')) || field.defaultZ;
-
-          // Set absolute positioning and z-index
-          el.style.position = 'absolute';
-          el.style.left = currentX + 'px';
-          el.style.top = currentY + 'px';
-          el.style.zIndex = currentZ;
-
-          // Helper to update position
-          function updatePosition(x, y) {
-            x = Math.max(0, Math.min(600, x));
-            y = Math.max(0, Math.min(300, y));
-            currentX = x;
-            currentY = y;
-            el.style.left = x + 'px';
-            el.style.top = y + 'px';
-            el.setAttribute('data-x', x);
-            el.setAttribute('data-y', y);
-            // Update dialog fields if open
-            if (positionDialog && positionDialog.element) {
-              const xInput = positionDialog.element.find('.x-input')[0];
-              const yInput = positionDialog.element.find('.y-input')[0];
-              const xCoord = positionDialog.element.find('.x-coord')[0];
-              const yCoord = positionDialog.element.find('.y-coord')[0];
-              if (xInput) xInput.value = x;
-              if (yInput) yInput.value = y;
-              if (xCoord) xCoord.textContent = x;
-              if (yCoord) yCoord.textContent = y;
-            }
-            // Save to hidden input fields
-            const form = el.closest('form');
-            if (form) {
-              const xInput = form.querySelector(`[name="${field.storage.x}"]`);
-              const yInput = form.querySelector(`[name="${field.storage.y}"]`);
-              if (xInput) xInput.value = x;
-              if (yInput) yInput.value = y;
-            }
-          }
-
-          // Helper to update z-index
-          function updateZIndex(z) {
-            z = Math.max(-10, Math.min(50, z));
-            currentZ = z;
-            el.style.zIndex = z;
-            el.setAttribute('data-z', z);
-            const form = el.closest('form');
-            if (form) {
-              const zInput = form.querySelector(`[name="${field.storage.z}"]`);
-              if (zInput) zInput.value = z;
-            }
-          }
-
-          // Show dialog
-          function showPositionDialog() {
-            if (positionDialog) {
-              positionDialog.bringToTop();
-              return;
-            }
-            const dialogContent = `
-              <div class="portrait-position-dialog" style="padding: 10px;">
-                <div style="margin-bottom: 10px;">
-                  <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #333;">${field.name} Position Controls</h3>
-                </div>
-                <div class="coordinates-entry" style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px; padding: 8px; background: #f0f0f0; border-radius: 4px;">
-                  <label style="font-size: 12px; font-weight: bold;">X:</label>
-                  <input type="number" class="x-input" min="0" max="600" style="width: 50px; height: 24px; font-size: 11px; text-align: center; border: 1px solid #ccc; border-radius: 3px;" value="${currentX}" />
-                  <label style="font-size: 12px; font-weight: bold;">Y:</label>
-                  <input type="number" class="y-input" min="0" max="300" style="width: 50px; height: 24px; font-size: 11px; text-align: center; border: 1px solid #ccc; border-radius: 3px;" value="${currentY}" />
-                  <button type="button" class="apply-coords" title="Apply Coordinates" style="width: 28px; height: 24px; border: none; background: #10b981; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px;">✓</button>
-                </div>
-                <div class="coordinates-display" style="text-align: center; font-size: 12px; margin-bottom: 15px; padding: 5px; background: #e8f4f8; border-radius: 3px;">
-                  <strong>Current Position: X: <span class="x-coord">${currentX}</span>, Y: <span class="y-coord">${currentY}</span></strong>
-                </div>
-                <div style="border-top: 1px solid #e5e7eb; padding-top: 10px; margin-top: 10px;">
-                  <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #333;">Layer (Z-Index)</h4>
-                  <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
-                    <label style="font-size: 11px; font-weight: bold;">Z-Index:</label>
-                    <input type="number" class="z-index" min="-10" max="50" style="width: 50px; height: 20px; font-size: 10px; text-align: center; border: 1px solid #ccc; border-radius: 2px;" value="${currentZ}" />
-                    <span style="font-size: 10px; color: #666;">(-10 to 50)</span>
-                  </div>
-                  <div style="display: flex; gap: 4px; margin-bottom: 4px;">
-                    <button type="button" class="z-behind" title="Send Behind (z-index: -1)" style="flex: 1; height: 20px; border: none; background: #6b7280; color: white; font-size: 9px; cursor: pointer; border-radius: 2px;">Behind</button>
-                    <button type="button" class="z-front" title="Bring to Front (z-index: 20)" style="flex: 1; height: 20px; border: none; background: #6b7280; color: white; font-size: 9px; cursor: pointer; border-radius: 2px;">Front</button>
-                    <button type="button" class="z-reset" title="Reset to Default (z-index: ${field.defaultZ})" style="flex: 1; height: 20px; border: none; background: #6b7280; color: white; font-size: 9px; cursor: pointer; border-radius: 2px;">Default</button>
-                  </div>
-                  <button type="button" class="apply-zindex" title="Apply Z-Index" style="width: 100%; height: 24px; border: none; background: #059669; color: white; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 3px; margin-bottom: 4px;">Apply Z-Index</button>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
-                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; margin-bottom: 5px;">
-                    <div></div>
-                    <button type="button" class="move-up" title="Move Up (1px)" style="width: 32px; height: 32px; border: none; background: #4a5568; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px;">↑</button>
-                    <div></div>
-                    <button type="button" class="move-left" title="Move Left (1px)" style="width: 32px; height: 32px; border: none; background: #4a5568; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px;">←</button>
-                    <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #e2e8f0; border-radius: 4px; font-size: 14px;">⊕</div>
-                    <button type="button" class="move-right" title="Move Right (1px)" style="width: 32px; height: 32px; border: none; background: #4a5568; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px;">→</button>
-                    <div></div>
-                    <button type="button" class="move-down" title="Move Down (1px)" style="width: 32px; height: 32px; border: none; background: #4a5568; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px;">↓</button>
-                    <div></div>
-                  </div>
-                  <div style="font-size: 10px; color: #666; text-align: center;">Use arrow buttons for 1-pixel precision</div>
-                </div>
-                <div style="font-size: 10px; color: #666; text-align: center; line-height: 1.3;">
-                  Right-click the ${field.name.toLowerCase()} again to close this dialog<br>
-                  Dialog can be moved by dragging the title bar
-                </div>
-              </div>
-            `;
-            positionDialog = new Dialog({
-              title: `${field.name} Position Controller`,
-              content: dialogContent,
-              buttons: {
-                close: {
-                  icon: '<i class="fas fa-times"></i>',
-                  label: 'Close',
-                  callback: () => { positionDialog = null; }
-                }
-              },
-              close: () => { positionDialog = null; },
-              render: (html) => {
-                const $html = $(html);
-                $html.find('.move-up').click(() => updatePosition(currentX, currentY - 1));
-                $html.find('.move-down').click(() => updatePosition(currentX, currentY + 1));
-                $html.find('.move-left').click(() => updatePosition(currentX - 1, currentY));
-                $html.find('.move-right').click(() => updatePosition(currentX + 1, currentY));
-                $html.find('.apply-coords').click(() => {
-                  const newX = parseInt($html.find('.x-input').val()) || 0;
-                  const newY = parseInt($html.find('.y-input').val()) || 0;
-                  updatePosition(newX, newY);
-                });
-                $html.find('.x-input, .y-input').keypress((e) => { if (e.which === 13) $html.find('.apply-coords').click(); });
-                $html.find('.z-index').on('change input', () => {
+    // ...existing code...
                   const z = parseInt($html.find('.z-index').val()) || field.defaultZ;
                   updateZIndex(z);
                 });
@@ -1856,13 +1629,25 @@
      data-x="{{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}"
      data-y="{{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}"
      data-z="{{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}5{{/if}}">
-      <div class="character-image" 
-           style="position: relative; 
-                  width: {{#if system.portraitFrame.width}}{{system.portraitFrame.width}}{{else}}130{{/if}}px; 
-                  height: {{#if system.portraitFrame.height}}{{system.portraitFrame.height}}{{else}}130{{/if}}px; 
-                  border: {{#if system.portraitBorder.enabled}}{{#if system.portraitBorder.size}}{{system.portraitBorder.size}}{{else}}1{{/if}}px solid {{#if system.portraitBorder.color}}{{system.portraitBorder.color}}{{else}}#000{{/if}}{{else}}none{{/if}}; 
-                  border-radius: 9px; 
-                  overflow: hidden;">
+      <div class="character-image"
+           style="position: relative; border-radius: 9px; overflow: hidden;"
+           data-width="{{#if system.portraitFrame.width}}{{system.portraitFrame.width}}{{else}}130{{/if}}"
+           data-height="{{#if system.portraitFrame.height}}{{system.portraitFrame.height}}{{else}}130{{/if}}"
+           data-border="{{#if system.portraitBorder.enabled}}{{#if system.portraitBorder.size}}{{system.portraitBorder.size}}{{else}}1{{/if}}px solid {{#if system.portraitBorder.color}}{{system.portraitBorder.color}}{{else}}#000{{/if}}{{else}}none{{/if}}">
+        <script>
+          // Set portrait frame and border dynamically (for template compatibility)
+          (function() {
+            const container = document.currentScript.parentElement;
+            if (container) {
+              const w = container.getAttribute('data-width');
+              const h = container.getAttribute('data-height');
+              const b = container.getAttribute('data-border');
+              if (w) container.style.width = w + 'px';
+              if (h) container.style.height = h + 'px';
+              if (b) container.style.border = b;
+            }
+          })();
+        </script>
         <img src="{{actor.img}}" alt="{{actor.name}}" title="{{actor.name}}"
              class="character-portrait" 
              style="position: absolute; width: 100%; height: 100%; object-fit: cover; transform-origin: top left; user-select: none; pointer-events: auto;" 
@@ -1882,11 +1667,8 @@
 
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section" id="character-name-container"
-       style="position: absolute;"
-       data-x="{{#if system.namePosition.x}}{{system.namePosition.x}}{{else}}195{{/if}}"
-       data-y="{{#if system.namePosition.y}}{{system.namePosition.y}}{{else}}12{{/if}}"
-       data-z="{{#if system.namePosition.zIndex}}{{system.namePosition.zIndex}}{{else}}10{{/if}}">
-  <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" placeholder="Enter name" style="text-align: center; font-size: 45px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; padding: 3px; margin: 0; border-radius: 9px; font-weight: bold; border: 1px solid #000; outline: none; min-height: 1.1em;"/>
+    style="position: absolute; left: 44px; top: 14px; z-index: 10;">
+  <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" style="text-align: center; font-size: 36px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; padding: 3px; margin: 0; border-radius: 9px; font-weight: bold; border: 1px solid #000; outline: none; width: 320px; height: 44px;"/>
       </div>
       
   <!-- Hidden inputs for portrait position data -->
@@ -1910,10 +1692,7 @@
       
   <!-- Character Level - Absolute positioned -->
   <div class="level-progress-ring-container" id="level-container"
-       style="position: absolute; width: 100px; height: 120px;"
-       data-x="{{#if system.levelPosition.x}}{{system.levelPosition.x}}{{else}}487{{/if}}"
-       data-y="{{#if system.levelPosition.y}}{{system.levelPosition.y}}{{else}}24{{/if}}"
-       data-z="{{#if system.levelPosition.zIndex}}{{system.levelPosition.zIndex}}{{else}}10{{/if}}">
+       style="position: absolute; width: 100px; height: 120px; left: 487px; top: 24px; z-index: 10;">
   <!-- Hidden inputs for level position data -->
   <input type="hidden" name="system.levelPosition.x" value="{{system.levelPosition.x}}" />
   <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
@@ -1961,53 +1740,53 @@
       </div>
       
   <!-- Character Class & Alignment - Centered under name as one element -->
-  <div class="class-alignment-group" id="class-alignment-container"
-       style="position: absolute; display: flex; gap: 10px; align-items: flex-end;"
-       data-x="{{#if system.classAlignPosition.x}}{{system.classAlignPosition.x}}{{else}}204{{/if}}"
-       data-y="{{#if system.classAlignPosition.y}}{{system.classAlignPosition.y}}{{else}}82{{/if}}"
-       data-z="{{#if system.classAlignPosition.zIndex}}{{system.classAlignPosition.zIndex}}{{else}}10{{/if}}">
-  <!-- Hidden inputs for class/alignment position data -->
-  <input type="hidden" name="system.classAlignPosition.x" value="{{system.classAlignPosition.x}}" />
-  <input type="hidden" name="system.classAlignPosition.y" value="{{system.classAlignPosition.y}}" />
-  <input type="hidden" name="system.classAlignPosition.zIndex" value="{{system.classAlignPosition.zIndex}}" />
-        <!-- Character Class -->
-        <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-          <!-- Removed Class title label -->
-          <select class="char-class" id="char-class" name="system.class" style="width: 140px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip;">
-          <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
-          <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
-          <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
-          <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
-          <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
-          <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
-          <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
-          <option value="Elf" {{#if (eq system.class "Elf")}}selected{{/if}}>Elf</option>
-          <option value="Fighter" {{#if (eq system.class "Fighter")}}selected{{/if}}>Fighter</option>
-          <option value="Gnome" {{#if (eq system.class "Gnome")}}selected{{/if}}>Gnome</option>
-          <option value="Half-Elf" {{#if (eq system.class "Half-Elf")}}selected{{/if}}>Half-Elf</option>
-          <option value="Half-Orc" {{#if (eq system.class "Half-Orc")}}selected{{/if}}>Half-Orc</option>
-          <option value="Hobbit" {{#if (eq system.class "Hobbit")}}selected{{/if}}>Hobbit</option>
-          <option value="Illusionist" {{#if (eq system.class "Illusionist")}}selected{{/if}}>Illusionist</option>
-          <option value="Knight" {{#if (eq system.class "Knight")}}selected{{/if}}>Knight</option>
-          <option value="Mage" {{#if (eq system.class "Mage")}}selected{{/if}}>Mage</option>
-          <option value="Magic-User" {{#if (eq system.class "Magic-User")}}selected{{/if}}>Magic-User</option>
-          <option value="Paladin" {{#if (eq system.class "Paladin")}}selected{{/if}}>Paladin</option>
-          <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
-          <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
-          <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
-          </select>
-        </div>
-        
-        <!-- Character Alignment -->
-        <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-          <!-- Removed Alignment title label -->
-          <select class="char-align" id="char-align" name="system.alignment" style="width: 100px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 5px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold;">
-            <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
-            <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
-            <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
-          </select>
-        </div>
-      </div>
+  <!-- Character Class - Independent container for positioning -->
+  <div class="class-group" id="class-container"
+       style="position: absolute; left: 300px; top: 12px; z-index: 10;">
+    <input type="hidden" name="system.classPosition.x" value="{{system.classPosition.x}}" />
+    <input type="hidden" name="system.classPosition.y" value="{{system.classPosition.y}}" />
+    <input type="hidden" name="system.classPosition.zIndex" value="{{system.classPosition.zIndex}}" />
+    <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
+  <select class="char-class" id="char-class" name="system.class" style="width: 140px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip;">
+        <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
+        <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
+        <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
+        <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
+        <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
+        <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
+        <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
+        <option value="Elf" {{#if (eq system.class "Elf")}}selected{{/if}}>Elf</option>
+        <option value="Fighter" {{#if (eq system.class "Fighter")}}selected{{/if}}>Fighter</option>
+        <option value="Gnome" {{#if (eq system.class "Gnome")}}selected{{/if}}>Gnome</option>
+        <option value="Half-Elf" {{#if (eq system.class "Half-Elf")}}selected{{/if}}>Half-Elf</option>
+        <option value="Half-Orc" {{#if (eq system.class "Half-Orc")}}selected{{/if}}>Half-Orc</option>
+        <option value="Hobbit" {{#if (eq system.class "Hobbit")}}selected{{/if}}>Hobbit</option>
+        <option value="Illusionist" {{#if (eq system.class "Illusionist")}}selected{{/if}}>Illusionist</option>
+        <option value="Knight" {{#if (eq system.class "Knight")}}selected{{/if}}>Knight</option>
+        <option value="Mage" {{#if (eq system.class "Mage")}}selected{{/if}}>Mage</option>
+        <option value="Magic-User" {{#if (eq system.class "Magic-User")}}selected{{/if}}>Magic-User</option>
+        <option value="Paladin" {{#if (eq system.class "Paladin")}}selected{{/if}}>Paladin</option>
+        <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
+        <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
+        <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Character Alignment - Independent container for positioning -->
+  <div class="alignment-group" id="alignment-container"
+       style="position: absolute; left: 460px; top: 12px; z-index: 10;">
+    <input type="hidden" name="system.alignmentPosition.x" value="{{system.alignmentPosition.x}}" />
+    <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
+    <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
+    <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
+  <select class="char-align" id="char-align" name="system.alignment" style="width: 100px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 5px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold;">
+        <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
+        <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
+        <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
+      </select>
+    </div>
+  </div>
       
       <!-- Horizontal separator line at bottom of static header -->
       <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background-color: #000; z-index: 15;"></div>
@@ -2156,7 +1935,7 @@
         </div>
       </div>
       <!-- Skills Tab -->
-      <div class="tab" data-group="primary" data-tab="skills" style="position: relative; min-height: 400px;">
+  <div class="tab" data-group="primary" data-tab="skills" style="position: relative;">
         <!-- Ability Scores Section -->
         <div class="ability-scores-section" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
           
@@ -2499,7 +2278,7 @@
         <div class="bio-content" style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem;">          <!-- Physical Characteristics Section -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Physical Characteristics</h3>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start; min-height: 60px; padding: 10px;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start; padding: 10px;">
               <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center;">
                 <label for="char-race" style="margin-bottom: 2px; text-align: center; font-size: 14px;">Race</label>
                 <select class="char-race" id="char-race" name="system.race" style="width: 80px; height: 2.5em; text-align: center; background-color: white;">
@@ -2648,12 +2427,12 @@
               </div>
               
               <!-- Languages Field -->
-              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: flex-start; min-width: 250px;">
+              <div class="char-field-group" style="display: flex; flex-direction: column; align-items: flex-start;">
                 <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.5rem;">
                   <label for="char-languages">Languages</label>
                   <button type="button" class="open-language-dialog" title="Add Language"></button>
                 </div>
-                <div class="languages-row" style="border: 1px solid #ccc; border-radius: 3px; padding: 0.5rem; min-height: 2.5em; width: 100%; background-color: white;">
+                <div class="languages-row" style="border: 1px solid #ccc; border-radius: 3px; padding: 0.5rem; width: 100%; background-color: white;">
                   <div class="languages-tags"></div>
                 </div>
                 <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
@@ -2665,35 +2444,35 @@
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Appearance</h3>
             <textarea name="system.bio.appearance" placeholder="Describe your character's physical appearance..." 
-                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.appearance}}</textarea>
+                      style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.appearance}}</textarea>
           </div>
 
           <!-- Character Personality -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Personality</h3>
             <textarea name="system.bio.personality" placeholder="Describe your character's personality, traits, and mannerisms..." 
-                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.personality}}</textarea>
+                      style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.personality}}</textarea>
           </div>
 
           <!-- Character Background/History -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Background & History</h3>
             <textarea name="system.bio.history" placeholder="Tell your character's story, background, and important life events..." 
-                      style="width: 100%; min-height: 120px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.history}}</textarea>
+                      style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.history}}</textarea>
           </div>
 
           <!-- Character Goals & Motivations -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Goals & Motivations</h3>
             <textarea name="system.bio.goals" placeholder="What drives your character? What are their goals and motivations..." 
-                      style="width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.goals}}</textarea>
+                      style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.goals}}</textarea>
           </div>
 
           <!-- Additional Notes -->
           <div class="bio-section">
             <h3 style="margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em;">Additional Notes</h3>
             <textarea name="system.bio.notes" placeholder="Any additional notes, relationships, or important details..." 
-                      style="width: 100%; min-height: 100px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.notes}}</textarea>
+                      style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white;">{{system.bio.notes}}</textarea>
           </div>
 
         </div>

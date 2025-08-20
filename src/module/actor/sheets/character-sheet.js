@@ -61,8 +61,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Only initialize handlers if sheet is editable
     if (!this.options.editable) return;
 
-    // Apply Council font as fallback if CSS doesn't work
-    this.ensureCouncilFont(html);
+    // Apply Minion Pro font as fallback if CSS doesn't work
+    this.ensureMinionProFont(html);
 
     // Initialize all handlers
     this.initializeHandlers(html);
@@ -212,17 +212,17 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Ensure Council font is applied - minimal fallback if CSS fails
+   * Ensure Minion Pro font is applied - minimal fallback if CSS fails
    */
-  ensureCouncilFont(html) {
+  ensureMinionProFont(html) {
     const nameInput = html.find('#char-name')[0];
     if (nameInput) {
       // Check if CSS applied correctly after a brief delay
       setTimeout(() => {
         const computedStyle = window.getComputedStyle(nameInput);
-        if (!computedStyle.fontFamily.includes('Council')) {
+        if (!computedStyle.fontFamily.includes('Minion Pro')) {
           // CSS failed, apply via JavaScript as fallback
-          nameInput.style.setProperty('font-family', 'Council, serif', 'important');
+          nameInput.style.setProperty('font-family', "'Minion Pro', serif", 'important');
           nameInput.style.setProperty('font-weight', 'normal', 'important');
           // font-size intentionally not set here; use inline style in HTML for px control
     // min-height removed for full manual control

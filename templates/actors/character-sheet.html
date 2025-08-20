@@ -216,6 +216,13 @@
       }
       if (portrait) {
         console.log('Portrait found, classes:', portrait.className);
+        console.log('Portrait src:', portrait.src);
+        console.log('Portrait alt:', portrait.alt);
+        if (!portrait.src || portrait.src.includes('icons/svg/mystery-man.svg')) {
+          console.warn('No custom image assigned - using default mystery man icon');
+        } else {
+          console.log('Custom image assigned:', portrait.src);
+        }
       }
       
       if (imageContainer && portrait) {
@@ -1465,7 +1472,7 @@
      style="position: absolute; pointer-events: auto;"
      data-x="{{#if system.portraitPosition.x}}{{system.portraitPosition.x}}{{else}}25{{/if}}"
      data-y="{{#if system.portraitPosition.y}}{{system.portraitPosition.y}}{{else}}12{{/if}}"
-     data-z="{{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}5{{/if}}">
+     data-z="{{#if system.portraitPosition.zIndex}}{{system.portraitPosition.zIndex}}{{else}}15{{/if}}">
       <div class="character-image"
            style="position: relative; border-radius: 9px; overflow: hidden;"
            data-width="{{#if system.portraitFrame.width}}{{system.portraitFrame.width}}{{else}}130{{/if}}"
@@ -1504,7 +1511,7 @@
 
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section" id="character-name-container"
-    style="position: absolute; left: 44px; top: 14px; z-index: 10;">
+    style="position: absolute; left: 40px; top: 14px; z-index: 10;">
 
       </div>
       
@@ -1572,6 +1579,17 @@
           box-shadow: none !important;
         " title="Award XP">{{system.level}}</div>
       </div>
+
+  <!-- Character Name - Absolute positioned -->
+  <div class="character-name-group" id="character-name-container"
+       style="position: absolute; left: 33px; top: 16px; z-index: 10;">
+    <input type="hidden" name="system.namePosition.x" value="{{system.namePosition.x}}" />
+    <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
+    <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
+    <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
+      <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" style="width: 280px; height: 34px; text-align: center; font-family: 'Minion Pro', serif; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip; border: 1px solid #000;" />
+    </div>
+  </div>
       
   <!-- Character Class & Alignment - Centered under name as one element -->
   <!-- Character Class - Independent container for positioning -->
@@ -1775,7 +1793,7 @@
           
           <!-- STR Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">STR</label>
+            <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">STR</label>
             <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
@@ -1785,7 +1803,7 @@
           
           <!-- DEX Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">DEX</label>
+            <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">DEX</label>
             <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
@@ -1795,7 +1813,7 @@
           
           <!-- CON Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CON</label>
+            <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">CON</label>
             <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
@@ -1805,7 +1823,7 @@
           
           <!-- INT Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">INT</label>
+            <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">INT</label>
             <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
@@ -1815,7 +1833,7 @@
           
           <!-- WIS Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">WIS</label>
+            <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">WIS</label>
             <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
@@ -1825,7 +1843,7 @@
           
           <!-- CHA Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
-            <label style="font-size: 45px; font-family: 'Council', serif; letter-spacing: 0.03em;">CHA</label>
+            <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">CHA</label>
             <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>

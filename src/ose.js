@@ -43,34 +43,6 @@ Hooks.once("init", () => {
     monster: game.i18n.localize("osp-houserules.Actor.Type.monster")
   };
 
-  // Register game settings
-  game.settings.register("osp-houserules", "defaultPortraitPosition", {
-    name: "Default Portrait Position",
-    hint: "Default X,Y coordinates and z-index for character portrait placement",
-    scope: "world",
-    config: false,
-    type: Object,
-    default: { x: 25, y: 12, zIndex: 5, timestamp: 0 }
-  });
-
-  game.settings.register("osp-houserules", "defaultPortraitBorder", {
-    name: "Default Portrait Border",
-    hint: "Default border settings for character portraits",
-    scope: "world",
-    config: false,
-    type: Object,
-    default: { enabled: true, size: 1, color: "#000000", timestamp: 0 }
-  });
-
-  game.settings.register("osp-houserules", "defaultPortraitFrame", {
-    name: "Default Portrait Frame Size",
-    hint: "Default frame size for character portraits",
-    scope: "world",
-    config: false,
-    type: Object,
-    default: { width: 130, height: 130, timestamp: 0 }
-  });
-
   Hooks.on("renderActorConfig", (app, html, data) => {
     const $html = $(html);
     const $select = $html.find('select[name="type"]');

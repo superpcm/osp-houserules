@@ -36,7 +36,6 @@ export class LayoutHandler {
   makeFieldsDraggable() {
     // Target individual draggable elements in all tabs AND static header
     const draggableSelectors = [
-      '.character-image-container',
       '.character-name-section',
       '.xp-progress-section', // XP progress bar section
       '.char-field-group', // Individual fields only, not their parent containers

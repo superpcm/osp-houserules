@@ -543,62 +543,68 @@
 
 
 
+  <!-- Character Level - Positioned behind everything -->
+  <div class="level-progress-bar-container" id="level-container"
+       style="position: absolute; width: 64px; height: 34px; left: 460px; top: 20px; z-index: 1;">
+  <!-- Hidden inputs for level position data -->
+  <input type="hidden" name="system.levelPosition.x" value="{{system.levelPosition.x}}" />
+  <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
+  <input type="hidden" name="system.levelPosition.zIndex" value="{{system.levelPosition.zIndex}}" />
+        
+        <!-- Horizontal Progress Bar Background -->
+        <div style="
+          position: absolute; 
+          top: 0px; 
+          left: 0; 
+          width: 64px; 
+          height: 34px; 
+          border: 0.5px solid #000; 
+          box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);
+          overflow: hidden;
+        ">
+          <!-- Progress Fill -->
+          <div class="level-progress-bar" style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #22c55e;
+            width: 0%;
+            transition: width 0.3s ease;
+          "></div>
+          
+          <!-- Level display in center -->
+          <div class="level-display" style="
+            position: absolute; 
+            top: 2px; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #000; 
+            cursor: pointer; 
+            z-index: 1; 
+            line-height: 34px;
+            font-family: 'Minion Pro', serif;
+            text-align: center;
+            box-sizing: border-box;
+            background: transparent !important;
+            box-shadow: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          " title="Award XP">{{system.level}}</div>
+        </div>
+      </div>
+
   <!-- Static Header Section - Absolute Positioning Layout -->
-  <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important;">
+  <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none;">
 
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section" id="character-name-container"
     style="position: absolute; left: 40px; top: 14px; z-index: 10;">
 
-      </div>
-      
-  <!-- Character Level - Absolute positioned -->
-  <div class="level-progress-ring-container" id="level-container"
-       style="position: absolute; width: 100px; height: 120px; left: 487px; top: 24px; z-index: 10;">
-  <!-- Hidden inputs for level position data -->
-  <input type="hidden" name="system.levelPosition.x" value="{{system.levelPosition.x}}" />
-  <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
-  <input type="hidden" name="system.levelPosition.zIndex" value="{{system.levelPosition.zIndex}}" />
-        <!-- Independent Curved Level Title -->
-  <!-- Removed Level title -->
-        
-        <!-- SVG Progress Ring -->
-        <svg width="100" height="120" style="position: absolute; top: 0; left: 0; transform: rotate(-90deg);">
-          <!-- Background ring -->
-          <circle cx="50" cy="60" r="32.5" fill="none" stroke="white" stroke-width="10" stroke-opacity="1" />
-          <!-- Progress ring -->
-          <circle cx="50" cy="60" r="32.5" fill="none" stroke="#22c55e" stroke-width="10" 
-                  stroke-dasharray="204.2" stroke-dashoffset="204.2" 
-                  class="level-progress-ring" 
-                  style="transition: stroke-dashoffset 0.3s ease; stroke-opacity: 1;" />
-          <!-- Outline ring - outer edge -->
-          <circle cx="50" cy="60" r="37.5" fill="none" stroke="#000" stroke-width="1" stroke-opacity="0.75" />
-          <!-- Outline ring - inner edge -->
-          <circle cx="50" cy="60" r="27.5" fill="none" stroke="#000" stroke-width="1" stroke-opacity="0.75" />
-        </svg>
-        <!-- Center circle with inset shadow styling like Level field -->
-        <div style="position: absolute; top: 32.5px; left: 22.5px; width: 55px; height: 55px; border-radius: 50%; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); z-index: 11;"></div>
-        <!-- Level display in center -->
-        <div class="level-display" style="
-          position: absolute; 
-          top: 34px; 
-          left: 21px; 
-          width: 55px; 
-          height: 55px; 
-          font-size: 48px; 
-          font-weight: bold; 
-          color: #000; 
-          cursor: pointer; 
-          z-index: 12; 
-          border-radius: 50%;
-          line-height: 1;
-          font-family: 'Minion Pro', serif;
-          padding-top: 5px;
-          text-align: center;
-          box-sizing: border-box;
-          background: transparent !important;
-          box-shadow: none !important;
-        " title="Award XP">{{system.level}}</div>
       </div>
 
   <!-- Character Name - Absolute positioned -->
@@ -608,7 +614,7 @@
     <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
     <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" style="width: 280px; height: 34px; text-align: center; font-family: 'Minion Pro', serif; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip; border: 1px solid #000;" />
+      <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" style="width: 280px; height: 34px; text-align: center; font-family: 'Minion Pro', serif; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip; border: 1px solid #000; pointer-events: auto;" />
     </div>
   </div>
       
@@ -620,7 +626,7 @@
     <input type="hidden" name="system.classPosition.y" value="{{system.classPosition.y}}" />
     <input type="hidden" name="system.classPosition.zIndex" value="{{system.classPosition.zIndex}}" />
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-  <select class="char-class" id="char-class" name="system.class" style="width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip;">
+  <select class="char-class" id="char-class" name="system.class" style="width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip; pointer-events: auto;">
         <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
         <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
         <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
@@ -653,7 +659,7 @@
     <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
     <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-  <select class="char-align" id="char-align" name="system.alignment" style="width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 5px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold;">
+  <select class="char-align" id="char-align" name="system.alignment" style="width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 5px 5px; margin: 0; transform: translateY(4px); border-radius: 9px; font-weight: bold; pointer-events: auto;">
         <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
         <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
         <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>

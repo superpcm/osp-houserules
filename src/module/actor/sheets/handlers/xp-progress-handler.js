@@ -31,7 +31,7 @@ export class XPProgressHandler {
     this.skillsLevelProgressRing = this.html.find('.skills-level-progress-ring');
     this.skillsLevelDisplay = this.html.find('.skills-level-display');
     this.staticLevelDisplay = this.html.find('.level-display'); // Static area level display
-    this.staticLevelProgressRing = this.html.find('.level-progress-ring'); // Static area progress ring
+    this.staticLevelProgressBar = this.html.find('.level-progress-bar'); // Static area progress bar (changed from ring)
     
     console.log('XP Progress Handler - Elements found:', {
       xpDisplay: this.xpDisplay.length,
@@ -44,7 +44,7 @@ export class XPProgressHandler {
       skillsLevelProgressRing: this.skillsLevelProgressRing.length,
       skillsLevelDisplay: this.skillsLevelDisplay.length,
       staticLevelDisplay: this.staticLevelDisplay.length,
-      staticLevelProgressRing: this.staticLevelProgressRing.length
+      staticLevelProgressBar: this.staticLevelProgressBar.length
     });
     
     this.bindEvents();
@@ -559,19 +559,16 @@ export class XPProgressHandler {
       staticLevelProgressRingFound: this.staticLevelProgressRing.length,
       progressPercentage: progressPercentage.toFixed(1)
     });
-    if (this.staticLevelProgressRing.length) {
-      console.log('Updating static level progress ring to:', `${progressPercentage}%`);
+    // Update static level progress bar
+    if (this.staticLevelProgressBar.length) {
+      console.log('Updating static level progress bar to:', `${progressPercentage}%`);
       
-      // Calculate stroke-dashoffset for progress ring
-      const circumference = 2 * Math.PI * 32.5; // 2πr where r = 32.5
-      const offset = circumference - (progressPercentage / 100) * circumference;
+      // Set the width of the progress bar
+      this.staticLevelProgressBar.css('width', `${progressPercentage}%`);
       
-      this.staticLevelProgressRing.css('stroke-dashoffset', offset);
-      
-      console.log('Static ring progress:', {
-        circumference: circumference.toFixed(1),
+      console.log('Static bar progress:', {
         progressPercentage: progressPercentage.toFixed(1),
-        offset: offset.toFixed(1)
+        width: `${progressPercentage}%`
       });
     }
 

@@ -1,4 +1,15 @@
-const { ActorSheet } = foundry.appv1.sheets;
+<div style="
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 55px;  <!-- This controls the actual bar width -->
+  height: 34px; 
+  background-color: white; 
+  border: 1px solid #000; 
+  border-radius: 9px;
+  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);
+  overflow: hidden;
+">const { ActorSheet } = foundry.appv1.sheets;
 
 export class OspActorSheetCharacter extends ActorSheet {
   static get defaultOptions() {

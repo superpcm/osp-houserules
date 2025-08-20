@@ -2,7 +2,6 @@ import { RaceClassHandler } from './handlers/race-class-handler.js';
 import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
-import { ImageHandler } from './handlers/image-handler.js';
 import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
@@ -259,14 +258,6 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     });
 
-    // Initialize image handler without layout handler dependency
-    try {
-      const imageHandler = new ImageHandler(html, this.actor, null);
-      imageHandler.initialize();
-      this.handlers.set('image', imageHandler);
-    } catch (error) {
-      console.error('Failed to initialize image handler:', error);
-    }
   }
 
   /**

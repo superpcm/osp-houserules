@@ -1,43 +1,6 @@
 // Import equipment styles
 @import 'equipment';
 
-
-// Character image styles
-.character-image-container {
-  .character-image {
-    transition: box-shadow 0.2s ease;
-    
-    &.dragging {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-  }
-  
-  .character-portrait {
-    transition: cursor 0.1s ease;
-  }
-  
-  .resize-handle {
-    transition: opacity 0.2s ease;
-    z-index: 10;
-    
-    &:hover {
-      background: #2d3748 !important;
-    }
-  }
-  
-  .image-controls {
-    z-index: 11;
-    
-    button {
-      transition: background-color 0.2s ease;
-      
-      &:hover {
-        background: #2d3748 !important;
-      }
-    }
-  }
-}
-
 // Layout system styles
 .draggable-field {
   transition: opacity 0.2s ease, z-index 0.2s ease;

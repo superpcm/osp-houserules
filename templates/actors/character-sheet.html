@@ -45,23 +45,7 @@
       overflow: visible !important; /* Allow tabs to show beyond content area */
     }
     
-    /* Keep character name with its original styling */
-    .char-name {
-  font-family: inherit !important;
-  font-weight: bold !important;
-  /* font-size intentionally unset here; set via inline style in HTML for px control */
-    }
-    
-    /* Character name background should be transparent */
-    form.osp.sheet.actor.character input.char-name,
-    form.osp.sheet.actor.character input#char-name,
-    .osp.sheet.actor.character input.char-name,
-    .osp.sheet.actor.character input#char-name {
-      background-color: transparent !important;
-      background: transparent !important;
-    }
-    
-  
+
     /* XP progress bar should be visible with different color */
     form.osp.sheet.actor.character .xp-progress-bar,
     .osp.sheet.actor.character .xp-progress-bar {
@@ -354,36 +338,7 @@
             translateY = 0;
             updateTransform();
           });
-        }
-        
-    // ...existing code...
-                  const z = parseInt($html.find('.z-index').val()) || field.defaultZ;
-                  updateZIndex(z);
-                });
-                $html.find('.apply-zindex').click(() => {
-                  const z = parseInt($html.find('.z-index').val()) || field.defaultZ;
-                  updateZIndex(z);
-                });
-                $html.find('.z-behind').click(() => updateZIndex(-1));
-                $html.find('.z-front').click(() => updateZIndex(20));
-                $html.find('.z-reset').click(() => updateZIndex(field.defaultZ));
-              }
-            });
-            positionDialog.render(true);
-          }
 
-          // Attach right-click event
-          el.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            if (positionDialog) {
-              positionDialog.close();
-              positionDialog = null;
-            } else {
-              showPositionDialog();
-            }
-          });
-        });
-      }
 
       // Call the universal positioning initializer
       setTimeout(initializeUniversalPositioning, 0);
@@ -1491,126 +1446,8 @@
       // Initialize saving throw tooltips after ability tooltips
       setTimeout(initializeSavingThrowTooltips, 100);
 
-      // Dynamic Character Name Positioning and Sizing System
-      function initializeCharacterNameSystem() {
-        const nameInput = document.getElementById('char-name');
-        const nameContainer = document.getElementById('character-name-container');
-        
-        if (!nameInput || !nameContainer) {
-          console.log('Character name system: Required elements not found');
-          return;
-        }
-        
-        const DEFAULT_FONT_SIZE = 45;
-        const MIN_FONT_SIZE = 24;
-        const PORTRAIT_END = 155; // 25px left + 130px width
-        const MAX_RIGHT_EDGE = 450; // Hard limit for right edge of name
-        const MARGIN = 10;
-        
-        function updateCharacterNamePosition() {
-          const textValue = nameInput.value || nameInput.placeholder || '';
-          if (!textValue) return;
-          
-          let fontSize = DEFAULT_FONT_SIZE;
-          let measuredWidth;
-          
-          // Create temporary span to measure text accurately
-          const measurer = document.createElement('span');
-          measurer.style.cssText = `
-            position: absolute;
-            visibility: hidden;
-            white-space: nowrap;
-            font-family: ${getComputedStyle(nameInput).fontFamily};
-            font-weight: ${getComputedStyle(nameInput).fontWeight};
-            padding: 6px;
-            border: 1px solid transparent;
-          `;
-          document.body.appendChild(measurer);
-          
-          // Calculate maximum allowed width
-          const maxAllowedWidth = MAX_RIGHT_EDGE - PORTRAIT_END - MARGIN;
-          
-          // Find the right font size
-          do {
-            measurer.style.fontSize = fontSize + 'px';
-            measurer.textContent = textValue;
-            measuredWidth = measurer.offsetWidth;
-            
-            if (measuredWidth <= maxAllowedWidth || fontSize <= MIN_FONT_SIZE) {
-              break;
-            }
-            fontSize -= 1; // Reduce by 1px for finer control
-          } while (fontSize >= MIN_FONT_SIZE);
-          
-          // Handle truncation if needed
-          let finalText = textValue;
-          if (measuredWidth > maxAllowedWidth && fontSize === MIN_FONT_SIZE) {
-            // Truncate text to fit
-            let testLength = textValue.length;
-            while (testLength > 0) {
-              finalText = textValue.substring(0, testLength) + '...';
-              measurer.textContent = finalText;
-              if (measurer.offsetWidth <= maxAllowedWidth) {
-                break;
-              }
-              testLength--;
-            }
-            measuredWidth = measurer.offsetWidth;
-          }
-          
-          document.body.removeChild(measurer);
-          
-          // Apply font size
-          nameInput.style.fontSize = fontSize + 'px';
-          
-          // Position the name container
-          const availableSpace = maxAllowedWidth;
-          const centerPoint = PORTRAIT_END + MARGIN + (availableSpace / 2);
-          let leftPosition = centerPoint - (measuredWidth / 2);
-          
-          // Ensure it doesn't go too far left or right
-          const minLeft = PORTRAIT_END + MARGIN;
-          const maxLeft = MAX_RIGHT_EDGE - measuredWidth;
-          leftPosition = Math.max(minLeft, Math.min(leftPosition, maxLeft));
-          
-          nameContainer.style.left = leftPosition + 'px';
-          
-          // Apply truncation if needed
-          if (finalText !== textValue) {
-            nameInput.dataset.originalValue = textValue;
-            nameInput.value = finalText;
-          } else if (nameInput.dataset.originalValue) {
-            delete nameInput.dataset.originalValue;
-          }
-          
-          console.log(`Name: "${finalText}" | Font: ${fontSize}px | Width: ${measuredWidth}px | Position: ${leftPosition}px | Max allowed: ${maxAllowedWidth}px`);
-        }
-        
-        // Event listeners
-        nameInput.addEventListener('input', () => {
-          // Restore original value if it was truncated
-          if (nameInput.dataset.originalValue) {
-            const cursorPos = nameInput.selectionStart;
-            nameInput.value = nameInput.dataset.originalValue;
-            nameInput.setSelectionRange(cursorPos, cursorPos);
-            delete nameInput.dataset.originalValue;
-          }
-          updateCharacterNamePosition();
-        });
-        
-        nameInput.addEventListener('blur', updateCharacterNamePosition);
-        
-        // Initial update
-        setTimeout(updateCharacterNamePosition, 100);
-        
-        console.log('Character name positioning system initialized');
-      }
-      
-      // Initialize the character name system
-      setTimeout(initializeCharacterNameSystem, 200);
-    }
-    
-    // Check if DOM is already ready or wait for it
+
+  // Check if DOM is already ready or wait for it
     if (document.readyState === 'loading') {
       console.log('DOM still loading, waiting for DOMContentLoaded...');
       document.addEventListener('DOMContentLoaded', initializeCharacterSheet);
@@ -1668,7 +1505,7 @@
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section" id="character-name-container"
     style="position: absolute; left: 44px; top: 14px; z-index: 10;">
-  <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" style="text-align: center; font-size: 36px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; padding: 3px; margin: 0; border-radius: 9px; font-weight: bold; border: 1px solid #000; outline: none; width: 320px; height: 44px;"/>
+
       </div>
       
   <!-- Hidden inputs for portrait position data -->
@@ -1676,10 +1513,7 @@
   <input type="hidden" name="system.portraitPosition.y" value="{{system.portraitPosition.y}}" />
   <input type="hidden" name="system.portraitPosition.zIndex" value="{{system.portraitPosition.zIndex}}" />
 
-  <!-- Hidden inputs for name position data -->
-  <input type="hidden" name="system.namePosition.x" value="{{system.namePosition.x}}" />
-  <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
-  <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
+
 
   <!-- Hidden inputs for portrait border data -->
   <input type="hidden" name="system.portraitBorder.enabled" value="{{system.portraitBorder.enabled}}" />
@@ -2478,4 +2312,3 @@
         </div>
       </div>
     </section>
-</form>

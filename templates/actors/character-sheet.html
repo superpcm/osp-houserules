@@ -175,6 +175,49 @@
       background: none !important;
       border: none !important;
     }
+
+    /* Language tag styling */
+    .languages-tags .lang-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #e0e0e0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: normal;
+      color: #333;
+    }
+
+    .languages-tags .lang-tag button.remove-lang {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      width: auto;
+      height: auto;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .languages-tags .lang-tag button.remove-lang:hover {
+      color: #c00;
+    }
+
+    .open-language-dialog {
+      font-size: 11px !important;
+      padding: 2px 6px !important;
+      background: #f0f0f0 !important;
+      border: 1px solid #ccc !important;
+      cursor: pointer !important;
+      border-radius: 3px !important;
+    }
+
+    .open-language-dialog:hover {
+      background: #e0e0e0 !important;
+      border-color: #999 !important;
+    }
   </style>
   <script>
     console.log('Character sheet script loaded');
@@ -903,7 +946,13 @@
   <div class="languages-group" id="languages-container"
        style="position: absolute; left: 319px; top: 183px; z-index: 10; border: 0.5px solid red;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <input class="char-languages" id="char-languages" name="system.languages" type="text" value="{{system.languages}}" style="width: 274px; height: 38px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 4px; margin: 0; font-weight: bold; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;" />
+      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.5rem;">
+        <button type="button" class="open-language-dialog" title="Add Language" style="background: #f0f0f0; border: 1px solid #ccc; padding: 4px 8px; cursor: pointer; border-radius: 3px; font-size: 12px;">+ Add</button>
+      </div>
+      <div class="languages-row" style="border: 1px solid #ccc; border-radius: 3px; padding: 0.5rem; width: 270px; background-color: white; min-height: 30px;">
+        <div class="languages-tags" style="display: flex; flex-wrap: wrap; gap: 4px;"></div>
+      </div>
+      <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
     </div>
   </div>
       

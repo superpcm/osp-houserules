@@ -193,9 +193,6 @@
       // Ability Score Tooltips System
       const TOOLTIP_DELAY = 800; // Configurable delay in milliseconds
       
-      // Ability Score Tooltips System
-      const TOOLTIP_DELAY = 800; // Configurable delay in milliseconds
-      
       const abilityScoreData = {
         "Strength": [
           { "score_range": "3", "melee": -3, "open_doors": "1-in-6" },
@@ -529,6 +526,56 @@
       // Initialize saving throw tooltips after ability tooltips
       setTimeout(initializeSavingThrowTooltips, 100);
 
+      console.log('Starting portrait setup...');
+      
+      // Portrait handling
+      const portraitDisplay = document.querySelector('.portrait-display');
+      
+      console.log('Portrait elements found:', { portraitDisplay });
+      
+      if (portraitDisplay) {
+        console.log('Setting up portrait event listeners...');
+        
+        // Click on portrait opens Foundry file picker
+        portraitDisplay.addEventListener('click', async (event) => {
+          console.log('Portrait clicked!', event);
+          
+          try {
+            // Use Foundry's FilePicker
+            const fp = new FilePicker({
+              type: "image",
+              current: "",
+              callback: (path) => {
+                console.log('File selected from Foundry picker:', path);
+                
+                // Update the portrait display
+                portraitDisplay.style.backgroundImage = `url('${path}')`;
+                
+                // Update the hidden input with the file path
+                const portraitInput = document.querySelector('input[name="system.portrait"]');
+                if (portraitInput) {
+                  portraitInput.value = path;
+                  
+                  // Trigger a change event to update the actor
+                  const changeEvent = new Event('change', { bubbles: true });
+                  portraitInput.dispatchEvent(changeEvent);
+                }
+              }
+            });
+            
+            // Render the file picker
+            fp.render(true);
+            
+          } catch (error) {
+            console.error('Error opening Foundry file picker:', error);
+          }
+        });
+        
+        console.log('Portrait event listeners set up successfully');
+      } else {
+        console.log('Portrait elements not found!');
+      }
+    }
 
   // Check if DOM is already ready or wait for it
     if (document.readyState === 'loading') {
@@ -598,6 +645,30 @@
         </div>
       </div>
 
+  <!-- Character Portrait - Positioned behind everything -->
+  <div class="portrait-container" id="portrait-container"
+       style="position: absolute; width: 145px; height: 145px; left: 33px; top: 74px; z-index: 1;">
+    <!-- Hidden input for portrait path data -->
+    <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
+    
+    <!-- Portrait display area -->
+    <div class="portrait-display" style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 145px;
+      height: 145px;
+      border: 0.5px solid #000;
+      cursor: pointer;
+      background-image: url('{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+      pointer-events: auto;
+    " title="Click to select portrait"></div>
+  </div>
+
   <!-- Static Header Section - Absolute Positioning Layout -->
   <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none;">
 
@@ -609,7 +680,7 @@
 
   <!-- Character Name - Absolute positioned -->
   <div class="character-name-group" id="character-name-container"
-       style="position: absolute; left: 33px; top: 16px; z-index: 10;">
+       style="position: absolute; left: 33px; top: 16px; z-index: 10; pointer-events: none;">
     <input type="hidden" name="system.namePosition.x" value="{{system.namePosition.x}}" />
     <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
     <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
@@ -654,7 +725,7 @@
 
   <!-- Character Alignment - Independent container for positioning -->
   <div class="alignment-group" id="alignment-container"
-       style="position: absolute; left: 319px; top: 125px; z-index: 10;">
+       style="position: absolute; left: 319px; top: 124px; z-index: 10;">
     <input type="hidden" name="system.alignmentPosition.x" value="{{system.alignmentPosition.x}}" />
     <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
     <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />

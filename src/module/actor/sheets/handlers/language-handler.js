@@ -110,7 +110,7 @@ export class LanguageHandler {
             ).join("")}
             <label style="display: flex; align-items: center; gap: 8px;">
               <input type="checkbox" name="customCheck" id="customCheck"/>
-              <input type="text" name="custom" id="customInput" style="width: 140px;" placeholder="Enter custom language" disabled/>
+              <input type="text" name="custom" id="customInput" style="width: 145px;" placeholder="Enter custom language" disabled/>
             </label>
           </div>
           <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">

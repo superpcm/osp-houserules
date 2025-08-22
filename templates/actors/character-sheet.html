@@ -87,7 +87,6 @@
       justify-content: center;
       font-family: 'Minion Pro', serif;
       font-size: 15px;
-      font-weight: bold;
       cursor: pointer;
       user-select: none;
       border-radius: 0 10px 10px 0;
@@ -139,7 +138,6 @@
       opacity: 1; /* Full opacity for active tab */
       /* Add slight inset shadow for depth */
       box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
-      font-weight: bold;
       z-index: 1; /* Bring active tab forward */
     }
     .sheet-body .tab {
@@ -288,6 +286,94 @@
   <script>
     console.log('Character sheet script loaded');
     
+    // Function to update XP Modifier display
+    function updateXPModifier() {
+      const xpModField = document.getElementById('xp-mod-display');
+      if (!xpModField) return;
+      
+      // Get current character data from form fields
+      const characterClass = document.querySelector('.char-class')?.value || '';
+      const attributes = {
+        str: { value: parseInt(document.querySelector('.attr-str')?.value) || 10 },
+        dex: { value: parseInt(document.querySelector('.attr-dex')?.value) || 10 },
+        con: { value: parseInt(document.querySelector('.attr-con')?.value) || 10 },
+        int: { value: parseInt(document.querySelector('.attr-int')?.value) || 10 },
+        wis: { value: parseInt(document.querySelector('.attr-wis')?.value) || 10 },
+        cha: { value: parseInt(document.querySelector('.attr-cha')?.value) || 10 }
+      };
+      
+      // Calculate XP modifier using the same logic as the system
+      const xpMod = calculateXPModifier(characterClass, attributes);
+      
+      // Format and display the modifier
+      const formattedMod = xpMod >= 0 ? `+${xpMod}%` : `${xpMod}%`;
+      xpModField.value = formattedMod;
+    }
+    
+    // Function to update XP display
+    function updateXPDisplay() {
+      const xpField = document.getElementById('xp-display');
+      if (!xpField) return;
+      
+      // Check if we're in the middle of an XP update by our handler
+      // If so, don't interfere with the display
+      if (window.xpHandlerUpdating) return;
+      
+      // Get current XP from the actor data
+      const currentXP = parseInt(document.querySelector('input[name="system.xp"]')?.value) || 0;
+      
+      // Only update if the field doesn't already have this value and the field isn't focused
+      const currentFieldValue = parseInt(xpField.value) || 0;
+      if (currentFieldValue !== currentXP && document.activeElement !== xpField) {
+        xpField.value = currentXP;
+      }
+    }
+    
+    // XP Modifier calculation function (matches the system logic)
+    function calculateXPModifier(characterClass, attributes) {
+      // Prime requisite mapping for each class
+      const primeRequisites = {
+        'fighter': ['str'],
+        'cleric': ['wis'], 
+        'magic-user': ['int'],
+        'thief': ['dex'],
+        'assassin': ['str', 'dex'],
+        'barbarian': ['str', 'con'],
+        'bard': ['dex', 'cha'],
+        'beast master': ['str', 'wis'],
+        'druid': ['wis'],
+        'knight': ['str'],
+        'paladin': ['str', 'cha'],
+        'ranger': ['str', 'wis'],
+        'warden': ['str', 'con']
+      };
+      
+      const primes = primeRequisites[characterClass.toLowerCase()] || [];
+      if (primes.length === 0) return 0;
+      
+      // Calculate modifier based on prime requisite scores
+      let totalModifier = 0;
+      
+      if (primes.length === 1) {
+        // Single prime requisite
+        const score = attributes[primes[0]]?.value || 10;
+        if (score >= 16) totalModifier = 10;
+        else if (score >= 13) totalModifier = 5;
+        else if (score <= 8) totalModifier = -10;
+      } else {
+        // Multiple prime requisites - both must be high for bonus
+        const scores = primes.map(attr => attributes[attr]?.value || 10);
+        const allHigh = scores.every(score => score >= 13);
+        const anyLow = scores.some(score => score <= 8);
+        
+        if (allHigh && scores.every(score => score >= 16)) totalModifier = 10;
+        else if (allHigh) totalModifier = 5;
+        else if (anyLow) totalModifier = -10;
+      }
+      
+      return totalModifier;
+    }
+    
     // Function to run when DOM is ready
     function initializeCharacterSheet() {
       console.log('Initializing character sheet...');
@@ -297,6 +383,31 @@
       if (bar) {
         const percent = bar.getAttribute('data-encumbrance');
         bar.style.width = percent + '%';
+      }
+      
+      // Update XP Modifier display
+      updateXPModifier();
+      
+      // Update XP display
+      updateXPDisplay();
+      
+      // Add event listeners to update XP modifier when class or attributes change
+      const classField = document.querySelector('.char-class');
+      const attributeFields = document.querySelectorAll('.attr-str, .attr-dex, .attr-con, .attr-int, .attr-wis, .attr-cha');
+      
+      if (classField) {
+        classField.addEventListener('change', updateXPModifier);
+      }
+      
+      attributeFields.forEach(field => {
+        field.addEventListener('change', updateXPModifier);
+      });
+      
+      // Add event listener to update XP display when XP changes
+      const xpInput = document.querySelector('input[name="system.experience.current"]');
+      if (xpInput) {
+        xpInput.addEventListener('change', updateXPDisplay);
+        xpInput.addEventListener('input', updateXPDisplay);
       }
       
       // Ability Score Tooltips System
@@ -737,9 +848,7 @@
             width: 100%; 
             height: 100%; 
             font-size: 24px; 
-            font-weight: bold; 
             color: #000; 
-            cursor: pointer; 
             z-index: 1; 
             line-height: 34px;
             font-family: 'Minion Pro', serif;
@@ -750,7 +859,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-          " title="Award XP">{{system.level}}</div>
+          ">{{system.level}}</div>
         </div>
       </div>
 
@@ -794,7 +903,7 @@
     <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
     <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" style="width: 280px; height: 34px; text-align: center; font-family: 'Minion Pro', serif; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip; border: none; pointer-events: auto;" />
+      <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" style="width: 280px; height: 34px; text-align: center; font-family: 'Minion Pro', serif; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); overflow: visible; white-space: nowrap; text-overflow: clip; border: none; pointer-events: auto;" />
     </div>
   </div>
       
@@ -806,7 +915,7 @@
     <input type="hidden" name="system.classPosition.y" value="{{system.classPosition.y}}" />
     <input type="hidden" name="system.classPosition.zIndex" value="{{system.classPosition.zIndex}}" />
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-  <select class="char-class" id="char-class" name="system.class" style="width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); font-weight: bold; overflow: visible; white-space: nowrap; text-overflow: clip; border: none; pointer-events: auto;">
+  <select class="char-class" id="char-class" name="system.class" style="width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); overflow: visible; white-space: nowrap; text-overflow: clip; border: none; pointer-events: auto;">
         <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
         <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
         <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
@@ -839,7 +948,7 @@
     <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
     <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-  <select class="char-align" id="char-align" name="system.alignment" style="width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 5px 5px; margin: 0; transform: translateY(4px); font-weight: bold; border: none; pointer-events: auto;">
+  <select class="char-align" id="char-align" name="system.alignment" style="width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 5px 5px; margin: 0; transform: translateY(4px); border: none; pointer-events: auto;">
         <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
         <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
         <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
@@ -851,7 +960,7 @@
   <div class="race-group" id="race-container"
        style="position: absolute; left: 179px; top: 74px; z-index: 10; border: 0.5px solid red;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <select class="char-race" id="char-race" name="system.race" style="width: 132px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 0 5px; margin: 0; font-weight: bold; border: none; pointer-events: auto;">
+      <select class="char-race" id="char-race" name="system.race" style="width: 132px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 0 5px; margin: 0; border: none; pointer-events: auto;">
         <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
         <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
         <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
@@ -867,14 +976,14 @@
   <div class="age-group" id="age-container"
        style="position: absolute; left: 179px; top: 129px; z-index: 10; border: 0.5px solid red;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 63px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 4px; margin: 0; font-weight: bold; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;" />
+      <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 63px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 4px; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;" />
     </div>
   </div>
 
   <div class="sex-group" id="sex-container"
        style="position: absolute; left: 249px; top: 128px; z-index: 10; border: 0.5px solid red;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <select class="char-sex" id="char-sex" name="system.sex" style="width: 63px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 4px; margin: 0; font-weight: bold; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;">
+      <select class="char-sex" id="char-sex" name="system.sex" style="width: 63px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 4px; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;">
         <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
         <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>F</option>
         <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>O</option>
@@ -886,7 +995,7 @@
   <div class="height-group" id="height-container"
        style="position: absolute; left: 179px; top: 183px; z-index: 10; border: 0.5px solid red;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 65px; height: 37px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 2px; margin: 0; font-weight: bold; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
+      <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 65px; height: 37px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 2px; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
     </div>
   </div>
 
@@ -894,7 +1003,7 @@
   <div class="weight-group" id="weight-container"
        style="position: absolute; left: 247px; top: 183px; z-index: 10; border: 0.5px solid red;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 65px; height: 37px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 2px; margin: 0; font-weight: bold; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
+      <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 65px; height: 37px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 2px; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
     </div>
   </div>
 
@@ -902,7 +1011,7 @@
   <div class="background-group" id="background-container"
        style="position: absolute; left: 460px; top: 129px; z-index: 10; border: 0.5px solid red;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <select class="char-background" id="char-background" name="system.background" style="width: 132px; height: 38px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 2px; margin: 0; font-weight: bold; border: none; pointer-events: auto;">
+      <select class="char-background" id="char-background" name="system.background" style="width: 132px; height: 38px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 2px; margin: 0; border: none; pointer-events: auto;">
  <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
                   <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
                   <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
@@ -1013,10 +1122,35 @@
        style="position: absolute; left: 319px; top: 183px; z-index: 100; border: 0.5px solid red; pointer-events: auto;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; pointer-events: auto;">
       <div class="languages-row open-language-dialog" style="width: 272px; height: 33px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: none !important; pointer-events: auto; z-index: 101; display: flex; align-items: center; justify-content: center;" title="Click to add languages">
-        <div class="languages-tags" style="display: flex; background: transparent !important; border: none !important; pointer-events: auto; text-align: center; width: 100%; font-weight: bold; line-height: 1; white-space: nowrap; overflow: hidden; align-items: center; justify-content: center; height: 100%;"></div>
+        <div class="languages-tags" style="display: flex; background: transparent !important; border: none !important; pointer-events: auto; text-align: center; width: 100%; line-height: 1; white-space: nowrap; overflow: hidden; align-items: center; justify-content: center; height: 100%;"></div>
       </div>
       <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
     </div>
+  </div>
+
+  <!-- XP Mod % field -->
+  <div class="xp-mod-group" id="xp-mod-container"
+       style="position: absolute; left: 530px; top: 20px; z-index: 10;">
+    <input type="text" class="xp-mod-display" id="xp-mod-display" readonly 
+           style="width: 64px; height: 34px; text-align: center; font-size: 24px; 
+                  background-color: transparent !important; border: 0.5px solid red; 
+                  box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+                  padding: 4px 0 0 0; margin: 0; line-height: 1; color: inherit; pointer-events: none;
+                  display: flex; align-items: center; justify-content: center;" />
+  </div>
+
+  <!-- XP field -->
+  <div class="xp-group" id="xp-container"
+       style="position: absolute; left: 319px; top: 74px; z-index: 10;">
+    <input type="number" class="xp-display" id="xp-display" value="{{system.xp}}"
+           style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
+                  background-color: transparent !important; border: 0.5px solid red; 
+                  box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+                  padding: 0; margin: 0; line-height: 1; color: inherit; cursor: pointer; pointer-events: auto;
+                  display: flex; align-items: center; justify-content: center;" 
+           title="Click to award XP (Double-click for admin)" 
+           onmouseover="this.style.cursor='pointer'" 
+           onmouseout="this.style.cursor='pointer'" />
   </div>
       
       <!-- Horizontal separator line at bottom of static header -->
@@ -1063,7 +1197,7 @@
           <div class="save-group-death" style="position: relative; display: inline-block; margin: 0 10px;">
             <div class="save death-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
-                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.death.value}}</span>
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.death.value}}</span>
               </div>
             </div>
             <div class="save-label-death" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
@@ -1071,7 +1205,7 @@
                 <defs>
                   <path id="deathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
                 </defs>
-                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; fill: #000; letter-spacing: 0.5px;">
                   <textPath href="#deathTextPath" startOffset="50%" text-anchor="middle">
                     Death / Poison
                   </textPath>
@@ -1084,7 +1218,7 @@
           <div class="save-group-wands" style="position: relative; display: inline-block; margin: 0 10px;">
             <div class="save wands-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
-                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.wands.value}}</span>
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.wands.value}}</span>
               </div>
             </div>
             <div class="save-label-wands" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
@@ -1092,7 +1226,7 @@
                 <defs>
                   <path id="wandsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
                 </defs>
-                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.8px;">
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; fill: #000; letter-spacing: 0.8px;">
                   <textPath href="#wandsTextPath" startOffset="50%" text-anchor="middle">
                     Wands
                   </textPath>
@@ -1105,7 +1239,7 @@
           <div class="save-group-paralysis" style="position: relative; display: inline-block; margin: 0 10px;">
             <div class="save paralysis-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
-                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.paralysis.value}}</span>
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.paralysis.value}}</span>
               </div>
             </div>
             <div class="save-label-paralysis" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
@@ -1113,7 +1247,7 @@
                 <defs>
                   <path id="paralysisTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
                 </defs>
-                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.3px;">
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; fill: #000; letter-spacing: 0.3px;">
                   <textPath href="#paralysisTextPath" startOffset="50%" text-anchor="middle">
                     Paralysis / Petrification
                   </textPath>
@@ -1126,7 +1260,7 @@
           <div class="save-group-breath" style="position: relative; display: inline-block; margin: 0 10px;">
             <div class="save breath-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
-                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.breath.value}}</span>
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: normal; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.breath.value}}</span>
               </div>
             </div>
             <div class="save-label-breath" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
@@ -1134,7 +1268,7 @@
                 <defs>
                   <path id="breathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
                 </defs>
-                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.8px;">
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: normal; fill: #000; letter-spacing: 0.8px;">
                   <textPath href="#breathTextPath" startOffset="50%" text-anchor="middle">
                     Breath Attacks
                   </textPath>
@@ -1147,7 +1281,7 @@
           <div class="save-group-spells" style="position: relative; display: inline-block; margin: 0 10px;">
             <div class="save spells-save" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible;">
               <div style="width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);">
-                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: bold; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.spells.value}}</span>
+                <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: normal; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.spells.value}}</span>
               </div>
             </div>
             <div class="save-label-spells" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
@@ -1155,7 +1289,7 @@
                 <defs>
                   <path id="spellsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
                 </defs>
-                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: bold; fill: #000; letter-spacing: 0.5px;">
+                <text style="font-family: 'Minion Pro', serif; font-size: 14px; font-weight: normal; fill: #000; letter-spacing: 0.5px;">
                   <textPath href="#spellsTextPath" startOffset="50%" text-anchor="middle">
                     Spells / Rods / Staves
                   </textPath>
@@ -1173,7 +1307,7 @@
           <!-- STR Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">STR</label>
-            <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+            <select class="attr-str" id="attr-str" name="system.attributes.str.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: normal; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
               {{/each}}
@@ -1183,7 +1317,7 @@
           <!-- DEX Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">DEX</label>
-            <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+            <select class="attr-dex" id="attr-dex" name="system.attributes.dex.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: normal; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
               {{/each}}
@@ -1193,7 +1327,7 @@
           <!-- CON Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">CON</label>
-            <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+            <select class="attr-con" id="attr-con" name="system.attributes.con.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: normal; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
               {{/each}}
@@ -1203,7 +1337,7 @@
           <!-- INT Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">INT</label>
-            <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+            <select class="attr-int" id="attr-int" name="system.attributes.int.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: normal; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
               {{/each}}
@@ -1213,7 +1347,7 @@
           <!-- WIS Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">WIS</label>
-            <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+            <select class="attr-wis" id="attr-wis" name="system.attributes.wis.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: normal; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
               {{/each}}
@@ -1223,7 +1357,7 @@
           <!-- CHA Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">CHA</label>
-            <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: bold; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
+            <select class="attr-cha" id="attr-cha" name="system.attributes.cha.value" style="width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: normal; background-color: white !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 1; padding: 8px 3px 0px 0px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8);">
               {{#each (range 3 18) as |val|}}
                 <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
               {{/each}}

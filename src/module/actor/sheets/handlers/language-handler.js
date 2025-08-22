@@ -21,12 +21,6 @@ export class LanguageHandler {
    * Initialize language management
    */
   initialize() {
-    console.log('LanguageHandler initializing...', {
-      tags: this.tags.length,
-      hidden: this.hidden.length,
-      openDialog: this.openDialog.length
-    });
-    
     this.renderTags();
     this.tags.on('click', '.remove-lang', this.onRemoveLanguage.bind(this));
     
@@ -37,14 +31,6 @@ export class LanguageHandler {
     if (this.openDialog.length > 0) {
       this.openDialog.on('click', this.onOpenDialog.bind(this));
     }
-    
-    // Create a global test function for debugging
-    window.testLanguageDialog = () => {
-      console.log('Test language dialog called');
-      this.onOpenDialog();
-    };
-    
-    console.log('LanguageHandler initialized successfully');
   }
 
   /**
@@ -79,8 +65,6 @@ export class LanguageHandler {
    * Handle opening the language selection dialog
    */
   async onOpenDialog(event) {
-    console.log('LanguageHandler: onOpenDialog called!', event);
-    
     const dialogContent = this.buildDialogContent();
     
     new Dialog({

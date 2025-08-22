@@ -55,6 +55,7 @@ export class LanguageHandler {
    * Handle removing a language
    */
   onRemoveLanguage(event) {
+    event.stopPropagation(); // Prevent triggering the dialog
     const lang = $(event.currentTarget).data('lang');
     this.languages = this.languages.filter(l => l !== lang && l !== "Common");
     this.languages.unshift("Common");
@@ -91,7 +92,7 @@ export class LanguageHandler {
         <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
           ${this.standardLanguages.map(lang =>
             `<label style="display: flex; align-items: center; gap: 8px;">
-              <input type="checkbox" name="lang" value="${lang}" ${this.languages.includes(lang) ? "checked disabled" : ""}/>
+              <input type="checkbox" name="lang" value="${lang}" ${this.languages.includes(lang) ? "checked" : ""}/>
               <span>${lang}</span>
             </label>`
           ).join("")}
@@ -108,15 +109,18 @@ export class LanguageHandler {
    * Handle dialog submission
    */
   onDialogSubmit(htmlDialog) {
-    // Add checked standard languages
-    htmlDialog.find('input[name="lang"]:checked:not(:disabled)').each((i, el) => {
+    // Start with Common (always included)
+    this.languages = ["Common"];
+    
+    // Add all checked standard languages
+    htmlDialog.find('input[name="lang"]:checked').each((i, el) => {
       const val = $(el).val();
       if (val && !this.languages.includes(val)) {
         this.languages.push(val);
       }
     });
 
-    // Add custom language
+    // Add custom language if provided
     const custom = htmlDialog.find('input[name="custom"]').val().trim();
     if (custom && !this.languages.includes(custom)) {
       this.languages.push(custom);

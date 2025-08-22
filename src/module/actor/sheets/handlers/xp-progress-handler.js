@@ -14,12 +14,15 @@ export class XPProgressHandler {
     this.xpAwardBtn = null;
     this.progressBar = null;
     this.nextLevelDisplay = null;
+    this.isUpdatingXP = false; // Flag to prevent XP display overwrites during updates
   }
 
   /**
    * Initialize the XP progress handler
    */
   initialize() {
+    console.log('XP Progress Handler initializing...');
+    
     // Initialize DOM elements
     this.progressBar = this.html.find('.xp-progress');
     this.levelXpProgress = this.html.find('.level-xp-progress');
@@ -46,6 +49,8 @@ export class XPProgressHandler {
       staticLevelDisplay: this.staticLevelDisplay.length,
       staticLevelProgressBar: this.staticLevelProgressBar.length
     });
+    
+    console.log('XP Display selector check:', this.html.find('#xp-display').length, this.html.find('.xp-display').length);
     
     this.bindEvents();
     
@@ -88,13 +93,62 @@ export class XPProgressHandler {
       staticLevelProgressRing: this.staticLevelProgressRing.length
     });
     
-    // Bind static level display click now that we have the element
+    // Bind XP display click now that we have the element
+    if (this.xpDisplay.length) {
+      console.log('Found XP display element, setting up events...');
+      
+      // Set readonly status based on user role
+      const isGM = game.user.isGM;
+      console.log('User is GM:', isGM);
+      
+      if (!isGM) {
+        this.xpDisplay.prop('readonly', true);
+        this.xpDisplay.css('cursor', 'pointer');
+        console.log('Set XP field to readonly for non-GM');
+      } else {
+        this.xpDisplay.prop('readonly', false);
+        this.xpDisplay.css('cursor', 'text');
+        console.log('Set XP field to editable for GM');
+      }
+      
+      // For non-admins, always open dialog on click
+      // For admins, open dialog on double-click or when field is readonly
+      if (!isGM) {
+        this.xpDisplay.off('click').on('click', (e) => {
+          console.log('XP field clicked by non-GM');
+          e.preventDefault();
+          this.showXPAwardDialog();
+        });
+        console.log('Bound single-click event for non-GM');
+      } else {
+        // For admins, use double-click to open dialog
+        this.xpDisplay.off('dblclick').on('dblclick', (e) => {
+          console.log('XP field double-clicked by GM');
+          e.preventDefault();
+          this.showXPAwardDialog();
+        });
+        
+        // Also allow single click when field is not focused
+        this.xpDisplay.off('click').on('click', (e) => {
+          console.log('XP field clicked by GM, focused:', this.xpDisplay.is(':focus'));
+          // If the field is not currently focused, open the dialog
+          if (!this.xpDisplay.is(':focus')) {
+            e.preventDefault();
+            this.showXPAwardDialog();
+          }
+        });
+        console.log('Bound click events for GM');
+      }
+      
+      console.log('XP display click event bound successfully');
+    } else {
+      console.error('XP display element not found!');
+    }
+    
+    // Remove click event from static level display (no longer used for XP award)
     if (this.staticLevelDisplay.length) {
-      this.staticLevelDisplay.off('click').on('click', (e) => {
-        e.preventDefault();
-        this.showXPAwardDialog();
-      });
-      console.log('Static level display click event bound successfully');
+      this.staticLevelDisplay.off('click');
+      console.log('Static level display click event removed');
     }
   }
 
@@ -139,9 +193,18 @@ export class XPProgressHandler {
 
     // Listen for actor updates (since level is now managed through dialog)
     if (this.actor) {
-      this.actor.on?.('update', () => {
-        console.log('Actor updated, refreshing progress bar...');
-        setTimeout(() => this.updateProgressBar(), 50);
+      this.actor.on?.('update', (actor, updateData) => {
+        console.log('Actor updated, refreshing progress bar...', updateData);
+        
+        // If XP was updated, immediately update the display to prevent flash
+        let skipXPUpdate = false;
+        if (updateData.system?.xp !== undefined && this.xpDisplay.length) {
+          this.xpDisplay.val(updateData.system.xp);
+          skipXPUpdate = true; // Don't let updateProgressBar overwrite our manual update
+        }
+        
+        // Then update progress bar with minimal delay, skipping XP update if we handled it
+        setTimeout(() => this.updateProgressBar(skipXPUpdate), 10);
       });
     }
 
@@ -149,6 +212,38 @@ export class XPProgressHandler {
     this.html.on('change', 'input[name="system.xp"]', () => {
       console.log('XP field changed, updating progress bar...');
       setTimeout(() => this.updateProgressBar(), 50);
+    });
+    
+    // Listen for direct XP display input changes (admin only)
+    this.html.on('change blur', '.xp-display', (e) => {
+      const isGM = game.user.isGM;
+      if (isGM) {
+        this.isUpdatingXP = true; // Prevent other updates from overwriting display
+        window.xpHandlerUpdating = true; // Prevent inline script interference
+        
+        const newXP = parseInt(e.target.value) || 0;
+        console.log('Admin changed XP to:', newXP);
+        
+        // Only update if the value is different from current
+        const currentXP = parseInt(this.actor.system.xp) || 0;
+        if (newXP !== currentXP) {
+          // Update the actor's XP
+          this.actor.update({
+            'system.xp': newXP
+          }).then(() => {
+            setTimeout(() => this.updateProgressBar(true), 50);
+            // Re-enable automatic updates after a short delay
+            setTimeout(() => {
+              this.isUpdatingXP = false;
+              window.xpHandlerUpdating = false;
+            }, 100);
+          });
+        } else {
+          // Re-enable immediately if no change
+          this.isUpdatingXP = false;
+          window.xpHandlerUpdating = false;
+        }
+      }
     });
   }
 
@@ -221,6 +316,9 @@ export class XPProgressHandler {
           icon: '<i class="fas fa-check"></i>',
           label: "OK",
           callback: async (html) => {
+            this.isUpdatingXP = true; // Prevent other updates from overwriting display
+            window.xpHandlerUpdating = true; // Prevent inline script interference
+            
             const awardedXP = parseInt(html.find('#xp-award-input').val()) || 0;
             let updateData = {};
             
@@ -232,6 +330,10 @@ export class XPProgressHandler {
               // Update current XP and level if changed
               if (newCurrentXP !== currentXP) {
                 updateData['system.xp'] = newCurrentXP;
+                // Immediately update the display to prevent flash
+                if (this.xpDisplay.length) {
+                  this.xpDisplay.val(newCurrentXP);
+                }
               }
               if (newLevel !== currentLevel) {
                 updateData['system.level'] = newLevel;
@@ -240,18 +342,24 @@ export class XPProgressHandler {
               if (Object.keys(updateData).length > 0) {
                 console.log('Updating actor with:', updateData);
                 await this.actor.update(updateData);
-                // Force progress bar update after level/XP change
-                setTimeout(() => this.updateProgressBar(), 100);
+                // Force progress bar update after level/XP change (skip XP display since we handle it)
+                setTimeout(() => this.updateProgressBar(updateData['system.xp'] !== undefined), 50);
               }
             }
             
             // Award XP if specified
             if (awardedXP > 0) {
-              this.awardXP(awardedXP);
+              await this.awardXP(awardedXP);
             } else if (Object.keys(updateData).length > 0) {
               // If we only changed level/XP without awarding, still refresh the progress bar
-              setTimeout(() => this.updateProgressBar(), 100);
+              setTimeout(() => this.updateProgressBar(updateData['system.xp'] !== undefined), 50);
             }
+            
+            // Re-enable automatic updates after a short delay
+            setTimeout(() => {
+              this.isUpdatingXP = false;
+              window.xpHandlerUpdating = false;
+            }, 150);
           }
         },
         cancel: {
@@ -352,22 +460,40 @@ export class XPProgressHandler {
    * Award XP to the character
    */
   async awardXP(baseXP) {
+    this.isUpdatingXP = true; // Prevent other updates from overwriting display
+    window.xpHandlerUpdating = true; // Prevent inline script interference
+    
     const xpMod = this.getXPModifier();
     const modifiedXP = Math.floor(baseXP * (1 + xpMod / 100));
     const currentXP = parseInt(this.actor.system.xp) || 0;
     const newXP = currentXP + modifiedXP;
 
+    console.log('Awarding XP:', { baseXP, modifiedXP, currentXP, newXP });
+
+    // Immediately update the display first to prevent flash
+    if (this.xpDisplay.length) {
+      this.xpDisplay.val(newXP);
+    }
+
     // Update the actor's XP
     await this.actor.update({ 'system.xp': newXP });
     
-    // Update the display
-    this.xpDisplay.text(newXP);
+    // Ensure display stays updated (redundant but safe)
+    if (this.xpDisplay.length) {
+      this.xpDisplay.val(newXP);
+    }
     
-    // Trigger progress bar update
-    this.updateProgressBar();
+    // Trigger progress bar update (skip XP display update since we handle it manually)
+    this.updateProgressBar(true);
     
     // Show notification
     ui.notifications.info(`Awarded ${baseXP} XP (${modifiedXP} after ${xpMod >= 0 ? '+' : ''}${xpMod}% modifier). New total: ${newXP}`);
+    
+    // Re-enable automatic updates after a short delay
+    setTimeout(() => {
+      this.isUpdatingXP = false;
+      window.xpHandlerUpdating = false;
+    }, 100);
   }
 
   /**
@@ -449,7 +575,7 @@ export class XPProgressHandler {
   /**
    * Update the progress bar based on current XP and next level requirements
    */
-  updateProgressBar() {
+  updateProgressBar(skipXPDisplayUpdate = false) {
     console.log('=== XP Progress Bar Update Started ===');
     const currentXP = parseInt(this.actor.system.xp) || 0;
     const currentLevel = parseInt(this.actor.system.level) || 1;
@@ -527,9 +653,9 @@ export class XPProgressHandler {
       this.percentageDisplay.text(Math.round(progressPercentage) + '%');
     }
 
-    // Update XP display if it exists
-    if (this.xpDisplay.length) {
-      this.xpDisplay.text(currentXP);
+    // Update XP display if it exists (use .val() for input fields)
+    if (this.xpDisplay.length && !skipXPDisplayUpdate && !this.isUpdatingXP) {
+      this.xpDisplay.val(currentXP);
     }
 
     // Update skills tab progress ring (if it exists)

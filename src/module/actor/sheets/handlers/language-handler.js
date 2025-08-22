@@ -22,7 +22,8 @@ export class LanguageHandler {
    */
   initialize() {
     this.renderTags();
-    this.tags.on('click', '.remove-lang', this.onRemoveLanguage.bind(this));
+    // Remove the click handler for remove buttons since we're using plain text now
+    // this.tags.on('click', '.remove-lang', this.onRemoveLanguage.bind(this));
     
     // Use event delegation on the entire form for the language dialog
     this.html.on('click', '.open-language-dialog', this.onOpenDialog.bind(this));
@@ -34,26 +35,20 @@ export class LanguageHandler {
   }
 
   /**
-   * Render language tags
+   * Render language text
    */
   renderTags() {
     this.tags.empty();
-    this.languages.forEach(lang => {
-      const canRemove = lang !== "Common";
-      const tagHtml = `
-        <span class="lang-tag">
-          ${lang}
-          ${canRemove ? `<button type="button" class="remove-lang" data-lang="${lang}" aria-label="Remove ${lang}">&times;</button>` : ""}
-        </span>
-      `;
-      this.tags.append(tagHtml);
-    });
+    // Join languages with commas for plain text display
+    const languageText = this.languages.join(", ");
+    this.tags.text(languageText);
     this.hidden.val(this.languages.join(", "));
   }
 
   /**
-   * Handle removing a language
+   * Handle removing a language (no longer used with plain text display)
    */
+  /*
   onRemoveLanguage(event) {
     event.stopPropagation(); // Prevent triggering the dialog
     const lang = $(event.currentTarget).data('lang');
@@ -61,6 +56,7 @@ export class LanguageHandler {
     this.languages.unshift("Common");
     this.renderTags();
   }
+  */
 
   /**
    * Handle opening the language selection dialog

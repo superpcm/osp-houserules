@@ -216,7 +216,10 @@
     }
 
     .languages-row.open-language-dialog:hover {
-      background-color: rgba(248, 248, 248, 0.3) !important;
+      background-color: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      color: inherit !important;
     }
 
     .languages-tags {
@@ -224,6 +227,17 @@
       border: none !important;
       box-shadow: none !important;
       pointer-events: auto;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .languages-tags:hover {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      color: inherit !important;
     }
 
     .languages-row.open-language-dialog:empty::before {
@@ -247,6 +261,28 @@
     .languages-tags .fa-plus,
     .open-language-dialog .fa-plus {
       display: none !important;
+    }
+
+    /* Languages field positioning and centering variables */
+    :root {
+      --languages-horizontal-offset: 0px;
+      --languages-vertical-offset: 0px;
+      --languages-font-size: 19px;
+      --languages-min-font-size: 10px;
+      --languages-line-height: 1;
+      --languages-letter-spacing: 0px;
+    }
+
+    .languages-tags {
+      transform: translate(var(--languages-horizontal-offset), var(--languages-vertical-offset));
+      font-size: var(--languages-font-size);
+      line-height: var(--languages-line-height);
+      letter-spacing: var(--languages-letter-spacing);
+    }
+
+    /* Ensure languages field starts with correct font size */
+    .languages-tags:not([style*="font-size"]) {
+      font-size: 19px !important;
     }
   </style>
   <script>
@@ -975,9 +1011,9 @@
   <!-- Languages field -->
   <div class="languages-group" id="languages-container"
        style="position: absolute; left: 319px; top: 183px; z-index: 100; border: 0.5px solid red; pointer-events: auto;">
-    <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; pointer-events: auto;">
-      <div class="languages-row open-language-dialog" style="padding: 0.5rem; width: 272px; height: 38px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: none !important; pointer-events: auto; z-index: 101;" title="Click to add languages">
-        <div class="languages-tags" style="display: flex; flex-wrap: wrap; gap: 4px; background: transparent !important; border: none !important; pointer-events: auto;"></div>
+    <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; pointer-events: auto;">
+      <div class="languages-row open-language-dialog" style="width: 272px; height: 33px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: none !important; pointer-events: auto; z-index: 101; display: flex; align-items: center; justify-content: center;" title="Click to add languages">
+        <div class="languages-tags" style="display: flex; background: transparent !important; border: none !important; pointer-events: auto; text-align: center; width: 100%; font-weight: bold; line-height: 1; white-space: nowrap; overflow: hidden; align-items: center; justify-content: center; height: 100%;"></div>
       </div>
       <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
     </div>

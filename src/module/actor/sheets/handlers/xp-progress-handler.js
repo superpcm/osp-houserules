@@ -29,6 +29,7 @@ export class XPProgressHandler {
     this.percentageDisplay = this.html.find('.xp-percentage');
     this.xpDisplay = this.html.find('.xp-display');
     this.nextLevelDisplay = this.html.find('.next-level-xp');
+    this.nextLevelFormDisplay = this.html.find('.next-level-display'); // Static header next level field
     this.xpAwardBtn = this.html.find('.xp-award-btn');
     this.levelDisplay = this.html.find('.char-level-display');
     this.skillsLevelProgressRing = this.html.find('.skills-level-progress-ring');
@@ -42,6 +43,7 @@ export class XPProgressHandler {
       progressBar: this.progressBar.length,
       levelXpProgress: this.levelXpProgress.length,
       nextLevelDisplay: this.nextLevelDisplay.length,
+      nextLevelFormDisplay: this.nextLevelFormDisplay.length,
       percentageDisplay: this.percentageDisplay.length,
       levelDisplay: this.levelDisplay.length,
       skillsLevelProgressRing: this.skillsLevelProgressRing.length,
@@ -72,6 +74,7 @@ export class XPProgressHandler {
     this.percentageDisplay = this.html.find('.xp-percentage');
     this.xpDisplay = this.html.find('.xp-display');
     this.nextLevelDisplay = this.html.find('.next-level-xp');
+    this.nextLevelFormDisplay = this.html.find('.next-level-display'); // Static header next level field
     this.xpAwardBtn = this.html.find('.xp-award-btn');
     this.levelDisplay = this.html.find('.char-level-display');
     this.skillsLevelProgressRing = this.html.find('.skills-level-progress-ring');
@@ -641,6 +644,11 @@ export class XPProgressHandler {
     // Update next level display
     if (this.nextLevelDisplay.length) {
       this.nextLevelDisplay.text(nextLevelXP);
+    }
+
+    // Update next level form display in static header
+    if (this.nextLevelFormDisplay.length) {
+      this.nextLevelFormDisplay.val(nextLevelXP);
     }
 
     // Update level display

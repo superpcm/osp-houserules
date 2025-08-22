@@ -38,6 +38,33 @@ export class LanguageHandler {
     const languageText = this.languages.join(", ");
     this.tags.text(languageText);
     this.hidden.val(this.languages.join(", "));
+    
+    // Auto-adjust font size to fit content
+    this.adjustFontSize();
+  }
+
+  /**
+   * Automatically adjust font size to fit content within container width
+   */
+  adjustFontSize() {
+    const container = this.tags;
+    const containerWidth = 272; // Fixed width from CSS
+    const maxFontSize = 19; // Default font size
+    const minFontSize = 10; // Minimum readable font size
+    
+    // Reset to maximum font size first
+    container.css('font-size', maxFontSize + 'px');
+    
+    // Give browser time to render before measuring
+    setTimeout(() => {
+      let fontSize = maxFontSize;
+      
+      // Check if text overflows and reduce font size accordingly
+      while (container[0].scrollWidth > containerWidth && fontSize > minFontSize) {
+        fontSize -= 0.5;
+        container.css('font-size', fontSize + 'px');
+      }
+    }, 10); // Small delay to ensure rendering is complete
   }
 
   /**

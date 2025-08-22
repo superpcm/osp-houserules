@@ -27,11 +27,6 @@ export class LanguageHandler {
     
     // Use event delegation on the entire form for the language dialog
     this.html.on('click', '.open-language-dialog', this.onOpenDialog.bind(this));
-    
-    // Also try direct binding if elements exist
-    if (this.openDialog.length > 0) {
-      this.openDialog.on('click', this.onOpenDialog.bind(this));
-    }
   }
 
   /**
@@ -64,17 +59,33 @@ export class LanguageHandler {
   async onOpenDialog(event) {
     const dialogContent = this.buildDialogContent();
     
-    new Dialog({
+    const dialog = new Dialog({
       title: "Add Language",
       content: dialogContent,
       buttons: {
         ok: {
-          label: "Add",
-          callback: this.onDialogSubmit.bind(this)
+          label: "OK",
+          callback: (html) => {
+            this.onDialogSubmit(html);
+            return true; // This allows the dialog to close
+          }
         },
         cancel: { label: "Cancel" }
       },
-      default: "ok"
+      default: "ok",
+      render: (html) => {
+        // Add event listener for custom checkbox
+        const customCheck = html.find('#customCheck');
+        const customInput = html.find('#customInput');
+        
+        customCheck.on('change', function() {
+          if (this.checked) {
+            customInput.prop('disabled', false).focus();
+          } else {
+            customInput.prop('disabled', true).val('');
+          }
+        });
+      }
     }).render(true);
   }
 
@@ -82,21 +93,35 @@ export class LanguageHandler {
    * Build dialog content HTML
    */
   buildDialogContent() {
+    // Split standard languages into two columns: 3 in first column, 3 in second
+    const firstColumn = this.standardLanguages.slice(0, 3);
+    const secondColumn = this.standardLanguages.slice(3, 6);
+    
     return `<form>
       <div style="margin-bottom:8px;">
         <label><b>Select Languages:</b></label><br/>
-        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
-          ${this.standardLanguages.map(lang =>
-            `<label style="display: flex; align-items: center; gap: 8px;">
-              <input type="checkbox" name="lang" value="${lang}" ${this.languages.includes(lang) ? "checked" : ""}/>
-              <span>${lang}</span>
-            </label>`
-          ).join("")}
+        <div style="display: flex; gap: 40px;">
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+            ${firstColumn.map(lang =>
+              `<label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" name="lang" value="${lang}" ${this.languages.includes(lang) ? "checked" : ""}/>
+                <span>${lang}</span>
+              </label>`
+            ).join("")}
+            <label style="display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" name="customCheck" id="customCheck"/>
+              <input type="text" name="custom" id="customInput" style="width: 140px;" placeholder="Enter custom language" disabled/>
+            </label>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+            ${secondColumn.map(lang =>
+              `<label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" name="lang" value="${lang}" ${this.languages.includes(lang) ? "checked" : ""}/>
+                <span>${lang}</span>
+              </label>`
+            ).join("")}
+          </div>
         </div>
-      </div>
-      <div style="text-align: center;">
-        <label><b>Custom Language:</b></label><br/>
-        <input type="text" name="custom" style="width: 80%;" placeholder="Enter custom language"/>
       </div>
     </form>`;
   }
@@ -116,9 +141,10 @@ export class LanguageHandler {
       }
     });
 
-    // Add custom language if provided
+    // Add custom language if checkbox is checked and text is provided
+    const customCheck = htmlDialog.find('input[name="customCheck"]').is(':checked');
     const custom = htmlDialog.find('input[name="custom"]').val().trim();
-    if (custom && !this.languages.includes(custom)) {
+    if (customCheck && custom && !this.languages.includes(custom)) {
       this.languages.push(custom);
     }
 

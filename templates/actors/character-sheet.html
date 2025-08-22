@@ -187,6 +187,7 @@
       font-size: 12px;
       font-weight: normal;
       color: #333;
+      pointer-events: auto;
     }
 
     .languages-tags .lang-tag button.remove-lang {
@@ -196,13 +197,16 @@
       cursor: pointer;
       width: auto;
       height: auto;
-      padding: 0;
+      padding: 0 2px;
       font-size: 14px;
       line-height: 1;
+      pointer-events: auto;
+      z-index: 102;
     }
 
     .languages-tags .lang-tag button.remove-lang:hover {
       color: #c00;
+      background: rgba(255, 0, 0, 0.1);
     }
 
     .languages-row.open-language-dialog {
@@ -219,6 +223,7 @@
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
+      pointer-events: auto;
     }
 
     .languages-row.open-language-dialog:empty::before {
@@ -226,6 +231,22 @@
       color: #999;
       font-style: italic;
       font-size: 12px;
+    }
+
+    /* Remove any + sign from languages field */
+    .languages-row::before,
+    .languages-row::after,
+    .languages-tags::before,
+    .languages-tags::after,
+    .open-language-dialog::before,
+    .open-language-dialog::after {
+      content: none !important;
+    }
+
+    .languages-row .fa-plus,
+    .languages-tags .fa-plus,
+    .open-language-dialog .fa-plus {
+      display: none !important;
     }
   </style>
   <script>
@@ -955,8 +976,8 @@
   <div class="languages-group" id="languages-container"
        style="position: absolute; left: 319px; top: 183px; z-index: 100; border: 0.5px solid red; pointer-events: auto;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; pointer-events: auto;">
-      <div class="languages-row open-language-dialog" style="padding: 0.5rem; width: 270px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: none !important; pointer-events: auto; z-index: 101;" title="Click to add languages">
-        <div class="languages-tags" style="display: flex; flex-wrap: wrap; gap: 4px; background: transparent !important; border: none !important; pointer-events: none;"></div>
+      <div class="languages-row open-language-dialog" style="padding: 0.5rem; width: 272px; height: 38px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: none !important; pointer-events: auto; z-index: 101;" title="Click to add languages">
+        <div class="languages-tags" style="display: flex; flex-wrap: wrap; gap: 4px; background: transparent !important; border: none !important; pointer-events: auto;"></div>
       </div>
       <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
     </div>

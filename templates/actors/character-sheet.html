@@ -128,6 +128,16 @@
       outline: none !important;
     }
     
+    /* Override any border styles on HandW field */
+    .char-handw, .handw-group {
+      border: none !important;
+      border-width: 0 !important;
+      border-style: none !important;
+      border-color: transparent !important;
+      outline: none !important;
+      box-sizing: border-box !important;
+    }
+    
     /* Remove shadows from Height and Weight field groups */
     .height-group .char-field-group, .weight-group .char-field-group {
       box-shadow: none !important;
@@ -986,13 +996,13 @@
 
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section" id="character-name-container"
-    style="position: absolute; left: 40px; top: 14px; z-index: 10;">
+    style="position: absolute; left: 40px; top: 14px; z-index: 9;">
 
       </div>
 
   <!-- Character Name - Absolute positioned -->
   <div class="character-name-group" id="character-name-container"
-       style="position: absolute; left: 33px; top: 16px; z-index: 10; pointer-events: none;">
+       style="position: absolute; left: 33px; top: 16px; z-index: 9; pointer-events: none;">
     <input type="hidden" name="system.namePosition.x" value="{{system.namePosition.x}}" />
     <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
     <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
@@ -1004,7 +1014,7 @@
   <!-- Character Class & Alignment - Centered under name as one element -->
   <!-- Character Class - Independent container for positioning -->
   <div class="class-group" id="class-container"
-       style="position: absolute; left: 319px; top: 16px; z-index: 10;">
+       style="position: absolute; left: 319px; top: 16px; z-index: 9;">
     <input type="hidden" name="system.classPosition.x" value="{{system.classPosition.x}}" />
     <input type="hidden" name="system.classPosition.y" value="{{system.classPosition.y}}" />
     <input type="hidden" name="system.classPosition.zIndex" value="{{system.classPosition.zIndex}}" />
@@ -1037,7 +1047,7 @@
 
   <!-- Character Alignment - Independent container for positioning -->
   <div class="alignment-group" id="alignment-container"
-       style="position: absolute; left: 319px; top: 125px; z-index: 10;">
+       style="position: absolute; left: 319px; top: 125px; z-index: 9;">
     <input type="hidden" name="system.alignmentPosition.x" value="{{system.alignmentPosition.x}}" />
     <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
     <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
@@ -1052,7 +1062,7 @@
 
   <!-- Character Race - Positioned next to existing fields -->
   <div class="race-group" id="race-container"
-       style="position: absolute; left: 179px; top: 74px; z-index: 10;">
+       style="position: absolute; left: 179px; top: 74px; z-index: 9;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-race" id="char-race" name="system.race" style="width: 132px; height: 35px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 3px 0 0 0; margin: 0; border: none; pointer-events: auto;">
         <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
@@ -1068,14 +1078,14 @@
 
   <!-- Character Age and Sex - Small fields -->
   <div class="age-group" id="age-container"
-       style="position: absolute; left: 179px; top: 129px; z-index: 10;">
+       style="position: absolute; left: 179px; top: 129px; z-index: 9;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 63px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 5px 0 2px 0; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;" />
     </div>
   </div>
 
   <div class="sex-group" id="sex-container"
-       style="position: absolute; left: 249px; top: 128px; z-index: 10;">
+       style="position: absolute; left: 249px; top: 128px; z-index: 9;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-sex" id="char-sex" name="system.sex" style="width: 63px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 6px 0 1px 0; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;">
         <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
@@ -1087,15 +1097,15 @@
 
   <!-- HandW field -->
   <div class="handw-group" id="handw-container"
-       style="position: absolute; left: 179px; top: 143px; z-index: 5;">
-    <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <input class="char-handw" id="char-handw" name="system.handw" type="text" value="{{system.handw}}" readonly style="width:134px; height: 34px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 2px; margin: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; line-height: 1;" />
+       style="position: absolute; left: 179px; top: 182px; z-index: 8;">
+    <div class="char-field-group" style="display: flex; flex-direction: column;">
+      <input class="char-handw" id="char-handw" name="system.handw" type="text" value="{{system.handw}}" readonly style="width:134px; height: 34px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; margin: 0; pointer-events: none; display: flex; line-height: 1; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; border: none !important; border-width: 0 !important; outline: none !important;" />
     </div>
   </div>
 
   <!-- Height field -->
   <div class="height-group" id="height-container"
-       style="position: absolute; left: 179px; top: 183px; z-index: 10;">
+       style="position: absolute; left: 179px; top: 183px; z-index: 9;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 65px; height: 35px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 3px 2px 0 2px; margin: 0; border: none; box-shadow: none !important; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
     </div>
@@ -1103,7 +1113,7 @@
 
   <!-- Weight field -->
   <div class="weight-group" id="weight-container"
-       style="position: absolute; left: 247px; top: 183px; z-index: 10;">
+       style="position: absolute; left: 247px; top: 183px; z-index: 9;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 65px; height: 35px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 3px 2px 0 2px; margin: 0; border: none; box-shadow: none !important; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
     </div>
@@ -1111,7 +1121,7 @@
 
   <!-- Background field -->
   <div class="background-group" id="background-container"
-       style="position: absolute; left: 460px; top: 129px; z-index: 10;">
+       style="position: absolute; left: 460px; top: 129px; z-index: 9;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-background" id="char-background" name="system.background" style="width: 133px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 2px; margin: 0; border: none; pointer-events: auto;">
  <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
@@ -1221,7 +1231,7 @@
 
   <!-- Languages field -->
   <div class="languages-group" id="languages-container"
-       style="position: absolute; left: 318px; top: 183px; z-index: 100; pointer-events: auto;">
+       style="position: absolute; left: 318px; top: 183px; z-index: 9; pointer-events: auto;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; pointer-events: auto;">
       <div class="languages-row open-language-dialog" style="width: 272px; height: 33px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; pointer-events: auto; padding: 2px; z-index: 101; display: flex; align-items: center; justify-content: center;" title="Click to add languages">
         <div class="languages-tags" style="display: flex; background: transparent !important; border: none !important; pointer-events: auto; text-align: center; width: 100%; line-height: 1; white-space: nowrap; overflow: hidden; align-items: center; justify-content: center; height: 100%;"></div>
@@ -1232,7 +1242,7 @@
 
   <!-- XP Mod % field -->
   <div class="xp-mod-group" id="xp-mod-container"
-       style="position: absolute; left: 530px; top: 20px; z-index: 10;">
+       style="position: absolute; left: 530px; top: 20px; z-index: 9;">
     <input type="text" class="xp-mod-display" id="xp-mod-display" readonly 
            style="width: 64px; height: 34px; text-align: center; font-size: 24px; 
                   background-color: transparent !important; border: none; 
@@ -1243,7 +1253,7 @@
 
   <!-- XP field -->
   <div class="xp-group" id="xp-container"
-       style="position: absolute; left: 319px; top: 74px; z-index: 10;">
+       style="position: absolute; left: 319px; top: 74px; z-index: 9;">
     <input type="number" class="xp-display" id="xp-display" value="{{system.xp}}"
            style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
                   background-color: transparent !important; border: none; 
@@ -1256,7 +1266,7 @@
 
   <!-- Next Level field -->
   <div class="next-level-group" id="next-level-container"
-       style="position: absolute; left: 460px; top: 74px; z-index: 10;">
+       style="position: absolute; left: 460px; top: 74px; z-index: 9;">
     <input type="text" class="next-level-display" id="next-level-display" readonly
            style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
                   background-color: transparent !important; border: none; 

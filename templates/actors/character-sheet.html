@@ -850,9 +850,9 @@
       if (portraitDisplay) {
         console.log('Setting up portrait event listeners...');
         
-        // Click on portrait opens Foundry file picker
-        portraitDisplay.addEventListener('click', async (event) => {
-          console.log('Portrait clicked!', event);
+        // Double-click on portrait opens Foundry file picker
+        portraitDisplay.addEventListener('dblclick', async (event) => {
+          console.log('Portrait double-clicked!', event);
           
           try {
             // Use Foundry's FilePicker
@@ -978,7 +978,7 @@
       background-repeat: no-repeat;
       overflow: hidden;
       pointer-events: auto;
-    " title="Click to select portrait"></div>
+    " title="Double-click to select portrait"></div>
   </div>
 
   <!-- Static Header Section - Absolute Positioning Layout -->

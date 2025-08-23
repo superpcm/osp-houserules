@@ -888,7 +888,7 @@
   </div>
 
   <!-- Static Header Section - Absolute Positioning Layout -->
-  <div class="static-header" style="height: 300px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none;">
+  <div class="static-header" style="height: 230px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none;">
 
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section" id="character-name-container"
@@ -958,7 +958,7 @@
 
   <!-- Character Race - Positioned next to existing fields -->
   <div class="race-group" id="race-container"
-       style="position: absolute; left: 179px; top: 74px; z-index: 10; border: 0.5px solid red;">
+       style="position: absolute; left: 179px; top: 74px; z-index: 10;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-race" id="char-race" name="system.race" style="width: 132px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 0 5px; margin: 0; border: none; pointer-events: auto;">
         <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
@@ -974,14 +974,14 @@
 
   <!-- Character Age and Sex - Small fields -->
   <div class="age-group" id="age-container"
-       style="position: absolute; left: 179px; top: 129px; z-index: 10; border: 0.5px solid red;">
+       style="position: absolute; left: 179px; top: 129px; z-index: 10;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 63px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 4px; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;" />
     </div>
   </div>
 
   <div class="sex-group" id="sex-container"
-       style="position: absolute; left: 249px; top: 128px; z-index: 10; border: 0.5px solid red;">
+       style="position: absolute; left: 249px; top: 128px; z-index: 10;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-sex" id="char-sex" name="system.sex" style="width: 63px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 4px; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;">
         <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
@@ -993,7 +993,7 @@
 
   <!-- Height field -->
   <div class="height-group" id="height-container"
-       style="position: absolute; left: 179px; top: 183px; z-index: 10; border: 0.5px solid red;">
+       style="position: absolute; left: 179px; top: 183px; z-index: 10;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 65px; height: 37px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 2px; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
     </div>
@@ -1001,7 +1001,7 @@
 
   <!-- Weight field -->
   <div class="weight-group" id="weight-container"
-       style="position: absolute; left: 247px; top: 183px; z-index: 10; border: 0.5px solid red;">
+       style="position: absolute; left: 247px; top: 183px; z-index: 10;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 65px; height: 37px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 2px; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
     </div>
@@ -1009,9 +1009,9 @@
 
   <!-- Background field -->
   <div class="background-group" id="background-container"
-       style="position: absolute; left: 460px; top: 129px; z-index: 10; border: 0.5px solid red;">
+       style="position: absolute; left: 460px; top: 129px; z-index: 10;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
-      <select class="char-background" id="char-background" name="system.background" style="width: 132px; height: 38px; text-align: center; font-size: 19px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 2px; margin: 0; border: none; pointer-events: auto;">
+      <select class="char-background" id="char-background" name="system.background" style="width: 132px; height: 38px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 2px; margin: 0; border: none; pointer-events: auto;">
  <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
                   <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
                   <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
@@ -1119,7 +1119,7 @@
 
   <!-- Languages field -->
   <div class="languages-group" id="languages-container"
-       style="position: absolute; left: 319px; top: 183px; z-index: 100; border: 0.5px solid red; pointer-events: auto;">
+       style="position: absolute; left: 319px; top: 183px; z-index: 100; pointer-events: auto;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; pointer-events: auto;">
       <div class="languages-row open-language-dialog" style="width: 272px; height: 33px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: none !important; pointer-events: auto; z-index: 101; display: flex; align-items: center; justify-content: center;" title="Click to add languages">
         <div class="languages-tags" style="display: flex; background: transparent !important; border: none !important; pointer-events: auto; text-align: center; width: 100%; line-height: 1; white-space: nowrap; overflow: hidden; align-items: center; justify-content: center; height: 100%;"></div>
@@ -1133,7 +1133,7 @@
        style="position: absolute; left: 530px; top: 20px; z-index: 10;">
     <input type="text" class="xp-mod-display" id="xp-mod-display" readonly 
            style="width: 64px; height: 34px; text-align: center; font-size: 24px; 
-                  background-color: transparent !important; border: 0.5px solid red; 
+                  background-color: transparent !important; border: none; 
                   box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
                   padding: 4px 0 0 0; margin: 0; line-height: 1; color: inherit; pointer-events: none;
                   display: flex; align-items: center; justify-content: center;" />
@@ -1144,9 +1144,9 @@
        style="position: absolute; left: 319px; top: 74px; z-index: 10;">
     <input type="number" class="xp-display" id="xp-display" value="{{system.xp}}"
            style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
-                  background-color: transparent !important; border: 0.5px solid red; 
+                  background-color: transparent !important; border: none; 
                   box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
-                  padding: 0; margin: 0; line-height: 1; color: inherit; cursor: pointer; pointer-events: auto;
+                  padding: 5px 0 0 0; margin: 0; line-height: 1; color: inherit; cursor: pointer; pointer-events: auto;
                   display: flex; align-items: center; justify-content: center;" 
            title="Click to award XP (Double-click for admin)" 
            onmouseover="this.style.cursor='pointer'" 
@@ -1158,9 +1158,9 @@
        style="position: absolute; left: 460px; top: 74px; z-index: 10;">
     <input type="text" class="next-level-display" id="next-level-display" readonly
            style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
-                  background-color: transparent !important; border: 0.5px solid red; 
+                  background-color: transparent !important; border: none; 
                   box-shadow: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
-                  padding: 0; margin: 0; line-height: 1; color: inherit; cursor: default; pointer-events: none;
+                  padding: 5px 0 0 0; margin: 0; line-height: 1; color: inherit; cursor: default; pointer-events: none;
                   display: flex; align-items: center; justify-content: center;" />
   </div>
       

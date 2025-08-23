@@ -916,7 +916,9 @@
 
   <!-- Character Level - Positioned behind everything -->
   <div class="level-progress-bar-container" id="level-container"
-       style="position: absolute; width: 64px; height: 34px; left: 460px; top: 20px; z-index: 1;">
+       style="position: absolute; width: 64px; height: 34px; left: 460px; top: 20px; z-index: 8;">
+    <!-- Shadow overlay for Level field -->
+    <div style="position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: 9; pointer-events: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); border-radius: 6px;"></div>
   <!-- Hidden inputs for level position data -->
   <input type="hidden" name="system.levelPosition.x" value="{{system.levelPosition.x}}" />
   <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
@@ -929,9 +931,9 @@
           left: 0; 
           width: 64px; 
           height: 34px; 
-          border: 0.5px solid #000; 
-          box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);
+          box-shadow: none !important;
           overflow: hidden;
+          z-index: 8;
         ">
           <!-- Progress Fill -->
           <div class="level-progress-bar" style="
@@ -980,7 +982,6 @@
       left: 0;
       width: 145px;
       height: 145px;
-      border: 0.5px solid #000;
       cursor: pointer;
       background-image: url('{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}');
       background-size: cover;
@@ -992,7 +993,7 @@
   </div>
 
   <!-- Static Header Section - Absolute Positioning Layout -->
-  <div class="static-header" style="height: 230px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none;">
+  <div class="static-header" style="height: 230px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/static-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none;">
 
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section" id="character-name-container"
@@ -1085,7 +1086,7 @@
   </div>
 
   <div class="sex-group" id="sex-container"
-       style="position: absolute; left: 249px; top: 128px; z-index: 9;">
+       style="position: absolute; left: 249px; top: 129px; z-index: 9;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-sex" id="char-sex" name="system.sex" style="width: 63px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 6px 0 1px 0; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;">
         <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>

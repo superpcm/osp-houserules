@@ -264,45 +264,56 @@ export class XPProgressHandler {
     
     // Create dialog content
     const content = `
-      <div style="padding: 10px; display: flex; gap: 20px;">
-        <div style="flex: 1;">
-          <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-            <label for="current-xp-display"><strong>Current XP:</strong></label>
-            ${isGM ? `<input type="number" id="current-xp-input" value="${currentXP}" min="0" max="999999" style="width: 80px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center;" />` : `<span id="current-xp-display">${currentXP}</span>`}
-          </div>
-          ${isGM ? `
-          <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-            <label for="level-input"><strong>Level:</strong></label>
-            <select id="level-input" style="width: 60px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none;">
-              <option value="1" ${currentLevel === 1 ? 'selected' : ''}>1</option>
-              <option value="2" ${currentLevel === 2 ? 'selected' : ''}>2</option>
-              <option value="3" ${currentLevel === 3 ? 'selected' : ''}>3</option>
-              <option value="4" ${currentLevel === 4 ? 'selected' : ''}>4</option>
-              <option value="5" ${currentLevel === 5 ? 'selected' : ''}>5</option>
-              <option value="6" ${currentLevel === 6 ? 'selected' : ''}>6</option>
-              <option value="7" ${currentLevel === 7 ? 'selected' : ''}>7</option>
-              <option value="8" ${currentLevel === 8 ? 'selected' : ''}>8</option>
-              <option value="9" ${currentLevel === 9 ? 'selected' : ''}>9</option>
-              <option value="10" ${currentLevel === 10 ? 'selected' : ''}>10</option>
-              <option value="11" ${currentLevel === 11 ? 'selected' : ''}>11</option>
-              <option value="12" ${currentLevel === 12 ? 'selected' : ''}>12</option>
-              <option value="13" ${currentLevel === 13 ? 'selected' : ''}>13</option>
-              <option value="14" ${currentLevel === 14 ? 'selected' : ''}>14</option>
-            </select>
-          </div>
-          ` : ''}
-          <div style="margin-bottom: 10px;">
-            <strong>Next Level XP:</strong> <span id="next-level-xp-display">${nextLevelXP}</span>
-          </div>
-          <div style="margin-bottom: 10px;">
-            <strong>XP Modifier:</strong> ${xpMod >= 0 ? '+' : ''}${xpMod}%
-          </div>
-          <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+      <div style="padding: 10px;">
+        <div style="margin-bottom: 20px; text-align: center;">
+          <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center;">
             <label for="xp-award-input"><strong>XP to Award:</strong></label>
             <input type="number" id="xp-award-input" value="" min="0" max="9999" style="width: 60px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center;" />
           </div>
         </div>
-        <div id="xp-preview" style="flex: 1; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none;">
+        <div style="display: flex; gap: 20px;">
+          <div style="flex: 1;">
+            <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+              <label for="current-xp-display"><strong>Current XP:</strong></label>
+              ${isGM ? `<input type="number" id="current-xp-input" value="${currentXP}" min="0" max="999999" style="width: 80px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center;" />` : `<span id="current-xp-display" style="border: none; background: none; color: inherit; padding: 0;">${currentXP}</span>`}
+            </div>
+            ${isGM ? `
+            <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+              <label for="level-input"><strong>Level:</strong></label>
+              <select id="level-input" style="width: 60px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none;">
+                <option value="1" ${currentLevel === 1 ? 'selected' : ''}>1</option>
+                <option value="2" ${currentLevel === 2 ? 'selected' : ''}>2</option>
+                <option value="3" ${currentLevel === 3 ? 'selected' : ''}>3</option>
+                <option value="4" ${currentLevel === 4 ? 'selected' : ''}>4</option>
+                <option value="5" ${currentLevel === 5 ? 'selected' : ''}>5</option>
+                <option value="6" ${currentLevel === 6 ? 'selected' : ''}>6</option>
+                <option value="7" ${currentLevel === 7 ? 'selected' : ''}>7</option>
+                <option value="8" ${currentLevel === 8 ? 'selected' : ''}>8</option>
+                <option value="9" ${currentLevel === 9 ? 'selected' : ''}>9</option>
+                <option value="10" ${currentLevel === 10 ? 'selected' : ''}>10</option>
+                <option value="11" ${currentLevel === 11 ? 'selected' : ''}>11</option>
+                <option value="12" ${currentLevel === 12 ? 'selected' : ''}>12</option>
+                <option value="13" ${currentLevel === 13 ? 'selected' : ''}>13</option>
+                <option value="14" ${currentLevel === 14 ? 'selected' : ''}>14</option>
+              </select>
+            </div>
+            ` : `
+            <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+              <label><strong>Level:</strong></label>
+              <span style="border: none; background: none; color: inherit; padding: 0;">${currentLevel}</span>
+            </div>
+            `}
+          </div>
+          <div style="flex: 1;">
+            <div style="margin-bottom: 10px;">
+              <strong>Next Level XP:</strong> <span id="next-level-xp-display" style="border: none; background: none; color: inherit; padding: 0;">${nextLevelXP}</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+              <strong>XP Modifier:</strong> <span style="border: none; background: none; color: inherit; padding: 0;">${xpMod >= 0 ? '+' : ''}${xpMod}%</span>
+            </div>
+          </div>
+        </div>
+        <div id="xp-preview" style="margin-top: 15px; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none;">
           <div><strong>Base XP:</strong> <span id="base-xp">0</span></div>
           <div><strong>Modified XP:</strong> <span id="modified-xp">0</span></div>
           <div><strong>New Total:</strong> <span id="new-total">${currentXP}</span></div>
@@ -374,15 +385,13 @@ export class XPProgressHandler {
       render: (html) => {
         const self = this; // Capture the XPProgressHandler instance
         
-        // Apply character sheet background styling to dialog
+        // Apply minimal styling to dialog
         const dialogWindow = html.closest('.app.window-app');
         if (dialogWindow.length) {
+          // Set white background for the dialog
           dialogWindow.css({
-            'background': 'transparent',
-            'background-image': 'url("systems/osp-houserules/assets/backgrounds/character-sheet-background.jpg")',
-            'background-repeat': 'no-repeat',
-            'background-size': 'cover',
-            'background-position': 'center'
+            'background': 'white',
+            'background-color': 'white'
           });
           
           // Style the window header to be black
@@ -394,12 +403,12 @@ export class XPProgressHandler {
             });
           }
           
-          // Also style the window content
+          // Ensure window content has white background
           const windowContent = dialogWindow.find('.window-content');
           if (windowContent.length) {
             windowContent.css({
-              'background': 'transparent',
-              'background-color': 'transparent'
+              'background': 'white',
+              'background-color': 'white'
             });
           }
         }

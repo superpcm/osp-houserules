@@ -49,7 +49,7 @@ export class LanguageHandler {
   adjustFontSize() {
     const container = this.tags;
     const containerWidth = 272; // Fixed width from CSS
-    const maxFontSize = 19; // Default font size
+    const maxFontSize = 24; // Start at 24px as specified
     const minFontSize = 10; // Minimum readable font size
     
     // Reset to maximum font size first
@@ -63,6 +63,18 @@ export class LanguageHandler {
       while (container[0].scrollWidth > containerWidth && fontSize > minFontSize) {
         fontSize -= 0.5;
         container.css('font-size', fontSize + 'px');
+      }
+      
+      // If text is short enough, try to scale up (but not above maxFontSize)
+      while (container[0].scrollWidth < containerWidth && fontSize < maxFontSize) {
+        fontSize += 0.5;
+        container.css('font-size', fontSize + 'px');
+        // Check if this increase caused overflow
+        if (container[0].scrollWidth > containerWidth) {
+          fontSize -= 0.5;
+          container.css('font-size', fontSize + 'px');
+          break;
+        }
       }
     }, 10); // Small delay to ensure rendering is complete
   }

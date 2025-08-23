@@ -3,6 +3,7 @@ import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
 import { XPProgressHandler } from './handlers/xp-progress-handler.js';
+import { BackgroundHandler } from './handlers/background-handler.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -244,7 +245,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       { name: 'language', Handler: LanguageHandler },
       { name: 'item', Handler: ItemHandler },
       { name: 'ui', Handler: UIHandler },
-      { name: 'xpProgress', Handler: XPProgressHandler }
+      { name: 'xpProgress', Handler: XPProgressHandler },
+      { name: 'background', Handler: BackgroundHandler }
     ];
 
     // Initialize handlers

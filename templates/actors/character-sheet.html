@@ -45,6 +45,31 @@
       overflow: visible !important; /* Allow tabs to show beyond content area */
     }
     
+    /* Black title bar for character sheet window */
+    .application.window-app.sheet.actor.character.osp .window-header,
+    .osp .window-header {
+      background: black !important;
+      background-color: black !important;
+      border-bottom: 1px solid #333 !important;
+    }
+    
+    /* Ensure title text is visible on black background */
+    .application.window-app.sheet.actor.character.osp .window-header .window-title,
+    .osp .window-header .window-title {
+      color: white !important;
+    }
+    
+    /* Style the window controls (close, minimize, etc.) for black background */
+    .application.window-app.sheet.actor.character.osp .window-header .header-button,
+    .osp .window-header .header-button {
+      color: white !important;
+    }
+    
+    .application.window-app.sheet.actor.character.osp .window-header .header-button:hover,
+    .osp .window-header .header-button:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+    }
+    
 
     /* XP progress bar should be visible with different color */
     form.osp.sheet.actor.character .xp-progress-bar,

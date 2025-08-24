@@ -1100,7 +1100,7 @@
 
   <!-- Character Portrait - Positioned behind everything -->
   <div class="portrait-container" id="portrait-container"
-       style="position: absolute; width: 145px; height: 145px; left: 33px; top: 74px; z-index: 1;">
+       style="position: absolute; width: 138px; height: 141px; left: 34px; top: 75px; z-index: 1;">
     <!-- Hidden input for portrait path data -->
     <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
     
@@ -1109,13 +1109,14 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 145px;
-      height: 145px;
+      width: 138px;
+      height: 141px;
       cursor: pointer;
       background-image: url('{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      border-radius: 3px;
       overflow: hidden;
       pointer-events: auto;
     " title="Double-click to select portrait"></div>

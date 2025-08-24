@@ -390,6 +390,11 @@
       xpModField.value = formattedMod;
     }
     
+    // Function to format numbers with commas
+    function formatNumberWithCommas(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
     // Function to update XP display
     function updateXPDisplay() {
       const xpField = document.getElementById('xp-display');
@@ -399,14 +404,123 @@
       // If so, don't interfere with the display
       if (window.xpHandlerUpdating) return;
       
-      // Get current XP from the actor data
-      const currentXP = parseInt(document.querySelector('input[name="system.xp"]')?.value) || 0;
-      
-      // Only update if the field doesn't already have this value and the field isn't focused
-      const currentFieldValue = parseInt(xpField.value) || 0;
-      if (currentFieldValue !== currentXP && document.activeElement !== xpField) {
-        xpField.value = currentXP;
+      // Only format if not currently focused (to avoid interfering with user input)
+      if (document.activeElement !== xpField) {
+        const currentXP = parseInt(xpField.value.replace(/,/g, '')) || 0;
+        xpField.value = formatNumberWithCommas(currentXP);
       }
+    }
+    
+    // Function to handle XP field formatting
+    function setupXPFieldFormatting() {
+      const xpField = document.getElementById('xp-display');
+      if (!xpField) return;
+      
+      // Input validation - only allow numbers and commas
+      xpField.addEventListener('input', function(e) {
+        // Remove any non-digit characters except commas
+        let value = this.value.replace(/[^\d,]/g, '');
+        
+        // Remove commas, parse as number, then reformat with commas
+        const numericValue = parseInt(value.replace(/,/g, '')) || 0;
+        
+        // Only update if the field is focused (user is typing)
+        if (document.activeElement === this) {
+          // Just show the raw number while typing
+          this.value = numericValue.toString();
+        }
+      });
+      
+      // Format on blur (when user leaves the field)
+      xpField.addEventListener('blur', function() {
+        const value = parseInt(this.value.replace(/,/g, '')) || 0;
+        this.value = formatNumberWithCommas(value);
+      });
+      
+      // Remove commas on focus (for easier editing)
+      xpField.addEventListener('focus', function() {
+        const value = parseInt(this.value.replace(/,/g, '')) || 0;
+        this.value = value.toString();
+      });
+    }
+
+    // Function to update Next Level display
+    function updateNextLevelDisplay() {
+      const nextLevelField = document.getElementById('next-level-display');
+      if (!nextLevelField) return;
+      
+      // Get current level and class to calculate next level XP
+      const level = parseInt(document.querySelector('input[name="system.level"]')?.value) || 1;
+      const characterClass = document.querySelector('select[name="system.class"]')?.value || 'fighter';
+      
+      // Calculate next level XP using the same tables as the actor
+      const nextLevelXP = calculateNextLevelXP(level, characterClass);
+      nextLevelField.value = formatNumberWithCommas(nextLevelXP);
+    }
+    
+    // Function to override XP Progress Handler formatting
+    function formatExistingFields() {
+      // Format XP display if it exists
+      const xpField = document.getElementById('xp-display');
+      if (xpField && xpField.value) {
+        const currentXP = parseInt(xpField.value.replace(/,/g, '')) || 0;
+        if (document.activeElement !== xpField) {
+          xpField.value = formatNumberWithCommas(currentXP);
+        }
+      }
+      
+      // Format Next Level display if it exists
+      const nextLevelField = document.getElementById('next-level-display');
+      if (nextLevelField && nextLevelField.value) {
+        const nextLevelXP = parseInt(nextLevelField.value.replace(/,/g, '')) || 0;
+        nextLevelField.value = formatNumberWithCommas(nextLevelXP);
+      }
+    }
+
+    // Function to calculate next level XP (matches actor.js logic)
+    function calculateNextLevelXP(level, characterClass) {
+      // OSE XP progression tables
+      const xpTables = {
+        'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
+        'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
+        'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
+        'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
+      };
+
+      // Map additional classes to their XP patterns
+      const classXPMapping = {
+        'fighter': 'fighter',
+        'cleric': 'cleric', 
+        'magic-user': 'magic-user',
+        'thief': 'thief',
+        'assassin': 'thief',
+        'barbarian': 'fighter',
+        'bard': 'thief',
+        'beast master': 'fighter',
+        'druid': 'cleric',
+        'knight': 'fighter',
+        'paladin': 'cleric',
+        'ranger': 'fighter',
+        'warden': 'fighter',
+        'illusionist': 'magic-user',
+        'mage': 'magic-user',
+        'dwarf': 'fighter',
+        'elf': 'magic-user',
+        'gnome': 'cleric',
+        'half-elf': 'fighter',
+        'half-orc': 'fighter',
+        'hobbit': 'thief'
+      };
+
+      // Get the appropriate XP table for this class
+      const mappedClass = classXPMapping[characterClass.toLowerCase()] || 'fighter';
+      const xpTable = xpTables[mappedClass];
+      
+      // Calculate next level XP (if max level, show current level requirement)
+      const nextLevel = Math.min(level + 1, 15); // Max level 15
+      const nextLevelIndex = nextLevel - 1; // Convert to array index
+      
+      return xpTable[nextLevelIndex] || xpTable[14]; // Use max level XP if beyond table
     }
     
     // XP Modifier calculation function (matches the system logic)
@@ -468,15 +582,30 @@
       // Update XP Modifier display
       updateXPModifier();
       
-      // Update XP display
+      // Setup XP field formatting
+      setupXPFieldFormatting();
+      
+      // Update XP display with comma formatting
       updateXPDisplay();
       
+      // Update Next Level display
+      updateNextLevelDisplay();
+      
+      // Set up periodic formatting to override XP progress handler
+      setInterval(formatExistingFields, 500); // Run every 500ms to catch updates from XP progress handler
+      
       // Add event listeners to update XP modifier when class or attributes change
-      const classField = document.querySelector('.char-class');
+      const classField = document.querySelector('select[name="system.class"]');
+      const levelField = document.querySelector('input[name="system.level"]');
       const attributeFields = document.querySelectorAll('.attr-str, .attr-dex, .attr-con, .attr-int, .attr-wis, .attr-cha');
       
       if (classField) {
         classField.addEventListener('change', updateXPModifier);
+        classField.addEventListener('change', updateNextLevelDisplay);
+      }
+      
+      if (levelField) {
+        levelField.addEventListener('change', updateNextLevelDisplay);
       }
       
       attributeFields.forEach(field => {
@@ -484,7 +613,7 @@
       });
       
       // Add event listener to update XP display when XP changes
-      const xpInput = document.querySelector('input[name="system.experience.current"]');
+      const xpInput = document.querySelector('#xp-display');
       if (xpInput) {
         xpInput.addEventListener('change', updateXPDisplay);
         xpInput.addEventListener('input', updateXPDisplay);
@@ -1255,7 +1384,7 @@
   <!-- XP field -->
   <div class="xp-group" id="xp-container"
        style="position: absolute; left: 319px; top: 74px; z-index: 9;">
-    <input type="number" class="xp-display" id="xp-display" value="{{system.xp}}"
+    <input type="text" class="xp-display" id="xp-display" name="system.xp" value="{{system.xp}}"
            style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
                   background-color: transparent !important; border: none; 
                   box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 

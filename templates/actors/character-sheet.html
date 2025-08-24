@@ -1100,7 +1100,7 @@
 
   <!-- Character Portrait - Positioned behind everything -->
   <div class="portrait-container" id="portrait-container"
-       style="position: absolute; width: 138px; height: 141px; left: 34px; top: 75px; z-index: 1;">
+       style="position: absolute; width: 138px; height: 141px; left: 34px; top: 75px; z-index: 1; overflow: hidden;">
     <!-- Hidden input for portrait path data -->
     <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
     
@@ -1109,8 +1109,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 138px;
-      height: 141px;
+  width: 100%;
+  height: 100%;
       cursor: pointer;
       background-image: url('{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}');
       background-size: cover;

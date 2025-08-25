@@ -917,7 +917,7 @@
       }
       
       // Ability Score Tooltips System
-      const TOOLTIP_DELAY = 800; // Configurable delay in milliseconds
+      const TOOLTIP_DELAY = 200; // Reduced delay for testing - was 800ms
       
       const abilityScoreData = {
         "Strength": [
@@ -1104,53 +1104,75 @@
         }
       });
       
-      // Setup dedicated tooltip for XP field
-      const xpElement = document.querySelector('#xp-display');
-      if (xpElement) {
-        // Create dedicated XP tooltip to avoid conflicts
-        let xpTooltip = document.getElementById('xp-tooltip');
-        if (!xpTooltip) {
-          xpTooltip = document.createElement('div');
-          xpTooltip.id = 'xp-tooltip';
-          xpTooltip.style.cssText = `
-            position: absolute;
-            background: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            line-height: 1.4;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          `;
-          document.body.appendChild(xpTooltip);
+      // Setup dedicated tooltip for XP field with improved event handling
+      setTimeout(() => {
+        const xpElement = document.querySelector('#xp-display');
+        if (xpElement) {
+          console.log('Setting up XP tooltip for element:', xpElement);
+          
+          // Create dedicated XP tooltip to avoid conflicts
+          let xpTooltip = document.getElementById('xp-tooltip');
+          if (!xpTooltip) {
+            xpTooltip = document.createElement('div');
+            xpTooltip.id = 'xp-tooltip';
+            xpTooltip.style.cssText = `
+              position: absolute;
+              background: #333;
+              color: white;
+              padding: 8px 12px;
+              border-radius: 4px;
+              font-size: 12px;
+              line-height: 1.4;
+              z-index: 10000;
+              pointer-events: none;
+              opacity: 0;
+              transition: opacity 0.2s;
+              white-space: nowrap;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            `;
+            document.body.appendChild(xpTooltip);
+          }
+          let xpTooltipTimeout;
+          
+          // Remove any existing event listeners and add new ones
+          xpElement.removeEventListener('mouseenter', xpElement._tooltipMouseEnter);
+          xpElement.removeEventListener('mouseleave', xpElement._tooltipMouseLeave);
+          xpElement.removeEventListener('mouseover', xpElement._tooltipMouseOver);
+          xpElement.removeEventListener('mouseout', xpElement._tooltipMouseOut);
+          
+          xpElement._tooltipMouseEnter = (e) => {
+            console.log('XP mouseenter triggered');
+            clearTimeout(xpTooltipTimeout);
+            xpTooltipTimeout = setTimeout(() => {
+              xpTooltip.innerHTML = 'Double-click to award XP • Click to edit';
+              
+              // Position tooltip above the element
+              const rect = xpElement.getBoundingClientRect();
+              const tooltipRect = xpTooltip.getBoundingClientRect();
+              
+              xpTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
+              xpTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
+              xpTooltip.style.opacity = '1';
+              console.log('XP tooltip shown');
+            }, TOOLTIP_DELAY);
+          };
+          
+          xpElement._tooltipMouseLeave = () => {
+            console.log('XP mouseleave triggered');
+            clearTimeout(xpTooltipTimeout);
+            xpTooltip.style.opacity = '0';
+          };
+          
+          // Try both mouseenter/mouseleave and mouseover/mouseout
+          xpElement._tooltipMouseOver = xpElement._tooltipMouseEnter;
+          xpElement._tooltipMouseOut = xpElement._tooltipMouseLeave;
+          
+          xpElement.addEventListener('mouseenter', xpElement._tooltipMouseEnter);
+          xpElement.addEventListener('mouseleave', xpElement._tooltipMouseLeave);
+          xpElement.addEventListener('mouseover', xpElement._tooltipMouseOver);
+          xpElement.addEventListener('mouseout', xpElement._tooltipMouseOut);
         }
-        let xpTooltipTimeout;
-        
-        xpElement.addEventListener('mouseenter', (e) => {
-          clearTimeout(xpTooltipTimeout);
-          xpTooltipTimeout = setTimeout(() => {
-            xpTooltip.innerHTML = 'Double-click to award XP • Click to edit';
-            
-            // Position tooltip above the element
-            const rect = xpElement.getBoundingClientRect();
-            const tooltipRect = xpTooltip.getBoundingClientRect();
-            
-            xpTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
-            xpTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-            xpTooltip.style.opacity = '1';
-          }, TOOLTIP_DELAY);
-        });
-        
-        xpElement.addEventListener('mouseleave', () => {
-          clearTimeout(xpTooltipTimeout);
-          xpTooltip.style.opacity = '0';
-        });
-      }
+      }, 100);
 
       // Saving Throw Tooltips System
       function initializeSavingThrowTooltips() {
@@ -1302,55 +1324,75 @@
 
       console.log('Starting portrait setup...');
       
-      // Portrait handling
-      const portraitDisplay = document.querySelector('.portrait-display');
-      
-      console.log('Portrait elements found:', { portraitDisplay });
+      // Portrait handling with delayed tooltip setup
+      setTimeout(() => {
+        const portraitDisplay = document.querySelector('.portrait-display');
+        
+        console.log('Portrait elements found:', { portraitDisplay });
 
-      if (portraitDisplay) {
-        console.log('Setting up portrait event listeners...');
+        if (portraitDisplay) {
+          console.log('Setting up portrait event listeners...');
 
-        // Create dedicated portrait tooltip to avoid conflicts with other tooltips
-        let portraitTooltip = document.getElementById('portrait-tooltip');
-        if (!portraitTooltip) {
-          portraitTooltip = document.createElement('div');
-          portraitTooltip.id = 'portrait-tooltip';
-          portraitTooltip.style.cssText = `
-            position: absolute;
-            background: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            line-height: 1.4;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          `;
-          document.body.appendChild(portraitTooltip);
-        }
-        let portraitTooltipTimeout;
+          // Create dedicated portrait tooltip to avoid conflicts with other tooltips
+          let portraitTooltip = document.getElementById('portrait-tooltip');
+          if (!portraitTooltip) {
+            portraitTooltip = document.createElement('div');
+            portraitTooltip.id = 'portrait-tooltip';
+            portraitTooltip.style.cssText = `
+              position: absolute;
+              background: #333;
+              color: white;
+              padding: 8px 12px;
+              border-radius: 4px;
+              font-size: 12px;
+              line-height: 1.4;
+              z-index: 10000;
+              pointer-events: none;
+              opacity: 0;
+              transition: opacity 0.2s;
+              white-space: nowrap;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            `;
+            document.body.appendChild(portraitTooltip);
+          }
+          let portraitTooltipTimeout;
 
-        // Show portrait tooltip on hover
-        portraitDisplay.addEventListener('mouseenter', () => {
-          clearTimeout(portraitTooltipTimeout);
-          portraitTooltipTimeout = setTimeout(() => {
-            const tipText = 'Double-click to select portrait • Right-click to adjust position';
-            portraitTooltip.innerHTML = tipText;
-            portraitTooltip.style.opacity = '1';
-            const rect = portraitDisplay.getBoundingClientRect();
-            const tooltipRect = portraitTooltip.getBoundingClientRect();
-            portraitTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
-            portraitTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-          }, TOOLTIP_DELAY);
-        });
-        portraitDisplay.addEventListener('mouseleave', () => {
-          clearTimeout(portraitTooltipTimeout);
-          portraitTooltip.style.opacity = '0';
-        });
+          // Remove any existing event listeners and add new ones  
+          portraitDisplay.removeEventListener('mouseenter', portraitDisplay._tooltipMouseEnter);
+          portraitDisplay.removeEventListener('mouseleave', portraitDisplay._tooltipMouseLeave);
+          portraitDisplay.removeEventListener('mouseover', portraitDisplay._tooltipMouseOver);
+          portraitDisplay.removeEventListener('mouseout', portraitDisplay._tooltipMouseOut);
+
+          // Show portrait tooltip on hover
+          portraitDisplay._tooltipMouseEnter = () => {
+            console.log('Portrait mouseenter triggered');
+            clearTimeout(portraitTooltipTimeout);
+            portraitTooltipTimeout = setTimeout(() => {
+              const tipText = 'Double-click to select portrait • Right-click to adjust position';
+              portraitTooltip.innerHTML = tipText;
+              portraitTooltip.style.opacity = '1';
+              const rect = portraitDisplay.getBoundingClientRect();
+              const tooltipRect = portraitTooltip.getBoundingClientRect();
+              portraitTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
+              portraitTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
+              console.log('Portrait tooltip shown');
+            }, TOOLTIP_DELAY);
+          };
+          
+          portraitDisplay._tooltipMouseLeave = () => {
+            console.log('Portrait mouseleave triggered');
+            clearTimeout(portraitTooltipTimeout);
+            portraitTooltip.style.opacity = '0';
+          };
+          
+          // Try both mouseenter/mouseleave and mouseover/mouseout
+          portraitDisplay._tooltipMouseOver = portraitDisplay._tooltipMouseEnter;
+          portraitDisplay._tooltipMouseOut = portraitDisplay._tooltipMouseLeave;
+          
+          portraitDisplay.addEventListener('mouseenter', portraitDisplay._tooltipMouseEnter);
+          portraitDisplay.addEventListener('mouseleave', portraitDisplay._tooltipMouseLeave);
+          portraitDisplay.addEventListener('mouseover', portraitDisplay._tooltipMouseOver);
+          portraitDisplay.addEventListener('mouseout', portraitDisplay._tooltipMouseOut);
 
         // Double-click on portrait opens Foundry file picker
         portraitDisplay.addEventListener('dblclick', async (event) => {
@@ -1420,13 +1462,14 @@
           // NO automatic hiding - only manual close via Done button
         });
         
-        // Setup portrait adjustment functionality
-        setupPortraitAdjustment();
-        
-        console.log('Portrait event listeners set up successfully');
-      } else {
-        console.log('Portrait elements not found!');
-      }
+          // Setup portrait adjustment functionality
+          setupPortraitAdjustment();
+          
+          console.log('Portrait event listeners set up successfully');
+        } else {
+          console.log('Portrait elements not found!');
+        }
+      }, 100);
     }
     
     // Portrait adjustment system
@@ -1784,7 +1827,7 @@
 
   <!-- Character Portrait - Positioned behind everything -->
   <div class="portrait-container" id="portrait-container"
-       style="--portrait-size: 138px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}}; position: absolute; width: var(--portrait-size); height: 141px; left: 34px; top: 75px; z-index: 1; overflow: hidden;">
+       style="--portrait-size: 138px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}}; position: absolute; width: var(--portrait-size); height: 141px; left: 34px; top: 75px; z-index: 15; overflow: hidden;">
     <!-- Hidden inputs for portrait data -->
     <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
     <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
@@ -1803,7 +1846,7 @@
       overflow: hidden;
       pointer-events: auto;
     ">
-      <img class="portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" style="width:100%;height:100%;object-fit:cover;display:block;" draggable="false" />
+      <img class="portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" style="width:100%;height:100%;object-fit:contain;display:block;" draggable="false" />
     </div>
     
     <!-- Portrait adjustment controls -->
@@ -2087,15 +2130,13 @@
 
   <!-- XP field -->
   <div class="xp-group" id="xp-container"
-       style="position: absolute; left: 319px; top: 74px; z-index: 9;">
+       style="position: absolute; left: 319px; top: 74px; z-index: 15;">
     <input type="text" class="xp-display" id="xp-display" name="system.xp" value="{{system.xp}}"
            style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
                   background-color: transparent !important; border: none; 
                   box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
                   padding: 5px 0 0 0; margin: 0; line-height: 1; color: inherit; cursor: pointer; pointer-events: auto;
-                  display: flex; align-items: center; justify-content: center;" 
-           onmouseover="this.style.cursor='pointer'" 
-           onmouseout="this.style.cursor='pointer'" />
+                  display: flex; align-items: center; justify-content: center;" />
   </div>
 
   <!-- Next Level field -->

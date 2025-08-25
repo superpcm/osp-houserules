@@ -208,11 +208,11 @@ export class XPProgressHandler {
         this.isUpdatingXP = true; // Prevent other updates from overwriting display
         window.xpHandlerUpdating = true; // Prevent inline script interference
         
-        const newXP = parseInt(e.target.value) || 0;
+        const newXP = parseInt(e.target.value.replace(/,/g, '')) || 0;
         console.log('Admin changed XP to:', newXP);
         
         // Only update if the value is different from current
-        const currentXP = parseInt(this.actor.system.xp) || 0;
+        const currentXP = parseInt(String(this.actor.system.xp).replace(/,/g, '')) || 0;
         if (newXP !== currentXP) {
           // Update the actor's XP
           this.actor.update({
@@ -238,7 +238,7 @@ export class XPProgressHandler {
    * Show XP award dialog
    */
   async showXPAwardDialog() {
-    const currentXP = parseInt(this.actor.system.xp) || 0;
+    const currentXP = parseInt(String(this.actor.system.xp).replace(/,/g, '')) || 0;
     const nextLevelXP = this.getNextLevelXP();
     const xpMod = this.getXPModifier();
     const currentLevel = parseInt(this.actor.system.level) || 1;
@@ -461,7 +461,7 @@ export class XPProgressHandler {
     
     const xpMod = this.getXPModifier();
     const modifiedXP = Math.floor(baseXP * (1 + xpMod / 100));
-    const currentXP = parseInt(this.actor.system.xp) || 0;
+    const currentXP = parseInt(String(this.actor.system.xp).replace(/,/g, '')) || 0;
     const newXP = currentXP + modifiedXP;
 
     console.log('Awarding XP:', { baseXP, modifiedXP, currentXP, newXP });
@@ -573,7 +573,7 @@ export class XPProgressHandler {
    */
   updateProgressBar(skipXPDisplayUpdate = false) {
     console.log('=== XP Progress Bar Update Started ===');
-    const currentXP = parseInt(this.actor.system.xp) || 0;
+    const currentXP = parseInt(String(this.actor.system.xp).replace(/,/g, '')) || 0;
     const currentLevel = parseInt(this.actor.system.level) || 1;
     const characterClass = this.actor.system.class || 'Fighter';
     const nextLevelXP = this.getNextLevelXP();

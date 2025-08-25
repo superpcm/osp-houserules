@@ -362,6 +362,83 @@
     .languages-tags:not([style*="font-size"]) {
       font-size: 24px !important;
     }
+    
+    /* Portrait transform system for end-user adjustment */
+    .portrait-img {
+      transform: scale(var(--user-portrait-scale, 1)) 
+                 translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px));
+      transform-origin: center center;
+      transition: transform 0.2s ease;
+    }
+    
+    /* Portrait adjustment controls */
+    .portrait-controls {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 5px;
+      background: rgba(0,0,0,0.95);
+      color: white;
+      padding: 3px;
+      border-radius: 3px;
+      display: none;
+      z-index: 1000;
+      font-size: 10px;
+      white-space: nowrap;
+      border: 1px solid #666;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    /* Force controls to stay visible when shown */
+    .portrait-controls[style*="display: block"] {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .portrait-controls button {
+      background: #555;
+      color: white;
+      border: 1px solid #777;
+      padding: 2px 4px;
+      margin: 1px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 10px;
+      width: 18px;
+      height: 18px;
+      line-height: 14px;
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+    
+    .portrait-controls button:hover {
+      background: #777;
+      border-color: #999;
+    }
+    
+    .portrait-controls button:active {
+      background: #333;
+    }
+    
+    .portrait-controls .btn-group {
+      display: inline-block;
+      margin: 0 2px;
+      vertical-align: top;
+    }
+    
+    .portrait-controls .btn-group:not(:last-child) {
+      border-right: 1px solid #777;
+      padding-right: 3px;
+    }
+    
+    .portrait-container.adjusting {
+      outline: 1px dashed #00aaff;
+      overflow: visible !important;
+      z-index: 1001 !important;
+    }
   </style>
   <script>
     console.log('Character sheet script loaded');
@@ -416,6 +493,143 @@
       const xpField = document.getElementById('xp-display');
       if (!xpField) return;
       
+      // Create a function to clean XP field value before any form operation
+      function cleanXPFieldForSubmission() {
+        if (xpField && xpField.value) {
+          const cleanValue = xpField.value.replace(/,/g, '');
+          if (cleanValue !== xpField.value) {
+            console.log('Cleaning XP field before form operation: from', xpField.value, 'to', cleanValue);
+            xpField.value = cleanValue;
+          } else {
+            console.log('XP field already clean:', xpField.value);
+          }
+        } else {
+          console.log('XP field not found or empty during clean attempt');
+        }
+      }
+      
+      // Function to restore XP formatting after form operations
+      function restoreXPFormatting() {
+        if (xpField && xpField.value && !xpField.value.includes(',')) {
+          const numericValue = parseInt(xpField.value) || 0;
+          if (numericValue >= 1000) { // Only format numbers 1000 and above
+            const formattedValue = numericValue.toLocaleString();
+            console.log('Restoring XP formatting: from', xpField.value, 'to', formattedValue);
+            xpField.value = formattedValue;
+          }
+        }
+      }
+      
+      // Add comprehensive debugging for XP field changes
+      const logXPFieldState = (context) => {
+        if (xpField) {
+          console.log(`XP Field State (${context}):`, {
+            value: xpField.value,
+            name: xpField.name,
+            focused: document.activeElement === xpField,
+            timestamp: new Date().toISOString()
+          });
+        }
+      };
+      
+      // Add form submission handler to remove commas from XP field
+      const form = xpField.closest('form');
+      if (form) {
+        console.log('Setting up comprehensive XP field protection...');
+        
+        // Handle form submit events
+        form.addEventListener('submit', function(e) {
+          console.log('Form submit event - preparing XP field for submission');
+          isFormSubmitting = true;
+          logXPFieldState('form submit');
+          cleanXPFieldForSubmission();
+          // Re-enable formatting after submission completes
+          setTimeout(() => {
+            isFormSubmitting = false;
+            restoreXPFormatting();
+          }, 100);
+        });
+        
+        // Handle change events that might trigger auto-save
+        form.addEventListener('change', function(e) {
+          console.log('Form change event - preparing XP field, target:', e.target.name);
+          isFormSubmitting = true;
+          logXPFieldState('form change');
+          cleanXPFieldForSubmission();
+          // Re-enable formatting after change completes
+          setTimeout(() => {
+            isFormSubmitting = false;
+            restoreXPFormatting();
+          }, 100);
+        });
+        
+        // Also handle input events that might trigger form processing
+        form.addEventListener('input', function(e) {
+          if (e.target !== xpField) { // Don't interfere with XP field's own input handling
+            console.log('Form input event - preparing XP field, target:', e.target.name);
+            isFormSubmitting = true;
+            logXPFieldState('form input');
+            cleanXPFieldForSubmission();
+            // Re-enable formatting after input completes
+            setTimeout(() => {
+              isFormSubmitting = false;
+              restoreXPFormatting();
+            }, 100);
+          }
+        });
+        
+        // Set up a mutation observer to catch any form data collection
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && (
+                mutation.attributeName === 'data-submitting' ||
+                mutation.attributeName === 'data-processing'
+            )) {
+              console.log('Mutation observer detected form processing - cleaning XP field');
+              cleanXPFieldForSubmission();
+            }
+          });
+        });
+        
+        observer.observe(form, {
+          attributes: true,
+          attributeFilter: ['data-submitting', 'data-processing']
+        });
+        
+        // Intercept any attempts to collect form data
+        const originalFormData = window.FormData;
+        let isIntercepting = false;
+        
+        function FormDataInterceptor(formElement) {
+          if (!isIntercepting && formElement === form) {
+            isIntercepting = true;
+            console.log('FormData constructor intercepted for character sheet - cleaning XP field');
+            cleanXPFieldForSubmission();
+            setTimeout(() => { isIntercepting = false; }, 100);
+          }
+          return new originalFormData(...arguments);
+        }
+        
+        // Copy prototype and properties
+        FormDataInterceptor.prototype = originalFormData.prototype;
+        Object.setPrototypeOf(FormDataInterceptor, originalFormData);
+        
+        // Temporarily replace FormData during critical operations
+        const interceptFormData = () => {
+          const originalFD = window.FormData;
+          window.FormData = FormDataInterceptor;
+          setTimeout(() => {
+            if (window.FormData === FormDataInterceptor) {
+              window.FormData = originalFD;
+            }
+          }, 1000);
+        };
+        
+        // Set up interception on key events
+        form.addEventListener('submit', interceptFormData);
+        form.addEventListener('change', interceptFormData);
+      }
+      
       // Input validation - only allow numbers and commas
       xpField.addEventListener('input', function(e) {
         // Remove any non-digit characters except commas
@@ -437,10 +651,93 @@
         this.value = formatNumberWithCommas(value);
       });
       
+      // Remove commas before change events (for auto-save)
+      xpField.addEventListener('change', function() {
+        const rawValue = this.value.replace(/,/g, '');
+        console.log('XP change event: cleaning value from', this.value, 'to', rawValue);
+        // Temporarily store raw value for form processing
+        this.dataset.rawValue = rawValue;
+        
+        // Temporarily clean for any immediate form processing
+        this.value = rawValue;
+        
+        // Restore formatting after a brief delay (unless we're in a form submission)
+        setTimeout(() => {
+          if (!isFormSubmitting && document.activeElement !== this) {
+            const numericValue = parseInt(rawValue) || 0;
+            if (numericValue >= 1000) {
+              this.value = numericValue.toLocaleString();
+              console.log('XP formatting restored to:', this.value);
+            }
+          }
+        }, 200);
+      });
+      
       // Remove commas on focus (for easier editing)
       xpField.addEventListener('focus', function() {
         const value = parseInt(this.value.replace(/,/g, '')) || 0;
         this.value = value.toString();
+      });
+      
+      // Add a smart monitoring system that preserves display formatting but ensures clean form submissions
+      let cleanupInterval;
+      let monitoringPaused = false;
+      let isFormSubmitting = false;
+      
+      const startXPMonitoring = () => {
+        if (cleanupInterval) return; // Already running
+        
+        // DO NOT continuously clean the display - only during actual form submissions
+        cleanupInterval = setInterval(() => {
+          if (monitoringPaused) return; // Skip if paused
+          
+          // Only check if we're in the middle of a form submission
+          if (isFormSubmitting && xpField && xpField.value && xpField.value.includes(',')) {
+            const cleanValue = xpField.value.replace(/,/g, '');
+            console.log('Form submission cleanup: cleaning', xpField.value, 'to', cleanValue);
+            xpField.value = cleanValue;
+          }
+        }, 50); // Check frequently during form submissions
+      };
+      
+      const stopXPMonitoring = () => {
+        if (cleanupInterval) {
+          clearInterval(cleanupInterval);
+          cleanupInterval = null;
+        }
+      };
+      
+      const pauseXPMonitoring = () => {
+        monitoringPaused = true;
+        console.log('XP monitoring paused');
+      };
+      
+      const resumeXPMonitoring = () => {
+        monitoringPaused = false;
+        console.log('XP monitoring resumed');
+      };
+      
+      // Export functions for portrait system
+      window.pauseXPMonitoring = pauseXPMonitoring;
+      window.resumeXPMonitoring = resumeXPMonitoring;
+      
+      // Start monitoring when document is ready
+      startXPMonitoring();
+      
+      // Clean up interval when form is removed
+      const formObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.removedNodes.forEach((node) => {
+            if (node.contains && node.contains(xpField)) {
+              stopXPMonitoring();
+            }
+          });
+        });
+      });
+      
+      formObserver.observe(document.body, {
+        childList: true,
+        subtree: true
       });
     }
 
@@ -807,27 +1104,51 @@
         }
       });
       
-      // Setup tooltip for XP field
+      // Setup dedicated tooltip for XP field
       const xpElement = document.querySelector('#xp-display');
       if (xpElement) {
+        // Create dedicated XP tooltip to avoid conflicts
+        let xpTooltip = document.getElementById('xp-tooltip');
+        if (!xpTooltip) {
+          xpTooltip = document.createElement('div');
+          xpTooltip.id = 'xp-tooltip';
+          xpTooltip.style.cssText = `
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          `;
+          document.body.appendChild(xpTooltip);
+        }
+        let xpTooltipTimeout;
+        
         xpElement.addEventListener('mouseenter', (e) => {
-          clearTimeout(tooltipTimeout);
-          tooltipTimeout = setTimeout(() => {
-            tooltip.innerHTML = 'Double-click to award XP';
+          clearTimeout(xpTooltipTimeout);
+          xpTooltipTimeout = setTimeout(() => {
+            xpTooltip.innerHTML = 'Double-click to award XP • Click to edit';
             
             // Position tooltip above the element
             const rect = xpElement.getBoundingClientRect();
-            const tooltipRect = tooltip.getBoundingClientRect();
+            const tooltipRect = xpTooltip.getBoundingClientRect();
             
-            tooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
-            tooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-            tooltip.style.opacity = '1';
+            xpTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
+            xpTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
+            xpTooltip.style.opacity = '1';
           }, TOOLTIP_DELAY);
         });
         
         xpElement.addEventListener('mouseleave', () => {
-          clearTimeout(tooltipTimeout);
-          tooltip.style.opacity = '0';
+          clearTimeout(xpTooltipTimeout);
+          xpTooltip.style.opacity = '0';
         });
       }
 
@@ -989,11 +1310,11 @@
       if (portraitDisplay) {
         console.log('Setting up portrait event listeners...');
 
-        // Reuse the abilities/save tooltip styles if available so portrait tooltip matches
-        let portraitTooltip = document.getElementById('save-tooltip');
+        // Create dedicated portrait tooltip to avoid conflicts with other tooltips
+        let portraitTooltip = document.getElementById('portrait-tooltip');
         if (!portraitTooltip) {
           portraitTooltip = document.createElement('div');
-          portraitTooltip.id = 'save-tooltip';
+          portraitTooltip.id = 'portrait-tooltip';
           portraitTooltip.style.cssText = `
             position: absolute;
             background: #333;
@@ -1007,23 +1328,24 @@
             opacity: 0;
             transition: opacity 0.2s;
             white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
           `;
           document.body.appendChild(portraitTooltip);
         }
         let portraitTooltipTimeout;
 
-        // Show matching tooltip on hover
+        // Show portrait tooltip on hover
         portraitDisplay.addEventListener('mouseenter', () => {
           clearTimeout(portraitTooltipTimeout);
           portraitTooltipTimeout = setTimeout(() => {
-            const tipText = portraitDisplay.getAttribute('title') || 'Double-click to select portrait';
+            const tipText = 'Double-click to select portrait • Right-click to adjust position';
             portraitTooltip.innerHTML = tipText;
             portraitTooltip.style.opacity = '1';
             const rect = portraitDisplay.getBoundingClientRect();
             const tooltipRect = portraitTooltip.getBoundingClientRect();
             portraitTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
             portraitTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-          }, TOOLTIP_DELAY || 150);
+          }, TOOLTIP_DELAY);
         });
         portraitDisplay.addEventListener('mouseleave', () => {
           clearTimeout(portraitTooltipTimeout);
@@ -1065,9 +1387,331 @@
           }
         });
         
+        // Right-click to show portrait adjustment controls
+        portraitDisplay.addEventListener('contextmenu', (event) => {
+          event.preventDefault();
+          console.log('Portrait right-clicked, showing controls');
+          const controls = document.getElementById('portrait-controls');
+          const container = document.getElementById('portrait-container');
+          
+          // Show controls and enter adjustment mode
+          if (controls) {
+            controls.style.display = 'block';
+            console.log('Controls shown, display style:', controls.style.display);
+            
+            // Add a global observer to see if something else is hiding the controls
+            const observer = new MutationObserver((mutations) => {
+              mutations.forEach((mutation) => {
+                if (mutation.target === controls && mutation.attributeName === 'style') {
+                  console.log('Controls style changed by something else!', controls.style.display);
+                  console.trace('Style change stack trace');
+                }
+              });
+            });
+            observer.observe(controls, { attributes: true, attributeFilter: ['style'] });
+            
+            // Store observer for cleanup
+            controls._observer = observer;
+          }
+          if (container) {
+            container.classList.add('adjusting');
+          }
+          
+          // NO automatic hiding - only manual close via Done button
+        });
+        
+        // Setup portrait adjustment functionality
+        setupPortraitAdjustment();
+        
         console.log('Portrait event listeners set up successfully');
       } else {
         console.log('Portrait elements not found!');
+      }
+    }
+    
+    // Portrait adjustment system
+    function setupPortraitAdjustment() {
+      const controls = document.getElementById('portrait-controls');
+      const container = document.getElementById('portrait-container');
+      
+      if (!controls || !container) {
+        console.error('Portrait controls or container not found');
+        return;
+      }
+      
+      // Get current values from CSS variables or defaults
+      let scale = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-scale')) || 1;
+      let x = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-x')) || 0;
+      let y = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-y')) || 0;
+      
+      // Add individual event listeners to each button with maximum event blocking
+      const buttons = controls.querySelectorAll('button');
+      console.log('Setting up', buttons.length, 'button listeners');
+      
+      buttons.forEach((button, index) => {
+        console.log('Setting up button', index, 'with action:', button.dataset.action);
+        
+        // Block all possible events that could bubble
+        ['mousedown', 'mouseup', 'click', 'pointerdown', 'pointerup'].forEach(eventType => {
+          button.addEventListener(eventType, (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            
+            // Only execute action on 'click'
+            if (eventType !== 'click') return;
+            
+            const action = button.dataset.action;
+            console.log('Button action executed:', action);
+            
+            switch (action) {
+              case 'zoom-in':
+                scale = Math.min(scale + 0.1, 2.5);
+                updatePortrait();
+                console.log('Zoomed in to', scale);
+                break;
+              case 'zoom-out':
+                scale = Math.max(scale - 0.1, 0.5);
+                updatePortrait();
+                console.log('Zoomed out to', scale);
+                break;
+              case 'move-up':
+                y -= 3;
+                updatePortrait();
+                console.log('Moved up to y:', y);
+                break;
+              case 'move-down':
+                y += 3;
+                updatePortrait();
+                console.log('Moved down to y:', y);
+                break;
+              case 'move-left':
+                x -= 3;
+                updatePortrait();
+                console.log('Moved left to x:', x);
+                break;
+              case 'move-right':
+                x += 3;
+                updatePortrait();
+                console.log('Moved right to x:', x);
+                break;
+              case 'reset':
+                scale = 1;
+                x = 0;
+                y = 0;
+                updatePortrait();
+                console.log('Reset portrait');
+                break;
+              case 'done':
+                console.log('Done button clicked - saving and closing controls');
+                
+                // Pause XP monitoring and mark form as submitting
+                if (window.pauseXPMonitoring) {
+                  window.pauseXPMonitoring();
+                }
+                isFormSubmitting = true;
+                
+                savePortraitData(); // Save the data to the actor
+                
+                // Resume normal operation after a delay
+                setTimeout(() => {
+                  isFormSubmitting = false;
+                  if (window.resumeXPMonitoring) {
+                    window.resumeXPMonitoring();
+                  }
+                  // Restore XP formatting
+                  const xpField = document.getElementById('xp-display');
+                  if (xpField && xpField.value && !xpField.value.includes(',')) {
+                    const numericValue = parseInt(xpField.value) || 0;
+                    if (numericValue >= 1000) {
+                      const formattedValue = numericValue.toLocaleString();
+                      console.log('Restoring XP formatting: from', xpField.value, 'to', formattedValue);
+                      xpField.value = formattedValue;
+                    }
+                  }
+                }, 2000);
+                
+                if (controls._observer) {
+                  controls._observer.disconnect();
+                }
+                controls.style.display = 'none';
+                container.classList.remove('adjusting');
+                console.log('Portrait adjustment closed');
+                break;
+            }
+          }, true); // Use capture phase
+        });
+      });
+      
+      // Update portrait transform and save data
+      function updatePortrait() {
+        // Update CSS variables
+        container.style.setProperty('--user-portrait-scale', scale);
+        container.style.setProperty('--user-portrait-x', x + 'px');
+        container.style.setProperty('--user-portrait-y', y + 'px');
+        
+        // Update hidden form inputs for persistence (but don't trigger events yet)
+        const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
+        const xInput = document.querySelector('input[name="system.userPortrait.x"]');
+        const yInput = document.querySelector('input[name="system.userPortrait.y"]');
+        
+        if (scaleInput) scaleInput.value = scale;
+        if (xInput) xInput.value = x;
+        if (yInput) yInput.value = y;
+        
+        // Don't trigger change events immediately to prevent re-render
+        // We'll save when the user clicks "Done" instead
+        console.log('Portrait updated - scale:', scale, 'x:', x, 'y:', y);
+      }
+      
+      // Function to save portrait data to actor (only called when Done)
+      function savePortraitData() {
+        console.log('Saving portrait data:', {scale, x, y});
+        
+        // Clean XP field before save operations
+        const xpField = document.getElementById('xp-display');
+        if (xpField && xpField.value) {
+          const cleanValue = xpField.value.replace(/,/g, '');
+          if (cleanValue !== xpField.value) {
+            console.log('Cleaning XP field before portrait save: from', xpField.value, 'to', cleanValue);
+            xpField.value = cleanValue;
+          }
+        }
+        
+        // Method 1: Try to get actor ID from the application instance
+        let actorId = null;
+        
+        // Try multiple methods to find the actor ID
+        // Method 1a: Check if there's a global actor reference in the sheet
+        if (window.currentActorSheet && window.currentActorSheet.actor) {
+          actorId = window.currentActorSheet.actor.id;
+          console.log('Found actor ID from window.currentActorSheet:', actorId);
+        }
+        
+        // Method 1b: Look for the sheet application instance
+        if (!actorId) {
+          const formElement = document.querySelector('form.flexcol');
+          if (formElement) {
+            const windowApp = formElement.closest('.window-app');
+            if (windowApp) {
+              const appId = windowApp.getAttribute('data-appid');
+              if (appId && ui.windows[appId] && ui.windows[appId].actor) {
+                actorId = ui.windows[appId].actor.id;
+                console.log('Found actor ID from app instance:', actorId);
+              }
+            }
+          }
+        }
+        
+        // Method 2: Try to get actor ID from form data
+        if (!actorId) {
+          const actorIdInput = document.querySelector('input[name="id"]');
+          if (actorIdInput && actorIdInput.value) {
+            actorId = actorIdInput.value;
+            console.log('Found actor ID from form input:', actorId);
+          }
+        }
+        
+        // Method 3: Try to get from URL or other sources
+        if (!actorId) {
+          const urlMatch = window.location.href.match(/actors\/([a-zA-Z0-9]+)/);
+          if (urlMatch) {
+            actorId = urlMatch[1];
+            console.log('Found actor ID from URL:', actorId);
+          }
+        }
+        
+        if (actorId) {
+          // Use Foundry's game.actors to update directly, completely bypassing form system
+          const actor = game.actors.get(actorId);
+          if (actor) {
+            const updateData = {
+              'system.userPortrait.scale': scale,
+              'system.userPortrait.x': x,
+              'system.userPortrait.y': y
+            };
+            
+            console.log('Updating actor directly with portrait data:', updateData);
+            console.log('Current actor XP before update:', actor.system.xp);
+            
+            // Use the most direct update method possible with maximum isolation
+            actor.update(updateData, {
+              render: false,     // Don't trigger re-render
+              diff: false,       // Don't compute diffs  
+              recursive: false,  // Don't do recursive updates
+              noHook: true      // Don't trigger hooks that might interfere
+            }).then(() => {
+              console.log('Portrait data saved directly to actor without re-render');
+              console.log('Actor XP after portrait update:', actor.system.xp);
+              
+              // Force update the hidden form fields to match saved data
+              const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
+              const xInput = document.querySelector('input[name="system.userPortrait.x"]');
+              const yInput = document.querySelector('input[name="system.userPortrait.y"]');
+              
+              if (scaleInput) {
+                scaleInput.value = scale;
+                scaleInput.setAttribute('value', scale);
+              }
+              if (xInput) {
+                xInput.value = x;
+                xInput.setAttribute('value', x);
+              }
+              if (yInput) {
+                yInput.value = y;
+                yInput.setAttribute('value', y);
+              }
+              
+              console.log('Portrait save completed - hidden form fields updated');
+              
+            }).catch(err => {
+              console.error('Error saving portrait data directly:', err);
+            });
+            return;
+          }
+        }
+        
+        console.error('Could not find actor ID for direct portrait save, falling back to form method');
+        
+        // Fallback: Use form system to save portrait data
+        const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
+        const xInput = document.querySelector('input[name="system.userPortrait.x"]');
+        const yInput = document.querySelector('input[name="system.userPortrait.y"]');
+        
+        console.log('Fallback: Found form inputs:', {
+          scaleInput: !!scaleInput,
+          xInput: !!xInput,
+          yInput: !!yInput
+        });
+        
+        if (scaleInput) {
+          scaleInput.value = scale;
+          scaleInput.setAttribute('value', scale);
+          console.log('Fallback: Updated scale input to', scale);
+        }
+        if (xInput) {
+          xInput.value = x;
+          xInput.setAttribute('value', x);
+          console.log('Fallback: Updated x input to', x);
+        }
+        if (yInput) {
+          yInput.value = y;
+          yInput.setAttribute('value', y);
+          console.log('Fallback: Updated y input to', y);
+        }
+        
+        // Trigger a form change event to save the data
+        const formElement = document.querySelector('form.flexcol');
+        if (formElement) {
+          const changeEvent = new Event('change', { bubbles: true });
+          if (scaleInput) {
+            scaleInput.dispatchEvent(changeEvent);
+            console.log('Fallback: Triggered change event on scale input');
+          }
+          console.log('Portrait data saved via form system fallback');
+        } else {
+          console.error('Fallback: Could not find form element');
+        }
       }
     }
 
@@ -1140,9 +1784,12 @@
 
   <!-- Character Portrait - Positioned behind everything -->
   <div class="portrait-container" id="portrait-container"
-       style="--portrait-size: 138px; position: absolute; width: var(--portrait-size); height: 141px; left: 34px; top: 75px; z-index: 1; overflow: hidden;">
-    <!-- Hidden input for portrait path data -->
+       style="--portrait-size: 138px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}}; position: absolute; width: var(--portrait-size); height: 141px; left: 34px; top: 75px; z-index: 1; overflow: hidden;">
+    <!-- Hidden inputs for portrait data -->
     <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
+    <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
+    <input type="hidden" name="system.userPortrait.x" value="{{system.userPortrait.x}}" />
+    <input type="hidden" name="system.userPortrait.y" value="{{system.userPortrait.y}}" />
     
     <!-- Portrait display area -->
     <div class="portrait-display" style="
@@ -1155,8 +1802,26 @@
       border-radius: 3px;
       overflow: hidden;
       pointer-events: auto;
-    " title="Double-click to select portrait">
+    ">
       <img class="portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" style="width:100%;height:100%;object-fit:cover;display:block;" draggable="false" />
+    </div>
+    
+    <!-- Portrait adjustment controls -->
+    <div class="portrait-controls" id="portrait-controls">
+      <div class="btn-group">
+        <button type="button" data-action="zoom-out" title="Zoom Out">−</button>
+        <button type="button" data-action="zoom-in" title="Zoom In">+</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" data-action="move-up" title="Move Up">↑</button>
+        <button type="button" data-action="move-down" title="Move Down">↓</button>
+        <button type="button" data-action="move-left" title="Move Left">←</button>
+        <button type="button" data-action="move-right" title="Move Right">→</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" data-action="reset" title="Reset">↻</button>
+        <button type="button" data-action="done" title="Done">✓</button>
+      </div>
     </div>
   </div>
 

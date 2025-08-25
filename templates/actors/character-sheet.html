@@ -190,11 +190,11 @@
       box-shadow: inset 0 0 0 1000px rgba(139, 115, 85, 0.3); /* Maintain same styling as default */
     }
 
-    /* Position each tab individually with precise spacing */
-    .sheet-tabs a.item:nth-child(1) { top: -215px; left: 0px; } /* Adjusted to fit the background */
-    .sheet-tabs a.item:nth-child(2) { top: -140px; left: -42px; } /* 30px height + 1px gap */
-    .sheet-tabs a.item:nth-child(3) { top: -61px; left: -76px; }
-    .sheet-tabs a.item:nth-child(4) { top: 18px; left: -110px; }
+    /* Position each tab individually with precise spacing - using negative values to align left edges */
+    .sheet-tabs a.item:nth-child(1) { top: -215px; left: 0px; } /* Combat tab */
+    .sheet-tabs a.item:nth-child(2) { top: -135px; left: -31px; } /* Skills tab - move further left */
+    .sheet-tabs a.item:nth-child(3) { top: -55px; left: -64px; } /* Equipment tab - move even further left */
+    .sheet-tabs a.item:nth-child(4) { top: 25px; left: -96px; } /* Bio tab - move furthest left */
 
     .sheet-tabs a.item:hover {
       background: #a0d1a3; /* Slightly darker green on hover */

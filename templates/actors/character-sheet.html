@@ -813,7 +813,7 @@
         xpElement.addEventListener('mouseenter', (e) => {
           clearTimeout(tooltipTimeout);
           tooltipTimeout = setTimeout(() => {
-            tooltip.innerHTML = 'Click to award XP (Double-click for admin)';
+            tooltip.innerHTML = 'Double-click to award XP';
             
             // Position tooltip above the element
             const rect = xpElement.getBoundingClientRect();
@@ -985,10 +985,51 @@
       const portraitDisplay = document.querySelector('.portrait-display');
       
       console.log('Portrait elements found:', { portraitDisplay });
-      
+
       if (portraitDisplay) {
         console.log('Setting up portrait event listeners...');
-        
+
+        // Reuse the abilities/save tooltip styles if available so portrait tooltip matches
+        let portraitTooltip = document.getElementById('save-tooltip');
+        if (!portraitTooltip) {
+          portraitTooltip = document.createElement('div');
+          portraitTooltip.id = 'save-tooltip';
+          portraitTooltip.style.cssText = `
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+          `;
+          document.body.appendChild(portraitTooltip);
+        }
+        let portraitTooltipTimeout;
+
+        // Show matching tooltip on hover
+        portraitDisplay.addEventListener('mouseenter', () => {
+          clearTimeout(portraitTooltipTimeout);
+          portraitTooltipTimeout = setTimeout(() => {
+            const tipText = portraitDisplay.getAttribute('title') || 'Double-click to select portrait';
+            portraitTooltip.innerHTML = tipText;
+            portraitTooltip.style.opacity = '1';
+            const rect = portraitDisplay.getBoundingClientRect();
+            const tooltipRect = portraitTooltip.getBoundingClientRect();
+            portraitTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
+            portraitTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
+          }, TOOLTIP_DELAY || 150);
+        });
+        portraitDisplay.addEventListener('mouseleave', () => {
+          clearTimeout(portraitTooltipTimeout);
+          portraitTooltip.style.opacity = '0';
+        });
+
         // Double-click on portrait opens Foundry file picker
         portraitDisplay.addEventListener('dblclick', async (event) => {
           console.log('Portrait double-clicked!', event);
@@ -1036,12 +1077,10 @@
       document.addEventListener('DOMContentLoaded', initializeCharacterSheet);
     } else {
       console.log('DOM already ready, initializing immediately...');
-      // DOM is already ready, run immediately
-      setTimeout(initializeCharacterSheet, 0);
-    }
+    // DOM is already ready, run immediately
+    setTimeout(initializeCharacterSheet, 0);
+  }
   </script>
-
-
 
   <!-- Character Level - Positioned behind everything -->
   <div class="level-progress-bar-container" id="level-container"
@@ -1070,6 +1109,7 @@
             top: 0;
             left: 0;
             height: 100%;
+            border-radius: 3px;
             background-color: #22c55e;
             width: 0%;
             transition: width 0.3s ease;
@@ -1930,3 +1970,4 @@
         </div>
       </div>
     </section>
+</form>

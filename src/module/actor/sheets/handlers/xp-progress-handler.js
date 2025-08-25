@@ -114,33 +114,17 @@ export class XPProgressHandler {
         console.log('Set XP field to editable for GM');
       }
       
-      // For non-admins, always open dialog on click
-      // For admins, open dialog on double-click or when field is readonly
+      // For both GMs and non-GMs, only open dialog on double-click
+      this.xpDisplay.off('dblclick').on('dblclick', (e) => {
+        console.log('XP field double-clicked by', isGM ? 'GM' : 'non-GM');
+        e.preventDefault();
+        this.showXPAwardDialog();
+      });
+      
       if (!isGM) {
-        this.xpDisplay.off('click').on('click', (e) => {
-          console.log('XP field clicked by non-GM');
-          e.preventDefault();
-          this.showXPAwardDialog();
-        });
-        console.log('Bound single-click event for non-GM');
+        console.log('Bound double-click event for non-GM');
       } else {
-        // For admins, use double-click to open dialog
-        this.xpDisplay.off('dblclick').on('dblclick', (e) => {
-          console.log('XP field double-clicked by GM');
-          e.preventDefault();
-          this.showXPAwardDialog();
-        });
-        
-        // Also allow single click when field is not focused
-        this.xpDisplay.off('click').on('click', (e) => {
-          console.log('XP field clicked by GM, focused:', this.xpDisplay.is(':focus'));
-          // If the field is not currently focused, open the dialog
-          if (!this.xpDisplay.is(':focus')) {
-            e.preventDefault();
-            this.showXPAwardDialog();
-          }
-        });
-        console.log('Bound click events for GM');
+        console.log('Bound double-click event for GM');
       }
       
       console.log('XP display click event bound successfully');

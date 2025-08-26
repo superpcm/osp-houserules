@@ -105,7 +105,7 @@ export class LayoutHandler {
         'color': '#666',
         'cursor': 'move',
         'opacity': '0.6',
-        'z-index': '10',
+  'z-index': 'var(--z-sheet, 10)',
         'pointer-events': 'auto',
         'font-weight': 'bold',
         'text-shadow': '1px 1px 1px rgba(255,255,255,0.8)',
@@ -253,7 +253,7 @@ export class LayoutHandler {
     // Visual feedback
     $element.addClass('dragging');
     $element.css({
-      'z-index': '1000',
+      'z-index': 'var(--z-overlay, 1000)',
       'opacity': '0.8'
     });
 
@@ -364,7 +364,7 @@ export class LayoutHandler {
    */
   addLayoutControls() {
     const controlsHtml = `
-      <div class="layout-controls" style="position: absolute; top: 5px; right: 5px; z-index: 1001; display: flex; gap: 5px;">
+      <div class="layout-controls" style="position: absolute; top: 5px; right: 5px; z-index: calc(var(--z-overlay, 1000) + 1); display: flex; gap: 5px;">
         <button type="button" class="layout-btn export-layout" title="Export Layout">📁</button>
         <button type="button" class="layout-btn import-layout" title="Import Layout">📂</button>
         <button type="button" class="layout-btn reset-layout" title="Reset Layout">↺</button>
@@ -421,7 +421,7 @@ export class LayoutHandler {
       'width': '100%',
       'height': '100%',
       'pointer-events': 'none',
-      'z-index': '999',
+  'z-index': 'calc(var(--z-overlay, 1000) - 1)',
       'background-image': `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)`,
       'background-size': `${this.gridSize}px ${this.gridSize}px`
     });

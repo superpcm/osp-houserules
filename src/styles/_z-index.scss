@@ -1,0 +1,15 @@
+/*
+ * Centralized z-index variable definitions
+ * Scoped to the character sheet form so they apply where needed while
+ * remaining available for var() fallbacks when used in templates.
+ */
+form.osp.sheet.actor.character {
+  --z-sheet: 10;
+  --z-tabs: 200;
+  --z-portrait: 15;
+  --z-level: 8;
+  --z-labels: 15;
+  --z-lang-row: 101;
+  --z-overlay: 1000;
+  --z-top: 10000;
+}

@@ -88,16 +88,90 @@
       background-color: transparent !important;
     }
     
-    /* Tab system styles - Individual absolute positioned tabs */
+    /* ===============================
+       Tabs - Consolidated Styles
+       Centralized rules for the tab navigation and content.
+       Kept together to avoid duplication and conflicting overrides.
+       =============================== */
     .sheet-tabs {
+      /* Positioning: tabs sit to the right of the sheet and extend outward. */
       position: absolute;
-      left: 600px; /* Position tabs to extend from right edge */
-      top: 50px; /* Starting position */
-      width: 30px; /* Container width */
-      height: 400px; /* Container height to accommodate all tabs */
-      z-index: -1; /* Behind other content */
+      left: 600px;
+      top: 50px;
+      width: 30px;
+      height: 400px;
+      z-index: 10; /* Ensure tabs are above the sheet content but below window chrome */
       pointer-events: auto;
     }
+
+    /* Tab link (clickable tab shape) */
+    .sheet-tabs a.item {
+      position: absolute;
+      width: 24px;    /* visual width (becomes height after rotation) */
+      height: 80px;   /* visual height (becomes width after rotation) */
+      background: white !important; /* base background */
+      border: 1px solid #000;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Minion Pro', serif;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      padding: 2px 6px 2px 2px;
+      border-radius: 0 20px 0 0;
+      transform-origin: center center;
+      transition: all 0.2s ease;
+      writing-mode: vertical-rl; /* rotate text */
+      text-orientation: mixed;
+      outline: none !important;
+      text-shadow: none !important;
+      /* subtle shading to provide depth; reduced opacity so white base shows through */
+      box-shadow: inset 0 0 0 1000px rgba(139,115,85,0.12);
+      opacity: 1;
+    }
+
+    .sheet-tabs a.item:focus {
+      outline: none !important;
+      text-shadow: none !important;
+      box-shadow: inset 0 0 0 1000px rgba(139,115,85,0.12);
+    }
+
+    /* Individual tab offsets (keeps order-driven absolute placement) */
+    .sheet-tabs a.item:nth-child(1) { top: -215px; left: 0px; } /* Combat tab */
+    .sheet-tabs a.item:nth-child(2) { top: -140px; left: -24px; } /* Skills */
+    .sheet-tabs a.item:nth-child(3) { top: -65px; left: -48px; }  /* Equipment */
+    .sheet-tabs a.item:nth-child(4) { top: 10px; left: -72px; }   /* Bio */
+
+    .sheet-tabs a.item:hover {
+      background: #f7fff7; /* light tint on hover */
+      color: #3a2915;
+      border-color: #6b4112;
+      box-shadow: inset 0 0 0 1000px rgba(139,115,85,0.07);
+      opacity: 0.95;
+    }
+
+    .sheet-tabs a.item.active {
+      background: #fff;
+      color: #000;
+      border-color: #000;
+      text-shadow: none !important;
+      opacity: 1;
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.08);
+      z-index: 1;
+    }
+
+    /* Tab content area */
+    .sheet-body .tab {
+      display: none;
+      background: white !important;
+      background-color: white !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+    .sheet-body .tab.active { display: block; }
     
     /* Remove all shadow effects from Height and Weight fields */
     .char-height, .char-weight {
@@ -152,83 +226,8 @@
       outline: none !important;
     }
 
-    .sheet-tabs a.item {
-      position: absolute;
-      width: 24px; /* Tab width (becomes height after rotation) */
-      height: 80px; /* Tab height (becomes width after rotation) */
-      background: #ffffff; /* Matching green background */
-      border: 1px solid #000;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Minion Pro', serif;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
-      padding: 2px 6px 2px 2px;
-      border-radius: 0 20px 0px 0;
-      transform-origin: center center;
-      transition: all 0.2s ease;
-      writing-mode: vertical-rl; /* Rotate text 90 degrees */
-      text-orientation: mixed; /* Keep letters upright */
-      
-      /* Remove any default focus/outline styles */
-      outline: none !important;
-      /* Remove any text shadows */
-      text-shadow: none !important;
-      
-      /* Shading for inactive tabs */
-      box-shadow: inset 0 0 0 1000px rgba(139, 115, 85, 0.3); /* Brown overlay for inactive state */
-      opacity: 1.0; /* Slightly reduce overall opacity */
-    }
-
-    /* Remove red highlighting on focus */
-    .sheet-tabs a.item:focus {
-      outline: none !important;
-      text-shadow: none !important;
-      box-shadow: inset 0 0 0 1000px rgba(139, 115, 85, 0.3); /* Maintain same styling as default */
-    }
-
-    /* Position each tab individually with precise spacing - using negative values to align left edges */
-    .sheet-tabs a.item:nth-child(1) { top: -215px; left: 0px; } /* Combat tab */
-    .sheet-tabs a.item:nth-child(2) { top: -140px; left: -24px; } /* Skills tab - move further left */
-    .sheet-tabs a.item:nth-child(3) { top: -65px; left: -48px; } /* Equipment tab - move even further left */
-    .sheet-tabs a.item:nth-child(4) { top: 10px; left: -72px; } /* Bio tab - move furthest left */
-
-    .sheet-tabs a.item:hover {
-      background: #a0d1a3; /* Slightly darker green on hover */
-      color: #3a2915; /* Darker brown */
-      border-color: #6b4112; /* Darker brown border */
-      text-shadow: none !important; /* Remove any text shadows */
-      /* Reduce shading on hover to show interaction */
-      box-shadow: inset 0 0 0 1000px rgba(139, 115, 85, 0.15); /* Lighter brown overlay */
-      opacity: 0.9; /* Slightly higher opacity on hover */
-    }
-
-    .sheet-tabs a.item.active {
-      background: #fff; /* Lighter green background for active tab */
-      color: #000; /* Darkest brown text */
-      border-color: #000; /* Darkest border */
-      text-shadow: none !important; /* Remove any text shadows */
-      /* Remove shading for active tab */
-      opacity: 1; /* Full opacity for active tab */
-      /* Add slight inset shadow for depth */
-      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
-      z-index: 1; /* Bring active tab forward */
-    }
-    .sheet-body .tab {
-      display: none;
-    }
-    .sheet-body .tab.active {
-      display: block;
-    }
-    /* Ensure tab container doesn't block clicks */
-    .sheet-tabs {
-      position: relative;
-      z-index: 10;
-    }
+  /* Duplicate tab CSS removed - consolidated rules are declared earlier under
+     the 'Tabs - Consolidated Styles' block to avoid conflicting overrides. */
     /* XP Award Button Hover Effect */
     button.xp-award-btn {
       color: #333 !important;

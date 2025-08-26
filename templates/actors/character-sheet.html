@@ -2168,10 +2168,10 @@
 
     <!-- Right-side Tab Navigation -->
     <nav class="sheet-tabs tabs" data-group="primary">
-      <a class="item" data-tab="combat" style="--tab-top:-215px; --tab-left:0px;">Combat</a>
-      <a class="item" data-tab="skills" style="--tab-top:-140px; --tab-left:-24px;">Skills</a>
-      <a class="item" data-tab="equipment" style="--tab-top:-65px; --tab-left:-48px;">Equipment</a>
-      <a class="item" data-tab="bio" style="--tab-top:10px; --tab-left:-72px;">Bio</a>
+      <a class="item" data-tab="combat" data-tab-top="-215px" data-tab-left="0px">Combat</a>
+      <a class="item" data-tab="skills" data-tab-top="-140px" data-tab-left="-24px">Skills</a>
+      <a class="item" data-tab="equipment" data-tab-top="-65px" data-tab-left="-48px">Equipment</a>
+      <a class="item" data-tab="bio" data-tab-top="10px" data-tab-left="-72px">Bio</a>
     </nav>
 
     <!-- Sheet Body - Tab Content Area -->
@@ -2688,3 +2688,21 @@
       </div>
     </section>
 </form>
+
+<script>
+  // Map data attributes to CSS variables so tab positions are data-driven and markup stays clean.
+  (function(){
+    function applyTabVars(root=document){
+      const tabs = root.querySelectorAll('.sheet-tabs .item');
+      tabs.forEach(el => {
+        const top = el.getAttribute('data-tab-top');
+        const left = el.getAttribute('data-tab-left');
+        if (top !== null) el.style.setProperty('--tab-top', top);
+        if (left !== null) el.style.setProperty('--tab-left', left);
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => applyTabVars(document));
+    } else applyTabVars(document);
+  })();
+</script>

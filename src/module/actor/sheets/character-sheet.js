@@ -100,13 +100,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Force CSS to ensure tabs are always clickable
     html.find('.sheet-tabs').css({
       'position': 'relative',
-      'z-index': '9999',
+      'z-index': 'var(--z-top, 10000)',
       'pointer-events': 'auto'
     });
     
     tabLinks.css({
       'position': 'relative',
-      'z-index': '10000',
+      'z-index': 'var(--z-top, 10000)',
       'pointer-events': 'auto',
       'cursor': 'pointer'
     });

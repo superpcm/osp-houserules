@@ -14,6 +14,8 @@
       background-image: none !important;
     }
     
+  /* Z-index variables centralized in src/styles/_z-index.scss */
+    
     /* Single Background Image System - Applied to window instead of form */
     form.osp.sheet.actor.character {
       position: relative;
@@ -93,14 +95,16 @@
        Centralized rules for the tab navigation and content.
        Kept together to avoid duplication and conflicting overrides.
        =============================== */
-    .sheet-tabs {
+  .sheet-tabs {
       /* Positioning: tabs sit to the right of the sheet and extend outward. */
       position: absolute;
       left: 600px;
       top: 50px;
       width: 30px;
       height: 400px;
-      z-index: 10; /* Ensure tabs are above the sheet content but below window chrome */
+      /* Single, consistent stacking context for tabs. Chosen high enough to sit
+         above sheet content and embedded elements but below global modals. */
+  z-index: var(--z-tabs, 200);
       pointer-events: auto;
     }
 
@@ -153,14 +157,14 @@
       opacity: 0.95;
     }
 
-    .sheet-tabs a.item.active {
+  .sheet-tabs a.item.active {
       background: #fff;
       color: #000;
       border-color: #000;
       text-shadow: none !important;
       opacity: 1;
       box-shadow: inset 1px 1px 3px rgba(0,0,0,0.08);
-      z-index: 1;
+  z-index: var(--z-labels, 15);
     }
 
     /* Tab content area */
@@ -265,7 +269,7 @@
       pointer-events: auto;
     }
 
-    .languages-tags .lang-tag button.remove-lang {
+  .languages-tags .lang-tag button.remove-lang {
       background: none;
       border: none;
       color: black !important;
@@ -276,7 +280,7 @@
       font-size: 14px;
       line-height: 1;
       pointer-events: auto;
-      z-index: 102;
+  z-index: var(--z-lang-row, 101);
     }
 
     .languages-tags .lang-tag button.remove-lang:hover {
@@ -371,7 +375,7 @@
     }
     
     /* Portrait adjustment controls */
-    .portrait-controls {
+  .portrait-controls {
       position: absolute;
       top: 100%;
       left: 0;
@@ -381,7 +385,7 @@
       padding: 3px;
       border-radius: 3px;
       display: none;
-      z-index: 1000;
+  z-index: var(--z-overlay, 1000);
       font-size: 10px;
       white-space: nowrap;
       border: 1px solid #666;
@@ -433,10 +437,10 @@
       padding-right: 3px;
     }
     
-    .portrait-container.adjusting {
+  .portrait-container.adjusting {
       outline: 1px dashed #00aaff;
       overflow: visible !important;
-      z-index: 1001 !important;
+  z-index: calc(var(--z-overlay, 1000) + 1) !important;
     }
   </style>
   <script>
@@ -1040,7 +1044,7 @@
         border-radius: 4px;
         font-size: 12px;
         line-height: 1.4;
-        z-index: 1000;
+        z-index: var(--z-overlay, 1000);
         pointer-events: none;
         opacity: 0;
         transition: opacity 0.2s;
@@ -1114,7 +1118,7 @@
           if (!xpTooltip) {
             xpTooltip = document.createElement('div');
             xpTooltip.id = 'xp-tooltip';
-            xpTooltip.style.cssText = `
+              xpTooltip.style.cssText = `
               position: absolute;
               background: #333;
               color: white;
@@ -1122,7 +1126,7 @@
               border-radius: 4px;
               font-size: 12px;
               line-height: 1.4;
-              z-index: 10000;
+              z-index: var(--z-top, 10000);
               pointer-events: none;
               opacity: 0;
               transition: opacity 0.2s;
@@ -1345,7 +1349,7 @@
               border-radius: 4px;
               font-size: 12px;
               line-height: 1.4;
-              z-index: 10000;
+              z-index: var(--z-top, 10000);
               pointer-events: none;
               opacity: 0;
               transition: opacity 0.2s;
@@ -1770,9 +1774,9 @@
 
   <!-- Character Level - Positioned behind everything -->
   <div class="level-progress-bar-container" id="level-container"
-       style="position: absolute; width: 64px; height: 34px; left: 460px; top: 20px; z-index: 8;">
+     style="position: absolute; width: 64px; height: 34px; left: 460px; top: 20px; z-index: var(--z-level, 8);">
     <!-- Shadow overlay for Level field -->
-    <div style="position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: 9; pointer-events: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); border-radius: 6px;"></div>
+  <div style="position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); border-radius: 6px;"></div>
   <!-- Hidden inputs for level position data -->
   <input type="hidden" name="system.levelPosition.x" value="{{system.levelPosition.x}}" />
   <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
@@ -1787,7 +1791,7 @@
           height: 34px; 
           box-shadow: none !important;
           overflow: hidden;
-          z-index: 8;
+          z-index: var(--z-level, 8);
         ">
           <!-- Progress Fill -->
           <div class="level-progress-bar" style="
@@ -1826,7 +1830,7 @@
 
   <!-- Character Portrait - Positioned behind everything -->
   <div class="portrait-container" id="portrait-container"
-       style="--portrait-size: 138px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}}; position: absolute; width: var(--portrait-size); height: 141px; left: 34px; top: 75px; z-index: 15; overflow: hidden;">
+       style="--portrait-size: 138px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}}; position: absolute; width: var(--portrait-size); height: 141px; left: 34px; top: 75px; z-index: var(--z-portrait, 15); overflow: hidden;">
     <!-- Hidden inputs for portrait data -->
     <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
     <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
@@ -1868,17 +1872,17 @@
   </div>
 
   <!-- Static Header Section - Absolute Positioning Layout -->
-  <div class="static-header" style="height: 230px; flex-shrink: 0; position: relative; z-index: 10; background: url('systems/osp-houserules/assets/character-sheet/static-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none;">
+  <div class="static-header" style="height: 230px; flex-shrink: 0; position: relative; z-index: var(--z-sheet, 10); background: url('systems/osp-houserules/assets/character-sheet/static-sheet.webp') no-repeat left top !important; background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none;">
 
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section" id="character-name-container"
-    style="position: absolute; left: 40px; top: 14px; z-index: 9;">
+    style="position: absolute; left: 40px; top: 14px; z-index: var(--z-labels, 15);">
 
       </div>
 
   <!-- Character Name - Absolute positioned -->
   <div class="character-name-group" id="character-name-container"
-       style="position: absolute; left: 33px; top: 16px; z-index: 9; pointer-events: none;">
+       style="position: absolute; left: 33px; top: 16px; z-index: var(--z-labels, 15); pointer-events: none;">
     <input type="hidden" name="system.namePosition.x" value="{{system.namePosition.x}}" />
     <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
     <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
@@ -1890,7 +1894,7 @@
   <!-- Character Class & Alignment - Centered under name as one element -->
   <!-- Character Class - Independent container for positioning -->
   <div class="class-group" id="class-container"
-       style="position: absolute; left: 319px; top: 16px; z-index: 9;">
+       style="position: absolute; left: 319px; top: 16px; z-index: var(--z-labels, 15);">
     <input type="hidden" name="system.classPosition.x" value="{{system.classPosition.x}}" />
     <input type="hidden" name="system.classPosition.y" value="{{system.classPosition.y}}" />
     <input type="hidden" name="system.classPosition.zIndex" value="{{system.classPosition.zIndex}}" />
@@ -1923,7 +1927,7 @@
 
   <!-- Character Alignment - Independent container for positioning -->
   <div class="alignment-group" id="alignment-container"
-       style="position: absolute; left: 319px; top: 125px; z-index: 9;">
+       style="position: absolute; left: 319px; top: 125px; z-index: var(--z-labels, 15);">
     <input type="hidden" name="system.alignmentPosition.x" value="{{system.alignmentPosition.x}}" />
     <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
     <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
@@ -1938,7 +1942,7 @@
 
   <!-- Character Race - Positioned next to existing fields -->
   <div class="race-group" id="race-container"
-       style="position: absolute; left: 179px; top: 74px; z-index: 9;">
+       style="position: absolute; left: 179px; top: 74px; z-index: var(--z-labels, 15);">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-race" id="char-race" name="system.race" style="width: 132px; height: 35px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 3px 0 0 0; margin: 0; border: none; pointer-events: auto;">
         <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
@@ -1954,14 +1958,14 @@
 
   <!-- Character Age and Sex - Small fields -->
   <div class="age-group" id="age-container"
-       style="position: absolute; left: 179px; top: 129px; z-index: 9;">
+       style="position: absolute; left: 179px; top: 129px; z-index: var(--z-labels, 15);">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-age" id="char-age" name="system.age" type="text" value="{{system.age}}" style="width: 63px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 5px 0 2px 0; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;" />
     </div>
   </div>
 
   <div class="sex-group" id="sex-container"
-       style="position: absolute; left: 249px; top: 129px; z-index: 9;">
+       style="position: absolute; left: 249px; top: 129px; z-index: var(--z-labels, 15);">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-sex" id="char-sex" name="system.sex" style="width: 63px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 6px 0 1px 0; margin: 0; border: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; vertical-align: middle;">
         <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
@@ -1973,7 +1977,7 @@
 
   <!-- HandW field -->
   <div class="handw-group" id="handw-container"
-       style="position: absolute; left: 179px; top: 182px; z-index: 8;">
+       style="position: absolute; left: 179px; top: 182px; z-index: var(--z-level, 8);">
     <div class="char-field-group" style="display: flex; flex-direction: column;">
       <input class="char-handw" id="char-handw" name="system.handw" type="text" value="{{system.handw}}" readonly style="width:134px; height: 34px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; margin: 0; pointer-events: none; display: flex; line-height: 1; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; border: none !important; border-width: 0 !important; outline: none !important;" />
     </div>
@@ -1981,7 +1985,7 @@
 
   <!-- Height field -->
   <div class="height-group" id="height-container"
-       style="position: absolute; left: 179px; top: 183px; z-index: 9;">
+       style="position: absolute; left: 179px; top: 183px; z-index: var(--z-labels, 15);">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-height" id="char-height" name="system.height" type="text" value="{{system.height}}" style="width: 65px; height: 35px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 3px 2px 0 2px; margin: 0; border: none; box-shadow: none !important; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
     </div>
@@ -1989,7 +1993,7 @@
 
   <!-- Weight field -->
   <div class="weight-group" id="weight-container"
-       style="position: absolute; left: 247px; top: 183px; z-index: 9;">
+       style="position: absolute; left: 247px; top: 183px; z-index: var(--z-labels, 15);">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <input class="char-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" style="width: 65px; height: 35px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 3px 2px 0 2px; margin: 0; border: none; box-shadow: none !important; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1;" />
     </div>
@@ -1997,7 +2001,7 @@
 
   <!-- Background field -->
   <div class="background-group" id="background-container"
-       style="position: absolute; left: 460px; top: 129px; z-index: 9;">
+       style="position: absolute; left: 460px; top: 129px; z-index: var(--z-labels, 15);">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px;">
       <select class="char-background" id="char-background" name="system.background" style="width: 133px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; line-height: 34px; padding: 2px; margin: 0; border: none; pointer-events: auto;">
  <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
@@ -2107,9 +2111,9 @@
 
   <!-- Languages field -->
   <div class="languages-group" id="languages-container"
-       style="position: absolute; left: 318px; top: 183px; z-index: 9; pointer-events: auto;">
+  style="position: absolute; left: 318px; top: 183px; z-index: var(--z-labels, 15); pointer-events: auto;">
     <div class="char-field-group" style="display: flex; flex-direction: column; align-items: center; pointer-events: auto;">
-      <div class="languages-row open-language-dialog" style="width: 272px; height: 33px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; pointer-events: auto; padding: 2px; z-index: 101; display: flex; align-items: center; justify-content: center;" title="Click to add languages">
+  <div class="languages-row open-language-dialog" style="width: 272px; height: 33px; background-color: transparent !important; min-height: 30px; cursor: pointer; border: none !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; pointer-events: auto; padding: 2px; z-index: var(--z-lang-row, 101); display: flex; align-items: center; justify-content: center;" title="Click to add languages">
         <div class="languages-tags" style="display: flex; background: transparent !important; border: none !important; pointer-events: auto; text-align: center; width: 100%; line-height: 1; white-space: nowrap; overflow: hidden; align-items: center; justify-content: center; height: 100%;"></div>
       </div>
       <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
@@ -2118,7 +2122,7 @@
 
   <!-- XP Mod % field -->
   <div class="xp-mod-group" id="xp-mod-container"
-       style="position: absolute; left: 530px; top: 20px; z-index: 9;">
+  style="position: absolute; left: 530px; top: 20px; z-index: var(--z-labels, 15);">
     <input type="text" class="xp-mod-display" id="xp-mod-display" readonly 
            style="width: 64px; height: 34px; text-align: center; font-size: 24px; 
                   background-color: transparent !important; border: none; 
@@ -2129,7 +2133,7 @@
 
   <!-- XP field -->
   <div class="xp-group" id="xp-container"
-       style="position: absolute; left: 319px; top: 74px; z-index: 15;">
+  style="position: absolute; left: 319px; top: 74px; z-index: var(--z-portrait, 15);">
     <input type="text" class="xp-display" id="xp-display" name="system.xp" value="{{system.xp}}"
            style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
                   background-color: transparent !important; border: none; 
@@ -2140,7 +2144,7 @@
 
   <!-- Next Level field -->
   <div class="next-level-group" id="next-level-container"
-       style="position: absolute; left: 460px; top: 74px; z-index: 9;">
+  style="position: absolute; left: 460px; top: 74px; z-index: var(--z-labels, 15);">
     <input type="text" class="next-level-display" id="next-level-display" readonly
            style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
                   background-color: transparent !important; border: none; 
@@ -2150,7 +2154,7 @@
   </div>
       
       <!-- Horizontal separator line at bottom of static header -->
-      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background-color: #000; z-index: 15;"></div>
+  <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background-color: #000; z-index: var(--z-labels, 15);"></div>
       
     </div>
 
@@ -2196,7 +2200,7 @@
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.death.value}}</span>
               </div>
             </div>
-            <div class="save-label-death" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+            <div class="save-label-death" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: var(--z-labels, 15); pointer-events: none;">
               <svg width="400" height="60" style="overflow: visible;">
                 <defs>
                   <path id="deathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
@@ -2217,7 +2221,7 @@
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.wands.value}}</span>
               </div>
             </div>
-            <div class="save-label-wands" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+            <div class="save-label-wands" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: var(--z-labels, 15); pointer-events: none;">
               <svg width="400" height="60" style="overflow: visible;">
                 <defs>
                   <path id="wandsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
@@ -2238,7 +2242,7 @@
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.paralysis.value}}</span>
               </div>
             </div>
-            <div class="save-label-paralysis" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+            <div class="save-label-paralysis" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: var(--z-labels, 15); pointer-events: none;">
               <svg width="400" height="60" style="overflow: visible;">
                 <defs>
                   <path id="paralysisTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
@@ -2259,7 +2263,7 @@
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: normal; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.breath.value}}</span>
               </div>
             </div>
-            <div class="save-label-breath" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+            <div class="save-label-breath" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: var(--z-labels, 15); pointer-events: none;">
               <svg width="400" height="60" style="overflow: visible;">
                 <defs>
                   <path id="breathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
@@ -2280,7 +2284,7 @@
                 <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(5px); font-size: 60px; font-weight: normal; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px;">{{saves.spells.value}}</span>
               </div>
             </div>
-            <div class="save-label-spells" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: 15; pointer-events: none;">
+            <div class="save-label-spells" style="position: absolute; left: -161px; top: 14px; width: 400px; height: 60px; overflow: visible; z-index: var(--z-labels, 15); pointer-events: none;">
               <svg width="400" height="60" style="overflow: visible;">
                 <defs>
                   <path id="spellsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>

@@ -13,11 +13,11 @@
     linear-gradient(90deg, rgba(255,0,0,0.3) 1px, transparent 1px);
   background-size: 20px 20px;
   pointer-events: none;
-  z-index: 1000;
+  z-index: var(--z-overlay, 1000);
 }
 
 .ability-scores-section.debug-mode .abilities-overlay {
-  z-index: 1001;
+  z-index: calc(var(--z-overlay, 1000) + 1);
 }
 
 /* Add numbered markers at key positions */
@@ -35,5 +35,5 @@
     radial-gradient(circle at 66.66% 50%, red 2px, transparent 3px),
     radial-gradient(circle at 83.33% 50%, red 2px, transparent 3px);
   pointer-events: none;
-  z-index: 1002;
+  z-index: calc(var(--z-overlay, 1000) + 2);
 }

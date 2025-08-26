@@ -378,11 +378,11 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Configuration: base offset and step (pixels)
     // These can be overridden by CSS variables on the .sheet-tabs element:
     // --tab-base-top, --tab-step-top, --tab-base-left, --tab-step-left
-  // Defaults calibrated from current UI measurements
-  let baseTop = -55;  // px for first tab (measured)
-  let stepTop = 75;   // px between tabs (measured)
-  let baseLeft = 0;   // starting left offset (measured)
-  let stepLeft = 0;   // left delta per index (measured)
+  // Defaults (original design): large negative top offsets used previously
+  let baseTop = -215; // px for first tab (original design)
+  let stepTop = 75;   // px between tabs
+  let baseLeft = 0;   // starting left offset
+  let stepLeft = -24; // left delta per index
 
     // If we have a tabs element, attempt to read CSS variables or data attributes
     let tabsEl = null;
@@ -450,6 +450,20 @@ export class OspActorSheetCharacter extends ActorSheet {
     const tabAnchors = (html && html.find) ? html.find('.sheet-tabs a.item') : document.querySelectorAll('.sheet-tabs a.item');
     const tabsEl = (html && html.find) ? html.find('.sheet-tabs')[0] : document.querySelector('.sheet-tabs');
     if (!tabAnchors || tabAnchors.length < 2 || !tabsEl) return; // need at least 2 points to compute step
+
+    // If the tabs element already provides CSS variables or explicit data attributes, don't auto-calibrate
+    try {
+      const cs = window.getComputedStyle(tabsEl);
+      const cssBaseTop = cs.getPropertyValue('--tab-base-top').trim();
+      const hasCssVars = !!cssBaseTop;
+      const hasDataAttrs = tabsEl.hasAttribute('data-tab-base-top') || tabsEl.hasAttribute('data-tab-step-top') || tabsEl.hasAttribute('data-tab-base-left') || tabsEl.hasAttribute('data-tab-step-left');
+      if (hasCssVars || hasDataAttrs) {
+        console.log('CHARACTER-SHEET.JS: autoCalibrateTabOffsets skipped because CSS vars or data attributes exist on .sheet-tabs');
+        return;
+      }
+    } catch (e) {
+      // ignore and continue
+    }
 
     // Convert to DOM nodes
     const nodes = [];

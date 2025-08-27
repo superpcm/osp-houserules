@@ -1,0 +1,17 @@
+/* Tab positioning variables and per-tab overrides
+   Move per-tab layout into CSS so designers can tweak positions without editing templates.
+*/
+
+.sheet-tabs {
+  /* Base values used by JS if no inline per-item vars exist */
+  /* Move the entire tab group slightly up and left so tabs sit under the sheet edge */
+  --tab-base-top: -220px;
+  --tab-step-top: 70px;
+  /* Shift group left and increase horizontal spread so tabs don't sit too far right */
+  --tab-base-left: -32px;
+  --tab-step-left: -24px;
+}
+
+/* No per-item offsets needed when tabs are stacked vertically.
+  Keep base variables for compatibility with older JS logic or future use. */
+

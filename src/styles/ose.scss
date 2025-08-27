@@ -2,6 +2,8 @@
 @import 'equipment';
 // Centralized z-index variables (CSS partial)
 @import 'z-index.css';
+// Tab positioning variables and overrides
+@import 'tabs.css';
 
 // Layout system styles
 .draggable-field {
@@ -46,4 +48,15 @@
 .sheet-tabs .item {
   pointer-events: auto !important;
   cursor: pointer !important;
+}
+
+/* Remove thin 1px separators that appear above the first tab and below the last tab */
+body.game .sheet.app nav.sheet-tabs {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove tab item borders (controls visual capsule edges) */
+.sheet-tabs a.item {
+  border: none !important;
 }

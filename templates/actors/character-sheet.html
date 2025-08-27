@@ -210,6 +210,17 @@
       z-index: var(--z-labels, 15);
     }
 
+    /* Overlap tabs vertically by 10px: each tab pulls up over the previous one */
+    .sheet-tabs a.item + .item {
+      margin-top: -10px !important; /* overlap amount - use !important to override margin: 0 */
+    }
+
+    /* Ensure hovered or active tabs are visually and interactively on top */
+    .sheet-tabs a.item:hover,
+    .sheet-tabs a.item.active {
+      z-index: 1000 !important; /* very high so selected tab obscures tabs below */
+    }
+
     /* Tab content area */
     .sheet-body .tab {
       display: none;

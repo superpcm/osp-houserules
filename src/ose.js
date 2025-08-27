@@ -1,6 +1,9 @@
 // ose.js - Main system entry point
 console.log("osp-houserules Debug: src/ose.js module loaded");
 
+// Import system styles so the build produces dist/ose.css
+import "./styles/ose.scss";
+
 import { OspActorSheetCharacter } from "./module/actor/sheets/character-sheet.js";
 import { OspActorSheetMonster } from "./module/actor/sheets/monster-sheet.js";
 import { OspActor } from "./module/actor/actor.js";

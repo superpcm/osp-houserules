@@ -57,6 +57,4 @@ body.game .sheet.app nav.sheet-tabs {
 }
 
 /* Remove tab item borders (controls visual capsule edges) */
-.sheet-tabs a.item {
-  border: none !important;
-}
+// Tab borders are now controlled by _tabs.scss

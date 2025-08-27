@@ -83,6 +83,8 @@ body.game .sheet.app nav.sheet-tabs {
   padding-top: 0;
   padding-bottom: 0;
   display: block;
+  /* Ensure a thin 0.5px border around each tab for consistent seams */
+  border: 0.5px solid #000;
 }
 
 .sheet-tabs a.item:hover {
@@ -102,7 +104,7 @@ body.game .sheet.app nav.sheet-tabs {
   border-top: 0.5px solid #000;
   border-right: 0.5px solid #000;
   border-bottom: 0.5px solid #000;
-  border-left: 0px solid transparent;
+  border-left: 0.5px solid #000;
   box-shadow: inset 1px 1px 3px rgba(0,0,0,0.08);
   z-index: var(--z-labels, 15);
 }

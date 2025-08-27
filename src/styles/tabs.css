@@ -35,14 +35,14 @@
   text-orientation: mixed;
   outline: none !important;
   text-shadow: none !important;
-  box-shadow: inset 0 0 0 1000px rgba(139,115,85,0.12);
-  opacity: 0.8;
+  box-shadow: none !important;
+  opacity: 1 !important;
 }
 
 .sheet-tabs a.item:focus {
   outline: none !important;
   text-shadow: none !important;
-  box-shadow: inset 0 0 0 1000px rgba(139,115,85,0.12);
+  box-shadow: none !important;
 }
 
 .sheet-tabs {
@@ -88,8 +88,8 @@ body.game .sheet.app nav.sheet-tabs {
   background: #f7fff7;
   color: #3a2915;
   border-color: #6b4112;
-  box-shadow: inset 0 0 0 1000px rgba(139,115,85,0.07);
-  opacity: 0.95;
+  box-shadow: none !important;
+  opacity: 1 !important;
 }
 
 .sheet-tabs a.item.active {
@@ -97,13 +97,28 @@ body.game .sheet.app nav.sheet-tabs {
   color: #000;
   border-color: #000;
   text-shadow: none !important;
-  opacity: 1;
-  border-top: 0.5px solid #000;
-  border-right: 0.5px solid #000;
-  border-bottom: 0.5px solid #000;
-  border-left: 0px solid transparent;
-  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.08);
-  z-index: var(--z-labels, 15);
+  opacity: 1 !important;
+  border-top: 1px solid #000;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+  border-left: 1px solid #000;
+  box-shadow: none !important;
+  z-index: var(--z-labels, 2000);
+}
+
+/* Mask the seam where the active tab overlaps the tab below */
+.sheet-tabs a.item.active::after {
+  content: '';
+  position: absolute;
+  left: -3px;
+  right: -3px;
+  bottom: -22px;
+  height: 40px;
+  background: #fff !important;
+  border-radius: 0 14px 14px 0;
+  pointer-events: none;
+  box-shadow: 0 0 0 3px #fff !important;
+  z-index: 4000;
 }
 
 .sheet-tabs a.item + .item {

@@ -190,6 +190,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     });
     
     console.log('CHARACTER-SHEET.JS: Tab system setup complete');
+    // Ensure tabs sit below the static header by measuring header height and setting .sheet-tabs top
+    try {
+      this.setTabsTopToHeader(html);
+    } catch (e) {}
 
     // Auto-calibrate offsets from current DOM positions, then apply computed tab offsets (index-based)
     try {
@@ -197,7 +201,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       this.applyComputedTabOffsets(html);
 
       // Recompute on window resize
-      this._tabResizeHandler = () => this.applyComputedTabOffsets(html);
+      this._tabResizeHandler = () => {
+        try { this.setTabsTopToHeader(html); } catch (e) {}
+        try { this.applyComputedTabOffsets(html); } catch (e) {}
+      };
       window.addEventListener('resize', this._tabResizeHandler);
 
       // Observe tab list changes (add/remove) and recompute
@@ -438,6 +445,29 @@ export class OspActorSheetCharacter extends ActorSheet {
       } catch (err) {
         // ignore
       }
+    }
+  }
+
+  /**
+   * Measure the static header and set the .sheet-tabs top so tabs start directly below it.
+   * This keeps tab placement correct even if the header height changes.
+   */
+  setTabsTopToHeader(html) {
+    const root = (html && html.find) ? html[0] : document;
+    const tabsEl = (html && html.find) ? html.find('.sheet-tabs')[0] : document.querySelector('.sheet-tabs');
+    const headerEl = (html && html.find) ? html.find('.static-header')[0] : document.querySelector('.static-header');
+    const sheetBody = (html && html.find) ? html.find('.sheet-body')[0] : document.querySelector('.sheet-body');
+    if (!tabsEl || !headerEl || !sheetBody) return;
+    try {
+      const headerRect = headerEl.getBoundingClientRect();
+      const sheetRect = sheetBody.getBoundingClientRect();
+      // Compute top relative to the sheet container
+  // Move tabs slightly upward (5px) so they don't sit flush with the header border
+  const topPx = Math.max(0, Math.round(headerRect.bottom - sheetRect.top) - 5);
+      // Apply as inline style on .sheet-tabs
+      tabsEl.style.top = `${topPx}px`;
+    } catch (e) {
+      // ignore
     }
   }
 

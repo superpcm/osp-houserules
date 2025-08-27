@@ -87,7 +87,6 @@
   background-color: transparent !important;
   margin-top: 0 !important;
   padding-top: 0 !important;
-      background-color: transparent !important;
     }
     
     /* ===============================
@@ -114,7 +113,8 @@
       width: 24px;    /* visual width (becomes height after rotation) */
       height: 80px;   /* visual height (becomes width after rotation) */
       background: white !important; /* base background */
-      border: 1px solid #000;
+  /* Asymmetric border: top/right/bottom 0.5px, left 0 */
+      border: 0.5px solid #000;
       text-decoration: none;
       display: flex;
       align-items: center;
@@ -134,7 +134,7 @@
       text-shadow: none !important;
       /* subtle shading to provide depth; reduced opacity so white base shows through */
       box-shadow: inset 0 0 0 1000px rgba(139,115,85,0.12);
-      opacity: 1;
+      opacity: 0.8;
     }
 
     .sheet-tabs a.item:focus {
@@ -143,18 +143,49 @@
       box-shadow: inset 0 0 0 1000px rgba(139,115,85,0.12);
     }
 
-    /* Per-item positioning driven by CSS variables so tabs can be added/removed safely.
-       Each .sheet-tabs a.item may set --tab-top and --tab-left (inline or via class)
-       Example: <a class="item" style="--tab-top: -215px; --tab-left: 0px">...
-    */
+    /* Right-anchored vertical tabs: place the tab container at the right edge
+       below the static header area and stack tabs directly under each other.
+       This removes per-item horizontal offsets so tabs align vertically. */
+    .sheet-tabs {
+      position: absolute;
+      /* Fixed placement and size requested */
+      left: 600px;
+      top: 350px;
+      width: 24px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end; /* keep rounded tab caps to the right */
+      gap: 0px; /* remove vertical spacing between tabs */
+      padding: 0; /* remove container padding */
+      margin: 0; /* remove any container margin */
+      box-sizing: border-box;
+      z-index: var(--z-tabs, 200);
+      overflow: visible;
+    }
+
+    /* Force removal of top/bottom nav borders and tab borders (Firefox-specific precedence) */
+    body.game .sheet.app nav.sheet-tabs {
+      border-top: none !important;
+      border-bottom: none !important;
+      background-color: transparent !important;
+    }
+
     .sheet-tabs a.item {
-      /* Reset any order-driven absolute offsets */
-      top: auto;
-      left: auto;
-      /* Position using CSS transform based on per-element variables */
-      transform: translate(var(--tab-left, 0px), var(--tab-top, 0px));
-      /* Ensure transform-origin matches layout expectations */
-      transform-origin: center center;
+      box-shadow: none !important;
+      background-clip: padding-box !important;
+    }
+
+    .sheet-tabs a.item {
+      /* Stack vertically; ignore per-item translate offsets */
+      position: static;
+      transform: none !important;
+      top: auto !important;
+      left: auto !important;
+      margin: 0; /* remove top/bottom margins */
+      padding-top: 0; /* remove any vertical padding */
+      padding-bottom: 0;
+      display: block;
     }
 
     .sheet-tabs a.item:hover {
@@ -165,14 +196,18 @@
       opacity: 0.95;
     }
 
-  .sheet-tabs a.item.active {
+    .sheet-tabs a.item.active {
       background: #fff;
       color: #000;
       border-color: #000;
       text-shadow: none !important;
       opacity: 1;
+      border-top: 0.5px solid #000;
+      border-right: 0.5px solid #000;
+      border-bottom: 0.5px solid #000;
+      border-left: 0px solid transparent;
       box-shadow: inset 1px 1px 3px rgba(0,0,0,0.08);
-  z-index: var(--z-labels, 15);
+      z-index: var(--z-labels, 15);
     }
 
     /* Tab content area */
@@ -2162,16 +2197,16 @@
   </div>
       
       <!-- Horizontal separator line at bottom of static header -->
-  <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background-color: #000; z-index: var(--z-labels, 15);"></div>
+  <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background-color: transparent; z-index: var(--z-labels, 15);"></div>
       
     </div>
 
     <!-- Right-side Tab Navigation -->
     <nav class="sheet-tabs tabs" data-group="primary">
-      <a class="item" data-tab="combat" data-tab-top="-215px" data-tab-left="0px">Combat</a>
-      <a class="item" data-tab="skills" data-tab-top="-140px" data-tab-left="-24px">Skills</a>
-      <a class="item" data-tab="equipment" data-tab-top="-65px" data-tab-left="-48px">Equipment</a>
-      <a class="item" data-tab="bio" data-tab-top="10px" data-tab-left="-72px">Bio</a>
+  <a class="item" data-tab="combat">Combat</a>
+  <a class="item" data-tab="skills">Skills</a>
+  <a class="item" data-tab="equipment">Equipment</a>
+  <a class="item" data-tab="bio">Bio</a>
     </nav>
 
     <!-- Sheet Body - Tab Content Area -->

@@ -2623,3 +2623,28 @@
     } else applyTabVars(document);
   })();
 </script>
+
+<script>
+  (function(){
+    const BASE_Z = 200; // base z-index for tabs
+    function ensureTabZIndices(root=document){
+      const tabs = Array.from(root.querySelectorAll('.sheet-tabs .item'));
+      tabs.forEach((el, idx) => {
+        // Use a data attribute to avoid clobbering inline styles that matter elsewhere
+        el.dataset._zAssigned = String(BASE_Z + idx);
+        el.style.zIndex = String(BASE_Z + idx);
+      });
+    }
+
+    function init(){
+      ensureTabZIndices(document);
+      const nav = document.querySelector('.sheet-tabs');
+      if (!nav) return;
+      const mo = new MutationObserver(() => ensureTabZIndices(document));
+      mo.observe(nav, { childList: true, subtree: false });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

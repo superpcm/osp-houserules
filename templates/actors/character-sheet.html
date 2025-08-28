@@ -36,40 +36,6 @@
     .application.window-app.sheet.actor.character.osp {
       overflow: visible !important; /* Allow tabs to extend beyond window */
     }
-
-    /* Prevent accidental stacking-contexts on ancestors which can break z-index ordering
-       by removing transforms, opacity and filters on the window and common ancestors. */
-    .application.window-app.sheet.actor.character.osp,
-    .application.window-app.sheet.actor.character.osp .window-content,
-    .osp.sheet.actor.character,
-    .window-content,
-    .window-content .window-content,
-    .osp .window-content,
-    form.osp.sheet.actor.character {
-      transform: none !important;
-      opacity: 1 !important;
-      filter: none !important;
-      will-change: auto !important;
-      backface-visibility: visible !important;
-    }
-
-    /* Neutralize transforms used for small layout nudges so they don't create stacking contexts */
-    .languages-tags,
-    .portrait-img,
-    .char-name,
-    .char-class,
-    .char-align,
-    .char-race,
-    .char-age,
-    .char-sex,
-    .save-label-death span,
-    .save-label-wands span,
-    .save-label-paralysis span,
-    .save-label-breath span,
-    .save-label-spells span {
-      transform: none !important;
-      will-change: auto !important;
-    }
     
     /* Also override the window content wrapper */
     .application.window-app.sheet.actor.character.osp .window-content,
@@ -125,44 +91,6 @@
     
   /* Tabs are now centralized in src/styles/tabs.css and built into dist/ose.css */
   /* See src/styles/tabs.css for tab layout, stacking and hover/active rules. */
-
-    /* FORCE OVERRIDE: Remove all transparency from tabs with maximum specificity */
-    form.osp.sheet.actor.character .sheet-tabs a.item,
-    .osp.sheet.actor.character .sheet-tabs a.item,
-    .sheet.actor.character .sheet-tabs a.item {
-      opacity: 1 !important;
-      background: white !important;
-      background-color: white !important;
-      box-shadow: none !important;
-    }
-    
-    form.osp.sheet.actor.character .sheet-tabs a.item:hover,
-    .osp.sheet.actor.character .sheet-tabs a.item:hover,
-    .sheet.actor.character .sheet-tabs a.item:hover {
-      opacity: 1 !important;
-      background: #f7f7f7 !important;
-      background-color: #f7f7f7 !important;
-      box-shadow: none !important;
-    }
-    
-    form.osp.sheet.actor.character .sheet-tabs a.item.active,
-    .osp.sheet.actor.character .sheet-tabs a.item.active,
-    .sheet.actor.character .sheet-tabs a.item.active {
-      opacity: 1 !important;
-      background: white !important;
-      background-color: white !important;
-      box-shadow: none !important;
-    }
-
-    /* OVERRIDE: Let JavaScript control z-index, remove CSS !important z-index rules */
-    form.osp.sheet.actor.character .sheet-tabs a.item:hover,
-    form.osp.sheet.actor.character .sheet-tabs a.item.active,
-    .osp.sheet.actor.character .sheet-tabs a.item:hover,
-    .osp.sheet.actor.character .sheet-tabs a.item.active,
-    .sheet.actor.character .sheet-tabs a.item:hover,
-    .sheet.actor.character .sheet-tabs a.item.active {
-      z-index: inherit !important; /* Let inline styles from JS take precedence */
-    }
 
     /* Tab content area */
     .sheet-body .tab {
@@ -2698,114 +2626,25 @@
 
 <script>
   (function(){
-    const BASE_Z = 500; // base z-index for tabs
-    const ACTIVE_Z = 5000; // z-index for active tab (very high to override everything)
-    
+    const BASE_Z = 200; // base z-index for tabs
     function ensureTabZIndices(root=document){
       const tabs = Array.from(root.querySelectorAll('.sheet-tabs .item'));
-      console.log('Setting z-indices for', tabs.length, 'tabs');
-      
       tabs.forEach((el, idx) => {
-        if (el.classList.contains('active')) {
-          // Active tab gets the highest z-index - use multiple methods to force it
-          el.style.setProperty('z-index', String(ACTIVE_Z), 'important');
-          el.style.zIndex = String(ACTIVE_Z);
-          el.dataset._zAssigned = String(ACTIVE_Z);
-          console.log('Set ACTIVE tab', idx, 'to z-index:', ACTIVE_Z);
-        } else {
-          // Non-active tabs get incrementally higher z-index from bottom to top
-          const zValue = BASE_Z + (tabs.length - idx);
-          el.style.setProperty('z-index', String(zValue), 'important');
-          el.style.zIndex = String(zValue);
-          el.dataset._zAssigned = String(zValue);
-          console.log('Set tab', idx, 'to z-index:', zValue);
-        }
+        // Use a data attribute to avoid clobbering inline styles that matter elsewhere
+        el.dataset._zAssigned = String(BASE_Z + idx);
+        el.style.zIndex = String(BASE_Z + idx);
       });
     }
 
     function init(){
-      console.log('Initializing tab z-index management');
       ensureTabZIndices(document);
       const nav = document.querySelector('.sheet-tabs');
-      if (!nav) {
-        console.log('No .sheet-tabs found');
-        return;
-      }
-      
-      // Re-run z-index assignment when tabs change (mutation observer)
-      const mo = new MutationObserver(() => {
-        console.log('Tabs changed, reassigning z-indices');
-        ensureTabZIndices(document);
-      });
-      mo.observe(nav, { childList: true, subtree: false, attributes: true, attributeFilter: ['class'] });
-      
-      // Re-run z-index assignment when active tab changes (click events)
-      nav.addEventListener('click', (e) => {
-        console.log('Tab clicked:', e.target);
-        // Use setTimeout to ensure the active class has been updated
-        setTimeout(() => {
-          console.log('Running delayed z-index update after click');
-          ensureTabZIndices(document);
-        }, 50);
-      });
-      
-      // Also listen for class changes directly
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            console.log('Class changed on tab, reassigning z-indices');
-            setTimeout(() => ensureTabZIndices(document), 10);
-          }
-        });
-      });
-      
-      tabs.forEach(tab => {
-        observer.observe(tab, { attributes: true, attributeFilter: ['class'] });
-      });
+      if (!nav) return;
+      const mo = new MutationObserver(() => ensureTabZIndices(document));
+      mo.observe(nav, { childList: true, subtree: false });
     }
 
-  // Z-INDEX MANAGEMENT - Run after character sheet JS initializes
-  setTimeout(function(){
-    console.log('=== STARTING Z-INDEX MANAGEMENT ===');
-    const BASE_Z = 500;
-    const ACTIVE_Z = 5000;
-    
-    function forceTabZIndices(){
-      const tabs = Array.from(document.querySelectorAll('.sheet-tabs .item'));
-      console.log('FORCE: Found', tabs.length, 'tabs');
-      
-      tabs.forEach((el, idx) => {
-        const isActive = el.classList.contains('active');
-        const zValue = isActive ? ACTIVE_Z : (BASE_Z + (tabs.length - idx));
-        
-        // Force z-index with multiple methods
-        el.style.setProperty('z-index', String(zValue), 'important');
-        el.style.zIndex = String(zValue);
-        
-        console.log('FORCE: Tab', idx, el.dataset.tab, isActive ? '(ACTIVE)' : '', '-> z-index:', zValue);
-      });
-    }
-    
-    // Run immediately
-    forceTabZIndices();
-    
-    // Hook into the existing character sheet tab system
-    const nav = document.querySelector('.sheet-tabs');
-    if (nav) {
-      console.log('FORCE: Adding event listeners to .sheet-tabs');
-      
-      // Intercept ALL click events on the tab container
-      nav.addEventListener('click', function(e) {
-        console.log('FORCE: Click intercepted on', e.target.dataset?.tab);
-        // Run after a delay to let the character sheet JS finish
-        setTimeout(forceTabZIndices, 100);
-      }, true); // Use capture phase
-      
-      // Also run periodically to catch any missed updates
-      setInterval(forceTabZIndices, 2000);
-    }
-    
-    console.log('=== Z-INDEX MANAGEMENT INITIALIZED ===');
-  }, 1000); // Wait 1 second for character sheet to initialize
-})();
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
 </script>

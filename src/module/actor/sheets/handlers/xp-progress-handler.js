@@ -1,7 +1,7 @@
 /**
  * XPProgressHandler - Manages XP progress bar functionalit    // Listen for changes to XP field
     this.html.on('change', 'input[name="system.xp"]', () => {
-      console.log('XP field changed, updating progress bar...');
+
       setTimeout(() => this.updateProgressBar(), 50);
     });
   }rd system
@@ -21,8 +21,8 @@ export class XPProgressHandler {
    * Initialize the XP progress handler
    */
   initialize() {
-    console.log('XP Progress Handler initializing...');
-    
+
+
     // Initialize DOM elements
     this.progressBar = this.html.find('.xp-progress');
     this.levelXpProgress = this.html.find('.level-xp-progress');
@@ -36,26 +36,13 @@ export class XPProgressHandler {
     this.skillsLevelDisplay = this.html.find('.skills-level-display');
     this.staticLevelDisplay = this.html.find('.level-display'); // Static area level display
     this.staticLevelProgressBar = this.html.find('.level-progress-bar'); // Static area progress bar (changed from ring)
-    
-    console.log('XP Progress Handler - Elements found:', {
-      xpDisplay: this.xpDisplay.length,
-      xpAwardBtn: this.xpAwardBtn.length,
-      progressBar: this.progressBar.length,
-      levelXpProgress: this.levelXpProgress.length,
-      nextLevelDisplay: this.nextLevelDisplay.length,
-      nextLevelFormDisplay: this.nextLevelFormDisplay.length,
-      percentageDisplay: this.percentageDisplay.length,
-      levelDisplay: this.levelDisplay.length,
-      skillsLevelProgressRing: this.skillsLevelProgressRing.length,
-      skillsLevelDisplay: this.skillsLevelDisplay.length,
-      staticLevelDisplay: this.staticLevelDisplay.length,
-      staticLevelProgressBar: this.staticLevelProgressBar.length
-    });
-    
-    console.log('XP Display selector check:', this.html.find('#xp-display').length, this.html.find('.xp-display').length);
-    
+
+
+
+
+
     this.bindEvents();
-    
+
     // Update all progress displays if they exist, with retry for DOM readiness
     setTimeout(() => {
       // Re-find elements to ensure DOM is ready
@@ -81,61 +68,49 @@ export class XPProgressHandler {
     this.skillsLevelDisplay = this.html.find('.skills-level-display');
     this.staticLevelDisplay = this.html.find('.level-display'); // Static area level display
     this.staticLevelProgressRing = this.html.find('.level-progress-ring'); // Static area progress ring
-    
-    console.log('XP Progress Handler - Elements refreshed:', {
-      xpDisplay: this.xpDisplay.length,
-      xpAwardBtn: this.xpAwardBtn.length,
-      progressBar: this.progressBar.length,
-      levelXpProgress: this.levelXpProgress.length,
-      nextLevelDisplay: this.nextLevelDisplay.length,
-      percentageDisplay: this.percentageDisplay.length,
-      levelDisplay: this.levelDisplay.length,
-      skillsLevelProgressRing: this.skillsLevelProgressRing.length,
-      skillsLevelDisplay: this.skillsLevelDisplay.length,
-      staticLevelDisplay: this.staticLevelDisplay.length,
-      staticLevelProgressRing: this.staticLevelProgressRing.length
-    });
-    
+
+
+
     // Bind XP display click now that we have the element
     if (this.xpDisplay.length) {
-      console.log('Found XP display element, setting up events...');
-      
+
+
       // Set readonly status based on user role
       const isGM = game.user.isGM;
-      console.log('User is GM:', isGM);
-      
+
+
       if (!isGM) {
         this.xpDisplay.prop('readonly', true);
         this.xpDisplay.css('cursor', 'pointer');
-        console.log('Set XP field to readonly for non-GM');
+
       } else {
         this.xpDisplay.prop('readonly', false);
         this.xpDisplay.css('cursor', 'text');
-        console.log('Set XP field to editable for GM');
+
       }
-      
+
       // For both GMs and non-GMs, only open dialog on double-click
       this.xpDisplay.off('dblclick').on('dblclick', (e) => {
-        console.log('XP field double-clicked by', isGM ? 'GM' : 'non-GM');
+
         e.preventDefault();
         this.showXPAwardDialog();
       });
-      
+
       if (!isGM) {
-        console.log('Bound double-click event for non-GM');
+
       } else {
-        console.log('Bound double-click event for GM');
+
       }
-      
-      console.log('XP display click event bound successfully');
+
+
     } else {
-      console.error('XP display element not found!');
+
     }
-    
+
     // Remove click event from static level display (no longer used for XP award)
     if (this.staticLevelDisplay.length) {
       this.staticLevelDisplay.off('click');
-      console.log('Static level display click event removed');
+
     }
   }
 
@@ -174,22 +149,22 @@ export class XPProgressHandler {
 
     // Listen for changes to the XP field directly
     this.html.on('change', '.char-xp', () => {
-      console.log('XP field changed, updating progress bar...');
+
       setTimeout(() => this.updateProgressBar(), 50);
     });
 
     // Listen for actor updates (since level is now managed through dialog)
     if (this.actor) {
       this.actor.on?.('update', (actor, updateData) => {
-        console.log('Actor updated, refreshing progress bar...', updateData);
-        
+
+
         // If XP was updated, immediately update the display to prevent flash
         let skipXPUpdate = false;
         if (updateData.system?.xp !== undefined && this.xpDisplay.length) {
           this.xpDisplay.val(updateData.system.xp);
           skipXPUpdate = true; // Don't let updateProgressBar overwrite our manual update
         }
-        
+
         // Then update progress bar with minimal delay, skipping XP update if we handled it
         setTimeout(() => this.updateProgressBar(skipXPUpdate), 10);
       });
@@ -197,20 +172,20 @@ export class XPProgressHandler {
 
     // Listen for changes to XP field
     this.html.on('change', 'input[name="system.xp"]', () => {
-      console.log('XP field changed, updating progress bar...');
+
       setTimeout(() => this.updateProgressBar(), 50);
     });
-    
+
     // Listen for direct XP display input changes (admin only)
     this.html.on('change blur', '.xp-display', (e) => {
       const isGM = game.user.isGM;
       if (isGM) {
         this.isUpdatingXP = true; // Prevent other updates from overwriting display
         window.xpHandlerUpdating = true; // Prevent inline script interference
-        
+
         const newXP = parseInt(e.target.value.replace(/,/g, '')) || 0;
-        console.log('Admin changed XP to:', newXP);
-        
+
+
         // Only update if the value is different from current
         const currentXP = parseInt(String(this.actor.system.xp).replace(/,/g, '')) || 0;
         if (newXP !== currentXP) {
@@ -242,10 +217,10 @@ export class XPProgressHandler {
     const nextLevelXP = this.getNextLevelXP();
     const xpMod = this.getXPModifier();
     const currentLevel = parseInt(this.actor.system.level) || 1;
-    
+
     // Check if user is a GM
     const isGM = game.user.isGM;
-    
+
     // Create dialog content
     const content = `
       <div style="padding: 10px;">
@@ -316,15 +291,15 @@ export class XPProgressHandler {
           callback: async (html) => {
             this.isUpdatingXP = true; // Prevent other updates from overwriting display
             window.xpHandlerUpdating = true; // Prevent inline script interference
-            
+
             const awardedXP = parseInt(html.find('#xp-award-input').val()) || 0;
             let updateData = {};
-            
+
             // Handle GM-only editable fields
             if (isGM) {
               const newCurrentXP = parseInt(html.find('#current-xp-input').val()) || 0;
               const newLevel = parseInt(html.find('#level-input').val()) || 1;
-              
+
               // Update current XP and level if changed
               if (newCurrentXP !== currentXP) {
                 updateData['system.xp'] = newCurrentXP;
@@ -336,15 +311,15 @@ export class XPProgressHandler {
               if (newLevel !== currentLevel) {
                 updateData['system.level'] = newLevel;
               }
-              
+
               if (Object.keys(updateData).length > 0) {
-                console.log('Updating actor with:', updateData);
+
                 await this.actor.update(updateData);
                 // Force progress bar update after level/XP change (skip XP display since we handle it)
                 setTimeout(() => this.updateProgressBar(updateData['system.xp'] !== undefined), 50);
               }
             }
-            
+
             // Award XP if specified
             if (awardedXP > 0) {
               await this.awardXP(awardedXP);
@@ -352,7 +327,7 @@ export class XPProgressHandler {
               // If we only changed level/XP without awarding, still refresh the progress bar
               setTimeout(() => this.updateProgressBar(updateData['system.xp'] !== undefined), 50);
             }
-            
+
             // Re-enable automatic updates after a short delay
             setTimeout(() => {
               this.isUpdatingXP = false;
@@ -368,7 +343,7 @@ export class XPProgressHandler {
       default: "ok",
       render: (html) => {
         const self = this; // Capture the XPProgressHandler instance
-        
+
         // Apply minimal styling to dialog
         const dialogWindow = html.closest('.app.window-app');
         if (dialogWindow.length) {
@@ -377,7 +352,7 @@ export class XPProgressHandler {
             'background': 'white',
             'background-color': 'white'
           });
-          
+
           // Style the window header to be black
           const windowHeader = dialogWindow.find('.window-header');
           if (windowHeader.length) {
@@ -386,7 +361,7 @@ export class XPProgressHandler {
               'background-color': 'black'
             });
           }
-          
+
           // Ensure window content has white background
           const windowContent = dialogWindow.find('.window-content');
           if (windowContent.length) {
@@ -396,7 +371,7 @@ export class XPProgressHandler {
             });
           }
         }
-        
+
         // Update preview when input changes
         const input = html.find('#xp-award-input');
         const preview = html.find('#xp-preview');
@@ -413,7 +388,7 @@ export class XPProgressHandler {
             const currentXPValue = isGM ? (parseInt(currentXPInput.val()) || 0) : currentXP;
             const modifiedXP = Math.floor(baseXP * (1 + xpMod / 100));
             const newTotal = currentXPValue + modifiedXP;
-            
+
             baseXPSpan.text(baseXP);
             modifiedXPSpan.text(modifiedXP);
             newTotalSpan.text(newTotal);
@@ -424,16 +399,16 @@ export class XPProgressHandler {
         };
 
         input.on('input', updatePreview);
-        
+
         // Update preview when GM changes current XP
         if (isGM) {
           currentXPInput.on('input', updatePreview);
-          
+
           // Update Next Level XP when level changes
           levelInput.on('change', () => {
             const selectedLevel = parseInt(levelInput.val()) || 1;
             const newNextLevelXP = self.getNextLevelXPForLevel(selectedLevel);
-            console.log(`Level changed to ${selectedLevel}, Next Level XP: ${newNextLevelXP}`);
+
             nextLevelXPDisplay.text(newNextLevelXP);
             updatePreview(); // Also update the preview in case XP award is set
           });
@@ -441,7 +416,7 @@ export class XPProgressHandler {
 
         // Focus the input
         input.focus();
-        
+
         // Handle Enter key
         input.on('keypress', (e) => {
           if (e.which === 13) { // Enter key
@@ -458,13 +433,13 @@ export class XPProgressHandler {
   async awardXP(baseXP) {
     this.isUpdatingXP = true; // Prevent other updates from overwriting display
     window.xpHandlerUpdating = true; // Prevent inline script interference
-    
+
     const xpMod = this.getXPModifier();
     const modifiedXP = Math.floor(baseXP * (1 + xpMod / 100));
     const currentXP = parseInt(String(this.actor.system.xp).replace(/,/g, '')) || 0;
     const newXP = currentXP + modifiedXP;
 
-    console.log('Awarding XP:', { baseXP, modifiedXP, currentXP, newXP });
+
 
     // Immediately update the display first to prevent flash
     if (this.xpDisplay.length) {
@@ -473,18 +448,18 @@ export class XPProgressHandler {
 
     // Update the actor's XP
     await this.actor.update({ 'system.xp': newXP });
-    
+
     // Ensure display stays updated (redundant but safe)
     if (this.xpDisplay.length) {
       this.xpDisplay.val(newXP);
     }
-    
+
     // Trigger progress bar update (skip XP display update since we handle it manually)
     this.updateProgressBar(true);
-    
+
     // Show notification
     ui.notifications.info(`Awarded ${baseXP} XP (${modifiedXP} after ${xpMod >= 0 ? '+' : ''}${xpMod}% modifier). New total: ${newXP}`);
-    
+
     // Re-enable automatic updates after a short delay
     setTimeout(() => {
       this.isUpdatingXP = false;
@@ -499,7 +474,7 @@ export class XPProgressHandler {
   getXPModifier() {
     const characterClass = this.actor.system.class || '';
     const attributes = this.actor.system.attributes || {};
-    
+
     // Prime requisite mapping for each class (matches ose.js and actor.js)
     const primeRequisites = {
       // Core OSE classes
@@ -507,7 +482,7 @@ export class XPProgressHandler {
       'cleric': ['wis'], 
       'magic-user': ['int'],
       'thief': ['dex'],
-      
+
       // Advanced Fantasy classes
       'assassin': ['str', 'dex'],       // Assassins need both STR and DEX
       'barbarian': ['str', 'con'],      // Barbarians need STR and CON
@@ -518,11 +493,11 @@ export class XPProgressHandler {
       'paladin': ['str', 'cha'],        // Paladins need STR and CHA
       'ranger': ['str', 'wis'],         // Rangers need STR and WIS
       'warden': ['str', 'con'],         // Wardens need STR and CON
-      
+
       // Magic users and variants
       'illusionist': ['int'],           // Illusionists use INT
       'mage': ['int'],                  // Mages use INT like magic-users
-      
+
       // Race-as-class options
       'dwarf': ['str'],                 // Dwarf class uses STR
       'elf': ['int', 'str'],            // Elf class needs INT and STR
@@ -533,37 +508,37 @@ export class XPProgressHandler {
     };
 
     const classReqs = primeRequisites[characterClass.toLowerCase()] || ['str'];
-    
+
     // Get all prime requisite scores
     const primeScores = classReqs.map(req => parseInt(attributes[req]?.value) || 10);
-    
+
     // Standard AF/OSE XP modifier rules:
     // - If ANY prime requisite ≤ 8 → −10% XP
     // - Else if ALL prime requisites ≥ 18 → +15% XP  
     // - Else if ALL prime requisites ≥ 16 → +10% XP
     // - Else if ALL prime requisites ≥ 13 → +5% XP
     // - Else → 0%
-    
+
     // Check if ANY prime is ≤ 8
     if (primeScores.some(score => score <= 8)) {
       return -10;
     }
-    
+
     // Check if ALL primes are ≥ 18
     if (primeScores.every(score => score >= 18)) {
       return 15;
     }
-    
+
     // Check if ALL primes are ≥ 16
     if (primeScores.every(score => score >= 16)) {
       return 10;
     }
-    
+
     // Check if ALL primes are ≥ 13
     if (primeScores.every(score => score >= 13)) {
       return 5;
     }
-    
+
     // Otherwise, no modifier
     return 0;
   }
@@ -572,13 +547,13 @@ export class XPProgressHandler {
    * Update the progress bar based on current XP and next level requirements
    */
   updateProgressBar(skipXPDisplayUpdate = false) {
-    console.log('=== XP Progress Bar Update Started ===');
+
     const currentXP = parseInt(String(this.actor.system.xp).replace(/,/g, '')) || 0;
     const currentLevel = parseInt(this.actor.system.level) || 1;
     const characterClass = this.actor.system.class || 'Fighter';
     const nextLevelXP = this.getNextLevelXP();
     const currentLevelXP = this.getCurrentLevelXP();
-    
+
     // Calculate progress toward next level as simple percentage
     // This shows: "How close am I to reaching the next level's XP requirement?"
     let progressPercentage = 0;
@@ -586,20 +561,12 @@ export class XPProgressHandler {
       progressPercentage = Math.min(100, Math.max(0, (currentXP / nextLevelXP) * 100));
     }
 
-    console.log('XP Progress Debug:', {
-      currentXP,
-      currentLevel,
-      characterClass,
-      nextLevelXP,
-      progressPercentage: Math.round(progressPercentage),
-      calculation: `${currentXP} / ${nextLevelXP} = ${progressPercentage.toFixed(1)}%`,
-      simple: `${currentXP} XP out of ${nextLevelXP} XP needed for level ${currentLevel + 1}`
-    });
+
 
     // Update horizontal progress bar (if it exists)
     if (this.progressBar.length) {
       this.progressBar.css('width', `${progressPercentage}%`);
-      
+
       // Optional: Change bar color if at max level or over XP requirement
       if (currentXP >= nextLevelXP) {
         this.progressBar.css('background-color', '#16a34a'); // Darker green when complete
@@ -610,9 +577,9 @@ export class XPProgressHandler {
 
     // Update vertical level field progress bar (if it exists)
     if (this.levelXpProgress.length) {
-      console.log('Updating level XP progress bar height to:', `${progressPercentage}%`);
+
       this.levelXpProgress.css('height', `${progressPercentage}%`);
-      
+
       // Calculate top border radius based on progress (gradual transition starting at 90%)
       let topRadius = 0;
       if (progressPercentage >= 90) {
@@ -620,10 +587,10 @@ export class XPProgressHandler {
         const radiusProgress = (progressPercentage - 90) / 10; // 0 to 1 scale
         topRadius = Math.min(9, radiusProgress * 9); // 0px to 9px
       }
-      
+
       // Update the CSS custom property for top border radius
       this.levelXpProgress.css('--progress-top-radius', `${topRadius}px`);
-      
+
       // Set background color based on progress
       if (currentXP >= nextLevelXP) {
         this.levelXpProgress.css('background', 'linear-gradient(to top, #16a34a 0%, #22c55e 100%)'); // Darker green when complete
@@ -631,7 +598,7 @@ export class XPProgressHandler {
         this.levelXpProgress.css('background', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)'); // Green gradient
       }
     } else {
-      console.log('Level XP progress element not found!');
+
     }
 
     // Update next level display
@@ -661,19 +628,15 @@ export class XPProgressHandler {
 
     // Update skills tab progress ring (if it exists)
     if (this.skillsLevelProgressRing.length) {
-      console.log('Updating skills level progress ring to:', `${progressPercentage}%`);
-      
+
+
       // Calculate stroke-dashoffset for progress ring
       const circumference = 2 * Math.PI * 32.5; // 2πr where r = 32.5
       const offset = circumference - (progressPercentage / 100) * circumference;
-      
+
       this.skillsLevelProgressRing.css('stroke-dashoffset', offset);
-      
-      console.log('Skills ring progress:', {
-        circumference: circumference.toFixed(1),
-        progressPercentage: progressPercentage.toFixed(1),
-        offset: offset.toFixed(1)
-      });
+
+
     }
 
     // Update skills level display
@@ -682,21 +645,15 @@ export class XPProgressHandler {
     }
 
     // Update static level progress ring (if it exists)
-    console.log('Checking for static level progress ring...', {
-      staticLevelProgressRingFound: this.staticLevelProgressRing.length,
-      progressPercentage: progressPercentage.toFixed(1)
-    });
+
     // Update static level progress bar
     if (this.staticLevelProgressBar.length) {
-      console.log('Updating static level progress bar to:', `${progressPercentage}%`);
-      
+
+
       // Set the width of the progress bar
       this.staticLevelProgressBar.css('width', `${progressPercentage}%`);
-      
-      console.log('Static bar progress:', {
-        progressPercentage: progressPercentage.toFixed(1),
-        width: `${progressPercentage}%`
-      });
+
+
     }
 
     // Update static level display
@@ -711,7 +668,7 @@ export class XPProgressHandler {
   getNextLevelXPForLevel(level) {
     const characterClass = this.actor.system.class;
     const currentLevel = parseInt(level) || 1;
-    
+
     // XP requirements table - matches ose.js
     const xpTables = {
       'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
@@ -727,7 +684,7 @@ export class XPProgressHandler {
       'cleric': 'cleric', 
       'magic-user': 'magic-user',
       'thief': 'thief',
-      
+
       // Advanced Fantasy classes - map to appropriate base class XP tables
       'assassin': 'thief',          // Assassins use thief XP
       'barbarian': 'fighter',       // Barbarians use fighter XP
@@ -738,11 +695,11 @@ export class XPProgressHandler {
       'paladin': 'cleric',          // Paladins use cleric XP
       'ranger': 'fighter',          // Rangers use fighter XP
       'warden': 'fighter',          // Wardens use fighter XP
-      
+
       // Magic users and variants
       'illusionist': 'magic-user',  // Illusionists use magic-user XP
       'mage': 'magic-user',         // Mages use magic-user XP
-      
+
       // Race-as-class options
       'dwarf': 'fighter',           // Dwarf class uses fighter XP
       'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
@@ -755,11 +712,11 @@ export class XPProgressHandler {
     // Get the appropriate XP table for this class
     const mappedClass = classXPMapping[characterClass?.toLowerCase()] || 'fighter';
     const table = xpTables[mappedClass];
-    
+
     // Get next level XP (currentLevel index = nextLevel - 1)
     const nextLevel = Math.min(currentLevel + 1, 15); // Max level 15
     const nextLevelIndex = nextLevel - 1; // Convert to array index
-    
+
     return table[nextLevelIndex] || table[14]; // Use max level XP if beyond table
   }
 
@@ -769,7 +726,7 @@ export class XPProgressHandler {
   getNextLevelXP() {
     const characterClass = this.actor.system.class;
     const currentLevel = parseInt(this.actor.system.level) || 1; // Use actual level field, not calculated from XP
-    
+
     // XP requirements table - matches ose.js
     const xpTables = {
       'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
@@ -785,7 +742,7 @@ export class XPProgressHandler {
       'cleric': 'cleric', 
       'magic-user': 'magic-user',
       'thief': 'thief',
-      
+
       // Advanced Fantasy classes - map to appropriate base class XP tables
       'assassin': 'thief',          // Assassins use thief XP
       'barbarian': 'fighter',       // Barbarians use fighter XP
@@ -796,11 +753,11 @@ export class XPProgressHandler {
       'paladin': 'cleric',          // Paladins use cleric XP
       'ranger': 'fighter',          // Rangers use fighter XP
       'warden': 'fighter',          // Wardens use fighter XP
-      
+
       // Magic users and variants
       'illusionist': 'magic-user',  // Illusionists use magic-user XP
       'mage': 'magic-user',         // Mages use magic-user XP
-      
+
       // Race-as-class options
       'dwarf': 'fighter',           // Dwarf class uses fighter XP
       'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
@@ -813,11 +770,11 @@ export class XPProgressHandler {
     // Get the appropriate XP table for this class
     const mappedClass = classXPMapping[characterClass?.toLowerCase()] || 'fighter';
     const table = xpTables[mappedClass];
-    
+
     // Get next level XP (currentLevel index = nextLevel - 1)
     const nextLevel = Math.min(currentLevel + 1, 15); // Max level 15
     const nextLevelIndex = nextLevel - 1; // Convert to array index
-    
+
     return table[nextLevelIndex] || table[14]; // Use max level XP if beyond table
   }
 
@@ -827,7 +784,7 @@ export class XPProgressHandler {
   getCurrentLevelXP() {
     const characterClass = this.actor.system.class;
     const currentLevel = parseInt(this.actor.system.level) || 1; // Use actual level field, not calculated from XP
-    
+
     // XP requirements table - matches ose.js
     const xpTables = {
       'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
@@ -843,7 +800,7 @@ export class XPProgressHandler {
       'cleric': 'cleric', 
       'magic-user': 'magic-user',
       'thief': 'thief',
-      
+
       // Advanced Fantasy classes - map to appropriate base class XP tables
       'assassin': 'thief',          // Assassins use thief XP
       'barbarian': 'fighter',       // Barbarians use fighter XP
@@ -854,11 +811,11 @@ export class XPProgressHandler {
       'paladin': 'cleric',          // Paladins use cleric XP
       'ranger': 'fighter',          // Rangers use fighter XP
       'warden': 'fighter',          // Wardens use fighter XP
-      
+
       // Magic users and variants
       'illusionist': 'magic-user',  // Illusionists use magic-user XP
       'mage': 'magic-user',         // Mages use magic-user XP
-      
+
       // Race-as-class options
       'dwarf': 'fighter',           // Dwarf class uses fighter XP
       'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
@@ -871,7 +828,7 @@ export class XPProgressHandler {
     // Get the appropriate XP table for this class
     const mappedClass = classXPMapping[characterClass?.toLowerCase()] || 'fighter';
     const table = xpTables[mappedClass];
-    
+
     // Get XP requirement for the current level (level - 1 = index)
     const levelIndex = Math.max(0, Math.min(currentLevel - 1, table.length - 1));
     return table[levelIndex] || 0;
@@ -884,7 +841,7 @@ export class XPProgressHandler {
     const currentXP = parseInt(this.actor.system.xp) || 0;
     const nextLevelXP = this.getNextLevelXP();
     const currentLevelXP = this.getCurrentLevelXP();
-    
+
     return {
       currentXP: currentXP,
       nextLevelXP: nextLevelXP,
@@ -904,13 +861,13 @@ export class XPProgressHandler {
    * Test the progress bar with a specific percentage (for debugging)
    */
   testProgressBar(percentage = 50) {
-    console.log(`Testing progress bar with ${percentage}%`);
+
     if (this.levelXpProgress.length) {
       this.levelXpProgress.css('height', `${percentage}%`);
       this.levelXpProgress.css('background', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
-      console.log(`Progress bar height set to ${percentage}%`);
+
     } else {
-      console.log('Level XP progress element not found for testing');
+
     }
   }
 

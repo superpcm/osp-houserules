@@ -20,7 +20,7 @@ export class CharacterNameHandler {
       this.setupDynamicWidth();
       this.bindEvents();
       this.adjustWidth(); // Initial adjustment
-      
+
       // Remove any drag handle from character name container
       this.ensureDragHandle();
     }
@@ -38,9 +38,9 @@ export class CharacterNameHandler {
         const dragHandle = container.find('.drag-handle');
         if (dragHandle.length) {
           dragHandle.remove();
-          console.log('Character name drag handle removed');
+
         }
-        
+
         // Remove any drag-related event handlers
         container.off('mouseenter.charname mouseleave.charname');
       }
@@ -62,7 +62,7 @@ export class CharacterNameHandler {
       'font-weight': this.nameInput.css('font-weight'),
       'letter-spacing': this.nameInput.css('letter-spacing')
     });
-    
+
     // Add to DOM for measurement
     $('body').append(this.measureSpan);
 
@@ -118,10 +118,10 @@ export class CharacterNameHandler {
     if (!this.nameInput || !this.measureSpan) return;
 
     const text = this.nameInput.val() || this.nameInput.attr('placeholder') || '';
-    
+
     // Use the longer of actual text or placeholder for measurement
     const measureText = text.length > 0 ? text : (this.nameInput.attr('placeholder') || 'Character Name');
-    
+
     // Set text in measure span and get width
     this.measureSpan.text(measureText);
     let textWidth = this.measureSpan.width();
@@ -143,10 +143,10 @@ export class CharacterNameHandler {
   setWidthConstraints(minWidth, maxWidth) {
     this.minWidth = minWidth;
     this.maxWidth = maxWidth;
-    
+
     this.nameInput.css({
     });
-    
+
     this.adjustWidth();
   }
 
@@ -156,7 +156,7 @@ export class CharacterNameHandler {
   getWidthInfo() {
     const currentWidth = this.nameInput.width();
     const text = this.nameInput.val() || '';
-    
+
     return {
       currentWidth: currentWidth,
       textLength: text.length,
@@ -182,11 +182,11 @@ export class CharacterNameHandler {
     if (this.nameInput) {
       this.nameInput.off('input keyup paste focus blur');
     }
-    
+
     if (this.measureSpan) {
       this.measureSpan.remove();
     }
-    
+
     if (this.fontObserver) {
       this.fontObserver.disconnect();
     }

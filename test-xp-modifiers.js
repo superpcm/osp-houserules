@@ -47,9 +47,9 @@ const testCases = [
   }
 ];
 
-console.log("XP Modifier Logic Comparison");
-console.log("============================");
-console.log();
+
+
+
 
 // Prime requisite mapping
 const primeRequisites = {
@@ -61,7 +61,7 @@ const primeRequisites = {
 // Old averaging logic
 function calculateOldXPModifier(characterClass, attributes) {
   const classReqs = primeRequisites[characterClass.toLowerCase()] || ['str'];
-  
+
   const getXPModifier = (score) => {
     const numScore = parseInt(score) || 10;
     if (numScore <= 8) return -10;
@@ -88,7 +88,7 @@ function calculateOldXPModifier(characterClass, attributes) {
 function calculateNewXPModifier(characterClass, attributes) {
   const classReqs = primeRequisites[characterClass.toLowerCase()] || ['str'];
   const primeScores = classReqs.map(req => parseInt(attributes[req]?.value) || 10);
-  
+
   if (primeScores.some(score => score <= 8)) return -10;
   if (primeScores.every(score => score >= 18)) return 15;
   if (primeScores.every(score => score >= 16)) return 10;
@@ -100,15 +100,15 @@ function calculateNewXPModifier(characterClass, attributes) {
 testCases.forEach(test => {
   const oldResult = calculateOldXPModifier(test.class, test.attributes);
   const newResult = calculateNewXPModifier(test.class, test.attributes);
-  
-  console.log(`${test.description}:`);
-  console.log(`  Old Logic (Average): ${oldResult}%`);
-  console.log(`  New Logic (AF/OSE):  ${newResult}%`);
-  console.log(`  Difference: ${newResult - oldResult}%`);
-  console.log();
+
+
+
+
+
+
 });
 
-console.log("Key Changes:");
-console.log("- Multi-prime classes now require ALL primes to meet thresholds");
-console.log("- ANY prime ≤ 8 results in -10% (no averaging)");
-console.log("- Thresholds are now consistent with AF/OSE rules");
+
+
+
+

@@ -7,4 +7,4 @@ const input = resolve(process.cwd(), 'src/styles/ose.scss');
 const out = resolve(process.cwd(), 'dist/ose.css');
 const result = compile(input, { loadPaths: [resolve(process.cwd(), 'src/styles')] });
 writeFileSync(out, result.css);
-console.log('SCSS compiled to', out);
+

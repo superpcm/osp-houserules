@@ -85,7 +85,7 @@ const currentImplementation = {
 // Function to convert JSON data to arrays
 function convertJsonToArrays(jsonClass) {
   const arrays = { death: [], wands: [], paralysis: [], breath: [], spells: [] };
-  
+
   for (let level = 1; level <= 14; level++) {
     const levelData = jsonClass.levels.find(l => l.level === level);
     if (levelData) {
@@ -103,40 +103,40 @@ function convertJsonToArrays(jsonClass) {
       arrays.spells.push(arrays.spells[arrays.spells.length - 1] || 15);
     }
   }
-  
+
   return arrays;
 }
 
 // Comparison function
 function compareImplementations() {
-  console.log("SAVING THROW ANALYSIS");
-  console.log("====================");
-  console.log();
+
+
+
 
   const classesToCheck = ['Fighter', 'Thief'];
-  
+
   classesToCheck.forEach(className => {
     const jsonClass = jsonData[className];
     const currentClass = currentImplementation[className.toLowerCase()];
-    
+
     if (!jsonClass || !currentClass) {
-      console.log(`❌ Missing data for ${className}`);
+
       return;
     }
-    
-    console.log(`=== ${className.toUpperCase()} ===`);
-    
+
+
+
     const jsonArrays = convertJsonToArrays(jsonClass);
-    
+
     // Compare each save type
     ['death', 'wands', 'paralysis', 'breath', 'spells'].forEach(saveType => {
       const jsonValues = jsonArrays[saveType];
       const currentValues = currentClass[saveType];
-      
-      console.log(`\\n${saveType.toUpperCase()} (D/W/P/B/S -> ${saveType}):`);
-      console.log(`JSON Data:    [${jsonValues.join(', ')}]`);
-      console.log(`Current Impl: [${currentValues.slice(0, 14).join(', ')}]`);
-      
+
+
+
+
+
       // Compare values level by level
       let differences = [];
       for (let i = 0; i < 14; i++) {
@@ -144,15 +144,15 @@ function compareImplementations() {
           differences.push(\`Level \${i+1}: \${currentValues[i]} -> \${jsonValues[i]}\`);
         }
       }
-      
+
       if (differences.length > 0) {
-        console.log(\`❌ DIFFERENCES: \${differences.join(', ')}\`);
+
       } else {
-        console.log(\`✅ MATCHES\`);
+
       }
     });
-    
-    console.log();
+
+
   });
 }
 

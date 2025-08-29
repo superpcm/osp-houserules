@@ -25,14 +25,14 @@ export class OspActorSheetCharacter extends ActorSheet {
   getData(options) {
     const context = super.getData(options);
     context.system = this.actor.system;
-    
+
     // Prepare items for template
     context.weapons = this.actor.system.weapons || [];
     context.armor = this.actor.system.armor || [];
     context.containers = this.actor.system.containers || [];
     context.items = this.actor.system.items || [];
     context.treasures = this.actor.system.treasures || [];
-    
+
     // Encumbrance data
     context.totalWeight = this.actor.system.encumbrance?.totalWeight || 0;
     context.maxWeight = this.actor.system.encumbrance?.maxWeight || 100;
@@ -47,7 +47,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       spells: { value: 0 }
     };
 
-    console.log("osp-houserules Debug: Saving throws in template context:", context.saves);
+
 
     return context;
   }
@@ -192,7 +192,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const header = event.currentTarget;
     const type = header.dataset.type;
     const isTreasure = header.dataset.treasure === "true";
-    
+
     const itemData = {
       name: `New ${type.capitalize()}`,
       type: type,
@@ -254,7 +254,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     event.preventDefault();
     const li = $(event.currentTarget).parents(".item-entry");
     const item = this.actor.items.get(li.data("item-id"));
-    
+
     // Create a chat message with item details
     const chatData = {
       user: game.user.id,
@@ -267,7 +267,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         <p><strong>Weight:</strong> ${item.system.weight} lbs</p>
       </div>`
     };
-    
+
     ChatMessage.create(chatData);
   }
 
@@ -280,7 +280,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     event.preventDefault();
     const li = $(event.currentTarget).parents(".item-entry");
     const item = this.actor.items.get(li.data("item-id"));
-    
+
     if (item.type === "weapon") {
       // Roll attack
       const roll = new Roll("1d20");
@@ -302,7 +302,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const itemId = input.dataset.itemId;
     const field = input.dataset.field;
     const value = parseInt(input.value) || 0;
-    
+
     const item = this.actor.items.get(itemId);
     if (item) {
       item.update({[field]: value});
@@ -319,7 +319,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const caret = event.currentTarget;
     const category = $(caret).closest('.item-category');
     const list = category.find('.item-list');
-    
+
     list.slideToggle(200);
     $(caret).find('i').toggleClass('fa-caret-down fa-caret-right');
   }

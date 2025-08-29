@@ -1,6 +1,6 @@
 export class OspActor extends Actor {
   constructor(data, context) {
-    console.log("OSP DEBUG: OspActor constructor called!");
+
     super(data, context);
   }
 
@@ -9,8 +9,8 @@ export class OspActor extends Actor {
    * @private
    */
   _calculateSavingThrows() {
-    console.log("OSP DEBUG: _calculateSavingThrows method called!");
-    
+
+
     // Initialize saves structure if it doesn't exist
     if (!this.system.saves) {
       this.system.saves = {
@@ -21,12 +21,12 @@ export class OspActor extends Actor {
         spells: { value: 0 }
       };
     }
-    
+
     const characterClass = this.system.class || '';
     const level = parseInt(this.system.level) || 1;
     const race = this.system.race?.toLowerCase() || '';
-    
-    console.log(`OSP Debug: Class: "${characterClass}", Level: ${level}, Race: "${race}"`);
+
+
 
     // OSE saving throw tables by class
     const savingThrowTables = {
@@ -116,7 +116,7 @@ export class OspActor extends Actor {
       }
     };
 
-    console.log(`OSP Debug: Full fighter table breath array:`, savingThrowTables.fighter.breath);
+
 
     // Map additional classes to their saving throw patterns
     const classMapping = {
@@ -125,7 +125,7 @@ export class OspActor extends Actor {
       'cleric': 'cleric', 
       'magic-user': 'magic-user',
       'thief': 'thief',
-      
+
       // Advanced Fantasy classes with specific tables
       'assassin': 'assassin',          // Assassins have their own progression
       'barbarian': 'barbarian',        // Barbarians have their own progression  
@@ -136,11 +136,11 @@ export class OspActor extends Actor {
       'paladin': 'cleric',             // Paladins use cleric saves
       'ranger': 'fighter',             // Rangers use fighter saves
       'warden': 'warden',              // Wardens have their own progression
-      
+
       // Magic users and variants
       'illusionist': 'magic-user',     // Illusionists use magic-user saves
       'mage': 'mage',                  // Mages have their own progression
-      
+
       // Race-as-class options with specific tables
       'dwarf': 'dwarf',                // Dwarf class has its own progression
       'elf': 'fighter',                // Elf class uses fighter saves (with some magic-user features)
@@ -153,13 +153,13 @@ export class OspActor extends Actor {
     // Get the appropriate save table for this class
     const mappedClass = classMapping[characterClass.toLowerCase()] || 'fighter';
     const saveTable = savingThrowTables[mappedClass];
-    console.log(`OSP Debug: Using save table for: ${characterClass.toLowerCase()} -> ${mappedClass}`);
-    console.log(`OSP Debug: Original level: ${level}, Character class: "${characterClass}"`);
+
+
     const levelIndex = Math.min(Math.max(level - 1, 0), 14); // Levels 1-15, array index 0-14
-    console.log(`OSP Debug: Level index: ${levelIndex}`);
-    console.log(`OSP Debug: Save table keys:`, Object.keys(saveTable));
-    console.log(`OSP Debug: Fighter breath array:`, savingThrowTables.fighter.breath);
-    console.log(`OSP Debug: Current save table breath array:`, saveTable.breath);
+
+
+
+
 
     // Calculate each saving throw
     ['death', 'wands', 'paralysis', 'breath', 'spells'].forEach(saveType => {
@@ -167,13 +167,13 @@ export class OspActor extends Actor {
       if (!this.system.saves[saveType]) {
         this.system.saves[saveType] = { value: 0 };
       }
-      
+
       let baseValue = saveTable[saveType] ? saveTable[saveType][levelIndex] : 15;
-      console.log(`OSP Debug: ${saveType} base value: ${baseValue} (from index ${levelIndex} of array [${saveTable[saveType]?.slice(0,5).join(',')}...])`);
-      
+
+
       // Apply racial bonuses
       let racialBonus = 0;
-      
+
       // Dwarf racial bonus - CON-based bonus vs poison, spells, wands/rods/staves
       if (race === 'dwarf' && (saveType === 'death' || saveType === 'spells' || saveType === 'wands')) {
         const conScore = parseInt(this.system.abilities?.con?.value) || 10;
@@ -188,16 +188,16 @@ export class OspActor extends Actor {
         } else if (conScore >= 18) {
           racialBonus = 5; // +5 bonus
         }
-        console.log(`OSP Debug: Dwarf CON ${conScore} grants +${racialBonus} bonus to ${saveType}`);
+
       } 
       // Hobbit racial bonus (keeping old system for now)
       else if (race === 'hobbit' && (saveType === 'wands' || saveType === 'spells' || saveType === 'paralysis' || saveType === 'death')) {
         racialBonus = 4; // Hobbits get +4 vs magic
       }
-      
+
       const finalValue = Math.max(baseValue - racialBonus, 2); // Minimum save of 2
-      console.log(`OSP Debug: ${saveType} final value: ${finalValue} (base ${baseValue} - racial ${racialBonus})`);
-      
+
+
       this.system.saves[saveType].value = finalValue;
     });
   }
@@ -209,18 +209,18 @@ export class OspActor extends Actor {
   _calculateNextLevelXP() {
     const characterClass = this.system.class || '';
     const level = parseInt(this.system.level) || 1;
-    
+
     // OSE XP progression tables
     const xpTables = {
       // Fighter progression (and similar classes)
       'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
-      
+
       // Cleric progression
       'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
-      
+
       // Magic-User progression (higher requirements)
       'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
-      
+
       // Thief progression
       'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
     };
@@ -232,7 +232,7 @@ export class OspActor extends Actor {
       'cleric': 'cleric', 
       'magic-user': 'magic-user',
       'thief': 'thief',
-      
+
       // Advanced Fantasy classes - map to appropriate base class XP tables
       'assassin': 'thief',          // Assassins use thief XP
       'barbarian': 'fighter',       // Barbarians use fighter XP
@@ -243,11 +243,11 @@ export class OspActor extends Actor {
       'paladin': 'cleric',          // Paladins use cleric XP
       'ranger': 'fighter',          // Rangers use fighter XP
       'warden': 'fighter',          // Wardens use fighter XP
-      
+
       // Magic users and variants
       'illusionist': 'magic-user',  // Illusionists use magic-user XP
       'mage': 'magic-user',         // Mages use magic-user XP
-      
+
       // Race-as-class options
       'dwarf': 'fighter',           // Dwarf class uses fighter XP
       'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
@@ -260,11 +260,11 @@ export class OspActor extends Actor {
     // Get the appropriate XP table for this class
     const mappedClass = classXPMapping[characterClass.toLowerCase()] || 'fighter';
     const xpTable = xpTables[mappedClass];
-    
+
     // Calculate next level XP (if max level, show current level requirement)
     const nextLevel = Math.min(level + 1, 15); // Max level 15
     const nextLevelIndex = nextLevel - 1; // Convert to array index
-    
+
     this.system.nextLevelXP = xpTable[nextLevelIndex] || xpTable[14]; // Use max level XP if beyond table
   }
 
@@ -275,7 +275,7 @@ export class OspActor extends Actor {
   _calculateXPModifier() {
     const characterClass = this.system.class || '';
     const attributes = this.system.attributes || {};
-    
+
     // Prime requisite mapping for each class
     const primeRequisites = {
       // Core OSE classes
@@ -283,7 +283,7 @@ export class OspActor extends Actor {
       'cleric': ['wis'], 
       'magic-user': ['int'],
       'thief': ['dex'],
-      
+
       // Advanced Fantasy classes
       'assassin': ['str', 'dex'],       // Assassins need both STR and DEX
       'barbarian': ['str', 'con'],      // Barbarians need STR and CON
@@ -294,11 +294,11 @@ export class OspActor extends Actor {
       'paladin': ['str', 'cha'],        // Paladins need STR and CHA
       'ranger': ['str', 'wis'],         // Rangers need STR and WIS
       'warden': ['str', 'con'],         // Wardens need STR and CON
-      
+
       // Magic users and variants
       'illusionist': ['int'],           // Illusionists use INT
       'mage': ['int'],                  // Mages use INT like magic-users
-      
+
       // Race-as-class options (these often have multiple requirements)
       'dwarf': ['str'],                 // Dwarf class uses STR
       'elf': ['int', 'str'],            // Elf class needs INT and STR
@@ -309,19 +309,19 @@ export class OspActor extends Actor {
     };
 
     const classReqs = primeRequisites[characterClass.toLowerCase()] || ['str'];
-    
+
     // Get all prime requisite scores
     const primeScores = classReqs.map(req => parseInt(attributes[req]?.value) || 10);
-    
+
     // Standard AF/OSE XP modifier rules:
     // - If ANY prime requisite ≤ 8 → −10% XP
     // - Else if ALL prime requisites ≥ 18 → +15% XP  
     // - Else if ALL prime requisites ≥ 16 → +10% XP
     // - Else if ALL prime requisites ≥ 13 → +5% XP
     // - Else → 0%
-    
+
     let totalModifier = 0;
-    
+
     // Check if ANY prime is ≤ 8
     if (primeScores.some(score => score <= 8)) {
       totalModifier = -10;
@@ -364,12 +364,12 @@ export class OspActor extends Actor {
 
   /** @override */
   prepareDerivedData() {
-    console.log("OSP DEBUG: prepareDerivedData called for actor type:", this.type);
+
     super.prepareDerivedData();
-    
+
     // Prepare character-specific data
     if (this.type === "character") {
-      console.log("OSP DEBUG: Calling _prepareCharacterData for character");
+
       this._prepareCharacterData();
     }
   }
@@ -379,8 +379,8 @@ export class OspActor extends Actor {
    * @private
    */
   _prepareCharacterData() {
-    console.log("OSP DEBUG: _prepareCharacterData called");
-    
+
+
     // Organize items by type
     this.system.weapons = this.items.filter(item => item.type === "weapon");
     this.system.armor = this.items.filter(item => item.type === "armor");
@@ -390,13 +390,13 @@ export class OspActor extends Actor {
 
     // Calculate encumbrance
     this._calculateEncumbrance();
-    
+
     // Calculate saving throws
     this._calculateSavingThrows();
-    
+
     // Calculate next level XP
     this._calculateNextLevelXP();
-    
+
     // Calculate XP modifier
     this._calculateXPModifier();
   }
@@ -407,7 +407,7 @@ export class OspActor extends Actor {
    */
   _calculateEncumbrance() {
     let totalWeight = 0;
-    
+
     // Sum up all item weights
     this.items.forEach(item => {
       if (item.system.equipped || item.type === "armor" || item.type === "weapon") {

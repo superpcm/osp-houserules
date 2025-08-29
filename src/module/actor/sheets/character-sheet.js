@@ -27,21 +27,21 @@ export class OspActorSheetCharacter extends ActorSheet {
   getData(options) {
     const context = super.getData(options);
     context.system = this.actor.system;
-    
+
     // Prepare items for template
     context.weapons = this.actor.system.weapons || [];
     context.armor = this.actor.system.armor || [];
     context.containers = this.actor.system.containers || [];
     context.items = this.actor.system.items || [];
     context.treasures = this.actor.system.treasures || [];
-    
+
     // Encumbrance data
     context.totalWeight = this.actor.system.encumbrance?.totalWeight || 0;
     context.maxWeight = this.actor.system.encumbrance?.maxWeight || 100;
     context.encumbrancePercentage = this.actor.system.encumbrance?.percentage || 0;
 
     // Ensure saving throws are available
-    console.log("OSP DEBUG: Actor system saves:", this.actor.system.saves);
+
     context.saves = this.actor.system.saves || {
       death: { value: 0 },
       wands: { value: 0 },
@@ -50,7 +50,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       spells: { value: 0 }
     };
 
-    console.log("OSP DEBUG: Context saves:", context.saves);
+
 
     return context;
   }
@@ -75,8 +75,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Add broad click detection for debugging
     html.on('click', '*', (event) => {
       if ($(event.target).closest('.sheet-tabs').length > 0) {
-        console.log('CHARACTER-SHEET.JS: Click detected in tab area:', event.target.tagName, event.target.className);
-        console.log('CHARACTER-SHEET.JS: Target data-tab:', $(event.target).data('tab'));
+
+
       }
     });
   }
@@ -85,16 +85,16 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Setup manual tab system
    */
   setupTabSystem(html) {
-    console.log('CHARACTER-SHEET.JS: Setting up tab system...');
+
     const tabLinks = html.find('.sheet-tabs a.item');
     const tabSections = html.find('.sheet-body .tab');
-    
-    console.log('CHARACTER-SHEET.JS: Found tab links:', tabLinks.length);
-    console.log('CHARACTER-SHEET.JS: Found tab sections:', tabSections.length);
-    
+
+
+
+
     // Debug: Log each tab link found
     tabLinks.each((i, el) => {
-      console.log('CHARACTER-SHEET.JS: Tab link element:', el, 'data-tab:', $(el).data('tab'), 'text:', $(el).text().trim());
+
     });
 
     // Force CSS to ensure tabs are always clickable
@@ -103,7 +103,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       'z-index': 'var(--z-top, 10000)',
       'pointer-events': 'auto'
     });
-    
+
     tabLinks.css({
       'position': 'relative',
       'z-index': 'var(--z-top, 10000)',
@@ -115,7 +115,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.activateTab(html, 'combat');
 
     // SUPER AGGRESSIVE APPROACH: Multiple layers of event capture
-    
+
     // Method 1: Body-level capture (even higher than document)
     $('body').off('click.tabsystem').on('click.tabsystem', (event) => {
       const $target = $(event.target);
@@ -124,7 +124,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         event.preventDefault();
         event.stopImmediatePropagation();
         const tabName = $tabItem.data('tab');
-        console.log('CHARACTER-SHEET.JS: Tab clicked (body capture):', tabName);
+
         this.activateTab(html, tabName);
         return false;
       }
@@ -134,30 +134,30 @@ export class OspActorSheetCharacter extends ActorSheet {
     tabLinks.each((i, el) => {
       // Override any CSS that might block clicks
       $(el).css('pointer-events', 'auto !important');
-      
+
       // Remove any existing listeners first
       el.removeEventListener('click', this._handleTabClick, true);
       el.removeEventListener('click', this._handleTabClick, false);
-      
+
       // Create bound handler
       this._handleTabClick = (event) => {
         event.preventDefault();
         event.stopImmediatePropagation();
         const tabName = $(event.target).data('tab');
-        console.log('CHARACTER-SHEET.JS: Tab clicked (direct capture):', tabName);
+
         this.activateTab(html, tabName);
         return false;
       };
-      
+
       // Bind with capture = true (highest priority)
       el.addEventListener('click', this._handleTabClick, true);
-      
+
       // Also bind as many event types as possible
       ['mouseup', 'mousedown', 'pointerup', 'touchend'].forEach(eventType => {
         el.addEventListener(eventType, (event) => {
           if (eventType === 'mouseup' || eventType === 'pointerup' || eventType === 'touchend') {
             const tabName = $(event.target).data('tab');
-            console.log(`CHARACTER-SHEET.JS: Tab ${eventType}:`, tabName);
+
             this.activateTab(html, tabName);
           }
         }, true);
@@ -168,28 +168,28 @@ export class OspActorSheetCharacter extends ActorSheet {
     tabLinks.on('mousedown touchstart', (event) => {
       const $target = $(event.currentTarget);
       const tabName = $target.data('tab');
-      console.log('CHARACTER-SHEET.JS: Setting timer for tab:', tabName);
-      
+
+
       // Clear any existing timer
       if (this._tabTimer) clearTimeout(this._tabTimer);
-      
+
       // Activate after short delay
       this._tabTimer = setTimeout(() => {
-        console.log('CHARACTER-SHEET.JS: Timer activation for tab:', tabName);
+
         this.activateTab(html, tabName);
       }, 100);
     });
-    
+
     // Method 4: Form delegation as backup
     html.off('click.tabsystem').on('click.tabsystem', '.sheet-tabs a.item', (event) => {
       event.preventDefault();
       event.stopImmediatePropagation();
       const tabName = $(event.currentTarget).data('tab');
-      console.log('CHARACTER-SHEET.JS: Tab clicked (form delegation):', tabName);
+
       this.activateTab(html, tabName);
     });
-    
-    console.log('CHARACTER-SHEET.JS: Tab system setup complete');
+
+
     // Ensure tabs sit below the static header by measuring header height and setting .sheet-tabs top
     try {
       this.setTabsTopToHeader(html);
@@ -214,7 +214,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         this._tabMutationObserver.observe(tabsElement, { childList: true });
       }
     } catch (err) {
-      console.warn('CHARACTER-SHEET.JS: Failed to initialize computed tab offsets', err);
+
     }
   }
 
@@ -232,7 +232,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Add active class to clicked tab and show corresponding section
     const activeLink = tabLinks.filter(`[data-tab="${tabName}"]`);
     const activeSection = tabSections.filter(`[data-tab="${tabName}"]`);
-    
+
     activeLink.addClass('active');
     activeSection.addClass('active').show();
   }
@@ -282,7 +282,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         handler.initialize();
         this.handlers.set(name, handler);
       } catch (error) {
-        console.error(`Failed to initialize ${name} handler:`, error);
+
       }
     });
 
@@ -298,7 +298,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           handler.destroy();
         }
       } catch (error) {
-        console.error(`Failed to destroy ${name} handler:`, error);
+
       }
     });
     this.handlers.clear();
@@ -310,20 +310,20 @@ export class OspActorSheetCharacter extends ActorSheet {
    * @param {Object} formData - The form data being submitted
    */
   async _updateObject(event, formData) {
-    console.log("OSP Debug: Character sheet _updateObject called with:", formData);
-    
+
+
     // Call the parent class update method
     const result = await super._updateObject(event, formData);
-    
+
     // Force the actor to recalculate derived data
     if (this.actor) {
-      console.log("OSP Debug: Forcing actor derived data recalculation");
+
       this.actor.prepareDerivedData();
-      
+
       // Re-render the sheet to show updated values
       this.render(false);
     }
-    
+
     return result;
   }
 
@@ -335,7 +335,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Clean up all tab-related event handlers
     $(document).off('click.tabsystem');
     $('body').off('click.tabsystem');
-    
+
     // Clear any pending timers
     if (this._tabTimer) {
       clearTimeout(this._tabTimer);
@@ -351,7 +351,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       try { this._tabMutationObserver.disconnect(); } catch(e) {}
       this._tabMutationObserver = null;
     }
-    
+
     return super.close(options);
   }
 
@@ -488,7 +488,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const hasCssVars = !!cssBaseTop;
       const hasDataAttrs = tabsEl.hasAttribute('data-tab-base-top') || tabsEl.hasAttribute('data-tab-step-top') || tabsEl.hasAttribute('data-tab-base-left') || tabsEl.hasAttribute('data-tab-step-left');
       if (hasCssVars || hasDataAttrs) {
-        console.log('CHARACTER-SHEET.JS: autoCalibrateTabOffsets skipped because CSS vars or data attributes exist on .sheet-tabs');
+
         return;
       }
     } catch (e) {
@@ -525,11 +525,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     const stepLeft = count > 0 ? (totalLeftStep / count) : (second.left - first.left);
 
     try {
-      console.log('CHARACTER-SHEET.JS: autoCalibrateTabOffsets measured:', measured);
-      console.log('CHARACTER-SHEET.JS: autoCalibrateTabOffsets computed ->', {
-        baseTop: Math.round(baseTop), stepTop: Math.round(stepTop), baseLeft: Math.round(baseLeft), stepLeft: Math.round(stepLeft),
-        count: measured.length
-      });
+
+
       tabsEl.style.setProperty('--tab-base-top', `${Math.round(baseTop)}px`);
       tabsEl.style.setProperty('--tab-step-top', `${Math.round(stepTop)}px`);
       tabsEl.style.setProperty('--tab-base-left', `${Math.round(baseLeft)}px`);

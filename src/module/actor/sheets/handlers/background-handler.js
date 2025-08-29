@@ -36,8 +36,8 @@ export class BackgroundHandler {
     const maxFontSize = 24; // Default font size
     const minFontSize = 10; // Minimum readable font size
     
-    // Reset to maximum font size first
-    this.backgroundSelect.css('font-size', maxFontSize + 'px');
+  // Reset to maximum font size first (use CSS var hook)
+  try { this.backgroundSelect[0].style.setProperty('--background-font-size', `${maxFontSize}px`); } catch (e) { if (this.backgroundSelect[0]) this.backgroundSelect[0].style.fontSize = maxFontSize + 'px'; }
     
     // Give browser time to render before measuring
     setTimeout(() => {
@@ -46,29 +46,33 @@ export class BackgroundHandler {
       // Get the selected option text
       const selectedText = select.options[select.selectedIndex]?.text || '';
       
-      // Create a temporary element to measure text width
-      const tempElement = $('<span>')
-        .css({
-          'font-family': this.backgroundSelect.css('font-family'),
-          'font-size': fontSize + 'px',
-          'visibility': 'hidden',
-          'position': 'absolute',
-          'white-space': 'nowrap'
-        })
-        .text(selectedText)
-        .appendTo('body');
-      
-      // Check if text overflows and reduce font size accordingly
-      while (tempElement.width() > (containerWidth - 8) && fontSize > minFontSize) { // -8px for padding
-        fontSize -= 0.5;
-        tempElement.css('font-size', fontSize + 'px');
+      // Create a temporary element to measure text width using native DOM
+      const tempElement = document.createElement('span');
+      try {
+        const computed = window.getComputedStyle(this.backgroundSelect[0]);
+        tempElement.style.fontFamily = computed.getPropertyValue('font-family') || '';
+      } catch (e) {
+        tempElement.style.fontFamily = '';
       }
+      tempElement.style.fontSize = fontSize + 'px';
+      tempElement.style.visibility = 'hidden';
+      tempElement.style.position = 'absolute';
+      tempElement.style.whiteSpace = 'nowrap';
+      tempElement.textContent = selectedText;
+      document.body.appendChild(tempElement);
       
-      // Apply the calculated font size
-      this.backgroundSelect.css('font-size', fontSize + 'px');
+    // Check if text overflows and reduce font size accordingly
+    while ((tempElement.offsetWidth || tempElement.getBoundingClientRect().width) > (containerWidth - 8) && fontSize > minFontSize) { // -8px for padding
+  fontSize -= 0.5;
+  tempElement.style.fontSize = fontSize + 'px';
+    }
+      
+  // Apply the calculated font size via CSS var when possible
+  try { this.backgroundSelect[0].style.setProperty('--background-font-size', `${fontSize}px`); } catch (e) { if (this.backgroundSelect[0]) this.backgroundSelect[0].style.fontSize = fontSize + 'px'; }
       
       // Clean up temporary element
-      tempElement.remove();
+      // Remove temporary element
+      if (tempElement && tempElement.parentNode) tempElement.parentNode.removeChild(tempElement);
     }, 10);
   }
 

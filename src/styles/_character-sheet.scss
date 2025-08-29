@@ -1,6 +1,48 @@
 /* Character sheet specific styles extracted from templates/actors/character-sheet.html
    Migrate presentation out of the template and into this partial. */
 
+/* Centralized position variables - change these to tweak sheet layout globally */
+$cs-pos-level-left: 460px !default;
+$cs-pos-level-top: 20px !default;
+$cs-pos-portrait-left: 34px !default;
+$cs-pos-portrait-top: 75px !default;
+$cs-pos-languages-left: 318px !default;
+$cs-pos-languages-top: 183px !default;
+$cs-pos-xpmod-left: 530px !default;
+$cs-pos-xpmod-top: 20px !default;
+$cs-pos-xp-left: 319px !default;
+$cs-pos-xp-top: 74px !default;
+$cs-pos-next-left: 460px !default;
+$cs-pos-next-top: 74px !default;
+
+/* Additional header / field position presets discovered during sweep */
+$cs-pos-name-left: 40px !default;
+$cs-pos-name-top: 14px !default;
+$cs-pos-namegroup-left: 33px !default;
+$cs-pos-namegroup-top: 16px !default;
+$cs-pos-class-left: 319px !default;
+$cs-pos-class-top: 16px !default;
+$cs-pos-alignment-left: 319px !default;
+$cs-pos-alignment-top: 125px !default;
+$cs-pos-race-left: 179px !default;
+$cs-pos-race-top: 74px !default;
+$cs-pos-age-left: 179px !default;
+$cs-pos-age-top: 129px !default;
+$cs-pos-sex-left: 249px !default;
+$cs-pos-sex-top: 129px !default;
+$cs-pos-handw-left: 179px !default;
+$cs-pos-handw-top: 182px !default;
+$cs-pos-height-left: 179px !default;
+$cs-pos-height-top: 183px !default;
+$cs-pos-weight-left: 247px !default;
+$cs-pos-weight-top: 183px !default;
+$cs-pos-background-left: 460px !default;
+$cs-pos-background-top: 129px !default;
+$cs-pos-save-label-left: -161px !default;
+$cs-pos-save-label-top: 14px !default;
+
+
+
 /* White Background Override - Apply to entire sheet and window */
 form.osp.sheet.actor.character,
 .osp.sheet.actor.character,
@@ -101,7 +143,7 @@ form.osp.sheet.actor.character .xp-progress-bar,
 /* Static header background image */
 form.osp.sheet.actor.character .static-header,
 .static-header {
-  background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat left top !important;
+  background: url('/systems/osp-houserules/assets/character-sheet/static-sheet.webp') no-repeat left top !important;
   background-position: left top !important;
   background-size: contain !important;
   background-color: transparent !important;
@@ -176,6 +218,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 .cs-tooltip--xp { box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: var(--z-top, 10000); }
 .cs-tooltip--portrait { box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: var(--z-top, 10000); }
 
+/* Dialog helper used by XP award dialog to centralize its presentation */
+.cs-xp-dialog { background: white !important; }
+.cs-xp-dialog .window-header { background: black !important; color: white !important; }
+.cs-xp-dialog .window-content { background: white !important; }
+
 /* Level & portrait container utility classes (migrate inline box-shadow/positioning into class-based rules) */
 .cs-level-container { position: absolute; width: 64px; height: 34px; }
 .cs-level-shadow { position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); border-radius: 6px; }
@@ -190,6 +237,61 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 
 /* Ability score box */
 .cs-ability-select { width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: normal; background-color: white !important; appearance: none; line-height: 1; padding: 8px 3px 0 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); }
+
+/* Tabs helper (in case nav items had inline styles) */
+.cs-tabs { display: flex; flex-direction: column; }
+.cs-tab-item { opacity: 1 !important; background: white !important; box-shadow: none !important; }
+
+/* Tabs runtime helpers */
+.cs-tabs {
+  position: relative !important;
+  z-index: var(--z-top, 10000) !important;
+  pointer-events: auto !important;
+  top: var(--tabs-top, auto);
+}
+.cs-tab-item {
+  position: relative !important;
+  z-index: var(--z-top, 10000) !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+.cs-force-pointer { pointer-events: auto !important; }
+
+/* Fallback class applied by JS when font-family fallback is necessary */
+.cs-minion-fallback { font-family: 'Minion Pro', serif !important; font-weight: normal !important; letter-spacing: 0.03em !important; }
+
+/* Cursor helper classes for JS toggles */
+.cs-cursor-pointer { cursor: pointer !important; }
+.cs-cursor-text { cursor: text !important; }
+
+/* XP progress width via CSS variable */
+.xp-progress { --xp-progress-width: 0%; }
+.xp-progress { --xp-progress-color: #22c55e; }
+.xp-progress .xp-progress-fill { width: var(--xp-progress-width); transition: width 0.3s ease; background-color: var(--xp-progress-color, #22c55e); }
+
+/* Vertical level progress uses CSS variables set by JS */
+.level-xp-progress { height: var(--level-height, 0%); background: var(--level-bg, linear-gradient(to top, #22c55e 0%, #4ade80 100%)); border-top-left-radius: var(--progress-top-radius, 0px); border-top-right-radius: var(--progress-top-radius, 0px); }
+
+/* Static level progress bar hook */
+.level-progress-bar { width: var(--static-level-width, 0%); transition: width 0.3s ease; }
+
+/* Combat stat boxes */
+.cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
+.cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
+.cs-combat-input { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; background-color: white; }
+.cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }
+
+/* Save badge system */
+.cs-save-group { position: relative; display: inline-block; margin: 0 10px; }
+.cs-save { position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible; }
+.cs-save-badge { width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; }
+.cs-save-value { font-size: 60px; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px; transform: translateY(5px); }
+.cs-save-label { width: 400px; height: 60px; overflow: visible; z-index: var(--z-labels, 15); pointer-events: none; }
+.cs-save-label svg { overflow: visible; }
+.cs-save-label text { font-family: 'Minion Pro', serif; font-size: 14px; fill: #000; letter-spacing: 0.5px; }
+
+/* Ability score label */
+.cs-ability-label { font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em; }
 
 /* Misc helpers for textareas in bio */
 .cs-bio-textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white; }
@@ -209,8 +311,123 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 
 /* XP/Next level small field helpers */
 .cs-field { background-color: transparent !important; border: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; padding: 4px 0 0 0; margin: 0; line-height: 1; color: inherit; display: flex; align-items: center; justify-content: center; }
-.cs-xp-mod-display { width: 64px; height: 34px; text-align: center; font-size: 24px; pointer-events: none; }
-.cs-xp-display { width: 134px; height: 34px; text-align: center; font-size: 24px; cursor: pointer; pointer-events: auto; }
-.cs-next-level-display { width: 134px; height: 34px; text-align: center; font-size: 24px; pointer-events: none; }
+.cs-xp-mod-display { width: 64px; height: 34px; pointer-events: none; text-align: center; font-size: 24px; }
+.cs-xp-display { width: 134px; height: 34px; cursor: pointer; pointer-events: auto; text-align: center; font-size: 24px; }
+.cs-next-level-display { width: 134px; height: 34px; pointer-events: none; cursor: default; text-align: center; font-size: 24px; }
+
+/* Ensure inputs behave consistently across browsers */
+input.cs-field, textarea.cs-bio-textarea, select.cs-ability-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Header field classes (name, class, race, small fields) */
+.cs-char-field-group { display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; }
+.cs-char-name { width: 280px; height: 34px; text-align: center; font-family: 'Minion Pro', serif; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 2px 0 2px; margin: 0; transform: translateY(4px); overflow: visible; white-space: nowrap; text-overflow: clip; border: none; pointer-events: auto; }
+.cs-select-large { width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border: none; pointer-events: auto; }
+.cs-select-small { width: 63px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 5px 0 0 0; margin: 0; border: none; pointer-events: auto; }
+.cs-handw { width:134px; height: 34px; background-color: transparent !important; appearance: none; margin: 0; pointer-events: none; display: flex; line-height: 1; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; border: none !important; border-width: 0 !important; outline: none !important; }
+.cs-height { width: 65px; height: 35px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; padding: 3px 2px 0 2px; margin: 0; border: none; box-shadow: none !important; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.cs-weight { width: 65px; height: 35px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; padding: 3px 2px 0 2px; margin: 0; border: none; box-shadow: none !important; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; }
 
 /* Keep this partial focused on presentation only; behavior remains in JS. */
+
+/* Absolute-position helper using CSS variables set inline on elements */
+.cs-abs {
+  position: absolute !important;
+  left: var(--left, auto);
+  top: var(--top, auto);
+  right: var(--right, auto);
+  bottom: var(--bottom, auto);
+  z-index: var(--z, auto) !important;
+  pointer-events: var(--pointer, auto);
+  height: var(--height, auto);
+  background: var(--bg, transparent);
+}
+
+/* Draggable field helpers */
+.draggable-field {
+  position: relative !important;
+  cursor: move !important;
+  user-select: none !important;
+  --translate-x: 0px;
+  --translate-y: 0px;
+  transform: translate(var(--translate-x), var(--translate-y));
+}
+.draggable-field.dragging { z-index: var(--z-overlay, 1000) !important; opacity: 0.8 !important; }
+.draggable-field .drag-handle { position: absolute; top: 2px; right: 2px; font-size: 12px; color: #666; cursor: move; opacity: 0.6; z-index: var(--z-sheet,10); pointer-events: auto; font-weight: bold; text-shadow: 1px 1px 1px rgba(255,255,255,0.8); background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 2px; padding: 1px 2px; line-height: 1; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; }
+.draggable-field.drag-hover { border-color: #ddd !important; }
+.draggable-field.drag-hover .drag-handle { opacity: 1 !important; }
+
+/* Drag handle visibility class toggled by JS instead of inline opacity */
+.draggable-field .drag-handle { transition: opacity 0.12s ease; }
+.draggable-field .drag-handle.visible { opacity: 1 !important; }
+
+/* Layout controls (export/import/reset grid buttons) */
+.layout-controls { position: absolute; top: 5px; right: 5px; z-index: calc(var(--z-overlay, 1000) + 1); display: flex; gap: 5px; }
+.layout-controls .layout-btn { width: 24px; height: 24px; border: none; border-radius: 3px; background: #4a5568; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.layout-controls .layout-btn:hover { filter: brightness(1.1); }
+.layout-controls .layout-btn.active { background: #2d3748 !important; }
+
+/* Grid overlay - uses CSS variables for grid size */
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: calc(var(--z-overlay, 1000) - 1);
+  background-image: linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px);
+  background-size: var(--grid-size, 10px) var(--grid-size, 10px);
+}
+
+/* Sheet body helper to centralize padding/scrolling */
+.cs-sheet-body {
+  position: absolute !important;
+  top: var(--sheet-top, 350px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem 0.75rem;
+  overflow-y: auto;
+}
+
+/* Generic small field label */
+.cs-field-label { margin-bottom: 0.5rem; font-size: 1.1rem; }
+
+/* Languages row and tags reset for consistent layout */
+.languages-row.open-language-dialog { width: var(--languages-row-width, 272px); height: 33px; min-height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 2px; z-index: var(--z-lang-row, 101); }
+.languages-tags { display: flex; align-items: center; justify-content: center; width: 100%; line-height: 1; white-space: nowrap; overflow: hidden; }
+
+/* Bio content wrapper */
+.bio-content { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
+
+/* Position presets (centralize numeric offsets) */
+.cs-pos-level { --left: #{$cs-pos-level-left}; --top: #{$cs-pos-level-top}; --z: var(--z-level, 8); }
+.cs-pos-portrait { --left: #{$cs-pos-portrait-left}; --top: #{$cs-pos-portrait-top}; --z: var(--z-portrait, 15); }
+.cs-pos-languages { --left: #{$cs-pos-languages-left}; --top: #{$cs-pos-languages-top}; --z: var(--z-labels, 15); --pointer: auto; }
+.cs-pos-xpmod { --left: #{$cs-pos-xpmod-left}; --top: #{$cs-pos-xpmod-top}; --z: var(--z-labels, 15); }
+.cs-pos-xp { --left: #{$cs-pos-xp-left}; --top: #{$cs-pos-xp-top}; --z: var(--z-portrait, 15); }
+.cs-pos-next { --left: #{$cs-pos-next-left}; --top: #{$cs-pos-next-top}; --z: var(--z-labels, 15); }
+.cs-pos-sep { --bottom: 0; --left: 0; --right: 0; --height: 1px; --bg: transparent; --z: var(--z-labels, 15); }
+
+/* Header / small-field presets discovered during the sweep */
+.cs-pos-name { --left: #{$cs-pos-name-left}; --top: #{$cs-pos-name-top}; --z: var(--z-labels, 15); }
+.cs-pos-namegroup { --left: #{$cs-pos-namegroup-left}; --top: #{$cs-pos-namegroup-top}; --z: var(--z-labels, 15); }
+.cs-pos-class { --left: #{$cs-pos-class-left}; --top: #{$cs-pos-class-top}; --z: var(--z-labels, 15); }
+.cs-pos-alignment { --left: #{$cs-pos-alignment-left}; --top: #{$cs-pos-alignment-top}; --z: var(--z-labels, 15); }
+.cs-pos-race { --left: #{$cs-pos-race-left}; --top: #{$cs-pos-race-top}; --z: var(--z-labels, 15); }
+.cs-pos-age { --left: #{$cs-pos-age-left}; --top: #{$cs-pos-age-top}; --z: var(--z-labels, 15); }
+.cs-pos-sex { --left: #{$cs-pos-sex-left}; --top: #{$cs-pos-sex-top}; --z: var(--z-labels, 15); }
+.cs-pos-handw { --left: #{$cs-pos-handw-left}; --top: #{$cs-pos-handw-top}; --z: var(--z-level, 8); }
+.cs-pos-height { --left: #{$cs-pos-height-left}; --top: #{$cs-pos-height-top}; --z: var(--z-labels, 15); }
+.cs-pos-weight { --left: #{$cs-pos-weight-left}; --top: #{$cs-pos-weight-top}; --z: var(--z-labels, 15); }
+.cs-pos-background { --left: #{$cs-pos-background-left}; --top: #{$cs-pos-background-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-label { --left: #{$cs-pos-save-label-left}; --top: #{$cs-pos-save-label-top}; --z: var(--z-labels, 15); }
+
+/* Small helpers found useful during migration */
+.cs-tab-relative { position: relative; }
+.cs-ability { display: flex; flex-direction: column; align-items: center; }
+.cs-bio-heading { margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em; }

@@ -97,19 +97,9 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     });
 
-    // Force CSS to ensure tabs are always clickable
-    html.find('.sheet-tabs').css({
-      'position': 'relative',
-      'z-index': 'var(--z-top, 10000)',
-      'pointer-events': 'auto'
-    });
-
-    tabLinks.css({
-      'position': 'relative',
-      'z-index': 'var(--z-top, 10000)',
-      'pointer-events': 'auto',
-      'cursor': 'pointer'
-    });
+  // Ensure tabs are clickable and use class-based presentation
+  html.find('.sheet-tabs').addClass('cs-tabs');
+  tabLinks.addClass('cs-tab-item');
 
     // Set initial active tab
     this.activateTab(html, 'combat');
@@ -132,8 +122,8 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Method 2: Direct element binding with capture phase
     tabLinks.each((i, el) => {
-      // Override any CSS that might block clicks
-      $(el).css('pointer-events', 'auto !important');
+  // Override any CSS that might block clicks by adding a helper class
+  $(el).addClass('cs-force-pointer');
 
       // Remove any existing listeners first
       el.removeEventListener('click', this._handleTabClick, true);
@@ -248,11 +238,8 @@ export class OspActorSheetCharacter extends ActorSheet {
         const computedStyle = window.getComputedStyle(nameInput);
         if (!computedStyle.fontFamily.includes('Minion Pro')) {
           // CSS failed, apply via JavaScript as fallback
-          nameInput.style.setProperty('font-family', "'Minion Pro', serif", 'important');
-          nameInput.style.setProperty('font-weight', 'normal', 'important');
-          // font-size intentionally not set here; use inline style in HTML for px control
-    // min-height removed for full manual control
-          nameInput.style.setProperty('letter-spacing', '0.03em', 'important');
+          // Prefer class-based fallback so CSS remains centralized
+          nameInput.classList.add('cs-minion-fallback');
         }
       }, 50);
     }
@@ -464,8 +451,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Compute top relative to the sheet container
   // Move tabs slightly upward (5px) so they don't sit flush with the header border
   const topPx = Math.max(0, Math.round(headerRect.bottom - sheetRect.top) - 5);
-      // Apply as inline style on .sheet-tabs
-      tabsEl.style.top = `${topPx}px`;
+  // Apply as a CSS custom property on .sheet-tabs (CSS will pick up via var(--tabs-top))
+  try { tabsEl.style.setProperty('--tabs-top', `${topPx}px`); } catch(e) {}
     } catch (e) {
       // ignore
     }

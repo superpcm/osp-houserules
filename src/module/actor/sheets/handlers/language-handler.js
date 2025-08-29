@@ -52,27 +52,27 @@ export class LanguageHandler {
     const maxFontSize = 24; // Start at 24px as specified
     const minFontSize = 10; // Minimum readable font size
     
-    // Reset to maximum font size first
-    container.css('font-size', maxFontSize + 'px');
+  // Reset to maximum font size first (use CSS var hook)
+  try { container[0].style.setProperty('--languages-font-size', `${maxFontSize}px`); } catch (e) { if (container[0]) container[0].style.fontSize = maxFontSize + 'px'; }
     
     // Give browser time to render before measuring
     setTimeout(() => {
       let fontSize = maxFontSize;
       
       // Check if text overflows and reduce font size accordingly
-      while (container[0].scrollWidth > containerWidth && fontSize > minFontSize) {
-        fontSize -= 0.5;
-        container.css('font-size', fontSize + 'px');
-      }
+        while (container[0].scrollWidth > containerWidth && fontSize > minFontSize) {
+      fontSize -= 0.5;
+      try { container[0].style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { if (container[0]) container[0].style.fontSize = fontSize + 'px'; }
+        }
       
       // If text is short enough, try to scale up (but not above maxFontSize)
-      while (container[0].scrollWidth < containerWidth && fontSize < maxFontSize) {
-        fontSize += 0.5;
-        container.css('font-size', fontSize + 'px');
+        while (container[0].scrollWidth < containerWidth && fontSize < maxFontSize) {
+      fontSize += 0.5;
+      try { container[0].style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { if (container[0]) container[0].style.fontSize = fontSize + 'px'; }
         // Check if this increase caused overflow
-        if (container[0].scrollWidth > containerWidth) {
+          if (container[0].scrollWidth > containerWidth) {
           fontSize -= 0.5;
-          container.css('font-size', fontSize + 'px');
+          try { container[0].style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { if (container[0]) container[0].style.fontSize = fontSize + 'px'; }
           break;
         }
       }

@@ -60,30 +60,20 @@ export class LayoutHandler {
    * Make a single element draggable
    */
   makeDraggable($element) {
-    $element.addClass('draggable-field');
-    $element.css({
-      'position': 'relative',
-      'cursor': 'move',
-      'user-select': 'none'
-    });
+  $element.addClass('draggable-field');
 
     // Add extra padding to char-field-group elements to create more clickable area
     if ($element.hasClass('char-field-group')) {
-      $element.css({
-        'padding': '4px 8px',
-        'margin': '2px',
-        'border': '1px solid transparent',
-        'border-radius': '3px'
-      });
+  $element.addClass('cs-char-field-group');
 
       // Add hover effect to show draggable area
       $element.off('mouseenter.fieldgroup mouseleave.fieldgroup')
         .on('mouseenter.fieldgroup', function() {
-          $(this).css('border-color', '#ddd');
+          $(this).addClass('drag-hover');
         })
         .on('mouseleave.fieldgroup', function() {
           if (!$(this).hasClass('dragging')) {
-            $(this).css('border-color', 'transparent');
+            $(this).removeClass('drag-hover');
           }
         });
     }
@@ -97,59 +87,30 @@ export class LayoutHandler {
       const isXPSection = $element.hasClass('xp-progress-section');
       const isCharFieldGroup = $element.hasClass('char-field-group');
 
-      dragHandle.css({
-        'position': 'absolute',
-        'top': isCharNameSection || isXPSection ? '5px' : (isCharFieldGroup ? '-2px' : '2px'),
-        'right': isCharNameSection || isXPSection ? '5px' : (isCharFieldGroup ? '-2px' : '2px'),
-        'font-size': '12px',
-        'color': '#666',
-        'cursor': 'move',
-        'opacity': '0.6',
-  'z-index': 'var(--z-sheet, 10)',
-        'pointer-events': 'auto',
-        'font-weight': 'bold',
-        'text-shadow': '1px 1px 1px rgba(255,255,255,0.8)',
-        'background': 'rgba(255,255,255,0.9)',
-        'border': '1px solid #ccc',
-        'border-radius': '2px',
-        'padding': '1px 2px',
-        'line-height': '1',
-        'width': '14px',
-        'height': '14px',
-        'display': 'flex',
-        'align-items': 'center',
-        'justify-content': 'center'
-      });
+  dragHandle.addClass('drag-handle');
       $element.append(dragHandle);
     }
 
     // Make labels clickable for dragging with explicit event handler
-    $element.find('label').css({
-      'cursor': 'move',
-      'user-select': 'none'
-    }).off('mousedown.label').on('mousedown.label', (e) => {
+  $element.find('label').addClass('drag-label').off('mousedown.label').on('mousedown.label', (e) => {
       e.stopPropagation();
       this.startDrag(e, $element);
     });
 
     // Special styling for character name section to make it more obviously draggable
-    if ($element.hasClass('character-name-section')) {
-      $element.css({
-        'padding': '8px',
-        'border': '1px dashed transparent',
-        'min-height': '40px' // Ensure minimum height for drag handle visibility
-      });
+  if ($element.hasClass('character-name-section')) {
+  $element.addClass('character-name-draggable');
 
       // Add hover effect to show it's draggable
       $element.off('mouseenter.charname mouseleave.charname')
         .on('mouseenter.charname', function() {
-          $(this).css('border-color', '#ccc');
-          $(this).find('.drag-handle').css('opacity', '1');
+          $(this).addClass('drag-hover');
+          $(this).find('.drag-handle').addClass('visible');
         })
         .on('mouseleave.charname', function() {
           if (!$(this).hasClass('dragging')) {
-            $(this).css('border-color', 'transparent');
-            $(this).find('.drag-handle').css('opacity', '0.6');
+            $(this).removeClass('drag-hover');
+            $(this).find('.drag-handle').removeClass('visible');
           }
         });
     }
@@ -192,16 +153,10 @@ export class LayoutHandler {
 
     // Show/hide drag handle on hover for all draggable elements
     $element.off('mouseenter.layout mouseleave.layout')
-      .on('mouseenter.layout', () => {
-        $element.find('.drag-handle').css('opacity', '1');
-      })
-      .on('mouseleave.layout', () => {
-        if (!this.isDragging) {
-          $element.find('.drag-handle').css('opacity', '0.6');
-        }
-      });
+      .on('mouseenter.layout', () => { $element.find('.drag-handle').addClass('visible'); })
+      .on('mouseleave.layout', () => { if (!this.isDragging) { $element.find('.drag-handle').removeClass('visible'); } });
 
-    // Store original position for reset functionality
+  // Store original position for reset functionality
     const originalPosition = {
       x: 0,
       y: 0
@@ -232,26 +187,34 @@ export class LayoutHandler {
     this.currentDragElement = $element;
     this.dragStartPos = { x: e.clientX, y: e.clientY };
 
-    // Get current transform values
-    const transform = $element.css('transform');
-    let currentX = 0, currentY = 0;
-    if (transform && transform !== 'none') {
-      const matrix = new DOMMatrix(transform);
-      currentX = matrix.m41;
-      currentY = matrix.m42;
+  // Get current transform values via CSS variables if present
+  let currentX = 0, currentY = 0;
+  try {
+    const computed = window.getComputedStyle($element[0]);
+    currentX = parseInt(computed.getPropertyValue('--translate-x')) || 0;
+    currentY = parseInt(computed.getPropertyValue('--translate-y')) || 0;
+  } catch (e) {
+    // Fallback to transform matrix parsing
+    try {
+      const transform = $element[0].style.transform || window.getComputedStyle($element[0]).transform;
+      if (transform && transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        currentX = matrix.m41 || 0;
+        currentY = matrix.m42 || 0;
+      }
+    } catch (e2) {
+      currentX = 0;
+      currentY = 0;
     }
-    this.elementStartPos = { x: currentX, y: currentY };
+  }
+  this.elementStartPos = { x: currentX, y: currentY };
 
     // Visual feedback
-    $element.addClass('dragging');
-    $element.css({
-      'z-index': 'var(--z-overlay, 1000)',
-      'opacity': '0.8'
-    });
+  $element.addClass('dragging');
 
     // Bind global events
-    $(document).on('mousemove.layout', (e) => this.onDrag(e));
-    $(document).on('mouseup.layout', () => this.endDrag());
+  $(document).on('mousemove.layout', (e) => this.onDrag(e));
+  $(document).on('mouseup.layout', () => this.endDrag());
 
     // Show grid if snap is enabled
     if (this.snapToGrid) {
@@ -307,8 +270,16 @@ export class LayoutHandler {
       newY = Math.round(newY / this.gridSize) * this.gridSize;
     }
 
-    // Apply transform
-    this.currentDragElement.css('transform', `translate(${newX}px, ${newY}px)`);
+    // Apply transform via CSS variables (keeps presentational control in CSS)
+    try {
+      this.currentDragElement[0].style.setProperty('--translate-x', `${newX}px`);
+      this.currentDragElement[0].style.setProperty('--translate-y', `${newY}px`);
+    } catch (e) {
+      // fallback to direct transform if setProperty fails
+      if (this.currentDragElement && this.currentDragElement[0]) {
+        this.currentDragElement[0].style.transform = `translate(${newX}px, ${newY}px)`;
+      }
+    }
   }
 
   /**
@@ -321,10 +292,10 @@ export class LayoutHandler {
 
     if (this.currentDragElement) {
       this.currentDragElement.removeClass('dragging');
-      this.currentDragElement.css({
-        'z-index': '',
-        'opacity': ''
-      });
+      if (this.currentDragElement[0]) {
+        this.currentDragElement[0].style.zIndex = '';
+        this.currentDragElement[0].style.opacity = '';
+      }
     }
 
     // Unbind global events
@@ -356,7 +327,7 @@ export class LayoutHandler {
    */
   addLayoutControls() {
     const controlsHtml = `
-      <div class="layout-controls" style="position: absolute; top: 5px; right: 5px; z-index: calc(var(--z-overlay, 1000) + 1); display: flex; gap: 5px;">
+      <div class="layout-controls">
         <button type="button" class="layout-btn export-layout" title="Export Layout">📁</button>
         <button type="button" class="layout-btn import-layout" title="Import Layout">📂</button>
         <button type="button" class="layout-btn reset-layout" title="Reset Layout">↺</button>
@@ -371,20 +342,7 @@ export class LayoutHandler {
     // Add to window content
     this.html.find('.window-content').prepend(controlsHtml);
 
-    // Style buttons
-    this.html.find('.layout-btn').css({
-      'width': '24px',
-      'height': '24px',
-      'border': 'none',
-      'border-radius': '3px',
-      'background': '#4a5568',
-      'color': 'white',
-      'font-size': '12px',
-      'cursor': 'pointer',
-      'display': 'flex',
-      'align-items': 'center',
-      'justify-content': 'center'
-    });
+  // Buttons are styled via SCSS; no inline styles
 
     // Bind events
     this.html.find('.export-layout').on('click', () => this.exportLayout());
@@ -405,20 +363,15 @@ export class LayoutHandler {
 
     const bounds = combatTab.getBoundingClientRect();
 
-    this.gridOverlay = $('<div class="grid-overlay"></div>');
-    this.gridOverlay.css({
-      'position': 'absolute',
-      'top': '0',
-      'left': '0',
-      'width': '100%',
-      'height': '100%',
-      'pointer-events': 'none',
-  'z-index': 'calc(var(--z-overlay, 1000) - 1)',
-      'background-image': `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)`,
-      'background-size': `${this.gridSize}px ${this.gridSize}px`
-    });
-
-    this.html.find('[data-tab="combat"]').append(this.gridOverlay);
+    this.gridOverlay = document.createElement('div');
+    this.gridOverlay.className = 'grid-overlay';
+    // Set grid size via CSS variable so SCSS controls visual appearance
+    try {
+      this.gridOverlay.style.setProperty('--grid-size', `${this.gridSize}px`);
+    } catch (e) {
+      this.gridOverlay.style.backgroundSize = `${this.gridSize}px ${this.gridSize}px`;
+    }
+    this.html.find('[data-tab="combat"]')[0].appendChild(this.gridOverlay);
   }
 
   /**
@@ -439,10 +392,10 @@ export class LayoutHandler {
 
     if (this.gridOverlay) {
       this.hideGrid();
-      button.css('background', '#4a5568');
+  button.removeClass('active');
     } else {
       this.showGrid();
-      button.css('background', '#2d3748');
+  button.addClass('active');
     }
   }
 
@@ -454,12 +407,12 @@ export class LayoutHandler {
     const button = this.html.find('.toggle-snap');
 
     if (this.snapToGrid) {
-      button.css('background', '#2d3748');
+  button.addClass('active');
       if (!this.gridOverlay) {
         this.showGrid();
       }
     } else {
-      button.css('background', '#4a5568');
+  button.removeClass('active');
     }
   }
 
@@ -473,13 +426,29 @@ export class LayoutHandler {
       const $element = $(element);
       const elementId = this.getElementId($element);
 
-      const transform = $element.css('transform');
+      // Prefer CSS variables, fallback to transform matrix parsing
       let x = 0, y = 0;
-
-      if (transform && transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        x = matrix.m41;
-        y = matrix.m42;
+      try {
+        const computed = window.getComputedStyle($element[0]);
+        const tx = computed.getPropertyValue('--translate-x');
+        const ty = computed.getPropertyValue('--translate-y');
+        if (tx && tx !== 'auto' && tx !== '0px') x = parseInt(tx) || 0;
+        if (ty && ty !== 'auto' && ty !== '0px') y = parseInt(ty) || 0;
+        if (!tx || !ty) {
+          const transform = $element[0].style.transform || computed.transform;
+          if (transform && transform !== 'none') {
+            const matrix = new DOMMatrix(transform);
+            x = matrix.m41 || x;
+            y = matrix.m42 || y;
+          }
+        }
+      } catch (e) {
+        const transform = $element[0].style.transform || window.getComputedStyle($element[0]).transform;
+        if (transform && transform !== 'none') {
+          const matrix = new DOMMatrix(transform);
+          x = matrix.m41;
+          y = matrix.m42;
+        }
       }
 
       positions[elementId] = { x, y };
@@ -538,7 +507,12 @@ export class LayoutHandler {
     Object.entries(layoutData.positions).forEach(([elementId, position]) => {
       const $element = this.getElementById(elementId);
       if ($element && $element.length) {
-        $element.css('transform', `translate(${position.x}px, ${position.y}px)`);
+        try {
+          $element[0].style.setProperty('--translate-x', `${position.x}px`);
+          $element[0].style.setProperty('--translate-y', `${position.y}px`);
+        } catch (e) {
+          if ($element[0]) $element[0].style.transform = `translate(${position.x}px, ${position.y}px)`;
+        }
       }
     });
 
@@ -549,7 +523,16 @@ export class LayoutHandler {
    * Reset layout to original positions
    */
   resetLayout() {
-    this.html.find('.draggable-field').css('transform', '');
+    // Clear CSS variables first, fallback to clearing transform
+    this.html.find('.draggable-field').each((i, el) => {
+      try {
+        el.style.removeProperty('--translate-x');
+        el.style.removeProperty('--translate-y');
+        el.style.removeProperty('transform');
+      } catch (e) {
+        if (el && el.style) el.style.transform = '';
+      }
+    });
     this.actor.unsetFlag('osp-houserules', 'layout');
     ui.notifications.info('Layout reset to defaults');
   }
@@ -571,13 +554,37 @@ export class LayoutHandler {
       const $element = $(element);
       const elementId = this.getElementId($element);
 
-      const transform = $element.css('transform');
+      // Prefer explicit CSS variables for stored positions
       let x = 0, y = 0;
-
-      if (transform && transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        x = matrix.m41;
-        y = matrix.m42;
+      try {
+        const computed = window.getComputedStyle($element[0]);
+        const computedX = computed.getPropertyValue('--translate-x');
+        const computedY = computed.getPropertyValue('--translate-y');
+        if (computedX && computedX !== '0px' && computedX !== 'auto') {
+          x = parseInt(computedX) || 0;
+        } else {
+          const transform = $element[0].style.transform || computed.transform;
+          if (transform && transform !== 'none') {
+            const matrix = new DOMMatrix(transform);
+            x = matrix.m41;
+          }
+        }
+        if (computedY && computedY !== '0px' && computedY !== 'auto') {
+          y = parseInt(computedY) || 0;
+        } else {
+          const transform = $element[0].style.transform || computed.transform;
+          if (transform && transform !== 'none') {
+            const matrix = new DOMMatrix(transform);
+            y = matrix.m42;
+          }
+        }
+      } catch (e) {
+        const transform = $element[0].style.transform || window.getComputedStyle($element[0]).transform;
+        if (transform && transform !== 'none') {
+          const matrix = new DOMMatrix(transform);
+          x = matrix.m41;
+          y = matrix.m42;
+        }
       }
 
       positions[elementId] = { x, y };

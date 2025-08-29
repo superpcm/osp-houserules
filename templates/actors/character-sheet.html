@@ -1638,7 +1638,7 @@
           if (window.currentActorSheet && window.currentActorSheet.actor) {
             const actor = window.currentActorSheet.actor;
 
-            return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => 
+            return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => { /* ignored */ });
           }
         } catch (err) {
 
@@ -1654,7 +1654,7 @@
               if (appId && ui && ui.windows && ui.windows[appId] && ui.windows[appId].actor) {
                 const actor = ui.windows[appId].actor;
 
-                return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => 
+                return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => { /* ignored */ });
               }
             }
           }
@@ -1667,9 +1667,9 @@
           const actorIdInput = document.querySelector('input[name="id"]');
           if (actorIdInput && actorIdInput.value) {
             const actor = game.actors.get(actorIdInput.value);
-            if (actor) {
+              if (actor) {
 
-              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => 
+              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => { /* ignored */ });
             }
           }
         } catch (err) {
@@ -1683,7 +1683,7 @@
             const actor = game.actors.get(urlMatch[1]);
             if (actor) {
 
-              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => 
+              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => { /* ignored */ });
             }
           }
         } catch (err) {

@@ -1,0 +1,16 @@
+# Exclude developer/debug tooling from npm packages
+scripts/debug/
+debug-*.js
+compare-saves.js
+analyze-saving-throws.js
+test-xp-modifiers.js
+test-*.js
+scripts/original-*.js
+
+# Build artifacts
+node_modules/
+dist/
+
+# Editor and system files
+.DS_Store
+.vscode/

@@ -13,14 +13,14 @@
       background-color: white !important;
       background-image: none !important;
     }
-    
+
   /* Z-index variables centralized in src/styles/_z-index.scss */
-    
+
     /* Single Background Image System - Applied to window instead of form */
     form.osp.sheet.actor.character {
       position: relative;
     }
-    
+
     /* Override any Foundry default backgrounds */
     .osp.sheet.actor.character,
     .application.window-app.sheet.actor.character.osp,
@@ -31,7 +31,7 @@
       background-color: white !important;
       background-image: none !important;
     }
-    
+
     /* Ensure the application window allows tabs to extend beyond right edge */
     .application.window-app.sheet.actor.character.osp {
       overflow: visible !important; /* Allow tabs to extend beyond window */
@@ -70,7 +70,7 @@
       transform: none !important;
       will-change: auto !important;
     }
-    
+
     /* Also override the window content wrapper */
     .application.window-app.sheet.actor.character.osp .window-content,
     .osp .window-content {
@@ -80,7 +80,7 @@
       padding: 0 !important;
       overflow: visible !important; /* Allow tabs to show beyond content area */
     }
-    
+
     /* Black title bar for character sheet window */
     .application.window-app.sheet.actor.character.osp .window-header,
     .osp .window-header {
@@ -88,31 +88,31 @@
       background-color: black !important;
       border-bottom: 1px solid #333 !important;
     }
-    
+
     /* Ensure title text is visible on black background */
     .application.window-app.sheet.actor.character.osp .window-header .window-title,
     .osp .window-header .window-title {
       color: white !important;
     }
-    
+
     /* Style the window controls (close, minimize, etc.) for black background */
     .application.window-app.sheet.actor.character.osp .window-header .header-button,
     .osp .window-header .header-button {
       color: white !important;
     }
-    
+
     .application.window-app.sheet.actor.character.osp .window-header .header-button:hover,
     .osp .window-header .header-button:hover {
       background: rgba(255, 255, 255, 0.2) !important;
     }
-    
+
 
     /* XP progress bar should be visible with different color */
     form.osp.sheet.actor.character .xp-progress-bar,
     .osp.sheet.actor.character .xp-progress-bar {
       background-color: #4a90e2 !important;
     }
-    
+
     /* Static header background image override - use existing file */
     form.osp.sheet.actor.character .static-header {
   background: url('systems/osp-houserules/assets/character-sheet/main-sheet.webp') no-repeat !important;
@@ -122,7 +122,7 @@
   margin-top: 0 !important;
   padding-top: 0 !important;
     }
-    
+
   /* Tabs are now centralized in src/styles/tabs.css and built into dist/ose.css */
   /* See src/styles/tabs.css for tab layout, stacking and hover/active rules. */
 
@@ -135,7 +135,7 @@
       background-color: white !important;
       box-shadow: none !important;
     }
-    
+
     form.osp.sheet.actor.character .sheet-tabs a.item:hover,
     .osp.sheet.actor.character .sheet-tabs a.item:hover,
     .sheet.actor.character .sheet-tabs a.item:hover {
@@ -144,7 +144,7 @@
       background-color: #f7f7f7 !important;
       box-shadow: none !important;
     }
-    
+
     form.osp.sheet.actor.character .sheet-tabs a.item.active,
     .osp.sheet.actor.character .sheet-tabs a.item.active,
     .sheet.actor.character .sheet-tabs a.item.active {
@@ -173,7 +173,7 @@
       border: none !important;
     }
     .sheet-body .tab.active { display: block; }
-    
+
     /* Remove all shadow effects from Height and Weight fields */
     .char-height, .char-weight {
       box-shadow: none !important;
@@ -188,7 +188,7 @@
       border: none !important;
       border-radius: 0 !important;
     }
-    
+
     /* Remove shadows from Height and Weight containers */
     .height-group, .weight-group {
       box-shadow: none !important;
@@ -202,7 +202,7 @@
       border-radius: 0 !important;
       outline: none !important;
     }
-    
+
     /* Override any border styles on HandW field */
     .char-handw, .handw-group {
       border: none !important;
@@ -212,7 +212,7 @@
       outline: none !important;
       box-sizing: border-box !important;
     }
-    
+
     /* Remove shadows from Height and Weight field groups */
     .height-group .char-field-group, .weight-group .char-field-group {
       box-shadow: none !important;
@@ -362,7 +362,7 @@
     .languages-tags:not([style*="font-size"]) {
       font-size: 24px !important;
     }
-    
+
     /* Portrait transform system for end-user adjustment */
     .portrait-img {
       transform: scale(var(--user-portrait-scale, 1)) 
@@ -370,7 +370,7 @@
       transform-origin: center center;
       transition: transform 0.2s ease;
     }
-    
+
     /* Portrait adjustment controls */
   .portrait-controls {
       position: absolute;
@@ -388,14 +388,14 @@
       border: 1px solid #666;
       box-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
-    
+
     /* Force controls to stay visible when shown */
     .portrait-controls[style*="display: block"] {
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
     }
-    
+
     .portrait-controls button {
       background: #555;
       color: white;
@@ -413,27 +413,27 @@
       vertical-align: middle;
       box-sizing: border-box;
     }
-    
+
     .portrait-controls button:hover {
       background: #777;
       border-color: #999;
     }
-    
+
     .portrait-controls button:active {
       background: #333;
     }
-    
+
     .portrait-controls .btn-group {
       display: inline-block;
       margin: 0 2px;
       vertical-align: top;
     }
-    
+
     .portrait-controls .btn-group:not(:last-child) {
       border-right: 1px solid #777;
       padding-right: 3px;
     }
-    
+
   .portrait-container.adjusting {
       outline: 1px dashed #00aaff;
       overflow: visible !important;
@@ -441,13 +441,13 @@
     }
   </style>
   <script>
-    console.log('Character sheet script loaded');
-    
+
+
     // Function to update XP Modifier display
     function updateXPModifier() {
       const xpModField = document.getElementById('xp-mod-display');
       if (!xpModField) return;
-      
+
       // Get current character data from form fields
       const characterClass = document.querySelector('.char-class')?.value || '';
       const attributes = {
@@ -458,15 +458,15 @@
         wis: { value: parseInt(document.querySelector('.attr-wis')?.value) || 10 },
         cha: { value: parseInt(document.querySelector('.attr-cha')?.value) || 10 }
       };
-      
+
       // Calculate XP modifier using the same logic as the system
       const xpMod = calculateXPModifier(characterClass, attributes);
-      
+
       // Format and display the modifier
       const formattedMod = xpMod >= 0 ? `+${xpMod}%` : `${xpMod}%`;
       xpModField.value = formattedMod;
     }
-    
+
     // Function to format numbers with commas
     function formatNumberWithCommas(num) {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -476,70 +476,65 @@
     function updateXPDisplay() {
       const xpField = document.getElementById('xp-display');
       if (!xpField) return;
-      
+
       // Check if we're in the middle of an XP update by our handler
       // If so, don't interfere with the display
       if (window.xpHandlerUpdating) return;
-      
+
       // Only format if not currently focused (to avoid interfering with user input)
       if (document.activeElement !== xpField) {
         const currentXP = parseInt(xpField.value.replace(/,/g, '')) || 0;
         xpField.value = formatNumberWithCommas(currentXP);
       }
     }
-    
+
     // Function to handle XP field formatting
     function setupXPFieldFormatting() {
       const xpField = document.getElementById('xp-display');
       if (!xpField) return;
-      
+
       // Create a function to clean XP field value before any form operation
       function cleanXPFieldForSubmission() {
         if (xpField && xpField.value) {
           const cleanValue = xpField.value.replace(/,/g, '');
           if (cleanValue !== xpField.value) {
-            console.log('Cleaning XP field before form operation: from', xpField.value, 'to', cleanValue);
+
             xpField.value = cleanValue;
           } else {
-            console.log('XP field already clean:', xpField.value);
+
           }
         } else {
-          console.log('XP field not found or empty during clean attempt');
+
         }
       }
-      
+
       // Function to restore XP formatting after form operations
       function restoreXPFormatting() {
         if (xpField && xpField.value && !xpField.value.includes(',')) {
           const numericValue = parseInt(xpField.value) || 0;
           if (numericValue >= 1000) { // Only format numbers 1000 and above
             const formattedValue = numericValue.toLocaleString();
-            console.log('Restoring XP formatting: from', xpField.value, 'to', formattedValue);
+
             xpField.value = formattedValue;
           }
         }
       }
-      
+
       // Add comprehensive debugging for XP field changes
       const logXPFieldState = (context) => {
         if (xpField) {
-          console.log(`XP Field State (${context}):`, {
-            value: xpField.value,
-            name: xpField.name,
-            focused: document.activeElement === xpField,
-            timestamp: new Date().toISOString()
-          });
+
         }
       };
-      
+
       // Add form submission handler to remove commas from XP field
       const form = xpField.closest('form');
       if (form) {
-        console.log('Setting up comprehensive XP field protection...');
-        
+
+
         // Handle form submit events
         form.addEventListener('submit', function(e) {
-          console.log('Form submit event - preparing XP field for submission');
+
           isFormSubmitting = true;
           logXPFieldState('form submit');
           cleanXPFieldForSubmission();
@@ -549,10 +544,10 @@
             restoreXPFormatting();
           }, 100);
         });
-        
+
         // Handle change events that might trigger auto-save
         form.addEventListener('change', function(e) {
-          console.log('Form change event - preparing XP field, target:', e.target.name);
+
           isFormSubmitting = true;
           logXPFieldState('form change');
           cleanXPFieldForSubmission();
@@ -562,11 +557,11 @@
             restoreXPFormatting();
           }, 100);
         });
-        
+
         // Also handle input events that might trigger form processing
         form.addEventListener('input', function(e) {
           if (e.target !== xpField) { // Don't interfere with XP field's own input handling
-            console.log('Form input event - preparing XP field, target:', e.target.name);
+
             isFormSubmitting = true;
             logXPFieldState('form input');
             cleanXPFieldForSubmission();
@@ -577,7 +572,7 @@
             }, 100);
           }
         });
-        
+
         // Set up a mutation observer to catch any form data collection
         const observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
@@ -585,35 +580,35 @@
                 mutation.attributeName === 'data-submitting' ||
                 mutation.attributeName === 'data-processing'
             )) {
-              console.log('Mutation observer detected form processing - cleaning XP field');
+
               cleanXPFieldForSubmission();
             }
           });
         });
-        
+
         observer.observe(form, {
           attributes: true,
           attributeFilter: ['data-submitting', 'data-processing']
         });
-        
+
         // Intercept any attempts to collect form data
         const originalFormData = window.FormData;
         let isIntercepting = false;
-        
+
         function FormDataInterceptor(formElement) {
           if (!isIntercepting && formElement === form) {
             isIntercepting = true;
-            console.log('FormData constructor intercepted for character sheet - cleaning XP field');
+
             cleanXPFieldForSubmission();
             setTimeout(() => { isIntercepting = false; }, 100);
           }
           return new originalFormData(...arguments);
         }
-        
+
         // Copy prototype and properties
         FormDataInterceptor.prototype = originalFormData.prototype;
         Object.setPrototypeOf(FormDataInterceptor, originalFormData);
-        
+
         // Temporarily replace FormData during critical operations
         const interceptFormData = () => {
           const originalFD = window.FormData;
@@ -624,106 +619,106 @@
             }
           }, 1000);
         };
-        
+
         // Set up interception on key events
         form.addEventListener('submit', interceptFormData);
         form.addEventListener('change', interceptFormData);
       }
-      
+
       // Input validation - only allow numbers and commas
       xpField.addEventListener('input', function(e) {
         // Remove any non-digit characters except commas
         let value = this.value.replace(/[^\d,]/g, '');
-        
+
         // Remove commas, parse as number, then reformat with commas
         const numericValue = parseInt(value.replace(/,/g, '')) || 0;
-        
+
         // Only update if the field is focused (user is typing)
         if (document.activeElement === this) {
           // Just show the raw number while typing
           this.value = numericValue.toString();
         }
       });
-      
+
       // Format on blur (when user leaves the field)
       xpField.addEventListener('blur', function() {
         const value = parseInt(this.value.replace(/,/g, '')) || 0;
         this.value = formatNumberWithCommas(value);
       });
-      
+
       // Remove commas before change events (for auto-save)
       xpField.addEventListener('change', function() {
         const rawValue = this.value.replace(/,/g, '');
-        console.log('XP change event: cleaning value from', this.value, 'to', rawValue);
+
         // Temporarily store raw value for form processing
         this.dataset.rawValue = rawValue;
-        
+
         // Temporarily clean for any immediate form processing
         this.value = rawValue;
-        
+
         // Restore formatting after a brief delay (unless we're in a form submission)
         setTimeout(() => {
           if (!isFormSubmitting && document.activeElement !== this) {
             const numericValue = parseInt(rawValue) || 0;
             if (numericValue >= 1000) {
               this.value = numericValue.toLocaleString();
-              console.log('XP formatting restored to:', this.value);
+
             }
           }
         }, 200);
       });
-      
+
       // Remove commas on focus (for easier editing)
       xpField.addEventListener('focus', function() {
         const value = parseInt(this.value.replace(/,/g, '')) || 0;
         this.value = value.toString();
       });
-      
+
       // Add a smart monitoring system that preserves display formatting but ensures clean form submissions
       let cleanupInterval;
       let monitoringPaused = false;
       let isFormSubmitting = false;
-      
+
       const startXPMonitoring = () => {
         if (cleanupInterval) return; // Already running
-        
+
         // DO NOT continuously clean the display - only during actual form submissions
         cleanupInterval = setInterval(() => {
           if (monitoringPaused) return; // Skip if paused
-          
+
           // Only check if we're in the middle of a form submission
           if (isFormSubmitting && xpField && xpField.value && xpField.value.includes(',')) {
             const cleanValue = xpField.value.replace(/,/g, '');
-            console.log('Form submission cleanup: cleaning', xpField.value, 'to', cleanValue);
+
             xpField.value = cleanValue;
           }
         }, 50); // Check frequently during form submissions
       };
-      
+
       const stopXPMonitoring = () => {
         if (cleanupInterval) {
           clearInterval(cleanupInterval);
           cleanupInterval = null;
         }
       };
-      
+
       const pauseXPMonitoring = () => {
         monitoringPaused = true;
-        console.log('XP monitoring paused');
+
       };
-      
+
       const resumeXPMonitoring = () => {
         monitoringPaused = false;
-        console.log('XP monitoring resumed');
+
       };
-      
+
       // Export functions for portrait system
       window.pauseXPMonitoring = pauseXPMonitoring;
       window.resumeXPMonitoring = resumeXPMonitoring;
-      
+
       // Start monitoring when document is ready
       startXPMonitoring();
-      
+
       // Clean up interval when form is removed
       const formObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -734,7 +729,7 @@
           });
         });
       });
-      
+
       formObserver.observe(document.body, {
         childList: true,
         subtree: true
@@ -745,16 +740,16 @@
     function updateNextLevelDisplay() {
       const nextLevelField = document.getElementById('next-level-display');
       if (!nextLevelField) return;
-      
+
       // Get current level and class to calculate next level XP
       const level = parseInt(document.querySelector('input[name="system.level"]')?.value) || 1;
       const characterClass = document.querySelector('select[name="system.class"]')?.value || 'fighter';
-      
+
       // Calculate next level XP using the same tables as the actor
       const nextLevelXP = calculateNextLevelXP(level, characterClass);
       nextLevelField.value = formatNumberWithCommas(nextLevelXP);
     }
-    
+
     // Function to override XP Progress Handler formatting
     function formatExistingFields() {
       // Format XP display if it exists
@@ -765,7 +760,7 @@
           xpField.value = formatNumberWithCommas(currentXP);
         }
       }
-      
+
       // Format Next Level display if it exists
       const nextLevelField = document.getElementById('next-level-display');
       if (nextLevelField && nextLevelField.value) {
@@ -812,14 +807,14 @@
       // Get the appropriate XP table for this class
       const mappedClass = classXPMapping[characterClass.toLowerCase()] || 'fighter';
       const xpTable = xpTables[mappedClass];
-      
+
       // Calculate next level XP (if max level, show current level requirement)
       const nextLevel = Math.min(level + 1, 15); // Max level 15
       const nextLevelIndex = nextLevel - 1; // Convert to array index
-      
+
       return xpTable[nextLevelIndex] || xpTable[14]; // Use max level XP if beyond table
     }
-    
+
     // XP Modifier calculation function (matches the system logic)
     function calculateXPModifier(characterClass, attributes) {
       // Prime requisite mapping for each class
@@ -838,13 +833,13 @@
         'ranger': ['str', 'wis'],
         'warden': ['str', 'con']
       };
-      
+
       const primes = primeRequisites[characterClass.toLowerCase()] || [];
       if (primes.length === 0) return 0;
-      
+
       // Calculate modifier based on prime requisite scores
       let totalModifier = 0;
-      
+
       if (primes.length === 1) {
         // Single prime requisite
         const score = attributes[primes[0]]?.value || 10;
@@ -856,69 +851,69 @@
         const scores = primes.map(attr => attributes[attr]?.value || 10);
         const allHigh = scores.every(score => score >= 13);
         const anyLow = scores.some(score => score <= 8);
-        
+
         if (allHigh && scores.every(score => score >= 16)) totalModifier = 10;
         else if (allHigh) totalModifier = 5;
         else if (anyLow) totalModifier = -10;
       }
-      
+
       return totalModifier;
     }
-    
+
     // Function to run when DOM is ready
     function initializeCharacterSheet() {
-      console.log('Initializing character sheet...');
-      
+
+
       // Set encumbrance bar width after rendering
       const bar = document.querySelector('.encumbrance-bar[data-encumbrance]');
       if (bar) {
         const percent = bar.getAttribute('data-encumbrance');
         bar.style.width = percent + '%';
       }
-      
+
       // Update XP Modifier display
       updateXPModifier();
-      
+
       // Setup XP field formatting
       setupXPFieldFormatting();
-      
+
       // Update XP display with comma formatting
       updateXPDisplay();
-      
+
       // Update Next Level display
       updateNextLevelDisplay();
-      
+
       // Set up periodic formatting to override XP progress handler
       setInterval(formatExistingFields, 500); // Run every 500ms to catch updates from XP progress handler
-      
+
       // Add event listeners to update XP modifier when class or attributes change
       const classField = document.querySelector('select[name="system.class"]');
       const levelField = document.querySelector('input[name="system.level"]');
       const attributeFields = document.querySelectorAll('.attr-str, .attr-dex, .attr-con, .attr-int, .attr-wis, .attr-cha');
-      
+
       if (classField) {
         classField.addEventListener('change', updateXPModifier);
         classField.addEventListener('change', updateNextLevelDisplay);
       }
-      
+
       if (levelField) {
         levelField.addEventListener('change', updateNextLevelDisplay);
       }
-      
+
       attributeFields.forEach(field => {
         field.addEventListener('change', updateXPModifier);
       });
-      
+
       // Add event listener to update XP display when XP changes
       const xpInput = document.querySelector('#xp-display');
       if (xpInput) {
         xpInput.addEventListener('change', updateXPDisplay);
         xpInput.addEventListener('input', updateXPDisplay);
       }
-      
+
       // Ability Score Tooltips System
       const TOOLTIP_DELAY = 200; // Reduced delay for testing - was 800ms
-      
+
       const abilityScoreData = {
         "Strength": [
           { "score_range": "3", "melee": -3, "open_doors": "1-in-6" },
@@ -975,7 +970,7 @@
           { "score_range": "18", "npc_reactions": 2, "max_retainers": 7, "loyalty": 10 }
         ]
       };
-      
+
       // Helper function to format modifier values
       function formatModifier(value) {
         if (typeof value === 'number') {
@@ -983,12 +978,12 @@
         }
         return value;
       }
-      
+
       // Helper function to find score data based on ability score
       function getScoreData(abilityName, score) {
         const data = abilityScoreData[abilityName];
         if (!data) return null;
-        
+
         for (const entry of data) {
           const range = entry.score_range;
           if (range.includes('-')) {
@@ -1000,13 +995,13 @@
         }
         return null;
       }
-      
+
       // Helper function to create tooltip content
       function createTooltipContent(abilityName, scoreData) {
         if (!scoreData) return '';
-        
+
         const lines = [];
-        
+
         if (abilityName === 'Strength') {
           lines.push(`Melee: ${formatModifier(scoreData.melee)}`);
           lines.push(`Open Doors: ${scoreData.open_doors}`);
@@ -1026,10 +1021,10 @@
           lines.push(`Max Retainers: ${scoreData.max_retainers}`);
           lines.push(`Loyalty: ${scoreData.loyalty}`);
         }
-        
+
         return lines.join('<br>');
       }
-      
+
       // Create tooltip element
       const tooltip = document.createElement('div');
       tooltip.id = 'ability-tooltip';
@@ -1048,9 +1043,9 @@
         white-space: nowrap;
       `;
       document.body.appendChild(tooltip);
-      
+
       let tooltipTimeout;
-      
+
       // Setup tooltips for ability scores
       const abilityMappings = [
         { selector: '.attr-str', name: 'Strength' },
@@ -1060,7 +1055,7 @@
         { selector: '.attr-wis', name: 'Wisdom' },
         { selector: '.attr-cha', name: 'Charisma' }
       ];
-      
+
       abilityMappings.forEach(({ selector, name }) => {
         const element = document.querySelector(selector);
         if (element) {
@@ -1070,26 +1065,26 @@
               const score = parseInt(element.value);
               const scoreData = getScoreData(name, score);
               const content = createTooltipContent(name, scoreData);
-              
+
               if (content) {
                 tooltip.innerHTML = content;
-                
+
                 // Position tooltip above the element
                 const rect = element.getBoundingClientRect();
                 const tooltipRect = tooltip.getBoundingClientRect();
-                
+
                 tooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
                 tooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
                 tooltip.style.opacity = '1';
               }
             }, TOOLTIP_DELAY);
           });
-          
+
           element.addEventListener('mouseleave', () => {
             clearTimeout(tooltipTimeout);
             tooltip.style.opacity = '0';
           });
-          
+
           // Update tooltip when value changes
           element.addEventListener('change', () => {
             if (tooltip.style.opacity === '1') {
@@ -1103,13 +1098,13 @@
           });
         }
       });
-      
+
       // Setup dedicated tooltip for XP field with improved event handling
       setTimeout(() => {
         const xpElement = document.querySelector('#xp-display');
         if (xpElement) {
-          console.log('Setting up XP tooltip for element:', xpElement);
-          
+
+
           // Create dedicated XP tooltip to avoid conflicts
           let xpTooltip = document.getElementById('xp-tooltip');
           if (!xpTooltip) {
@@ -1133,40 +1128,40 @@
             document.body.appendChild(xpTooltip);
           }
           let xpTooltipTimeout;
-          
+
           // Remove any existing event listeners and add new ones
           xpElement.removeEventListener('mouseenter', xpElement._tooltipMouseEnter);
           xpElement.removeEventListener('mouseleave', xpElement._tooltipMouseLeave);
           xpElement.removeEventListener('mouseover', xpElement._tooltipMouseOver);
           xpElement.removeEventListener('mouseout', xpElement._tooltipMouseOut);
-          
+
           xpElement._tooltipMouseEnter = (e) => {
-            console.log('XP mouseenter triggered');
+
             clearTimeout(xpTooltipTimeout);
             xpTooltipTimeout = setTimeout(() => {
               xpTooltip.innerHTML = 'Double-click to award XP • Click to edit';
-              
+
               // Position tooltip above the element
               const rect = xpElement.getBoundingClientRect();
               const tooltipRect = xpTooltip.getBoundingClientRect();
-              
+
               xpTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
               xpTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
               xpTooltip.style.opacity = '1';
-              console.log('XP tooltip shown');
+
             }, TOOLTIP_DELAY);
           };
-          
+
           xpElement._tooltipMouseLeave = () => {
-            console.log('XP mouseleave triggered');
+
             clearTimeout(xpTooltipTimeout);
             xpTooltip.style.opacity = '0';
           };
-          
+
           // Try both mouseenter/mouseleave and mouseover/mouseout
           xpElement._tooltipMouseOver = xpElement._tooltipMouseEnter;
           xpElement._tooltipMouseOut = xpElement._tooltipMouseLeave;
-          
+
           xpElement.addEventListener('mouseenter', xpElement._tooltipMouseEnter);
           xpElement.addEventListener('mouseleave', xpElement._tooltipMouseLeave);
           xpElement.addEventListener('mouseover', xpElement._tooltipMouseOver);
@@ -1176,43 +1171,43 @@
 
       // Saving Throw Tooltips System
       function initializeSavingThrowTooltips() {
-        console.log('Initializing saving throw tooltips...');
-        
+
+
         // Get character data
         const race = (document.querySelector('#char-race')?.value || '').toLowerCase().trim();
         const characterClass = (document.querySelector('#char-class')?.value || '').toLowerCase().trim();
         const conScore = parseInt(document.querySelector('[name="system.abilities.con.value"]')?.value) || 10;
-        
-        console.log(`Character: Race="${race}", Class="${characterClass}", CON=${conScore}`);
-        
+
+
+
         // Check if character is an elf (race or class)
         const isElf = race === 'elf' || characterClass === 'elf';
-        
+
         // Only show CON-based racial tooltips if race is different from class (race+class combo, not race-as-class)
         const showRacialBonuses = race && race !== characterClass;
-        
+
         if (!showRacialBonuses && !isElf) {
-          console.log('No tooltips needed');
+
           return;
         }
-        
+
         // Calculate racial bonuses and special abilities
         function getRacialBonus(race, characterClass, saveType, conScore) {
           let bonus = 0;
           let description = '';
-          
+
           // Elf paralysis immunity (works for race or class)
           const isElf = race === 'elf' || characterClass === 'elf';
           if (isElf && saveType === 'paralysis') {
             description = 'Unaffected by the paralysis that ghouls can inflict.';
             return { bonus, description };
           }
-          
+
           // CON-based racial bonuses (only for race+class combinations, not race-as-class)
           if (!race || race === characterClass) {
             return { bonus, description };
           }
-          
+
           if (race === 'dwarf') {
             if (saveType === 'death') { // Death Ray/Poison - only poison part
               if (conScore <= 6) bonus = 0;
@@ -1255,10 +1250,10 @@
               description = '+' + bonus + ' vs Magic';
             }
           }
-          
+
           return { bonus, description };
         }
-        
+
         // Create tooltip element for saving throws
         let saveTooltip = document.getElementById('save-tooltip');
         if (!saveTooltip) {
@@ -1280,37 +1275,37 @@
           `;
           document.body.appendChild(saveTooltip);
         }
-        
+
         let saveTooltipTimeout;
-        
+
         // Setup tooltips for each saving throw
         const saveTypes = ['death', 'wands', 'paralysis', 'breath', 'spells'];
-        
+
         saveTypes.forEach(saveType => {
           const saveElement = document.querySelector(`.save-group-${saveType} .save span`);
           if (!saveElement) return;
-          
+
           const racialData = getRacialBonus(race, characterClass, saveType, conScore);
-          
+
           // Show tooltip if there's a racial bonus OR if it's elf paralysis immunity
           if (racialData.bonus > 0 || racialData.description) {
-            console.log(`Adding tooltip to ${saveType}: ${racialData.description}`);
-            
+
+
             saveElement.addEventListener('mouseenter', () => {
               clearTimeout(saveTooltipTimeout);
               saveTooltipTimeout = setTimeout(() => {
                 saveTooltip.innerHTML = racialData.description;
                 saveTooltip.style.opacity = '1';
-                
+
                 // Position tooltip above the saving throw circle
                 const rect = saveElement.getBoundingClientRect();
                 const tooltipRect = saveTooltip.getBoundingClientRect();
-                
+
                 saveTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
                 saveTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
               }, TOOLTIP_DELAY);
             });
-            
+
             saveElement.addEventListener('mouseleave', () => {
               clearTimeout(saveTooltipTimeout);
               saveTooltip.style.opacity = '0';
@@ -1318,20 +1313,20 @@
           }
         });
       }
-      
+
       // Initialize saving throw tooltips after ability tooltips
       setTimeout(initializeSavingThrowTooltips, 100);
 
-      console.log('Starting portrait setup...');
-      
+
+
       // Portrait handling with delayed tooltip setup
       setTimeout(() => {
         const portraitDisplay = document.querySelector('.portrait-display');
-        
-        console.log('Portrait elements found:', { portraitDisplay });
+
+
 
         if (portraitDisplay) {
-          console.log('Setting up portrait event listeners...');
+
 
           // Create dedicated portrait tooltip to avoid conflicts with other tooltips
           let portraitTooltip = document.getElementById('portrait-tooltip');
@@ -1365,7 +1360,7 @@
 
           // Show portrait tooltip on hover
           portraitDisplay._tooltipMouseEnter = () => {
-            console.log('Portrait mouseenter triggered');
+
             clearTimeout(portraitTooltipTimeout);
             portraitTooltipTimeout = setTimeout(() => {
               const tipText = 'Double-click to select portrait • Right-click to adjust position';
@@ -1375,20 +1370,20 @@
               const tooltipRect = portraitTooltip.getBoundingClientRect();
               portraitTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
               portraitTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-              console.log('Portrait tooltip shown');
+
             }, TOOLTIP_DELAY);
           };
-          
+
           portraitDisplay._tooltipMouseLeave = () => {
-            console.log('Portrait mouseleave triggered');
+
             clearTimeout(portraitTooltipTimeout);
             portraitTooltip.style.opacity = '0';
           };
-          
+
           // Try both mouseenter/mouseleave and mouseover/mouseout
           portraitDisplay._tooltipMouseOver = portraitDisplay._tooltipMouseEnter;
           portraitDisplay._tooltipMouseOut = portraitDisplay._tooltipMouseLeave;
-          
+
           portraitDisplay.addEventListener('mouseenter', portraitDisplay._tooltipMouseEnter);
           portraitDisplay.addEventListener('mouseleave', portraitDisplay._tooltipMouseLeave);
           portraitDisplay.addEventListener('mouseover', portraitDisplay._tooltipMouseOver);
@@ -1396,166 +1391,166 @@
 
         // Double-click on portrait opens Foundry file picker
         portraitDisplay.addEventListener('dblclick', async (event) => {
-          console.log('Portrait double-clicked!', event);
-          
+
+
           try {
             // Use Foundry's FilePicker
             const fp = new FilePicker({
               type: "image",
               current: "",
               callback: (path) => {
-                console.log('File selected from Foundry picker:', path);
-                
+
+
                 // Update the portrait display
                 portraitDisplay.style.backgroundImage = `url('${path}')`;
-                
+
                 // Update the hidden input with the file path
                 const portraitInput = document.querySelector('input[name="system.portrait"]');
                 if (portraitInput) {
                   portraitInput.value = path;
-                  
+
                   // Trigger a change event to update the actor
                   const changeEvent = new Event('change', { bubbles: true });
                   portraitInput.dispatchEvent(changeEvent);
                 }
               }
             });
-            
+
             // Render the file picker
             fp.render(true);
-            
+
           } catch (error) {
-            console.error('Error opening Foundry file picker:', error);
+
           }
         });
-        
+
         // Right-click to show portrait adjustment controls
         portraitDisplay.addEventListener('contextmenu', (event) => {
           event.preventDefault();
-          console.log('Portrait right-clicked, showing controls');
+
           const controls = document.getElementById('portrait-controls');
           const container = document.getElementById('portrait-container');
-          
+
           // Show controls and enter adjustment mode
           if (controls) {
             controls.style.display = 'block';
-            console.log('Controls shown, display style:', controls.style.display);
-            
+
+
             // Add a global observer to see if something else is hiding the controls
             const observer = new MutationObserver((mutations) => {
               mutations.forEach((mutation) => {
                 if (mutation.target === controls && mutation.attributeName === 'style') {
-                  console.log('Controls style changed by something else!', controls.style.display);
-                  console.trace('Style change stack trace');
+
+
                 }
               });
             });
             observer.observe(controls, { attributes: true, attributeFilter: ['style'] });
-            
+
             // Store observer for cleanup
             controls._observer = observer;
           }
           if (container) {
             container.classList.add('adjusting');
           }
-          
+
           // NO automatic hiding - only manual close via Done button
         });
-        
+
           // Setup portrait adjustment functionality
           setupPortraitAdjustment();
-          
-          console.log('Portrait event listeners set up successfully');
+
+
         } else {
-          console.log('Portrait elements not found!');
+
         }
       }, 100);
     }
-    
+
     // Portrait adjustment system
     function setupPortraitAdjustment() {
       const controls = document.getElementById('portrait-controls');
       const container = document.getElementById('portrait-container');
-      
+
       if (!controls || !container) {
-        console.error('Portrait controls or container not found');
+
         return;
       }
-      
+
       // Get current values from CSS variables or defaults
       let scale = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-scale')) || 1;
       let x = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-x')) || 0;
       let y = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-y')) || 0;
-      
+
       // Add individual event listeners to each button with maximum event blocking
       const buttons = controls.querySelectorAll('button');
-      console.log('Setting up', buttons.length, 'button listeners');
-      
+
+
       buttons.forEach((button, index) => {
-        console.log('Setting up button', index, 'with action:', button.dataset.action);
-        
+
+
         // Block all possible events that could bubble
         ['mousedown', 'mouseup', 'click', 'pointerdown', 'pointerup'].forEach(eventType => {
           button.addEventListener(eventType, (event) => {
             event.preventDefault();
             event.stopPropagation();
             event.stopImmediatePropagation();
-            
+
             // Only execute action on 'click'
             if (eventType !== 'click') return;
-            
+
             const action = button.dataset.action;
-            console.log('Button action executed:', action);
-            
+
+
             switch (action) {
               case 'zoom-in':
                 scale = Math.min(scale + 0.1, 2.5);
                 updatePortrait();
-                console.log('Zoomed in to', scale);
+
                 break;
               case 'zoom-out':
                 scale = Math.max(scale - 0.1, 0.5);
                 updatePortrait();
-                console.log('Zoomed out to', scale);
+
                 break;
               case 'move-up':
                 y -= 3;
                 updatePortrait();
-                console.log('Moved up to y:', y);
+
                 break;
               case 'move-down':
                 y += 3;
                 updatePortrait();
-                console.log('Moved down to y:', y);
+
                 break;
               case 'move-left':
                 x -= 3;
                 updatePortrait();
-                console.log('Moved left to x:', x);
+
                 break;
               case 'move-right':
                 x += 3;
                 updatePortrait();
-                console.log('Moved right to x:', x);
+
                 break;
               case 'reset':
                 scale = 1;
                 x = 0;
                 y = 0;
                 updatePortrait();
-                console.log('Reset portrait');
+
                 break;
               case 'done':
-                console.log('Done button clicked - saving and closing controls');
-                
+
+
                 // Pause XP monitoring and mark form as submitting
                 if (window.pauseXPMonitoring) {
                   window.pauseXPMonitoring();
                 }
                 isFormSubmitting = true;
-                
+
                 savePortraitData(); // Save the data to the actor
-                
+
                 // Resume normal operation after a delay
                 setTimeout(() => {
                   isFormSubmitting = false;
@@ -1568,55 +1563,55 @@
                     const numericValue = parseInt(xpField.value) || 0;
                     if (numericValue >= 1000) {
                       const formattedValue = numericValue.toLocaleString();
-                      console.log('Restoring XP formatting: from', xpField.value, 'to', formattedValue);
+
                       xpField.value = formattedValue;
                     }
                   }
                 }, 2000);
-                
+
                 if (controls._observer) {
                   controls._observer.disconnect();
                 }
                 controls.style.display = 'none';
                 container.classList.remove('adjusting');
-                console.log('Portrait adjustment closed');
+
                 break;
             }
           }, true); // Use capture phase
         });
       });
-      
+
       // Update portrait transform and save data
       function updatePortrait() {
         // Update CSS variables
         container.style.setProperty('--user-portrait-scale', scale);
         container.style.setProperty('--user-portrait-x', x + 'px');
         container.style.setProperty('--user-portrait-y', y + 'px');
-        
+
         // Update hidden form inputs for persistence (but don't trigger events yet)
         const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
         const xInput = document.querySelector('input[name="system.userPortrait.x"]');
         const yInput = document.querySelector('input[name="system.userPortrait.y"]');
-        
+
         if (scaleInput) scaleInput.value = scale;
         if (xInput) xInput.value = x;
         if (yInput) yInput.value = y;
-        
+
         // Don't trigger change events immediately to prevent re-render
         // We'll save when the user clicks "Done" instead
-        console.log('Portrait updated - scale:', scale, 'x:', x, 'y:', y);
+
       }
-      
+
       // Function to save portrait data to actor (only called when Done)
       function savePortraitData() {
-        console.log('Saving portrait data (robust):', {scale, x, y});
+
 
         // Clean XP field before save operations (unchanged)
         const xpField = document.getElementById('xp-display');
         if (xpField && xpField.value) {
           const cleanValue = xpField.value.replace(/,/g, '');
           if (cleanValue !== xpField.value) {
-            console.log('Cleaning XP field before portrait save: from', xpField.value, 'to', cleanValue);
+
             xpField.value = cleanValue;
           }
         }
@@ -1642,11 +1637,11 @@
         try {
           if (window.currentActorSheet && window.currentActorSheet.actor) {
             const actor = window.currentActorSheet.actor;
-            console.log('Saving via window.currentActorSheet.actor:', actor.id);
-            return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs(); console.log('Saved via currentActorSheet'); }).catch(err => console.error('Error saving via currentActorSheet:', err));
+
+            return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => 
           }
         } catch (err) {
-          console.warn('currentActorSheet path failed:', err);
+
         }
 
         // Attempt 2: Resolve via the containing window-app of the portrait container
@@ -1658,13 +1653,13 @@
               const appId = windowApp.getAttribute('data-appid');
               if (appId && ui && ui.windows && ui.windows[appId] && ui.windows[appId].actor) {
                 const actor = ui.windows[appId].actor;
-                console.log('Saving via ui.windows[appId].actor:', actor.id);
-                return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs(); console.log('Saved via ui.windows app actor'); }).catch(err => console.error('Error saving via ui.windows actor:', err));
+
+                return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => 
               }
             }
           }
         } catch (err) {
-          console.warn('ui.windows path failed:', err);
+
         }
 
         // Attempt 3: Look for a form-bound actor id or known inputs
@@ -1673,12 +1668,12 @@
           if (actorIdInput && actorIdInput.value) {
             const actor = game.actors.get(actorIdInput.value);
             if (actor) {
-              console.log('Saving via actorIdInput -> game.actors.get:', actor.id);
-              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs(); console.log('Saved via actorIdInput fallback'); }).catch(err => console.error('Error saving via actorIdInput:', err));
+
+              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => 
             }
           }
         } catch (err) {
-          console.warn('actorIdInput path failed:', err);
+
         }
 
         // Attempt 4: Try to find actor id from URL
@@ -1687,12 +1682,12 @@
           if (urlMatch) {
             const actor = game.actors.get(urlMatch[1]);
             if (actor) {
-              console.log('Saving via URL-derived actor id:', actor.id);
-              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs(); console.log('Saved via URL-derived actor'); }).catch(err => console.error('Error saving via URL-derived actor:', err));
+
+              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs();  }).catch(err => 
             }
           }
         } catch (err) {
-          console.warn('URL-derived actor path failed:', err);
+
         }
 
         // Final fallback: update hidden inputs and try to trigger a change on a nearest form
@@ -1706,23 +1701,23 @@
             const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
             if (scaleInput) scaleInput.dispatchEvent(changeEvent);
             nearestForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-            console.log('Form fallback triggered submit/change on nearest form');
+
             return Promise.resolve();
           }
         } catch (err) {
-          console.error('Form fallback failed:', err);
+
         }
 
-        console.error('Unable to persist portrait data to actor by any method');
+
       }
     }
 
   // Check if DOM is already ready or wait for it
     if (document.readyState === 'loading') {
-      console.log('DOM still loading, waiting for DOMContentLoaded...');
+
       document.addEventListener('DOMContentLoaded', initializeCharacterSheet);
     } else {
-      console.log('DOM already ready, initializing immediately...');
+
     // DOM is already ready, run immediately
     setTimeout(initializeCharacterSheet, 0);
   }
@@ -1737,7 +1732,7 @@
   <input type="hidden" name="system.levelPosition.x" value="{{system.levelPosition.x}}" />
   <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
   <input type="hidden" name="system.levelPosition.zIndex" value="{{system.levelPosition.zIndex}}" />
-        
+
         <!-- Horizontal Progress Bar Background -->
         <div style="
           position: absolute; 
@@ -1760,7 +1755,7 @@
             width: 0%;
             transition: width 0.3s ease;
           "></div>
-          
+
           <!-- Level display in center -->
           <div class="level-display" style="
             position: absolute; 
@@ -1792,7 +1787,7 @@
     <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
     <input type="hidden" name="system.userPortrait.x" value="{{system.userPortrait.x}}" />
     <input type="hidden" name="system.userPortrait.y" value="{{system.userPortrait.y}}" />
-    
+
     <!-- Portrait display area -->
     <div class="portrait-display" style="
       position: absolute;
@@ -1807,7 +1802,7 @@
     ">
       <img class="portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" style="width:100%;height:100%;object-fit:contain;display:block;" draggable="false" />
     </div>
-    
+
     <!-- Portrait adjustment controls -->
     <div class="portrait-controls" id="portrait-controls">
       <div class="btn-group">
@@ -1846,7 +1841,7 @@
       <input class="char-name" id="char-name" name="name" type="text" value="{{actor.name}}" style="width: 280px; height: 34px; text-align: center; font-family: 'Minion Pro', serif; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 2px 0 2px; margin: 0; transform: translateY(4px); overflow: visible; white-space: nowrap; text-overflow: clip; border: none; pointer-events: auto;" />
     </div>
   </div>
-      
+
   <!-- Character Class & Alignment - Centered under name as one element -->
   <!-- Character Class - Independent container for positioning -->
   <div class="class-group" id="class-container"
@@ -2108,10 +2103,10 @@
                   padding: 5px 0 0 0; margin: 0; line-height: 1; color: inherit; cursor: default; pointer-events: none;
                   display: flex; align-items: center; justify-content: center;" />
   </div>
-      
+
       <!-- Horizontal separator line at bottom of static header -->
   <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background-color: transparent; z-index: var(--z-labels, 15);"></div>
-      
+
     </div>
 
     <!-- Right-side Tab Navigation -->
@@ -2259,7 +2254,7 @@
   <div class="tab" data-group="primary" data-tab="skills" style="position: relative;">
         <!-- Ability Scores Section -->
         <div class="ability-scores-section" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
-          
+
           <!-- STR Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">STR</label>
@@ -2269,7 +2264,7 @@
               {{/each}}
             </select>
           </div>
-          
+
           <!-- DEX Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">DEX</label>
@@ -2279,7 +2274,7 @@
               {{/each}}
             </select>
           </div>
-          
+
           <!-- CON Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">CON</label>
@@ -2289,7 +2284,7 @@
               {{/each}}
             </select>
           </div>
-          
+
           <!-- INT Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">INT</label>
@@ -2299,7 +2294,7 @@
               {{/each}}
             </select>
           </div>
-          
+
           <!-- WIS Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">WIS</label>
@@ -2309,7 +2304,7 @@
               {{/each}}
             </select>
           </div>
-          
+
           <!-- CHA Ability Score -->
           <div class="ability" style="display: flex; flex-direction: column; align-items: center;">
             <label style="font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em;">CHA</label>
@@ -2319,11 +2314,11 @@
               {{/each}}
             </select>
           </div>
-          
+
         </div>
-        
+
         <!-- Additional Skills content can go here -->
-        
+
       </div>
       <!-- Equipment Tab -->
       <div class="tab" data-group="primary" data-tab="equipment">
@@ -2659,65 +2654,65 @@
   (function(){
     const BASE_Z = 500; // base z-index for tabs
     const ACTIVE_Z = 5000; // z-index for active tab (very high to override everything)
-    
+
     function ensureTabZIndices(root=document){
       const tabs = Array.from(root.querySelectorAll('.sheet-tabs .item'));
-      console.log('Setting z-indices for', tabs.length, 'tabs');
-      
+
+
       tabs.forEach((el, idx) => {
         if (el.classList.contains('active')) {
           // Active tab gets the highest z-index - use multiple methods to force it
           el.style.setProperty('z-index', String(ACTIVE_Z), 'important');
           el.style.zIndex = String(ACTIVE_Z);
           el.dataset._zAssigned = String(ACTIVE_Z);
-          console.log('Set ACTIVE tab', idx, 'to z-index:', ACTIVE_Z);
+
         } else {
           // Non-active tabs get incrementally higher z-index from bottom to top
           const zValue = BASE_Z + (tabs.length - idx);
           el.style.setProperty('z-index', String(zValue), 'important');
           el.style.zIndex = String(zValue);
           el.dataset._zAssigned = String(zValue);
-          console.log('Set tab', idx, 'to z-index:', zValue);
+
         }
       });
     }
 
     function init(){
-      console.log('Initializing tab z-index management');
+
       ensureTabZIndices(document);
       const nav = document.querySelector('.sheet-tabs');
       if (!nav) {
-        console.log('No .sheet-tabs found');
+
         return;
       }
-      
+
       // Re-run z-index assignment when tabs change (mutation observer)
       const mo = new MutationObserver(() => {
-        console.log('Tabs changed, reassigning z-indices');
+
         ensureTabZIndices(document);
       });
       mo.observe(nav, { childList: true, subtree: false, attributes: true, attributeFilter: ['class'] });
-      
+
       // Re-run z-index assignment when active tab changes (click events)
       nav.addEventListener('click', (e) => {
-        console.log('Tab clicked:', e.target);
+
         // Use setTimeout to ensure the active class has been updated
         setTimeout(() => {
-          console.log('Running delayed z-index update after click');
+
           ensureTabZIndices(document);
         }, 50);
       });
-      
+
       // Also listen for class changes directly
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            console.log('Class changed on tab, reassigning z-indices');
+
             setTimeout(() => ensureTabZIndices(document), 10);
           }
         });
       });
-      
+
       tabs.forEach(tab => {
         observer.observe(tab, { attributes: true, attributeFilter: ['class'] });
       });
@@ -2725,46 +2720,46 @@
 
   // Z-INDEX MANAGEMENT - Run after character sheet JS initializes
   setTimeout(function(){
-    console.log('=== STARTING Z-INDEX MANAGEMENT ===');
+
     const BASE_Z = 500;
     const ACTIVE_Z = 5000;
-    
+
     function forceTabZIndices(){
       const tabs = Array.from(document.querySelectorAll('.sheet-tabs .item'));
-      console.log('FORCE: Found', tabs.length, 'tabs');
-      
+
+
       tabs.forEach((el, idx) => {
         const isActive = el.classList.contains('active');
         const zValue = isActive ? ACTIVE_Z : (BASE_Z + (tabs.length - idx));
-        
+
         // Force z-index with multiple methods
         el.style.setProperty('z-index', String(zValue), 'important');
         el.style.zIndex = String(zValue);
-        
-        console.log('FORCE: Tab', idx, el.dataset.tab, isActive ? '(ACTIVE)' : '', '-> z-index:', zValue);
+
+
       });
     }
-    
+
     // Run immediately
     forceTabZIndices();
-    
+
     // Hook into the existing character sheet tab system
     const nav = document.querySelector('.sheet-tabs');
     if (nav) {
-      console.log('FORCE: Adding event listeners to .sheet-tabs');
-      
+
+
       // Intercept ALL click events on the tab container
       nav.addEventListener('click', function(e) {
-        console.log('FORCE: Click intercepted on', e.target.dataset?.tab);
+
         // Run after a delay to let the character sheet JS finish
         setTimeout(forceTabZIndices, 100);
       }, true); // Use capture phase
-      
+
       // Also run periodically to catch any missed updates
       setInterval(forceTabZIndices, 2000);
     }
-    
-    console.log('=== Z-INDEX MANAGEMENT INITIALIZED ===');
+
+
   }, 1000); // Wait 1 second for character sheet to initialize
 })();
 </script>

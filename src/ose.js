@@ -1,5 +1,5 @@
 // ose.js - Main system entry point
-console.log("osp-houserules Debug: src/ose.js module loaded");
+
 
 // Import system styles so the build produces dist/ose.css
 import "./styles/ose.scss";
@@ -14,14 +14,14 @@ Hooks.once("init", () => {
   // Configure Actor document classes
   CONFIG.Actor.documentClass = OspActor;
   CONFIG.Actor.label = game.i18n.localize("osp-houserules.Actor.documentLabel");
-  
+
   // Configure Item document classes
   CONFIG.Item.documentClass = OspItem;
-  
+
   // Unregister core sheets
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
-  
+
   // Register Actor sheets
   foundry.documents.collections.Actors.registerSheet("osp-houserules", OspActorSheetCharacter, {
     types: ["character"],
@@ -72,7 +72,7 @@ Hooks.once("init", () => {
     });
   });
 
-  console.log("osp-houserules Debug: Actor and Item sheets registered successfully");
+
 });
 
 // Register a Handlebars helper for range
@@ -100,7 +100,7 @@ Handlebars.registerHelper('multiply', function(a, b) {
 Handlebars.registerHelper('abilityMod', function(score) {
   const numScore = parseInt(score, 10);
   if (isNaN(numScore)) return '0';
-  
+
   let modifier;
   if (numScore === 3) modifier = -3;
   else if (numScore >= 4 && numScore <= 5) modifier = -2;
@@ -110,7 +110,7 @@ Handlebars.registerHelper('abilityMod', function(score) {
   else if (numScore >= 16 && numScore <= 17) modifier = +2;
   else if (numScore === 18) modifier = +3;
   else modifier = 0; // fallback for scores outside normal range
-  
+
   return modifier > 0 ? `+${modifier}` : `${modifier}`;
 });
 
@@ -118,7 +118,7 @@ Handlebars.registerHelper('abilityMod', function(score) {
 Handlebars.registerHelper('unarmoredAC', function(dexScore) {
   const numScore = parseInt(dexScore, 10);
   if (isNaN(numScore)) return 10;
-  
+
   let modifier;
   if (numScore === 3) modifier = -3;
   else if (numScore >= 4 && numScore <= 5) modifier = -2;
@@ -128,7 +128,7 @@ Handlebars.registerHelper('unarmoredAC', function(dexScore) {
   else if (numScore >= 16 && numScore <= 17) modifier = +2;
   else if (numScore === 18) modifier = +3;
   else modifier = 0; // fallback for scores outside normal range
-  
+
   return 10 + modifier;
 });
 
@@ -148,7 +148,7 @@ Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, l
     'cleric': 'cleric', 'druid': 'cleric',
     'magic-user': 'magicUser', 'illusionist': 'magicUser',
     'thief': 'thief', 'assassin': 'assassin', 'acrobat': 'thief', 'bard': 'thief',
-    
+
     // Race-as-class with specific tables
     'dwarf': 'dwarf',
     'hobbit': 'hobbit', 
@@ -309,18 +309,18 @@ Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, l
 Handlebars.registerHelper('getNextLevelXP', function(characterClass, level) {
   const classLower = (characterClass || '').toLowerCase();
   const currentLevel = parseInt(level) || 1;
-  
+
   // OSE XP progression tables
   const xpTables = {
     // Fighter progression (and similar classes)
     'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
-    
+
     // Cleric progression
     'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
-    
+
     // Magic-User progression (higher requirements)
     'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
-    
+
     // Thief progression
     'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
   };
@@ -332,7 +332,7 @@ Handlebars.registerHelper('getNextLevelXP', function(characterClass, level) {
     'cleric': 'cleric', 
     'magic-user': 'magic-user',
     'thief': 'thief',
-    
+
     // Advanced Fantasy classes - map to appropriate base class XP tables
     'assassin': 'thief',          // Assassins use thief XP
     'barbarian': 'fighter',       // Barbarians use fighter XP
@@ -343,11 +343,11 @@ Handlebars.registerHelper('getNextLevelXP', function(characterClass, level) {
     'paladin': 'cleric',          // Paladins use cleric XP
     'ranger': 'fighter',          // Rangers use fighter XP
     'warden': 'fighter',          // Wardens use fighter XP
-    
+
     // Magic users and variants
     'illusionist': 'magic-user',  // Illusionists use magic-user XP
     'mage': 'magic-user',         // Mages use magic-user XP
-    
+
     // Race-as-class options
     'dwarf': 'fighter',           // Dwarf class uses fighter XP
     'elf': 'magic-user',          // Elf class uses magic-user XP (fighter/magic-user hybrid)
@@ -360,11 +360,11 @@ Handlebars.registerHelper('getNextLevelXP', function(characterClass, level) {
   // Get the appropriate XP table for this class
   const mappedClass = classXPMapping[classLower] || 'fighter';
   const xpTable = xpTables[mappedClass];
-  
+
   // Calculate next level XP (if max level, show current level requirement)
   const nextLevel = Math.min(currentLevel + 1, 15); // Max level 15
   const nextLevelIndex = nextLevel - 1; // Convert to array index
-  
+
   return xpTable[nextLevelIndex] || xpTable[14]; // Use max level XP if beyond table
 });
 
@@ -372,7 +372,7 @@ Handlebars.registerHelper('getNextLevelXP', function(characterClass, level) {
 Handlebars.registerHelper('getXPModifier', function(characterClass, attributes) {
   const classLower = (characterClass || '').toLowerCase();
   const attrs = attributes || {};
-  
+
   // Prime requisite mapping for each class
   const primeRequisites = {
     // Core OSE classes
@@ -380,7 +380,7 @@ Handlebars.registerHelper('getXPModifier', function(characterClass, attributes) 
     'cleric': ['wis'], 
     'magic-user': ['int'],
     'thief': ['dex'],
-    
+
     // Advanced Fantasy classes
     'assassin': ['str', 'dex'],       // Assassins need both STR and DEX
     'barbarian': ['str', 'con'],      // Barbarians need STR and CON
@@ -391,11 +391,11 @@ Handlebars.registerHelper('getXPModifier', function(characterClass, attributes) 
     'paladin': ['str', 'cha'],        // Paladins need STR and CHA
     'ranger': ['str', 'wis'],         // Rangers need STR and WIS
     'warden': ['str', 'con'],         // Wardens need STR and CON
-    
+
     // Magic users and variants
     'illusionist': ['int'],           // Illusionists use INT
     'mage': ['int'],                  // Mages use INT like magic-users
-    
+
     // Race-as-class options
     'dwarf': ['str'],                 // Dwarf class uses STR
     'elf': ['int', 'str'],            // Elf class needs INT and STR
@@ -406,37 +406,37 @@ Handlebars.registerHelper('getXPModifier', function(characterClass, attributes) 
   };
 
   const classReqs = primeRequisites[classLower] || ['str'];
-  
+
   // Get all prime requisite scores
   const primeScores = classReqs.map(req => parseInt(attrs[req]?.value) || 10);
-  
+
   // Standard AF/OSE XP modifier rules:
   // - If ANY prime requisite ≤ 8 → −10% XP
   // - Else if ALL prime requisites ≥ 18 → +15% XP  
   // - Else if ALL prime requisites ≥ 16 → +10% XP
   // - Else if ALL prime requisites ≥ 13 → +5% XP
   // - Else → 0%
-  
+
   // Check if ANY prime is ≤ 8
   if (primeScores.some(score => score <= 8)) {
     return -10;
   }
-  
+
   // Check if ALL primes are ≥ 18
   if (primeScores.every(score => score >= 18)) {
     return 15;
   }
-  
+
   // Check if ALL primes are ≥ 16
   if (primeScores.every(score => score >= 16)) {
     return 10;
   }
-  
+
   // Check if ALL primes are ≥ 13
   if (primeScores.every(score => score >= 13)) {
     return 5;
   }
-  
+
   // Otherwise, no modifier
   return 0;
 });
@@ -444,14 +444,14 @@ Handlebars.registerHelper('getXPModifier', function(characterClass, attributes) 
 // Register a Handlebars helper to display prime requisites for a class
 Handlebars.registerHelper('getPrimeRequisites', function(characterClass) {
   const classLower = (characterClass || '').toLowerCase();
-  
+
   const primeRequisites = {
     // Core OSE classes
     'fighter': ['STR'],
     'cleric': ['WIS'], 
     'magic-user': ['INT'],
     'thief': ['DEX'],
-    
+
     // Advanced Fantasy classes
     'assassin': ['STR', 'DEX'],
     'barbarian': ['STR', 'CON'],
@@ -462,11 +462,11 @@ Handlebars.registerHelper('getPrimeRequisites', function(characterClass) {
     'paladin': ['STR', 'CHA'],
     'ranger': ['STR', 'WIS'],
     'warden': ['STR', 'CON'],
-    
+
     // Magic users and variants
     'illusionist': ['INT'],
     'mage': ['INT'],
-    
+
     // Race-as-class options
     'dwarf': ['STR'],
     'elf': ['INT', 'STR'],
@@ -489,13 +489,13 @@ Handlebars.registerHelper('path', function(templatePath) {
 Hooks.once("ready", () => {
   if (game.paused) {
     game.togglePause();
-    console.log("osp-houserules: Game automatically unpaused on startup");
+
   }
 
   // Add global utility function to reset all character sheet fields
   window.resetAllCharacterFields = function() {
     let resetCount = 0;
-    
+
     // Find all open character sheets
     Object.values(ui.windows).forEach(window => {
       if (window instanceof OspActorSheetCharacter) {
@@ -503,21 +503,21 @@ Hooks.once("ready", () => {
           window.resetAllFieldsToVisible();
           resetCount++;
         } catch (error) {
-          console.error('Failed to reset fields for character sheet:', error);
+
         }
       }
     });
-    
+
     if (resetCount > 0) {
       ui.notifications.info(`Reset fields for ${resetCount} character sheet(s)`);
-      console.log(`osp-houserules: Reset fields for ${resetCount} character sheet(s)`);
+
     } else {
       ui.notifications.warn('No open character sheets found to reset');
-      console.log('osp-houserules: No open character sheets found to reset');
+
     }
-    
+
     return resetCount;
   };
-  
-  console.log("osp-houserules: Global utility functions registered. Use resetAllCharacterFields() to reset all draggable fields.");
+
+
 });

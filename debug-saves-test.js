@@ -16,13 +16,13 @@ const classMapping = {
 };
 
 function testSavingThrows(characterClass, level) {
-  console.log(`\n=== Testing ${characterClass} Level ${level} ===`);
-  
+
+
   const tableKey = classMapping[characterClass.toLowerCase()] || 'fighter';
   const table = savingThrowTables[tableKey];
-  
-  console.log(`Using table: ${tableKey}`);
-  
+
+
+
   // Find the appropriate tier
   let currentTier = null;
   for (const tier of table) {
@@ -31,14 +31,14 @@ function testSavingThrows(characterClass, level) {
       break;
     }
   }
-  
+
   if (currentTier) {
-    console.log(`Found tier for levels ${currentTier.levels.join(', ')}`);
-    console.log(`Saves: D:${currentTier.saves.death}, W:${currentTier.saves.wands}, P:${currentTier.saves.paralysis}, B:${currentTier.saves.breath}, S:${currentTier.saves.spells}`);
+
+
   } else {
-    console.log(`No tier found for level ${level}!`);
+
   }
-  
+
   return currentTier?.saves || { death: 15, wands: 15, paralysis: 15, breath: 15, spells: 15 };
 }
 

@@ -51,10 +51,10 @@ export class CharacterNameHandler {
    * Setup dynamic width functionality
    */
   setupDynamicWidth() {
-    // Create a hidden span to measure text width
-  this.measureSpan = $('<span></span>');
+    // Create a hidden span to measure text width (native DOM)
+  this.measureSpan = document.createElement('span');
   // Use direct DOM style assignment for measurement span
-  const ms = this.measureSpan[0];
+  const ms = this.measureSpan;
   ms.style.visibility = 'hidden';
   ms.style.position = 'absolute';
   ms.style.whiteSpace = 'nowrap';
@@ -72,8 +72,8 @@ export class CharacterNameHandler {
     ms.style.letterSpacing = '';
   }
 
-    // Add to DOM for measurement
-    $('body').append(this.measureSpan);
+  // Add to DOM for measurement
+  document.body.appendChild(this.measureSpan);
 
     // Set initial CSS properties for the input via DOM styles
     const ni = this.nameInput[0];
@@ -112,7 +112,7 @@ export class CharacterNameHandler {
    */
   updateMeasureSpanFont() {
     if (this.measureSpan) {
-      const ms2 = this.measureSpan[0];
+      const ms2 = this.measureSpan;
       if (ms2) {
         try {
           const computed2 = window.getComputedStyle(this.nameInput[0]);
@@ -141,9 +141,10 @@ export class CharacterNameHandler {
     // Use the longer of actual text or placeholder for measurement
     const measureText = text.length > 0 ? text : (this.nameInput.attr('placeholder') || 'Character Name');
 
-    // Set text in measure span and get width
-    this.measureSpan.text(measureText);
-    let textWidth = this.measureSpan.width();
+  // Set text in measure span and get width
+  if (this.measureSpan) this.measureSpan.textContent = measureText;
+  let textWidth = 0;
+  if (this.measureSpan) textWidth = this.measureSpan.offsetWidth || this.measureSpan.getBoundingClientRect().width || 0;
 
     // Add padding and constrain to min/max
     let newWidth = Math.max(textWidth + this.padding, this.minWidth);
@@ -173,7 +174,7 @@ export class CharacterNameHandler {
    * Get current width information
    */
   getWidthInfo() {
-    const currentWidth = this.nameInput.width();
+    const currentWidth = (this.nameInput && this.nameInput[0]) ? (this.nameInput[0].getBoundingClientRect().width || this.nameInput[0].offsetWidth || 0) : 0;
     const text = this.nameInput.val() || '';
 
     return {

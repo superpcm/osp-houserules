@@ -223,23 +223,23 @@ export class XPProgressHandler {
 
     // Create dialog content
     const content = `
-      <div style="padding: 10px;">
-        <div style="margin-bottom: 20px; text-align: center;">
-          <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center;">
+      <div class="cs-xp-dialog-container">
+        <div class="cs-xp-row">
+          <div class="cs-xp-inline">
             <label for="xp-award-input"><strong>XP to Award:</strong></label>
-            <input type="number" id="xp-award-input" value="" min="0" max="9999" style="width: 60px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center;" />
+            <input type="number" id="xp-award-input" value="" min="0" max="9999" class="cs-input-small" />
           </div>
         </div>
-        <div style="display: flex; gap: 20px;">
-          <div style="flex: 1;">
-            <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+        <div class="cs-xp-flex">
+          <div class="cs-xp-col">
+            <div class="cs-xp-inline">
               <label for="current-xp-display"><strong>Current XP:</strong></label>
-              ${isGM ? `<input type="number" id="current-xp-input" value="${currentXP}" min="0" max="999999" style="width: 80px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center;" />` : `<span id="current-xp-display" style="border: none; background: none; color: inherit; padding: 0;">${currentXP}</span>`}
+              ${isGM ? `<input type="number" id="current-xp-input" value="${currentXP}" min="0" max="999999" class="cs-input-medium" />` : `<span id="current-xp-display" class="cs-no-border">${currentXP}</span>`}
             </div>
             ${isGM ? `
-            <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <div class="cs-xp-inline">
               <label for="level-input"><strong>Level:</strong></label>
-              <select id="level-input" style="width: 60px; padding: 5px; background-color: white !important; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none;">
+              <select id="level-input" class="cs-select-inline">
                 <option value="1" ${currentLevel === 1 ? 'selected' : ''}>1</option>
                 <option value="2" ${currentLevel === 2 ? 'selected' : ''}>2</option>
                 <option value="3" ${currentLevel === 3 ? 'selected' : ''}>3</option>
@@ -257,22 +257,22 @@ export class XPProgressHandler {
               </select>
             </div>
             ` : `
-            <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <div class="cs-xp-inline">
               <label><strong>Level:</strong></label>
-              <span style="border: none; background: none; color: inherit; padding: 0;">${currentLevel}</span>
+              <span class="cs-no-border">${currentLevel}</span>
             </div>
             `}
           </div>
-          <div style="flex: 1;">
-            <div style="margin-bottom: 10px;">
-              <strong>Next Level XP:</strong> <span id="next-level-xp-display" style="border: none; background: none; color: inherit; padding: 0;">${nextLevelXP}</span>
+          <div class="cs-xp-side">
+            <div class="cs-xp-side-row">
+              <strong>Next Level XP:</strong> <span id="next-level-xp-display" class="cs-no-border">${nextLevelXP}</span>
             </div>
-            <div style="margin-bottom: 10px;">
-              <strong>XP Modifier:</strong> <span style="border: none; background: none; color: inherit; padding: 0;">${xpMod >= 0 ? '+' : ''}${xpMod}%</span>
+            <div class="cs-xp-side-row">
+              <strong>XP Modifier:</strong> <span class="cs-no-border">${xpMod >= 0 ? '+' : ''}${xpMod}%</span>
             </div>
           </div>
         </div>
-        <div id="xp-preview" style="margin-top: 15px; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none;">
+  <div id="xp-preview" class="cs-xp-preview">
           <div><strong>Base XP:</strong> <span id="base-xp">0</span></div>
           <div><strong>Modified XP:</strong> <span id="modified-xp">0</span></div>
           <div><strong>New Total:</strong> <span id="new-total">${currentXP}</span></div>

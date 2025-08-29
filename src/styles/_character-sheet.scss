@@ -223,6 +223,31 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 .cs-xp-dialog .window-header { background: black !important; color: white !important; }
 .cs-xp-dialog .window-content { background: white !important; }
 
+/* Dialog layout and control helpers for handler-generated markup */
+.cs-xp-dialog-container { padding: 10px; }
+.cs-xp-row { margin-bottom: 20px; text-align: center; }
+.cs-xp-inline { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
+.cs-xp-flex { display: flex; gap: 20px; }
+.cs-xp-col { flex: 1; }
+.cs-input-small { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; }
+.cs-input-medium { width: 80px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; }
+.cs-no-border { border: none; background: none; color: inherit; padding: 0; }
+.cs-xp-preview { margin-top: 15px; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none; }
+
+/* XP dialog side column helpers (replaces small inline wrappers) */
+.cs-xp-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.cs-xp-side-row { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
+
+/* Reusable small select style for inline dialogs (appearance reset handled elsewhere) */
+.cs-select-inline { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
+
+/* Language dialog helpers */
+.cs-dialog-row { margin-bottom: 8px; }
+.cs-dialog-columns { display: flex; gap: 40px; }
+.cs-dialog-column { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.cs-custom-input { width: 145px; }
+.cs-dialog-label { display: flex; align-items: center; gap: 8px; }
+
 /* Level & portrait container utility classes (migrate inline box-shadow/positioning into class-based rules) */
 .cs-level-container { position: absolute; width: 64px; height: 34px; }
 .cs-level-shadow { position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); border-radius: 6px; }
@@ -299,6 +324,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 /* Encumbrance bar helpers */
 .encumbrance-section .encumbrance-bar-container { position: relative; }
 .encumbrance-section .encumbrance-bar { height: 12px; background: #22c55e; transition: width 0.3s ease; }
+.encumbrance-section .encumbrance-bar { width: var(--encumbrance-width, 0%); }
 
 /* Level progress helpers */
 .cs-level-progress-bar { position: absolute; top: 0; left: 0; height: 100%; border-radius: 3px; background-color: #22c55e; width: 0%; transition: width 0.3s ease; }

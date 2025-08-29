@@ -81,11 +81,11 @@ export class XPProgressHandler {
 
       if (!isGM) {
         this.xpDisplay.prop('readonly', true);
-        this.xpDisplay.css('cursor', 'pointer');
+        this.xpDisplay.addClass('cs-cursor-pointer').removeClass('cs-cursor-text');
 
       } else {
         this.xpDisplay.prop('readonly', false);
-        this.xpDisplay.css('cursor', 'text');
+        this.xpDisplay.addClass('cs-cursor-text').removeClass('cs-cursor-pointer');
 
       }
 
@@ -344,32 +344,10 @@ export class XPProgressHandler {
       render: (html) => {
         const self = this; // Capture the XPProgressHandler instance
 
-        // Apply minimal styling to dialog
+        // Apply minimal styling to dialog by adding a class that SCSS targets
         const dialogWindow = html.closest('.app.window-app');
         if (dialogWindow.length) {
-          // Set white background for the dialog
-          dialogWindow.css({
-            'background': 'white',
-            'background-color': 'white'
-          });
-
-          // Style the window header to be black
-          const windowHeader = dialogWindow.find('.window-header');
-          if (windowHeader.length) {
-            windowHeader.css({
-              'background': 'black',
-              'background-color': 'black'
-            });
-          }
-
-          // Ensure window content has white background
-          const windowContent = dialogWindow.find('.window-content');
-          if (windowContent.length) {
-            windowContent.css({
-              'background': 'white',
-              'background-color': 'white'
-            });
-          }
+          dialogWindow.addClass('cs-xp-dialog');
         }
 
         // Update preview when input changes
@@ -565,40 +543,37 @@ export class XPProgressHandler {
 
     // Update horizontal progress bar (if it exists)
     if (this.progressBar.length) {
-      this.progressBar.css('width', `${progressPercentage}%`);
-
-      // Optional: Change bar color if at max level or over XP requirement
-      if (currentXP >= nextLevelXP) {
-        this.progressBar.css('background-color', '#16a34a'); // Darker green when complete
-      } else {
-        this.progressBar.css('background-color', '#22c55e'); // Bright green
+      // Use CSS variable for width and color so presentation stays in CSS
+      try {
+        this.progressBar[0].style.setProperty('--xp-progress-width', `${progressPercentage}%`);
+        this.progressBar[0].style.setProperty('--xp-progress-color', currentXP >= nextLevelXP ? '#16a34a' : '#22c55e');
+      } catch (e) {
+        // Fallback to direct style assignment when setProperty is unavailable
+        if (this.progressBar[0]) {
+          this.progressBar[0].style.width = `${progressPercentage}%`;
+          this.progressBar[0].style.backgroundColor = currentXP >= nextLevelXP ? '#16a34a' : '#22c55e';
+        }
       }
     }
 
     // Update vertical level field progress bar (if it exists)
     if (this.levelXpProgress.length) {
-
-      this.levelXpProgress.css('height', `${progressPercentage}%`);
-
-      // Calculate top border radius based on progress (gradual transition starting at 90%)
-      let topRadius = 0;
-      if (progressPercentage >= 90) {
-        // Linear interpolation: at 90% = 0px, at 100% = 9px
-        const radiusProgress = (progressPercentage - 90) / 10; // 0 to 1 scale
-        topRadius = Math.min(9, radiusProgress * 9); // 0px to 9px
+      // Set CSS variables for height, top-radius and background
+      const topRadius = (progressPercentage >= 90) ? `${Math.min(9, ((progressPercentage - 90) / 10) * 9)}px` : '0px';
+      try {
+        this.levelXpProgress[0].style.setProperty('--level-height', `${progressPercentage}%`);
+        this.levelXpProgress[0].style.setProperty('--progress-top-radius', topRadius);
+        this.levelXpProgress[0].style.setProperty('--level-bg', currentXP >= nextLevelXP ? 'linear-gradient(to top, #16a34a 0%, #22c55e 100%)' : 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
+      } catch (e) {
+        // Fallback to direct style properties
+        if (this.levelXpProgress[0]) {
+          this.levelXpProgress[0].style.height = `${progressPercentage}%`;
+          // apply top radius to both corners for visual parity
+          this.levelXpProgress[0].style.borderTopLeftRadius = topRadius;
+          this.levelXpProgress[0].style.borderTopRightRadius = topRadius;
+          this.levelXpProgress[0].style.background = currentXP >= nextLevelXP ? 'linear-gradient(to top, #16a34a 0%, #22c55e 100%)' : 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)';
+        }
       }
-
-      // Update the CSS custom property for top border radius
-      this.levelXpProgress.css('--progress-top-radius', `${topRadius}px`);
-
-      // Set background color based on progress
-      if (currentXP >= nextLevelXP) {
-        this.levelXpProgress.css('background', 'linear-gradient(to top, #16a34a 0%, #22c55e 100%)'); // Darker green when complete
-      } else {
-        this.levelXpProgress.css('background', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)'); // Green gradient
-      }
-    } else {
-
     }
 
     // Update next level display
@@ -628,15 +603,16 @@ export class XPProgressHandler {
 
     // Update skills tab progress ring (if it exists)
     if (this.skillsLevelProgressRing.length) {
-
-
       // Calculate stroke-dashoffset for progress ring
-      const circumference = 2 * Math.PI * 32.5; // 2πr where r = 32.5
+      const circumference = 2 * Math.PI * 32.5; // 2Ãc0r where r = 32.5
       const offset = circumference - (progressPercentage / 100) * circumference;
-
-      this.skillsLevelProgressRing.css('stroke-dashoffset', offset);
-
-
+      try {
+        // SVG attributes work best with setAttribute
+        this.skillsLevelProgressRing[0].setAttribute('stroke-dashoffset', String(offset));
+      } catch (e) {
+        // Fallback to style property
+        if (this.skillsLevelProgressRing[0]) this.skillsLevelProgressRing[0].style.strokeDashoffset = offset;
+      }
     }
 
     // Update skills level display
@@ -648,12 +624,11 @@ export class XPProgressHandler {
 
     // Update static level progress bar
     if (this.staticLevelProgressBar.length) {
-
-
-      // Set the width of the progress bar
-      this.staticLevelProgressBar.css('width', `${progressPercentage}%`);
-
-
+      try {
+        this.staticLevelProgressBar[0].style.setProperty('--static-level-width', `${progressPercentage}%`);
+      } catch (e) {
+        if (this.staticLevelProgressBar[0]) this.staticLevelProgressBar[0].style.width = `${progressPercentage}%`;
+      }
     }
 
     // Update static level display
@@ -863,8 +838,19 @@ export class XPProgressHandler {
   testProgressBar(percentage = 50) {
 
     if (this.levelXpProgress.length) {
-      this.levelXpProgress.css('height', `${percentage}%`);
-      this.levelXpProgress.css('background', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
+      try {
+        this.levelXpProgress[0].style.setProperty('--level-height', `${percentage}%`);
+        this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
+      } catch (e) {
+        if (this.levelXpProgress[0]) {
+          this.levelXpProgress[0].style.height = `${percentage}%`;
+          try {
+            this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
+          } catch (e2) {
+            this.levelXpProgress[0].style.background = 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)';
+          }
+        }
+      }
 
     } else {
 

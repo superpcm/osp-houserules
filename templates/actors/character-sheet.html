@@ -1609,9 +1609,9 @@
       
       // Function to save portrait data to actor (only called when Done)
       function savePortraitData() {
-        console.log('Saving portrait data:', {scale, x, y});
-        
-        // Clean XP field before save operations
+        console.log('Saving portrait data (robust):', {scale, x, y});
+
+        // Clean XP field before save operations (unchanged)
         const xpField = document.getElementById('xp-display');
         if (xpField && xpField.value) {
           const cleanValue = xpField.value.replace(/,/g, '');
@@ -1620,141 +1620,100 @@
             xpField.value = cleanValue;
           }
         }
-        
-        // Method 1: Try to get actor ID from the application instance
-        let actorId = null;
-        
-        // Try multiple methods to find the actor ID
-        // Method 1a: Check if there's a global actor reference in the sheet
-        if (window.currentActorSheet && window.currentActorSheet.actor) {
-          actorId = window.currentActorSheet.actor.id;
-          console.log('Found actor ID from window.currentActorSheet:', actorId);
+
+        // Gather update payload
+        const updateData = {
+          'system.userPortrait.scale': scale,
+          'system.userPortrait.x': x,
+          'system.userPortrait.y': y
+        };
+
+        // Helper: update hidden inputs to keep form in sync
+        function syncHiddenInputs() {
+          const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
+          const xInput = document.querySelector('input[name="system.userPortrait.x"]');
+          const yInput = document.querySelector('input[name="system.userPortrait.y"]');
+          if (scaleInput) { scaleInput.value = scale; scaleInput.setAttribute('value', scale); }
+          if (xInput) { xInput.value = x; xInput.setAttribute('value', x); }
+          if (yInput) { yInput.value = y; yInput.setAttribute('value', y); }
         }
-        
-        // Method 1b: Look for the sheet application instance
-        if (!actorId) {
-          const formElement = document.querySelector('form.flexcol');
-          if (formElement) {
-            const windowApp = formElement.closest('.window-app');
+
+        // Attempt 1: Use the sheet instance stored on the window (most reliable if set)
+        try {
+          if (window.currentActorSheet && window.currentActorSheet.actor) {
+            const actor = window.currentActorSheet.actor;
+            console.log('Saving via window.currentActorSheet.actor:', actor.id);
+            return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs(); console.log('Saved via currentActorSheet'); }).catch(err => console.error('Error saving via currentActorSheet:', err));
+          }
+        } catch (err) {
+          console.warn('currentActorSheet path failed:', err);
+        }
+
+        // Attempt 2: Resolve via the containing window-app of the portrait container
+        try {
+          const container = document.getElementById('portrait-container');
+          if (container) {
+            const windowApp = container.closest('.window-app');
             if (windowApp) {
               const appId = windowApp.getAttribute('data-appid');
-              if (appId && ui.windows[appId] && ui.windows[appId].actor) {
-                actorId = ui.windows[appId].actor.id;
-                console.log('Found actor ID from app instance:', actorId);
+              if (appId && ui && ui.windows && ui.windows[appId] && ui.windows[appId].actor) {
+                const actor = ui.windows[appId].actor;
+                console.log('Saving via ui.windows[appId].actor:', actor.id);
+                return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs(); console.log('Saved via ui.windows app actor'); }).catch(err => console.error('Error saving via ui.windows actor:', err));
               }
             }
           }
+        } catch (err) {
+          console.warn('ui.windows path failed:', err);
         }
-        
-        // Method 2: Try to get actor ID from form data
-        if (!actorId) {
+
+        // Attempt 3: Look for a form-bound actor id or known inputs
+        try {
           const actorIdInput = document.querySelector('input[name="id"]');
           if (actorIdInput && actorIdInput.value) {
-            actorId = actorIdInput.value;
-            console.log('Found actor ID from form input:', actorId);
+            const actor = game.actors.get(actorIdInput.value);
+            if (actor) {
+              console.log('Saving via actorIdInput -> game.actors.get:', actor.id);
+              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs(); console.log('Saved via actorIdInput fallback'); }).catch(err => console.error('Error saving via actorIdInput:', err));
+            }
           }
+        } catch (err) {
+          console.warn('actorIdInput path failed:', err);
         }
-        
-        // Method 3: Try to get from URL or other sources
-        if (!actorId) {
+
+        // Attempt 4: Try to find actor id from URL
+        try {
           const urlMatch = window.location.href.match(/actors\/([a-zA-Z0-9]+)/);
           if (urlMatch) {
-            actorId = urlMatch[1];
-            console.log('Found actor ID from URL:', actorId);
+            const actor = game.actors.get(urlMatch[1]);
+            if (actor) {
+              console.log('Saving via URL-derived actor id:', actor.id);
+              return actor.update(updateData, {render: false}).then(() => { syncHiddenInputs(); console.log('Saved via URL-derived actor'); }).catch(err => console.error('Error saving via URL-derived actor:', err));
+            }
           }
+        } catch (err) {
+          console.warn('URL-derived actor path failed:', err);
         }
-        
-        if (actorId) {
-          // Use Foundry's game.actors to update directly, completely bypassing form system
-          const actor = game.actors.get(actorId);
-          if (actor) {
-            const updateData = {
-              'system.userPortrait.scale': scale,
-              'system.userPortrait.x': x,
-              'system.userPortrait.y': y
-            };
-            
-            console.log('Updating actor directly with portrait data:', updateData);
-            console.log('Current actor XP before update:', actor.system.xp);
-            
-            // Use the most direct update method possible with maximum isolation
-            actor.update(updateData, {
-              render: false,     // Don't trigger re-render
-              diff: false,       // Don't compute diffs  
-              recursive: false,  // Don't do recursive updates
-              noHook: true      // Don't trigger hooks that might interfere
-            }).then(() => {
-              console.log('Portrait data saved directly to actor without re-render');
-              console.log('Actor XP after portrait update:', actor.system.xp);
-              
-              // Force update the hidden form fields to match saved data
-              const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
-              const xInput = document.querySelector('input[name="system.userPortrait.x"]');
-              const yInput = document.querySelector('input[name="system.userPortrait.y"]');
-              
-              if (scaleInput) {
-                scaleInput.value = scale;
-                scaleInput.setAttribute('value', scale);
-              }
-              if (xInput) {
-                xInput.value = x;
-                xInput.setAttribute('value', x);
-              }
-              if (yInput) {
-                yInput.value = y;
-                yInput.setAttribute('value', y);
-              }
-              
-              console.log('Portrait save completed - hidden form fields updated');
-              
-            }).catch(err => {
-              console.error('Error saving portrait data directly:', err);
-            });
-            return;
+
+        // Final fallback: update hidden inputs and try to trigger a change on a nearest form
+        console.warn('All direct actor save methods failed; using form fallback');
+        try {
+          syncHiddenInputs();
+          const nearestForm = document.getElementById('portrait-container')?.closest('form') || document.querySelector('form.flexcol') || document.querySelector('form');
+          if (nearestForm) {
+            // Dispatch an input/change event on the nearest inputs and the form
+            const changeEvent = new Event('change', { bubbles: true });
+            const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
+            if (scaleInput) scaleInput.dispatchEvent(changeEvent);
+            nearestForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            console.log('Form fallback triggered submit/change on nearest form');
+            return Promise.resolve();
           }
+        } catch (err) {
+          console.error('Form fallback failed:', err);
         }
-        
-        console.error('Could not find actor ID for direct portrait save, falling back to form method');
-        
-        // Fallback: Use form system to save portrait data
-        const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
-        const xInput = document.querySelector('input[name="system.userPortrait.x"]');
-        const yInput = document.querySelector('input[name="system.userPortrait.y"]');
-        
-        console.log('Fallback: Found form inputs:', {
-          scaleInput: !!scaleInput,
-          xInput: !!xInput,
-          yInput: !!yInput
-        });
-        
-        if (scaleInput) {
-          scaleInput.value = scale;
-          scaleInput.setAttribute('value', scale);
-          console.log('Fallback: Updated scale input to', scale);
-        }
-        if (xInput) {
-          xInput.value = x;
-          xInput.setAttribute('value', x);
-          console.log('Fallback: Updated x input to', x);
-        }
-        if (yInput) {
-          yInput.value = y;
-          yInput.setAttribute('value', y);
-          console.log('Fallback: Updated y input to', y);
-        }
-        
-        // Trigger a form change event to save the data
-        const formElement = document.querySelector('form.flexcol');
-        if (formElement) {
-          const changeEvent = new Event('change', { bubbles: true });
-          if (scaleInput) {
-            scaleInput.dispatchEvent(changeEvent);
-            console.log('Fallback: Triggered change event on scale input');
-          }
-          console.log('Portrait data saved via form system fallback');
-        } else {
-          console.error('Fallback: Could not find form element');
-        }
+
+        console.error('Unable to persist portrait data to actor by any method');
       }
     }
 

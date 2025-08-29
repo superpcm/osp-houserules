@@ -4,16 +4,19 @@
   "type": "module",
   "description": "OSP House Rules Game System",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w"
+    "build:css": "node ./scripts/build-css.js",
+    "build": "npm run build:css && rollup -c",
+    "watch": "rollup -c -w",
+    "test-upgrades": "node ./scripts/test-upgrade.js"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "rollup": "^3.0.0",
-    "rollup-plugin-scss": "^4.0.0",
-    "rollup-plugin-typescript2": "^0.34.1",
-    "sass": "^1.69.0",
-    "typescript": "^5.0.0"
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "rollup": "^4.49.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "sass": "^1.91.0"
   }
 }

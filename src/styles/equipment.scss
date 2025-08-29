@@ -223,6 +223,14 @@
   cursor: pointer;
 }
 
+/* Portrait transform: read user variables set by the portrait adjustment script */
+.portrait-img {
+  transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px));
+  transform-origin: center center;
+  /* Make updates immediate to match user adjustments */
+  transition: transform 0s ease;
+}
+
 .osp.sheet.item .header-col {
   flex: 1;
 }

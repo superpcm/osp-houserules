@@ -4,6 +4,7 @@
 @use 'z-index' as *;
 // Tab positioning variables and overrides
 @use '_tabs' as *;
+@use 'character-sheet' as *;
 
 // Layout system styles
 .draggable-field {

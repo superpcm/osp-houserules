@@ -1026,23 +1026,11 @@
       }
 
       // Create tooltip element
-      const tooltip = document.createElement('div');
-      tooltip.id = 'ability-tooltip';
-      tooltip.style.cssText = `
-        position: absolute;
-        background: #333;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        line-height: 1.4;
-        z-index: var(--z-overlay, 1000);
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.2s;
-        white-space: nowrap;
-      `;
-      document.body.appendChild(tooltip);
+  const tooltip = document.createElement('div');
+  tooltip.id = 'ability-tooltip';
+  // Use CSS class for visual styling; styles live in src/styles/_character-sheet.scss
+  tooltip.className = 'cs-tooltip';
+  document.body.appendChild(tooltip);
 
       let tooltipTimeout;
 
@@ -1110,21 +1098,8 @@
           if (!xpTooltip) {
             xpTooltip = document.createElement('div');
             xpTooltip.id = 'xp-tooltip';
-              xpTooltip.style.cssText = `
-              position: absolute;
-              background: #333;
-              color: white;
-              padding: 8px 12px;
-              border-radius: 4px;
-              font-size: 12px;
-              line-height: 1.4;
-              z-index: var(--z-top, 10000);
-              pointer-events: none;
-              opacity: 0;
-              transition: opacity 0.2s;
-              white-space: nowrap;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            `;
+            // Apply tooltip classes - visual styles handled by CSS
+            xpTooltip.className = 'cs-tooltip cs-tooltip--xp';
             document.body.appendChild(xpTooltip);
           }
           let xpTooltipTimeout;
@@ -1333,21 +1308,7 @@
           if (!portraitTooltip) {
             portraitTooltip = document.createElement('div');
             portraitTooltip.id = 'portrait-tooltip';
-            portraitTooltip.style.cssText = `
-              position: absolute;
-              background: #333;
-              color: white;
-              padding: 8px 12px;
-              border-radius: 4px;
-              font-size: 12px;
-              line-height: 1.4;
-              z-index: var(--z-top, 10000);
-              pointer-events: none;
-              opacity: 0;
-              transition: opacity 0.2s;
-              white-space: nowrap;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            `;
+            portraitTooltip.className = 'cs-tooltip cs-tooltip--portrait';
             document.body.appendChild(portraitTooltip);
           }
           let portraitTooltipTimeout;
@@ -1724,8 +1685,8 @@
   </script>
 
   <!-- Character Level - Positioned behind everything -->
-  <div class="level-progress-bar-container" id="level-container"
-     style="position: absolute; width: 64px; height: 34px; left: 460px; top: 20px; z-index: var(--z-level, 8);">
+  <div class="level-progress-bar-container cs-level-container" id="level-container"
+     style="left: 460px; top: 20px; z-index: var(--z-level, 8);">
     <!-- Shadow overlay for Level field -->
   <div style="position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); border-radius: 6px;"></div>
   <!-- Hidden inputs for level position data -->
@@ -1734,54 +1695,18 @@
   <input type="hidden" name="system.levelPosition.zIndex" value="{{system.levelPosition.zIndex}}" />
 
         <!-- Horizontal Progress Bar Background -->
-        <div style="
-          position: absolute; 
-          top: 0px; 
-          left: 0; 
-          width: 64px; 
-          height: 34px; 
-          box-shadow: none !important;
-          overflow: hidden;
-          z-index: var(--z-level, 8);
-        ">
+        <div>
           <!-- Progress Fill -->
-          <div class="level-progress-bar" style="
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            border-radius: 3px;
-            background-color: #22c55e;
-            width: 0%;
-            transition: width 0.3s ease;
-          "></div>
+          <div class="cs-level-progress-bar"></div>
 
           <!-- Level display in center -->
-          <div class="level-display" style="
-            position: absolute; 
-            top: 2px; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            font-size: 24px; 
-            color: #000; 
-            z-index: var(--z-level, 8);
-            line-height: 34px;
-            font-family: 'Minion Pro', serif;
-            text-align: center;
-            box-sizing: border-box;
-            background: transparent !important;
-            box-shadow: none !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          ">{{system.level}}</div>
+          <div class="cs-level-display">{{system.level}}</div>
         </div>
       </div>
 
   <!-- Character Portrait - Positioned behind everything -->
-  <div class="portrait-container" id="portrait-container"
-       style="--portrait-size: 138px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}}; position: absolute; width: var(--portrait-size); height: 141px; left: 34px; top: 75px; z-index: var(--z-portrait, 15); overflow: hidden;">
+  <div class="portrait-container cs-portrait-container" id="portrait-container"
+       style="--portrait-size: 138px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}}; left: 34px; top: 75px; z-index: var(--z-portrait, 15);">
     <!-- Hidden inputs for portrait data -->
     <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
     <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
@@ -1789,18 +1714,8 @@
     <input type="hidden" name="system.userPortrait.y" value="{{system.userPortrait.y}}" />
 
     <!-- Portrait display area -->
-    <div class="portrait-display" style="
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-      border-radius: 3px;
-      overflow: hidden;
-      pointer-events: auto;
-    ">
-      <img class="portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" style="width:100%;height:100%;object-fit:contain;display:block;" draggable="false" />
+    <div class="portrait-display cs-portrait-display">
+      <img class="portrait-img cs-portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" draggable="false" />
     </div>
 
     <!-- Portrait adjustment controls -->
@@ -2074,34 +1989,34 @@
   <!-- XP Mod % field -->
   <div class="xp-mod-group" id="xp-mod-container"
   style="position: absolute; left: 530px; top: 20px; z-index: var(--z-labels, 15);">
-    <input type="text" class="xp-mod-display" id="xp-mod-display" readonly 
-           style="width: 64px; height: 34px; text-align: center; font-size: 24px; 
-                  background-color: transparent !important; border: none; 
-                  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
-                  padding: 4px 0 0 0; margin: 0; line-height: 1; color: inherit; pointer-events: none;
-                  display: flex; align-items: center; justify-content: center;" />
+    <input type="text" class="xp-mod-display cs-field cs-xp-mod-display" id="xp-mod-display" readonly 
+      style="text-align: center; font-size: 24px; 
+        background-color: transparent !important; border: none; 
+        box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+        padding: 4px 0 0 0; margin: 0; line-height: 1; color: inherit; pointer-events: none;
+        display: flex; align-items: center; justify-content: center;" />
   </div>
 
   <!-- XP field -->
   <div class="xp-group" id="xp-container"
   style="position: absolute; left: 319px; top: 74px; z-index: var(--z-portrait, 15);">
-    <input type="text" class="xp-display" id="xp-display" name="system.xp" value="{{system.xp}}"
-           style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
-                  background-color: transparent !important; border: none; 
-                  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
-                  padding: 5px 0 0 0; margin: 0; line-height: 1; color: inherit; cursor: pointer; pointer-events: auto;
-                  display: flex; align-items: center; justify-content: center;" />
+    <input type="text" class="xp-display cs-field cs-xp-display" id="xp-display" name="system.xp" value="{{system.xp}}"
+      style="text-align: center; font-size: 24px; 
+        background-color: transparent !important; border: none; 
+        box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+        padding: 5px 0 0 0; margin: 0; line-height: 1; color: inherit; cursor: pointer; pointer-events: auto;
+        display: flex; align-items: center; justify-content: center;" />
   </div>
 
   <!-- Next Level field -->
   <div class="next-level-group" id="next-level-container"
   style="position: absolute; left: 460px; top: 74px; z-index: var(--z-labels, 15);">
-    <input type="text" class="next-level-display" id="next-level-display" readonly
-           style="width: 134px; height: 34px; text-align: center; font-size: 24px; 
-                  background-color: transparent !important; border: none; 
-                  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
-                  padding: 5px 0 0 0; margin: 0; line-height: 1; color: inherit; cursor: default; pointer-events: none;
-                  display: flex; align-items: center; justify-content: center;" />
+    <input type="text" class="next-level-display cs-field cs-next-level-display" id="next-level-display" readonly
+      style="text-align: center; font-size: 24px; 
+        background-color: transparent !important; border: none; 
+        box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; 
+        padding: 5px 0 0 0; margin: 0; line-height: 1; color: inherit; cursor: default; pointer-events: none;
+        display: flex; align-items: center; justify-content: center;" />
   </div>
 
       <!-- Horizontal separator line at bottom of static header -->

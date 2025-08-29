@@ -48,31 +48,37 @@ export class LanguageHandler {
    */
   adjustFontSize() {
     const container = this.tags;
+    const el = container && container[0];
     const containerWidth = 272; // Fixed width from CSS
     const maxFontSize = 24; // Start at 24px as specified
     const minFontSize = 10; // Minimum readable font size
-    
-  // Reset to maximum font size first (use CSS var hook)
-  try { container[0].style.setProperty('--languages-font-size', `${maxFontSize}px`); } catch (e) { if (container[0]) container[0].style.fontSize = maxFontSize + 'px'; }
-    
+
+    // If the container element isn't present, bail out safely
+    if (!el) return;
+
+    // Reset to maximum font size first (use CSS var hook)
+    try { el.style.setProperty('--languages-font-size', `${maxFontSize}px`); } catch (e) { el.style.fontSize = maxFontSize + 'px'; }
+
     // Give browser time to render before measuring
     setTimeout(() => {
+      // Re-check element existence (in case the DOM changed)
+      if (!el) return;
       let fontSize = maxFontSize;
-      
+
       // Check if text overflows and reduce font size accordingly
-        while (container[0].scrollWidth > containerWidth && fontSize > minFontSize) {
-      fontSize -= 0.5;
-      try { container[0].style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { if (container[0]) container[0].style.fontSize = fontSize + 'px'; }
-        }
-      
+      while ((el.scrollWidth || 0) > containerWidth && fontSize > minFontSize) {
+        fontSize -= 0.5;
+        try { el.style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { el.style.fontSize = fontSize + 'px'; }
+      }
+
       // If text is short enough, try to scale up (but not above maxFontSize)
-        while (container[0].scrollWidth < containerWidth && fontSize < maxFontSize) {
-      fontSize += 0.5;
-      try { container[0].style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { if (container[0]) container[0].style.fontSize = fontSize + 'px'; }
+      while ((el.scrollWidth || 0) < containerWidth && fontSize < maxFontSize) {
+        fontSize += 0.5;
+        try { el.style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { el.style.fontSize = fontSize + 'px'; }
         // Check if this increase caused overflow
-          if (container[0].scrollWidth > containerWidth) {
+        if ((el.scrollWidth || 0) > containerWidth) {
           fontSize -= 0.5;
-          try { container[0].style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { if (container[0]) container[0].style.fontSize = fontSize + 'px'; }
+          try { el.style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { el.style.fontSize = fontSize + 'px'; }
           break;
         }
       }
@@ -137,24 +143,24 @@ export class LanguageHandler {
     const secondColumn = this.standardLanguages.slice(3, 6);
     
     return `<form>
-      <div style="margin-bottom:8px;">
+      <div class="cs-dialog-row">
         <label><b>Select Languages:</b></label><br/>
-        <div style="display: flex; gap: 40px;">
-          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+        <div class="cs-dialog-columns">
+          <div class="cs-dialog-column">
             ${firstColumn.map(lang =>
-              `<label style="display: flex; align-items: center; gap: 8px;">
+              `<label class="cs-dialog-label">
                 <input type="checkbox" name="lang" value="${lang}" ${this.languages.includes(lang) ? "checked" : ""}/>
                 <span>${lang}</span>
               </label>`
             ).join("")}
-            <label style="display: flex; align-items: center; gap: 8px;">
+            <label class="cs-dialog-label">
               <input type="checkbox" name="customCheck" id="customCheck"/>
-              <input type="text" name="custom" id="customInput" style="width: 145px;" placeholder="Enter custom language" disabled/>
+              <input type="text" name="custom" id="customInput" class="cs-custom-input" placeholder="Enter custom language" disabled/>
             </label>
           </div>
-          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+          <div class="cs-dialog-column">
             ${secondColumn.map(lang =>
-              `<label style="display: flex; align-items: center; gap: 8px;">
+              `<label class="cs-dialog-label">
                 <input type="checkbox" name="lang" value="${lang}" ${this.languages.includes(lang) ? "checked" : ""}/>
                 <span>${lang}</span>
               </label>`

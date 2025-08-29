@@ -1,9 +1,9 @@
-// Import equipment styles
-@import 'equipment';
-// Centralized z-index variables (CSS partial)
-@import 'z-index.css';
+// Import equipment styles (use modern module system)
+@use 'equipment' as *;
+// Centralized z-index variables (Sass module)
+@use 'z-index' as *;
 // Tab positioning variables and overrides
-@import '_tabs';
+@use '_tabs' as *;
 
 // Layout system styles
 .draggable-field {

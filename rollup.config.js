@@ -2,8 +2,8 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
-import scss from "rollup-plugin-scss";
-import sass from "sass";
+import * as sass from "sass";
+import { resolve as resolvePath } from 'path';
 
 export default {
   input: "src/ose.js",
@@ -13,6 +13,18 @@ export default {
     sourcemap: true,
   },
   plugins: [
+    // Ensure imports of SCSS in JS don't break the JS bundle; return an empty module for .scss
+    {
+      name: 'ignore-scss-imports',
+      resolveId(source) {
+        if (source.endsWith('.scss')) return source;
+        return null;
+      },
+      load(id) {
+        if (id.endsWith('.scss')) return 'export default "";';
+        return null;
+      }
+    },
     resolve({
       extensions: [".js", ".ts"],
     }),
@@ -21,9 +33,6 @@ export default {
       tsconfig: "./tsconfig.json",
       clean: true,
     }),
-    scss({
-      output: "dist/ose.css",
-      sass,
-    }),
+  // ...existing code...
   ],
 };

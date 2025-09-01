@@ -19,14 +19,14 @@
       // Calculate XP modifier using the same logic as the system
       const xpMod = calculateXPModifier(characterClass, attributes);
 
-      // Format and display the modifier
-      const formattedMod = xpMod >= 0 ? `+${xpMod}%` : `${xpMod}%`;
+      // Format and display the modifier using utility
+      const formattedMod = window.OSP?.NumberFormatter?.formatXPModifier(xpMod) || `${xpMod}%`;
       xpModField.value = formattedMod;
     }
 
-    // Function to format numbers with commas
+    // Function to format numbers with commas (uses simplified utility)
     function formatNumberWithCommas(num) {
-      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return window.OSP?.NumberFormatter?.formatWithCommas(num) || num.toString();
     }
 
     // Function to update XP display
@@ -326,95 +326,28 @@
       }
     }
 
-    // Function to calculate next level XP (matches actor.js logic)
+    // Function to calculate next level XP (uses centralized config)
     function calculateNextLevelXP(level, characterClass) {
-      // OSE XP progression tables
-      const xpTables = {
-        'fighter': [0, 2000, 4000, 8000, 16000, 32000, 64000, 120000, 240000, 360000, 480000, 600000, 720000, 840000, 960000],
-        'cleric': [0, 1500, 3000, 6000, 12000, 25000, 50000, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000],
-        'magic-user': [0, 2500, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 450000, 600000, 750000, 900000, 1050000, 1200000],
-        'thief': [0, 1200, 2400, 4800, 9600, 20000, 40000, 80000, 160000, 280000, 400000, 520000, 640000, 760000, 880000]
-      };
-
-      // Map additional classes to their XP patterns
-      const classXPMapping = {
-        'fighter': 'fighter',
-        'cleric': 'cleric', 
-        'magic-user': 'magic-user',
-        'thief': 'thief',
-        'assassin': 'thief',
-        'barbarian': 'fighter',
-        'bard': 'thief',
-        'beast master': 'fighter',
-        'druid': 'cleric',
-        'knight': 'fighter',
-        'paladin': 'cleric',
-        'ranger': 'fighter',
-        'warden': 'fighter',
-        'illusionist': 'magic-user',
-        'mage': 'magic-user',
-        'dwarf': 'fighter',
-        'elf': 'magic-user',
-        'gnome': 'cleric',
-        'half-elf': 'fighter',
-        'half-orc': 'fighter',
-        'hobbit': 'thief'
-      };
-
-      // Get the appropriate XP table for this class
-      const mappedClass = classXPMapping[characterClass.toLowerCase()] || 'fighter';
-      const xpTable = xpTables[mappedClass];
-
-      // Calculate next level XP (if max level, show current level requirement)
-      const nextLevel = Math.min(level + 1, 15); // Max level 15
-      const nextLevelIndex = nextLevel - 1; // Convert to array index
-
-      return xpTable[nextLevelIndex] || xpTable[14]; // Use max level XP if beyond table
+      // Use the centralized config function made available globally
+      if (window.OSP && window.OSP.getNextLevelXP) {
+        return window.OSP.getNextLevelXP(characterClass, level);
+      }
+      
+      // Fallback for development/testing (should not be needed in production)
+      console.warn('OSP global config not available, using fallback XP calculation');
+      return 2000; // Basic fallback
     }
 
-    // XP Modifier calculation function (matches the system logic)
+    // XP Modifier calculation function (uses centralized config)
     function calculateXPModifier(characterClass, attributes) {
-      // Prime requisite mapping for each class
-      const primeRequisites = {
-        'fighter': ['str'],
-        'cleric': ['wis'], 
-        'magic-user': ['int'],
-        'thief': ['dex'],
-        'assassin': ['str', 'dex'],
-        'barbarian': ['str', 'con'],
-        'bard': ['dex', 'cha'],
-        'beast master': ['str', 'wis'],
-        'druid': ['wis'],
-        'knight': ['str'],
-        'paladin': ['str', 'cha'],
-        'ranger': ['str', 'wis'],
-        'warden': ['str', 'con']
-      };
-
-      const primes = primeRequisites[characterClass.toLowerCase()] || [];
-      if (primes.length === 0) return 0;
-
-      // Calculate modifier based on prime requisite scores
-      let totalModifier = 0;
-
-      if (primes.length === 1) {
-        // Single prime requisite
-        const score = attributes[primes[0]]?.value || 10;
-        if (score >= 16) totalModifier = 10;
-        else if (score >= 13) totalModifier = 5;
-        else if (score <= 8) totalModifier = -10;
-      } else {
-        // Multiple prime requisites - both must be high for bonus
-        const scores = primes.map(attr => attributes[attr]?.value || 10);
-        const allHigh = scores.every(score => score >= 13);
-        const anyLow = scores.some(score => score <= 8);
-
-        if (allHigh && scores.every(score => score >= 16)) totalModifier = 10;
-        else if (allHigh) totalModifier = 5;
-        else if (anyLow) totalModifier = -10;
+      // Use the centralized config function made available globally
+      if (window.OSP && window.OSP.calculateXPModifier) {
+        return window.OSP.calculateXPModifier(characterClass, attributes);
       }
-
-      return totalModifier;
+      
+      // Fallback for development/testing (should not be needed in production)
+      console.warn('OSP global config not available, using fallback XP modifier calculation');
+      return 0; // Basic fallback
     }
 
     // Function to run when DOM is ready
@@ -470,6 +403,24 @@
 
       // Ability Score Tooltips System
       const TOOLTIP_DELAY = 200; // Reduced delay for testing - was 800ms
+
+      // Safe tooltip content setter: defaults to textContent, optionally allows HTML when explicitly requested
+      function setTooltipContent(el, content, opts = { allowHtml: false }) {
+        if (!el) return;
+        const allowHtml = !!(opts && opts.allowHtml);
+        if (allowHtml && window.DOMPurify) {
+          try {
+            el.innerHTML = window.DOMPurify.sanitize(String(content));
+          } catch (err) {
+            el.textContent = String(content);
+          }
+        } else if (allowHtml && !window.DOMPurify) {
+          // Fallback: don't allow raw HTML if sanitizer is unavailable
+          el.textContent = String(content);
+        } else {
+          el.textContent = String(content);
+        }
+      }
 
       const abilityScoreData = {
         "Strength": [
@@ -612,7 +563,7 @@
               const content = createTooltipContent(name, scoreData);
 
               if (content) {
-                tooltip.innerHTML = content;
+                setTooltipContent(tooltip, content, { allowHtml: true });
 
                 // Position tooltip above the element
                 const rect = element.getBoundingClientRect();
@@ -637,7 +588,7 @@
               const scoreData = getScoreData(name, score);
               const content = createTooltipContent(name, scoreData);
               if (content) {
-                tooltip.innerHTML = content;
+                setTooltipContent(tooltip, content, { allowHtml: true });
               }
             }
           });
@@ -671,7 +622,7 @@
 
             clearTimeout(xpTooltipTimeout);
             xpTooltipTimeout = setTimeout(() => {
-              xpTooltip.innerHTML = 'Double-click to award XP • Click to edit';
+              setTooltipContent(xpTooltip, 'Double-click to award XP • Click to edit');
 
               // Position tooltip above the element
               const rect = xpElement.getBoundingClientRect();
@@ -826,7 +777,7 @@
             saveElement.addEventListener('mouseenter', () => {
               clearTimeout(saveTooltipTimeout);
               saveTooltipTimeout = setTimeout(() => {
-                saveTooltip.innerHTML = racialData.description;
+                setTooltipContent(saveTooltip, racialData.description);
                 saveTooltip.style.opacity = '1';
 
                 // Position tooltip above the saving throw circle
@@ -882,7 +833,7 @@
             clearTimeout(portraitTooltipTimeout);
             portraitTooltipTimeout = setTimeout(() => {
               const tipText = 'Double-click to select portrait • Right-click to adjust position';
-              portraitTooltip.innerHTML = tipText;
+              setTooltipContent(portraitTooltip, tipText);
               portraitTooltip.style.opacity = '1';
               const rect = portraitDisplay.getBoundingClientRect();
               const tooltipRect = portraitTooltip.getBoundingClientRect();
@@ -1261,7 +1212,7 @@
       </div>
 
   <!-- Character Portrait - Positioned behind everything -->
-  <div class="portrait-container cs-portrait-container cs-abs cs-pos-portrait" id="portrait-container" style="--portrait-size:138px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}};">
+  <div class="portrait-container cs-portrait-container cs-abs cs-pos-portrait" id="portrait-container" style="--portrait-size:138px; --portrait-height:183px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}};">
     <!-- Hidden inputs for portrait data -->
     <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
     <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
@@ -1293,7 +1244,7 @@
   </div>
 
   <!-- Static Header Section - Absolute Positioning Layout -->
-  <div class="static-header cs-static-header" style="--z:var(--z-sheet,10);">
+  <div class="static-header cs-static-header">
 
       <!-- Character Name - Centered positioning -->
   <div class="character-name-section cs-abs cs-pos-name" id="character-name-container">
@@ -1349,7 +1300,7 @@
     <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
     <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
     <div class="cs-char-field-group">
-  <select class="char-align cs-select-large" id="char-align" name="system.alignment">
+  <select class="char-align cs-alignment-select" id="char-align" name="system.alignment">
         <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
         <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
         <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
@@ -1360,7 +1311,7 @@
   <!-- Character Race - Positioned next to existing fields -->
   <div class="race-group cs-abs cs-pos-race" id="race-container">
     <div class="cs-char-field-group">
-      <select class="char-race cs-select-large" id="char-race" name="system.race">
+      <select class="char-race cs-race-select" id="char-race" name="system.race">
         <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
         <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
         <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
@@ -1375,13 +1326,13 @@
   <!-- Character Age and Sex - Small fields -->
   <div class="age-group cs-abs cs-pos-age" id="age-container">
     <div class="cs-char-field-group">
-      <input class="char-age cs-select-small" id="char-age" name="system.age" type="text" value="{{system.age}}" />
+      <input class="char-age cs-age-field" id="char-age" name="system.age" type="text" value="{{system.age}}" />
     </div>
   </div>
 
   <div class="sex-group cs-abs cs-pos-sex" id="sex-container">
     <div class="cs-char-field-group">
-      <select class="char-sex cs-select-small" id="char-sex" name="system.sex">
+      <select class="char-sex cs-sex-field" id="char-sex" name="system.sex">
         <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
         <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>F</option>
         <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>O</option>
@@ -1389,31 +1340,24 @@
     </div>
   </div>
 
-  <!-- HandW field -->
-  <div class="handw-group cs-abs cs-pos-handw" id="handw-container">
-    <div class="cs-char-field-group">
-      <input class="char-handw cs-handw" id="char-handw" name="system.handw" type="text" value="{{system.handw}}" readonly />
-    </div>
-  </div>
-
   <!-- Height field -->
   <div class="height-group cs-abs cs-pos-height" id="height-container">
     <div class="cs-char-field-group">
-      <input class="char-height cs-height" id="char-height" name="system.height" type="text" value="{{system.height}}" />
+      <input class="char-height cs-height-field" id="char-height" name="system.height" type="text" value="{{system.height}}" />
     </div>
   </div>
 
   <!-- Weight field -->
   <div class="weight-group cs-abs cs-pos-weight" id="weight-container">
     <div class="cs-char-field-group">
-      <input class="char-weight cs-weight" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" />
+      <input class="char-weight cs-weight-field" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" />
     </div>
   </div>
 
   <!-- Background field -->
   <div class="background-group cs-abs cs-pos-background" id="background-container">
     <div class="char-field-group cs-char-field-group">
-      <select class="char-background" id="char-background" name="system.background">
+      <select class="char-background cs-background-select" id="char-background" name="system.background">
  <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
                   <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
                   <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
@@ -1522,7 +1466,7 @@
   <!-- Languages field -->
   <div class="languages-group cs-abs cs-pos-languages" id="languages-container">
   <div class="char-field-group cs-char-field-group">
-  <div class="languages-row open-language-dialog" title="Click to add languages">
+  <div class="cs-languages-field open-language-dialog" title="Click to add languages">
         <div class="languages-tags"></div>
       </div>
       <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
@@ -1541,7 +1485,7 @@
 
   <!-- Next Level field -->
   <div class="next-level-group cs-abs cs-pos-next" id="next-level-container">
-  <input type="text" class="next-level-display cs-field cs-next-level-display" id="next-level-display" readonly />
+  <input type="text" class="next-level-display cs-next-level-field" id="next-level-display" readonly />
   </div>
 
       <!-- Horizontal separator line at bottom of static header -->

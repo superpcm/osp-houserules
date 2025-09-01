@@ -1,10 +1,56 @@
-// Import equipment styles (use modern module system)
+// Import styles first (required by Sass @use rules)
 @use 'equipment' as *;
-// Centralized z-index variables (Sass module)
 @use 'z-index' as *;
-// Tab positioning variables and overrides
 @use '_tabs' as *;
 @use 'character-sheet' as *;
+
+/* ================================================================
+   OSP House Rules Font Configuration
+   ================================================================
+   
+   Primary Font: Minion Pro
+   - Professional serif typeface designed by Robert Slimbach
+   - Excellent readability for RPG character sheets
+   - Classical aesthetic appropriate for fantasy gaming
+   
+   Fallback Chain:
+   1. 'Minion Pro' - Primary choice
+   2. 'Adobe Minion Pro' - Adobe's version
+   3. 'Minion' - Simplified name variant
+   4. 'Times New Roman' - Widely available serif fallback
+   5. Times - System Times variant
+   6. serif - Generic serif fallback
+   
+   ================================================================ */
+
+/* Global Font Configuration - Minion Pro for entire OSP module */
+.osp,
+.osp *,
+form.osp,
+form.osp *,
+.application.window-app.sheet.actor.character.osp,
+.application.window-app.sheet.actor.character.osp * {
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif !important;
+}
+
+/* Ensure all form elements inherit Minion Pro */
+.osp input,
+.osp select,
+.osp textarea,
+.osp button,
+form.osp input,
+form.osp select,
+form.osp textarea,
+form.osp button {
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif !important;
+}
+
+/* Font loading and fallback management */
+@supports (font-family: 'Minion Pro') {
+  .osp {
+    font-family: 'Minion Pro', serif !important;
+  }
+}
 
 // Layout system styles
 .draggable-field {
@@ -56,6 +102,3 @@ body.game .sheet.app nav.sheet-tabs {
   border-top: none !important;
   border-bottom: none !important;
 }
-
-/* Remove tab item borders (controls visual capsule edges) */
-// Tab borders are now controlled by _tabs.scss

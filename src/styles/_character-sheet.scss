@@ -1,6 +1,96 @@
 /* Character sheet specific styles extracted from templates/actors/character-sheet.html
    Migrate presentation out of the template and into this partial. */
 
+/* ================================================================
+   DEBUG CONFIGURATION
+   ================================================================
+   
+   Uncomment the sections below to enable visual debugging for specific
+   components. These should be commented out in production.
+   
+   ================================================================ */
+
+/* Portrait Debug - Comment out for production */
+/*
+.cs-portrait-container { 
+  border: 5px solid red !important; 
+  background: rgba(255,0,0,0.5) !important; 
+  overflow: visible !important;
+  z-index: 99999 !important;
+}
+.cs-portrait-display { 
+  border: 3px solid blue !important; 
+  background: rgba(0,0,255,0.3) !important;
+  overflow: visible !important; 
+}
+.cs-portrait-img { 
+  border: 3px solid green !important; 
+  background: rgba(0,255,0,0.3) !important;
+}
+
+/* Debug old portrait classes too */
+/*
+.portrait-display { 
+  border: 3px solid orange !important; 
+  background: rgba(255,165,0,0.3) !important; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+}
+.portrait-img { 
+  border: 3px solid purple !important; 
+  background: rgba(128,0,128,0.3) !important;
+  width: 100%; 
+  height: 100%; 
+  display: block; 
+}
+*/
+
+/* Field Debug - Uncomment to show field boundaries */
+/*
+.cs-char-name { border: 1px solid orange !important; }
+.cs-select-large { border: 1px solid purple !important; }
+.cs-background-select { border: 1px solid cyan !important; }
+.cs-race-select { border: 1px solid yellow !important; }
+.cs-alignment-select { border: 1px solid pink !important; }
+.cs-age-field { border: 1px solid lime !important; }
+.cs-sex-field { border: 1px solid magenta !important; }
+.cs-height-field { border: 1px solid brown !important; }
+.cs-weight-field { border: 1px solid navy !important; }
+.cs-languages-field { border: 1px solid teal !important; }
+*/
+
+/* Positioning Debug - Comment out for production */
+/*
+.cs-abs { 
+  outline: 5px dashed red !important; 
+  background: rgba(255,255,0,0.3) !important;
+}
+.cs-abs::before { 
+  content: attr(class); 
+  position: absolute; 
+  top: -15px; 
+  left: 0; 
+  font-size: 10px; 
+  background: black; 
+  color: white; 
+  padding: 2px; 
+  z-index: 999999; 
+}
+*/
+
+/* Transform Debug - Uncomment to show transform origins */
+/*
+[style*="transform"] { outline: 1px dotted blue !important; }
+[style*="transform"]::after { content: "T"; position: absolute; top: 0; right: 0; font-size: 8px; background: blue; color: white; padding: 1px; z-index: 999999; }
+*/
+
+/* ================================================================
+   END DEBUG CONFIGURATION
+   ================================================================ */
+
 /* Centralized position variables - change these to tweak sheet layout globally */
 $cs-pos-level-left: 460px !default;
 $cs-pos-level-top: 20px !default;
@@ -14,6 +104,15 @@ $cs-pos-xp-left: 319px !default;
 $cs-pos-xp-top: 74px !default;
 $cs-pos-next-left: 460px !default;
 $cs-pos-next-top: 74px !default;
+
+/* Portrait dimension variables - adjust these for different aspect ratios */
+$cs-portrait-width: 138px !default;    /* Standard width */
+$cs-portrait-height: 183px !default;   /* 3:4 aspect ratio (portrait orientation) */
+/* Alternative aspect ratios:
+   Square: width: 138px, height: 138px
+   4:3 landscape: width: 183px, height: 138px  
+   16:9 landscape: width: 245px, height: 138px
+   2:3 portrait: width: 138px, height: 207px */
 
 /* Additional header / field position presets discovered during sweep */
 $cs-pos-name-left: 40px !default;
@@ -30,8 +129,6 @@ $cs-pos-age-left: 179px !default;
 $cs-pos-age-top: 129px !default;
 $cs-pos-sex-left: 249px !default;
 $cs-pos-sex-top: 129px !default;
-$cs-pos-handw-left: 179px !default;
-$cs-pos-handw-top: 182px !default;
 $cs-pos-height-left: 179px !default;
 $cs-pos-height-top: 183px !default;
 $cs-pos-weight-left: 247px !default;
@@ -95,7 +192,6 @@ form.osp.sheet.actor.character {
 
 /* Neutralize small transforms */
 .languages-tags,
-.portrait-img,
 .char-name,
 .char-class,
 .char-align,
@@ -180,26 +276,9 @@ form.osp.sheet.actor.character .sheet-tabs a.item.active,
 .char-height, .char-weight { box-shadow: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; outline: none !important; }
 .height-group, .weight-group { box-shadow: none !important; background: transparent !important; border: none !important; outline: none !important; }
 
-/* HandW field */
-.char-handw, .handw-group { border: none !important; box-sizing: border-box !important; }
-
 /* XP Award Button */
 button.xp-award-btn { color: #333 !important; background: none !important; border: none !important; outline: none !important; box-shadow: none !important; }
 button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important; }
-
-/* Language tag styling */
-.languages-tags .lang-tag { display: inline-flex; align-items: center; gap: 4px; background: #e0e0e0; padding: 2px 6px; border-radius: 3px; font-size: 12px; color: black !important; }
-.languages-tags .lang-tag button.remove-lang { background: none; border: none; color: black !important; cursor: pointer; padding: 0 2px; font-size: 14px; line-height: 1; z-index: var(--z-lang-row, 101); }
-.languages-tags .lang-tag button.remove-lang:hover { background: rgba(0,0,0,0.1); }
-.languages-row.open-language-dialog { background: transparent !important; border: none !important; box-shadow: none !important; }
-.languages-tags { background: transparent !important; border: none !important; box-shadow: none !important; pointer-events: auto; user-select: none; color: black !important; }
-.languages-row.open-language-dialog:empty::before { content: "Click to add languages..."; color: black !important; font-style: italic; font-size: 12px; }
-.languages-row::before,.languages-row::after,.languages-tags::before,.languages-tags::after,.open-language-dialog::before,.open-language-dialog::after { content: none !important; }
-.languages-row .fa-plus,.languages-tags .fa-plus,.open-language-dialog .fa-plus { display: none !important; }
-
-:root { --languages-horizontal-offset: 0px; --languages-vertical-offset: 0px; --languages-font-size: 24px; --languages-min-font-size: 10px; --languages-line-height: 1; --languages-letter-spacing: 0px; }
-.languages-tags { transform: translate(var(--languages-horizontal-offset), var(--languages-vertical-offset)); font-size: var(--languages-font-size); line-height: var(--languages-line-height); letter-spacing: var(--languages-letter-spacing); }
-.languages-tags:not([style*="font-size"]) { font-size: 24px !important; }
 
 /* Portrait transform */
 .portrait-img { transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px)); transform-origin: center center; transition: transform 0.2s ease; }
@@ -229,8 +308,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 .cs-xp-inline { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
 .cs-xp-flex { display: flex; gap: 20px; }
 .cs-xp-col { flex: 1; }
-.cs-input-small { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; }
-.cs-input-medium { width: 80px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; }
+.cs-input-small { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; }
+.cs-input-medium { width: 80px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; }
 .cs-no-border { border: none; background: none; color: inherit; padding: 0; }
 .cs-xp-preview { margin-top: 15px; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none; }
 
@@ -239,7 +318,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 .cs-xp-side-row { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
 
 /* Reusable small select style for inline dialogs (appearance reset handled elsewhere) */
-.cs-select-inline { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
+.cs-select-inline { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
 
 /* Language dialog helpers */
 .cs-dialog-row { margin-bottom: 8px; }
@@ -250,7 +329,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 
 /* Level & portrait container utility classes (migrate inline box-shadow/positioning into class-based rules) */
 .cs-level-container { position: absolute; width: 64px; height: 34px; }
-.cs-level-shadow { position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); border-radius: 6px; }
+.cs-level-shadow { position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; box-shadow: none !important; border-radius: 6px; }
 
 /* Static header helper */
 .cs-static-header { height: 230px; flex-shrink: 0; position: relative; z-index: var(--z-sheet, 10); background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none; }
@@ -258,10 +337,28 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 /* Combat and ability layouts markup helpers */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
-.cs-save-badge { width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); }
+.cs-save-badge { width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: none !important; }
 
 /* Ability score box */
-.cs-ability-select { width: 75px; height: 75px; text-align: center; font-size: 70px; font-weight: normal; background-color: white !important; appearance: none; line-height: 1; padding: 8px 3px 0 0; display: flex; align-items: center; justify-content: center; border-radius: 9px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8); }
+.cs-ability-select {
+  @extend %visual-center-large;
+  @extend %single-character-center;
+  @extend %round-container-center;
+  @extend %numeric-center;
+  
+  width: 75px;
+  height: 75px;
+  font-size: 70px;
+  font-weight: normal;
+  background-color: white !important;
+  appearance: none;
+  border-radius: 9px;
+  box-shadow: none !important;
+  
+  /* Large ability scores in circular containers need maximum adjustment */
+  padding: 0;
+  transform: translateY(-0.1em);
+}
 
 /* Tabs helper (in case nav items had inline styles) */
 .cs-tabs { display: flex; flex-direction: column; }
@@ -282,8 +379,123 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 }
 .cs-force-pointer { pointer-events: auto !important; }
 
-/* Fallback class applied by JS when font-family fallback is necessary */
-.cs-minion-fallback { font-family: 'Minion Pro', serif !important; font-weight: normal !important; letter-spacing: 0.03em !important; }
+/* ================================================================
+   VISUAL TEXT CENTERING SYSTEM
+   ================================================================
+   
+   This system provides precise text centering that accounts for both
+   mathematical and visual weight. Different font sizes and characters
+   require different compensation for optimal visual centering.
+   
+   ================================================================ */
+
+/* Base centering mixin applied to all centered fields */
+%visual-center-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Reset any inherited text transformations */
+  text-indent: 0;
+  text-transform: none;
+  
+  /* Ensure consistent baseline alignment */
+  vertical-align: baseline;
+}
+
+/* Size-specific visual adjustments for Minion Pro font */
+%visual-center-large {
+  @extend %visual-center-base;
+  
+  /* Large text (40px+) - account for descender visual weight */
+  transform: translateY(-0.02em);
+  letter-spacing: -0.01em;
+  
+  /* Optical adjustment for rounded/circular containers */
+  &.in-circle {
+    transform: translateY(-0.05em);
+  }
+}
+
+%visual-center-medium {
+  @extend %visual-center-base;
+  
+  /* Medium text (20-39px) - subtle baseline adjustment */
+  transform: translateY(-0.01em);
+  letter-spacing: 0;
+  
+  /* Adjustment for serif fonts at medium sizes */
+  &.serif-adjust {
+    transform: translateY(0.02em);
+  }
+}
+
+%visual-center-small {
+  @extend %visual-center-base;
+  
+  /* Small text (12-19px) - minimal adjustment */
+  transform: translateY(0);
+  letter-spacing: 0.01em;
+}
+
+/* Specific adjustments for common number/character types */
+%numeric-center {
+  /* Numbers often need slight upward adjustment */
+  transform: translateY(-0.03em);
+  
+  /* Monospace-like spacing for consistency */
+  font-variant-numeric: tabular-nums;
+}
+
+%single-character-center {
+  /* Single characters (ability scores, etc.) */
+  transform: translateY(-0.04em);
+  font-weight: normal;
+  
+  /* Prevent character distortion */
+  font-synthesis: none;
+}
+
+/* Input field specific centering (accounts for border/padding visual weight) */
+%input-visual-center {
+  @extend %visual-center-base;
+  
+  /* Compensate for visual weight of borders and shadows */
+  padding-top: 0.1em;
+  padding-bottom: 0;
+  
+  /* Ensure text cursor appears centered */
+  &:focus {
+    text-align: center;
+  }
+  
+  /* Placeholder text centering */
+  &::placeholder {
+    text-align: center;
+    transform: translateY(-0.01em);
+  }
+}
+
+/* Container-specific adjustments */
+%round-container-center {
+  /* For circular/rounded containers - text appears lower */
+  transform: translateY(-0.06em);
+}
+
+%rectangular-container-center {
+  /* For rectangular containers - standard centering */
+  transform: translateY(-0.02em);
+}
+
+/* Font loading and fallback management */
+@supports (font-family: 'Minion Pro') {
+  .osp {
+    font-family: 'Minion Pro', serif !important;
+  }
+}
 
 /* Cursor helper classes for JS toggles */
 .cs-cursor-pointer { cursor: pointer !important; }
@@ -303,20 +515,55 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 /* Combat stat boxes */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
-.cs-combat-input { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; background-color: white; }
+.cs-combat-input {
+  @extend %input-visual-center;
+  @extend %visual-center-medium;
+  @extend %numeric-center;
+  
+  width: 80px;
+  height: 40px;
+  font-size: 1.2rem;
+  border: 2px solid #4a5568;
+  border-radius: 8px;
+  background-color: white;
+  
+  /* Combat values are typically numbers */
+  transform: translateY(-0.02em);
+}
 .cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }
 
 /* Save badge system */
 .cs-save-group { position: relative; display: inline-block; margin: 0 10px; }
 .cs-save { position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible; }
-.cs-save-badge { width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; }
-.cs-save-value { font-size: 60px; line-height: 1; font-family: 'Minion Pro', serif; letter-spacing: -1px; transform: translateY(5px); }
+.cs-save-badge { width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: none !important; display: flex; align-items: center; justify-content: center; }
+.cs-save-value {
+  @extend %visual-center-large;
+  @extend %single-character-center;
+  @extend %round-container-center;
+  
+  font-size: 60px;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  letter-spacing: -1px;
+  
+  /* Visual centering override for save values */
+  transform: translateY(-0.08em);
+}
 .cs-save-label { width: 400px; height: 60px; overflow: visible; z-index: var(--z-labels, 15); pointer-events: none; }
 .cs-save-label svg { overflow: visible; }
-.cs-save-label text { font-family: 'Minion Pro', serif; font-size: 14px; fill: #000; letter-spacing: 0.5px; }
+.cs-save-label text { font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif; font-size: 14px; fill: #000; letter-spacing: 0.5px; }
 
 /* Ability score label */
-.cs-ability-label { font-size: 45px; font-family: 'Minion Pro', serif; letter-spacing: 0.03em; }
+.cs-ability-label {
+  @extend %visual-center-large;
+  @extend %single-character-center;
+  
+  font-size: 45px;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  letter-spacing: 0.03em;
+  
+  /* Ability scores are typically single numbers */
+  transform: translateY(-0.06em);
+}
 
 /* Misc helpers for textareas in bio */
 .cs-bio-textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white; }
@@ -328,34 +575,826 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 
 /* Level progress helpers */
 .cs-level-progress-bar { position: absolute; top: 0; left: 0; height: 100%; border-radius: 3px; background-color: #22c55e; width: 0%; transition: width 0.3s ease; }
-.cs-level-display { position: absolute; top: 2px; left: 0; width: 100%; height: 100%; font-size: 24px; color: #000; z-index: var(--z-level, 8); line-height: 34px; font-family: 'Minion Pro', serif; text-align: center; box-sizing: border-box; background: transparent !important; box-shadow: none !important; display: flex; align-items: center; justify-content: center; }
+.cs-level-display {
+  /* Removed conflicting @extend mixins - using manual centering instead */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 24px;
+  color: #000;
+  z-index: var(--z-level, 8);
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  background: transparent !important;
+  box-shadow: none !important;
+  
+  /* Level numbers need precise centering - adjust for visual weight */
+  transform: translateY(0.7em) !important;
+}
 
-/* Portrait helpers - keep per-actor CSS variables inline for transform */
-.cs-portrait-container { position: absolute; width: var(--portrait-size); height: 141px; overflow: hidden; }
-.cs-portrait-display { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; border-radius: 3px; overflow: hidden; pointer-events: auto; }
-.cs-portrait-img { width:100%; height:100%; object-fit:contain; display:block; }
+/* Portrait helpers - configurable dimensions via CSS variables */
+.cs-portrait-container { 
+  position: absolute; 
+  width: 138px !important; /* Fixed width - more reliable than CSS variables */
+  height: 141px !important; /* Fixed height - more reliable than CSS variables */
+  /* z-index: 99999 !important; */
+  overflow: hidden; 
+}
+.cs-portrait-display,
+.portrait-display { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  cursor: pointer; 
+  border-radius: 3px; 
+  overflow: hidden; 
+  pointer-events: auto; 
+}
+.cs-portrait-img,
+.portrait-img { 
+  /* Default size: fit within container while maintaining aspect ratio */
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block; 
+  /* Player can resize and reposition from this starting size */
+}
 
 /* XP/Next level small field helpers */
-.cs-field { background-color: transparent !important; border: none; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; padding: 4px 0 0 0; margin: 0; line-height: 1; color: inherit; display: flex; align-items: center; justify-content: center; }
-.cs-xp-mod-display { width: 64px; height: 34px; pointer-events: none; text-align: center; font-size: 24px; }
-.cs-xp-display { width: 134px; height: 34px; cursor: pointer; pointer-events: auto; text-align: center; font-size: 24px; }
-.cs-next-level-display { width: 134px; height: 34px; pointer-events: none; cursor: default; text-align: center; font-size: 24px; }
+.cs-field {
+  @extend %input-visual-center;
+  @extend %visual-center-medium;
+  
+  background-color: transparent !important;
+  border: none;
+  box-shadow: none !important;
+  appearance: none;
+  margin: 0;
+  color: inherit;
+  
+  /* Input fields need compensation for visual border weight */
+  padding: 0.05em 0 0 0;
+  transform: translateY(0.09em);
+}
+.cs-xp-mod-display {
+  @extend %visual-center-medium;
+  @extend %numeric-center;
+  @extend %rectangular-container-center;
+  
+  width: 64px;
+  height: 34px;
+  pointer-events: none;
+  font-size: 24px;
+  
+  /* XP modifier percentages with + signs need special centering */
+  transform: translateY(0.09em);
+  text-indent: -0.008em;
+}
+.cs-xp-display {
+  @extend %visual-center-medium;
+  @extend %numeric-center;
+  @extend %input-visual-center;
+  
+  width: 134px;
+  height: 34px;
+  cursor: pointer;
+  pointer-events: auto;
+  font-size: 24px;
+  
+  /* XP values are numbers that need precise centering */
+  transform: translateY(0.09em);
+}
+/* Next Level field class moved below - see .cs-next-level-field for independent control */
 
-/* Ensure inputs behave consistently across browsers */
-input.cs-field, textarea.cs-bio-textarea, select.cs-ability-select {
+/* Ensure inputs behave consistently across browsers with visual centering */
+input.cs-field, 
+textarea.cs-bio-textarea, 
+select.cs-ability-select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  
+  /* Apply visual centering to all form elements */
+  @extend %input-visual-center;
+}
+
+/* Additional browser-specific centering fixes */
+input[type="text"], 
+input[type="number"], 
+select {
+  /* WebKit browsers need extra centering help */
+  &::-webkit-input-placeholder {
+    text-align: center;
+    line-height: normal;
+  }
+  
+  /* Firefox placeholder centering */
+  &::-moz-placeholder {
+    text-align: center;
+    line-height: normal;
+  }
+  
+  /* Edge/IE placeholder centering */
+  &::-ms-input-placeholder {
+    text-align: center;
+    line-height: normal;
+  }
+}
+
+/* Visual centering for specific input types */
+input[type="number"] {
+  @extend %numeric-center;
+  
+  /* Remove spinner arrows that affect visual centering */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+  
+  /* Firefox number input styling */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ================================================================
+   MANUAL FINE-TUNING UTILITY CLASSES
+   ================================================================
+   
+   These classes can be applied when the automatic visual centering
+   needs adjustment for specific elements or edge cases.
+   
+   ================================================================ */
+
+/* Vertical adjustment utilities */
+.cs-center-nudge-up-xs { transform: translateY(-0.01em) !important; }
+.cs-center-nudge-up-sm { transform: translateY(-0.02em) !important; }
+.cs-center-nudge-up-md { transform: translateY(-0.04em) !important; }
+.cs-center-nudge-up-lg { transform: translateY(-0.06em) !important; }
+.cs-center-nudge-up-xl { transform: translateY(-0.08em) !important; }
+
+.cs-center-nudge-down-xs { transform: translateY(0.01em) !important; }
+.cs-center-nudge-down-sm { transform: translateY(0.02em) !important; }
+.cs-center-nudge-down-md { transform: translateY(0.04em) !important; }
+.cs-center-nudge-down-lg { transform: translateY(0.06em) !important; }
+.cs-center-nudge-down-xl { transform: translateY(0.08em) !important; }
+
+/* Horizontal adjustment utilities */
+.cs-center-nudge-left-xs { text-indent: -0.01em !important; }
+.cs-center-nudge-left-sm { text-indent: -0.02em !important; }
+.cs-center-nudge-left-md { text-indent: -0.04em !important; }
+
+.cs-center-nudge-right-xs { text-indent: 0.01em !important; }
+.cs-center-nudge-right-sm { text-indent: 0.02em !important; }
+.cs-center-nudge-right-md { text-indent: 0.04em !important; }
+
+/* Letter spacing adjustments for visual centering */
+.cs-letter-spacing-tight { letter-spacing: -0.02em !important; }
+.cs-letter-spacing-normal { letter-spacing: 0 !important; }
+.cs-letter-spacing-loose { letter-spacing: 0.02em !important; }
+
+/* Font weight adjustments that affect visual centering */
+.cs-visual-weight-light { font-weight: 300 !important; transform: translateY(-0.01em) !important; }
+.cs-visual-weight-normal { font-weight: 400 !important; }
+.cs-visual-weight-bold { font-weight: 600 !important; transform: translateY(0.01em) !important; }
+
+/* Character-specific centering adjustments */
+.cs-percentage-center {
+  /* Percentage signs need slight left adjustment */
+  text-indent: -0.01em;
+  transform: translateY(-0.02em);
+}
+
+.cs-plus-sign-center {
+  /* Plus signs in XP modifiers need adjustment */
+  text-indent: -0.005em;
+  transform: translateY(-0.03em);
+}
+
+/* Field-specific fine-tuning classes for JavaScript application */
+.cs-level-field-adjust {
+  /* Specific adjustment for level field if needed */
+  transform: translateY(0.04em) !important;
+}
+
+.cs-xp-mod-field-adjust {
+  /* Specific adjustment for XP modifier field */
+  transform: translateY(-0.015em) !important;
+  text-indent: -0.01em !important;
+}
+
+/* Custom field-specific adjustments - add your own here */
+.cs-custom-level-fix {
+  /* Custom level field adjustment */
+  transform: translateY(0.015em) !important;
+  text-indent: -0.005em !important;
+}
+
+.cs-custom-xp-mod-fix {
+  /* Custom XP modifier adjustment */
+  transform: translateY(-0.025em) !important;
+  text-indent: -0.012em !important;
+}
+
+.cs-custom-name-fix {
+  /* Custom character name adjustment */
+  transform: translateY(-0.005em) !important;
+  letter-spacing: 0.005em !important;
+}
+
+/* Add more custom classes as needed */
+.cs-custom-ability-fix {
+  /* Custom ability score adjustment */
+  transform: translateY(-0.03em) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.cs-number-only-center {
+  /* For fields that only contain single numbers */
+  transform: translateY(-0.02em) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.cs-mixed-alphanumeric-center {
+  /* Mixed content like "+10%" needs balanced centering */
+  text-indent: -0.008em;
+  transform: translateY(-0.025em);
+}
+
+/* Disable visual centering for elements that need manual control */
+.cs-manual-center {
+  transform: none !important;
+  text-indent: 0 !important;
+  letter-spacing: inherit !important;
 }
 
 /* Header field classes (name, class, race, small fields) */
 .cs-char-field-group { display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; }
-.cs-char-name { width: 280px; height: 34px; text-align: center; font-family: 'Minion Pro', serif; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 2px 0 2px; margin: 0; transform: translateY(4px); overflow: visible; white-space: nowrap; text-overflow: clip; border: none; pointer-events: auto; }
-.cs-select-large { width: 134px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 6px 5px 2px 5px; margin: 0; transform: translateY(4px); border: none; pointer-events: auto; }
-.cs-select-small { width: 63px; height: 34px; text-align: center; font-size: 24px; background-color: transparent !important; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; appearance: none; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 5px 0 0 0; margin: 0; border: none; pointer-events: auto; }
-.cs-handw { width:134px; height: 34px; background-color: transparent !important; appearance: none; margin: 0; pointer-events: none; display: flex; line-height: 1; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15), inset -2px -2px 3px rgba(255,255,255,0.8) !important; border: none !important; border-width: 0 !important; outline: none !important; }
-.cs-height { width: 65px; height: 35px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; padding: 3px 2px 0 2px; margin: 0; border: none; box-shadow: none !important; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; }
-.cs-weight { width: 65px; height: 35px; text-align: center; font-size: 19px; background-color: transparent !important; appearance: none; padding: 3px 2px 0 2px; margin: 0; border: none; box-shadow: none !important; pointer-events: auto; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.cs-char-name {
+  @extend %input-visual-center;
+  @extend %visual-center-medium;
+  
+  width: 280px;
+  height: 34px;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-size: 24px;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  appearance: none;
+  margin: 0;
+  overflow: visible;
+  white-space: nowrap;
+  text-overflow: clip;
+  border: none;
+  pointer-events: auto;
+  
+  /* Character names need balanced centering for variable text length */
+  padding: 0.05em 2px 0 2px;
+  transform: translateY(0.24em) !important;
+}
+.cs-select-large {
+  /* Removed conflicting @extend mixins - using manual centering instead */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  width: 134px;
+  height: 34px;
+  font-size: 24px;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  appearance: none;
+  margin: 0;
+  border: none;
+  pointer-events: auto;
+  
+  /* Large select elements need centered text - multiple centering approaches */
+  padding: 0.05em 5px 0 5px;
+  transform: translateY(0.25em) !important;
+  
+  /* Alternative centering methods if transform doesn't work */
+  line-height: 1.1 !important;        /* Adjust line height */
+  vertical-align: middle !important;   /* Vertical alignment */
+  
+  /* For testing - remove when satisfied */
+  /* margin-top: -2px !important; */   /* Use margin instead of transform */
+}
+
+.cs-select-small {
+  @extend %input-visual-center;
+  @extend %visual-center-medium;
+  @extend %numeric-center;
+  
+  width: 63px;
+  height: 34px;
+  font-size: 24px;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  appearance: none;
+  margin: 0;
+  border: none;
+  pointer-events: auto;
+  
+  /* Small select elements - often contain numbers */
+  padding: 0.04em 0 0 0;
+  transform: translateY(-0.03em);
+}
+/* Background field - separate class for independent control */
+.cs-background-select {
+  /* Inherit base layout from large selects but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Size and positioning */
+  width: 134px;
+  height: 34px;
+  
+  /* Typography - uses CSS variable from JavaScript for dynamic sizing */
+  font-size: var(--background-font-size, 24px);
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-weight: normal;
+  letter-spacing: 0;
+  
+  /* Appearance */
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  box-shadow: none !important;
+  appearance: none;
+  outline: none;
+  
+  /* Layout */
+  margin: 0;
+  padding: 0.05em 5px 0 5px;
+  
+  /* Interaction */
+  pointer-events: auto;
+  cursor: pointer;
+  
+  /* Visual centering */
+  transform: translateY(0.05em);
+  vertical-align: middle;
+  
+  /* Focus states - customize as needed */
+  &:focus {
+    outline: none;
+  }
+  
+  /* Disabled states */
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* Race field - separate class for independent control */
+.cs-race-select {
+  /* Inherit base layout from large selects but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Size and positioning */
+  width: 134px;
+  height: 34px;
+  
+  /* Typography - customize as needed */
+  font-size: 24px;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-weight: normal;
+  letter-spacing: 0;
+  
+  /* Appearance */
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  box-shadow: none !important;
+  appearance: none;
+  outline: none;
+  
+  /* Layout */
+  margin: 0;
+  padding: 0.05em 5px 0 5px;
+  
+  /* Interaction */
+  pointer-events: auto;
+  cursor: pointer;
+  
+  /* Visual centering */
+  transform: translateY(0.11em) !important;
+  vertical-align: middle;
+  
+  /* Focus states - customize as needed */
+  &:focus {
+    outline: none;
+  }
+  
+  /* Disabled states (for race-as-class synchronization) */
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
+/* Next Level field - separate class for independent control */
+.cs-next-level-field {
+  /* Inherit base layout but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Size and positioning */
+  width: 134px;
+  height: 34px;
+  
+  /* Typography - customize as needed */
+  font-size: 24px;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-weight: normal;
+  letter-spacing: 0;
+  
+  /* Appearance */
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  box-shadow: none !important;
+  appearance: none;
+  outline: none;
+  
+  /* Layout */
+  margin: 0;
+  padding: 0.05em 0 0 0;
+  
+  /* Interaction - readonly field */
+  pointer-events: none;
+  cursor: default;
+  user-select: none;
+  
+  /* Visual centering - numbers need precise positioning */
+  transform: translateY(0.11em) !important;
+  vertical-align: middle;
+  
+  /* Numeric formatting */
+  font-variant-numeric: tabular-nums;
+  
+  /* Focus states - not applicable for readonly */
+  &:focus {
+    outline: none;
+  }
+  
+  /* Custom styling for calculated values */
+  &[readonly] {
+    background-color: transparent !important;
+    color: inherit;
+  }
+}
+
+/* Alignment field - separate class for independent control */
+.cs-alignment-select {
+  /* Inherit base layout from large selects but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Size and positioning */
+  width: 134px;
+  height: 34px;
+  
+  /* Typography - customize as needed */
+  font-size: 24px;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-weight: normal;
+  letter-spacing: 0;
+  
+  /* Appearance */
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  box-shadow: none !important;
+  appearance: none;
+  outline: none;
+  
+  /* Layout */
+  margin: 0;
+  padding: 0.05em 5px 0 5px;
+  
+  /* Interaction */
+  pointer-events: auto;
+  cursor: pointer;
+  
+  /* Visual centering */
+  transform: translateY(0.22em) !important;
+  vertical-align: middle;
+  
+  /* Focus states - customize as needed */
+  &:focus {
+    outline: none;
+  }
+}
+
+/* Height field - separate class for independent control */
+.cs-height-field {
+  /* Inherit base layout but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Size and positioning */
+  width: 65px;
+  height: 35px;
+  
+  /* Typography - customize as needed */
+  font-size: 24px;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  letter-spacing: 0;
+  
+  /* Appearance */
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  box-shadow: none !important;
+  appearance: none;
+  outline: none;
+  
+  /* Layout */
+  margin: 0;
+  padding: 3px 2px 0 2px;
+  
+  /* Interaction */
+  pointer-events: auto;
+  cursor: text;
+  
+  /* Visual centering for measurements */
+  transform: translateY(0);
+  vertical-align: middle;
+  
+  /* Focus states */
+  &:focus {
+    outline: none;
+  }
+  
+  /* Input styling for physical measurements */
+  &::placeholder {
+    color: #888;
+    font-style: italic;
+  }
+}
+
+/* Weight field - separate class for independent control */
+.cs-weight-field {
+  /* Inherit base layout but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Size and positioning */
+  width: 65px;
+  height: 35px;
+  
+  /* Typography - customize as needed */
+  font-size: 24px;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  letter-spacing: 0;
+  
+  /* Appearance */
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  box-shadow: none !important;
+  appearance: none;
+  outline: none;
+  
+  /* Layout */
+  margin: 0;
+  padding: 3px 2px 0 2px;
+  
+  /* Interaction */
+  pointer-events: auto;
+  cursor: text;
+  
+  /* Visual centering for measurements */
+  transform: translateY(0);
+  vertical-align: middle;
+  
+  /* Focus states */
+  &:focus {
+    outline: none;
+  }
+  
+  /* Input styling for physical measurements */
+  &::placeholder {
+    color: #888;
+    font-style: italic;
+  }
+}
+
+/* Languages field - separate class for independent control */
+.cs-languages-field {
+  /* Container for language tags display */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Size and positioning - uses CSS variables from existing system */
+  width: var(--languages-row-width, 272px);
+  height: 33px;
+  min-height: 30px;
+  
+  /* Typography - uses CSS variables for dynamic control */
+  font-size: var(--languages-font-size, 24px);
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-weight: normal;
+  letter-spacing: var(--languages-letter-spacing, 0px);
+  line-height: var(--languages-line-height, 1);
+  
+  /* Appearance */
+  background: transparent !important;
+  color: black !important;
+  border: none !important;
+  box-shadow: none !important;
+  
+  /* Layout */
+  margin: 0;
+  padding: 2px;
+  
+  /* Interaction */
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  
+  /* Visual centering - Y-axis positioning adjustment */
+  transform: translateY(0.11em) !important;
+  vertical-align: middle;
+  
+  /* Empty state styling */
+  &:empty::before {
+    content: "Click to add languages...";
+    color: black !important;
+    font-style: italic;
+    font-size: 12px;
+  }
+  
+  /* Language tag container */
+  .languages-tags {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    pointer-events: auto;
+    user-select: none;
+    color: black !important;
+  }
+  
+  /* Individual language tags */
+  .lang-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #e0e0e0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: black !important;
+    
+    /* Remove language button */
+    button.remove-lang {
+      background: none;
+      border: none;
+      color: black !important;
+      cursor: pointer;
+      padding: 0 2px;
+      font-size: 14px;
+      line-height: 1;
+      z-index: var(--z-lang-row, 101);
+      
+      &:hover {
+        background: rgba(0,0,0,0.1);
+      }
+    }
+  }
+}
+
+/* Age field - separate class for independent control */
+.cs-age-field {
+  /* Inherit base layout but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  
+  /* Size and positioning - compact field for age */
+  width: 64px;
+  height: 34px;
+  
+  /* Typography - Age field with Minion Pro */
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', serif !important;
+  font-size: 24px;
+  color: #000000;
+
+    /* Appearance */
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  box-shadow: none !important;
+  appearance: none;
+  outline: none;
+  
+  /* Visual centering - Y-axis positioning adjustment */
+  transform: translateY(0.1em) !important;
+  vertical-align: middle;
+}
+
+/* Sex field - separate class for independent control */
+.cs-sex-field {
+  /* Inherit base layout but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+
+  /* Size and positioning - compact dropdown for sex */
+  width: 64px;
+  height: 34px;
+  
+  /* Typography - Sex field with Minion Pro */
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', serif !important;
+  font-size: 24px;
+  color: #000000;
+  
+  /* Appearance */
+  background-color: transparent !important;
+  border: none;
+  color: inherit;
+  box-shadow: none !important;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  
+  /* Remove default select styling */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Visual centering - Y-axis positioning adjustment */
+  transform: translateY(0.11em) !important;
+  vertical-align: middle;
+  
+  /* Option styling */
+  option {
+    font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', serif;
+    font-size: 16px;
+    color: #000000;
+    background-color: #ffffff;
+  }
+}
 
 /* Keep this partial focused on presentation only; behavior remains in JS. */
 
@@ -447,7 +1486,6 @@ input.cs-field, textarea.cs-bio-textarea, select.cs-ability-select {
 .cs-pos-race { --left: #{$cs-pos-race-left}; --top: #{$cs-pos-race-top}; --z: var(--z-labels, 15); }
 .cs-pos-age { --left: #{$cs-pos-age-left}; --top: #{$cs-pos-age-top}; --z: var(--z-labels, 15); }
 .cs-pos-sex { --left: #{$cs-pos-sex-left}; --top: #{$cs-pos-sex-top}; --z: var(--z-labels, 15); }
-.cs-pos-handw { --left: #{$cs-pos-handw-left}; --top: #{$cs-pos-handw-top}; --z: var(--z-level, 8); }
 .cs-pos-height { --left: #{$cs-pos-height-left}; --top: #{$cs-pos-height-top}; --z: var(--z-labels, 15); }
 .cs-pos-weight { --left: #{$cs-pos-weight-left}; --top: #{$cs-pos-weight-top}; --z: var(--z-labels, 15); }
 .cs-pos-background { --left: #{$cs-pos-background-left}; --top: #{$cs-pos-background-top}; --z: var(--z-labels, 15); }

@@ -490,20 +490,20 @@ export class XPProgressHandler {
 
     // Update vertical level field progress bar (if it exists)
     if (this.levelXpProgress.length) {
-      // Set CSS variables for height, top-radius and background
-      const topRadius = (progressPercentage >= 90) ? `${Math.min(9, ((progressPercentage - 90) / 10) * 9)}px` : '0px';
+      // Set CSS variables for width, right-radius and background
+      const rightRadius = (progressPercentage >= 90) ? `${Math.min(9, ((progressPercentage - 90) / 10) * 9)}px` : '0px';
       try {
         this.levelXpProgress[0].style.setProperty('--level-height', `${progressPercentage}%`);
-        this.levelXpProgress[0].style.setProperty('--progress-top-radius', topRadius);
-        this.levelXpProgress[0].style.setProperty('--level-bg', currentXP >= nextLevelXP ? 'linear-gradient(to top, #16a34a 0%, #22c55e 100%)' : 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
+        this.levelXpProgress[0].style.setProperty('--progress-top-radius', rightRadius);
+        this.levelXpProgress[0].style.setProperty('--level-bg', currentXP >= nextLevelXP ? 'linear-gradient(to right, #16a34a 0%, #22c55e 100%)' : 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)');
       } catch (e) {
         // Fallback to direct style properties
         if (this.levelXpProgress[0]) {
-          this.levelXpProgress[0].style.height = `${progressPercentage}%`;
-          // apply top radius to both corners for visual parity
-          this.levelXpProgress[0].style.borderTopLeftRadius = topRadius;
-          this.levelXpProgress[0].style.borderTopRightRadius = topRadius;
-          this.levelXpProgress[0].style.background = currentXP >= nextLevelXP ? 'linear-gradient(to top, #16a34a 0%, #22c55e 100%)' : 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)';
+          this.levelXpProgress[0].style.width = `${progressPercentage}%`;
+          // apply right radius to both corners for visual parity
+          this.levelXpProgress[0].style.borderTopRightRadius = rightRadius;
+          this.levelXpProgress[0].style.borderBottomRightRadius = rightRadius;
+          this.levelXpProgress[0].style.background = currentXP >= nextLevelXP ? 'linear-gradient(to right, #16a34a 0%, #22c55e 100%)' : 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)';
         }
       }
     }
@@ -634,14 +634,14 @@ export class XPProgressHandler {
     if (this.levelXpProgress.length) {
       try {
         this.levelXpProgress[0].style.setProperty('--level-height', `${percentage}%`);
-        this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
+        this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)');
       } catch (e) {
         if (this.levelXpProgress[0]) {
-          this.levelXpProgress[0].style.height = `${percentage}%`;
+          this.levelXpProgress[0].style.width = `${percentage}%`;
           try {
-            this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)');
+            this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)');
           } catch (e2) {
-            this.levelXpProgress[0].style.background = 'linear-gradient(to top, #22c55e 0%, #4ade80 100%)';
+            this.levelXpProgress[0].style.background = 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)';
           }
         }
       }

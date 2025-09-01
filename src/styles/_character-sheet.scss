@@ -507,10 +507,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #dc2626 !important
 .xp-progress .xp-progress-fill { width: var(--xp-progress-width); transition: width 0.3s ease; background-color: var(--xp-progress-color, #22c55e); }
 
 /* Vertical level progress uses CSS variables set by JS */
-.level-xp-progress { height: var(--level-height, 0%); background: var(--level-bg, linear-gradient(to top, #22c55e 0%, #4ade80 100%)); border-top-left-radius: var(--progress-top-radius, 0px); border-top-right-radius: var(--progress-top-radius, 0px); }
+/* level-xp-progress { width: var(--level-height, 0%); background: var(--level-bg, linear-gradient(to right, #22c55e 0%, #4ade80 100%)); border-top-right-radius: var(--progress-top-radius, 0px); border-bottom-right-radius: var(--progress-top-radius, 0px); }
 
 /* Static level progress bar hook */
-.level-progress-bar { width: var(--static-level-width, 0%); transition: width 0.3s ease; }
+/* .level-progress-bar { width: var(--static-level-width, 0%); transition: width 0.3s ease; }*/
 
 /* Combat stat boxes */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
@@ -1072,6 +1072,33 @@ input[type="number"] {
   &[readonly] {
     background-color: transparent !important;
     color: inherit;
+  }
+}
+
+/* Next Level container with XP progress bar */
+.next-level-group {
+  position: relative;
+  width: 134px;
+  height: 34px;
+  
+  /* XP Progress bar within Next Level field */
+  .level-xp-progress {
+    position: absolute;
+    top: 0.5px;
+    left: 0.5px;
+    height: 33px;
+    width: var(--level-height, 0%);
+    background: var(--level-bg, linear-gradient(to right, #22c55e 0%, #4ade80 100%));
+    transition: width 0.3s ease;
+    z-index: 1;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  /* Next Level display sits on top of progress bar */
+  .cs-next-level-field {
+    position: relative;
+    z-index: 2;
   }
 }
 

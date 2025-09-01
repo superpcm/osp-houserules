@@ -1220,11 +1220,8 @@
   <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
   <input type="hidden" name="system.levelPosition.zIndex" value="{{system.levelPosition.zIndex}}" />
 
-        <!-- Horizontal Progress Bar Background -->
+        <!-- Level display without progress bar -->
         <div>
-          <!-- Progress Fill -->
-          <div class="cs-level-progress-bar"></div>
-
           <!-- Level display in center -->
           <div class="cs-level-display">{{system.level}}</div>
         </div>
@@ -1504,7 +1501,10 @@
 
   <!-- Next Level field -->
   <div class="next-level-group cs-abs cs-pos-next" id="next-level-container">
-  <input type="text" class="next-level-display cs-next-level-field" id="next-level-display" readonly />
+    <!-- XP Progress Bar -->
+    <div class="level-xp-progress"></div>
+    <!-- Next Level Display -->
+    <input type="text" class="next-level-display cs-next-level-field" id="next-level-display" readonly />
   </div>
 
       <!-- Horizontal separator line at bottom of static header -->

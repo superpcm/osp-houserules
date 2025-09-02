@@ -71,20 +71,9 @@ export class XPProgressHandler {
     // Bind XP display click now that we have the element
     if (this.xpDisplay.length) {
 
-
-      // Set readonly status based on user role
-      const isGM = game.user.isGM;
-
-
-      if (!isGM) {
-        this.xpDisplay.prop('readonly', true);
-        this.xpDisplay.addClass('cs-cursor-pointer').removeClass('cs-cursor-text');
-
-      } else {
-        this.xpDisplay.prop('readonly', false);
-        this.xpDisplay.addClass('cs-cursor-text').removeClass('cs-cursor-pointer');
-
-      }
+      // Set readonly status - XP field is now readonly for everyone
+      this.xpDisplay.prop('readonly', true);
+      this.xpDisplay.addClass('cs-cursor-pointer').removeClass('cs-cursor-text');
 
       // For both GMs and non-GMs, only open dialog on double-click
       this.xpDisplay.off('dblclick').on('dblclick', (e) => {
@@ -92,13 +81,6 @@ export class XPProgressHandler {
         e.preventDefault();
         this.showXPAwardDialog();
       });
-
-      if (!isGM) {
-
-      } else {
-
-      }
-
 
     } else {
 
@@ -173,37 +155,8 @@ export class XPProgressHandler {
       setTimeout(() => this.updateProgressBar(), 50);
     });
 
-    // Listen for direct XP display input changes (admin only)
-    this.html.on('change blur', '.xp-display', (e) => {
-      const isGM = game.user.isGM;
-      if (isGM) {
-        this.isUpdatingXP = true; // Prevent other updates from overwriting display
-        window.xpHandlerUpdating = true; // Prevent inline script interference
-
-        const newXP = parseInt(e.target.value.replace(/,/g, '')) || 0;
-
-
-        // Only update if the value is different from current
-        const currentXP = parseInt(String(this.actor.system.xp).replace(/,/g, '')) || 0;
-        if (newXP !== currentXP) {
-          // Update the actor's XP
-          this.actor.update({
-            'system.xp': newXP
-          }).then(() => {
-            setTimeout(() => this.updateProgressBar(true), 50);
-            // Re-enable automatic updates after a short delay
-            setTimeout(() => {
-              this.isUpdatingXP = false;
-              window.xpHandlerUpdating = false;
-            }, 100);
-          });
-        } else {
-          // Re-enable immediately if no change
-          this.isUpdatingXP = false;
-          window.xpHandlerUpdating = false;
-        }
-      }
-    });
+    // XP field is now readonly - removed direct editing functionality
+    // Users must use the XP award dialog (double-click) to modify XP
   }
 
   /**
@@ -464,11 +417,16 @@ export class XPProgressHandler {
     const nextLevelXP = this.getNextLevelXP();
     const currentLevelXP = this.getCurrentLevelXP();
 
-    // Calculate progress toward next level as simple percentage
-    // This shows: "How close am I to reaching the next level's XP requirement?"
+    // Calculate progress toward next level as percentage between current and next level XP requirements
+    // This shows: "How much progress have I made from my current level toward the next level?"
     let progressPercentage = 0;
-    if (nextLevelXP > 0) {
-      progressPercentage = Math.min(100, Math.max(0, (currentXP / nextLevelXP) * 100));
+    if (nextLevelXP > currentLevelXP && nextLevelXP > 0 && currentLevelXP >= 0) {
+      const xpInCurrentLevel = currentXP - currentLevelXP;
+      const xpNeededForNextLevel = nextLevelXP - currentLevelXP;
+      
+      if (xpNeededForNextLevel > 0) {
+        progressPercentage = Math.min(100, Math.max(0, (xpInCurrentLevel / xpNeededForNextLevel) * 100));
+      }
     }
 
 
@@ -478,12 +436,12 @@ export class XPProgressHandler {
       // Use CSS variable for width and color so presentation stays in CSS
       try {
         this.progressBar[0].style.setProperty('--xp-progress-width', `${progressPercentage}%`);
-        this.progressBar[0].style.setProperty('--xp-progress-color', currentXP >= nextLevelXP ? '#16a34a' : '#22c55e');
+        this.progressBar[0].style.setProperty('--xp-progress-color', currentXP >= nextLevelXP ? 'rgba(112, 66, 21, 0.9)' : 'rgba(112, 66, 21, 0.8)');
       } catch (e) {
         // Fallback to direct style assignment when setProperty is unavailable
         if (this.progressBar[0]) {
           this.progressBar[0].style.width = `${progressPercentage}%`;
-          this.progressBar[0].style.backgroundColor = currentXP >= nextLevelXP ? '#16a34a' : '#22c55e';
+          this.progressBar[0].style.backgroundColor = currentXP >= nextLevelXP ? 'rgba(112, 66, 21, 0.9)' : 'rgba(112, 66, 21, 0.8)';
         }
       }
     }
@@ -495,7 +453,7 @@ export class XPProgressHandler {
       try {
         this.levelXpProgress[0].style.setProperty('--level-height', `${progressPercentage}%`);
         this.levelXpProgress[0].style.setProperty('--progress-top-radius', rightRadius);
-        this.levelXpProgress[0].style.setProperty('--level-bg', currentXP >= nextLevelXP ? 'linear-gradient(to right, #16a34a 0%, #22c55e 100%)' : 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)');
+        this.levelXpProgress[0].style.setProperty('--level-bg', currentXP >= nextLevelXP ? 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)' : 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)');
       } catch (e) {
         // Fallback to direct style properties
         if (this.levelXpProgress[0]) {
@@ -503,7 +461,7 @@ export class XPProgressHandler {
           // apply right radius to both corners for visual parity
           this.levelXpProgress[0].style.borderTopRightRadius = rightRadius;
           this.levelXpProgress[0].style.borderBottomRightRadius = rightRadius;
-          this.levelXpProgress[0].style.background = currentXP >= nextLevelXP ? 'linear-gradient(to right, #16a34a 0%, #22c55e 100%)' : 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)';
+          this.levelXpProgress[0].style.background = currentXP >= nextLevelXP ? 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)' : 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)';
         }
       }
     }
@@ -634,14 +592,14 @@ export class XPProgressHandler {
     if (this.levelXpProgress.length) {
       try {
         this.levelXpProgress[0].style.setProperty('--level-height', `${percentage}%`);
-        this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)');
+        this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)');
       } catch (e) {
         if (this.levelXpProgress[0]) {
           this.levelXpProgress[0].style.width = `${percentage}%`;
           try {
-            this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)');
+            this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)');
           } catch (e2) {
-            this.levelXpProgress[0].style.background = 'linear-gradient(to right, #22c55e 0%, #4ade80 100%)';
+            this.levelXpProgress[0].style.background = 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)';
           }
         }
       }

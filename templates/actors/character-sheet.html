@@ -182,54 +182,54 @@
         form.addEventListener('change', interceptFormData);
       }
 
-      // Input validation - only allow numbers and commas
-      xpField.addEventListener('input', function(e) {
-        // Remove any non-digit characters except commas
-        let value = this.value.replace(/[^\d,]/g, '');
+      // Input validation - only allow numbers and commas - DISABLED for readonly field
+      // xpField.addEventListener('input', function(e) {
+      //   // Remove any non-digit characters except commas
+      //   let value = this.value.replace(/[^\d,]/g, '');
+      //
+      //   // Remove commas, parse as number, then reformat with commas
+      //   const numericValue = parseInt(value.replace(/,/g, '')) || 0;
+      //
+      //   // Only update if the field is focused (user is typing)
+      //   if (document.activeElement === this) {
+      //     // Just show the raw number while typing
+      //     this.value = numericValue.toString();
+      //   }
+      // });
 
-        // Remove commas, parse as number, then reformat with commas
-        const numericValue = parseInt(value.replace(/,/g, '')) || 0;
+      // Format on blur (when user leaves the field) - DISABLED for readonly field
+      // xpField.addEventListener('blur', function() {
+      //   const value = parseInt(this.value.replace(/,/g, '')) || 0;
+      //   this.value = formatNumberWithCommas(value);
+      // });
 
-        // Only update if the field is focused (user is typing)
-        if (document.activeElement === this) {
-          // Just show the raw number while typing
-          this.value = numericValue.toString();
-        }
-      });
+      // Remove commas before change events (for auto-save) - DISABLED for readonly field
+      // xpField.addEventListener('change', function() {
+      //   const rawValue = this.value.replace(/,/g, '');
+      //
+      //   // Temporarily store raw value for form processing
+      //   this.dataset.rawValue = rawValue;
+      //
+      //   // Temporarily clean for any immediate form processing
+      //   this.value = rawValue;
+      //
+      //   // Restore formatting after a brief delay (unless we're in a form submission)
+      //   setTimeout(() => {
+      //     if (!isFormSubmitting && document.activeElement !== this) {
+      //       const numericValue = parseInt(rawValue) || 0;
+      //       if (numericValue >= 1000) {
+      //         this.value = numericValue.toLocaleString();
+      //
+      //       }
+      //     }
+      //   }, 200);
+      // });
 
-      // Format on blur (when user leaves the field)
-      xpField.addEventListener('blur', function() {
-        const value = parseInt(this.value.replace(/,/g, '')) || 0;
-        this.value = formatNumberWithCommas(value);
-      });
-
-      // Remove commas before change events (for auto-save)
-      xpField.addEventListener('change', function() {
-        const rawValue = this.value.replace(/,/g, '');
-
-        // Temporarily store raw value for form processing
-        this.dataset.rawValue = rawValue;
-
-        // Temporarily clean for any immediate form processing
-        this.value = rawValue;
-
-        // Restore formatting after a brief delay (unless we're in a form submission)
-        setTimeout(() => {
-          if (!isFormSubmitting && document.activeElement !== this) {
-            const numericValue = parseInt(rawValue) || 0;
-            if (numericValue >= 1000) {
-              this.value = numericValue.toLocaleString();
-
-            }
-          }
-        }, 200);
-      });
-
-      // Remove commas on focus (for easier editing)
-      xpField.addEventListener('focus', function() {
-        const value = parseInt(this.value.replace(/,/g, '')) || 0;
-        this.value = value.toString();
-      });
+      // Remove commas on focus (for easier editing) - DISABLED for readonly field
+      // xpField.addEventListener('focus', function() {
+      //   const value = parseInt(this.value.replace(/,/g, '')) || 0;
+      //   this.value = value.toString();
+      // });
 
       // Add a smart monitoring system that preserves display formatting but ensures clean form submissions
       let cleanupInterval;
@@ -394,15 +394,15 @@
         field.addEventListener('change', updateXPModifier);
       });
 
-      // Add event listener to update XP display when XP changes
+      // Add event listener to update XP display when XP changes - DISABLED for readonly field
       const xpInput = document.querySelector('#xp-display');
       if (xpInput) {
-        xpInput.addEventListener('change', updateXPDisplay);
-        xpInput.addEventListener('input', updateXPDisplay);
+        // xpInput.addEventListener('change', updateXPDisplay);
+        // xpInput.addEventListener('input', updateXPDisplay);
       }
 
       // Ability Score Tooltips System
-      const TOOLTIP_DELAY = 200; // Reduced delay for testing - was 800ms
+      const TOOLTIP_DELAY = 900; // Reduced delay for testing - was 800ms
 
       // Safe tooltip content setter: defaults to textContent, optionally allows HTML when explicitly requested
       function setTooltipContent(el, content, opts = { allowHtml: false }) {
@@ -622,7 +622,7 @@
 
             clearTimeout(xpTooltipTimeout);
             xpTooltipTimeout = setTimeout(() => {
-              setTooltipContent(xpTooltip, 'Double-click to award XP • Click to edit');
+              setTooltipContent(xpTooltip, 'Double-click to award XP');
 
               // Position tooltip above the element
               const rect = xpElement.getBoundingClientRect();
@@ -649,6 +649,59 @@
           xpElement.addEventListener('mouseleave', xpElement._tooltipMouseLeave);
           xpElement.addEventListener('mouseover', xpElement._tooltipMouseOver);
           xpElement.addEventListener('mouseout', xpElement._tooltipMouseOut);
+        }
+      }, 100);
+
+      // Language Tooltip System
+      setTimeout(() => {
+        const languageElement = document.querySelector('.open-language-dialog');
+        if (languageElement) {
+          // Create dedicated language tooltip
+          let languageTooltip = document.getElementById('language-tooltip');
+          if (!languageTooltip) {
+            languageTooltip = document.createElement('div');
+            languageTooltip.id = 'language-tooltip';
+            // Apply tooltip classes to match XP style
+            languageTooltip.className = 'cs-tooltip cs-tooltip--xp';
+            document.body.appendChild(languageTooltip);
+          }
+          let languageTooltipTimeout;
+
+          // Remove any existing event listeners and add new ones
+          languageElement.removeEventListener('mouseenter', languageElement._tooltipMouseEnter);
+          languageElement.removeEventListener('mouseleave', languageElement._tooltipMouseLeave);
+          languageElement.removeEventListener('mouseover', languageElement._tooltipMouseOver);
+          languageElement.removeEventListener('mouseout', languageElement._tooltipMouseOut);
+
+          languageElement._tooltipMouseEnter = (e) => {
+            clearTimeout(languageTooltipTimeout);
+            languageTooltipTimeout = setTimeout(() => {
+              setTooltipContent(languageTooltip, 'Double-click to add languages');
+
+              // Position tooltip above the element
+              const rect = languageElement.getBoundingClientRect();
+              const tooltipRect = languageTooltip.getBoundingClientRect();
+
+              languageTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
+              languageTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
+              languageTooltip.style.opacity = '1';
+
+            }, TOOLTIP_DELAY);
+          };
+
+          languageElement._tooltipMouseLeave = () => {
+            clearTimeout(languageTooltipTimeout);
+            languageTooltip.style.opacity = '0';
+          };
+
+          // Try both mouseenter/mouseleave and mouseover/mouseout
+          languageElement._tooltipMouseOver = languageElement._tooltipMouseEnter;
+          languageElement._tooltipMouseOut = languageElement._tooltipMouseLeave;
+
+          languageElement.addEventListener('mouseenter', languageElement._tooltipMouseEnter);
+          languageElement.addEventListener('mouseleave', languageElement._tooltipMouseLeave);
+          languageElement.addEventListener('mouseover', languageElement._tooltipMouseOver);
+          languageElement.addEventListener('mouseout', languageElement._tooltipMouseOut);
         }
       }, 100);
 
@@ -1482,7 +1535,7 @@
   <!-- Languages field -->
   <div class="languages-group cs-abs cs-pos-languages" id="languages-container">
   <div class="char-field-group cs-char-field-group">
-  <div class="cs-languages-field open-language-dialog" title="Click to add languages">
+  <div class="cs-languages-field open-language-dialog">
         <div class="languages-tags"></div>
       </div>
       <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />

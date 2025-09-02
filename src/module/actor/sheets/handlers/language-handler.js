@@ -26,7 +26,12 @@ export class LanguageHandler {
     // this.tags.on('click', '.remove-lang', this.onRemoveLanguage.bind(this));
     
     // Use event delegation on the entire form for the language dialog
-    this.html.on('click', '.open-language-dialog', this.onOpenDialog.bind(this));
+    this.html.on('dblclick', '.open-language-dialog', this.onOpenDialog.bind(this));
+    
+    // Additional call to adjust font size after DOM is fully settled
+    setTimeout(() => {
+      this.adjustFontSize();
+    }, 500);
   }
 
   /**
@@ -49,40 +54,82 @@ export class LanguageHandler {
   adjustFontSize() {
     const container = this.tags;
     const el = container && container[0];
-    const containerWidth = 272; // Fixed width from CSS
+    const containerWidth = 264; // Available width accounting for padding
     const maxFontSize = 24; // Start at 24px as specified
-    const minFontSize = 10; // Minimum readable font size
+    const minFontSize = 12; // Minimum readable font size (increased from 10)
 
     // If the container element isn't present, bail out safely
     if (!el) return;
 
-    // Reset to maximum font size first (use CSS var hook)
-    try { el.style.setProperty('--languages-font-size', `${maxFontSize}px`); } catch (e) { el.style.fontSize = maxFontSize + 'px'; }
+    // Create a temporary measurement element
+    const measureElement = document.createElement('span');
+    measureElement.style.visibility = 'hidden';
+    measureElement.style.position = 'absolute';
+    measureElement.style.whiteSpace = 'nowrap';
+    measureElement.style.fontFamily = window.getComputedStyle(el).fontFamily;
+    measureElement.textContent = el.textContent;
+    document.body.appendChild(measureElement);
 
-    // Give browser time to render before measuring
-    setTimeout(() => {
-      // Re-check element existence (in case the DOM changed)
-      if (!el) return;
-      let fontSize = maxFontSize;
+    let fontSize = maxFontSize;
+    
+    // Function to measure text width at a given font size
+    const getTextWidth = (size) => {
+      measureElement.style.fontSize = `${size}px`;
+      return measureElement.scrollWidth;
+    };
 
-      // Check if text overflows and reduce font size accordingly
-      while ((el.scrollWidth || 0) > containerWidth && fontSize > minFontSize) {
-        fontSize -= 0.5;
-        try { el.style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { el.style.fontSize = fontSize + 'px'; }
+    // Set the font size on the actual element
+    const setFontSize = (size, allowWrap = false) => {
+      el.style.setProperty('--languages-font-size', `${size}px`);
+      el.style.fontSize = `${size}px`;
+      if (allowWrap) {
+        el.style.whiteSpace = 'normal';
+        el.style.wordWrap = 'break-word';
+      } else {
+        el.style.whiteSpace = 'nowrap';
+        el.style.wordWrap = 'normal';
       }
+    };
 
-      // If text is short enough, try to scale up (but not above maxFontSize)
-      while ((el.scrollWidth || 0) < containerWidth && fontSize < maxFontSize) {
-        fontSize += 0.5;
-        try { el.style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { el.style.fontSize = fontSize + 'px'; }
-        // Check if this increase caused overflow
-        if ((el.scrollWidth || 0) > containerWidth) {
-          fontSize -= 0.5;
-          try { el.style.setProperty('--languages-font-size', `${fontSize}px`); } catch (e) { el.style.fontSize = fontSize + 'px'; }
-          break;
-        }
-      }
-    }, 10); // Small delay to ensure rendering is complete
+    // Start with max font size
+    setFontSize(fontSize);
+    let textWidth = getTextWidth(fontSize);
+    
+    console.log('Font sizing debug (improved):', {
+      text: el.textContent,
+      containerWidth: containerWidth,
+      initialTextWidth: textWidth,
+      fontSize: fontSize
+    });
+    
+    // Check if we even need to reduce the font size
+    if (textWidth <= containerWidth) {
+      console.log('Text fits at', fontSize + 'px, no adjustment needed');
+      document.body.removeChild(measureElement);
+      return;
+    }
+    
+    // Reduce font size by 0.5px until text fits or we reach minimum
+    while (textWidth > containerWidth && fontSize > minFontSize) {
+      fontSize -= 0.5;
+      textWidth = getTextWidth(fontSize);
+      
+      console.log('Reduced font to', fontSize + 'px, textWidth:', textWidth);
+    }
+    
+    // If we've reached minimum font size and text still doesn't fit, enable wrapping
+    if (fontSize <= minFontSize && textWidth > containerWidth) {
+      console.log('Reached minimum font size, enabling text wrapping');
+      setFontSize(minFontSize, true); // Enable wrapping
+    } else {
+      // Apply final font size without wrapping
+      setFontSize(fontSize, false);
+    }
+    
+    console.log('Final font size:', fontSize + 'px', textWidth > containerWidth ? '(with wrapping)' : '(single line)');
+    
+    // Clean up measurement element
+    document.body.removeChild(measureElement);
   }
 
   /**

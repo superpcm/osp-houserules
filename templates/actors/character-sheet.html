@@ -1578,25 +1578,64 @@
       <!-- Combat Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
         <div class="combat-section">
-          <div class="combat-stats cs-combat-stats">
-            <div class="combat-stat cs-combat-stat">
-              <label for="char-ac" class="cs-field-label">Armor Class</label>
-              <input class="char-ac cs-combat-input" id="char-ac" name="system.ac" type="number" value="{{system.ac}}" min="0" max="20" />
+
+          <!-- Ability Scores Section -->
+          <div class="ability-scores-section cs-combat-stats">
+
+            <!-- STR Ability Score -->
+            <div class="ability cs-ability">
+              <select class="attr-str cs-ability-select" id="attr-str" name="system.attributes.str.value">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
             </div>
-            <div class="combat-stat cs-combat-stat">
-              <label class="cs-field-label">Unarmored AC</label>
-              <div class="cs-unarmored-box">
-                {{unarmoredAC system.attributes.dex.value}}
-              </div>
+
+            <!-- DEX Ability Score -->
+            <div class="ability cs-ability">
+              <select class="attr-dex cs-ability-select" id="attr-dex" name="system.attributes.dex.value">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
             </div>
-            <div class="combat-stat cs-combat-stat">
-              <label for="char-hp" class="cs-field-label">Current HP</label>
-              <input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" />
+
+            <!-- CON Ability Score -->
+            <div class="ability cs-ability">
+              <select class="attr-con cs-ability-select" id="attr-con" name="system.attributes.con.value">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
             </div>
-            <div class="combat-stat cs-combat-stat">
-              <label for="char-max-hp" class="cs-field-label">Max HP</label>
-              <input class="char-max-hp cs-combat-input" id="char-max-hp" name="system.maxhitpoints" type="number" value="{{system.maxhitpoints}}" min="0" />
+
+            <!-- INT Ability Score -->
+            <div class="ability cs-ability">
+              <select class="attr-int cs-ability-select" id="attr-int" name="system.attributes.int.value">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
             </div>
+
+            <!-- WIS Ability Score -->
+            <div class="ability cs-ability">
+              <select class="attr-wis cs-ability-select" id="attr-wis" name="system.attributes.wis.value">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
+            </div>
+
+            <!-- CHA Ability Score -->
+            <div class="ability cs-ability">
+              <select class="attr-cha cs-ability-select" id="attr-cha" name="system.attributes.cha.value">
+                {{#each (range 3 18) as |val|}}
+                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
+                {{/each}}
+              </select>
+            </div>
+
           </div>
 
           <!-- Saving Throw Groups - Positioned relative to combat section -->
@@ -1708,69 +1747,26 @@
       </div>
       <!-- Skills Tab -->
   <div class="tab" data-group="primary" data-tab="skills">
-        <!-- Ability Scores Section -->
-        <div class="ability-scores-section cs-combat-stats">
-
-          <!-- STR Ability Score -->
-          <div class="ability cs-ability">
-            <label class="cs-ability-label">STR</label>
-            <select class="attr-str cs-ability-select" id="attr-str" name="system.attributes.str.value">
-              {{#each (range 3 18) as |val|}}
-                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
-              {{/each}}
-            </select>
+        <!-- Combat Stats Section -->
+        <div class="combat-stats cs-combat-stats">
+          <div class="combat-stat cs-combat-stat">
+            <label for="char-ac" class="cs-field-label">Armor Class</label>
+            <input class="char-ac cs-combat-input" id="char-ac" name="system.ac" type="number" value="{{system.ac}}" min="0" max="20" />
           </div>
-
-          <!-- DEX Ability Score -->
-          <div class="ability cs-ability">
-            <label class="cs-ability-label">DEX</label>
-            <select class="attr-dex cs-ability-select" id="attr-dex" name="system.attributes.dex.value">
-              {{#each (range 3 18) as |val|}}
-                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
-              {{/each}}
-            </select>
+          <div class="combat-stat cs-combat-stat">
+            <label class="cs-field-label">Unarmored AC</label>
+            <div class="cs-unarmored-box">
+              {{unarmoredAC system.attributes.dex.value}}
+            </div>
           </div>
-
-          <!-- CON Ability Score -->
-          <div class="ability cs-ability">
-            <label class="cs-ability-label">CON</label>
-            <select class="attr-con cs-ability-select" id="attr-con" name="system.attributes.con.value">
-              {{#each (range 3 18) as |val|}}
-                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
-              {{/each}}
-            </select>
+          <div class="combat-stat cs-combat-stat">
+            <label for="char-hp" class="cs-field-label">Current HP</label>
+            <input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" />
           </div>
-
-          <!-- INT Ability Score -->
-          <div class="ability cs-ability">
-            <label class="cs-ability-label">INT</label>
-            <select class="attr-int cs-ability-select" id="attr-int" name="system.attributes.int.value">
-              {{#each (range 3 18) as |val|}}
-                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
-              {{/each}}
-            </select>
+          <div class="combat-stat cs-combat-stat">
+            <label for="char-max-hp" class="cs-field-label">Max HP</label>
+            <input class="char-max-hp cs-combat-input" id="char-max-hp" name="system.maxhitpoints" type="number" value="{{system.maxhitpoints}}" min="0" />
           </div>
-
-          <!-- WIS Ability Score -->
-          <div class="ability cs-ability">
-            <label class="cs-ability-label">WIS</label>
-            <select class="attr-wis cs-ability-select" id="attr-wis" name="system.attributes.wis.value">
-              {{#each (range 3 18) as |val|}}
-                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
-              {{/each}}
-            </select>
-          </div>
-
-          <!-- CHA Ability Score -->
-          <div class="ability cs-ability">
-            <label class="cs-ability-label">CHA</label>
-            <select class="attr-cha cs-ability-select" id="attr-cha" name="system.attributes.cha.value">
-              {{#each (range 3 18) as |val|}}
-                <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
-              {{/each}}
-            </select>
-          </div>
-
         </div>
 
         <!-- Additional Skills content can go here -->

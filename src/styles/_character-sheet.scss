@@ -325,7 +325,14 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Combat and ability layouts markup helpers */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
-.cs-save-badge { width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: none !important; }
+.cs-save-badge { border: none !important; border-radius: 0 !important; background-color: transparent !important; position: relative; box-shadow: none !important; width: auto !important; height: auto !important; }
+
+/* Ability scores section - positioned container for absolute ability elements */
+.ability-scores-section { 
+  position: relative; 
+  width: 100%; 
+  height: 200px; /* Set height to contain absolutely positioned abilities */ 
+}
 
 /* Ability score box */
 .cs-ability-select {
@@ -338,14 +345,49 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 75px;
   font-size: 70px;
   font-weight: normal;
-  background-color: white !important;
   appearance: none;
-  border-radius: 9px;
   box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
   
   /* Large ability scores in circular containers need maximum adjustment */
   padding: 0;
   transform: translateY(-0.1em);
+}
+
+/* Ability score positioning system */
+.cs-ability { 
+  position: absolute; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  margin: 0;
+  top: 55px; /* Shared Y position for all abilities */
+}
+
+/* Individual ability X positioning - customize these left coordinates as needed */
+.ability:has(.attr-str) { 
+  left: 0px; 
+}
+
+.ability:has(.attr-dex) { 
+  left: 100px; 
+}
+
+.ability:has(.attr-con) { 
+  left: 200px; 
+}
+
+.ability:has(.attr-int) { 
+  left: 300px; 
+}
+
+.ability:has(.attr-wis) { 
+  left: 400px; 
+}
+
+.ability:has(.attr-cha) { 
+  left: 500px; 
 }
 
 /* Tabs helper (in case nav items had inline styles) */
@@ -494,12 +536,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .xp-progress { --xp-progress-color: rgba(112, 66, 21, 0.8); }
 .xp-progress .xp-progress-fill { width: var(--xp-progress-width); transition: width 0.3s ease; background-color: var(--xp-progress-color, rgba(112, 66, 21, 0.8)); }
 
-/* Vertical level progress uses CSS variables set by JS */
-/* level-xp-progress { width: var(--level-height, 0%); background: var(--level-bg, linear-gradient(to right, #22c55e 0%, #4ade80 100%)); border-top-right-radius: var(--progress-top-radius, 0px); border-bottom-right-radius: var(--progress-top-radius, 0px); }
-
-/* Static level progress bar hook */
-/* .level-progress-bar { width: var(--static-level-width, 0%); transition: width 0.3s ease; }*/
-
 /* Combat stat boxes */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
@@ -518,39 +554,78 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   /* Combat values are typically numbers */
   transform: translateY(-0.02em);
 }
+
+/* Combat tab background */
+.tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/stats-targets.webp') !important;
+  background-size: contain !important;
+  background-position: top center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+  background-color: transparent !important;
+  min-height: 400px !important;
+}
 .cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }
 
 /* Save badge system */
-.cs-save-group { position: relative; display: inline-block; margin: 0 10px; }
+.combat-section {
+  position: relative;
+  width: 100%;
+  /*height: 400px; /* Set a height to contain the absolutely positioned saves */
+}
+
+.cs-save-group { 
+  position: absolute; 
+  display: inline-block; 
+  margin: 0; 
+}
 .cs-save { position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible; }
-.cs-save-badge { width: 75px; height: 75px; border: 2px solid #4a5568; border-radius: 50%; position: relative; background-color: white; box-shadow: none !important; display: flex; align-items: center; justify-content: center; }
+.cs-save-badge { border: none !important; border-radius: 0 !important; background-color: transparent !important; position: relative; box-shadow: none !important; display: flex; align-items: center; justify-content: center; width: auto !important; height: auto !important; }
+
+/* Individual save positioning - customize these (x,y) coordinates as needed */
+.save-group-death { 
+  left: 0px; 
+  top: 185px; 
+}
+
+.save-group-wands { 
+  left: 130px; 
+  top: 185px; 
+}
+
+.save-group-paralysis { 
+  left: 250px; 
+  top: 185px; 
+}
+
+.save-group-breath { 
+  left: 375px; 
+  top: 185px; 
+}
+
+.save-group-spells { 
+  left: 500px; 
+  top: 185px; 
+}
 .cs-save-value {
   @extend %visual-center-large;
   @extend %single-character-center;
   @extend %round-container-center;
   
-  font-size: 60px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
-  letter-spacing: -1px;
+  font-size: 70px !important;
+  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif !important;
+  letter-spacing: -1px !important;
+  color: #704214 !important;
+  font-weight: bold !important;
   
   /* Visual centering override for save values */
   transform: translateY(-0.08em);
 }
-.cs-save-label { width: 400px; height: 60px; overflow: visible; z-index: var(--z-labels, 15); pointer-events: none; }
-.cs-save-label svg { overflow: visible; }
-.cs-save-label text { font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif; font-size: 14px; fill: #704214; letter-spacing: 0.5px; }
+.cs-save-label { display: none !important; }
 
-/* Ability score label */
+/* Ability score label - hidden */
 .cs-ability-label {
-  @extend %visual-center-large;
-  @extend %single-character-center;
-  
-  font-size: 45px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
-  letter-spacing: 0.03em;
-  
-  /* Ability scores are typically single numbers */
-  transform: translateY(-0.06em);
+  display: none !important;
 }
 
 /* Misc helpers for textareas in bio */
@@ -1422,12 +1497,12 @@ input[type="number"] {
 /* Sheet body helper to centralize padding/scrolling */
 .cs-sheet-body {
   position: absolute !important;
-  top: var(--sheet-top, 350px);
+  top: var(--sheet-top, 230px);
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 1rem 0.75rem;
-  overflow-y: auto;
+  padding: 1px 6.25px 2px 4px;
+  /* overflow-y: auto; */
 }
 
 /* Generic small field label */
@@ -1483,5 +1558,4 @@ input[type="number"] {
 
 /* Small helpers found useful during migration */
 .cs-tab-relative { position: relative; }
-.cs-ability { display: flex; flex-direction: column; align-items: center; }
 .cs-bio-heading { margin: 0 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid #ccc; font-size: 1.1em; }

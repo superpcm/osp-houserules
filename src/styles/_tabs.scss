@@ -109,26 +109,8 @@ body.game .sheet.app nav.sheet-tabs {
   background-color: #fff !important;
   z-index: var(--z-labels, 2000);
 }
-
 /* Mask the seam where this active tab overlaps the one below it. The mask is
    positioned inside the active tab so it follows its rounded shape. */
-.sheet-tabs a.item.active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -12px; /* pull down to cover the top border of the tab below */
-  height: 18px; /* tall enough to fully hide thin borders */
-  background: #fff !important; /* ensure mask is fully opaque and matches tab */
-  border-radius: 0 14px 14px 0; /* slightly larger to fully cover underlying rounding */
-  pointer-events: none;
-  left: -3px;
-  right: -3px;
-  bottom: -22px; /* pull further down to fully cover underlying top border and antialias */
-  height: 40px; /* increase height to ensure full coverage */
-  box-shadow: 0 0 0 3px #fff !important; /* cover any anti-aliased edges */
-  z-index: 4000; /* ensure mask sits above underlying tabs and borders */
-}
 
 .sheet-tabs a.item + .item {
   margin-top: -10px !important;
@@ -137,13 +119,3 @@ body.game .sheet.app nav.sheet-tabs {
 .sheet-tabs a.item.active {
   z-index: 1000 !important;
 }
-
-.sheet-body .tab {
-  display: none;
-  background: white !important;
-  background-color: white !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-.sheet-body .tab.active { display: block; }

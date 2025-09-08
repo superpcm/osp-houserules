@@ -18,7 +18,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
       width: 600, // Back to original width - tabs extend beyond without scroll
-      height: 645,
+      height: 650,
       resizable: false,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],
     });
@@ -61,8 +61,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Only initialize handlers if sheet is editable
     if (!this.options.editable) return;
 
-    // Apply Minion Pro font as fallback if CSS doesn't work
-    this.ensureMinionProFont(html);
+    // Apply Handwritten font as fallback if CSS doesn't work
+    this.ensureHandwrittenFont(html);
 
     // Initialize all handlers
     this.initializeHandlers(html);
@@ -228,18 +228,18 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Ensure Minion Pro font is applied - minimal fallback if CSS fails
+   * Ensure Handwritten font is applied - minimal fallback if CSS fails
    */
-  ensureMinionProFont(html) {
+  ensureHandwrittenFont(html) {
     const nameInput = html.find('#char-name')[0];
     if (nameInput) {
       // Check if CSS applied correctly after a brief delay
       setTimeout(() => {
         const computedStyle = window.getComputedStyle(nameInput);
-        if (!computedStyle.fontFamily.includes('Minion Pro')) {
+        if (!computedStyle.fontFamily.includes('Handwritten')) {
           // CSS failed, apply via JavaScript as fallback
           // Prefer class-based fallback so CSS remains centralized
-          nameInput.classList.add('cs-minion-fallback');
+          nameInput.classList.add('cs-handwritten-fallback');
         }
       }, 50);
     }

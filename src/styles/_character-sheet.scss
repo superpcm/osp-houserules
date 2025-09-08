@@ -1,3 +1,6 @@
+// ...existing code...
+
+// Place after $cs-pos-listening-top is defined
 /* Character sheet specific styles extracted from templates/actors/character-sheet.html
    Migrate presentation out of the template and into this partial. */
 
@@ -91,15 +94,18 @@
    END DEBUG CONFIGURATION
    ================================================================ */
 
+/* Shared positioning variables */
+$cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields (Name, Class, Level, XP Mod)
+
 /* Centralized position variables - change these to tweak sheet layout globally */
 $cs-pos-level-left: 460px !default;
-$cs-pos-level-top: 20px !default;
+$cs-pos-level-top: 9px !default;
 $cs-pos-portrait-left: 34px !default;
 $cs-pos-portrait-top: 75px !default;
 $cs-pos-languages-left: 318px !default;
 $cs-pos-languages-top: 183px !default;
 $cs-pos-xpmod-left: 530px !default;
-$cs-pos-xpmod-top: 20px !default;
+$cs-pos-xpmod-top: 9px !default;
 $cs-pos-xp-left: 319px !default;
 $cs-pos-xp-top: 74px !default;
 $cs-pos-next-left: 460px !default;
@@ -116,11 +122,11 @@ $cs-portrait-height: 183px !default;   /* 3:4 aspect ratio (portrait orientation
 
 /* Additional header / field position presets discovered during sweep */
 $cs-pos-name-left: 40px !default;
-$cs-pos-name-top: 14px !default;
+$cs-pos-name-top: 30px !default;
 $cs-pos-namegroup-left: 33px !default;
-$cs-pos-namegroup-top: 16px !default;
+$cs-pos-namegroup-top: 5px !default;
 $cs-pos-class-left: 319px !default;
-$cs-pos-class-top: 16px !default;
+$cs-pos-class-top: 3px !default;
 $cs-pos-alignment-left: 319px !default;
 $cs-pos-alignment-top: 125px !default;
 $cs-pos-race-left: 179px !default;
@@ -135,6 +141,29 @@ $cs-pos-weight-left: 247px !default;
 $cs-pos-weight-top: 183px !default;
 $cs-pos-background-left: 460px !default;
 $cs-pos-background-top: 129px !default;
+$cs-pos-listening-left: -6px !default;
+$cs-pos-listening-top: 304px !default;
+$cs-pos-find-secret-door-left: 60px !default;
+$cs-pos-find-secret-door-top: 304px !default;
+.cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left}; --top: #{$cs-pos-find-secret-door-top}; --z: var(--z-labels, 15); }
+$cs-pos-open-stuck-doors-left: 126px !default;
+$cs-pos-open-stuck-doors-top: 304px !default;
+.cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left}; --top: #{$cs-pos-open-stuck-doors-top}; --z: var(--z-labels, 15); }
+$cs-pos-detect-construction-left: 190px !default;
+$cs-pos-detect-construction-top: 304px !default;
+.cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left}; --top: #{$cs-pos-detect-construction-top}; --z: var(--z-labels, 15); }
+$cs-pos-detect-room-traps-left: 256px !default;
+$cs-pos-detect-room-traps-top: 304px !default;
+.cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left}; --top: #{$cs-pos-detect-room-traps-top}; --z: var(--z-labels, 15); }
+$cs-pos-barbarian-climb-left: 322px !default;
+$cs-pos-barbarian-climb-top: 190px !default;
+.cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left}; --top: #{$cs-pos-barbarian-climb-top}; --z: var(--z-labels, 15); }
+$cs-pos-barbarian-hide-left: 388px !default;
+$cs-pos-barbarian-hide-top: 256px !default;
+.cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left}; --top: #{$cs-pos-barbarian-hide-top}; --z: var(--z-labels, 15); }
+$cs-pos-barbarian-move-left: 454px !default;
+$cs-pos-barbarian-move-top: 322px !default;
+.cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --z: var(--z-labels, 15); }
 $cs-pos-save-label-left: -161px !default;
 $cs-pos-save-label-top: 14px !default;
 
@@ -224,15 +253,22 @@ form.osp.sheet.actor.character {
 form.osp.sheet.actor.character .xp-progress-bar,
 .osp.sheet.actor.character .xp-progress-bar { background-color: #4a90e2 !important; }
 
-/* Static header background image */
+/* Static header - consolidated background image and layout properties */
 form.osp.sheet.actor.character .static-header,
-.static-header {
-  background: url('/systems/osp-houserules/assets/character-sheet/static-sheet.webp') no-repeat left top !important;
+.static-header,
+.cs-static-header {
+  background: url('/systems/osp-houserules/assets/character-sheet/header.webp') no-repeat !important;
   background-position: left top !important;
   background-size: contain !important;
   background-color: transparent !important;
-  margin-top: 0 !important;
-  padding-top: 0 !important;
+  width: 591.5px !important;
+  height: 220px !important;
+  flex-shrink: 0;
+  position: relative;
+  z-index: var(--z-sheet, 10);
+  margin-top: 4px !important;
+  margin-left: 2px !important;
+  pointer-events: none;
 }
 
 /* FORCE OVERRIDE: Semi-transparent tabs to show background */
@@ -257,7 +293,7 @@ form.osp.sheet.actor.character .sheet-tabs a.item.active,
 .sheet.actor.character .sheet-tabs a.item.active { z-index: inherit !important; }
 
 /* Tab content area */
-.sheet-body .tab { display: none; background: none !important; border: none !important; }
+.sheet-body .tab { display: none; background: none !important; border: none !important; margin-top: -5px !important; }
 .sheet-body .tab.active { display: block; }
 
 /* Height/Weight neutralization */
@@ -281,9 +317,48 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .portrait-container.adjusting { outline: 1px dashed #00aaff; overflow: visible !important; z-index: calc(var(--z-overlay, 1000) + 1) !important; }
 
 /* Tooltip classes to replace JS-injected cssText */
-.cs-tooltip { position: absolute; background: #333; color: white; padding: 8px 12px; border-radius: 4px; font-size: 12px; line-height: 1.4; z-index: var(--z-overlay, 1000); pointer-events: none; opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
+.cs-tooltip { 
+  position: absolute; 
+  background: #333; 
+  color: white; 
+  padding: 8px 12px; 
+  border-radius: 4px; 
+  font-size: 12px; 
+  line-height: 1.4; 
+  z-index: var(--z-overlay, 1000); 
+  pointer-events: none; 
+  opacity: 0; 
+  transition: opacity 0.2s; 
+  white-space: nowrap;
+  
+  /* Auto-hide animation for stuck tooltips */
+  animation: tooltip-auto-hide 3s ease-out forwards;
+}
+
+@keyframes tooltip-auto-hide {
+  0% { opacity: var(--tooltip-opacity, 0); }
+  20% { opacity: var(--tooltip-opacity, 0); }
+  80% { opacity: var(--tooltip-opacity, 0); }
+  100% { opacity: 0 !important; }
+}
+
 .cs-tooltip--xp { box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: var(--z-top, 10000); }
 .cs-tooltip--portrait { box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: var(--z-top, 10000); }
+.cs-tooltip--ability { 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); 
+  z-index: var(--z-top, 10000); 
+  pointer-events: none !important;
+  
+  /* Faster auto-hide for ability tooltips since they're more prone to sticking */
+  animation: tooltip-auto-hide-fast 2s ease-out forwards;
+}
+
+@keyframes tooltip-auto-hide-fast {
+  0% { opacity: var(--tooltip-opacity, 0); }
+  10% { opacity: var(--tooltip-opacity, 0); }
+  70% { opacity: var(--tooltip-opacity, 0); }
+  100% { opacity: 0 !important; }
+}
 
 /* Dialog helper used by XP award dialog to centralize its presentation */
 .cs-xp-dialog { background: white !important; }
@@ -319,9 +394,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-level-container { position: absolute; width: 64px; height: 34px; }
 .cs-level-shadow { position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; box-shadow: none !important; border-radius: 6px; }
 
-/* Static header helper */
-.cs-static-header { height: 230px; flex-shrink: 0; position: relative; z-index: var(--z-sheet, 10); background-size: 100% auto !important; background-color: transparent !important; margin-top: 0 !important; padding-top: 0 !important; pointer-events: none; }
-
 /* Combat and ability layouts markup helpers */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
@@ -331,7 +403,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .ability-scores-section { 
   position: relative; 
   width: 100%; 
-  height: 200px; /* Set height to contain absolutely positioned abilities */ 
+  height: 100%; /* Set height to contain absolutely positioned abilities */ 
 }
 
 /* Ability score box */
@@ -342,17 +414,16 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   @extend %numeric-center;
   
   width: 75px;
-  height: 75px;
-  font-size: 70px;
+  height: 85px;
+  font-size: 100px;
   font-weight: normal;
   appearance: none;
   box-shadow: none !important;
   border: none !important;
   background: transparent !important;
-  
-  /* Large ability scores in circular containers need maximum adjustment */
-  padding: 0;
-  transform: translateY(-0.1em);
+  position: relative; /* Ensure proper positioning context */
+  z-index: var(--z-labels, 15); /* Ensure tooltips work properly */
+  pointer-events: auto; /* Ensure mouse events work */
 }
 
 /* Ability score positioning system */
@@ -362,32 +433,91 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   flex-direction: column; 
   align-items: center; 
   margin: 0;
-  top: 55px; /* Shared Y position for all abilities */
+  top: 30px; /* Shared Y position for all abilities */
+  z-index: var(--z-labels, 15); /* Ensure proper z-index for tooltips */
+  pointer-events: auto; /* Ensure mouse events work properly */
+}
+
+/* Hide tooltips when dropdown is active/focused */
+.cs-ability-select:focus ~ .cs-tooltip,
+.cs-ability-select:active ~ .cs-tooltip,
+.cs-ability-select:focus-within ~ .cs-tooltip {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  animation: none !important;
+}
+
+/* Hide tooltips when any dropdown in the ability section is open */
+.ability-scores-section:focus-within .cs-tooltip {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  animation: none !important;
 }
 
 /* Individual ability X positioning - customize these left coordinates as needed */
 .ability:has(.attr-str) { 
-  left: 0px; 
-}
-
-.ability:has(.attr-dex) { 
-  left: 100px; 
-}
-
-.ability:has(.attr-con) { 
-  left: 200px; 
+  left: 4px; 
 }
 
 .ability:has(.attr-int) { 
-  left: 300px; 
+  left: 105px; 
+}
+
+.ability:has(.attr-dex) { 
+  left: 204.1px; 
+}
+
+.ability:has(.attr-con) { 
+  left: 306.1px; 
 }
 
 .ability:has(.attr-wis) { 
-  left: 400px; 
+  left: 407.1px; 
 }
 
 .ability:has(.attr-cha) { 
-  left: 500px; 
+  left: 507px; 
+}
+
+/* Listening at Doors field styling */
+.listening-group {
+  z-index: var(--z-labels, 15);
+  pointer-events: auto;
+}
+
+/* Hide Barbarian skill fields by default - JavaScript will show them when needed */
+.cs-pos-barbarian-climb,
+.cs-pos-barbarian-hide,
+.cs-pos-barbarian-move {
+  display: none;
+}
+
+.listening-group .cs-field-label {
+  display: none !important;
+}
+
+.cs-listening-select {
+  @extend %input-visual-center;
+  @extend %visual-center-medium;
+  
+  width: 80px;
+  height: 80px;
+  font-size: 60px;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  appearance: none;
+  margin: 0;
+  border: none !important;
+  pointer-events: auto;
+  text-align: center;
+  
+  /* Visual centering for select options */
+  transform: translateY(-0.02em);
+}
+
+.cs-listening-select:disabled {
+  color: #704214;
+  cursor: not-allowed;
 }
 
 /* Tabs helper (in case nav items had inline styles) */
@@ -436,7 +566,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   vertical-align: baseline;
 }
 
-/* Size-specific visual adjustments for Minion Pro font */
+/* Size-specific visual adjustments for Handwritten font */
 %visual-center-large {
   @extend %visual-center-base;
   
@@ -521,9 +651,9 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 /* Font loading and fallback management */
-@supports (font-family: 'Minion Pro') {
+@supports (font-family: 'Handwritten') {
   .osp {
-    font-family: 'Minion Pro', serif !important;
+    font-family: 'Handwritten', cursive !important;
   }
 }
 
@@ -557,13 +687,17 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Combat tab background */
 .tab[data-tab="combat"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/stats-targets.webp') !important;
-  background-size: contain !important;
-  background-position: top center !important;
-  background-repeat: no-repeat !important;
-  background-attachment: scroll !important;
+  background-image: 
+    url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'),
+    url('/systems/osp-houserules/assets/character-sheet/skill-targets.webp') !important;
+  background-size: contain, contain !important;
+  background-position: 
+    top center,
+    left 280px !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll !important;
   background-color: transparent !important;
-  min-height: 400px !important;
+  min-height: 403px !important;
 }
 .cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }
 
@@ -577,43 +711,37 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-save-group { 
   position: absolute; 
   display: inline-block; 
-  margin: 0; 
+  margin: 0;
+  top: 165px; /* Shared Y position for all save groups */
 }
-.cs-save { position: relative; display: flex; flex-direction: column; align-items: center; width: 80px; height: 80px; overflow: visible; }
-.cs-save-badge { border: none !important; border-radius: 0 !important; background-color: transparent !important; position: relative; box-shadow: none !important; display: flex; align-items: center; justify-content: center; width: auto !important; height: auto !important; }
 
-/* Individual save positioning - customize these (x,y) coordinates as needed */
+/* Individual save positioning - customize these left coordinates as needed */
 .save-group-death { 
-  left: 0px; 
-  top: 185px; 
+  left: 12px; 
 }
 
 .save-group-wands { 
-  left: 130px; 
-  top: 185px; 
+  left: 138px; 
 }
 
 .save-group-paralysis { 
-  left: 250px; 
-  top: 185px; 
+  left: 262px; 
 }
 
 .save-group-breath { 
-  left: 375px; 
-  top: 185px; 
+  left: 386.1px; 
 }
 
 .save-group-spells { 
-  left: 500px; 
-  top: 185px; 
+  left: 510px;
 }
 .cs-save-value {
   @extend %visual-center-large;
   @extend %single-character-center;
   @extend %round-container-center;
   
-  font-size: 70px !important;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif !important;
+  font-size: 100px !important;
+  font-family: 'Handwritten', cursive !important;
   letter-spacing: -1px !important;
   color: #704214 !important;
   font-weight: bold !important;
@@ -652,10 +780,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   left: 0;
   width: 100%;
   height: 100%;
-  font-size: 24px;
+  font-size: 34px;
   color: #704214;
   z-index: var(--z-level, 8);
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-family: 'Handwritten', cursive;
   background: transparent !important;
   box-shadow: none !important;
   
@@ -718,7 +846,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   width: 64px;
   height: 34px;
   pointer-events: none;
-  font-size: 24px;
+  font-size: 34px;
   
   /* XP modifier percentages with + signs need special centering */
   transform: translateY(0.09em);
@@ -733,7 +861,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 34px;
   cursor: pointer;
   pointer-events: auto;
-  font-size: 24px;
+  font-size: 34px;
   
   /* XP values are numbers that need precise centering */
   transform: translateY(0.09em);
@@ -911,8 +1039,8 @@ input[type="number"] {
   
   width: 280px;
   height: 34px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
-  font-size: 24px;
+  font-family: 'Handwritten', cursive;
+  font-size: 34px;
   color: #704214 !important;
   background-color: transparent !important;
   box-shadow: none !important;
@@ -939,7 +1067,7 @@ input[type="number"] {
   
   width: 134px;
   height: 34px;
-  font-size: 24px;
+  font-size: 34px;
   background-color: transparent !important;
   box-shadow: none !important;
   appearance: none;
@@ -954,9 +1082,6 @@ input[type="number"] {
   /* Alternative centering methods if transform doesn't work */
   line-height: 1.1 !important;        /* Adjust line height */
   vertical-align: middle !important;   /* Vertical alignment */
-  
-  /* For testing - remove when satisfied */
-  /* margin-top: -2px !important; */   /* Use margin instead of transform */
 }
 
 .cs-select-small {
@@ -966,7 +1091,7 @@ input[type="number"] {
   
   width: 63px;
   height: 34px;
-  font-size: 24px;
+  font-size: 34px;
   background-color: transparent !important;
   box-shadow: none !important;
   appearance: none;
@@ -994,7 +1119,7 @@ input[type="number"] {
   
   /* Typography - uses CSS variable from JavaScript for dynamic sizing */
   font-size: var(--background-font-size, 24px);
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1045,8 +1170,8 @@ input[type="number"] {
   height: 34px;
   
   /* Typography - customize as needed */
-  font-size: 24px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-size: 34px;
+  font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1098,8 +1223,8 @@ input[type="number"] {
   height: 34px;
   
   /* Typography - customize as needed */
-  font-size: 24px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-size: 34px;
+  font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1181,8 +1306,8 @@ input[type="number"] {
   height: 34px;
   
   /* Typography - customize as needed */
-  font-size: 24px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-size: 34px;
+  font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1227,8 +1352,8 @@ input[type="number"] {
   height: 35px;
   
   /* Typography - customize as needed */
-  font-size: 24px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-size: 34px;
+  font-family: 'Handwritten', cursive;
   letter-spacing: 0;
   
   /* Appearance */
@@ -1278,8 +1403,8 @@ input[type="number"] {
   height: 35px;
   
   /* Typography - customize as needed */
-  font-size: 24px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-size: 34px;
+  font-family: 'Handwritten', cursive;
   letter-spacing: 0;
   
   /* Appearance */
@@ -1331,7 +1456,7 @@ input[type="number"] {
   
   /* Typography - uses CSS variables for dynamic control */
   font-size: var(--languages-font-size, 24px);
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif;
+  font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: var(--languages-letter-spacing, 0px);
   line-height: var(--languages-line-height, 1);
@@ -1378,9 +1503,9 @@ input[type="number"] {
   width: 64px;
   height: 34px;
   
-  /* Typography - Age field with Minion Pro */
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', serif !important;
-  font-size: 24px;
+  /* Typography - Age field with Handwritten font */
+  font-family: 'Handwritten', cursive !important;
+  font-size: 34px;
   color: #704214;
 
     /* Appearance */
@@ -1410,9 +1535,9 @@ input[type="number"] {
   width: 64px;
   height: 34px;
   
-  /* Typography - Sex field with Minion Pro */
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', serif !important;
-  font-size: 24px;
+  /* Typography - Sex field with Handwritten font */
+  font-family: 'Handwritten', cursive !important;
+  font-size: 34px;
   color: #704214;
   
   /* Appearance */
@@ -1435,7 +1560,7 @@ input[type="number"] {
   
   /* Option styling */
   option {
-    font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', serif;
+    font-family: 'Handwritten', cursive;
     font-size: 16px;
     color: #704214;
     background-color: #ffffff;
@@ -1520,7 +1645,7 @@ input[type="number"] {
   overflow: hidden; 
   font-size: var(--languages-font-size, 24px) !important;
   padding: 0 4px;
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif !important;
+  font-family: 'Handwritten', cursive !important;
   color: #704214 !important;
   text-align: center;
   word-wrap: break-word; /* Allow breaking long words if needed */
@@ -1554,6 +1679,7 @@ input[type="number"] {
 .cs-pos-height { --left: #{$cs-pos-height-left}; --top: #{$cs-pos-height-top}; --z: var(--z-labels, 15); }
 .cs-pos-weight { --left: #{$cs-pos-weight-left}; --top: #{$cs-pos-weight-top}; --z: var(--z-labels, 15); }
 .cs-pos-background { --left: #{$cs-pos-background-left}; --top: #{$cs-pos-background-top}; --z: var(--z-labels, 15); }
+.cs-pos-listening { --left: #{$cs-pos-listening-left}; --top: #{$cs-pos-listening-top}; --z: var(--z-labels, 15); }
 .cs-pos-save-label { --left: #{$cs-pos-save-label-left}; --top: #{$cs-pos-save-label-top}; --z: var(--z-labels, 15); }
 
 /* Small helpers found useful during migration */

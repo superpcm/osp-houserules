@@ -8,32 +8,28 @@
    OSP House Rules Font Configuration
    ================================================================
    
-   Primary Font: Minion Pro
-   - Professional serif typeface designed by Robert Slimbach
-   - Excellent readability for RPG character sheets
-   - Classical aesthetic appropriate for fantasy gaming
+   Primary Font: Handwritten
+   - Stylish handwritten typeface for fantasy character sheets
+   - Adds personality and character to RPG sheets
+   - Aesthetic appropriate for fantasy gaming
    
    Fallback Chain:
-   1. 'Minion Pro' - Primary choice
-   2. 'Adobe Minion Pro' - Adobe's version
-   3. 'Minion' - Simplified name variant
-   4. 'Times New Roman' - Widely available serif fallback
-   5. Times - System Times variant
-   6. serif - Generic serif fallback
+   1. 'Handwritten' - Primary choice
+   2. cursive - Generic cursive fallback
    
    ================================================================ */
 
-/* Global Font Configuration - Minion Pro for entire OSP module */
+/* Global Font Configuration - Handwritten for entire OSP module */
 .osp,
 .osp *,
 form.osp,
 form.osp *,
 .application.window-app.sheet.actor.character.osp,
 .application.window-app.sheet.actor.character.osp * {
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif !important;
+  font-family: 'Handwritten', cursive !important;
 }
 
-/* Ensure all form elements inherit Minion Pro */
+/* Ensure all form elements inherit Handwritten */
 .osp input,
 .osp select,
 .osp textarea,
@@ -42,13 +38,13 @@ form.osp input,
 form.osp select,
 form.osp textarea,
 form.osp button {
-  font-family: 'Minion Pro', 'Adobe Minion Pro', 'Minion', 'Times New Roman', Times, serif !important;
+  font-family: 'Handwritten', cursive !important;
 }
 
 /* Font loading and fallback management */
-@supports (font-family: 'Minion Pro') {
+@supports (font-family: 'Handwritten') {
   .osp {
-    font-family: 'Minion Pro', serif !important;
+    font-family: 'Handwritten', cursive !important;
   }
 }
 

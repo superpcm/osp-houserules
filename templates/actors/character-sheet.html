@@ -1251,6 +1251,270 @@
 
 
       }
+
+      // Listening at Doors Management
+      function updateListeningAtDoors() {
+        const listeningField = document.getElementById('listening-doors');
+        const raceField = document.getElementById('char-race');
+        const classField = document.querySelector('select[name="system.class"]');
+        
+        if (!listeningField || !raceField || !classField) return;
+
+        const race = raceField.value.toLowerCase();
+        const characterClass = classField.value.toLowerCase();
+        
+        // Check if class is Thief or Assassin (editable)
+        const isThiefAssassin = characterClass === 'thief' || characterClass === 'assassin';
+        
+        if (isThiefAssassin) {
+          // Thief/Assassin: editable field, default to 1 if not set
+          listeningField.disabled = false;
+          if (!listeningField.value || listeningField.value === '') {
+            listeningField.value = '1';
+          }
+        } else {
+          // Other classes: read-only, set by race
+          listeningField.disabled = true;
+          
+          // Set value based on race per OSE rules
+          switch (race) {
+            case 'human':
+            case 'half-elf':
+            case 'half-orc':
+              listeningField.value = '1';
+              break;
+            case 'dwarf':
+            case 'elf':
+            case 'halfling':
+            case 'hobbit':
+            case 'gnome':
+              listeningField.value = '2';
+              break;
+            default:
+              listeningField.value = '1';
+              break;
+          }
+        }
+      }
+
+      function updateOpenStuckDoors() {
+        const openStuckDoorsField = document.getElementById('open-stuck-doors');
+        const strField = document.getElementById('attr-str');
+        
+        if (!openStuckDoorsField || !strField) return;
+        
+        const strValue = parseInt(strField.value) || 10;
+        let doorValue = '1';
+        
+        // OSE Open Doors chances based on STR
+        if (strValue >= 3 && strValue <= 8) {
+          doorValue = '1';
+        } else if (strValue >= 9 && strValue <= 12) {
+          doorValue = '2';
+        } else if (strValue >= 13 && strValue <= 15) {
+          doorValue = '3';
+        } else if (strValue >= 16 && strValue <= 17) {
+          doorValue = '4';
+        } else if (strValue >= 18) {
+          doorValue = '5';
+        }
+        
+        openStuckDoorsField.value = doorValue;
+        openStuckDoorsField.disabled = true; // Always read-only
+      }
+
+      function updateFindSecretDoor() {
+        const findSecretDoorField = document.getElementById('find-secret-door');
+        const raceField = document.getElementById('char-race');
+        const classField = document.querySelector('select[name="system.class"]');
+        
+        if (!findSecretDoorField || !raceField || !classField) return;
+
+        const race = raceField.value.toLowerCase();
+        const characterClass = classField.value.toLowerCase();
+        
+        // Check if class is Thief, Assassin, or Barbarian (editable)
+        const isEditableClass = characterClass === 'thief' || characterClass === 'assassin' || characterClass === 'barbarian';
+        
+        if (isEditableClass) {
+          // Thief/Assassin/Barbarian: editable field, set default based on race if not set
+          findSecretDoorField.disabled = false;
+          if (!findSecretDoorField.value || findSecretDoorField.value === '') {
+            // Set racial default for editable classes
+            switch (race) {
+              case 'elf':
+              case 'half-elf':
+                findSecretDoorField.value = '2';
+                break;
+              default:
+                findSecretDoorField.value = '1';
+                break;
+            }
+          }
+        } else {
+          // Other classes: read-only, set by race
+          findSecretDoorField.disabled = true;
+          
+          // Set value based on race per OSE rules
+          switch (race) {
+            case 'elf':
+            case 'half-elf':
+              findSecretDoorField.value = '2';
+              break;
+            default:
+              findSecretDoorField.value = '1';
+              break;
+          }
+        }
+      }
+
+      function updateDetectConstruction() {
+        const detectConstructionField = document.getElementById('detect-construction');
+        const raceField = document.getElementById('char-race');
+        
+        if (!detectConstructionField || !raceField) return;
+
+        const race = raceField.value.toLowerCase();
+        
+        // Only Dwarf and Gnome can use this ability - but field is read-only
+        if (race === 'dwarf' || race === 'gnome') {
+          detectConstructionField.disabled = true; // Always read-only
+          detectConstructionField.value = '2'; // 2-in-6 for Dwarf/Gnome
+        } else {
+          // All other races cannot use this ability
+          detectConstructionField.disabled = true;
+          detectConstructionField.value = ''; // No number shown
+        }
+      }
+
+      function updateDetectRoomTraps() {
+        const detectRoomTrapsField = document.getElementById('detect-room-traps');
+        const raceField = document.getElementById('char-race');
+        
+        if (!detectRoomTrapsField || !raceField) return;
+
+        const race = raceField.value.toLowerCase();
+        
+        // Only Dwarf can use this ability - but field is read-only
+        if (race === 'dwarf') {
+          detectRoomTrapsField.disabled = true; // Always read-only
+          detectRoomTrapsField.value = '2'; // 2-in-6 for Dwarf
+        } else {
+          // All other races cannot use this ability
+          detectRoomTrapsField.disabled = true;
+          detectRoomTrapsField.value = ''; // No number shown
+        }
+      }
+
+      function updateBarbarianSkills() {
+        const barbarianClimbField = document.getElementById('barbarian-climb');
+        const barbarianHideField = document.getElementById('barbarian-hide');
+        const barbarianMoveField = document.getElementById('barbarian-move');
+        const classField = document.querySelector('select[name="system.class"]');
+        const levelField = document.querySelector('input[name="system.level"]');
+        
+        if (!barbarianClimbField || !barbarianHideField || !barbarianMoveField || !classField || !levelField) return;
+
+        // Get the parent divs to control visibility
+        const barbarianClimbDiv = barbarianClimbField.closest('.listening-group');
+        const barbarianHideDiv = barbarianHideField.closest('.listening-group');
+        const barbarianMoveDiv = barbarianMoveField.closest('.listening-group');
+
+        const characterClass = classField.value.toLowerCase();
+        const level = parseInt(levelField.value) || 1;
+        
+        if (characterClass === 'barbarian') {
+          // Show and configure Barbarian fields
+          if (barbarianClimbDiv) barbarianClimbDiv.style.display = 'block';
+          if (barbarianHideDiv) barbarianHideDiv.style.display = 'block';
+          if (barbarianMoveDiv) barbarianMoveDiv.style.display = 'block';
+          
+          // Barbarian: read-only fields with level-based progression
+          barbarianClimbField.disabled = true;
+          barbarianHideField.disabled = true;
+          barbarianMoveField.disabled = true;
+          
+          // Set values based on level progression
+          // CS: Always 5-in-6
+          barbarianClimbField.value = '5';
+          
+          // HD: 1-in-6 (levels 1-5), 2-in-6 (levels 6-10), 3-in-6 (levels 11-13), 4-in-6 (level 14)
+          if (level <= 5) {
+            barbarianHideField.value = '1';
+          } else if (level <= 10) {
+            barbarianHideField.value = '2';
+          } else if (level <= 13) {
+            barbarianHideField.value = '3';
+          } else {
+            barbarianHideField.value = '4';
+          }
+          
+          // MS: 1-in-6 (levels 1-3), 2-in-6 (levels 4-10), 3-in-6 (levels 11+)
+          if (level <= 3) {
+            barbarianMoveField.value = '1';
+          } else if (level <= 10) {
+            barbarianMoveField.value = '2';
+          } else {
+            barbarianMoveField.value = '3';
+          }
+        } else {
+          // Non-Barbarian: hide fields completely
+          if (barbarianClimbDiv) barbarianClimbDiv.style.display = 'none';
+          if (barbarianHideDiv) barbarianHideDiv.style.display = 'none';
+          if (barbarianMoveDiv) barbarianMoveDiv.style.display = 'none';
+          
+          barbarianClimbField.disabled = true;
+          barbarianHideField.disabled = true;
+          barbarianMoveField.disabled = true;
+          barbarianClimbField.value = '';
+          barbarianHideField.value = '';
+          barbarianMoveField.value = '';
+        }
+      }
+
+      // Initialize listening at doors
+      updateListeningAtDoors();
+      
+      // Initialize open stuck doors
+      updateOpenStuckDoors();
+      
+      // Initialize find secret door
+      updateFindSecretDoor();
+      
+      // Initialize detect construction
+      updateDetectConstruction();
+      
+      // Initialize detect room traps
+      updateDetectRoomTraps();
+      
+      // Initialize barbarian skills
+      updateBarbarianSkills();
+
+      // Add event listeners for race and class changes
+      const raceField = document.getElementById('char-race');
+      const classField = document.querySelector('select[name="system.class"]');
+      const strField = document.getElementById('attr-str');
+      
+      if (raceField) {
+        raceField.addEventListener('change', updateListeningAtDoors);
+        raceField.addEventListener('change', updateFindSecretDoor);
+        raceField.addEventListener('change', updateDetectConstruction);
+        raceField.addEventListener('change', updateDetectRoomTraps);
+      }
+      if (classField) {
+        classField.addEventListener('change', updateListeningAtDoors);
+        classField.addEventListener('change', updateFindSecretDoor);
+        classField.addEventListener('change', updateBarbarianSkills);
+      }
+      if (strField) {
+        strField.addEventListener('change', updateOpenStuckDoors);
+      }
+      
+      // Add level change listener for Barbarian skills
+      const levelField = document.querySelector('input[name="system.level"]');
+      if (levelField) {
+        levelField.addEventListener('change', updateBarbarianSkills);
+      }
     }
 
   // Check if DOM is already ready or wait for it
@@ -1743,6 +2007,126 @@
               </svg>
             </div>
           </div>
+
+
+          <!-- Listening at Doors Field -->
+          <div class="listening-group cs-abs cs-pos-listening">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Listen at Doors</label>
+              <select class="listening-doors cs-listening-select" id="listening-doors" name="system.listeningAtDoors" data-dtype="String">
+                <option value="1" {{#if (eq system.listeningAtDoors "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.listeningAtDoors "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.listeningAtDoors "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.listeningAtDoors "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.listeningAtDoors "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Find Secret Door Field -->
+          <div class="listening-group cs-abs cs-pos-find-secret-door">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Find Secret Door</label>
+              <select class="find-secret-door cs-listening-select" id="find-secret-door" name="system.findSecretDoor" data-dtype="String">
+                <option value="1" {{#if (eq system.findSecretDoor "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.findSecretDoor "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.findSecretDoor "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.findSecretDoor "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.findSecretDoor "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Open Stuck Doors Field -->
+          <div class="listening-group cs-abs cs-pos-open-stuck-doors">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Open Stuck Doors</label>
+              <select class="open-stuck-doors cs-listening-select" id="open-stuck-doors" name="system.openStuckDoors" data-dtype="String">
+                <option value="1" {{#if (eq system.openStuckDoors "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.openStuckDoors "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.openStuckDoors "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.openStuckDoors "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.openStuckDoors "5")}}selected{{/if}}>5</option>
+                <option value="6" {{#if (eq system.openStuckDoors "6")}}selected{{/if}}>6</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Detect Construction Tricks Field -->
+          <div class="listening-group cs-abs cs-pos-detect-construction">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Detect Construction Tricks</label>
+              <select class="detect-construction cs-listening-select" id="detect-construction" name="system.detectConstruction" data-dtype="String">
+                <option value="" {{#if (eq system.detectConstruction "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.detectConstruction "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.detectConstruction "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.detectConstruction "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.detectConstruction "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.detectConstruction "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Detect Room Traps Field -->
+          <div class="listening-group cs-abs cs-pos-detect-room-traps">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Detect Room Traps</label>
+              <select class="detect-room-traps cs-listening-select" id="detect-room-traps" name="system.detectRoomTraps" data-dtype="String">
+                <option value="" {{#if (eq system.detectRoomTraps "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.detectRoomTraps "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.detectRoomTraps "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.detectRoomTraps "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.detectRoomTraps "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.detectRoomTraps "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Barbarian Climb Surfaces Field -->
+          <div class="listening-group cs-abs cs-pos-barbarian-climb">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Climb Surfaces (Barbarian)</label>
+              <select class="barbarian-climb cs-listening-select" id="barbarian-climb" name="system.barbarianClimb" data-dtype="String">
+                <option value="" {{#if (eq system.barbarianClimb "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.barbarianClimb "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.barbarianClimb "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.barbarianClimb "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.barbarianClimb "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.barbarianClimb "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Barbarian Hide in Undergrowth Field -->
+          <div class="listening-group cs-abs cs-pos-barbarian-hide">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Hide in Undergrowth (Barbarian)</label>
+              <select class="barbarian-hide cs-listening-select" id="barbarian-hide" name="system.barbarianHide" data-dtype="String">
+                <option value="" {{#if (eq system.barbarianHide "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.barbarianHide "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.barbarianHide "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.barbarianHide "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.barbarianHide "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.barbarianHide "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Barbarian Move Silently Field -->
+          <div class="listening-group cs-abs cs-pos-barbarian-move">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Move Silently (Barbarian)</label>
+              <select class="barbarian-move cs-listening-select" id="barbarian-move" name="system.barbarianMove" data-dtype="String">
+                <option value="" {{#if (eq system.barbarianMove "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.barbarianMove "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.barbarianMove "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.barbarianMove "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.barbarianMove "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.barbarianMove "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
         </div>
       </div>
       <!-- Skills Tab -->

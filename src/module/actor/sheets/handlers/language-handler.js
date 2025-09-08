@@ -55,8 +55,8 @@ export class LanguageHandler {
     const container = this.tags;
     const el = container && container[0];
     const containerWidth = 264; // Available width accounting for padding
-    const maxFontSize = 24; // Start at 24px as specified
-    const minFontSize = 12; // Minimum readable font size (increased from 10)
+    const maxFontSize = 48; // Start at 24px as specified
+    const minFontSize = 24; // Minimum readable font size (increased from 10)
 
     // If the container element isn't present, bail out safely
     if (!el) return;

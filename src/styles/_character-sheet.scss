@@ -13,6 +13,10 @@
    
    ================================================================ */
 
+/* Form Field Debug - Master Switch */
+/* Uncomment the line below to enable red dashed borders on all form fields */
+$debug-form-fields: true; // Change to false to disable
+
 /* Portrait Debug - Comment out for production */
 /*
 .cs-portrait-container { 
@@ -54,7 +58,7 @@
 /* Field Debug - Uncomment to show field boundaries */
 /*
 .cs-char-name { border: 1px solid orange !important; }
-.cs-select-large { border: 1px solid purple !important; }
+.cs-class-select { border: 1px solid purple !important; }
 .cs-background-select { border: 1px solid cyan !important; }
 .cs-race-select { border: 1px solid yellow !important; }
 .cs-alignment-select { border: 1px solid pink !important; }
@@ -90,6 +94,67 @@
 [style*="transform"]::after { content: "T"; position: absolute; top: 0; right: 0; font-size: 8px; background: blue; color: white; padding: 1px; z-index: 999999; }
 */
 
+/* Form Field Debug - Controlled by $debug-form-fields variable */
+@if $debug-form-fields {
+  input, select, textarea, button {
+    border: 1px dashed red !important;
+  }
+  
+  /* Additional form field types */
+  .cs-char-name,
+  .cs-class-select,
+  .cs-background-select,
+  .cs-race-select,
+  .cs-alignment-select,
+  .cs-age-field,
+  .cs-sex-field,
+  .cs-height-field,
+  .cs-weight-field,
+  .char-height,
+  .char-weight,
+  .cs-languages-field,
+  .languages-tags,
+  .char-languages,
+  .cs-input-small,
+  .cs-input-medium,
+  .cs-select-inline,
+  .cs-listening-select,
+  .cs-bio-textarea,
+  .cs-ability-select,
+  .attr-str,
+  .attr-dex,
+  .attr-con,
+  .attr-int,
+  .attr-wis,
+  .attr-cha,
+  .cs-save-value,
+  .cs-save-badge,
+  .cs-combat-input,
+  .cs-portrait-img,
+  .portrait-img,
+  .cs-portrait-display,
+  .portrait-display,
+  .cs-level-display {
+    border: 1px dashed red !important;
+  }
+  
+  /* High specificity rules for stubborn elements */
+  .osp.sheet.actor.character {
+    input[name*="height"],
+    input[name*="weight"],
+    input[name*="languages"],
+    select[name*="attributes"],
+    .attr-str,
+    .attr-dex,
+    .attr-con,
+    .attr-int,
+    .attr-wis,
+    .attr-cha {
+      border: 1px dashed red !important;
+    }
+  }
+}
+
 /* ================================================================
    END DEBUG CONFIGURATION
    ================================================================ */
@@ -99,13 +164,13 @@ $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields 
 
 /* Centralized position variables - change these to tweak sheet layout globally */
 $cs-pos-level-left: 460px !default;
-$cs-pos-level-top: 9px !default;
+$cs-pos-level-top: 17px !default;
 $cs-pos-portrait-left: 34px !default;
 $cs-pos-portrait-top: 75px !default;
 $cs-pos-languages-left: 318px !default;
 $cs-pos-languages-top: 183px !default;
 $cs-pos-xpmod-left: 530px !default;
-$cs-pos-xpmod-top: 9px !default;
+$cs-pos-xpmod-top: 12px !default;
 $cs-pos-xp-left: 319px !default;
 $cs-pos-xp-top: 74px !default;
 $cs-pos-next-left: 460px !default;
@@ -121,16 +186,14 @@ $cs-portrait-height: 183px !default;   /* 3:4 aspect ratio (portrait orientation
    2:3 portrait: width: 138px, height: 207px */
 
 /* Additional header / field position presets discovered during sweep */
-$cs-pos-name-left: 40px !default;
-$cs-pos-name-top: 30px !default;
-$cs-pos-namegroup-left: 33px !default;
-$cs-pos-namegroup-top: 5px !default;
-$cs-pos-class-left: 319px !default;
-$cs-pos-class-top: 3px !default;
+$cs-pos-namegroup-left: 45px !default;
+$cs-pos-namegroup-top: 14px !default;
+$cs-pos-class-left: 324px !default;
+$cs-pos-class-top: 14px !default;
 $cs-pos-alignment-left: 319px !default;
 $cs-pos-alignment-top: 125px !default;
 $cs-pos-race-left: 179px !default;
-$cs-pos-race-top: 74px !default;
+$cs-pos-race-top: 70px !default;
 $cs-pos-age-left: 179px !default;
 $cs-pos-age-top: 129px !default;
 $cs-pos-sex-left: 249px !default;
@@ -765,30 +828,32 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .encumbrance-section .encumbrance-bar { width: var(--encumbrance-width, 0%); }
 
 /* Level progress helpers */
-.cs-level-progress-bar { position: absolute; top: 0; left: 0; height: 100%; border-radius: 3px; background-color: rgba(112, 66, 21, 0.8); width: 0%; transition: width 0.3s ease; }
+.cs-level-progress-bar { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    height: 100%; 
+    border-radius: 3px; 
+    background-color: rgba(112, 66, 21, 0.8); 
+    width: 0%; 
+    transition: width 0.3s ease; 
+}
+
 .cs-level-display {
-  /* Removed conflicting @extend mixins - using manual centering instead */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   line-height: 1;
   box-sizing: border-box;
-  
-  position: absolute;
-  top: 2px;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  width: 62px;
+  height: 31px;
   font-size: 34px;
   color: #704214;
   z-index: var(--z-level, 8);
   font-family: 'Handwritten', cursive;
   background: transparent !important;
   box-shadow: none !important;
-  
-  /* Level numbers need precise centering - adjust for visual weight */
-  transform: translateY(0.7em) !important;
 }
 
 /* Portrait helpers - configurable dimensions via CSS variables */
@@ -833,25 +898,19 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   appearance: none;
   margin: 0;
   color: inherit;
-  
-  /* Input fields need compensation for visual border weight */
   padding: 0.05em 0 0 0;
-  transform: translateY(0.09em);
 }
 .cs-xp-mod-display {
   @extend %visual-center-medium;
   @extend %numeric-center;
   @extend %rectangular-container-center;
   
-  width: 64px;
-  height: 34px;
+  width: 62px;
+  height: 31px;
   pointer-events: none;
   font-size: 34px;
-  
-  /* XP modifier percentages with + signs need special centering */
-  transform: translateY(0.09em);
-  text-indent: -0.008em;
 }
+
 .cs-xp-display {
   @extend %visual-center-medium;
   @extend %numeric-center;
@@ -862,9 +921,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   cursor: pointer;
   pointer-events: auto;
   font-size: 34px;
-  
-  /* XP values are numbers that need precise centering */
-  transform: translateY(0.09em);
 }
 /* Next Level field class moved below - see .cs-next-level-field for independent control */
 
@@ -974,37 +1030,6 @@ input[type="number"] {
   transform: translateY(-0.03em);
 }
 
-/* Field-specific fine-tuning classes for JavaScript application */
-.cs-level-field-adjust {
-  /* Specific adjustment for level field if needed */
-  transform: translateY(0.04em) !important;
-}
-
-.cs-xp-mod-field-adjust {
-  /* Specific adjustment for XP modifier field */
-  transform: translateY(-0.015em) !important;
-  text-indent: -0.01em !important;
-}
-
-/* Custom field-specific adjustments - add your own here */
-.cs-custom-level-fix {
-  /* Custom level field adjustment */
-  transform: translateY(0.015em) !important;
-  text-indent: -0.005em !important;
-}
-
-.cs-custom-xp-mod-fix {
-  /* Custom XP modifier adjustment */
-  transform: translateY(-0.025em) !important;
-  text-indent: -0.012em !important;
-}
-
-.cs-custom-name-fix {
-  /* Custom character name adjustment */
-  transform: translateY(-0.005em) !important;
-  letter-spacing: 0.005em !important;
-}
-
 /* Add more custom classes as needed */
 .cs-custom-ability-fix {
   /* Custom ability score adjustment */
@@ -1037,8 +1062,8 @@ input[type="number"] {
   @extend %input-visual-center;
   @extend %visual-center-medium;
   
-  width: 280px;
-  height: 34px;
+  width: 269px;
+  height: 31px;
   font-family: 'Handwritten', cursive;
   font-size: 34px;
   color: #704214 !important;
@@ -1051,12 +1076,9 @@ input[type="number"] {
   text-overflow: clip;
   border: none;
   pointer-events: auto;
-  
-  /* Character names need balanced centering for variable text length */
-  padding: 0.05em 2px 0 2px;
-  transform: translateY(0.24em) !important;
+  padding: 1px 2px 0 2px;
 }
-.cs-select-large {
+.cs-class-select {
   /* Removed conflicting @extend mixins - using manual centering instead */
   display: flex;
   align-items: center;
@@ -1065,8 +1087,8 @@ input[type="number"] {
   line-height: 1;
   box-sizing: border-box;
   
-  width: 134px;
-  height: 34px;
+  width: 128px;
+  height: 31px;
   font-size: 34px;
   background-color: transparent !important;
   box-shadow: none !important;
@@ -1074,35 +1096,12 @@ input[type="number"] {
   margin: 0;
   border: none;
   pointer-events: auto;
-  
-  /* Large select elements need centered text - multiple centering approaches */
-  padding: 0.05em 5px 0 5px;
-  transform: translateY(0.25em) !important;
+  padding: 1px 2px 0 2px;
   
   /* Alternative centering methods if transform doesn't work */
-  line-height: 1.1 !important;        /* Adjust line height */
   vertical-align: middle !important;   /* Vertical alignment */
 }
 
-.cs-select-small {
-  @extend %input-visual-center;
-  @extend %visual-center-medium;
-  @extend %numeric-center;
-  
-  width: 63px;
-  height: 34px;
-  font-size: 34px;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  appearance: none;
-  margin: 0;
-  border: none;
-  pointer-events: auto;
-  
-  /* Small select elements - often contain numbers */
-  padding: 0.04em 0 0 0;
-  transform: translateY(-0.03em);
-}
 /* Background field - separate class for independent control */
 .cs-background-select {
   /* Inherit base layout from large selects but allow independent styling */
@@ -1192,7 +1191,6 @@ input[type="number"] {
   cursor: pointer;
   
   /* Visual centering */
-  transform: translateY(0.11em) !important;
   vertical-align: middle;
   
   /* Focus states - customize as needed */
@@ -1669,7 +1667,6 @@ input[type="number"] {
 .cs-pos-sep { --bottom: 0; --left: 0; --right: 0; --height: 1px; --bg: transparent; --z: var(--z-labels, 15); }
 
 /* Header / small-field presets discovered during the sweep */
-.cs-pos-name { --left: #{$cs-pos-name-left}; --top: #{$cs-pos-name-top}; --z: var(--z-labels, 15); }
 .cs-pos-namegroup { --left: #{$cs-pos-namegroup-left}; --top: #{$cs-pos-namegroup-top}; --z: var(--z-labels, 15); }
 .cs-pos-class { --left: #{$cs-pos-class-left}; --top: #{$cs-pos-class-top}; --z: var(--z-labels, 15); }
 .cs-pos-alignment { --left: #{$cs-pos-alignment-left}; --top: #{$cs-pos-alignment-top}; --z: var(--z-labels, 15); }

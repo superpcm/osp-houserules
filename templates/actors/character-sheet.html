@@ -1528,6 +1528,661 @@
   }
   </script>
 
+  <!-- Position Adjustment Tool - Only active when debug borders are enabled -->
+  <script>
+    // Position Adjustment Tool - Only works when debug is enabled
+    (function() {
+      'use strict';
+      
+      let currentTool = null;
+      let currentElement = null;
+      let cssVariableMap = {}; // Maps element classes to their CSS variables
+      
+      // Initialize CSS variable mapping for positioned elements
+      function initializeVariableMap() {
+        cssVariableMap = {
+          'cs-pos-name': { left: '$cs-pos-name-left', top: '$cs-pos-name-top' },
+          'cs-pos-namegroup': { left: '$cs-pos-namegroup-left', top: '$cs-pos-namegroup-top' },
+          'cs-pos-class': { left: '$cs-pos-class-left', top: '$cs-pos-class-top' },
+          'cs-pos-alignment': { left: '$cs-pos-alignment-left', top: '$cs-pos-alignment-top' },
+          'cs-pos-race': { left: '$cs-pos-race-left', top: '$cs-pos-race-top' },
+          'cs-pos-age': { left: '$cs-pos-age-left', top: '$cs-pos-age-top' },
+          'cs-pos-sex': { left: '$cs-pos-sex-left', top: '$cs-pos-sex-top' },
+          'cs-pos-height': { left: '$cs-pos-height-left', top: '$cs-pos-height-top' },
+          'cs-pos-weight': { left: '$cs-pos-weight-left', top: '$cs-pos-weight-top' },
+          'cs-pos-background': { left: '$cs-pos-background-left', top: '$cs-pos-background-top' },
+          'cs-pos-languages': { left: '$cs-pos-languages-left', top: '$cs-pos-languages-top' },
+          'cs-pos-xp': { left: '$cs-pos-xp-left', top: '$cs-pos-xp-top' },
+          'cs-pos-xpmod': { left: '$cs-pos-xpmod-left', top: '$cs-pos-xpmod-top' },
+          'cs-pos-level': { left: '$cs-pos-level-left', top: '$cs-pos-level-top' },
+          'cs-pos-portrait': { left: '$cs-pos-portrait-left', top: '$cs-pos-portrait-top' },
+          'cs-pos-next': { left: '$cs-pos-next-left', top: '$cs-pos-next-top' },
+          // Individual save value positioning
+          'cs-pos-save-death': { left: '$cs-pos-save-death-left', top: '$cs-pos-save-death-top' },
+          'cs-pos-save-wands': { left: '$cs-pos-save-wands-left', top: '$cs-pos-save-wands-top' },
+          'cs-pos-save-paralysis': { left: '$cs-pos-save-paralysis-left', top: '$cs-pos-save-paralysis-top' },
+          'cs-pos-save-breath': { left: '$cs-pos-save-breath-left', top: '$cs-pos-save-breath-top' },
+          'cs-pos-save-spells': { left: '$cs-pos-save-spells-left', top: '$cs-pos-save-spells-top' },
+          // Individual save label positioning
+          'cs-pos-save-label-death': { left: '$cs-pos-save-label-death-left', top: '$cs-pos-save-label-death-top' },
+          'cs-pos-save-label-wands': { left: '$cs-pos-save-label-wands-left', top: '$cs-pos-save-label-wands-top' },
+          'cs-pos-save-label-paralysis': { left: '$cs-pos-save-label-paralysis-left', top: '$cs-pos-save-label-paralysis-top' },
+          'cs-pos-save-label-breath': { left: '$cs-pos-save-label-breath-left', top: '$cs-pos-save-label-breath-top' },
+          'cs-pos-save-label-spells': { left: '$cs-pos-save-label-spells-left', top: '$cs-pos-save-label-spells-top' },
+          'cs-pos-save-label': { left: '$cs-pos-save-label-left', top: '$cs-pos-save-label-top' },
+          // Add pseudo-positioning for elements that don't have dedicated CSS variables
+          'ability-scores-section': { left: 'inline-left', top: 'inline-top' },
+          'cs-combat-stats': { left: 'inline-left', top: 'inline-top' },
+          'cs-save-group': { left: 'inline-left', top: 'inline-top' }
+        };
+      }
+      
+      // Check if debug borders are enabled by looking for the red dashed border style
+      function isDebugEnabled() {
+        const testEl = document.querySelector('.cs-char-name');
+        if (!testEl) return false;
+        const style = window.getComputedStyle(testEl);
+        return style.borderStyle.includes('dashed') && style.borderColor.includes('rgb(255, 0, 0)');
+      }
+      
+      // Get position class from element
+      function getPositionClass(element) {
+        const classes = Array.from(element.classList);
+        const posClass = classes.find(cls => cls.startsWith('cs-pos-'));
+        if (posClass) return posClass;
+        
+        // For elements without direct position classes, check their class names
+        if (element.classList.contains('ability-scores-section')) return 'ability-scores-section';
+        if (element.classList.contains('cs-combat-stats')) return 'cs-combat-stats';
+        if (element.classList.contains('cs-save-group')) return 'cs-save-group';
+        
+        return null;
+      }
+      
+      // Extract current pixel values from styles
+      function getCurrentValues(element) {
+        const rect = element.getBoundingClientRect();
+        const style = window.getComputedStyle(element);
+        
+        // For position values, we need to handle elements positioned relative to their container
+        let currentLeft = 0;
+        let currentTop = 0;
+        
+        // If element already has inline positioning, use those values
+        if (element.style.left) {
+          currentLeft = parseInt(element.style.left);
+        } else {
+          // Calculate position relative to the offsetParent (positioning context)
+          const parentRect = element.offsetParent ? element.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
+          currentLeft = Math.round(rect.left - parentRect.left);
+        }
+        
+        if (element.style.top) {
+          currentTop = parseInt(element.style.top);
+        } else {
+          // Calculate position relative to the offsetParent (positioning context)
+          const parentRect = element.offsetParent ? element.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
+          currentTop = Math.round(rect.top - parentRect.top);
+        }
+        
+        return {
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+          x: currentLeft,
+          y: currentTop
+        };
+      }
+      
+      // Create the position adjustment tool UI
+      function createPositionTool(element) {
+        if (currentTool) {
+          document.body.removeChild(currentTool);
+        }
+        
+        const posClass = getPositionClass(element);
+        if (!posClass || !cssVariableMap[posClass]) {
+          console.warn('No CSS variable mapping found for element', element);
+          return;
+        }
+        
+        currentElement = element;
+        const values = getCurrentValues(element);
+        
+        const tool = document.createElement('div');
+        tool.className = 'cs-position-tool';
+        tool.innerHTML = `
+          <div class="tool-header">
+            <span>Position Tool: ${posClass}</span>
+            <button class="close-btn" onclick="closePositionTool()">✕</button>
+          </div>
+          
+          <div class="tool-section">
+            <div class="section-title">Position (pixels)</div>
+            <div class="controls">
+              <span class="control-label">X:</span>
+              <div class="control-buttons">
+                <button onclick="adjustValue('x', -1)">-</button>
+                <button onclick="adjustValue('x', 1)">+</button>
+              </div>
+              <span class="control-value" id="x-value">${values.x}px</span>
+            </div>
+            <div class="controls">
+              <span class="control-label">Y:</span>
+              <div class="control-buttons">
+                <button onclick="adjustValue('y', -1)">-</button>
+                <button onclick="adjustValue('y', 1)">+</button>
+              </div>
+              <span class="control-value" id="y-value">${values.y}px</span>
+            </div>
+          </div>
+          
+          <div class="tool-section">
+            <div class="section-title">Size (pixels)</div>
+            <div class="controls">
+              <span class="control-label">Width:</span>
+              <div class="control-buttons">
+                <button onclick="adjustValue('width', -1)">-</button>
+                <button onclick="adjustValue('width', 1)">+</button>
+              </div>
+              <span class="control-value" id="width-value">${values.width}px</span>
+            </div>
+            <div class="controls">
+              <span class="control-label">Height:</span>
+              <div class="control-buttons">
+                <button onclick="adjustValue('height', -1)">-</button>
+                <button onclick="adjustValue('height', 1)">+</button>
+              </div>
+              <span class="control-value" id="height-value">${values.height}px</span>
+            </div>
+          </div>
+          
+          <div class="tool-footer">
+            <button class="save-btn" onclick="saveToCSSFile()">Save to CSS</button>
+            <button class="reset-btn" onclick="resetValues()">Reset</button>
+            <button id="toggle-borders-btn" class="toggle-btn" onclick="toggleDiagnosticBorders()">Hide Borders</button>
+          </div>
+        `;
+        
+        document.body.appendChild(tool);
+        currentTool = tool;
+        
+        // Make the tool draggable
+        makeDraggable(tool);
+        
+        // Store original values for reset
+        tool._originalValues = values;
+        tool._positionClass = posClass;
+      }
+      
+      // Force resize with high specificity and multiple approaches
+      function forceResize(element, property, value) {
+        console.log('Force resizing:', element, property, value);
+        
+        // Apply with !important to override CSS specificity
+        element.style.setProperty(property, value, 'important');
+        
+        // Also try setting box-sizing to ensure consistent behavior
+        element.style.setProperty('box-sizing', 'border-box', 'important');
+        
+        // For certain elements, also set min/max constraints
+        if (property === 'width') {
+          element.style.setProperty('min-width', '0', 'important');
+          element.style.setProperty('max-width', 'none', 'important');
+          
+          // For input elements, also try setting size attribute
+          if (element.tagName === 'INPUT' || element.tagName === 'SELECT') {
+            element.style.setProperty('width', value, 'important');
+            // Remove any conflicting flex or grid properties
+            element.style.setProperty('flex', 'none', 'important');
+            element.style.setProperty('flex-grow', '0', 'important');
+            element.style.setProperty('flex-shrink', '0', 'important');
+          }
+        }
+        if (property === 'height') {
+          element.style.setProperty('min-height', '0', 'important');
+          element.style.setProperty('max-height', 'none', 'important');
+          
+          // For input elements, ensure height takes effect
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.style.setProperty('height', value, 'important');
+            element.style.setProperty('line-height', 'normal', 'important');
+          }
+        }
+        
+        // Force a reflow to ensure the changes take effect
+        void element.offsetHeight;
+      }
+      
+      // Make tool draggable
+      function makeDraggable(toolElement) {
+        const header = toolElement.querySelector('.tool-header');
+        let isDragging = false;
+        let startX, startY, startLeft, startTop;
+        
+        header.style.cursor = 'move';
+        header.style.userSelect = 'none';
+        
+        header.addEventListener('mousedown', function(e) {
+          if (e.target.classList.contains('close-btn')) return; // Don't drag when clicking close button
+          
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          
+          const rect = toolElement.getBoundingClientRect();
+          startLeft = rect.left;
+          startTop = rect.top;
+          
+          // Remove transform to use absolute positioning
+          toolElement.style.transform = 'none';
+          toolElement.style.left = startLeft + 'px';
+          toolElement.style.top = startTop + 'px';
+          
+          e.preventDefault();
+        });
+        
+        document.addEventListener('mousemove', function(e) {
+          if (!isDragging) return;
+          
+          const deltaX = e.clientX - startX;
+          const deltaY = e.clientY - startY;
+          
+          toolElement.style.left = (startLeft + deltaX) + 'px';
+          toolElement.style.top = (startTop + deltaY) + 'px';
+        });
+        
+        document.addEventListener('mouseup', function() {
+          isDragging = false;
+        });
+      }
+      
+      // Adjust value and update display
+      window.adjustValue = function(property, delta) {
+        if (!currentElement || !currentTool) return;
+        
+        console.log('=== DEBUGGING ADJUSTMENT ===');
+        console.log('Property:', property, 'Delta:', delta);
+        console.log('Element:', currentElement);
+        console.log('Current computed style position:', window.getComputedStyle(currentElement).position);
+        console.log('Current computed style display:', window.getComputedStyle(currentElement).display);
+        console.log('Current getBoundingClientRect():', currentElement.getBoundingClientRect());
+        console.log('Current style.left:', currentElement.style.left);
+        console.log('Current style.top:', currentElement.style.top);
+        console.log('Current style.width:', currentElement.style.width);
+        console.log('Current style.height:', currentElement.style.height);
+        
+        switch(property) {
+          case 'x':
+            // For positioning, we need to account for the element's positioning context
+            let currentLeft;
+            if (currentElement.style.left) {
+              // Already has inline positioning, use that
+              currentLeft = parseInt(currentElement.style.left);
+            } else {
+              // Calculate position relative to the offsetParent (positioning context)
+              const rect = currentElement.getBoundingClientRect();
+              const parentRect = currentElement.offsetParent ? currentElement.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
+              currentLeft = Math.round(rect.left - parentRect.left);
+              console.log('X: No existing left value, calculated relative position:', currentLeft);
+              console.log('X: Element rect.left:', rect.left, 'Parent rect.left:', parentRect.left);
+            }
+            
+            const newLeft = currentLeft + delta;
+            console.log('X: Setting left from', currentLeft, 'to', newLeft);
+            
+            currentElement.style.setProperty('position', 'absolute', 'important');
+            currentElement.style.setProperty('left', newLeft + 'px', 'important');
+            // Clear any conflicting positioning
+            currentElement.style.setProperty('right', 'auto', 'important');
+            
+            // Update border if it exists and borders are visible
+            if (typeof bordersVisible !== 'undefined' && bordersVisible) {
+              currentElement.style.setProperty('border', '0.5px dashed red', 'important');
+            }
+            
+            document.getElementById('x-value').textContent = newLeft + 'px';
+            
+            console.log('After X change - getBoundingClientRect():', currentElement.getBoundingClientRect());
+            break;
+            
+          case 'y':
+            // For positioning, we need to account for the element's positioning context
+            let currentTop;
+            if (currentElement.style.top) {
+              // Already has inline positioning, use that
+              currentTop = parseInt(currentElement.style.top);
+            } else {
+              // Calculate position relative to the offsetParent (positioning context)
+              const rect = currentElement.getBoundingClientRect();
+              const parentRect = currentElement.offsetParent ? currentElement.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
+              currentTop = Math.round(rect.top - parentRect.top);
+              console.log('Y: No existing top value, calculated relative position:', currentTop);
+              console.log('Y: Element rect.top:', rect.top, 'Parent rect.top:', parentRect.top);
+            }
+            
+            const newTop = currentTop + delta;
+            console.log('Y: Setting top from', currentTop, 'to', newTop);
+            
+            currentElement.style.setProperty('position', 'absolute', 'important');
+            currentElement.style.setProperty('top', newTop + 'px', 'important');
+            // Clear any conflicting positioning
+            currentElement.style.setProperty('bottom', 'auto', 'important');
+            
+            // Update border if it exists and borders are visible
+            if (typeof bordersVisible !== 'undefined' && bordersVisible) {
+              currentElement.style.setProperty('border', '0.5px dashed red', 'important');
+            }
+            
+            document.getElementById('y-value').textContent = newTop + 'px';
+            
+            console.log('After Y change - getBoundingClientRect():', currentElement.getBoundingClientRect());
+            break;
+            
+          case 'width':
+            const currentRect = currentElement.getBoundingClientRect();
+            const currentWidth = Math.round(currentRect.width);
+            const newWidth = Math.max(10, currentWidth + delta);
+            
+            console.log('Width: Changing from', currentWidth, 'to', newWidth);
+            
+            // Try different approaches based on element type
+            if (currentElement.tagName === 'INPUT' || currentElement.tagName === 'SELECT' || currentElement.tagName === 'TEXTAREA') {
+              console.log('Form element detected, using form-specific approach');
+              currentElement.style.setProperty('width', newWidth + 'px', 'important');
+              currentElement.style.setProperty('min-width', 'auto', 'important');
+              currentElement.style.setProperty('max-width', 'none', 'important');
+            } else {
+              console.log('Non-form element, using standard approach');
+              currentElement.style.setProperty('width', newWidth + 'px', 'important');
+              currentElement.style.setProperty('min-width', '0', 'important');
+              currentElement.style.setProperty('max-width', 'none', 'important');
+            }
+            
+            // Update border to match new dimensions (only if borders are visible)
+            if (typeof bordersVisible !== 'undefined' && bordersVisible) {
+              // Remove any existing border first to avoid doubling
+              currentElement.style.removeProperty('border');
+              // Force reflow
+              void currentElement.offsetHeight;
+              // Apply the diagnostic border inline to match new dimensions
+              currentElement.style.setProperty('border', '0.5px dashed red', 'important');
+            }
+            
+            document.getElementById('width-value').textContent = newWidth + 'px';
+            
+            setTimeout(() => {
+              const afterRect = currentElement.getBoundingClientRect();
+              console.log('Width verification: expected', newWidth, 'actual', Math.round(afterRect.width));
+            }, 100);
+            break;
+            
+          case 'height':
+            const currentRectH = currentElement.getBoundingClientRect();
+            const currentHeight = Math.round(currentRectH.height);
+            const newHeight = Math.max(10, currentHeight + delta);
+            
+            console.log('Height: Changing from', currentHeight, 'to', newHeight);
+            
+            // Try different approaches based on element type
+            if (currentElement.tagName === 'INPUT' || currentElement.tagName === 'SELECT' || currentElement.tagName === 'TEXTAREA') {
+              console.log('Form element detected, using form-specific approach');
+              currentElement.style.setProperty('height', newHeight + 'px', 'important');
+              currentElement.style.setProperty('min-height', 'auto', 'important');
+              currentElement.style.setProperty('max-height', 'none', 'important');
+            } else {
+              console.log('Non-form element, using standard approach');
+              currentElement.style.setProperty('height', newHeight + 'px', 'important');
+              currentElement.style.setProperty('min-height', '0', 'important');
+              currentElement.style.setProperty('max-height', 'none', 'important');
+            }
+            
+            // Update border to match new dimensions (only if borders are visible)
+            if (typeof bordersVisible !== 'undefined' && bordersVisible) {
+              // Remove any existing border first to avoid doubling
+              currentElement.style.removeProperty('border');
+              // Force reflow
+              void currentElement.offsetHeight;
+              // Apply the diagnostic border inline to match new dimensions
+              currentElement.style.setProperty('border', '0.5px dashed red', 'important');
+            }
+            
+            document.getElementById('height-value').textContent = newHeight + 'px';
+            
+            setTimeout(() => {
+              const afterRectH = currentElement.getBoundingClientRect();
+              console.log('Height verification: expected', newHeight, 'actual', Math.round(afterRectH.height));
+            }, 100);
+            break;
+        }
+        
+        console.log('=== END DEBUGGING ===');
+      };
+      
+      // Close the tool
+      window.closePositionTool = function() {
+        if (currentTool) {
+          document.body.removeChild(currentTool);
+          currentTool = null;
+          currentElement = null;
+        }
+      };
+      
+      // Reset to original values
+      window.resetValues = function() {
+        if (!currentElement || !currentTool) return;
+        
+        // Clear all positioning and sizing styles
+        currentElement.style.removeProperty('position');
+        currentElement.style.removeProperty('left');
+        currentElement.style.removeProperty('top');
+        currentElement.style.removeProperty('width');
+        currentElement.style.removeProperty('height');
+        currentElement.style.removeProperty('min-width');
+        currentElement.style.removeProperty('max-width');
+        currentElement.style.removeProperty('min-height');
+        currentElement.style.removeProperty('max-height');
+        currentElement.style.removeProperty('box-sizing');
+        
+        // Update display values
+        const values = getCurrentValues(currentElement);
+        document.getElementById('x-value').textContent = values.x + 'px';
+        document.getElementById('y-value').textContent = values.y + 'px';
+        document.getElementById('width-value').textContent = values.width + 'px';
+        document.getElementById('height-value').textContent = values.height + 'px';
+      };
+
+      // Toggle diagnostic borders
+      let bordersVisible = true;
+      window.toggleDiagnosticBorders = function() {
+        const button = document.getElementById('toggle-borders-btn');
+        // Match all the selectors from the SCSS debug system
+        const formFields = document.querySelectorAll(`
+          input, select, textarea, button,
+          .cs-char-name,
+          .cs-class-select,
+          .cs-background-select,
+          .cs-race-select,
+          .cs-alignment-select,
+          .cs-age-field,
+          .cs-sex-field,
+          .cs-height-field,
+          .cs-weight-field,
+          .char-height,
+          .char-weight,
+          .cs-languages-field,
+          .languages-tags,
+          .char-languages,
+          .cs-input-small,
+          .cs-input-medium,
+          .cs-select-inline,
+          .cs-listening-select,
+          .cs-bio-textarea,
+          .cs-ability-select,
+          .attr-str,
+          .attr-dex,
+          .attr-con,
+          .attr-int,
+          .attr-wis,
+          .attr-cha,
+          .cs-save-value,
+          .cs-save-badge,
+          .cs-combat-input,
+          .cs-portrait-img,
+          .portrait-img,
+          .cs-portrait-display,
+          .portrait-display,
+          .cs-level-display,
+          .cs-xp-display,
+          .cs-xp-mod-display,
+          .cs-next-level-field,
+          input[name*="height"],
+          input[name*="weight"],
+          input[name*="languages"],
+          select[name*="attributes"]
+        `);
+
+        if (bordersVisible) {
+          // Hide borders - use !important to override CSS
+          formFields.forEach(field => {
+            field.style.setProperty('border', 'none', 'important');
+          });
+          button.textContent = 'Show Borders';
+          button.style.background = '#4CAF50';
+          bordersVisible = false;
+        } else {
+          // Show borders - remove the override to restore CSS borders
+          formFields.forEach(field => {
+            field.style.removeProperty('border');
+          });
+          button.textContent = 'Hide Borders';
+          button.style.background = '#2196F3';
+          bordersVisible = true;
+        }
+      };
+      
+      // Save changes to CSS file (placeholder - would need server-side implementation)
+      window.saveToCSSFile = function() {
+        if (!currentElement || !currentTool) return;
+        
+        const posClass = currentTool._positionClass;
+        const mapping = cssVariableMap[posClass];
+        if (!mapping) return;
+        
+        const currentLeft = parseInt(currentElement.style.left) || 0;
+        const currentTop = parseInt(currentElement.style.top) || 0;
+        
+        // Check if this is an inline-positioned element
+        if (mapping.left === 'inline-left' && mapping.top === 'inline-top') {
+          console.log('Inline positioning saved:', {
+            class: posClass,
+            element: currentElement.className,
+            leftValue: currentLeft + 'px',
+            topValue: currentTop + 'px'
+          });
+          
+          // Show confirmation for inline positioning
+          alert(`Inline positioning saved!\nElement: ${posClass}\nLeft: ${currentLeft}px\nTop: ${currentTop}px\n\nNote: This uses inline styles, not CSS variables.`);
+        } else {
+          // In a real implementation, this would make an API call to update the SCSS file
+          console.log('Save to CSS:', {
+            class: posClass,
+            leftVar: mapping.left,
+            topVar: mapping.top,
+            leftValue: currentLeft + 'px',
+            topValue: currentTop + 'px'
+          });
+          
+          // Show confirmation
+          alert('Changes saved!\n' + mapping.left + ': ' + currentLeft + 'px\n' + mapping.top + ': ' + currentTop + 'px\n\nNote: This is a placeholder. Server-side implementation needed.');
+        }
+        
+        closePositionTool();
+      };
+      
+      // Add right-click event listener to positioned elements with debug borders
+      function addPositionToolListeners() {
+        console.log('addPositionToolListeners called');
+        console.log('Debug enabled:', isDebugEnabled());
+        
+        if (!isDebugEnabled()) return;
+        
+        // Find all elements with cs-pos-* classes that also have debug borders
+        const positionedElements = document.querySelectorAll('[class*="cs-pos-"]');
+        console.log('Found positioned elements:', positionedElements.length);
+        
+        positionedElements.forEach(element => {
+          element.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            createPositionTool(this);
+          });
+          
+          // Add visual indicator that right-click is available
+          element.style.cursor = 'context-menu';
+          element.title = (element.title || '') + ' (Right-click for position tool)';
+        });
+        
+        // Also add listeners to specific form elements that have diagnostic borders but don't have positioning classes
+        const formElements = document.querySelectorAll(`
+          .cs-ability-select,
+          .attr-str, .attr-dex, .attr-con, .attr-int, .attr-wis, .attr-cha,
+          .cs-save-value,
+          .cs-save-badge,
+          .cs-xp-display,
+          .cs-xp-mod-display,
+          .cs-next-level-field
+        `);
+        
+        console.log('Found form elements:', formElements.length);
+        
+        formElements.forEach(element => {
+          console.log('Checking form element:', element.className);
+          
+          // Find the closest parent with a cs-pos-* class for these elements
+          let positionedParent = element.closest('[class*="cs-pos-"]');
+          
+          // If no cs-pos-* parent found, try specific container classes
+          if (!positionedParent) {
+            positionedParent = element.closest('.ability-scores-section, .cs-combat-stats, .cs-save-group');
+            console.log('Found alternative parent:', positionedParent?.className);
+          }
+          
+          if (positionedParent) {
+            element.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+              console.log('Right-click on form element, opening tool for parent:', positionedParent.className);
+              createPositionTool(positionedParent);
+            });
+            
+            // Add visual indicator that right-click is available
+            element.style.cursor = 'context-menu';
+            element.title = (element.title || '') + ' (Right-click for position tool)';
+            console.log('Added listener to:', element.className);
+          } else {
+            console.log('No positioned parent found for:', element.className);
+          }
+        });
+      }
+      
+      // Initialize when DOM is ready
+      function init() {
+        initializeVariableMap();
+        
+        // Check if debug is enabled and add listeners
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(addPositionToolListeners, 100);
+          });
+        } else {
+          setTimeout(addPositionToolListeners, 100);
+        }
+      }
+      
+      // Start initialization
+      init();
+      
+    })();
+  </script>
+
   <!-- Character Level - Positioned behind everything -->
   <div class="level-progress-bar-container cs-level-container cs-abs cs-pos-level" id="level-container">
     <!-- Shadow overlay for Level field -->
@@ -1905,12 +2560,12 @@
           <!-- Saving Throw Groups - Positioned relative to combat section -->
           <!-- Death Ray/Poison Group -->
           <div class="save-group-death cs-save-group">
-            <div class="save death-save cs-save">
+            <div class="save death-save cs-save cs-abs cs-pos-save-death">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.death.value}}</span>
               </div>
             </div>
-            <div class="save-label-death cs-save-label cs-abs cs-pos-save-label">
+            <div class="save-label-death cs-save-label cs-abs cs-pos-save-label-death">
               <svg width="400" height="60">
                 <defs>
                   <path id="deathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
@@ -1926,12 +2581,12 @@
 
           <!-- Wands Group -->
           <div class="save-group-wands cs-save-group">
-            <div class="save wands-save cs-save">
+            <div class="save wands-save cs-save cs-abs cs-pos-save-wands">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.wands.value}}</span>
               </div>
             </div>
-            <div class="save-label-wands cs-save-label cs-abs cs-pos-save-label">
+            <div class="save-label-wands cs-save-label cs-abs cs-pos-save-label-wands">
               <svg width="400" height="60">
                 <defs>
                   <path id="wandsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
@@ -1947,12 +2602,12 @@
 
           <!-- Paralysis Group -->
           <div class="save-group-paralysis cs-save-group">
-            <div class="save paralysis-save cs-save">
+            <div class="save paralysis-save cs-save cs-abs cs-pos-save-paralysis">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.paralysis.value}}</span>
               </div>
             </div>
-            <div class="save-label-paralysis cs-save-label cs-abs cs-pos-save-label">
+            <div class="save-label-paralysis cs-save-label cs-abs cs-pos-save-label-paralysis">
               <svg width="400" height="60">
                 <defs>
                   <path id="paralysisTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
@@ -1968,12 +2623,12 @@
 
           <!-- Breath Attacks Group -->
           <div class="save-group-breath cs-save-group">
-            <div class="save breath-save cs-save">
+            <div class="save breath-save cs-save cs-abs cs-pos-save-breath">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.breath.value}}</span>
               </div>
             </div>
-            <div class="save-label-breath cs-save-label cs-abs cs-pos-save-label">
+            <div class="save-label-breath cs-save-label cs-abs cs-pos-save-label-breath">
               <svg width="400" height="60">
                 <defs>
                   <path id="breathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
@@ -1989,12 +2644,12 @@
 
           <!-- Spells/Rods/Staves Group -->
           <div class="save-group-spells cs-save-group">
-            <div class="save spells-save cs-save">
+            <div class="save spells-save cs-save cs-abs cs-pos-save-spells">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.spells.value}}</span>
               </div>
             </div>
-            <div class="save-label-spells cs-save-label cs-abs cs-pos-save-label">
+            <div class="save-label-spells cs-save-label cs-abs cs-pos-save-label-spells">
               <svg width="400" height="60">
                 <defs>
                   <path id="spellsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>

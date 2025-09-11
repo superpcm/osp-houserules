@@ -97,7 +97,7 @@ $debug-form-fields: true; // Change to false to disable
 /* Form Field Debug - Controlled by $debug-form-fields variable */
 @if $debug-form-fields {
   input, select, textarea, button {
-    border: 1px dashed red !important;
+    border: 0.5px dashed red !important;
   }
   
   /* Additional form field types */
@@ -134,8 +134,11 @@ $debug-form-fields: true; // Change to false to disable
   .portrait-img,
   .cs-portrait-display,
   .portrait-display,
-  .cs-level-display {
-    border: 1px dashed red !important;
+  .cs-level-display,
+  .cs-xp-display,
+  .cs-xp-mod-display,
+  .cs-next-level-field {
+    border: 0.5px dashed red !important;
   }
   
   /* High specificity rules for stubborn elements */
@@ -150,7 +153,158 @@ $debug-form-fields: true; // Change to false to disable
     .attr-int,
     .attr-wis,
     .attr-cha {
-      border: 1px dashed red !important;
+      border: 0.5px dashed red !important;
+    }
+  }
+  
+  /* Position Adjustment Tool - Only visible when debug is enabled */
+  .cs-position-tool {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #2a2a2a;
+    border: 2px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    color: #fff;
+    font-family: monospace;
+    font-size: 12px;
+    z-index: 10000;
+    min-width: 280px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    
+    .tool-header {
+      background: #333;
+      margin: -15px -15px 10px -15px;
+      padding: 8px 15px;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 1px solid #555;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .close-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        padding: 2px 6px;
+        cursor: pointer;
+        font-size: 11px;
+        
+        &:hover {
+          background: #c0392b;
+        }
+      }
+    }
+    
+    .tool-section {
+      margin-bottom: 12px;
+      
+      .section-title {
+        color: #bbb;
+        margin-bottom: 6px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .controls {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 5px;
+        align-items: center;
+        margin-bottom: 4px;
+        
+        .control-label {
+          min-width: 50px;
+          color: #ccc;
+        }
+        
+        .control-buttons {
+          display: flex;
+          gap: 2px;
+          justify-content: center;
+          
+          button {
+            background: #444;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 3px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 11px;
+            min-width: 25px;
+            
+            &:hover {
+              background: #555;
+            }
+            
+            &:active {
+              background: #333;
+            }
+          }
+        }
+        
+        .control-value {
+          color: #4CAF50;
+          font-weight: bold;
+          text-align: right;
+          min-width: 50px;
+        }
+      }
+    }
+    
+    .tool-footer {
+      border-top: 1px solid #555;
+      padding-top: 8px;
+      margin-top: 12px;
+      text-align: center;
+      
+      .save-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 20px;
+        cursor: pointer;
+        font-size: 11px;
+        margin-right: 8px;
+        
+        &:hover {
+          background: #229954;
+        }
+      }
+      
+      .reset-btn {
+        background: #f39c12;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 20px;
+        cursor: pointer;
+        font-size: 11px;
+        
+        &:hover {
+          background: #e67e22;
+        }
+      }
+
+      .toggle-btn {
+        background: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 20px;
+        cursor: pointer;
+        font-size: 11px;
+        
+        &:hover {
+          background: #1976D2;
+        }
+      }
     }
   }
 }
@@ -163,22 +317,22 @@ $debug-form-fields: true; // Change to false to disable
 $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields (Name, Class, Level, XP Mod)
 
 /* Centralized position variables - change these to tweak sheet layout globally */
-$cs-pos-level-left: 460px !default;
-$cs-pos-level-top: 17px !default;
-$cs-pos-portrait-left: 34px !default;
-$cs-pos-portrait-top: 75px !default;
-$cs-pos-languages-left: 318px !default;
-$cs-pos-languages-top: 183px !default;
-$cs-pos-xpmod-left: 530px !default;
-$cs-pos-xpmod-top: 12px !default;
-$cs-pos-xp-left: 319px !default;
-$cs-pos-xp-top: 74px !default;
-$cs-pos-next-left: 460px !default;
-$cs-pos-next-top: 74px !default;
+$cs-pos-level-left: 463px !default;
+$cs-pos-level-top: 18px !default;
+$cs-pos-portrait-left: 48px !default;
+$cs-pos-portrait-top: 74px !default;
+$cs-pos-languages-left: 323px !default;
+$cs-pos-languages-top: 173px !default;
+$cs-pos-xpmod-left: 531px !default;
+$cs-pos-xpmod-top: 14px !default;
+$cs-pos-xp-left: 323px !default;
+$cs-pos-xp-top: 67px !default;
+$cs-pos-next-left: 462px !default;
+$cs-pos-next-top: 68px !default;
 
 /* Portrait dimension variables - adjust these for different aspect ratios */
-$cs-portrait-width: 138px !default;    /* Standard width */
-$cs-portrait-height: 183px !default;   /* 3:4 aspect ratio (portrait orientation) */
+$cs-portrait-width: 130px !default;    /* Standard width */
+$cs-portrait-height: 134px !default;   /* 3:4 aspect ratio (portrait orientation) */
 /* Alternative aspect ratios:
    Square: width: 138px, height: 138px
    4:3 landscape: width: 183px, height: 138px  
@@ -186,24 +340,24 @@ $cs-portrait-height: 183px !default;   /* 3:4 aspect ratio (portrait orientation
    2:3 portrait: width: 138px, height: 207px */
 
 /* Additional header / field position presets discovered during sweep */
-$cs-pos-namegroup-left: 45px !default;
+$cs-pos-namegroup-left: 44px !default;
 $cs-pos-namegroup-top: 14px !default;
-$cs-pos-class-left: 324px !default;
+$cs-pos-class-left: 323px !default;
 $cs-pos-class-top: 14px !default;
-$cs-pos-alignment-left: 319px !default;
-$cs-pos-alignment-top: 125px !default;
-$cs-pos-race-left: 179px !default;
-$cs-pos-race-top: 70px !default;
-$cs-pos-age-left: 179px !default;
-$cs-pos-age-top: 129px !default;
-$cs-pos-sex-left: 249px !default;
-$cs-pos-sex-top: 129px !default;
-$cs-pos-height-left: 179px !default;
-$cs-pos-height-top: 183px !default;
-$cs-pos-weight-left: 247px !default;
-$cs-pos-weight-top: 183px !default;
-$cs-pos-background-left: 460px !default;
-$cs-pos-background-top: 129px !default;
+$cs-pos-alignment-left: 324px !default;
+$cs-pos-alignment-top: 120px !default;
+$cs-pos-race-left: 186px !default;
+$cs-pos-race-top: 67px !default;
+$cs-pos-age-left: 186px !default;
+$cs-pos-age-top: 120px !default;
+$cs-pos-sex-left: 255px !default;
+$cs-pos-sex-top: 120px !default;
+$cs-pos-height-left: 186px !default;
+$cs-pos-height-top: 173px !default;
+$cs-pos-weight-left: 250px !default;
+$cs-pos-weight-top: 173px !default;
+$cs-pos-background-left: 462px !default;
+$cs-pos-background-top: 120px !default;
 $cs-pos-listening-left: -6px !default;
 $cs-pos-listening-top: 304px !default;
 $cs-pos-find-secret-door-left: 60px !default;
@@ -229,6 +383,30 @@ $cs-pos-barbarian-move-top: 322px !default;
 .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --z: var(--z-labels, 15); }
 $cs-pos-save-label-left: -161px !default;
 $cs-pos-save-label-top: 14px !default;
+
+// Individual Save Value Positioning
+$cs-pos-save-death-left: 380px !default;
+$cs-pos-save-death-top: 100px !default;
+$cs-pos-save-wands-left: 380px !default;
+$cs-pos-save-wands-top: 140px !default;
+$cs-pos-save-paralysis-left: 380px !default;
+$cs-pos-save-paralysis-top: 180px !default;
+$cs-pos-save-breath-left: 380px !default;
+$cs-pos-save-breath-top: 220px !default;
+$cs-pos-save-spells-left: 380px !default;
+$cs-pos-save-spells-top: 260px !default;
+
+// Individual Save Label Positioning
+$cs-pos-save-label-death-left: -161px !default;
+$cs-pos-save-label-death-top: 100px !default;
+$cs-pos-save-label-wands-left: -161px !default;
+$cs-pos-save-label-wands-top: 140px !default;
+$cs-pos-save-label-paralysis-left: -161px !default;
+$cs-pos-save-label-paralysis-top: 180px !default;
+$cs-pos-save-label-breath-left: -161px !default;
+$cs-pos-save-label-breath-top: 220px !default;
+$cs-pos-save-label-spells-left: -161px !default;
+$cs-pos-save-label-spells-top: 260px !default;
 
 
 
@@ -750,13 +928,9 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Combat tab background */
 .tab[data-tab="combat"] {
-  background-image: 
-    url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'),
-    url('/systems/osp-houserules/assets/character-sheet/skill-targets.webp') !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets.webp') !important;
   background-size: contain, contain !important;
-  background-position: 
-    top center,
-    left 280px !important;
+  background-position: top center, left 280px !important;
   background-repeat: no-repeat, no-repeat !important;
   background-attachment: scroll, scroll !important;
   background-color: transparent !important;
@@ -775,12 +949,12 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   position: absolute; 
   display: inline-block; 
   margin: 0;
-  top: 165px; /* Shared Y position for all save groups */
+  top: 176px; /* Shared Y position for all save groups */
 }
 
 /* Individual save positioning - customize these left coordinates as needed */
 .save-group-death { 
-  left: 12px; 
+  left: 0px; 
 }
 
 .save-group-wands { 
@@ -844,10 +1018,9 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   align-items: center;
   justify-content: center;
   text-align: center;
-  line-height: 1;
   box-sizing: border-box;
-  width: 62px;
-  height: 31px;
+  width: 61px;
+  height: 32px;
   font-size: 34px;
   color: #704214;
   z-index: var(--z-level, 8);
@@ -859,8 +1032,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Portrait helpers - configurable dimensions via CSS variables */
 .cs-portrait-container { 
   position: absolute; 
-  width: 138px !important; /* Fixed width - more reliable than CSS variables */
-  height: 141px !important; /* Fixed height - more reliable than CSS variables */
+  width: 130px !important; /* Fixed width - more reliable than CSS variables */
+  height: 134px !important; /* Fixed height - more reliable than CSS variables */
   /* z-index: 99999 !important; */
   overflow: hidden; 
 }
@@ -898,15 +1071,18 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   appearance: none;
   margin: 0;
   color: inherit;
-  padding: 0.05em 0 0 0;
+  padding: 0 2px 0 2px;
 }
 .cs-xp-mod-display {
   @extend %visual-center-medium;
   @extend %numeric-center;
   @extend %rectangular-container-center;
   
-  width: 62px;
-  height: 31px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 60px;
+  height: 32px;
   pointer-events: none;
   font-size: 34px;
 }
@@ -916,8 +1092,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   @extend %numeric-center;
   @extend %input-visual-center;
   
-  width: 134px;
-  height: 34px;
+  width: 130px;
+  height: 32px;
   cursor: pointer;
   pointer-events: auto;
   font-size: 34px;
@@ -1062,7 +1238,7 @@ input[type="number"] {
   @extend %input-visual-center;
   @extend %visual-center-medium;
   
-  width: 269px;
+  width: 271px;
   height: 31px;
   font-family: 'Handwritten', cursive;
   font-size: 34px;
@@ -1076,7 +1252,7 @@ input[type="number"] {
   text-overflow: clip;
   border: none;
   pointer-events: auto;
-  padding: 1px 2px 0 2px;
+  padding: 0 2px 0 2px;
 }
 .cs-class-select {
   /* Removed conflicting @extend mixins - using manual centering instead */
@@ -1084,10 +1260,9 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   text-align: center;
-  line-height: 1;
   box-sizing: border-box;
   
-  width: 128px;
+  width: 130px;
   height: 31px;
   font-size: 34px;
   background-color: transparent !important;
@@ -1096,10 +1271,7 @@ input[type="number"] {
   margin: 0;
   border: none;
   pointer-events: auto;
-  padding: 1px 2px 0 2px;
-  
-  /* Alternative centering methods if transform doesn't work */
-  vertical-align: middle !important;   /* Vertical alignment */
+  padding: 0 2px 0 2px;
 }
 
 /* Background field - separate class for independent control */
@@ -1113,8 +1285,8 @@ input[type="number"] {
   box-sizing: border-box;
   
   /* Size and positioning */
-  width: 134px;
-  height: 34px;
+  width: 128px;
+  height: 32px;
   
   /* Typography - uses CSS variable from JavaScript for dynamic sizing */
   font-size: var(--background-font-size, 24px);
@@ -1132,14 +1304,13 @@ input[type="number"] {
   
   /* Layout */
   margin: 0;
-  padding: 0.05em 5px 0 5px;
+  padding: 0 5px 0 5px;
   
   /* Interaction */
   pointer-events: auto;
   cursor: pointer;
   
   /* Visual centering */
-  transform: translateY(0.05em);
   vertical-align: middle;
   
   /* Focus states - customize as needed */
@@ -1165,8 +1336,8 @@ input[type="number"] {
   box-sizing: border-box;
   
   /* Size and positioning */
-  width: 134px;
-  height: 34px;
+  width: 130px;
+  height: 32px;
   
   /* Typography - customize as needed */
   font-size: 34px;
@@ -1184,14 +1355,11 @@ input[type="number"] {
   
   /* Layout */
   margin: 0;
-  padding: 0.05em 5px 0 5px;
+  padding: 0 5px 0 5px;
   
   /* Interaction */
   pointer-events: auto;
   cursor: pointer;
-  
-  /* Visual centering */
-  vertical-align: middle;
   
   /* Focus states - customize as needed */
   &:focus {
@@ -1209,16 +1377,17 @@ input[type="number"] {
 /* Next Level field - separate class for independent control */
 .cs-next-level-field {
   /* Inherit base layout but allow independent styling */
-  display: flex;
+  @extend %visual-center-medium;
+  @extend %numeric-center;
+  @extend %rectangular-container-center;
+  /*display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  line-height: 1;
-  box-sizing: border-box;
+  box-sizing: border-box;*/
   
   /* Size and positioning */
-  width: 134px;
-  height: 34px;
+  width: 129px;
+  height: 32px;
   
   /* Typography - customize as needed */
   font-size: 34px;
@@ -1236,16 +1405,12 @@ input[type="number"] {
   
   /* Layout */
   margin: 0;
-  padding: 0.05em 0 0 0;
+  padding: 2px 0 0 2px;
   
   /* Interaction - readonly field */
   pointer-events: none;
   cursor: default;
   user-select: none;
-  
-  /* Visual centering - numbers need precise positioning */
-  transform: translateY(0.11em) !important;
-  vertical-align: middle;
   
   /* Numeric formatting */
   font-variant-numeric: tabular-nums;
@@ -1300,8 +1465,8 @@ input[type="number"] {
   box-sizing: border-box;
   
   /* Size and positioning */
-  width: 134px;
-  height: 34px;
+  width: 128px;
+  height: 32px;
   
   /* Typography - customize as needed */
   font-size: 34px;
@@ -1319,14 +1484,13 @@ input[type="number"] {
   
   /* Layout */
   margin: 0;
-  padding: 0.05em 5px 0 5px;
+  padding: 0 5px 0 5px;
   
   /* Interaction */
   pointer-events: auto;
   cursor: pointer;
   
   /* Visual centering */
-  transform: translateY(0.22em) !important;
   vertical-align: middle;
   
   /* Focus states - customize as needed */
@@ -1342,12 +1506,11 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   text-align: center;
-  line-height: 1;
   box-sizing: border-box;
   
   /* Size and positioning */
   width: 65px;
-  height: 35px;
+  height: 32px;
   
   /* Typography - customize as needed */
   font-size: 34px;
@@ -1364,14 +1527,13 @@ input[type="number"] {
   
   /* Layout */
   margin: 0;
-  padding: 3px 2px 0 2px;
+  padding: 0 2px 0 2px;
   
   /* Interaction */
   pointer-events: auto;
   cursor: text;
   
   /* Visual centering for measurements */
-  transform: translateY(0);
   vertical-align: middle;
   
   /* Focus states */
@@ -1397,8 +1559,8 @@ input[type="number"] {
   box-sizing: border-box;
   
   /* Size and positioning */
-  width: 65px;
-  height: 35px;
+  width: 66px;
+  height: 32px;
   
   /* Typography - customize as needed */
   font-size: 34px;
@@ -1415,14 +1577,13 @@ input[type="number"] {
   
   /* Layout */
   margin: 0;
-  padding: 3px 2px 0 2px;
+  padding: 0 2px 0 2px;
   
   /* Interaction */
   pointer-events: auto;
   cursor: text;
   
   /* Visual centering for measurements */
-  transform: translateY(0);
   vertical-align: middle;
   
   /* Focus states */
@@ -1444,13 +1605,11 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   text-align: center;
-  line-height: 1;
   box-sizing: border-box;
   
   /* Size and positioning - uses CSS variables from existing system */
-  width: var(--languages-row-width, 272px);
-  height: 33px;
-  min-height: 30px;
+  width: 267px;
+  height: 32px;
   
   /* Typography - uses CSS variables for dynamic control */
   font-size: var(--languages-font-size, 24px);
@@ -1467,7 +1626,7 @@ input[type="number"] {
   
   /* Layout */
   margin: 0;
-  padding: 2px;
+  padding: 2px 3px 2px 3px;
   
   /* Interaction */
   pointer-events: auto;
@@ -1475,16 +1634,15 @@ input[type="number"] {
   user-select: none;
   
   /* Visual centering - Y-axis positioning adjustment */
-  transform: translateY(0.11em) !important;
   vertical-align: middle;
   
-  /* Empty state styling */
+  /* Empty state styling
   &:empty::before {
     content: "Click to add languages...";
     color: #704214 !important;
     font-style: italic;
     font-size: 12px;
-  }
+  } */
 }
 
 /* Age field - separate class for independent control */
@@ -1494,12 +1652,11 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   text-align: center;
-  line-height: 1;
   box-sizing: border-box;
   
   /* Size and positioning - compact field for age */
-  width: 64px;
-  height: 34px;
+  width: 61px;
+  height: 32px;
   
   /* Typography - Age field with Handwritten font */
   font-family: 'Handwritten', cursive !important;
@@ -1515,7 +1672,6 @@ input[type="number"] {
   outline: none;
   
   /* Visual centering - Y-axis positioning adjustment */
-  transform: translateY(0.1em) !important;
   vertical-align: middle;
 }
 
@@ -1526,12 +1682,11 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   text-align: center;
-  line-height: 1;
   box-sizing: border-box;
 
   /* Size and positioning - compact dropdown for sex */
-  width: 64px;
-  height: 34px;
+  width: 61px;
+  height: 32px;
   
   /* Typography - Sex field with Handwritten font */
   font-family: 'Handwritten', cursive !important;
@@ -1553,7 +1708,6 @@ input[type="number"] {
   -moz-appearance: none;
   
   /* Visual centering - Y-axis positioning adjustment */
-  transform: translateY(0.11em) !important;
   vertical-align: middle;
   
   /* Option styling */
@@ -1638,7 +1792,7 @@ input[type="number"] {
   align-items: center; 
   justify-content: center; 
   width: 100%; 
-  line-height: 1.2;
+  line-height: 0.6;
   white-space: wrap; /* Allow wrapping when needed */
   overflow: hidden; 
   font-size: var(--languages-font-size, 24px) !important;
@@ -1678,6 +1832,20 @@ input[type="number"] {
 .cs-pos-background { --left: #{$cs-pos-background-left}; --top: #{$cs-pos-background-top}; --z: var(--z-labels, 15); }
 .cs-pos-listening { --left: #{$cs-pos-listening-left}; --top: #{$cs-pos-listening-top}; --z: var(--z-labels, 15); }
 .cs-pos-save-label { --left: #{$cs-pos-save-label-left}; --top: #{$cs-pos-save-label-top}; --z: var(--z-labels, 15); }
+
+/* Individual Save Value Positioning */
+.cs-pos-save-death { --left: #{$cs-pos-save-death-left}; --top: #{$cs-pos-save-death-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-wands { --left: #{$cs-pos-save-wands-left}; --top: #{$cs-pos-save-wands-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-paralysis { --left: #{$cs-pos-save-paralysis-left}; --top: #{$cs-pos-save-paralysis-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-breath { --left: #{$cs-pos-save-breath-left}; --top: #{$cs-pos-save-breath-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-spells { --left: #{$cs-pos-save-spells-left}; --top: #{$cs-pos-save-spells-top}; --z: var(--z-labels, 15); }
+
+/* Individual Save Label Positioning */
+.cs-pos-save-label-death { --left: #{$cs-pos-save-label-death-left}; --top: #{$cs-pos-save-label-death-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-label-wands { --left: #{$cs-pos-save-label-wands-left}; --top: #{$cs-pos-save-label-wands-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-label-paralysis { --left: #{$cs-pos-save-label-paralysis-left}; --top: #{$cs-pos-save-label-paralysis-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-label-breath { --left: #{$cs-pos-save-label-breath-left}; --top: #{$cs-pos-save-label-breath-top}; --z: var(--z-labels, 15); }
+.cs-pos-save-label-spells { --left: #{$cs-pos-save-label-spells-left}; --top: #{$cs-pos-save-label-spells-top}; --z: var(--z-labels, 15); }
 
 /* Small helpers found useful during migration */
 .cs-tab-relative { position: relative; }

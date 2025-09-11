@@ -54,8 +54,8 @@ export class LanguageHandler {
   adjustFontSize() {
     const container = this.tags;
     const el = container && container[0];
-    const containerWidth = 264; // Available width accounting for padding
-    const maxFontSize = 48; // Start at 24px as specified
+    const containerWidth = 267; // Available width accounting for padding
+    const maxFontSize = 34; // Start at 24px as specified
     const minFontSize = 24; // Minimum readable font size (increased from 10)
 
     // If the container element isn't present, bail out safely

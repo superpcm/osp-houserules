@@ -282,8 +282,6 @@ $cs-pos-xp-left: 323px !default;
 $cs-pos-xp-top: 67px !default;
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
-
-/* Additional header / field position presets discovered during sweep */
 $cs-pos-namegroup-left: 44px !default;
 $cs-pos-namegroup-top: 14px !default;
 $cs-pos-class-left: 323px !default;
@@ -302,28 +300,28 @@ $cs-pos-weight-left: 250px !default;
 $cs-pos-weight-top: 173px !default;
 $cs-pos-background-left: 462px !default;
 $cs-pos-background-top: 120px !default;
-$cs-pos-listening-left: -6px !default;
-$cs-pos-listening-top: 304px !default;
-$cs-pos-find-secret-door-left: 60px !default;
-$cs-pos-find-secret-door-top: 304px !default;
-.cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left}; --top: #{$cs-pos-find-secret-door-top}; --z: var(--z-labels, 15); }
-$cs-pos-open-stuck-doors-left: 126px !default;
-$cs-pos-open-stuck-doors-top: 304px !default;
+$cs-pos-open-stuck-doors-left: 19px !default;
+$cs-pos-open-stuck-doors-top: 312px !default;
 .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left}; --top: #{$cs-pos-open-stuck-doors-top}; --z: var(--z-labels, 15); }
+$cs-pos-listening-left: -6px !default;
+$cs-pos-listening-top: 312px !default;
+$cs-pos-find-secret-door-left: 60px !default;
+$cs-pos-find-secret-door-top: 312px !default;
+.cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left}; --top: #{$cs-pos-find-secret-door-top}; --z: var(--z-labels, 15); }
 $cs-pos-detect-construction-left: 190px !default;
-$cs-pos-detect-construction-top: 304px !default;
+$cs-pos-detect-construction-top: 312px !default;
 .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left}; --top: #{$cs-pos-detect-construction-top}; --z: var(--z-labels, 15); }
 $cs-pos-detect-room-traps-left: 256px !default;
-$cs-pos-detect-room-traps-top: 304px !default;
+$cs-pos-detect-room-traps-top: 312px !default;
 .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left}; --top: #{$cs-pos-detect-room-traps-top}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-climb-left: 322px !default;
-$cs-pos-barbarian-climb-top: 190px !default;
+$cs-pos-barbarian-climb-top: 312px !default;
 .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left}; --top: #{$cs-pos-barbarian-climb-top}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-hide-left: 388px !default;
-$cs-pos-barbarian-hide-top: 256px !default;
+$cs-pos-barbarian-hide-top: 312px !default;
 .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left}; --top: #{$cs-pos-barbarian-hide-top}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-move-left: 454px !default;
-$cs-pos-barbarian-move-top: 322px !default;
+$cs-pos-barbarian-move-top: 312px !default;
 .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --z: var(--z-labels, 15); }
 
 /* Background Image Override - Apply to entire sheet and window */
@@ -633,10 +631,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   border: none !important;
   pointer-events: auto;
   text-align: center;
-  
-  /* Visual centering for select options */
-  transform: translateY(-0.02em);
-}
 
 .cs-listening-select:disabled {
   color: #704214;
@@ -1672,10 +1666,10 @@ input[type="number"] {
 
 /* Position presets (centralize numeric offsets) */
 .cs-pos-level { --left: #{$cs-pos-level-left}; --top: #{$cs-pos-level-top}; --z: var(--z-level, 8); }
-.cs-pos-portrait { --left: #{$cs-pos-portrait-left}; --top: #{$cs-pos-portrait-top}; --z: var(--z-portrait, 15); }
+.cs-pos-portrait { --left: #{$cs-pos-portrait-left}; --top: #{$cs-pos-portrait-top}; --z: var(--z-level, 8); }
 .cs-pos-languages { --left: #{$cs-pos-languages-left}; --top: #{$cs-pos-languages-top}; --z: var(--z-labels, 15); --pointer: auto; }
 .cs-pos-xpmod { --left: #{$cs-pos-xpmod-left}; --top: #{$cs-pos-xpmod-top}; --z: var(--z-labels, 15); }
-.cs-pos-xp { --left: #{$cs-pos-xp-left}; --top: #{$cs-pos-xp-top}; --z: var(--z-portrait, 15); }
+.cs-pos-xp { --left: #{$cs-pos-xp-left}; --top: #{$cs-pos-xp-top}; --z: var(--z-level, 8); }
 .cs-pos-next { --left: #{$cs-pos-next-left}; --top: #{$cs-pos-next-top}; --z: var(--z-labels, 15); }
 .cs-pos-sep { --bottom: 0; --left: 0; --right: 0; --height: 1px; --bg: transparent; --z: var(--z-labels, 15); }
 

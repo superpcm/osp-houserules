@@ -1534,10 +1534,14 @@
     (function() {
       'use strict';
       
+      console.log('=== POSITION TOOL SCRIPT STARTING ===');
+      console.log('Script block is executing');
+      
       let currentTool = null;
       let currentElement = null;
       let cssVariableMap = {}; // Maps element classes to their CSS variables
       
+      /* TEMPORARILY COMMENTED OUT TO ISOLATE SYNTAX ERROR
       // Initialize CSS variable mapping for positioned elements
       function initializeVariableMap() {
         cssVariableMap = {
@@ -1557,12 +1561,37 @@
           'cs-pos-level': { left: '$cs-pos-level-left', top: '$cs-pos-level-top' },
           'cs-pos-portrait': { left: '$cs-pos-portrait-left', top: '$cs-pos-portrait-top' },
           'cs-pos-next': { left: '$cs-pos-next-left', top: '$cs-pos-next-top' },
-          // Individual save value positioning
-          'cs-pos-save-death': { left: '$cs-pos-save-death-left', top: '$cs-pos-save-death-top' },
-          'cs-pos-save-wands': { left: '$cs-pos-save-wands-left', top: '$cs-pos-save-wands-top' },
-          'cs-pos-save-paralysis': { left: '$cs-pos-save-paralysis-left', top: '$cs-pos-save-paralysis-top' },
-          'cs-pos-save-breath': { left: '$cs-pos-save-breath-left', top: '$cs-pos-save-breath-top' },
-          'cs-pos-save-spells': { left: '$cs-pos-save-spells-left', top: '$cs-pos-save-spells-top' },
+          // Individual save value positioning with size control
+          'cs-pos-save-death': { 
+            left: '$cs-pos-save-death-left', 
+            top: '$cs-pos-save-death-top',
+            width: '$cs-pos-save-death-width',
+            height: '$cs-pos-save-death-height'
+          },
+          'cs-pos-save-wands': { 
+            left: '$cs-pos-save-wands-left', 
+            top: '$cs-pos-save-wands-top',
+            width: '$cs-pos-save-wands-width',
+            height: '$cs-pos-save-wands-height'
+          },
+          'cs-pos-save-paralysis': { 
+            left: '$cs-pos-save-paralysis-left', 
+            top: '$cs-pos-save-paralysis-top',
+            width: '$cs-pos-save-paralysis-width',
+            height: '$cs-pos-save-paralysis-height'
+          },
+          'cs-pos-save-breath': { 
+            left: '$cs-pos-save-breath-left', 
+            top: '$cs-pos-save-breath-top',
+            width: '$cs-pos-save-breath-width',
+            height: '$cs-pos-save-breath-height'
+          },
+          'cs-pos-save-spells': { 
+            left: '$cs-pos-save-spells-left', 
+            top: '$cs-pos-save-spells-top',
+            width: '$cs-pos-save-spells-width',
+            height: '$cs-pos-save-spells-height'
+          },
           // Individual save label positioning
           'cs-pos-save-label-death': { left: '$cs-pos-save-label-death-left', top: '$cs-pos-save-label-death-top' },
           'cs-pos-save-label-wands': { left: '$cs-pos-save-label-wands-left', top: '$cs-pos-save-label-wands-top' },
@@ -1570,6 +1599,43 @@
           'cs-pos-save-label-breath': { left: '$cs-pos-save-label-breath-left', top: '$cs-pos-save-label-breath-top' },
           'cs-pos-save-label-spells': { left: '$cs-pos-save-label-spells-left', top: '$cs-pos-save-label-spells-top' },
           'cs-pos-save-label': { left: '$cs-pos-save-label-left', top: '$cs-pos-save-label-top' },
+          // Individual ability score positioning with size control
+          'cs-pos-ability-str': { 
+            left: '$cs-pos-ability-str-left', 
+            top: '$cs-pos-ability-str-top',
+            width: '$cs-pos-ability-str-width',
+            height: '$cs-pos-ability-str-height'
+          },
+          'cs-pos-ability-dex': { 
+            left: '$cs-pos-ability-dex-left', 
+            top: '$cs-pos-ability-dex-top',
+            width: '$cs-pos-ability-dex-width',
+            height: '$cs-pos-ability-dex-height'
+          },
+          'cs-pos-ability-con': { 
+            left: '$cs-pos-ability-con-left', 
+            top: '$cs-pos-ability-con-top',
+            width: '$cs-pos-ability-con-width',
+            height: '$cs-pos-ability-con-height'
+          },
+          'cs-pos-ability-int': { 
+            left: '$cs-pos-ability-int-left', 
+            top: '$cs-pos-ability-int-top',
+            width: '$cs-pos-ability-int-width',
+            height: '$cs-pos-ability-int-height'
+          },
+          'cs-pos-ability-wis': { 
+            left: '$cs-pos-ability-wis-left', 
+            top: '$cs-pos-ability-wis-top',
+            width: '$cs-pos-ability-wis-width',
+            height: '$cs-pos-ability-wis-height'
+          },
+          'cs-pos-ability-cha': { 
+            left: '$cs-pos-ability-cha-left', 
+            top: '$cs-pos-ability-cha-top',
+            width: '$cs-pos-ability-cha-width',
+            height: '$cs-pos-ability-cha-height'
+          },
           // Add pseudo-positioning for elements that don't have dedicated CSS variables
           'ability-scores-section': { left: 'inline-left', top: 'inline-top' },
           'cs-combat-stats': { left: 'inline-left', top: 'inline-top' },
@@ -1604,52 +1670,143 @@
         const rect = element.getBoundingClientRect();
         const style = window.getComputedStyle(element);
         
-        // For position values, we need to handle elements positioned relative to their container
-        let currentLeft = 0;
-        let currentTop = 0;
+        // Check if this element uses simplified positioning
+        const usesSimplifiedPositioning = element.classList.contains('cs-ability') || element.classList.contains('cs-save');
+        const elementType = element.classList.contains('cs-ability') ? 'ability' : 'save';
         
-        // If element already has inline positioning, use those values
-        if (element.style.left) {
-          currentLeft = parseInt(element.style.left);
+        if (usesSimplifiedPositioning) {
+          // For simplified positioning, read from CSS custom properties
+          let currentLeft = 0;
+          let currentTop = 0;
+          let currentWidth = elementType === 'ability' ? 65 : 60;
+          let currentHeight = elementType === 'ability' ? 87 : 30;
+          
+          // Try to get values from inline styles first, then computed styles
+          const leftInline = element.style.getPropertyValue(`--${elementType}-left`);
+          const topInline = element.style.getPropertyValue(`--${elementType}-top`);
+          const widthInline = element.style.getPropertyValue(`--${elementType}-width`);
+          const heightInline = element.style.getPropertyValue(`--${elementType}-height`);
+          
+          if (leftInline) {
+            currentLeft = parseInt(leftInline);
+          } else {
+            const computedLeft = getComputedStyle(element).getPropertyValue(`--${elementType}-left`);
+            currentLeft = parseInt(computedLeft) || 0;
+          }
+          
+          if (topInline) {
+            currentTop = parseInt(topInline);
+          } else {
+            const computedTop = getComputedStyle(element).getPropertyValue(`--${elementType}-top`);
+            currentTop = parseInt(computedTop) || (elementType === 'ability' ? 52 : 100);
+          }
+          
+          if (widthInline) {
+            currentWidth = parseInt(widthInline);
+          } else {
+            const computedWidth = getComputedStyle(element).getPropertyValue(`--${elementType}-width`);
+            currentWidth = parseInt(computedWidth) || currentWidth;
+          }
+          
+          if (heightInline) {
+            currentHeight = parseInt(heightInline);
+          } else {
+            const computedHeight = getComputedStyle(element).getPropertyValue(`--${elementType}-height`);
+            currentHeight = parseInt(computedHeight) || currentHeight;
+          }
+          
+          return {
+            width: currentWidth,
+            height: currentHeight,
+            x: currentLeft,
+            y: currentTop
+          };
         } else {
-          // Calculate position relative to the offsetParent (positioning context)
-          const parentRect = element.offsetParent ? element.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
-          currentLeft = Math.round(rect.left - parentRect.left);
+          // Legacy positioning system - calculate from DOM positioning
+          let currentLeft = 0;
+          let currentTop = 0;
+          
+          // If element already has inline positioning, use those values
+          if (element.style.left) {
+            currentLeft = parseInt(element.style.left);
+          } else {
+            // Calculate position relative to the offsetParent (positioning context)
+            const parentRect = element.offsetParent ? element.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
+            currentLeft = Math.round(rect.left - parentRect.left);
+          }
+          
+          if (element.style.top) {
+            currentTop = parseInt(element.style.top);
+          } else {
+            // Calculate position relative to the offsetParent (positioning context)
+            const parentRect = element.offsetParent ? element.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
+            currentTop = Math.round(rect.top - parentRect.top);
+          }
+          
+          return {
+            width: Math.round(rect.width),
+            height: Math.round(rect.height),
+            x: currentLeft,
+            y: currentTop
+          };
         }
-        
-        if (element.style.top) {
-          currentTop = parseInt(element.style.top);
-        } else {
-          // Calculate position relative to the offsetParent (positioning context)
-          const parentRect = element.offsetParent ? element.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
-          currentTop = Math.round(rect.top - parentRect.top);
-        }
-        
-        return {
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-          x: currentLeft,
-          y: currentTop
-        };
       }
       
       // Create the position adjustment tool UI
       function createPositionTool(element) {
+        console.log('=== createPositionTool called ===');
+        console.log('Element:', element);
+        console.log('Element classes:', element.className);
+        
         if (currentTool) {
+          console.log('Removing existing tool');
           document.body.removeChild(currentTool);
         }
         
-        const posClass = getPositionClass(element);
-        if (!posClass || !cssVariableMap[posClass]) {
-          console.warn('No CSS variable mapping found for element', element);
-          return;
+        // Check if this element uses the new simplified positioning system
+        const usesSimplifiedPositioning = element.classList.contains('cs-ability') || element.classList.contains('cs-save');
+        
+        console.log('Uses simplified positioning:', usesSimplifiedPositioning);
+        
+        if (usesSimplifiedPositioning) {
+          console.log('Using simplified positioning system');
+          // For simplified positioning, we don't need cssVariableMap
+          currentElement = element;
+          const values = getCurrentValues(element);
+          console.log('Current values:', values);
+          
+          // Show diagnostic border on the current element
+          element.style.setProperty('border', '0.5px dashed red', 'important');
+          console.log('Applied diagnostic border to element');
+        } else {
+          console.log('Using legacy positioning system');
+          const posClass = getPositionClass(element);
+          console.log('Position class found:', posClass);
+          
+          if (!posClass || !cssVariableMap[posClass]) {
+            console.warn('No CSS variable mapping found for element', element);
+            console.warn('Position class:', posClass);
+            console.warn('Available mappings:', Object.keys(cssVariableMap));
+            return;
+          }
+          
+          console.log('CSS mapping found:', cssVariableMap[posClass]);
+          
+          currentElement = element;
+          const values = getCurrentValues(element);
+          console.log('Current values:', values);
+          
+          // Show diagnostic border on the current element
+          element.style.setProperty('border', '0.5px dashed red', 'important');
+          console.log('Applied diagnostic border to element');
         }
         
-        currentElement = element;
         const values = getCurrentValues(element);
+        console.log('Final values for tool:', values);
         
         const tool = document.createElement('div');
         tool.className = 'cs-position-tool';
+        console.log('Creating tool with class:', tool.className);
         tool.innerHTML = `
           <div class="tool-header">
             <span>Position Tool: ${posClass}</span>
@@ -1664,6 +1821,7 @@
                 <button onclick="adjustValue('x', -1)">-</button>
                 <button onclick="adjustValue('x', 1)">+</button>
               </div>
+              <input type="number" class="control-input" id="x-input" value="${values.x}" onchange="setValueFromInput('x', this.value)" />
               <span class="control-value" id="x-value">${values.x}px</span>
             </div>
             <div class="controls">
@@ -1672,6 +1830,7 @@
                 <button onclick="adjustValue('y', -1)">-</button>
                 <button onclick="adjustValue('y', 1)">+</button>
               </div>
+              <input type="number" class="control-input" id="y-input" value="${values.y}" onchange="setValueFromInput('y', this.value)" />
               <span class="control-value" id="y-value">${values.y}px</span>
             </div>
           </div>
@@ -1684,6 +1843,7 @@
                 <button onclick="adjustValue('width', -1)">-</button>
                 <button onclick="adjustValue('width', 1)">+</button>
               </div>
+              <input type="number" class="control-input" id="width-input" value="${values.width}" onchange="setValueFromInput('width', this.value)" />
               <span class="control-value" id="width-value">${values.width}px</span>
             </div>
             <div class="controls">
@@ -1692,6 +1852,7 @@
                 <button onclick="adjustValue('height', -1)">-</button>
                 <button onclick="adjustValue('height', 1)">+</button>
               </div>
+              <input type="number" class="control-input" id="height-input" value="${values.height}" onchange="setValueFromInput('height', this.value)" />
               <span class="control-value" id="height-value">${values.height}px</span>
             </div>
           </div>
@@ -1703,15 +1864,43 @@
           </div>
         `;
         
+        console.log('Adding tool to document body');
         document.body.appendChild(tool);
         currentTool = tool;
+        console.log('Tool added to DOM, currentTool set:', currentTool);
+        
+        // Force the tool to be visible and properly positioned
+        setTimeout(() => {
+          // Force positioning with JavaScript as backup
+          tool.style.position = 'fixed';
+          tool.style.top = '50%';
+          tool.style.left = '50%';
+          tool.style.transform = 'translate(-50%, -50%)';
+          tool.style.zIndex = '99999';
+          tool.style.display = 'block';
+          tool.style.visibility = 'visible';
+          tool.style.opacity = '1';
+          
+          const rect = tool.getBoundingClientRect();
+          console.log('Tool visibility forced, final position:', rect);
+          console.log('Tool computed styles:', {
+            position: getComputedStyle(tool).position,
+            top: getComputedStyle(tool).top,
+            left: getComputedStyle(tool).left,
+            transform: getComputedStyle(tool).transform,
+            zIndex: getComputedStyle(tool).zIndex,
+            display: getComputedStyle(tool).display
+          });
+        }, 10);
         
         // Make the tool draggable
         makeDraggable(tool);
+        console.log('Made tool draggable');
         
         // Store original values for reset
         tool._originalValues = values;
         tool._positionClass = posClass;
+        console.log('=== createPositionTool completed successfully ===');
       }
       
       // Force resize with high specificity and multiple approaches
@@ -1796,130 +1985,218 @@
         });
       }
       
-      // Adjust value and update display
+      // Adjust value and update display - now supports both simplified and legacy positioning
       window.adjustValue = function(property, delta) {
         if (!currentElement || !currentTool) return;
         
         console.log('=== DEBUGGING ADJUSTMENT ===');
         console.log('Property:', property, 'Delta:', delta);
         console.log('Element:', currentElement);
-        console.log('Current computed style position:', window.getComputedStyle(currentElement).position);
-        console.log('Current computed style display:', window.getComputedStyle(currentElement).display);
-        console.log('Current getBoundingClientRect():', currentElement.getBoundingClientRect());
-        console.log('Current style.left:', currentElement.style.left);
-        console.log('Current style.top:', currentElement.style.top);
-        console.log('Current style.width:', currentElement.style.width);
-        console.log('Current style.height:', currentElement.style.height);
+        
+        // Check if this element uses simplified positioning
+        const usesSimplifiedPositioning = currentElement.classList.contains('cs-ability') || currentElement.classList.contains('cs-save');
+        const elementType = currentElement.classList.contains('cs-ability') ? 'ability' : 'save';
+        
+        console.log('Uses simplified positioning:', usesSimplifiedPositioning, 'Type:', elementType);
         
         switch(property) {
           case 'x':
-            // For positioning, we need to account for the element's positioning context
-            let currentLeft;
-            if (currentElement.style.left) {
-              // Already has inline positioning, use that
-              currentLeft = parseInt(currentElement.style.left);
+            if (usesSimplifiedPositioning) {
+              // Get current value from CSS custom property
+              const customProperty = `--${elementType}-left`;
+              let currentValue = 0;
+              
+              // Try inline style first, then computed style
+              const inlineValue = currentElement.style.getPropertyValue(customProperty);
+              if (inlineValue) {
+                currentValue = parseInt(inlineValue);
+              } else {
+                // Get computed style and extract just the numeric value
+                const computedValue = getComputedStyle(currentElement).getPropertyValue(customProperty);
+                currentValue = parseInt(computedValue) || 0;
+              }
+              
+              const newValue = currentValue + delta;
+              
+              console.log(`X (simplified): ${customProperty} current: ${currentValue}, new: ${newValue}`);
+              currentElement.style.setProperty(customProperty, newValue + 'px');
+              
+              document.getElementById('x-value').textContent = newValue + 'px';
+              document.getElementById('x-input').value = newValue;
             } else {
-              // Calculate position relative to the offsetParent (positioning context)
-              const rect = currentElement.getBoundingClientRect();
-              const parentRect = currentElement.offsetParent ? currentElement.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
-              currentLeft = Math.round(rect.left - parentRect.left);
-              console.log('X: No existing left value, calculated relative position:', currentLeft);
-              console.log('X: Element rect.left:', rect.left, 'Parent rect.left:', parentRect.left);
+              // Legacy positioning system
+              let currentLeft;
+              if (currentElement.style.left) {
+                currentLeft = parseInt(currentElement.style.left);
+              } else {
+                const rect = currentElement.getBoundingClientRect();
+                const parentRect = currentElement.offsetParent ? currentElement.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
+                currentLeft = Math.round(rect.left - parentRect.left);
+              }
+              
+              const newLeft = currentLeft + delta;
+              console.log('X (legacy): Setting left from', currentLeft, 'to', newLeft);
+              
+              currentElement.style.setProperty('position', 'absolute', 'important');
+              currentElement.style.setProperty('left', newLeft + 'px', 'important');
+              currentElement.style.setProperty('right', 'auto', 'important');
+              
+              document.getElementById('x-value').textContent = newLeft + 'px';
+              document.getElementById('x-input').value = newLeft;
             }
             
-            const newLeft = currentLeft + delta;
-            console.log('X: Setting left from', currentLeft, 'to', newLeft);
-            
-            currentElement.style.setProperty('position', 'absolute', 'important');
-            currentElement.style.setProperty('left', newLeft + 'px', 'important');
-            // Clear any conflicting positioning
-            currentElement.style.setProperty('right', 'auto', 'important');
-            
-            // Update border if it exists and borders are visible
-            if (typeof bordersVisible !== 'undefined' && bordersVisible) {
-              currentElement.style.setProperty('border', '0.5px dashed red', 'important');
-            }
-            
-            document.getElementById('x-value').textContent = newLeft + 'px';
-            
-            console.log('After X change - getBoundingClientRect():', currentElement.getBoundingClientRect());
+            // Update border - always show when tool is open
+            currentElement.style.setProperty('border', '0.5px dashed red', 'important');
             break;
             
           case 'y':
-            // For positioning, we need to account for the element's positioning context
-            let currentTop;
-            if (currentElement.style.top) {
-              // Already has inline positioning, use that
-              currentTop = parseInt(currentElement.style.top);
+            if (usesSimplifiedPositioning) {
+              // Get current value from CSS custom property
+              const customProperty = `--${elementType}-top`;
+              let currentValue = 0;
+              
+              // Try inline style first, then computed style
+              const inlineValue = currentElement.style.getPropertyValue(customProperty);
+              if (inlineValue) {
+                currentValue = parseInt(inlineValue);
+              } else {
+                // Get computed style and extract just the numeric value
+                const computedValue = getComputedStyle(currentElement).getPropertyValue(customProperty);
+                currentValue = parseInt(computedValue) || 0;
+              }
+              
+              const newValue = currentValue + delta;
+              
+              console.log(`Y (simplified): ${customProperty} current: ${currentValue}, new: ${newValue}`);
+              currentElement.style.setProperty(customProperty, newValue + 'px');
+              
+              document.getElementById('y-value').textContent = newValue + 'px';
+              document.getElementById('y-input').value = newValue;
             } else {
-              // Calculate position relative to the offsetParent (positioning context)
-              const rect = currentElement.getBoundingClientRect();
-              const parentRect = currentElement.offsetParent ? currentElement.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
-              currentTop = Math.round(rect.top - parentRect.top);
-              console.log('Y: No existing top value, calculated relative position:', currentTop);
-              console.log('Y: Element rect.top:', rect.top, 'Parent rect.top:', parentRect.top);
+              // Legacy positioning system
+              let currentTop;
+              if (currentElement.style.top) {
+                currentTop = parseInt(currentElement.style.top);
+              } else {
+                const rect = currentElement.getBoundingClientRect();
+                const parentRect = currentElement.offsetParent ? currentElement.offsetParent.getBoundingClientRect() : {left: 0, top: 0};
+                currentTop = Math.round(rect.top - parentRect.top);
+              }
+              
+              const newTop = currentTop + delta;
+              console.log('Y (legacy): Setting top from', currentTop, 'to', newTop);
+              
+              currentElement.style.setProperty('position', 'absolute', 'important');
+              currentElement.style.setProperty('top', newTop + 'px', 'important');
+              currentElement.style.setProperty('bottom', 'auto', 'important');
+              
+              document.getElementById('y-value').textContent = newTop + 'px';
+              document.getElementById('y-input').value = newTop;
             }
             
-            const newTop = currentTop + delta;
-            console.log('Y: Setting top from', currentTop, 'to', newTop);
-            
-            currentElement.style.setProperty('position', 'absolute', 'important');
-            currentElement.style.setProperty('top', newTop + 'px', 'important');
-            // Clear any conflicting positioning
-            currentElement.style.setProperty('bottom', 'auto', 'important');
-            
-            // Update border if it exists and borders are visible
-            if (typeof bordersVisible !== 'undefined' && bordersVisible) {
-              currentElement.style.setProperty('border', '0.5px dashed red', 'important');
-            }
-            
-            document.getElementById('y-value').textContent = newTop + 'px';
-            
-            console.log('After Y change - getBoundingClientRect():', currentElement.getBoundingClientRect());
+            // Update border - always show when tool is open
+            currentElement.style.setProperty('border', '0.5px dashed red', 'important');
             break;
             
           case 'width':
-            const currentRect = currentElement.getBoundingClientRect();
-            const currentWidth = Math.round(currentRect.width);
-            const newWidth = Math.max(10, currentWidth + delta);
-            
-            console.log('Width: Changing from', currentWidth, 'to', newWidth);
-            
-            // Try different approaches based on element type
-            if (currentElement.tagName === 'INPUT' || currentElement.tagName === 'SELECT' || currentElement.tagName === 'TEXTAREA') {
-              console.log('Form element detected, using form-specific approach');
-              currentElement.style.setProperty('width', newWidth + 'px', 'important');
-              currentElement.style.setProperty('min-width', 'auto', 'important');
-              currentElement.style.setProperty('max-width', 'none', 'important');
+            if (usesSimplifiedPositioning) {
+              // Get current value from CSS custom property
+              const customProperty = `--${elementType}-width`;
+              let currentValue = elementType === 'ability' ? 65 : 60; // default values
+              
+              // Try inline style first, then computed style
+              const inlineValue = currentElement.style.getPropertyValue(customProperty);
+              if (inlineValue) {
+                currentValue = parseInt(inlineValue);
+              } else {
+                // Get computed style and extract just the numeric value
+                const computedValue = getComputedStyle(currentElement).getPropertyValue(customProperty);
+                currentValue = parseInt(computedValue) || currentValue;
+              }
+              
+              const newValue = Math.max(10, currentValue + delta);
+              
+              console.log(`Width (simplified): ${customProperty} current: ${currentValue}, new: ${newValue}`);
+              currentElement.style.setProperty(customProperty, newValue + 'px');
+              
+              document.getElementById('width-value').textContent = newValue + 'px';
+              document.getElementById('width-input').value = newValue;
             } else {
-              console.log('Non-form element, using standard approach');
-              currentElement.style.setProperty('width', newWidth + 'px', 'important');
-              currentElement.style.setProperty('min-width', '0', 'important');
-              currentElement.style.setProperty('max-width', 'none', 'important');
+              // Legacy width adjustment system
+              const currentRect = currentElement.getBoundingClientRect();
+              const currentWidth = Math.round(currentRect.width);
+              const newWidth = Math.max(10, currentWidth + delta);
+              
+              console.log('Width (legacy): Changing from', currentWidth, 'to', newWidth);
+              
+              if (currentElement.tagName === 'INPUT' || currentElement.tagName === 'SELECT' || currentElement.tagName === 'TEXTAREA') {
+                currentElement.style.setProperty('width', newWidth + 'px', 'important');
+                currentElement.style.setProperty('min-width', 'auto', 'important');
+                currentElement.style.setProperty('max-width', 'none', 'important');
+              } else {
+                currentElement.style.setProperty('width', newWidth + 'px', 'important');
+                currentElement.style.setProperty('min-width', '0', 'important');
+                currentElement.style.setProperty('max-width', 'none', 'important');
+              }
+              
+              document.getElementById('width-value').textContent = newWidth + 'px';
+              document.getElementById('width-input').value = newWidth;
             }
             
-            // Update border to match new dimensions (only if borders are visible)
-            if (typeof bordersVisible !== 'undefined' && bordersVisible) {
-              // Remove any existing border first to avoid doubling
-              currentElement.style.removeProperty('border');
-              // Force reflow
-              void currentElement.offsetHeight;
-              // Apply the diagnostic border inline to match new dimensions
-              currentElement.style.setProperty('border', '0.5px dashed red', 'important');
-            }
-            
-            document.getElementById('width-value').textContent = newWidth + 'px';
-            
-            setTimeout(() => {
-              const afterRect = currentElement.getBoundingClientRect();
-              console.log('Width verification: expected', newWidth, 'actual', Math.round(afterRect.width));
-            }, 100);
+            // Update border - always show when tool is open
+            currentElement.style.setProperty('border', '0.5px dashed red', 'important');
             break;
             
           case 'height':
-            const currentRectH = currentElement.getBoundingClientRect();
-            const currentHeight = Math.round(currentRectH.height);
-            const newHeight = Math.max(10, currentHeight + delta);
+            if (usesSimplifiedPositioning) {
+              // Get current value from CSS custom property
+              const customProperty = `--${elementType}-height`;
+              let currentValue = elementType === 'ability' ? 87 : 30; // default values
+              
+              // Try inline style first, then computed style
+              const inlineValue = currentElement.style.getPropertyValue(customProperty);
+              if (inlineValue) {
+                currentValue = parseInt(inlineValue);
+              } else {
+                // Get computed style and extract just the numeric value
+                const computedValue = getComputedStyle(currentElement).getPropertyValue(customProperty);
+                currentValue = parseInt(computedValue) || currentValue;
+              }
+              
+              const newValue = Math.max(10, currentValue + delta);
+              
+              console.log(`Height (simplified): ${customProperty} current: ${currentValue}, new: ${newValue}`);
+              currentElement.style.setProperty(customProperty, newValue + 'px');
+              
+              document.getElementById('height-value').textContent = newValue + 'px';
+              document.getElementById('height-input').value = newValue;
+            } else {
+              // Legacy height adjustment system
+              const currentRectH = currentElement.getBoundingClientRect();
+              const currentHeight = Math.round(currentRectH.height);
+              const newHeight = Math.max(10, currentHeight + delta);
+              
+              console.log('Height (legacy): Changing from', currentHeight, 'to', newHeight);
+              
+              if (currentElement.tagName === 'INPUT' || currentElement.tagName === 'SELECT' || currentElement.tagName === 'TEXTAREA') {
+                currentElement.style.setProperty('height', newHeight + 'px', 'important');
+                currentElement.style.setProperty('min-height', 'auto', 'important');
+                currentElement.style.setProperty('max-height', 'none', 'important');
+              } else {
+                currentElement.style.setProperty('height', newHeight + 'px', 'important');
+                currentElement.style.setProperty('min-height', '0', 'important');
+                currentElement.style.setProperty('max-height', 'none', 'important');
+              }
+              
+              document.getElementById('height-value').textContent = newHeight + 'px';
+              document.getElementById('height-input').value = newHeight;
+            }
+            
+            // Update border - always show when tool is open
+            currentElement.style.setProperty('border', '0.5px dashed red', 'important');
+            break;
+        }
+      };
             
             console.log('Height: Changing from', currentHeight, 'to', newHeight);
             
@@ -1936,17 +2213,16 @@
               currentElement.style.setProperty('max-height', 'none', 'important');
             }
             
-            // Update border to match new dimensions (only if borders are visible)
-            if (typeof bordersVisible !== 'undefined' && bordersVisible) {
-              // Remove any existing border first to avoid doubling
-              currentElement.style.removeProperty('border');
-              // Force reflow
-              void currentElement.offsetHeight;
-              // Apply the diagnostic border inline to match new dimensions
-              currentElement.style.setProperty('border', '0.5px dashed red', 'important');
-            }
+            // Update border to match new dimensions - always show when tool is open
+            // Remove any existing border first to avoid doubling
+            currentElement.style.removeProperty('border');
+            // Force reflow
+            void currentElement.offsetHeight;
+            // Apply the diagnostic border inline to match new dimensions
+            currentElement.style.setProperty('border', '0.5px dashed red', 'important');
             
             document.getElementById('height-value').textContent = newHeight + 'px';
+            document.getElementById('height-input').value = newHeight;
             
             setTimeout(() => {
               const afterRectH = currentElement.getBoundingClientRect();
@@ -1954,8 +2230,67 @@
             }, 100);
             break;
         }
+      };
+      
+      // Set value from manual input - now supports both simplified and legacy positioning
+      window.setValueFromInput = function(property, value) {
+        if (!currentElement || !currentTool) return;
         
-        console.log('=== END DEBUGGING ===');
+        const numValue = parseInt(value) || 0;
+        
+        // Check if this element uses simplified positioning
+        const usesSimplifiedPositioning = currentElement.classList.contains('cs-ability') || currentElement.classList.contains('cs-save');
+        const elementType = currentElement.classList.contains('cs-ability') ? 'ability' : 'save';
+        
+        switch(property) {
+          case 'x':
+            if (usesSimplifiedPositioning) {
+              const customProperty = `--${elementType}-left`;
+              currentElement.style.setProperty(customProperty, numValue + 'px');
+            } else {
+              currentElement.style.setProperty('position', 'absolute', 'important');
+              currentElement.style.setProperty('left', numValue + 'px', 'important');
+              currentElement.style.setProperty('right', 'auto', 'important');
+            }
+            document.getElementById('x-value').textContent = numValue + 'px';
+            break;
+          case 'y':
+            if (usesSimplifiedPositioning) {
+              const customProperty = `--${elementType}-top`;
+              currentElement.style.setProperty(customProperty, numValue + 'px');
+            } else {
+              currentElement.style.setProperty('position', 'absolute', 'important');
+              currentElement.style.setProperty('top', numValue + 'px', 'important');
+              currentElement.style.setProperty('bottom', 'auto', 'important');
+            }
+            document.getElementById('y-value').textContent = numValue + 'px';
+            break;
+          case 'width':
+            if (usesSimplifiedPositioning) {
+              const customProperty = `--${elementType}-width`;
+              currentElement.style.setProperty(customProperty, numValue + 'px');
+            } else {
+              currentElement.style.setProperty('width', numValue + 'px', 'important');
+              currentElement.style.setProperty('min-width', 'auto', 'important');
+              currentElement.style.setProperty('max-width', 'none', 'important');
+            }
+            document.getElementById('width-value').textContent = numValue + 'px';
+            break;
+          case 'height':
+            if (usesSimplifiedPositioning) {
+              const customProperty = `--${elementType}-height`;
+              currentElement.style.setProperty(customProperty, numValue + 'px');
+            } else {
+              currentElement.style.setProperty('height', numValue + 'px', 'important');
+              currentElement.style.setProperty('min-height', 'auto', 'important');
+              currentElement.style.setProperty('max-height', 'none', 'important');
+            }
+            document.getElementById('height-value').textContent = numValue + 'px';
+            break;
+        }
+        
+        // Update border - always show when tool is open
+        currentElement.style.setProperty('border', '0.5px dashed red', 'important');
       };
       
       // Close the tool
@@ -1963,6 +2298,11 @@
         if (currentTool) {
           document.body.removeChild(currentTool);
           currentTool = null;
+        }
+        
+        // Remove diagnostic border from the current element
+        if (currentElement) {
+          currentElement.style.removeProperty('border');
           currentElement = null;
         }
       };
@@ -1989,6 +2329,10 @@
         document.getElementById('y-value').textContent = values.y + 'px';
         document.getElementById('width-value').textContent = values.width + 'px';
         document.getElementById('height-value').textContent = values.height + 'px';
+        document.getElementById('x-input').value = values.x;
+        document.getElementById('y-input').value = values.y;
+        document.getElementById('width-input').value = values.width;
+        document.getElementById('height-input').value = values.height;
       };
 
       // Toggle diagnostic borders
@@ -2099,16 +2443,45 @@
         closePositionTool();
       };
       
-      // Add right-click event listener to positioned elements with debug borders
+      // Add right-click event listener to positioned elements
       function addPositionToolListeners() {
-        console.log('addPositionToolListeners called');
+        console.log('=== addPositionToolListeners called ===');
+        console.log('Document ready state:', document.readyState);
         console.log('Debug enabled:', isDebugEnabled());
         
-        if (!isDebugEnabled()) return;
+        // Position tool is always available, regardless of debug border visibility
         
-        // Find all elements with cs-pos-* classes that also have debug borders
-        const positionedElements = document.querySelectorAll('[class*="cs-pos-"]');
+        // Find all elements with cs-pos-* classes AND simplified positioning classes (cs-ability, cs-save)
+        const positionedElements = document.querySelectorAll('[class*="cs-pos-"], .cs-ability, .cs-save');
         console.log('Found positioned elements:', positionedElements.length);
+        console.log('Positioned elements:', Array.from(positionedElements).map(el => el.className));
+        
+        let listenerCount = 0;
+        
+        positionedElements.forEach(element => {
+          // Check if listener already exists
+          if (element.hasAttribute('data-position-listener')) {
+            console.log('Listener already exists for:', element.className);
+            return;
+          }
+          
+          console.log('Adding listener to:', element.className);
+          element.addEventListener('contextmenu', function(e) {
+            console.log('RIGHT-CLICK detected on:', this.className);
+            e.preventDefault();
+            createPositionTool(this);
+          });
+          
+          // Mark that listener has been added
+          element.setAttribute('data-position-listener', 'true');
+          
+          // Add visual indicator that right-click is available
+          element.style.cursor = 'context-menu';
+          element.title = (element.title || '') + ' (Right-click for position tool)';
+          listenerCount++;
+        });
+        
+        console.log('Added listeners to', listenerCount, 'positioned elements');
         
         positionedElements.forEach(element => {
           element.addEventListener('contextmenu', function(e) {
@@ -2121,7 +2494,7 @@
           element.title = (element.title || '') + ' (Right-click for position tool)';
         });
         
-        // Also add listeners to specific form elements that have diagnostic borders but don't have positioning classes
+        // Also add listeners to specific form elements that may not have positioning classes
         const formElements = document.querySelectorAll(`
           .cs-ability-select,
           .attr-str, .attr-dex, .attr-con, .attr-int, .attr-wis, .attr-cha,
@@ -2137,8 +2510,14 @@
         formElements.forEach(element => {
           console.log('Checking form element:', element.className);
           
-          // Find the closest parent with a cs-pos-* class for these elements
-          let positionedParent = element.closest('[class*="cs-pos-"]');
+          // Check if listener already exists
+          if (element.hasAttribute('data-position-listener')) {
+            console.log('Form element listener already exists for:', element.className);
+            return;
+          }
+          
+          // Find the closest parent with a cs-pos-* class OR simplified positioning classes for these elements
+          let positionedParent = element.closest('[class*="cs-pos-"], .cs-ability, .cs-save');
           
           // If no cs-pos-* parent found, try specific container classes
           if (!positionedParent) {
@@ -2153,6 +2532,9 @@
               createPositionTool(positionedParent);
             });
             
+            // Mark that listener has been added
+            element.setAttribute('data-position-listener', 'true');
+            
             // Add visual indicator that right-click is available
             element.style.cursor = 'context-menu';
             element.title = (element.title || '') + ' (Right-click for position tool)';
@@ -2162,22 +2544,28 @@
           }
         });
       }
+      */
       
       // Initialize when DOM is ready
       function init() {
-        initializeVariableMap();
+        console.log('Position tool init() called, readyState:', document.readyState);
         
-        // Check if debug is enabled and add listeners
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(addPositionToolListeners, 100);
-          });
-        } else {
-          setTimeout(addPositionToolListeners, 100);
-        }
+        // Simple test - just add right-click listeners without complex functionality
+        setTimeout(() => {
+          console.log('Adding simple right-click listeners...');
+          
+          const abilityElements = document.querySelectorAll('.cs-ability');
+          const saveElements = document.querySelectorAll('.cs-save');
+          
+          console.log('Found abilities:', abilityElements.length);
+          console.log('Found saves:', saveElements.length);
+          
+          console.log('Simple listeners setup complete - using enhanced positioning tool instead');
+        }, 1000);
       }
       
       // Start initialization
+      console.log('About to call init() function');
       init();
       
     })();
@@ -2502,7 +2890,7 @@
           <div class="ability-scores-section cs-combat-stats">
 
             <!-- STR Ability Score -->
-            <div class="ability cs-ability">
+            <div class="ability cs-ability cs-abs">
               <select class="attr-str cs-ability-select" id="attr-str" name="system.attributes.str.value">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
@@ -2511,7 +2899,7 @@
             </div>
 
             <!-- DEX Ability Score -->
-            <div class="ability cs-ability">
+            <div class="ability cs-ability cs-abs">
               <select class="attr-dex cs-ability-select" id="attr-dex" name="system.attributes.dex.value">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
@@ -2520,7 +2908,7 @@
             </div>
 
             <!-- CON Ability Score -->
-            <div class="ability cs-ability">
+            <div class="ability cs-ability cs-abs">
               <select class="attr-con cs-ability-select" id="attr-con" name="system.attributes.con.value">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
@@ -2529,7 +2917,7 @@
             </div>
 
             <!-- INT Ability Score -->
-            <div class="ability cs-ability">
+            <div class="ability cs-ability cs-abs">
               <select class="attr-int cs-ability-select" id="attr-int" name="system.attributes.int.value">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
@@ -2538,7 +2926,7 @@
             </div>
 
             <!-- WIS Ability Score -->
-            <div class="ability cs-ability">
+            <div class="ability cs-ability cs-abs">
               <select class="attr-wis cs-ability-select" id="attr-wis" name="system.attributes.wis.value">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
@@ -2547,7 +2935,7 @@
             </div>
 
             <!-- CHA Ability Score -->
-            <div class="ability cs-ability">
+            <div class="ability cs-ability cs-abs">
               <select class="attr-cha cs-ability-select" id="attr-cha" name="system.attributes.cha.value">
                 {{#each (range 3 18) as |val|}}
                   <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
@@ -2560,106 +2948,46 @@
           <!-- Saving Throw Groups - Positioned relative to combat section -->
           <!-- Death Ray/Poison Group -->
           <div class="save-group-death cs-save-group">
-            <div class="save death-save cs-save cs-abs cs-pos-save-death">
+            <div class="save death-save cs-save cs-abs">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.death.value}}</span>
               </div>
-            </div>
-            <div class="save-label-death cs-save-label cs-abs cs-pos-save-label-death">
-              <svg width="400" height="60">
-                <defs>
-                  <path id="deathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-                </defs>
-                <text>
-                  <textPath href="#deathTextPath" startOffset="50%" text-anchor="middle">
-                    Death / Poison
-                  </textPath>
-                </text>
-              </svg>
             </div>
           </div>
 
           <!-- Wands Group -->
           <div class="save-group-wands cs-save-group">
-            <div class="save wands-save cs-save cs-abs cs-pos-save-wands">
+            <div class="save wands-save cs-save cs-abs">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.wands.value}}</span>
               </div>
-            </div>
-            <div class="save-label-wands cs-save-label cs-abs cs-pos-save-label-wands">
-              <svg width="400" height="60">
-                <defs>
-                  <path id="wandsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-                </defs>
-                <text>
-                  <textPath href="#wandsTextPath" startOffset="50%" text-anchor="middle">
-                    Wands
-                  </textPath>
-                </text>
-              </svg>
             </div>
           </div>
 
           <!-- Paralysis Group -->
           <div class="save-group-paralysis cs-save-group">
-            <div class="save paralysis-save cs-save cs-abs cs-pos-save-paralysis">
+            <div class="save paralysis-save cs-save cs-abs"
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.paralysis.value}}</span>
               </div>
-            </div>
-            <div class="save-label-paralysis cs-save-label cs-abs cs-pos-save-label-paralysis">
-              <svg width="400" height="60">
-                <defs>
-                  <path id="paralysisTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-                </defs>
-                <text>
-                  <textPath href="#paralysisTextPath" startOffset="50%" text-anchor="middle">
-                    Paralysis / Petrification
-                  </textPath>
-                </text>
-              </svg>
             </div>
           </div>
 
           <!-- Breath Attacks Group -->
           <div class="save-group-breath cs-save-group">
-            <div class="save breath-save cs-save cs-abs cs-pos-save-breath">
+            <div class="save breath-save cs-save cs-abs">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.breath.value}}</span>
               </div>
-            </div>
-            <div class="save-label-breath cs-save-label cs-abs cs-pos-save-label-breath">
-              <svg width="400" height="60">
-                <defs>
-                  <path id="breathTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-                </defs>
-                <text>
-                  <textPath href="#breathTextPath" startOffset="50%" text-anchor="middle">
-                    Breath Attacks
-                  </textPath>
-                </text>
-              </svg>
             </div>
           </div>
 
           <!-- Spells/Rods/Staves Group -->
           <div class="save-group-spells cs-save-group">
-            <div class="save spells-save cs-save cs-abs cs-pos-save-spells">
+            <div class="save spells-save cs-save cs-abs">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.spells.value}}</span>
               </div>
-            </div>
-            <div class="save-label-spells cs-save-label cs-abs cs-pos-save-label-spells">
-              <svg width="400" height="60">
-                <defs>
-                  <path id="spellsTextPath" d="M 150,25 A 50,50 0 0,0 250,25" stroke="none" fill="none"/>
-                </defs>
-                <text>
-                  <textPath href="#spellsTextPath" startOffset="50%" text-anchor="middle">
-                    Spells / Rods / Staves
-                  </textPath>
-                </text>
-              </svg>
             </div>
           </div>
 
@@ -3247,5 +3575,351 @@
 
 
   }, 1000); // Wait 1 second for character sheet to initialize
+})();
+
+// ===== POSITIONING TOOL SCRIPT =====
+(function() {
+    'use strict';
+    
+    let dragState = null;
+    let currentHighlightedElement = null;
+    
+    function addDiagnosticBorder(element) {
+        removeDiagnosticBorder(); // Remove any existing border
+        
+        // Get current positioning values
+        const values = getCurrentValues(element);
+        console.log('Debug: Adding diagnostic border with values:', values);
+        
+        // Apply the diagnostic border
+        element.style.setProperty('border', '0.5px dashed red', 'important');
+        element.style.setProperty('box-sizing', 'border-box', 'important');
+        
+        // Ensure the element has the correct positioning applied
+        const isAbility = element.classList.contains('cs-ability');
+        const isSave = element.classList.contains('cs-save');
+        
+        if (isAbility || isSave) {
+            // For simplified positioning, ensure CSS custom properties are set
+            const prefix = isAbility ? '--ability-' : '--save-';
+            element.style.setProperty(prefix + 'left', values.left);
+            element.style.setProperty(prefix + 'top', values.top);
+            element.style.setProperty(prefix + 'width', values.width);
+            element.style.setProperty(prefix + 'height', values.height);
+        } else {
+            // For legacy positioning, ensure direct properties are set
+            element.style.setProperty('left', values.left, 'important');
+            element.style.setProperty('top', values.top, 'important');
+            element.style.setProperty('width', values.width, 'important');
+            element.style.setProperty('height', values.height, 'important');
+        }
+        
+        // Force a style recalculation
+        element.offsetHeight;
+        
+        currentHighlightedElement = element;
+    }
+    
+    function removeDiagnosticBorder() {
+        if (currentHighlightedElement) {
+            currentHighlightedElement.style.removeProperty('border');
+            currentHighlightedElement.style.removeProperty('box-sizing');
+            currentHighlightedElement = null;
+        }
+    }
+    
+    function createPositionTool(element) {
+        // Remove any existing tools
+        const existingTool = document.querySelector('.position-tool');
+        if (existingTool) {
+            document.body.removeChild(existingTool);
+        }
+        
+        // Add diagnostic border
+        addDiagnosticBorder(element);
+        
+        const tool = document.createElement('div');
+        tool.className = 'position-tool';
+        tool.style.cssText = `
+            position: fixed;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-family: monospace;
+            pointer-events: auto;
+            cursor: move;
+            user-select: none;
+            min-width: 200px;
+        `;
+        
+        const values = getCurrentValues(element);
+        const originalValues = { ...values }; // Store original values for reset
+        
+        tool.innerHTML = `
+            <div style="margin-bottom: 8px; font-weight: bold; text-align: center; cursor: move;" class="tool-header">
+                Position Tool - Drag to Move
+            </div>
+            <div style="display: grid; grid-template-columns: auto 1fr auto auto; gap: 4px; align-items: center;">
+                <span>Left:</span>
+                <input type="number" id="left-input" value="${parseInt(values.left)}" style="width: 60px; background: #333; color: white; border: 1px solid #555;">
+                <button id="left-minus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">-</button>
+                <button id="left-plus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">+</button>
+                
+                <span>Top:</span>
+                <input type="number" id="top-input" value="${parseInt(values.top)}" style="width: 60px; background: #333; color: white; border: 1px solid #555;">
+                <button id="top-minus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">-</button>
+                <button id="top-plus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">+</button>
+                
+                <span>Width:</span>
+                <input type="number" id="width-input" value="${parseInt(values.width)}" style="width: 60px; background: #333; color: white; border: 1px solid #555;">
+                <button id="width-minus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">-</button>
+                <button id="width-plus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">+</button>
+                
+                <span>Height:</span>
+                <input type="number" id="height-input" value="${parseInt(values.height)}" style="width: 60px; background: #333; color: white; border: 1px solid #555;">
+                <button id="height-minus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">-</button>
+                <button id="height-plus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">+</button>
+            </div>
+            <div style="margin-top: 8px; display: flex; gap: 4px; justify-content: center;">
+                <button id="apply-btn" style="background: #0a6; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px;">Apply</button>
+                <button id="reset-btn" style="background: #a60; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px;">Reset</button>
+                <button id="close-btn" style="background: #666; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px;">Close</button>
+            </div>
+        `;
+        
+        // Position tool near the element but avoid overlap
+        const rect = element.getBoundingClientRect();
+        tool.style.left = Math.min(rect.right + 10, window.innerWidth - 220) + 'px';
+        tool.style.top = Math.max(rect.top, 10) + 'px';
+        
+        // Make tool draggable
+        const header = tool.querySelector('.tool-header');
+        header.addEventListener('mousedown', (e) => {
+            dragState = {
+                offsetX: e.clientX - tool.offsetLeft,
+                offsetY: e.clientY - tool.offsetTop,
+                tool: tool
+            };
+        });
+        
+        // Add +/- button functionality
+        function addPlusMinusListeners(property) {
+            const input = tool.querySelector(`#${property}-input`);
+            const minusBtn = tool.querySelector(`#${property}-minus`);
+            const plusBtn = tool.querySelector(`#${property}-plus`);
+            
+            minusBtn.addEventListener('click', () => {
+                input.value = parseInt(input.value) - 1;
+                applyValue(element, property, input.value);
+            });
+            
+            plusBtn.addEventListener('click', () => {
+                input.value = parseInt(input.value) + 1;
+                applyValue(element, property, input.value);
+            });
+            
+            // Real-time updates as user types
+            input.addEventListener('input', () => {
+                applyValue(element, property, input.value);
+            });
+        }
+        
+        addPlusMinusListeners('left');
+        addPlusMinusListeners('top');
+        addPlusMinusListeners('width');
+        addPlusMinusListeners('height');
+        
+        // Apply button - finalize all changes
+        tool.querySelector('#apply-btn').addEventListener('click', () => {
+            const left = tool.querySelector('#left-input').value;
+            const top = tool.querySelector('#top-input').value;
+            const width = tool.querySelector('#width-input').value;
+            const height = tool.querySelector('#height-input').value;
+            
+            adjustValue(element, 'left', left);
+            adjustValue(element, 'top', top);
+            adjustValue(element, 'width', width);
+            adjustValue(element, 'height', height);
+            
+            removeDiagnosticBorder();
+            document.body.removeChild(tool);
+        });
+        
+        // Reset button - restore original values
+        tool.querySelector('#reset-btn').addEventListener('click', () => {
+            tool.querySelector('#left-input').value = parseInt(originalValues.left);
+            tool.querySelector('#top-input').value = parseInt(originalValues.top);
+            tool.querySelector('#width-input').value = parseInt(originalValues.width);
+            tool.querySelector('#height-input').value = parseInt(originalValues.height);
+            
+            adjustValue(element, 'left', originalValues.left);
+            adjustValue(element, 'top', originalValues.top);
+            adjustValue(element, 'width', originalValues.width);
+            adjustValue(element, 'height', originalValues.height);
+        });
+        
+        // Close button
+        tool.querySelector('#close-btn').addEventListener('click', () => {
+            removeDiagnosticBorder();
+            document.body.removeChild(tool);
+        });
+        
+        document.body.appendChild(tool);
+        
+        // Focus first input
+        tool.querySelector('#left-input').focus();
+    }
+    
+    function applyValue(element, property, value) {
+        adjustValue(element, property, value);
+    }
+
+    function getCurrentValues(element) {
+        const isAbility = element.classList.contains('cs-ability');
+        const isSave = element.classList.contains('cs-save');
+        
+        console.log('Debug: getCurrentValues for element:', element.className, { isAbility, isSave });
+        
+        if (isAbility || isSave) {
+            // Simplified positioning system - read from CSS custom properties
+            const prefix = isAbility ? '--ability-' : '--save-';
+            const style = element.style;
+            
+            const values = {
+                left: style.getPropertyValue(prefix + 'left') || '0px',
+                top: style.getPropertyValue(prefix + 'top') || '0px',
+                width: style.getPropertyValue(prefix + 'width') || '100px',
+                height: style.getPropertyValue(prefix + 'height') || '20px'
+            };
+            
+            console.log('Debug: Simplified positioning values:', values);
+            return values;
+        }
+        
+        // Legacy positioning system (cs-pos-* elements)
+        const computedStyle = window.getComputedStyle(element);
+        const values = {
+            left: computedStyle.left || '0px',
+            top: computedStyle.top || '0px',
+            width: computedStyle.width || '100px',
+            height: computedStyle.height || '20px'
+        };
+        
+        console.log('Debug: Legacy positioning values:', values);
+        return values;
+    }
+
+    function adjustValue(element, property, value) {
+        const isAbility = element.classList.contains('cs-ability');
+        const isSave = element.classList.contains('cs-save');
+        
+        console.log('Debug: adjustValue called', {
+            element: element.className,
+            property: property,
+            value: value,
+            isAbility: isAbility,
+            isSave: isSave
+        });
+        
+        if (isAbility || isSave) {
+            // Simplified positioning system
+            const prefix = isAbility ? '--ability-' : '--save-';
+            const propertyName = prefix + property;
+            const propertyValue = value + 'px';
+            
+            console.log('Debug: Setting property', propertyName, 'to', propertyValue);
+            element.style.setProperty(propertyName, propertyValue);
+            
+            // Verify the property was set
+            const actualValue = element.style.getPropertyValue(propertyName);
+            console.log('Debug: Property verification - set:', propertyValue, 'actual:', actualValue);
+            
+            // Check computed style to see what CSS is actually using
+            const computedStyle = window.getComputedStyle(element);
+            const computedLeft = computedStyle.getPropertyValue('left');
+            console.log('Debug: Computed left value:', computedLeft);
+            
+        } else {
+            // Legacy positioning system - restore !important for proper override
+            element.style.setProperty(property, value + 'px', 'important');
+            console.log('Debug: Set legacy property:', property, '=', value + 'px !important');
+        }
+        
+        // Force a layout recalculation
+        element.offsetHeight;
+    }
+
+    function init() {
+        console.log('Debug: Enhanced universal positioning tool init starting');
+        
+        // Add right-click listeners for simplified positioning elements (abilities and saves)
+        const abilityElements = document.querySelectorAll('.cs-ability');
+        const saveElements = document.querySelectorAll('.cs-save');
+        
+        // Add right-click listeners for legacy positioning elements (cs-pos-* classes)
+        const legacyElements = document.querySelectorAll('[class*="cs-pos-"]');
+        
+        console.log('Debug: Found ability elements:', abilityElements.length);
+        console.log('Debug: Found save elements:', saveElements.length);
+        console.log('Debug: Found legacy positioned elements:', legacyElements.length);
+        
+        // Function to add right-click listener
+        function addRightClickListener(element, debugName) {
+            element.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                console.log(`Debug: Right-click on ${debugName}:`, element);
+                createPositionTool(element);
+            });
+        }
+        
+        // Add listeners to all positioning elements
+        abilityElements.forEach((el, index) => {
+            addRightClickListener(el, `ability ${index}`);
+        });
+        
+        saveElements.forEach((el, index) => {
+            addRightClickListener(el, `save ${index}`);
+        });
+        
+        legacyElements.forEach((el, index) => {
+            addRightClickListener(el, `legacy positioned element ${index} (${el.className})`);
+        });
+        
+        console.log('Debug: Enhanced universal positioning tool init complete');
+    }
+    
+    // Global mouse handlers for dragging
+    document.addEventListener('mousemove', (e) => {
+        if (dragState) {
+            dragState.tool.style.left = (e.clientX - dragState.offsetX) + 'px';
+            dragState.tool.style.top = (e.clientY - dragState.offsetY) + 'px';
+        }
+    });
+    
+    document.addEventListener('mouseup', () => {
+        dragState = null;
+    });
+    
+    // Remove diagnostic border when clicking elsewhere
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.position-tool') && !e.target.closest('[class*="cs-pos-"], .cs-ability, .cs-save')) {
+            // Clicked outside tool and positioned elements
+            const existingTool = document.querySelector('.position-tool');
+            if (!existingTool) {
+                // Only remove border if tool is not open
+                removeDiagnosticBorder();
+            }
+        }
+    });
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
 </script>

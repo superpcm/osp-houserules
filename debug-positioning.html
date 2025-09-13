@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Positioning Tool</title>
+    <style>
+        .cs-ability {
+            position: absolute !important;
+            left: var(--ability-left, 0px) !important;
+            top: var(--ability-top, 52px) !important;
+            width: var(--ability-width, 65px) !important;
+            height: var(--ability-height, 87px) !important;
+            border: 1px solid blue;
+            background: lightblue;
+        }
+        
+        .cs-save {
+            position: absolute !important;
+            left: var(--save-left, 380px) !important;
+            top: var(--save-top, 100px) !important;
+            width: var(--save-width, 60px) !important;
+            height: var(--save-height, 30px) !important;
+            border: 1px solid red;
+            background: lightcoral;
+        }
+        
+        body {
+            position: relative;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Custom Property Test</h1>
+    
+    <div class="cs-ability" style="--ability-left: 100px; --ability-top: 100px;">
+        Ability Test
+    </div>
+    
+    <div class="cs-save" style="--save-left: 200px; --save-top: 200px;">
+        Save Test
+    </div>
+    
+    <script>
+        function testPropertyReading() {
+            console.log('=== Testing CSS Custom Property Reading ===');
+            
+            const abilityEl = document.querySelector('.cs-ability');
+            const saveEl = document.querySelector('.cs-save');
+            
+            console.log('Ability element:', abilityEl);
+            console.log('Save element:', saveEl);
+            
+            // Test reading inline custom properties
+            console.log('Ability --ability-left inline:', abilityEl.style.getPropertyValue('--ability-left'));
+            console.log('Save --save-left inline:', saveEl.style.getPropertyValue('--save-left'));
+            
+            // Test reading computed custom properties
+            console.log('Ability --ability-left computed:', getComputedStyle(abilityEl).getPropertyValue('--ability-left'));
+            console.log('Save --save-left computed:', getComputedStyle(saveEl).getPropertyValue('--save-left'));
+            
+            // Test setting new values
+            abilityEl.style.setProperty('--ability-left', '150px');
+            saveEl.style.setProperty('--save-left', '250px');
+            
+            console.log('After setting new values:');
+            console.log('Ability --ability-left inline:', abilityEl.style.getPropertyValue('--ability-left'));
+            console.log('Save --save-left inline:', saveEl.style.getPropertyValue('--save-left'));
+        }
+        
+        window.onload = testPropertyReading;
+    </script>
+</body>
+</html>

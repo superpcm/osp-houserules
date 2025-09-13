@@ -15,84 +15,7 @@
 
 /* Form Field Debug - Master Switch */
 /* Uncomment the line below to enable red dashed borders on all form fields */
-$debug-form-fields: true; // Change to false to disable
-
-/* Portrait Debug - Comment out for production */
-/*
-.cs-portrait-container { 
-  border: 5px solid red !important; 
-  background: rgba(255,0,0,0.5) !important; 
-  overflow: visible !important;
-  z-index: 99999 !important;
-}
-.cs-portrait-display { 
-  border: 3px solid blue !important; 
-  background: rgba(0,0,255,0.3) !important;
-  overflow: visible !important; 
-}
-.cs-portrait-img { 
-  border: 3px solid green !important; 
-  background: rgba(0,255,0,0.3) !important;
-}
-
-/* Debug old portrait classes too */
-/*
-.portrait-display { 
-  border: 3px solid orange !important; 
-  background: rgba(255,165,0,0.3) !important; 
-  position: absolute; 
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-}
-.portrait-img { 
-  border: 3px solid purple !important; 
-  background: rgba(128,0,128,0.3) !important;
-  width: 100%; 
-  height: 100%; 
-  display: block; 
-}
-*/
-
-/* Field Debug - Uncomment to show field boundaries */
-/*
-.cs-char-name { border: 1px solid orange !important; }
-.cs-class-select { border: 1px solid purple !important; }
-.cs-background-select { border: 1px solid cyan !important; }
-.cs-race-select { border: 1px solid yellow !important; }
-.cs-alignment-select { border: 1px solid pink !important; }
-.cs-age-field { border: 1px solid lime !important; }
-.cs-sex-field { border: 1px solid magenta !important; }
-.cs-height-field { border: 1px solid brown !important; }
-.cs-weight-field { border: 1px solid navy !important; }
-.cs-languages-field { border: 1px solid teal !important; }
-*/
-
-/* Positioning Debug - Comment out for production */
-/*
-.cs-abs { 
-  outline: 5px dashed red !important; 
-  background: rgba(255,255,0,0.3) !important;
-}
-.cs-abs::before { 
-  content: attr(class); 
-  position: absolute; 
-  top: -15px; 
-  left: 0; 
-  font-size: 10px; 
-  background: black; 
-  color: white; 
-  padding: 2px; 
-  z-index: 999999; 
-}
-*/
-
-/* Transform Debug - Uncomment to show transform origins */
-/*
-[style*="transform"] { outline: 1px dotted blue !important; }
-[style*="transform"]::after { content: "T"; position: absolute; top: 0; right: 0; font-size: 8px; background: blue; color: white; padding: 1px; z-index: 999999; }
-*/
+$debug-form-fields: false; // Change to false to disable
 
 /* Form Field Debug - Controlled by $debug-form-fields variable */
 @if $debug-form-fields {
@@ -157,152 +80,182 @@ $debug-form-fields: true; // Change to false to disable
     }
   }
   
-  /* Position Adjustment Tool - Only visible when debug is enabled */
+  /* Position Adjustment Tool - Clean, modern styling */
   .cs-position-tool {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #2a2a2a;
-    border: 2px solid #444;
-    border-radius: 8px;
-    padding: 15px;
-    color: #fff;
-    font-family: monospace;
-    font-size: 12px;
-    z-index: 10000;
-    min-width: 280px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background: #2a2a2a !important;
+    border: 2px solid #444 !important;
+    border-radius: 8px !important;
+    padding: 15px !important;
+    color: #fff !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 12px !important;
+    z-index: 99999 !important;
+    min-width: 320px !important;
+    max-width: 400px !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.8) !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     
     .tool-header {
-      background: #333;
-      margin: -15px -15px 10px -15px;
-      padding: 8px 15px;
-      border-radius: 6px 6px 0 0;
-      border-bottom: 1px solid #555;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #333 !important;
+      margin: -15px -15px 15px -15px !important;
+      padding: 12px 15px !important;
+      border-radius: 6px 6px 0 0 !important;
+      border-bottom: 1px solid #555 !important;
+      font-weight: bold !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      color: #fff !important;
       
       .close-btn {
-        background: #e74c3c;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        padding: 2px 6px;
-        cursor: pointer;
-        font-size: 11px;
+        background: #e74c3c !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 3px !important;
+        padding: 4px 8px !important;
+        cursor: pointer !important;
+        font-size: 12px !important;
+        font-weight: bold !important;
         
         &:hover {
-          background: #c0392b;
+          background: #c0392b !important;
         }
       }
     }
     
     .tool-section {
-      margin-bottom: 12px;
+      margin-bottom: 15px !important;
       
       .section-title {
-        color: #bbb;
-        margin-bottom: 6px;
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        color: #bbb !important;
+        margin-bottom: 8px !important;
+        font-size: 11px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        font-weight: bold !important;
       }
       
       .controls {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        gap: 5px;
-        align-items: center;
-        margin-bottom: 4px;
+        display: grid !important;
+        grid-template-columns: 60px auto 60px 80px !important;
+        gap: 8px !important;
+        align-items: center !important;
+        margin-bottom: 6px !important;
         
         .control-label {
-          min-width: 50px;
-          color: #ccc;
+          color: #ccc !important;
+          font-weight: 500 !important;
         }
         
         .control-buttons {
-          display: flex;
-          gap: 2px;
-          justify-content: center;
+          display: flex !important;
+          gap: 4px !important;
+          justify-content: center !important;
           
           button {
-            background: #444;
-            color: #fff;
-            border: 1px solid #666;
-            border-radius: 3px;
-            padding: 4px 8px;
-            cursor: pointer;
-            font-size: 11px;
-            min-width: 25px;
+            background: #444 !important;
+            color: #fff !important;
+            border: 1px solid #666 !important;
+            border-radius: 4px !important;
+            padding: 6px 10px !important;
+            cursor: pointer !important;
+            font-size: 12px !important;
+            font-weight: bold !important;
+            min-width: 30px !important;
             
             &:hover {
-              background: #555;
+              background: #555 !important;
+              border-color: #777 !important;
             }
             
             &:active {
-              background: #333;
+              background: #333 !important;
             }
           }
         }
         
+        .control-input {
+          background: #333 !important;
+          color: #fff !important;
+          border: 1px solid #666 !important;
+          border-radius: 4px !important;
+          padding: 6px 8px !important;
+          font-size: 12px !important;
+          width: 100% !important;
+          text-align: center !important;
+          
+          &:focus {
+            outline: none !important;
+            border-color: #4CAF50 !important;
+            background: #444 !important;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2) !important;
+          }
+        }
+        
         .control-value {
-          color: #4CAF50;
-          font-weight: bold;
-          text-align: right;
-          min-width: 50px;
+          color: #4CAF50 !important;
+          font-weight: bold !important;
+          text-align: right !important;
+          font-size: 12px !important;
         }
       }
     }
     
     .tool-footer {
-      border-top: 1px solid #555;
-      padding-top: 8px;
-      margin-top: 12px;
-      text-align: center;
+      border-top: 1px solid #555 !important;
+      padding-top: 12px !important;
+      margin-top: 15px !important;
+      text-align: center !important;
+      display: flex !important;
+      gap: 8px !important;
+      justify-content: center !important;
       
-      .save-btn {
-        background: #27ae60;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 6px 20px;
-        cursor: pointer;
-        font-size: 11px;
-        margin-right: 8px;
+      button {
+        border: none !important;
+        border-radius: 4px !important;
+        padding: 8px 16px !important;
+        cursor: pointer !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
         
         &:hover {
-          background: #229954;
+          transform: translateY(-1px) !important;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+        }
+      }
+      
+      .save-btn {
+        background: #27ae60 !important;
+        color: white !important;
+        
+        &:hover {
+          background: #229954 !important;
         }
       }
       
       .reset-btn {
-        background: #f39c12;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 6px 20px;
-        cursor: pointer;
-        font-size: 11px;
+        background: #f39c12 !important;
+        color: white !important;
         
         &:hover {
-          background: #e67e22;
+          background: #e67e22 !important;
         }
       }
 
       .toggle-btn {
-        background: #2196F3;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 6px 20px;
-        cursor: pointer;
-        font-size: 11px;
+        background: #2196F3 !important;
+        color: white !important;
         
         &:hover {
-          background: #1976D2;
+          background: #1976D2 !important;
         }
       }
     }
@@ -319,8 +272,8 @@ $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields 
 /* Centralized position variables - change these to tweak sheet layout globally */
 $cs-pos-level-left: 463px !default;
 $cs-pos-level-top: 18px !default;
-$cs-pos-portrait-left: 48px !default;
-$cs-pos-portrait-top: 74px !default;
+$cs-pos-portrait-left: 46px !default;
+$cs-pos-portrait-top: 71px !default;
 $cs-pos-languages-left: 323px !default;
 $cs-pos-languages-top: 173px !default;
 $cs-pos-xpmod-left: 531px !default;
@@ -329,15 +282,6 @@ $cs-pos-xp-left: 323px !default;
 $cs-pos-xp-top: 67px !default;
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
-
-/* Portrait dimension variables - adjust these for different aspect ratios */
-$cs-portrait-width: 130px !default;    /* Standard width */
-$cs-portrait-height: 134px !default;   /* 3:4 aspect ratio (portrait orientation) */
-/* Alternative aspect ratios:
-   Square: width: 138px, height: 138px
-   4:3 landscape: width: 183px, height: 138px  
-   16:9 landscape: width: 245px, height: 138px
-   2:3 portrait: width: 138px, height: 207px */
 
 /* Additional header / field position presets discovered during sweep */
 $cs-pos-namegroup-left: 44px !default;
@@ -381,34 +325,6 @@ $cs-pos-barbarian-hide-top: 256px !default;
 $cs-pos-barbarian-move-left: 454px !default;
 $cs-pos-barbarian-move-top: 322px !default;
 .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --z: var(--z-labels, 15); }
-$cs-pos-save-label-left: -161px !default;
-$cs-pos-save-label-top: 14px !default;
-
-// Individual Save Value Positioning
-$cs-pos-save-death-left: 380px !default;
-$cs-pos-save-death-top: 100px !default;
-$cs-pos-save-wands-left: 380px !default;
-$cs-pos-save-wands-top: 140px !default;
-$cs-pos-save-paralysis-left: 380px !default;
-$cs-pos-save-paralysis-top: 180px !default;
-$cs-pos-save-breath-left: 380px !default;
-$cs-pos-save-breath-top: 220px !default;
-$cs-pos-save-spells-left: 380px !default;
-$cs-pos-save-spells-top: 260px !default;
-
-// Individual Save Label Positioning
-$cs-pos-save-label-death-left: -161px !default;
-$cs-pos-save-label-death-top: 100px !default;
-$cs-pos-save-label-wands-left: -161px !default;
-$cs-pos-save-label-wands-top: 140px !default;
-$cs-pos-save-label-paralysis-left: -161px !default;
-$cs-pos-save-label-paralysis-top: 180px !default;
-$cs-pos-save-label-breath-left: -161px !default;
-$cs-pos-save-label-breath-top: 220px !default;
-$cs-pos-save-label-spells-left: -161px !default;
-$cs-pos-save-label-spells-top: 260px !default;
-
-
 
 /* Background Image Override - Apply to entire sheet and window */
 form.osp.sheet.actor.character,
@@ -448,23 +364,6 @@ form.osp.sheet.actor.character {
   filter: none !important;
   will-change: auto !important;
   backface-visibility: visible !important;
-}
-
-/* Neutralize small transforms */
-.languages-tags,
-.char-name,
-.char-class,
-.char-align,
-.char-race,
-.char-age,
-.char-sex,
-.save-label-death span,
-.save-label-wands span,
-.save-label-paralysis span,
-.save-label-breath span,
-.save-label-spells span {
-  transform: none !important;
-  will-change: auto !important;
 }
 
 /* Window content wrapper - inherits background from main declaration above */
@@ -640,13 +539,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
 .cs-save-badge { border: none !important; border-radius: 0 !important; background-color: transparent !important; position: relative; box-shadow: none !important; width: auto !important; height: auto !important; }
 
-/* Ability scores section - positioned container for absolute ability elements */
-.ability-scores-section { 
-  position: relative; 
-  width: 100%; 
-  height: 100%; /* Set height to contain absolutely positioned abilities */ 
-}
-
 /* Ability score box */
 .cs-ability-select {
   @extend %visual-center-large;
@@ -667,17 +559,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   pointer-events: auto; /* Ensure mouse events work */
 }
 
-/* Ability score positioning system */
-.cs-ability { 
-  position: absolute; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  margin: 0;
-  top: 30px; /* Shared Y position for all abilities */
-  z-index: var(--z-labels, 15); /* Ensure proper z-index for tooltips */
-  pointer-events: auto; /* Ensure mouse events work properly */
-}
+/* NOTE: Old .cs-ability positioning removed - now uses simplified system at bottom of file */
 
 /* Hide tooltips when dropdown is active/focused */
 .cs-ability-select:focus ~ .cs-tooltip,
@@ -697,27 +579,27 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Individual ability X positioning - customize these left coordinates as needed */
 .ability:has(.attr-str) { 
-  left: 4px; 
+  --ability-left: 4px !important;
 }
 
 .ability:has(.attr-int) { 
-  left: 105px; 
-}
-
-.ability:has(.attr-dex) { 
-  left: 204.1px; 
-}
-
-.ability:has(.attr-con) { 
-  left: 306.1px; 
+  --ability-left: 103px !important;
 }
 
 .ability:has(.attr-wis) { 
-  left: 407.1px; 
+  --ability-left: 205px !important;
+}
+
+.ability:has(.attr-dex) { 
+  --ability-left: 305px !important;
+}
+
+.ability:has(.attr-con) { 
+  --ability-left: 404px !important;
 }
 
 .ability:has(.attr-cha) { 
-  left: 507px; 
+  --ability-left: 502px !important;
 }
 
 /* Listening at Doors field styling */
@@ -853,7 +735,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 %single-character-center {
   /* Single characters (ability scores, etc.) */
-  transform: translateY(-0.04em);
   font-weight: normal;
   
   /* Prevent character distortion */
@@ -863,10 +744,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Input field specific centering (accounts for border/padding visual weight) */
 %input-visual-center {
   @extend %visual-center-base;
-  
-  /* Compensate for visual weight of borders and shadows */
-  padding-top: 0.1em;
-  padding-bottom: 0;
   
   /* Ensure text cursor appears centered */
   &:focus {
@@ -949,28 +826,27 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   position: absolute; 
   display: inline-block; 
   margin: 0;
-  top: 176px; /* Shared Y position for all save groups */
 }
 
 /* Individual save positioning - customize these left coordinates as needed */
 .save-group-death { 
-  left: 0px; 
+  --save-left: 12px; 
 }
 
 .save-group-wands { 
-  left: 138px; 
+  --save-left: 139px; 
 }
 
 .save-group-paralysis { 
-  left: 262px; 
+  --save-left: 262px; 
 }
 
 .save-group-breath { 
-  left: 386.1px; 
+  --save-left: 390px; 
 }
 
 .save-group-spells { 
-  left: 510px;
+  --save-left: 516px;
 }
 .cs-save-value {
   @extend %visual-center-large;
@@ -979,18 +855,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   
   font-size: 100px !important;
   font-family: 'Handwritten', cursive !important;
-  letter-spacing: -1px !important;
   color: #704214 !important;
   font-weight: bold !important;
-  
-  /* Visual centering override for save values */
-  transform: translateY(-0.08em);
-}
-.cs-save-label { display: none !important; }
-
-/* Ability score label - hidden */
-.cs-ability-label {
-  display: none !important;
 }
 
 /* Misc helpers for textareas in bio */
@@ -1023,7 +889,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 32px;
   font-size: 34px;
   color: #704214;
-  z-index: var(--z-level, 8);
+  z-index: var(--z-level, -10);
   font-family: 'Handwritten', cursive;
   background: transparent !important;
   box-shadow: none !important;
@@ -1032,9 +898,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Portrait helpers - configurable dimensions via CSS variables */
 .cs-portrait-container { 
   position: absolute; 
-  width: 130px !important; /* Fixed width - more reliable than CSS variables */
-  height: 134px !important; /* Fixed height - more reliable than CSS variables */
-  /* z-index: 99999 !important; */
+  width: 134px !important; /* Fixed width - more reliable than CSS variables */
+  height: 138px !important; /* Fixed height - more reliable than CSS variables */
   overflow: hidden; 
 }
 .cs-portrait-display,
@@ -1207,12 +1072,6 @@ input[type="number"] {
 }
 
 /* Add more custom classes as needed */
-.cs-custom-ability-fix {
-  /* Custom ability score adjustment */
-  transform: translateY(-0.03em) !important;
-  font-variant-numeric: tabular-nums !important;
-}
-
 .cs-number-only-center {
   /* For fields that only contain single numbers */
   transform: translateY(-0.02em) !important;
@@ -1831,21 +1690,33 @@ input[type="number"] {
 .cs-pos-weight { --left: #{$cs-pos-weight-left}; --top: #{$cs-pos-weight-top}; --z: var(--z-labels, 15); }
 .cs-pos-background { --left: #{$cs-pos-background-left}; --top: #{$cs-pos-background-top}; --z: var(--z-labels, 15); }
 .cs-pos-listening { --left: #{$cs-pos-listening-left}; --top: #{$cs-pos-listening-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-label { --left: #{$cs-pos-save-label-left}; --top: #{$cs-pos-save-label-top}; --z: var(--z-labels, 15); }
 
-/* Individual Save Value Positioning */
-.cs-pos-save-death { --left: #{$cs-pos-save-death-left}; --top: #{$cs-pos-save-death-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-wands { --left: #{$cs-pos-save-wands-left}; --top: #{$cs-pos-save-wands-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-paralysis { --left: #{$cs-pos-save-paralysis-left}; --top: #{$cs-pos-save-paralysis-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-breath { --left: #{$cs-pos-save-breath-left}; --top: #{$cs-pos-save-breath-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-spells { --left: #{$cs-pos-save-spells-left}; --top: #{$cs-pos-save-spells-top}; --z: var(--z-labels, 15); }
+/* Universal Save Positioning - Simplified System */
+.cs-save {
+  position: absolute !important;
+  left: var(--save-left, 0px) !important;
+  top: var(--save-top, 131px) !important;
+  width: var(--save-width, 65px) !important;
+  height: var(--save-height, 87px) !important;
+  z-index: var(--z-labels, 15) !important;
+}
 
-/* Individual Save Label Positioning */
-.cs-pos-save-label-death { --left: #{$cs-pos-save-label-death-left}; --top: #{$cs-pos-save-label-death-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-label-wands { --left: #{$cs-pos-save-label-wands-left}; --top: #{$cs-pos-save-label-wands-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-label-paralysis { --left: #{$cs-pos-save-label-paralysis-left}; --top: #{$cs-pos-save-label-paralysis-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-label-breath { --left: #{$cs-pos-save-label-breath-left}; --top: #{$cs-pos-save-label-breath-top}; --z: var(--z-labels, 15); }
-.cs-pos-save-label-spells { --left: #{$cs-pos-save-label-spells-left}; --top: #{$cs-pos-save-label-spells-top}; --z: var(--z-labels, 15); }
+/* Universal Ability Score Positioning - Simplified System */
+/* Individual abilities are positioned via inline CSS custom properties like: */
+/* style="--ability-left: 150px; --ability-top: 52px; --ability-width: 65px; --ability-height: 87px;" */
+.cs-ability {
+  position: absolute !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  margin: 0 !important;
+  left: var(--ability-left, 0px);
+  top: var(--ability-top, 40px) !important;
+  width: var(--ability-width, 86px) !important;
+  height: var(--ability-height, 66px) !important;
+  z-index: var(--z-labels, 15) !important;
+  pointer-events: auto !important;
+}
 
 /* Small helpers found useful during migration */
 .cs-tab-relative { position: relative; }

@@ -282,6 +282,8 @@ $cs-pos-xp-left: 323px !default;
 $cs-pos-xp-top: 67px !default;
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
+
+/* Additional header / field position presets discovered during sweep */
 $cs-pos-namegroup-left: 44px !default;
 $cs-pos-namegroup-top: 14px !default;
 $cs-pos-class-left: 323px !default;
@@ -300,29 +302,45 @@ $cs-pos-weight-left: 250px !default;
 $cs-pos-weight-top: 173px !default;
 $cs-pos-background-left: 462px !default;
 $cs-pos-background-top: 120px !default;
-$cs-pos-open-stuck-doors-left: 19px !default;
-$cs-pos-open-stuck-doors-top: 312px !default;
-.cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left}; --top: #{$cs-pos-open-stuck-doors-top}; --z: var(--z-labels, 15); }
 $cs-pos-listening-left: -6px !default;
-$cs-pos-listening-top: 312px !default;
+$cs-pos-listening-top: 304px !default;
+$cs-pos-listening-width: 60px !default;
+$cs-pos-listening-height: 30px !default;
 $cs-pos-find-secret-door-left: 60px !default;
-$cs-pos-find-secret-door-top: 312px !default;
-.cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left}; --top: #{$cs-pos-find-secret-door-top}; --z: var(--z-labels, 15); }
+$cs-pos-find-secret-door-top: 304px !default;
+$cs-pos-find-secret-door-width: 60px !default;
+$cs-pos-find-secret-door-height: 30px !default;
+.cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left}; --top: #{$cs-pos-find-secret-door-top}; --width: #{$cs-pos-find-secret-door-width}; --height: #{$cs-pos-find-secret-door-height}; --z: var(--z-labels, 15); }
+$cs-pos-open-stuck-doors-left: 126px !default;
+$cs-pos-open-stuck-doors-top: 304px !default;
+$cs-pos-open-stuck-doors-width: 60px !default;
+$cs-pos-open-stuck-doors-height: 30px !default;
+.cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left}; --top: #{$cs-pos-open-stuck-doors-top}; --width: #{$cs-pos-open-stuck-doors-width}; --height: #{$cs-pos-open-stuck-doors-height}; --z: var(--z-labels, 15); }
 $cs-pos-detect-construction-left: 190px !default;
-$cs-pos-detect-construction-top: 312px !default;
-.cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left}; --top: #{$cs-pos-detect-construction-top}; --z: var(--z-labels, 15); }
+$cs-pos-detect-construction-top: 304px !default;
+$cs-pos-detect-construction-width: 60px !default;
+$cs-pos-detect-construction-height: 30px !default;
+.cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left}; --top: #{$cs-pos-detect-construction-top}; --width: #{$cs-pos-detect-construction-width}; --height: #{$cs-pos-detect-construction-height}; --z: var(--z-labels, 15); }
 $cs-pos-detect-room-traps-left: 256px !default;
-$cs-pos-detect-room-traps-top: 312px !default;
-.cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left}; --top: #{$cs-pos-detect-room-traps-top}; --z: var(--z-labels, 15); }
+$cs-pos-detect-room-traps-top: 304px !default;
+$cs-pos-detect-room-traps-width: 60px !default;
+$cs-pos-detect-room-traps-height: 30px !default;
+.cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left}; --top: #{$cs-pos-detect-room-traps-top}; --width: #{$cs-pos-detect-room-traps-width}; --height: #{$cs-pos-detect-room-traps-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-climb-left: 322px !default;
-$cs-pos-barbarian-climb-top: 312px !default;
-.cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left}; --top: #{$cs-pos-barbarian-climb-top}; --z: var(--z-labels, 15); }
+$cs-pos-barbarian-climb-top: 190px !default;
+$cs-pos-barbarian-climb-width: 60px !default;
+$cs-pos-barbarian-climb-height: 30px !default;
+.cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left}; --top: #{$cs-pos-barbarian-climb-top}; --width: #{$cs-pos-barbarian-climb-width}; --height: #{$cs-pos-barbarian-climb-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-hide-left: 388px !default;
-$cs-pos-barbarian-hide-top: 312px !default;
-.cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left}; --top: #{$cs-pos-barbarian-hide-top}; --z: var(--z-labels, 15); }
+$cs-pos-barbarian-hide-top: 256px !default;
+$cs-pos-barbarian-hide-width: 60px !default;
+$cs-pos-barbarian-hide-height: 30px !default;
+.cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left}; --top: #{$cs-pos-barbarian-hide-top}; --width: #{$cs-pos-barbarian-hide-width}; --height: #{$cs-pos-barbarian-hide-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-move-left: 454px !default;
-$cs-pos-barbarian-move-top: 312px !default;
-.cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --z: var(--z-labels, 15); }
+$cs-pos-barbarian-move-top: 322px !default;
+$cs-pos-barbarian-move-width: 60px !default;
+$cs-pos-barbarian-move-height: 30px !default;
+.cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --width: #{$cs-pos-barbarian-move-width}; --height: #{$cs-pos-barbarian-move-height}; --z: var(--z-labels, 15); }
 
 /* Background Image Override - Apply to entire sheet and window */
 form.osp.sheet.actor.character,
@@ -631,6 +649,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   border: none !important;
   pointer-events: auto;
   text-align: center;
+  
+  /* Visual centering for select options */
+  transform: translateY(-0.02em);
+}
 
 .cs-listening-select:disabled {
   color: #704214;
@@ -1666,10 +1688,10 @@ input[type="number"] {
 
 /* Position presets (centralize numeric offsets) */
 .cs-pos-level { --left: #{$cs-pos-level-left}; --top: #{$cs-pos-level-top}; --z: var(--z-level, 8); }
-.cs-pos-portrait { --left: #{$cs-pos-portrait-left}; --top: #{$cs-pos-portrait-top}; --z: var(--z-level, 8); }
+.cs-pos-portrait { --left: #{$cs-pos-portrait-left}; --top: #{$cs-pos-portrait-top}; --z: var(--z-portrait, 15); }
 .cs-pos-languages { --left: #{$cs-pos-languages-left}; --top: #{$cs-pos-languages-top}; --z: var(--z-labels, 15); --pointer: auto; }
 .cs-pos-xpmod { --left: #{$cs-pos-xpmod-left}; --top: #{$cs-pos-xpmod-top}; --z: var(--z-labels, 15); }
-.cs-pos-xp { --left: #{$cs-pos-xp-left}; --top: #{$cs-pos-xp-top}; --z: var(--z-level, 8); }
+.cs-pos-xp { --left: #{$cs-pos-xp-left}; --top: #{$cs-pos-xp-top}; --z: var(--z-portrait, 15); }
 .cs-pos-next { --left: #{$cs-pos-next-left}; --top: #{$cs-pos-next-top}; --z: var(--z-labels, 15); }
 .cs-pos-sep { --bottom: 0; --left: 0; --right: 0; --height: 1px; --bg: transparent; --z: var(--z-labels, 15); }
 
@@ -1683,7 +1705,7 @@ input[type="number"] {
 .cs-pos-height { --left: #{$cs-pos-height-left}; --top: #{$cs-pos-height-top}; --z: var(--z-labels, 15); }
 .cs-pos-weight { --left: #{$cs-pos-weight-left}; --top: #{$cs-pos-weight-top}; --z: var(--z-labels, 15); }
 .cs-pos-background { --left: #{$cs-pos-background-left}; --top: #{$cs-pos-background-top}; --z: var(--z-labels, 15); }
-.cs-pos-listening { --left: #{$cs-pos-listening-left}; --top: #{$cs-pos-listening-top}; --z: var(--z-labels, 15); }
+.cs-pos-listening { --left: #{$cs-pos-listening-left}; --top: #{$cs-pos-listening-top}; --width: #{$cs-pos-listening-width}; --height: #{$cs-pos-listening-height}; --z: var(--z-labels, 15); }
 
 /* Universal Save Positioning - Simplified System */
 .cs-save {

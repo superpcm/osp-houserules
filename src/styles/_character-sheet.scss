@@ -342,6 +342,104 @@ $cs-pos-barbarian-move-width: 60px !default;
 $cs-pos-barbarian-move-height: 30px !default;
 .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --width: #{$cs-pos-barbarian-move-width}; --height: #{$cs-pos-barbarian-move-height}; --z: var(--z-labels, 15); }
 
+/* Skill Target Position Variants - Adjusts positions based on race/class layout */
+/* Class-based position adjustments (take priority over race) */
+.skill-layout-assassin {
+  .cs-pos-listening { --left: #{$cs-pos-listening-left - 20px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 20px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 20px}; }
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 20px}; }
+  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 20px}; }
+  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left - 20px}; }
+  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left - 20px}; }
+  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left - 20px}; }
+}
+
+.skill-layout-barbarian {
+  .cs-pos-listening { --left: #{$cs-pos-listening-left + 20px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 20px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 20px}; }
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 20px}; }
+  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 20px}; }
+  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left + 20px}; }
+  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left + 20px}; }
+  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left + 20px}; }
+}
+
+.skill-layout-thief {
+  .cs-pos-listening { --left: #{$cs-pos-listening-left - 40px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 40px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 40px}; }
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 40px}; }
+  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 40px}; }
+  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left - 40px}; }
+  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left - 40px}; }
+  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left - 40px}; }
+}
+
+/* Race-based position adjustments (only if no qualifying class) */
+.skill-layout-dwarf {
+  .cs-pos-listening { --left: #{$cs-pos-listening-left + 40px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 40px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 40px}; }
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 40px}; }
+  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 40px}; }
+  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left + 40px}; }
+  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left + 40px}; }
+  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left + 40px}; }
+}
+
+.skill-layout-gnome {
+  .cs-pos-listening { --left: #{$cs-pos-listening-left + 60px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 60px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 60px}; }
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 60px}; }
+  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 60px}; }
+  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left + 60px}; }
+  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left + 60px}; }
+  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left + 60px}; }
+}
+
+.skill-layout-halforc {
+  .cs-pos-listening { --left: #{$cs-pos-listening-left - 80px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 80px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 80px}; }
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 80px}; }
+  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 80px}; }
+  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left - 80px}; }
+  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left - 80px}; }
+  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left - 80px}; }
+}
+
+.skill-layout-hobbit {
+  .cs-pos-listening { --left: #{$cs-pos-listening-left - 60px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 60px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 60px}; }
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 60px}; }
+  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 60px}; }
+  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left - 60px}; }
+  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left - 60px}; }
+  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left - 60px}; }
+}
+
+/* Special race + class combinations */
+.skill-layout-dwarf-thief {
+  .cs-pos-listening { --left: #{$cs-pos-listening-left + 30px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 30px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 30px}; }
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 30px}; }
+  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 30px}; }
+  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left + 30px}; }
+  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left + 30px}; }
+  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left + 30px}; }
+}
+
+/* Generic fallback layout (default positioning when no other conditions are met) */
+.skill-layout-generic {
+  /* Uses default positioning - ensures consistent class-based approach */
+  position: relative;
+}
+
 /* Background Image Override - Apply to entire sheet and window */
 form.osp.sheet.actor.character,
 .osp.sheet.actor.character,
@@ -814,21 +912,80 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   border: 2px solid #4a5568;
   border-radius: 8px;
   background-color: white;
-  
-  /* Combat values are typically numbers */
-  transform: translateY(-0.02em);
 }
 
-/* Combat tab background */
+/* Combat tab background - Default (Generic) */
 .tab[data-tab="combat"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets.webp') !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-generic.webp') !important;
   background-size: contain, contain !important;
   background-position: top center, left 280px !important;
   background-repeat: no-repeat, no-repeat !important;
   background-attachment: scroll, scroll !important;
   background-color: transparent !important;
-  min-height: 403px !important;
+  /*min-height: 400px !important;
+  max-height: 420px !important;*/
 }
+
+/* Skill target variants - Class takes priority over race */
+/* Class-based variants */
+.skill-layout-assassin .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp') !important;
+  background-position: top center, left 280px !important;
+  min-height: 380px !important;
+  max-height: 400px !important;
+}
+
+.skill-layout-barbarian .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-barbarian.webp') !important;
+  background-position: top center, left 280px !important;
+  min-height: 450px !important;
+  max-height: 470px !important;
+}
+
+.skill-layout-thief .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-thief.webp') !important;
+  background-position: top center, left 280px !important;
+  min-height: 390px !important;
+  max-height: 410px !important;
+}
+
+/* Race-based variants (only applied if no qualifying class) */
+.skill-layout-dwarf .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-dwarf.webp') !important;
+  background-position: top center, left 280px !important;
+  min-height: 420px !important;
+  max-height: 440px !important;
+}
+
+.skill-layout-gnome .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-gnome.webp') !important;
+  background-position: top center, left 280px !important;
+  min-height: 360px !important;
+  max-height: 380px !important;
+}
+
+.skill-layout-halforc .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-halforc.webp') !important;
+  background-position: top center, left 280px !important;
+  min-height: 480px !important;
+  max-height: 500px !important;
+}
+
+.skill-layout-hobbit .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-hobbit.webp') !important;
+  background-position: top center, left 280px !important;
+  min-height: 350px !important;
+  max-height: 370px !important;
+}
+
+/* Special race + class combinations */
+.skill-layout-dwarf-thief .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-dwarf-thief.webp') !important;
+  background-position: top center, left 280px !important;
+  min-height: 435px !important;
+  max-height: 475px !important;
+}
+
 .cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }
 
 /* Save badge system */

@@ -515,14 +515,9 @@ form.osp.sheet.actor.character .static-header,
   background-position: left top !important;
   background-size: contain !important;
   background-color: transparent !important;
-  width: 591.5px !important;
   height: 220px !important;
-  flex-shrink: 0;
-  position: relative;
   z-index: var(--z-sheet, 10);
-  margin-top: 4px !important;
-  margin-left: 2px !important;
-  pointer-events: none;
+  margin: 4px 3.6px 0px 0.8px !important;
 }
 
 /* FORCE OVERRIDE: Semi-transparent tabs to show background */
@@ -922,29 +917,25 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   background-repeat: no-repeat, no-repeat !important;
   background-attachment: scroll, scroll !important;
   background-color: transparent !important;
-  /*min-height: 400px !important;
-  max-height: 420px !important;*/
+  height: 400px !important;
 }
 
 /* Skill target variants - Class takes priority over race */
 /* Class-based variants */
 .skill-layout-assassin .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp') !important;
-  background-position: top center, left 280px !important;
   min-height: 380px !important;
   max-height: 400px !important;
 }
 
 .skill-layout-barbarian .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-barbarian.webp') !important;
-  background-position: top center, left 280px !important;
   min-height: 450px !important;
   max-height: 470px !important;
 }
 
 .skill-layout-thief .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-thief.webp') !important;
-  background-position: top center, left 280px !important;
   min-height: 390px !important;
   max-height: 410px !important;
 }
@@ -952,28 +943,24 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Race-based variants (only applied if no qualifying class) */
 .skill-layout-dwarf .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-dwarf.webp') !important;
-  background-position: top center, left 280px !important;
   min-height: 420px !important;
   max-height: 440px !important;
 }
 
 .skill-layout-gnome .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-gnome.webp') !important;
-  background-position: top center, left 280px !important;
   min-height: 360px !important;
   max-height: 380px !important;
 }
 
 .skill-layout-halforc .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-halforc.webp') !important;
-  background-position: top center, left 280px !important;
   min-height: 480px !important;
   max-height: 500px !important;
 }
 
 .skill-layout-hobbit .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-hobbit.webp') !important;
-  background-position: top center, left 280px !important;
   min-height: 350px !important;
   max-height: 370px !important;
 }
@@ -981,9 +968,9 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Special race + class combinations */
 .skill-layout-dwarf-thief .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-dwarf-thief.webp') !important;
-  background-position: top center, left 280px !important;
-  min-height: 435px !important;
-  max-height: 475px !important;
+  /*min-height: 435px !important;
+  max-height: 475px !important;*/
+  height: 420px !important;
 }
 
 .cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }
@@ -1810,7 +1797,7 @@ input[type="number"] {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 1px 6.25px 2px 4px;
+  padding: 1px 3.6px 2px 4px;
   /* overflow-y: auto; */
 }
 

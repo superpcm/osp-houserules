@@ -452,12 +452,21 @@ form.osp.sheet.actor.character,
   background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') no-repeat center center !important;
   background-size: 100% !important;
   background-attachment: scroll !important;
-  columns: #704214;
 }
 
 /* Single Background Image System - Applied to window instead of form */
 form.osp.sheet.actor.character {
   position: relative;
+  color: #704214 !important; /* Default text color for all sheet content */
+}
+
+/* Remove box-shadows from all form elements globally and ensure color inheritance */
+form.osp.sheet.actor.character input,
+form.osp.sheet.actor.character select,
+form.osp.sheet.actor.character textarea,
+form.osp.sheet.actor.character button {
+  box-shadow: none !important;
+  color: inherit !important;
 }
 
 /* Ensure the application window allows tabs to extend beyond right edge */
@@ -526,7 +535,7 @@ form.osp.sheet.actor.character .sheet-tabs a.item,
 .sheet.actor.character .sheet-tabs a.item { 
   opacity: 1 !important; 
   background: rgba(139, 123, 101, 0.4) !important; /* Semi-transparent brown to blend with parchment */
-  box-shadow: none !important;
+
   position: relative !important;
   z-index: 10 !important;
 }
@@ -553,11 +562,11 @@ form.osp.sheet.actor.character .sheet-tabs a.item.active,
 .sheet-body .tab.active { display: block; }
 
 /* Height/Weight neutralization */
-.char-height, .char-weight { box-shadow: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; outline: none !important; }
-.height-group, .weight-group { box-shadow: none !important; background: transparent !important; border: none !important; outline: none !important; }
+.char-height, .char-weight { background: transparent !important; border: none !important; border-radius: 0 !important; outline: none !important; }
+.height-group, .weight-group { background: transparent !important; border: none !important; outline: none !important; }
 
 /* XP Award Button */
-button.xp-award-btn { color: #704214 !important; background: none !important; border: none !important; outline: none !important; box-shadow: none !important; }
+button.xp-award-btn { background: none !important; border: none !important; outline: none !important; }
 button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important; }
 
 /* Portrait transform */
@@ -627,8 +636,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-xp-inline { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
 .cs-xp-flex { display: flex; gap: 20px; }
 .cs-xp-col { flex: 1; }
-.cs-input-small { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; color: #704214 !important; }
-.cs-input-medium { width: 80px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; color: #704214 !important; }
+.cs-input-small { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; text-align: center; }
+.cs-input-medium { width: 80px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; text-align: center; }
 .cs-no-border { border: none; background: none; color: inherit; padding: 0; }
 .cs-xp-preview { margin-top: 15px; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none; }
 
@@ -637,7 +646,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-xp-side-row { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
 
 /* Reusable small select style for inline dialogs (appearance reset handled elsewhere) */
-.cs-select-inline { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none; color: #704214 !important; }
+.cs-select-inline { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
 
 /* Language dialog helpers */
 .cs-dialog-row { margin-bottom: 8px; }
@@ -648,12 +657,12 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Level & portrait container utility classes (migrate inline box-shadow/positioning into class-based rules) */
 .cs-level-container { position: absolute; width: 64px; height: 34px; }
-.cs-level-shadow { position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; box-shadow: none !important; border-radius: 6px; }
+.cs-level-shadow { position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; border-radius: 6px; }
 
 /* Combat and ability layouts markup helpers */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
-.cs-save-badge { border: none !important; border-radius: 0 !important; background-color: transparent !important; position: relative; box-shadow: none !important; width: auto !important; height: auto !important; }
+.cs-save-badge { border: none !important; border-radius: 0 !important; background-color: transparent !important; position: relative; width: auto !important; height: auto !important; }
 
 /* Ability score box */
 .cs-ability-select {
@@ -666,9 +675,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 85px;
   font-size: 100px;
   font-weight: normal;
-  color: #704214 !important;
   appearance: none;
-  box-shadow: none !important;
+
   border: none !important;
   background: transparent !important;
   position: relative; /* Ensure proper positioning context */
@@ -744,17 +752,15 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 80px;
   font-size: 60px;
   background-color: transparent !important;
-  box-shadow: none !important;
+
   appearance: none;
   margin: 0;
   border: none !important;
   pointer-events: auto;
   text-align: center;
-  color: #704214 !important;
 }
 
 .cs-listening-select:disabled {
-  color: #704214;
   cursor: not-allowed;
 }
 
@@ -763,7 +769,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-tab-item { 
   opacity: 1 !important; 
   background: rgba(139, 123, 101, 0.4) !important; /* Semi-transparent to show parchment */
-  box-shadow: none !important; 
+  
 }
 
 /* Tabs runtime helpers */
@@ -1038,7 +1044,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   
   font-size: 100px !important;
   font-family: 'Handwritten', cursive !important;
-  color: #704214 !important;
 }
 
 /* Misc helpers for textareas in bio */
@@ -1070,11 +1075,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   width: 61px;
   height: 32px;
   font-size: 34px;
-  color: #704214;
   z-index: var(--z-level, -10);
   font-family: 'Handwritten', cursive;
   background: transparent !important;
-  box-shadow: none !important;
+
 }
 
 /* Portrait helpers - configurable dimensions via CSS variables */
@@ -1114,7 +1118,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   
   background-color: transparent !important;
   border: none;
-  box-shadow: none !important;
+
   appearance: none;
   margin: 0;
   color: inherit;
@@ -1132,7 +1136,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 32px;
   pointer-events: none;
   font-size: 34px;
-  color: #704214 !important;
 }
 
 .cs-xp-display {
@@ -1145,7 +1148,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   cursor: pointer;
   pointer-events: auto;
   font-size: 34px;
-  color: #704214 !important;
 }
 /* Next Level field class moved below - see .cs-next-level-field for independent control */
 
@@ -1276,7 +1278,7 @@ input[type="number"] {
 }
 
 /* Header field classes (name, class, race, small fields) */
-.cs-char-field-group { display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; }
+/*.cs-char-field-group { display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; }*/
 .cs-char-name {
   @extend %input-visual-center;
   @extend %visual-center-medium;
@@ -1285,17 +1287,12 @@ input[type="number"] {
   height: 31px;
   font-family: 'Handwritten', cursive;
   font-size: 34px;
-  color: #704214 !important;
   background-color: transparent !important;
-  box-shadow: none !important;
-  appearance: none;
-  margin: 0;
-  overflow: visible;
+
   white-space: nowrap;
   text-overflow: clip;
   border: none;
-  pointer-events: auto;
-  padding: 0 2px 0 2px;
+  padding: 0 2px 0 5px;
 }
 .cs-class-select {
   /* Removed conflicting @extend mixins - using manual centering instead */
@@ -1308,9 +1305,8 @@ input[type="number"] {
   width: 130px;
   height: 31px;
   font-size: 34px;
-  color: #704214 !important;
   background-color: transparent !important;
-  box-shadow: none !important;
+
   appearance: none;
   margin: 0;
   border: none;
@@ -1337,13 +1333,11 @@ input[type="number"] {
   font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
-  color: #704214 !important;
   
   /* Appearance */
   background-color: transparent !important;
-  color: inherit;
   border: none;
-  box-shadow: none !important;
+
   appearance: none;
   outline: none;
   
@@ -1387,7 +1381,7 @@ input[type="number"] {
   /* Typography - customize as needed */
   font-size: 34px;
   font-family: 'Handwritten', cursive;
-  color: #704214 !important;
+
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1395,7 +1389,7 @@ input[type="number"] {
   background-color: transparent !important;
   color: inherit;
   border: none;
-  box-shadow: none !important;
+
   appearance: none;
   outline: none;
   
@@ -1440,13 +1434,13 @@ input[type="number"] {
   font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
-  color: #704214 !important;
+
   
   /* Appearance */
   background-color: transparent !important;
   color: inherit;
   border: none;
-  box-shadow: none !important;
+
   appearance: none;
   outline: none;
   
@@ -1520,13 +1514,13 @@ input[type="number"] {
   font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
-  color: #704214 !important;
+
   
   /* Appearance */
   background-color: transparent !important;
   color: inherit;
   border: none;
-  box-shadow: none !important;
+
   appearance: none;
   outline: none;
   
@@ -1564,13 +1558,13 @@ input[type="number"] {
   font-size: 34px;
   font-family: 'Handwritten', cursive;
   letter-spacing: 0;
-  color: #704214 !important;
+
   
   /* Appearance */
   background-color: transparent !important;
   color: inherit;
   border: none;
-  box-shadow: none !important;
+
   appearance: none;
   outline: none;
   
@@ -1615,13 +1609,13 @@ input[type="number"] {
   font-size: 34px;
   font-family: 'Handwritten', cursive;
   letter-spacing: 0;
-  color: #704214 !important;
+
   
   /* Appearance */
   background-color: transparent !important;
   color: inherit;
   border: none;
-  box-shadow: none !important;
+
   appearance: none;
   outline: none;
   
@@ -1667,13 +1661,13 @@ input[type="number"] {
   font-weight: normal;
   letter-spacing: var(--languages-letter-spacing, 0px);
   line-height: var(--languages-line-height, 1);
-  color: #704214 !important;
+
   
   /* Appearance */
   background: transparent !important;
-  color: #704214 !important;
+
   border: none !important;
-  box-shadow: none !important;
+
   
   /* Layout */
   margin: 0;
@@ -1696,7 +1690,7 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  color: #704214 !important;
+
   
   /* Size and positioning - compact field for age */
   width: 61px;
@@ -1705,13 +1699,11 @@ input[type="number"] {
   /* Typography - Age field with Handwritten font */
   font-family: 'Handwritten', cursive !important;
   font-size: 34px;
-  color: #704214;
 
     /* Appearance */
   background-color: transparent !important;
-  color: inherit;
   border: none;
-  box-shadow: none !important;
+
   appearance: none;
   outline: none;
   
@@ -1727,7 +1719,7 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  color: #704214 !important;
+
 
   /* Size and positioning - compact dropdown for sex */
   width: 61px;
@@ -1736,13 +1728,11 @@ input[type="number"] {
   /* Typography - Sex field with Handwritten font */
   font-family: 'Handwritten', cursive !important;
   font-size: 34px;
-  color: #704214;
   
   /* Appearance */
   background-color: transparent !important;
   border: none;
-  color: inherit;
-  box-shadow: none !important;
+
   appearance: none;
   outline: none;
   cursor: pointer;
@@ -1843,7 +1833,7 @@ input[type="number"] {
   font-size: var(--languages-font-size, 24px) !important;
   padding: 0 4px;
   font-family: 'Handwritten', cursive !important;
-  color: #704214 !important;
+
   text-align: center;
   word-wrap: break-word; /* Allow breaking long words if needed */
   

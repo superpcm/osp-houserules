@@ -452,7 +452,7 @@ form.osp.sheet.actor.character,
   background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') no-repeat center center !important;
   background-size: 100% !important;
   background-attachment: scroll !important;
-  color: #704214 !important;
+  columns: #704214;
 }
 
 /* Single Background Image System - Applied to window instead of form */
@@ -520,26 +520,33 @@ form.osp.sheet.actor.character .static-header,
   margin: 4px 3.6px 0px 0.8px !important;
 }
 
-/* FORCE OVERRIDE: Semi-transparent tabs to show background */
+/* FORCE OVERRIDE: Semi-transparent tabs to show parchment background */
 form.osp.sheet.actor.character .sheet-tabs a.item,
 .osp.sheet.actor.character .sheet-tabs a.item,
-.sheet.actor.character .sheet-tabs a.item { opacity: 1 !important; background: rgba(255,255,255,0.9) !important; box-shadow: none !important; }
+.sheet.actor.character .sheet-tabs a.item { 
+  opacity: 1 !important; 
+  background: rgba(139, 123, 101, 0.4) !important; /* Semi-transparent brown to blend with parchment */
+  box-shadow: none !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
 
 form.osp.sheet.actor.character .sheet-tabs a.item:hover,
 .osp.sheet.actor.character .sheet-tabs a.item:hover,
-.sheet.actor.character .sheet-tabs a.item:hover { opacity: 1 !important; background: rgba(247,247,247,0.95) !important; }
+.sheet.actor.character .sheet-tabs a.item:hover { 
+  opacity: 1 !important; 
+  background: rgba(139, 123, 101, 0.6) !important; /* Slightly more opaque on hover */
+  z-index: 15 !important;
+}
 
 form.osp.sheet.actor.character .sheet-tabs a.item.active,
 .osp.sheet.actor.character .sheet-tabs a.item.active,
-.sheet.actor.character .sheet-tabs a.item.active { opacity: 1 !important; background: rgba(255,255,255,0.95) !important; }
-
-/* Let JavaScript control z-index via variables or inline assignment */
-form.osp.sheet.actor.character .sheet-tabs a.item:hover,
-form.osp.sheet.actor.character .sheet-tabs a.item.active,
-.osp.sheet.actor.character .sheet-tabs a.item:hover,
-.osp.sheet.actor.character .sheet-tabs a.item.active,
-.sheet.actor.character .sheet-tabs a.item:hover,
-.sheet.actor.character .sheet-tabs a.item.active { z-index: inherit !important; }
+.sheet.actor.character .sheet-tabs a.item.active { 
+  opacity: 1 !important; 
+  background: rgba(255, 255, 255, 0.8) !important; /* More opaque white for active tab */
+  z-index: 20 !important;
+  border-left: none !important;
+}
 
 /* Tab content area */
 .sheet-body .tab { display: none; background: none !important; border: none !important; margin-top: -5px !important; }
@@ -620,8 +627,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-xp-inline { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
 .cs-xp-flex { display: flex; gap: 20px; }
 .cs-xp-col { flex: 1; }
-.cs-input-small { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; }
-.cs-input-medium { width: 80px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; }
+.cs-input-small { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; color: #704214 !important; }
+.cs-input-medium { width: 80px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; color: #704214 !important; }
 .cs-no-border { border: none; background: none; color: inherit; padding: 0; }
 .cs-xp-preview { margin-top: 15px; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none; }
 
@@ -630,7 +637,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-xp-side-row { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
 
 /* Reusable small select style for inline dialogs (appearance reset handled elsewhere) */
-.cs-select-inline { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
+.cs-select-inline { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; box-shadow: none !important; text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none; color: #704214 !important; }
 
 /* Language dialog helpers */
 .cs-dialog-row { margin-bottom: 8px; }
@@ -659,6 +666,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 85px;
   font-size: 100px;
   font-weight: normal;
+  color: #704214 !important;
   appearance: none;
   box-shadow: none !important;
   border: none !important;
@@ -742,9 +750,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   border: none !important;
   pointer-events: auto;
   text-align: center;
-  
-  /* Visual centering for select options */
-  transform: translateY(-0.02em);
+  color: #704214 !important;
 }
 
 .cs-listening-select:disabled {
@@ -754,7 +760,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Tabs helper (in case nav items had inline styles) */
 .cs-tabs { display: flex; flex-direction: column; }
-.cs-tab-item { opacity: 1 !important; background: white !important; box-shadow: none !important; }
+.cs-tab-item { 
+  opacity: 1 !important; 
+  background: rgba(139, 123, 101, 0.4) !important; /* Semi-transparent to show parchment */
+  box-shadow: none !important; 
+}
 
 /* Tabs runtime helpers */
 .cs-tabs {
@@ -765,9 +775,22 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 .cs-tab-item {
   position: relative !important;
-  z-index: var(--z-top, 10000) !important;
+  z-index: 10 !important; /* Base tab layer */
   pointer-events: auto !important;
   cursor: pointer !important;
+}
+
+/* Active tab state for cs-tab-item */
+.cs-tab-item.active {
+  z-index: 20 !important; /* Active tab comes forward */
+  border-left: none !important; /* Seamless connection to page */
+  background: rgba(255, 255, 255, 0.8) !important; /* More opaque for active tab */
+}
+
+/* Hover state for cs-tab-item */
+.cs-tab-item:hover {
+  z-index: 15 !important; /* Hover tab comes slightly forward */
+  background: rgba(139, 123, 101, 0.6) !important; /* Slightly more opaque on hover */
 }
 .cs-force-pointer { pointer-events: auto !important; }
 
@@ -1016,7 +1039,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   font-size: 100px !important;
   font-family: 'Handwritten', cursive !important;
   color: #704214 !important;
-  font-weight: bold !important;
 }
 
 /* Misc helpers for textareas in bio */
@@ -1110,6 +1132,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 32px;
   pointer-events: none;
   font-size: 34px;
+  color: #704214 !important;
 }
 
 .cs-xp-display {
@@ -1122,6 +1145,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   cursor: pointer;
   pointer-events: auto;
   font-size: 34px;
+  color: #704214 !important;
 }
 /* Next Level field class moved below - see .cs-next-level-field for independent control */
 
@@ -1284,6 +1308,7 @@ input[type="number"] {
   width: 130px;
   height: 31px;
   font-size: 34px;
+  color: #704214 !important;
   background-color: transparent !important;
   box-shadow: none !important;
   appearance: none;
@@ -1312,6 +1337,7 @@ input[type="number"] {
   font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
+  color: #704214 !important;
   
   /* Appearance */
   background-color: transparent !important;
@@ -1361,6 +1387,7 @@ input[type="number"] {
   /* Typography - customize as needed */
   font-size: 34px;
   font-family: 'Handwritten', cursive;
+  color: #704214 !important;
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1413,6 +1440,7 @@ input[type="number"] {
   font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
+  color: #704214 !important;
   
   /* Appearance */
   background-color: transparent !important;
@@ -1492,6 +1520,7 @@ input[type="number"] {
   font-family: 'Handwritten', cursive;
   font-weight: normal;
   letter-spacing: 0;
+  color: #704214 !important;
   
   /* Appearance */
   background-color: transparent !important;
@@ -1535,6 +1564,7 @@ input[type="number"] {
   font-size: 34px;
   font-family: 'Handwritten', cursive;
   letter-spacing: 0;
+  color: #704214 !important;
   
   /* Appearance */
   background-color: transparent !important;
@@ -1585,6 +1615,7 @@ input[type="number"] {
   font-size: 34px;
   font-family: 'Handwritten', cursive;
   letter-spacing: 0;
+  color: #704214 !important;
   
   /* Appearance */
   background-color: transparent !important;
@@ -1636,6 +1667,7 @@ input[type="number"] {
   font-weight: normal;
   letter-spacing: var(--languages-letter-spacing, 0px);
   line-height: var(--languages-line-height, 1);
+  color: #704214 !important;
   
   /* Appearance */
   background: transparent !important;
@@ -1654,14 +1686,6 @@ input[type="number"] {
   
   /* Visual centering - Y-axis positioning adjustment */
   vertical-align: middle;
-  
-  /* Empty state styling
-  &:empty::before {
-    content: "Click to add languages...";
-    color: #704214 !important;
-    font-style: italic;
-    font-size: 12px;
-  } */
 }
 
 /* Age field - separate class for independent control */
@@ -1672,6 +1696,7 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
+  color: #704214 !important;
   
   /* Size and positioning - compact field for age */
   width: 61px;
@@ -1702,6 +1727,7 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
+  color: #704214 !important;
 
   /* Size and positioning - compact dropdown for sex */
   width: 61px;

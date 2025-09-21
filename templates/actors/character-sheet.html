@@ -293,20 +293,6 @@
       });
     }
 
-    // Function to update Next Level display
-    function updateNextLevelDisplay() {
-      const nextLevelField = document.getElementById('next-level-display');
-      if (!nextLevelField) return;
-
-      // Get current level and class to calculate next level XP
-      const level = parseInt(document.querySelector('input[name="system.level"]')?.value) || 1;
-      const characterClass = document.querySelector('select[name="system.class"]')?.value || 'fighter';
-
-      // Calculate next level XP using the same tables as the actor
-      const nextLevelXP = calculateNextLevelXP(level, characterClass);
-      nextLevelField.value = formatNumberWithCommas(nextLevelXP);
-    }
-
     // Function to override XP Progress Handler formatting
     function formatExistingFields() {
       // Format XP display if it exists
@@ -316,13 +302,6 @@
         if (document.activeElement !== xpField) {
           xpField.value = formatNumberWithCommas(currentXP);
         }
-      }
-
-      // Format Next Level display if it exists
-      const nextLevelField = document.getElementById('next-level-display');
-      if (nextLevelField && nextLevelField.value) {
-        const nextLevelXP = parseInt(nextLevelField.value.replace(/,/g, '')) || 0;
-        nextLevelField.value = formatNumberWithCommas(nextLevelXP);
       }
     }
 
@@ -370,9 +349,6 @@
       // Update XP display with comma formatting
       updateXPDisplay();
 
-      // Update Next Level display
-      updateNextLevelDisplay();
-
       // Set up periodic formatting to override XP progress handler
       setInterval(formatExistingFields, 500); // Run every 500ms to catch updates from XP progress handler
 
@@ -383,11 +359,6 @@
 
       if (classField) {
         classField.addEventListener('change', updateXPModifier);
-        classField.addEventListener('change', updateNextLevelDisplay);
-      }
-
-      if (levelField) {
-        levelField.addEventListener('change', updateNextLevelDisplay);
       }
 
       attributeFields.forEach(field => {
@@ -1910,12 +1881,6 @@
   <!-- XP Progress Bar -->
   <div class="level-xp-progress"></div>
   <input type="text" class="xp-display cs-field cs-xp-display" id="xp-display" name="system.xp" value="{{system.xp}}" />
-  </div>
-
-  <!-- Next Level field -->
-  <div class="next-level-group cs-abs cs-pos-next" id="next-level-container">
-    <!-- Next Level Display -->
-    <input type="text" class="next-level-display cs-next-level-field" id="next-level-display" readonly />
   </div>
 
       <!-- Horizontal separator line at bottom of static header -->

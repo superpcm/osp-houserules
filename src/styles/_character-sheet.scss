@@ -59,8 +59,7 @@ $debug-form-fields: false; // Change to false to disable
   .portrait-display,
   .cs-level-display,
   .cs-xp-display,
-  .cs-xp-mod-display,
-  .cs-next-level-field {
+  .cs-xp-mod-display {
     border: 0.5px dashed red !important;
   }
   
@@ -270,38 +269,38 @@ $debug-form-fields: false; // Change to false to disable
 $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields (Name, Class, Level, XP Mod)
 
 /* Centralized position variables - change these to tweak sheet layout globally */
-$cs-pos-level-left: 463px !default;
-$cs-pos-level-top: 18px !default;
-$cs-pos-portrait-left: 46px !default;
-$cs-pos-portrait-top: 71px !default;
-$cs-pos-languages-left: 323px !default;
-$cs-pos-languages-top: 173px !default;
-$cs-pos-xpmod-left: 531px !default;
-$cs-pos-xpmod-top: 14px !default;
-$cs-pos-xp-left: 323px !default;
-$cs-pos-xp-top: 67px !default;
+$cs-pos-level-left: 466px !default;
+$cs-pos-level-top: 21px !default;
+$cs-pos-portrait-left: 5px !default;
+$cs-pos-portrait-top: 26px !default;
+$cs-pos-languages-left: 328px !default;
+$cs-pos-languages-top: 180px !default;
+$cs-pos-xpmod-left: 534px !default;
+$cs-pos-xpmod-top: 21px !default;
+$cs-pos-xp-left: 465px !default;
+$cs-pos-xp-top: 74px !default;
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
 
 /* Additional header / field position presets discovered during sweep */
-$cs-pos-namegroup-left: 44px !default;
-$cs-pos-namegroup-top: 14px !default;
-$cs-pos-class-left: 323px !default;
-$cs-pos-class-top: 14px !default;
-$cs-pos-alignment-left: 324px !default;
-$cs-pos-alignment-top: 120px !default;
-$cs-pos-race-left: 186px !default;
-$cs-pos-race-top: 67px !default;
-$cs-pos-age-left: 186px !default;
-$cs-pos-age-top: 120px !default;
-$cs-pos-sex-left: 255px !default;
-$cs-pos-sex-top: 120px !default;
-$cs-pos-height-left: 186px !default;
-$cs-pos-height-top: 173px !default;
-$cs-pos-weight-left: 250px !default;
-$cs-pos-weight-top: 173px !default;
-$cs-pos-background-left: 462px !default;
-$cs-pos-background-top: 120px !default;
+$cs-pos-namegroup-left: 190px !default;
+$cs-pos-namegroup-top: 21px !default;
+$cs-pos-class-left: 328px !default;
+$cs-pos-class-top: 74px !default;
+$cs-pos-alignment-left: 328px !default;
+$cs-pos-alignment-top: 127px !default;
+$cs-pos-race-left: 190px !default;
+$cs-pos-race-top: 74px !default;
+$cs-pos-age-left: 190px !default;
+$cs-pos-age-top: 127px !default;
+$cs-pos-sex-left: 259px !default;
+$cs-pos-sex-top: 127px !default;
+$cs-pos-height-left: 190px !default;
+$cs-pos-height-top: 180px !default;
+$cs-pos-weight-left: 259px !default;
+$cs-pos-weight-top: 180px !default;
+$cs-pos-background-left: 466px !default;
+$cs-pos-background-top: 127px !default;
 $cs-pos-listening-left: -6px !default;
 $cs-pos-listening-top: 304px !default;
 $cs-pos-listening-width: 60px !default;
@@ -529,7 +528,7 @@ form.osp.sheet.actor.character .static-header,
   background-color: transparent !important;
   height: 220px !important;
   z-index: var(--z-sheet, 10);
-  margin: 4px 3.6px 0px 1px !important;
+  margin: 4px 3.6px 0px 4px !important;
 }
 
 /* FORCE OVERRIDE: Semi-transparent tabs to show parchment background */
@@ -1074,18 +1073,18 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   text-align: center;
   box-sizing: border-box;
   width: 61px;
-  height: 32px;
+  height: 29px;
   font-size: 34px;
   z-index: var(--z-level, -10);
   background: transparent !important;
-
+  padding: 0 0 2px 0;
 }
 
 /* Portrait helpers - configurable dimensions via CSS variables */
 .cs-portrait-container { 
   position: absolute; 
-  width: 134px !important; /* Fixed width - more reliable than CSS variables */
-  height: 138px !important; /* Fixed height - more reliable than CSS variables */
+  width: 178px !important; /* Fixed width - more reliable than CSS variables */
+  height: 184px !important; /* Fixed height - more reliable than CSS variables */
   overflow: hidden; 
 }
 .cs-portrait-display,
@@ -1131,8 +1130,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   align-items: center;
   justify-content: center;
   text-align: center;
-  width: 60px;
-  height: 32px;
+  width: 62px;
+  height: 29px;
   pointer-events: none;
   font-size: 34px;
 }
@@ -1148,7 +1147,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   pointer-events: auto;
   font-size: 34px;
 }
-/* Next Level field class moved below - see .cs-next-level-field for independent control */
 
 /* Ensure inputs behave consistently across browsers with visual centering */
 input.cs-field, 
@@ -1279,17 +1277,16 @@ input[type="number"] {
   @extend %input-visual-center;
   @extend %visual-center-medium;
   
-  width: 271px;
-  height: 31px;
-
+  width: 268px;
+  height: 29px;
   font-size: 34px;
   background-color: transparent !important;
-
   white-space: nowrap;
   text-overflow: clip;
   border: none;
-  padding: 0 2px 0 5px;
+  padding: 0 2px 0 2px;
 }
+
 .cs-class-select {
   /* Removed conflicting @extend mixins - using manual centering instead */
   display: flex;
@@ -1299,7 +1296,7 @@ input[type="number"] {
   box-sizing: border-box;
   
   width: 130px;
-  height: 31px;
+  height: 30px;
   font-size: 34px;
   background-color: transparent !important;
 
@@ -1311,46 +1308,27 @@ input[type="number"] {
 
 /* Background field - separate class for independent control */
 .cs-background-select {
-  /* Inherit base layout from large selects but allow independent styling */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   line-height: 1;
   box-sizing: border-box;
-  
-  /* Size and positioning */
-  width: 128px;
-  height: 32px;
-  
-  /* Typography - uses CSS variable from JavaScript for dynamic sizing */
+  width: 130px;
+  height: 30px;
   font-size: var(--background-font-size, 24px);
-
   font-weight: normal;
   letter-spacing: 0;
-  
-  /* Appearance */
   background-color: transparent !important;
   border: none;
-
-  
-  /* Layout */
   margin: 0;
   padding: 0 5px 0 5px;
-  
-  /* Interaction */
   pointer-events: auto;
   cursor: pointer;
-  
-  /* Visual centering */
   vertical-align: middle;
-  
-  /* Focus states - customize as needed */
   &:focus {
     outline: none;
   }
-  
-  /* Disabled states */
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -1364,17 +1342,14 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   text-align: center;
-  line-height: 1;
   box-sizing: border-box;
   
   /* Size and positioning */
   width: 130px;
-  height: 32px;
+  height: 30px;
   
   /* Typography - customize as needed */
   font-size: 34px;
-
-
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1383,10 +1358,9 @@ input[type="number"] {
   color: inherit;
   border: none;
 
-  
   /* Layout */
   margin: 0;
-  padding: 0 5px 0 5px;
+  padding: 0 5px 2px 5px;
   
   /* Interaction */
   pointer-events: auto;
@@ -1405,70 +1379,18 @@ input[type="number"] {
   }
 }
 
-/* Next Level field - separate class for independent control */
-.cs-next-level-field {
-  /* Inherit base layout but allow independent styling */
-  @extend %visual-center-medium;
-  @extend %numeric-center;
-  @extend %rectangular-container-center;
-  /*display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;*/
-  
-  /* Size and positioning */
-  width: 129px;
-  height: 32px;
-  
-  /* Typography - customize as needed */
-  font-size: 34px;
-
-  font-weight: normal;
-  letter-spacing: 0;
-
-  
-  /* Appearance */
-  background-color: transparent !important;
-  color: inherit;
-  border: none;
-
-  
-  /* Layout */
-  margin: 0;
-  padding: 2px 0 0 2px;
-  
-  /* Interaction - readonly field */
-  pointer-events: none;
-  cursor: default;
-  user-select: none;
-  
-  /* Numeric formatting */
-  font-variant-numeric: tabular-nums;
-  
-  /* Focus states - not applicable for readonly */
-  &:focus {
-    outline: none;
-  }
-  
-  /* Custom styling for calculated values */
-  &[readonly] {
-    background-color: transparent !important;
-    color: inherit;
-  }
-}
-
 /* XP container with XP progress bar */
 .xp-group {
   position: relative;
-  width: 134px;
-  height: 34px;
+  width: 131px;
+  height: 30px;
   
   /* XP Progress bar within XP field */
   .level-xp-progress {
     position: absolute;
     top: 0px;
     left: 0px;
-    height: 33px;
+    height: 30px;
     width: var(--level-height, 0%);
     background: var(--level-bg, linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%));
     transition: width 0.3s ease;
@@ -1484,58 +1406,27 @@ input[type="number"] {
   }
 }
 
-/* Next Level container */
-.next-level-group {
-  position: relative;
-  width: 134px;
-  height: 34px;
-  
-  /* Next Level display */
-  .cs-next-level-field {
-    position: relative;
-    z-index: 2;
-  }
-}
-
 /* Alignment field - separate class for independent control */
 .cs-alignment-select {
-  /* Inherit base layout from large selects but allow independent styling */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   line-height: 1;
   box-sizing: border-box;
-  
-  /* Size and positioning */
-  width: 128px;
-  height: 32px;
-  
-  /* Typography - customize as needed */
+  width: 130px;
+  height: 30px;
   font-size: 34px;
-
   font-weight: normal;
   letter-spacing: 0;
-
-  
-  /* Appearance */
   background-color: transparent !important;
   color: inherit;
   border: none;
-
-  
-  /* Layout */
   margin: 0;
-  padding: 0 5px 0 5px;
-  
-  /* Interaction */
+  padding: 0 5px 5px 5px;
   pointer-events: auto;
   cursor: pointer;
-  
-  /* Visual centering */
   vertical-align: middle;
-  
-  /* Focus states - customize as needed */
   &:focus {
     outline: none;
   }
@@ -1543,46 +1434,26 @@ input[type="number"] {
 
 /* Height field - separate class for independent control */
 .cs-height-field {
-  /* Inherit base layout but allow independent styling */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  
-  /* Size and positioning */
-  width: 65px;
-  height: 32px;
-  
-  /* Typography - customize as needed */
+  width: 62px;
+  height: 30px;
   font-size: 34px;
-
   letter-spacing: 0;
-
-  
-  /* Appearance */
   background-color: transparent !important;
   color: inherit;
   border: none;
-
-  
-  /* Layout */
   margin: 0;
   padding: 0 2px 0 2px;
-  
-  /* Interaction */
   pointer-events: auto;
   cursor: text;
-  
-  /* Visual centering for measurements */
   vertical-align: middle;
-  
-  /* Focus states */
   &:focus {
     outline: none;
   }
-  
-  /* Input styling for physical measurements */
   &::placeholder {
     color: #704214;
     font-style: italic;
@@ -1591,47 +1462,27 @@ input[type="number"] {
 
 /* Weight field - separate class for independent control */
 .cs-weight-field {
-  /* Inherit base layout but allow independent styling */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   line-height: 1;
   box-sizing: border-box;
-  
-  /* Size and positioning */
-  width: 66px;
-  height: 32px;
-  
-  /* Typography - customize as needed */
+  width: 62px;
+  height: 30px;
   font-size: 34px;
-
   letter-spacing: 0;
-
-  
-  /* Appearance */
   background-color: transparent !important;
   color: inherit;
   border: none;
-
-  
-  /* Layout */
   margin: 0;
-  padding: 0 2px 0 2px;
-  
-  /* Interaction */
+  padding: 0;
   pointer-events: auto;
   cursor: text;
-  
-  /* Visual centering for measurements */
   vertical-align: middle;
-  
-  /* Focus states */
   &:focus {
     outline: none;
   }
-  
-  /* Input styling for physical measurements */
   &::placeholder {
     color: #704214;
     font-style: italic;
@@ -1640,103 +1491,57 @@ input[type="number"] {
 
 /* Languages field - separate class for independent control */
 .cs-languages-field {
-  /* Container for language tags display */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  
-  /* Size and positioning - uses CSS variables from existing system */
-  width: 267px;
-  height: 32px;
-  
-  /* Typography - uses CSS variables for dynamic control */
+  width: 268px;
+  height: 30px;
   font-size: var(--languages-font-size, 24px);
-
   font-weight: normal;
   letter-spacing: var(--languages-letter-spacing, 0px);
   line-height: var(--languages-line-height, 1);
-
-  
-  /* Appearance */
   background: transparent !important;
-
   border: none !important;
-
-  
-  /* Layout */
   margin: 0;
   padding: 2px 3px 2px 3px;
-  
-  /* Interaction */
   pointer-events: auto;
   cursor: pointer;
   user-select: none;
-  
-  /* Visual centering - Y-axis positioning adjustment */
   vertical-align: middle;
 }
 
 /* Age field - separate class for independent control */
 .cs-age-field {
-  /* Inherit base layout but allow independent styling */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-
-  
-  /* Size and positioning - compact field for age */
-  width: 61px;
-  height: 32px;
-  
-  /* Typography - Age field with Handwritten font */
-
+  width: 62px;
+  height: 33px;
   font-size: 34px;
-
-    /* Appearance */
   background-color: transparent !important;
   border: none;
-
-  
-  /* Visual centering - Y-axis positioning adjustment */
   vertical-align: middle;
 }
 
 /* Sex field - separate class for independent control */
 .cs-sex-field {
-  /* Inherit base layout but allow independent styling */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-
-
-  /* Size and positioning - compact dropdown for sex */
-  width: 61px;
-  height: 32px;
-  
-  /* Typography - Sex field with Handwritten font */
-
+  width: 62px;
+  height: 30px;
   font-size: 34px;
-  
-  /* Appearance */
   background-color: transparent !important;
   border: none;
-
   cursor: pointer;
-  
-  /* Remove default select styling */
-  
-  /* Visual centering - Y-axis positioning adjustment */
   vertical-align: middle;
-  
-  /* Option styling */
   option {
-  
     font-size: 16px;
     color: #704214;
     background-color: #ffffff;

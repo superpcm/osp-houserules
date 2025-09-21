@@ -460,13 +460,16 @@ form.osp.sheet.actor.character {
   color: #704214 !important; /* Default text color for all sheet content */
 }
 
-/* Remove box-shadows from all form elements globally and ensure color inheritance */
+/* Global form element reset - remove redundant declarations */
 form.osp.sheet.actor.character input,
 form.osp.sheet.actor.character select,
 form.osp.sheet.actor.character textarea,
 form.osp.sheet.actor.character button {
   box-shadow: none !important;
   color: inherit !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
 }
 
 /* Ensure the application window allows tabs to extend beyond right edge */
@@ -526,7 +529,7 @@ form.osp.sheet.actor.character .static-header,
   background-color: transparent !important;
   height: 220px !important;
   z-index: var(--z-sheet, 10);
-  margin: 4px 3.6px 0px 0.8px !important;
+  margin: 4px 3.6px 0px 1px !important;
 }
 
 /* FORCE OVERRIDE: Semi-transparent tabs to show parchment background */
@@ -675,7 +678,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 85px;
   font-size: 100px;
   font-weight: normal;
-  appearance: none;
 
   border: none !important;
   background: transparent !important;
@@ -753,7 +755,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   font-size: 60px;
   background-color: transparent !important;
 
-  appearance: none;
   margin: 0;
   border: none !important;
   pointer-events: auto;
@@ -909,7 +910,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Font loading and fallback management */
 @supports (font-family: 'Handwritten') {
   .osp {
-    font-family: 'Handwritten', cursive !important;
+  
   }
 }
 
@@ -1043,7 +1044,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   @extend %round-container-center;
   
   font-size: 100px !important;
-  font-family: 'Handwritten', cursive !important;
+
 }
 
 /* Misc helpers for textareas in bio */
@@ -1076,7 +1077,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 32px;
   font-size: 34px;
   z-index: var(--z-level, -10);
-  font-family: 'Handwritten', cursive;
   background: transparent !important;
 
 }
@@ -1119,7 +1119,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   background-color: transparent !important;
   border: none;
 
-  appearance: none;
   margin: 0;
   color: inherit;
   padding: 0 2px 0 2px;
@@ -1155,9 +1154,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 input.cs-field, 
 textarea.cs-bio-textarea, 
 select.cs-ability-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
   
   /* Apply visual centering to all form elements */
   @extend %input-visual-center;
@@ -1285,7 +1281,7 @@ input[type="number"] {
   
   width: 271px;
   height: 31px;
-  font-family: 'Handwritten', cursive;
+
   font-size: 34px;
   background-color: transparent !important;
 
@@ -1307,7 +1303,6 @@ input[type="number"] {
   font-size: 34px;
   background-color: transparent !important;
 
-  appearance: none;
   margin: 0;
   border: none;
   pointer-events: auto;
@@ -1330,7 +1325,7 @@ input[type="number"] {
   
   /* Typography - uses CSS variable from JavaScript for dynamic sizing */
   font-size: var(--background-font-size, 24px);
-  font-family: 'Handwritten', cursive;
+
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1338,8 +1333,6 @@ input[type="number"] {
   background-color: transparent !important;
   border: none;
 
-  appearance: none;
-  outline: none;
   
   /* Layout */
   margin: 0;
@@ -1380,7 +1373,7 @@ input[type="number"] {
   
   /* Typography - customize as needed */
   font-size: 34px;
-  font-family: 'Handwritten', cursive;
+
 
   font-weight: normal;
   letter-spacing: 0;
@@ -1390,8 +1383,6 @@ input[type="number"] {
   color: inherit;
   border: none;
 
-  appearance: none;
-  outline: none;
   
   /* Layout */
   margin: 0;
@@ -1431,7 +1422,7 @@ input[type="number"] {
   
   /* Typography - customize as needed */
   font-size: 34px;
-  font-family: 'Handwritten', cursive;
+
   font-weight: normal;
   letter-spacing: 0;
 
@@ -1441,8 +1432,6 @@ input[type="number"] {
   color: inherit;
   border: none;
 
-  appearance: none;
-  outline: none;
   
   /* Layout */
   margin: 0;
@@ -1511,7 +1500,7 @@ input[type="number"] {
   
   /* Typography - customize as needed */
   font-size: 34px;
-  font-family: 'Handwritten', cursive;
+
   font-weight: normal;
   letter-spacing: 0;
 
@@ -1521,8 +1510,6 @@ input[type="number"] {
   color: inherit;
   border: none;
 
-  appearance: none;
-  outline: none;
   
   /* Layout */
   margin: 0;
@@ -1556,7 +1543,7 @@ input[type="number"] {
   
   /* Typography - customize as needed */
   font-size: 34px;
-  font-family: 'Handwritten', cursive;
+
   letter-spacing: 0;
 
   
@@ -1565,8 +1552,6 @@ input[type="number"] {
   color: inherit;
   border: none;
 
-  appearance: none;
-  outline: none;
   
   /* Layout */
   margin: 0;
@@ -1607,7 +1592,7 @@ input[type="number"] {
   
   /* Typography - customize as needed */
   font-size: 34px;
-  font-family: 'Handwritten', cursive;
+
   letter-spacing: 0;
 
   
@@ -1616,8 +1601,6 @@ input[type="number"] {
   color: inherit;
   border: none;
 
-  appearance: none;
-  outline: none;
   
   /* Layout */
   margin: 0;
@@ -1657,7 +1640,7 @@ input[type="number"] {
   
   /* Typography - uses CSS variables for dynamic control */
   font-size: var(--languages-font-size, 24px);
-  font-family: 'Handwritten', cursive;
+
   font-weight: normal;
   letter-spacing: var(--languages-letter-spacing, 0px);
   line-height: var(--languages-line-height, 1);
@@ -1697,15 +1680,13 @@ input[type="number"] {
   height: 32px;
   
   /* Typography - Age field with Handwritten font */
-  font-family: 'Handwritten', cursive !important;
+
   font-size: 34px;
 
     /* Appearance */
   background-color: transparent !important;
   border: none;
 
-  appearance: none;
-  outline: none;
   
   /* Visual centering - Y-axis positioning adjustment */
   vertical-align: middle;
@@ -1726,28 +1707,23 @@ input[type="number"] {
   height: 32px;
   
   /* Typography - Sex field with Handwritten font */
-  font-family: 'Handwritten', cursive !important;
+
   font-size: 34px;
   
   /* Appearance */
   background-color: transparent !important;
   border: none;
 
-  appearance: none;
-  outline: none;
   cursor: pointer;
   
   /* Remove default select styling */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   
   /* Visual centering - Y-axis positioning adjustment */
   vertical-align: middle;
   
   /* Option styling */
   option {
-    font-family: 'Handwritten', cursive;
+  
     font-size: 16px;
     color: #704214;
     background-color: #ffffff;
@@ -1832,7 +1808,7 @@ input[type="number"] {
   overflow: hidden; 
   font-size: var(--languages-font-size, 24px) !important;
   padding: 0 4px;
-  font-family: 'Handwritten', cursive !important;
+
 
   text-align: center;
   word-wrap: break-word; /* Allow breaking long words if needed */

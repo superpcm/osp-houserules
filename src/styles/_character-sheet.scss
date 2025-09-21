@@ -273,72 +273,72 @@ $cs-pos-level-left: 466px !default;
 $cs-pos-level-top: 21px !default;
 $cs-pos-portrait-left: 5px !default;
 $cs-pos-portrait-top: 26px !default;
-$cs-pos-languages-left: 328px !default;
-$cs-pos-languages-top: 180px !default;
-$cs-pos-xpmod-left: 534px !default;
-$cs-pos-xpmod-top: 21px !default;
-$cs-pos-xp-left: 465px !default;
-$cs-pos-xp-top: 74px !default;
+$cs-pos-languages-left: 324px !default;
+$cs-pos-languages-top: 176px !default;
+$cs-pos-xpmod-left: 530px !default;
+$cs-pos-xpmod-top: 17px !default;
+$cs-pos-xp-left: 461px !default;
+$cs-pos-xp-top: 70px !default;
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
 
 /* Additional header / field position presets discovered during sweep */
-$cs-pos-namegroup-left: 190px !default;
-$cs-pos-namegroup-top: 21px !default;
-$cs-pos-class-left: 328px !default;
-$cs-pos-class-top: 74px !default;
-$cs-pos-alignment-left: 328px !default;
-$cs-pos-alignment-top: 127px !default;
-$cs-pos-race-left: 190px !default;
-$cs-pos-race-top: 74px !default;
-$cs-pos-age-left: 190px !default;
-$cs-pos-age-top: 127px !default;
-$cs-pos-sex-left: 259px !default;
-$cs-pos-sex-top: 127px !default;
-$cs-pos-height-left: 190px !default;
-$cs-pos-height-top: 180px !default;
-$cs-pos-weight-left: 259px !default;
-$cs-pos-weight-top: 180px !default;
-$cs-pos-background-left: 466px !default;
-$cs-pos-background-top: 127px !default;
-$cs-pos-listening-left: -6px !default;
-$cs-pos-listening-top: 304px !default;
-$cs-pos-listening-width: 60px !default;
-$cs-pos-listening-height: 30px !default;
-$cs-pos-find-secret-door-left: 60px !default;
-$cs-pos-find-secret-door-top: 304px !default;
-$cs-pos-find-secret-door-width: 60px !default;
-$cs-pos-find-secret-door-height: 30px !default;
+$cs-pos-namegroup-left: 186px !default;
+$cs-pos-namegroup-top: 17px !default;
+$cs-pos-class-left: 324px !default;
+$cs-pos-class-top: 70px !default;
+$cs-pos-alignment-left: 324px !default;
+$cs-pos-alignment-top: 123px !default;
+$cs-pos-race-left: 186px !default;
+$cs-pos-race-top: 70px !default;
+$cs-pos-age-left: 186px !default;
+$cs-pos-age-top: 123px !default;
+$cs-pos-sex-left: 255px !default;
+$cs-pos-sex-top: 123px !default;
+$cs-pos-height-left: 186px !default;
+$cs-pos-height-top: 176px !default;
+$cs-pos-weight-left: 255px !default;
+$cs-pos-weight-top: 176px !default;
+$cs-pos-background-left: 461px !default;
+$cs-pos-background-top: 123px !default;
+$cs-pos-listening-left: 385px !default;
+$cs-pos-listening-top: 294px !default;
+$cs-pos-listening-width: 58px !default;
+$cs-pos-listening-height: 58px !default;
+$cs-pos-find-secret-door-left: 271px !default;
+$cs-pos-find-secret-door-top: 294px !default;
+$cs-pos-find-secret-door-width: 58px !default;
+$cs-pos-find-secret-door-height: 58px !default;
 .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left}; --top: #{$cs-pos-find-secret-door-top}; --width: #{$cs-pos-find-secret-door-width}; --height: #{$cs-pos-find-secret-door-height}; --z: var(--z-labels, 15); }
-$cs-pos-open-stuck-doors-left: 126px !default;
-$cs-pos-open-stuck-doors-top: 304px !default;
-$cs-pos-open-stuck-doors-width: 60px !default;
-$cs-pos-open-stuck-doors-height: 30px !default;
+$cs-pos-open-stuck-doors-left: 158px !default;
+$cs-pos-open-stuck-doors-top: 294px !default;
+$cs-pos-open-stuck-doors-width: 58px !default;
+$cs-pos-open-stuck-doors-height: 58px !default;
 .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left}; --top: #{$cs-pos-open-stuck-doors-top}; --width: #{$cs-pos-open-stuck-doors-width}; --height: #{$cs-pos-open-stuck-doors-height}; --z: var(--z-labels, 15); }
 $cs-pos-detect-construction-left: 190px !default;
 $cs-pos-detect-construction-top: 304px !default;
-$cs-pos-detect-construction-width: 60px !default;
-$cs-pos-detect-construction-height: 30px !default;
+$cs-pos-detect-construction-width: 58px !default;
+$cs-pos-detect-construction-height: 58px !default;
 .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left}; --top: #{$cs-pos-detect-construction-top}; --width: #{$cs-pos-detect-construction-width}; --height: #{$cs-pos-detect-construction-height}; --z: var(--z-labels, 15); }
 $cs-pos-detect-room-traps-left: 256px !default;
 $cs-pos-detect-room-traps-top: 304px !default;
-$cs-pos-detect-room-traps-width: 60px !default;
-$cs-pos-detect-room-traps-height: 30px !default;
+$cs-pos-detect-room-traps-width: 58px !default;
+$cs-pos-detect-room-traps-height: 58px !default;
 .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left}; --top: #{$cs-pos-detect-room-traps-top}; --width: #{$cs-pos-detect-room-traps-width}; --height: #{$cs-pos-detect-room-traps-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-climb-left: 322px !default;
 $cs-pos-barbarian-climb-top: 190px !default;
-$cs-pos-barbarian-climb-width: 60px !default;
-$cs-pos-barbarian-climb-height: 30px !default;
+$cs-pos-barbarian-climb-width: 58px !default;
+$cs-pos-barbarian-climb-height: 58px !default;
 .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left}; --top: #{$cs-pos-barbarian-climb-top}; --width: #{$cs-pos-barbarian-climb-width}; --height: #{$cs-pos-barbarian-climb-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-hide-left: 388px !default;
 $cs-pos-barbarian-hide-top: 256px !default;
-$cs-pos-barbarian-hide-width: 60px !default;
-$cs-pos-barbarian-hide-height: 30px !default;
+$cs-pos-barbarian-hide-width: 58px !default;
+$cs-pos-barbarian-hide-height: 58px !default;
 .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left}; --top: #{$cs-pos-barbarian-hide-top}; --width: #{$cs-pos-barbarian-hide-width}; --height: #{$cs-pos-barbarian-hide-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-move-left: 454px !default;
 $cs-pos-barbarian-move-top: 322px !default;
-$cs-pos-barbarian-move-width: 60px !default;
-$cs-pos-barbarian-move-height: 30px !default;
+$cs-pos-barbarian-move-width: 58px !default;
+$cs-pos-barbarian-move-height: 58px !default;
 .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --width: #{$cs-pos-barbarian-move-width}; --height: #{$cs-pos-barbarian-move-height}; --z: var(--z-labels, 15); }
 
 /* Skill Target Position Variants - Adjusts positions based on race/class layout */
@@ -522,13 +522,28 @@ form.osp.sheet.actor.character .xp-progress-bar,
 form.osp.sheet.actor.character .static-header,
 .static-header,
 .cs-static-header {
-  background: url('/systems/osp-houserules/assets/character-sheet/header.webp') no-repeat !important;
-  background-position: left top !important;
-  background-size: contain !important;
+  position: relative;
   background-color: transparent !important;
   height: 220px !important;
   z-index: var(--z-sheet, 10);
   margin: 4px 3.6px 0px 4px !important;
+}
+
+/* Header frame image as pseudo-element with higher z-index */
+form.osp.sheet.actor.character .static-header::before,
+.static-header::before,
+.cs-static-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/systems/osp-houserules/assets/character-sheet/header.webp') no-repeat !important;
+  background-position: left top !important;
+  background-size: contain !important;
+  z-index: 15 !important; /* Higher than portrait (z-index 5) to overlay it */
+  pointer-events: none; /* Allow clicks to pass through */
 }
 
 /* FORCE OVERRIDE: Semi-transparent tabs to show parchment background */
@@ -749,8 +764,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   @extend %input-visual-center;
   @extend %visual-center-medium;
   
-  width: 80px;
-  height: 80px;
+  width: 58px;
+  height: 58px;
   font-size: 60px;
   background-color: transparent !important;
 
@@ -830,14 +845,14 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Size-specific visual adjustments for Handwritten font */
 %visual-center-large {
   @extend %visual-center-base;
-  
+
   /* Large text (40px+) - account for descender visual weight */
-  transform: translateY(-0.02em);
+  /* transform: translateY(-0.02em); */
   letter-spacing: -0.01em;
   
   /* Optical adjustment for rounded/circular containers */
   &.in-circle {
-    transform: translateY(-0.05em);
+    /*transform: translateY(-0.05em);*/
   }
 }
 
@@ -845,12 +860,12 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   @extend %visual-center-base;
   
   /* Medium text (20-39px) - subtle baseline adjustment */
-  transform: translateY(-0.01em);
-  letter-spacing: 0;
+  /* transform: translateY(-0.01em); */
+  /*  letter-spacing: 0;
   
   /* Adjustment for serif fonts at medium sizes */
   &.serif-adjust {
-    transform: translateY(0.02em);
+    /* transform: translateY(0.02em); */
   }
 }
 
@@ -858,14 +873,14 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   @extend %visual-center-base;
   
   /* Small text (12-19px) - minimal adjustment */
-  transform: translateY(0);
-  letter-spacing: 0.01em;
+  /*transform: translateY(0);
+  letter-spacing: 0.01em;*/
 }
 
 /* Specific adjustments for common number/character types */
 %numeric-center {
   /* Numbers often need slight upward adjustment */
-  transform: translateY(-0.03em);
+  /*transform: translateY(-0.03em);*/
   
   /* Monospace-like spacing for consistency */
   font-variant-numeric: tabular-nums;
@@ -891,19 +906,19 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   /* Placeholder text centering */
   &::placeholder {
     text-align: center;
-    transform: translateY(-0.01em);
+    /* transform: translateY(-0.01em); */
   }
 }
 
 /* Container-specific adjustments */
 %round-container-center {
   /* For circular/rounded containers - text appears lower */
-  transform: translateY(-0.06em);
+  /* transform: translateY(-0.06em); */
 }
 
 %rectangular-container-center {
   /* For rectangular containers - standard centering */
-  transform: translateY(-0.02em);
+  /* transform: translateY(-0.02em); */
 }
 
 /* Font loading and fallback management */
@@ -1086,6 +1101,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   width: 178px !important; /* Fixed width - more reliable than CSS variables */
   height: 184px !important; /* Fixed height - more reliable than CSS variables */
   overflow: hidden; 
+  z-index: 5 !important; /* Force portrait below header (header is z-index 10) */
 }
 .cs-portrait-display,
 .portrait-display { 
@@ -1141,8 +1157,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   @extend %numeric-center;
   @extend %input-visual-center;
   
-  width: 130px;
-  height: 32px;
+  width: 131px;
+  height: 30px;
   cursor: pointer;
   pointer-events: auto;
   font-size: 34px;
@@ -1314,7 +1330,7 @@ input[type="number"] {
   text-align: center;
   line-height: 1;
   box-sizing: border-box;
-  width: 130px;
+  width: 131px;
   height: 30px;
   font-size: var(--background-font-size, 24px);
   font-weight: normal;
@@ -1409,24 +1425,18 @@ input[type="number"] {
 /* Alignment field - separate class for independent control */
 .cs-alignment-select {
   display: flex;
-  align-items: center;
-  justify-content: center;
   text-align: center;
-  line-height: 1;
   box-sizing: border-box;
   width: 130px;
   height: 30px;
   font-size: 34px;
-  font-weight: normal;
-  letter-spacing: 0;
   background-color: transparent !important;
   color: inherit;
   border: none;
-  margin: 0;
-  padding: 0 5px 5px 5px;
+  padding: 0 5px 0 5px;
   pointer-events: auto;
   cursor: pointer;
-  vertical-align: middle;
+
   &:focus {
     outline: none;
   }
@@ -1520,7 +1530,7 @@ input[type="number"] {
   text-align: center;
   box-sizing: border-box;
   width: 62px;
-  height: 33px;
+  height: 30px;
   font-size: 34px;
   background-color: transparent !important;
   border: none;
@@ -1642,7 +1652,7 @@ input[type="number"] {
 
 /* Position presets (centralize numeric offsets) */
 .cs-pos-level { --left: #{$cs-pos-level-left}; --top: #{$cs-pos-level-top}; --z: var(--z-level, 8); }
-.cs-pos-portrait { --left: #{$cs-pos-portrait-left}; --top: #{$cs-pos-portrait-top}; --z: var(--z-portrait, 15); }
+.cs-pos-portrait { --left: #{$cs-pos-portrait-left}; --top: #{$cs-pos-portrait-top}; --z: 5; }
 .cs-pos-languages { --left: #{$cs-pos-languages-left}; --top: #{$cs-pos-languages-top}; --z: var(--z-labels, 15); --pointer: auto; }
 .cs-pos-xpmod { --left: #{$cs-pos-xpmod-left}; --top: #{$cs-pos-xpmod-top}; --z: var(--z-labels, 15); }
 .cs-pos-xp { --left: #{$cs-pos-xp-left}; --top: #{$cs-pos-xp-top}; --z: var(--z-portrait, 15); }

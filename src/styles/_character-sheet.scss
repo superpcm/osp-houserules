@@ -1457,13 +1457,13 @@ input[type="number"] {
   }
 }
 
-/* Next Level container with XP progress bar */
-.next-level-group {
+/* XP container with XP progress bar */
+.xp-group {
   position: relative;
   width: 134px;
   height: 34px;
   
-  /* XP Progress bar within Next Level field */
+  /* XP Progress bar within XP field */
   .level-xp-progress {
     position: absolute;
     top: 0px;
@@ -1477,7 +1477,20 @@ input[type="number"] {
     overflow: hidden;
   }
   
-  /* Next Level display sits on top of progress bar */
+  /* XP display sits on top of progress bar */
+  .cs-xp-display {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+/* Next Level container */
+.next-level-group {
+  position: relative;
+  width: 134px;
+  height: 34px;
+  
+  /* Next Level display */
   .cs-next-level-field {
     position: relative;
     z-index: 2;

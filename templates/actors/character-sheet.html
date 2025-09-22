@@ -1443,57 +1443,6 @@
         }
       }
 
-      // Function to update skill target layout based on class and race
-      function updateSkillLayout() {
-        const form = document.querySelector('form.character');
-        if (!form) return;
-
-        // Get current class and race values
-        const classField = document.querySelector('#char-class');
-        const raceField = document.querySelector('#char-race');
-        
-        const characterClass = (classField?.value || '').toLowerCase().trim();
-        const characterRace = (raceField?.value || '').toLowerCase().trim();
-
-        // Remove any existing skill-layout classes
-        const existingClasses = ['skill-layout-assassin', 'skill-layout-barbarian', 'skill-layout-thief', 
-                                'skill-layout-dwarf', 'skill-layout-gnome', 'skill-layout-halforc', 'skill-layout-hobbit', 
-                                'skill-layout-dwarf-thief', 'skill-layout-generic'];
-        existingClasses.forEach(cls => form.classList.remove(cls));
-
-        // Determine which layout to apply (class takes priority over race)
-        let layoutClass = 'skill-layout-generic'; // default fallback
-
-        // Check for special race + class combinations first (highest priority)
-        if (characterClass === 'thief' && characterRace === 'dwarf') {
-          layoutClass = 'skill-layout-dwarf-thief';
-        }
-        // Check for qualifying classes (priority)
-        else if (characterClass === 'assassin') {
-          layoutClass = 'skill-layout-assassin';
-        } else if (characterClass === 'barbarian') {
-          layoutClass = 'skill-layout-barbarian';
-        } else if (characterClass === 'thief') {
-          layoutClass = 'skill-layout-thief';
-        } else if (characterClass === 'half-orc' || characterClass === 'halforc') {
-          layoutClass = 'skill-layout-halforc';
-        } 
-        // If no qualifying class, check for qualifying races
-        else if (characterRace === 'dwarf') {
-          layoutClass = 'skill-layout-dwarf';
-        } else if (characterRace === 'gnome') {
-          layoutClass = 'skill-layout-gnome';
-        } else if (characterRace === 'hobbit') {
-          layoutClass = 'skill-layout-hobbit';
-        }
-        // Note: half-orc race uses generic layout unless class qualifies
-
-        // Apply the determined layout class
-        form.classList.add(layoutClass);
-        
-        console.log(`Applied skill layout: ${layoutClass} (class: ${characterClass}, race: ${characterRace})`);
-      }
-
       // Initialize listening at doors
       updateListeningAtDoors();
       
@@ -1512,9 +1461,6 @@
       // Initialize barbarian skills
       updateBarbarianSkills();
 
-      // Initialize skill layout
-      updateSkillLayout();
-
       // Add event listeners for race and class changes
       const raceField = document.getElementById('char-race');
       const classField = document.querySelector('select[name="system.class"]');
@@ -1525,13 +1471,11 @@
         raceField.addEventListener('change', updateFindSecretDoor);
         raceField.addEventListener('change', updateDetectConstruction);
         raceField.addEventListener('change', updateDetectRoomTraps);
-        raceField.addEventListener('change', updateSkillLayout);
       }
       if (classField) {
         classField.addEventListener('change', updateListeningAtDoors);
         classField.addEventListener('change', updateFindSecretDoor);
         classField.addEventListener('change', updateBarbarianSkills);
-        classField.addEventListener('change', updateSkillLayout);
       }
       if (strField) {
         strField.addEventListener('change', updateOpenStuckDoors);
@@ -1555,43 +1499,7 @@
   }
   </script>
 
-  <!-- Position Adjustment Tool - Only active when debug borders are enabled -->
-  <script>
-    // Position Adjustment Tool - Only works when debug is enabled
-    (function() {
-      'use strict';
-      
-      console.log('=== POSITION TOOL SCRIPT STARTING ===');
-      console.log('Script block is executing');
-      
-      let currentTool = null;
-      let currentElement = null;
-      let cssVariableMap = {}; // Maps element classes to their CSS variables
-      
-      // Initialize when DOM is ready
-      function init() {
-        console.log('Position tool init() called, readyState:', document.readyState);
-        
-        // Simple test - just add right-click listeners without complex functionality
-        setTimeout(() => {
-          console.log('Adding simple right-click listeners...');
-          
-          const abilityElements = document.querySelectorAll('.cs-ability');
-          const saveElements = document.querySelectorAll('.cs-save');
-          
-          console.log('Found abilities:', abilityElements.length);
-          console.log('Found saves:', saveElements.length);
-          
-          console.log('Simple listeners setup complete - using enhanced positioning tool instead');
-        }, 1000);
-      }
-      
-      // Start initialization
-      console.log('About to call init() function');
-      init();
-      
-    })();
-  </script>
+  <!-- Position adjustment tool moved to character sheet handlers -->
 
   <!-- Character Level - Positioned behind everything -->
   <div class="level-progress-bar-container cs-level-container cs-abs cs-pos-level" id="level-container">
@@ -2126,6 +2034,141 @@
             </div>
           </div>
 
+          <!-- Assassination Field -->
+          <div class="listening-group cs-abs cs-pos-assassination">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Assassination</label>
+              <select class="assassination cs-listening-select" id="assassination" name="system.assassination" data-dtype="String">
+                <option value="" {{#if (eq system.assassination "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.assassination "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.assassination "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.assassination "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.assassination "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.assassination "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Climb Sheer Surfaces Field -->
+          <div class="listening-group cs-abs cs-pos-climb-sheer">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Climb Sheer Surfaces</label>
+              <select class="climb-sheer cs-listening-select" id="climb-sheer" name="system.climbSheer" data-dtype="String">
+                <option value="" {{#if (eq system.climbSheer "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.climbSheer "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.climbSheer "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.climbSheer "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.climbSheer "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.climbSheer "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Hide in Shadows Field -->
+          <div class="listening-group cs-abs cs-pos-hide-shadows">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Hide in Shadows</label>
+              <select class="hide-shadows cs-listening-select" id="hide-shadows" name="system.hideShadows" data-dtype="String">
+                <option value="" {{#if (eq system.hideShadows "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.hideShadows "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.hideShadows "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.hideShadows "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.hideShadows "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.hideShadows "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Move Silently Field -->
+          <div class="listening-group cs-abs cs-pos-move-silently">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Move Silently</label>
+              <select class="move-silently cs-listening-select" id="move-silently" name="system.moveSilently" data-dtype="String">
+                <option value="" {{#if (eq system.moveSilently "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.moveSilently "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.moveSilently "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.moveSilently "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.moveSilently "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.moveSilently "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Find Traps Field -->
+          <div class="listening-group cs-abs cs-pos-find-traps">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Find Traps</label>
+              <select class="find-traps cs-listening-select" id="find-traps" name="system.findTraps" data-dtype="String">
+                <option value="" {{#if (eq system.findTraps "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.findTraps "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.findTraps "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.findTraps "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.findTraps "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.findTraps "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Open Locks Field -->
+          <div class="listening-group cs-abs cs-pos-open-locks">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Open Locks</label>
+              <select class="open-locks cs-listening-select" id="open-locks" name="system.openLocks" data-dtype="String">
+                <option value="" {{#if (eq system.openLocks "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.openLocks "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.openLocks "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.openLocks "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.openLocks "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.openLocks "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Pick Pockets Field -->
+          <div class="listening-group cs-abs cs-pos-pick-pockets">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Pick Pockets</label>
+              <select class="pick-pockets cs-listening-select" id="pick-pockets" name="system.pickPockets" data-dtype="String">
+                <option value="" {{#if (eq system.pickPockets "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.pickPockets "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.pickPockets "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.pickPockets "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.pickPockets "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.pickPockets "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Hide in Undergrowth Field -->
+          <div class="listening-group cs-abs cs-pos-hide-undergrowth">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Hide in Undergrowth</label>
+              <select class="hide-undergrowth cs-listening-select" id="hide-undergrowth" name="system.hideUndergrowth" data-dtype="String">
+                <option value="" {{#if (eq system.hideUndergrowth "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.hideUndergrowth "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.hideUndergrowth "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.hideUndergrowth "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.hideUndergrowth "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.hideUndergrowth "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Hide in Dungeons Field -->
+          <div class="listening-group cs-abs cs-pos-hide-dungeons">
+            <div class="cs-char-field-group">
+              <label class="cs-field-label">Hide in Dungeons</label>
+              <select class="hide-dungeons cs-listening-select" id="hide-dungeons" name="system.hideDungeons" data-dtype="String">
+                <option value="" {{#if (eq system.hideDungeons "")}}selected{{/if}}></option>
+                <option value="1" {{#if (eq system.hideDungeons "1")}}selected{{/if}}>1</option>
+                <option value="2" {{#if (eq system.hideDungeons "2")}}selected{{/if}}>2</option>
+                <option value="3" {{#if (eq system.hideDungeons "3")}}selected{{/if}}>3</option>
+                <option value="4" {{#if (eq system.hideDungeons "4")}}selected{{/if}}>4</option>
+                <option value="5" {{#if (eq system.hideDungeons "5")}}selected{{/if}}>5</option>
+              </select>
+            </div>
+          </div>
+
         </div>
       </div>
       <!-- Skills Tab -->
@@ -2593,349 +2636,7 @@
   }, 1000); // Wait 1 second for character sheet to initialize
 })();
 
-// ===== POSITIONING TOOL SCRIPT =====
-(function() {
-    'use strict';
-    
-    let dragState = null;
-    let currentHighlightedElement = null;
-    
-    function addDiagnosticBorder(element) {
-        removeDiagnosticBorder(); // Remove any existing border
-        
-        // Get current positioning values
-        const values = getCurrentValues(element);
-        console.log('Debug: Adding diagnostic border with values:', values);
-        
-        // Apply the diagnostic border
-        element.style.setProperty('border', '0.5px dashed red', 'important');
-        element.style.setProperty('box-sizing', 'border-box', 'important');
-        
-        // Ensure the element has the correct positioning applied
-        const isAbility = element.classList.contains('cs-ability');
-        const isSave = element.classList.contains('cs-save');
-        
-        if (isAbility || isSave) {
-            // For simplified positioning, ensure CSS custom properties are set
-            const prefix = isAbility ? '--ability-' : '--save-';
-            element.style.setProperty(prefix + 'left', values.left);
-            element.style.setProperty(prefix + 'top', values.top);
-            element.style.setProperty(prefix + 'width', values.width);
-            element.style.setProperty(prefix + 'height', values.height);
-        } else {
-            // For legacy positioning, ensure direct properties are set
-            element.style.setProperty('left', values.left, 'important');
-            element.style.setProperty('top', values.top, 'important');
-            element.style.setProperty('width', values.width, 'important');
-            element.style.setProperty('height', values.height, 'important');
-        }
-        
-        // Force a style recalculation
-        element.offsetHeight;
-        
-        currentHighlightedElement = element;
-    }
-    
-    function removeDiagnosticBorder() {
-        if (currentHighlightedElement) {
-            currentHighlightedElement.style.removeProperty('border');
-            currentHighlightedElement.style.removeProperty('box-sizing');
-            currentHighlightedElement = null;
-        }
-    }
-    
-    function createPositionTool(element) {
-        // Remove any existing tools
-        const existingTool = document.querySelector('.position-tool');
-        if (existingTool) {
-            document.body.removeChild(existingTool);
-        }
-        
-        // Add diagnostic border
-        addDiagnosticBorder(element);
-        
-        const tool = document.createElement('div');
-        tool.className = 'position-tool';
-        tool.style.cssText = `
-            position: fixed;
-            z-index: 10000;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-family: monospace;
-            pointer-events: auto;
-            cursor: move;
-            user-select: none;
-            min-width: 200px;
-        `;
-        
-        const values = getCurrentValues(element);
-        const originalValues = { ...values }; // Store original values for reset
-        
-        tool.innerHTML = `
-            <div style="margin-bottom: 8px; font-weight: bold; text-align: center; cursor: move;" class="tool-header">
-                Position Tool - Drag to Move
-            </div>
-            <div style="display: grid; grid-template-columns: auto 1fr auto auto; gap: 4px; align-items: center;">
-                <span>Left:</span>
-                <input type="number" id="left-input" value="${parseInt(values.left)}" style="width: 60px; background: #333; color: white; border: 1px solid #555;">
-                <button id="left-minus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">-</button>
-                <button id="left-plus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">+</button>
-                
-                <span>Top:</span>
-                <input type="number" id="top-input" value="${parseInt(values.top)}" style="width: 60px; background: #333; color: white; border: 1px solid #555;">
-                <button id="top-minus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">-</button>
-                <button id="top-plus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">+</button>
-                
-                <span>Width:</span>
-                <input type="number" id="width-input" value="${parseInt(values.width)}" style="width: 60px; background: #333; color: white; border: 1px solid #555;">
-                <button id="width-minus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">-</button>
-                <button id="width-plus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">+</button>
-                
-                <span>Height:</span>
-                <input type="number" id="height-input" value="${parseInt(values.height)}" style="width: 60px; background: #333; color: white; border: 1px solid #555;">
-                <button id="height-minus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">-</button>
-                <button id="height-plus" style="width: 20px; height: 20px; background: #444; color: white; border: none; cursor: pointer;">+</button>
-            </div>
-            <div style="margin-top: 8px; display: flex; gap: 4px; justify-content: center;">
-                <button id="apply-btn" style="background: #0a6; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px;">Apply</button>
-                <button id="reset-btn" style="background: #a60; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px;">Reset</button>
-                <button id="close-btn" style="background: #666; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px;">Close</button>
-            </div>
-        `;
-        
-        // Position tool near the element but avoid overlap
-        const rect = element.getBoundingClientRect();
-        tool.style.left = Math.min(rect.right + 10, window.innerWidth - 220) + 'px';
-        tool.style.top = Math.max(rect.top, 10) + 'px';
-        
-        // Make tool draggable
-        const header = tool.querySelector('.tool-header');
-        header.addEventListener('mousedown', (e) => {
-            dragState = {
-                offsetX: e.clientX - tool.offsetLeft,
-                offsetY: e.clientY - tool.offsetTop,
-                tool: tool
-            };
-        });
-        
-        // Add +/- button functionality
-        function addPlusMinusListeners(property) {
-            const input = tool.querySelector(`#${property}-input`);
-            const minusBtn = tool.querySelector(`#${property}-minus`);
-            const plusBtn = tool.querySelector(`#${property}-plus`);
-            
-            minusBtn.addEventListener('click', () => {
-                input.value = parseInt(input.value) - 1;
-                applyValue(element, property, input.value);
-            });
-            
-            plusBtn.addEventListener('click', () => {
-                input.value = parseInt(input.value) + 1;
-                applyValue(element, property, input.value);
-            });
-            
-            // Real-time updates as user types
-            input.addEventListener('input', () => {
-                applyValue(element, property, input.value);
-            });
-        }
-        
-        addPlusMinusListeners('left');
-        addPlusMinusListeners('top');
-        addPlusMinusListeners('width');
-        addPlusMinusListeners('height');
-        
-        // Apply button - finalize all changes
-        tool.querySelector('#apply-btn').addEventListener('click', () => {
-            const left = tool.querySelector('#left-input').value;
-            const top = tool.querySelector('#top-input').value;
-            const width = tool.querySelector('#width-input').value;
-            const height = tool.querySelector('#height-input').value;
-            
-            adjustValue(element, 'left', left);
-            adjustValue(element, 'top', top);
-            adjustValue(element, 'width', width);
-            adjustValue(element, 'height', height);
-            
-            removeDiagnosticBorder();
-            document.body.removeChild(tool);
-        });
-        
-        // Reset button - restore original values
-        tool.querySelector('#reset-btn').addEventListener('click', () => {
-            tool.querySelector('#left-input').value = parseInt(originalValues.left);
-            tool.querySelector('#top-input').value = parseInt(originalValues.top);
-            tool.querySelector('#width-input').value = parseInt(originalValues.width);
-            tool.querySelector('#height-input').value = parseInt(originalValues.height);
-            
-            adjustValue(element, 'left', originalValues.left);
-            adjustValue(element, 'top', originalValues.top);
-            adjustValue(element, 'width', originalValues.width);
-            adjustValue(element, 'height', originalValues.height);
-        });
-        
-        // Close button
-        tool.querySelector('#close-btn').addEventListener('click', () => {
-            removeDiagnosticBorder();
-            document.body.removeChild(tool);
-        });
-        
-        document.body.appendChild(tool);
-        
-        // Focus first input
-        tool.querySelector('#left-input').focus();
-    }
-    
-    function applyValue(element, property, value) {
-        adjustValue(element, property, value);
-    }
+// ===== POSITIONING TOOL MOVED TO HANDLERS =====
+// Positioning tool functionality moved to character sheet JavaScript handlers to prevent infinite re-rendering loops
 
-    function getCurrentValues(element) {
-        const isAbility = element.classList.contains('cs-ability');
-        const isSave = element.classList.contains('cs-save');
-        
-        console.log('Debug: getCurrentValues for element:', element.className, { isAbility, isSave });
-        
-        if (isAbility || isSave) {
-            // Simplified positioning system - read from CSS custom properties
-            const prefix = isAbility ? '--ability-' : '--save-';
-            const style = element.style;
-            
-            const values = {
-                left: style.getPropertyValue(prefix + 'left') || '0px',
-                top: style.getPropertyValue(prefix + 'top') || '0px',
-                width: style.getPropertyValue(prefix + 'width') || '100px',
-                height: style.getPropertyValue(prefix + 'height') || '20px'
-            };
-            
-            console.log('Debug: Simplified positioning values:', values);
-            return values;
-        }
-        
-        // Legacy positioning system (cs-pos-* elements)
-        const computedStyle = window.getComputedStyle(element);
-        const values = {
-            left: computedStyle.left || '0px',
-            top: computedStyle.top || '0px',
-            width: computedStyle.width || '100px',
-            height: computedStyle.height || '20px'
-        };
-        
-        console.log('Debug: Legacy positioning values:', values);
-        return values;
-    }
-
-    function adjustValue(element, property, value) {
-        const isAbility = element.classList.contains('cs-ability');
-        const isSave = element.classList.contains('cs-save');
-        
-        console.log('Debug: adjustValue called', {
-            element: element.className,
-            property: property,
-            value: value,
-            isAbility: isAbility,
-            isSave: isSave
-        });
-        
-        if (isAbility || isSave) {
-            // Simplified positioning system
-            const prefix = isAbility ? '--ability-' : '--save-';
-            const propertyName = prefix + property;
-            const propertyValue = value + 'px';
-            
-            console.log('Debug: Setting property', propertyName, 'to', propertyValue);
-            element.style.setProperty(propertyName, propertyValue);
-            
-            // Verify the property was set
-            const actualValue = element.style.getPropertyValue(propertyName);
-            console.log('Debug: Property verification - set:', propertyValue, 'actual:', actualValue);
-            
-            // Check computed style to see what CSS is actually using
-            const computedStyle = window.getComputedStyle(element);
-            const computedLeft = computedStyle.getPropertyValue('left');
-            console.log('Debug: Computed left value:', computedLeft);
-            
-        } else {
-            // Legacy positioning system - restore !important for proper override
-            element.style.setProperty(property, value + 'px', 'important');
-            console.log('Debug: Set legacy property:', property, '=', value + 'px !important');
-        }
-        
-        // Force a layout recalculation
-        element.offsetHeight;
-    }
-
-    function init() {
-        console.log('Debug: Enhanced universal positioning tool init starting');
-        
-        // Add right-click listeners for simplified positioning elements (abilities and saves)
-        const abilityElements = document.querySelectorAll('.cs-ability');
-        const saveElements = document.querySelectorAll('.cs-save');
-        
-        // Add right-click listeners for legacy positioning elements (cs-pos-* classes)
-        const legacyElements = document.querySelectorAll('[class*="cs-pos-"]');
-        
-        console.log('Debug: Found ability elements:', abilityElements.length);
-        console.log('Debug: Found save elements:', saveElements.length);
-        console.log('Debug: Found legacy positioned elements:', legacyElements.length);
-        
-        // Function to add right-click listener
-        function addRightClickListener(element, debugName) {
-            element.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                console.log(`Debug: Right-click on ${debugName}:`, element);
-                createPositionTool(element);
-            });
-        }
-        
-        // Add listeners to all positioning elements
-        abilityElements.forEach((el, index) => {
-            addRightClickListener(el, `ability ${index}`);
-        });
-        
-        saveElements.forEach((el, index) => {
-            addRightClickListener(el, `save ${index}`);
-        });
-        
-        legacyElements.forEach((el, index) => {
-            addRightClickListener(el, `legacy positioned element ${index} (${el.className})`);
-        });
-        
-        console.log('Debug: Enhanced universal positioning tool init complete');
-    }
-    
-    // Global mouse handlers for dragging
-    document.addEventListener('mousemove', (e) => {
-        if (dragState) {
-            dragState.tool.style.left = (e.clientX - dragState.offsetX) + 'px';
-            dragState.tool.style.top = (e.clientY - dragState.offsetY) + 'px';
-        }
-    });
-    
-    document.addEventListener('mouseup', () => {
-        dragState = null;
-    });
-    
-    // Remove diagnostic border when clicking elsewhere
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.position-tool') && !e.target.closest('[class*="cs-pos-"], .cs-ability, .cs-save')) {
-            // Clicked outside tool and positioned elements
-            const existingTool = document.querySelector('.position-tool');
-            if (!existingTool) {
-                // Only remove border if tool is not open
-                removeDiagnosticBorder();
-            }
-        }
-    });
-    
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-})();
 </script>

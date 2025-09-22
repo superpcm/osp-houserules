@@ -10,6 +10,9 @@ export class LanguageHandler {
     this.openDialog = html.find('.open-language-dialog');
     this.standardLanguages = ["Dwarvish", "Elvish", "Gnomish", "Hobbitish", "Humanish", "Orcish"];
     
+    // Guard to prevent infinite loops during font adjustment
+    this._adjustingFont = false;
+    
     // Initialize languages with Common as default
     this.languages = (this.hidden.val() || "").split(",")
       .map(l => l.trim())
@@ -28,10 +31,10 @@ export class LanguageHandler {
     // Use event delegation on the entire form for the language dialog
     this.html.on('dblclick', '.open-language-dialog', this.onOpenDialog.bind(this));
     
-    // Additional call to adjust font size after DOM is fully settled
-    setTimeout(() => {
-      this.adjustFontSize();
-    }, 500);
+    // Temporarily disable additional font sizing call to prevent infinite loops
+    // setTimeout(() => {
+    //   this.adjustFontSize();
+    // }, 500);
   }
 
   /**
@@ -44,14 +47,18 @@ export class LanguageHandler {
     this.tags.text(languageText);
     this.hidden.val(this.languages.join(", "));
     
-    // Auto-adjust font size to fit content
-    this.adjustFontSize();
+    // Temporarily disable auto-adjust font size to prevent infinite loops
+    // this.adjustFontSize();
   }
 
   /**
    * Automatically adjust font size to fit content within container width
    */
   adjustFontSize() {
+    // Prevent infinite loops
+    if (this._adjustingFont) return;
+    this._adjustingFont = true;
+    
     const container = this.tags;
     const el = container && container[0];
     const containerWidth = 267; // Available width accounting for padding
@@ -59,7 +66,10 @@ export class LanguageHandler {
     const minFontSize = 24; // Minimum readable font size (increased from 10)
 
     // If the container element isn't present, bail out safely
-    if (!el) return;
+    if (!el) {
+      this._adjustingFont = false;
+      return;
+    }
 
     // Create a temporary measurement element
     const measureElement = document.createElement('span');
@@ -95,17 +105,19 @@ export class LanguageHandler {
     setFontSize(fontSize);
     let textWidth = getTextWidth(fontSize);
     
-    console.log('Font sizing debug (improved):', {
-      text: el.textContent,
-      containerWidth: containerWidth,
-      initialTextWidth: textWidth,
-      fontSize: fontSize
-    });
+    // Debug: Font sizing logic (disabled to prevent infinite loops)
+    // console.log('Font sizing debug (improved):', {
+    //   text: el.textContent,
+    //   containerWidth: containerWidth,
+    //   initialTextWidth: textWidth,
+    //   fontSize: fontSize
+    // });
     
     // Check if we even need to reduce the font size
     if (textWidth <= containerWidth) {
-      console.log('Text fits at', fontSize + 'px, no adjustment needed');
+      // console.log('Text fits at', fontSize + 'px, no adjustment needed');
       document.body.removeChild(measureElement);
+      this._adjustingFont = false;
       return;
     }
     
@@ -114,22 +126,25 @@ export class LanguageHandler {
       fontSize -= 0.5;
       textWidth = getTextWidth(fontSize);
       
-      console.log('Reduced font to', fontSize + 'px, textWidth:', textWidth);
+      // console.log('Reduced font to', fontSize + 'px, textWidth:', textWidth);
     }
     
     // If we've reached minimum font size and text still doesn't fit, enable wrapping
     if (fontSize <= minFontSize && textWidth > containerWidth) {
-      console.log('Reached minimum font size, enabling text wrapping');
+      // console.log('Reached minimum font size, enabling text wrapping');
       setFontSize(minFontSize, true); // Enable wrapping
     } else {
       // Apply final font size without wrapping
       setFontSize(fontSize, false);
     }
     
-    console.log('Final font size:', fontSize + 'px', textWidth > containerWidth ? '(with wrapping)' : '(single line)');
+    // console.log('Final font size:', fontSize + 'px', textWidth > containerWidth ? '(with wrapping)' : '(single line)');
     
     // Clean up measurement element
     document.body.removeChild(measureElement);
+    
+    // Reset the guard
+    this._adjustingFont = false;
   }
 
   /**

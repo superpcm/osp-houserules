@@ -316,121 +316,246 @@ $cs-pos-open-stuck-doors-width: 58px !default;
 $cs-pos-open-stuck-doors-height: 58px !default;
 .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left}; --top: #{$cs-pos-open-stuck-doors-top}; --width: #{$cs-pos-open-stuck-doors-width}; --height: #{$cs-pos-open-stuck-doors-height}; --z: var(--z-labels, 15); }
 $cs-pos-detect-construction-left: 190px !default;
-$cs-pos-detect-construction-top: 304px !default;
+$cs-pos-detect-construction-top: 294px !default;
 $cs-pos-detect-construction-width: 58px !default;
 $cs-pos-detect-construction-height: 58px !default;
 .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left}; --top: #{$cs-pos-detect-construction-top}; --width: #{$cs-pos-detect-construction-width}; --height: #{$cs-pos-detect-construction-height}; --z: var(--z-labels, 15); }
 $cs-pos-detect-room-traps-left: 256px !default;
-$cs-pos-detect-room-traps-top: 304px !default;
+$cs-pos-detect-room-traps-top: 294px !default;
 $cs-pos-detect-room-traps-width: 58px !default;
 $cs-pos-detect-room-traps-height: 58px !default;
 .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left}; --top: #{$cs-pos-detect-room-traps-top}; --width: #{$cs-pos-detect-room-traps-width}; --height: #{$cs-pos-detect-room-traps-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-climb-left: 322px !default;
-$cs-pos-barbarian-climb-top: 190px !default;
+$cs-pos-barbarian-climb-top: 294px !default;
 $cs-pos-barbarian-climb-width: 58px !default;
 $cs-pos-barbarian-climb-height: 58px !default;
 .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left}; --top: #{$cs-pos-barbarian-climb-top}; --width: #{$cs-pos-barbarian-climb-width}; --height: #{$cs-pos-barbarian-climb-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-hide-left: 388px !default;
-$cs-pos-barbarian-hide-top: 256px !default;
+$cs-pos-barbarian-hide-top: 294px !default;
 $cs-pos-barbarian-hide-width: 58px !default;
 $cs-pos-barbarian-hide-height: 58px !default;
 .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left}; --top: #{$cs-pos-barbarian-hide-top}; --width: #{$cs-pos-barbarian-hide-width}; --height: #{$cs-pos-barbarian-hide-height}; --z: var(--z-labels, 15); }
 $cs-pos-barbarian-move-left: 454px !default;
-$cs-pos-barbarian-move-top: 322px !default;
+$cs-pos-barbarian-move-top: 294px !default;
 $cs-pos-barbarian-move-width: 58px !default;
 $cs-pos-barbarian-move-height: 58px !default;
 .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --width: #{$cs-pos-barbarian-move-width}; --height: #{$cs-pos-barbarian-move-height}; --z: var(--z-labels, 15); }
 
+// Additional skill positioning variables for dynamic skills
+$cs-pos-assassination-left: 100px !default;
+$cs-pos-assassination-top: 294px !default;
+$cs-pos-assassination-width: 58px !default;
+$cs-pos-assassination-height: 58px !default;
+.cs-pos-assassination { --left: #{$cs-pos-assassination-left}; --top: #{$cs-pos-assassination-top}; --width: #{$cs-pos-assassination-width}; --height: #{$cs-pos-assassination-height}; --z: var(--z-labels, 15); }
+
+$cs-pos-climb-sheer-left: 200px !default;
+$cs-pos-climb-sheer-top: 294px !default;
+$cs-pos-climb-sheer-width: 58px !default;
+$cs-pos-climb-sheer-height: 58px !default;
+.cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left}; --top: #{$cs-pos-climb-sheer-top}; --width: #{$cs-pos-climb-sheer-width}; --height: #{$cs-pos-climb-sheer-height}; --z: var(--z-labels, 15); }
+
+$cs-pos-hide-shadows-left: 300px !default;
+$cs-pos-hide-shadows-top: 294px !default;
+$cs-pos-hide-shadows-width: 58px !default;
+$cs-pos-hide-shadows-height: 58px !default;
+.cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left}; --top: #{$cs-pos-hide-shadows-top}; --width: #{$cs-pos-hide-shadows-width}; --height: #{$cs-pos-hide-shadows-height}; --z: var(--z-labels, 15); }
+
+$cs-pos-move-silently-left: 400px !default;
+$cs-pos-move-silently-top: 294px !default;
+$cs-pos-move-silently-width: 58px !default;
+$cs-pos-move-silently-height: 58px !default;
+.cs-pos-move-silently { --left: #{$cs-pos-move-silently-left}; --top: #{$cs-pos-move-silently-top}; --width: #{$cs-pos-move-silently-width}; --height: #{$cs-pos-move-silently-height}; --z: var(--z-labels, 15); }
+
+$cs-pos-find-traps-left: 500px !default;
+$cs-pos-find-traps-top: 294px !default;
+$cs-pos-find-traps-width: 58px !default;
+$cs-pos-find-traps-height: 58px !default;
+.cs-pos-find-traps { --left: #{$cs-pos-find-traps-left}; --top: #{$cs-pos-find-traps-top}; --width: #{$cs-pos-find-traps-width}; --height: #{$cs-pos-find-traps-height}; --z: var(--z-labels, 15); }
+
+$cs-pos-open-locks-left: 150px !default;
+$cs-pos-open-locks-top: 294px !default;
+$cs-pos-open-locks-width: 58px !default;
+$cs-pos-open-locks-height: 58px !default;
+.cs-pos-open-locks { --left: #{$cs-pos-open-locks-left}; --top: #{$cs-pos-open-locks-top}; --width: #{$cs-pos-open-locks-width}; --height: #{$cs-pos-open-locks-height}; --z: var(--z-labels, 15); }
+
+$cs-pos-pick-pockets-left: 250px !default;
+$cs-pos-pick-pockets-top: 294px !default;
+$cs-pos-pick-pockets-width: 58px !default;
+$cs-pos-pick-pockets-height: 58px !default;
+.cs-pos-pick-pockets { --left: #{$cs-pos-pick-pockets-left}; --top: #{$cs-pos-pick-pockets-top}; --width: #{$cs-pos-pick-pockets-width}; --height: #{$cs-pos-pick-pockets-height}; --z: var(--z-labels, 15); }
+
+$cs-pos-hide-undergrowth-left: 350px !default;
+$cs-pos-hide-undergrowth-top: 294px !default;
+$cs-pos-hide-undergrowth-width: 58px !default;
+$cs-pos-hide-undergrowth-height: 58px !default;
+.cs-pos-hide-undergrowth { --left: #{$cs-pos-hide-undergrowth-left}; --top: #{$cs-pos-hide-undergrowth-top}; --width: #{$cs-pos-hide-undergrowth-width}; --height: #{$cs-pos-hide-undergrowth-height}; --z: var(--z-labels, 15); }
+
+$cs-pos-hide-dungeons-left: 450px !default;
+$cs-pos-hide-dungeons-top: 294px !default;
+$cs-pos-hide-dungeons-width: 58px !default;
+$cs-pos-hide-dungeons-height: 58px !default;
+.cs-pos-hide-dungeons { --left: #{$cs-pos-hide-dungeons-left}; --top: #{$cs-pos-hide-dungeons-top}; --width: #{$cs-pos-hide-dungeons-width}; --height: #{$cs-pos-hide-dungeons-height}; --z: var(--z-labels, 15); }
+
 /* Skill Target Position Variants - Adjusts positions based on race/class layout */
 /* Class-based position adjustments (take priority over race) */
 .skill-layout-assassin {
+  /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left - 20px}; }
   .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 20px}; }
   .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 20px}; }
+  
+  /* Assassin-specific skills */
+  .cs-pos-assassination { --left: #{$cs-pos-assassination-left - 20px}; }
+  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left - 20px}; }
+  .cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left - 20px}; }
+  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left - 20px}; }
+  
+  /* Skills that might be present from race */
   .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 20px}; }
   .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 20px}; }
-  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left - 20px}; }
-  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left - 20px}; }
-  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left - 20px}; }
 }
 
 .skill-layout-barbarian {
+  /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left + 20px}; }
   .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 20px}; }
   .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 20px}; }
+  
+  /* Barbarian-specific skills */
+  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left + 20px}; }
+  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left + 20px}; }
+  .cs-pos-hide-undergrowth { --left: #{$cs-pos-hide-undergrowth-left + 20px}; }
+  
+  /* Skills that might be present from race */
   .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 20px}; }
   .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 20px}; }
-  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left + 20px}; }
-  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left + 20px}; }
-  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left + 20px}; }
 }
 
 .skill-layout-thief {
+  /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left - 40px}; }
   .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 40px}; }
   .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 40px}; }
+  
+  /* Thief-specific skills */
+  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left - 40px}; }
+  .cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left - 40px}; }
+  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left - 40px}; }
+  .cs-pos-find-traps { --left: #{$cs-pos-find-traps-left - 40px}; }
+  .cs-pos-open-locks { --left: #{$cs-pos-open-locks-left - 40px}; }
+  .cs-pos-pick-pockets { --left: #{$cs-pos-pick-pockets-left - 40px}; }
+  
+  /* Skills that might be present from race */
   .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 40px}; }
   .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 40px}; }
-  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left - 40px}; }
-  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left - 40px}; }
-  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left - 40px}; }
 }
 
 /* Race-based position adjustments (only if no qualifying class) */
 .skill-layout-dwarf {
+  /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left + 40px}; }
   .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 40px}; }
   .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 40px}; }
+  
+  /* Dwarf-specific skills */
   .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 40px}; }
   .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 40px}; }
-  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left + 40px}; }
-  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left + 40px}; }
-  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left + 40px}; }
 }
 
 .skill-layout-gnome {
+  /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left + 60px}; }
   .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 60px}; }
   .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 60px}; }
+  
+  /* Gnome-specific skills */
   .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 60px}; }
-  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 60px}; }
-  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left + 60px}; }
-  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left + 60px}; }
-  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left + 60px}; }
 }
 
 .skill-layout-halforc {
+  /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left - 80px}; }
   .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 80px}; }
   .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 80px}; }
-  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 80px}; }
-  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 80px}; }
-  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left - 80px}; }
-  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left - 80px}; }
-  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left - 80px}; }
+  
+  /* Half-orc specific skills */
+  .cs-pos-hide-dungeons { --left: #{$cs-pos-hide-dungeons-left - 80px}; }
 }
 
 .skill-layout-hobbit {
+  /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left - 60px}; }
   .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 60px}; }
   .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 60px}; }
-  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 60px}; }
-  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 60px}; }
-  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left - 60px}; }
-  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left - 60px}; }
-  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left - 60px}; }
 }
 
 /* Special race + class combinations */
 .skill-layout-dwarf-thief {
+  /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left + 30px}; }
   .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 30px}; }
   .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 30px}; }
+  
+  /* Thief-specific skills with dwarf positioning adjustment */
+  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left + 30px}; }
+  .cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left + 30px}; }
+  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left + 30px}; }
+  .cs-pos-find-traps { --left: #{$cs-pos-find-traps-left + 30px}; }
+  .cs-pos-open-locks { --left: #{$cs-pos-open-locks-left + 30px}; }
+  .cs-pos-pick-pockets { --left: #{$cs-pos-pick-pockets-left + 30px}; }
+  
+  /* Dwarf-specific skills */
   .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 30px}; }
   .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 30px}; }
-  .cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left + 30px}; }
-  .cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left + 30px}; }
-  .cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left + 30px}; }
+}
+
+.skill-layout-gnome-thief {
+  /* Base skills - all races have these */
+  .cs-pos-listening { --left: #{$cs-pos-listening-left + 50px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 50px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 50px}; }
+  
+  /* Thief-specific skills with gnome positioning adjustment */
+  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left + 50px}; }
+  .cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left + 50px}; }
+  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left + 50px}; }
+  .cs-pos-find-traps { --left: #{$cs-pos-find-traps-left + 50px}; }
+  .cs-pos-open-locks { --left: #{$cs-pos-open-locks-left + 50px}; }
+  .cs-pos-pick-pockets { --left: #{$cs-pos-pick-pockets-left + 50px}; }
+  
+  /* Gnome-specific skills */
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 50px}; }
+}
+
+.skill-layout-halforc-assassin {
+  /* Base skills - all races have these */
+  .cs-pos-listening { --left: #{$cs-pos-listening-left - 100px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 100px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 100px}; }
+  
+  /* Assassin-specific skills with half-orc positioning adjustment */
+  .cs-pos-assassination { --left: #{$cs-pos-assassination-left - 100px}; }
+  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left - 100px}; }
+  .cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left - 100px}; }
+  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left - 100px}; }
+  
+  /* Half-orc specific skills */
+  .cs-pos-hide-dungeons { --left: #{$cs-pos-hide-dungeons-left - 100px}; }
+}
+
+.skill-layout-halforc-barbarian {
+  /* Base skills - all races have these */
+  .cs-pos-listening { --left: #{$cs-pos-listening-left - 60px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 60px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 60px}; }
+  
+  /* Barbarian-specific skills with half-orc positioning adjustment */
+  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left - 60px}; }
+  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left - 60px}; }
+  .cs-pos-hide-undergrowth { --left: #{$cs-pos-hide-undergrowth-left - 60px}; }
+  
+  /* Half-orc specific skills */
+  .cs-pos-hide-dungeons { --left: #{$cs-pos-hide-dungeons-left - 60px}; }
 }
 
 /* Generic fallback layout (default positioning when no other conditions are met) */
@@ -1015,6 +1140,21 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   /*min-height: 435px !important;
   max-height: 475px !important;*/
   height: 420px !important;
+}
+
+.skill-layout-gnome-thief .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-gnome-thief.webp') !important;
+  height: 400px !important;
+}
+
+.skill-layout-halforc-assassin .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp') !important;
+  height: 480px !important;
+}
+
+.skill-layout-halforc-barbarian .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-barbarian.webp') !important;
+  height: 500px !important;
 }
 
 .cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }

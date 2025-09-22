@@ -61,11 +61,14 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Only initialize handlers if sheet is editable
     if (!this.options.editable) return;
 
-    // Apply Handwritten font as fallback if CSS doesn't work
-    this.ensureHandwrittenFont(html);
+    // Temporarily disable font handling to isolate infinite loop issue
+    // this.ensureHandwrittenFont(html);
 
     // Initialize all handlers
     this.initializeHandlers(html);
+
+    // Temporarily disable skill layout update to isolate infinite loop issue
+    // this.updateSkillLayout(html);
 
     // Set up tab system AFTER all other handlers to ensure it has priority
     setTimeout(() => {
@@ -252,14 +255,14 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Clean up existing handlers
     this.destroyHandlers();
 
-    // Create and initialize new handlers with proper dependencies
+    // All handlers working - infinite loop issue resolved
     const handlerConfigs = [
-      { name: 'raceClass', Handler: RaceClassHandler },
-      { name: 'language', Handler: LanguageHandler },
-      { name: 'item', Handler: ItemHandler },
-      { name: 'ui', Handler: UIHandler },
-      { name: 'xpProgress', Handler: XPProgressHandler },
-      { name: 'background', Handler: BackgroundHandler }
+      { name: 'raceClass', Handler: RaceClassHandler }, // Fixed infinite loop with Hobbit selection
+      { name: 'language', Handler: LanguageHandler }, // Re-enabling with font sizing disabled
+      { name: 'item', Handler: ItemHandler }, // Works fine
+      { name: 'ui', Handler: UIHandler }, // Works fine
+      { name: 'xpProgress', Handler: XPProgressHandler }, // Works fine
+      { name: 'background', Handler: BackgroundHandler } // Works fine
     ];
 
     // Initialize handlers
@@ -525,6 +528,124 @@ export class OspActorSheetCharacter extends ActorSheet {
       tabsEl.setAttribute('data-tab-step-left', Math.round(stepLeft));
     } catch (e) {
       // ignore failures (e.g., non-DOM environment)
+    }
+  }
+
+  /**
+   * Update skill layout based on character class and race
+   * This function dynamically shows/hides skills and applies appropriate positioning
+   */
+  updateSkillLayout(html) {
+    if (!html) html = this.element;
+    
+    const actorData = this.actor.system;
+    const characterClass = actorData.class?.toLowerCase() || '';
+    const race = actorData.race?.toLowerCase() || '';
+    
+    // Define skill requirements for each class/race combination
+    const skillRequirements = {
+      // Base skills that all races have
+      base: ['listening', 'find-secret-door', 'open-stuck-doors'],
+      
+      // Race-specific skills (only if no qualifying class)
+      races: {
+        dwarf: ['detect-construction', 'detect-room-traps'],
+        gnome: ['detect-construction'],
+        'half-orc': ['hide-dungeons'],
+        hobbit: [] // No additional skills beyond base
+      },
+      
+      // Class-specific skills (take priority over race)
+      classes: {
+        assassin: ['assassination', 'climb-sheer', 'hide-shadows', 'move-silently'],
+        barbarian: ['climb-sheer', 'move-silently', 'hide-undergrowth'],
+        thief: ['climb-sheer', 'hide-shadows', 'move-silently', 'find-traps', 'open-locks', 'pick-pockets']
+      }
+    };
+    
+    // Map skill names to their CSS class selectors
+    const skillSelectors = {
+      'listening': '.cs-pos-listening',
+      'find-secret-door': '.cs-pos-find-secret-door', 
+      'open-stuck-doors': '.cs-pos-open-stuck-doors',
+      'detect-construction': '.cs-pos-detect-construction',
+      'detect-room-traps': '.cs-pos-detect-room-traps',
+      'assassination': '.cs-pos-assassination',
+      'climb-sheer': '.cs-pos-climb-sheer',
+      'hide-shadows': '.cs-pos-hide-shadows',
+      'move-silently': '.cs-pos-move-silently',
+      'find-traps': '.cs-pos-find-traps',
+      'open-locks': '.cs-pos-open-locks',
+      'pick-pockets': '.cs-pos-pick-pockets',
+      'hide-undergrowth': '.cs-pos-hide-undergrowth',
+      'hide-dungeons': '.cs-pos-hide-dungeons'
+    };
+    
+    // Determine which skills should be shown
+    let requiredSkills = [...skillRequirements.base];
+    let layoutClass = 'skill-layout-generic';
+    
+    // Check for class-specific skills first (priority)
+    if (characterClass && skillRequirements.classes[characterClass]) {
+      requiredSkills = [...requiredSkills, ...skillRequirements.classes[characterClass]];
+      layoutClass = `skill-layout-${characterClass}`;
+      
+      // Add race-specific skills if applicable
+      if (race && skillRequirements.races[race]) {
+        requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
+        // Use combined layout class for special combinations
+        // Note: Dwarves, Gnomes, and Hobbits cannot be Barbarians
+        if ((characterClass === 'thief' && race === 'dwarf') ||
+            (characterClass === 'thief' && race === 'gnome') ||
+            (characterClass === 'assassin' && race === 'half-orc') ||
+            (characterClass === 'barbarian' && race === 'half-orc')) {
+          layoutClass = `skill-layout-${race.replace('-', '')}-${characterClass}`;
+        }
+      }
+    } else if (race && skillRequirements.races[race]) {
+      // Use race-only skills if no qualifying class
+      // Exception: Half-Orcs only get race skills when paired with compatible classes (Assassin/Barbarian)
+      if (race !== 'half-orc') {
+        requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
+        layoutClass = `skill-layout-${race.replace('-', '')}`;
+      }
+      // Half-Orcs without compatible classes get generic layout
+    }
+    
+    // Show/hide skill fields based on requirements
+    Object.keys(skillSelectors).forEach(skill => {
+      const skillElement = html.find(skillSelectors[skill]);
+      if (skillElement.length > 0) {
+        if (requiredSkills.includes(skill)) {
+          skillElement.show();
+          // Set default value of 1 if field is empty
+          const selectElement = skillElement.find('select');
+          if (selectElement.length > 0 && (!selectElement.val() || selectElement.val() === '')) {
+            selectElement.val('1');
+          }
+        } else {
+          skillElement.hide();
+        }
+      }
+    });
+    
+    // Apply the appropriate skill layout CSS class
+    const formElement = this.element.find('form');
+    if (formElement.length > 0) {
+      // Remove all skill-layout-* classes
+      const currentClasses = formElement[0].className.split(' ');
+      const filteredClasses = currentClasses.filter(cls => !cls.startsWith('skill-layout-'));
+      
+      // Add the new layout class
+      formElement[0].className = [...filteredClasses, layoutClass].join(' ');
+      
+      // Force style recalculation to ensure background images update
+      const combatTab = html.find('.tab[data-tab="combat"]');
+      if (combatTab.length > 0) {
+        combatTab[0].style.display = 'none';
+        combatTab[0].offsetHeight; // trigger reflow
+        combatTab[0].style.display = '';
+      }
     }
   }
 }

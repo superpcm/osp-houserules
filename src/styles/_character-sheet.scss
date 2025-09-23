@@ -527,6 +527,16 @@ $cs-pos-hide-dungeons-height: 58px !default;
   .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 50px}; }
 }
 
+.skill-layout-gnome-cleric {
+  /* Base skills - all races have these */
+  .cs-pos-listening { --left: #{$cs-pos-listening-left + 50px}; }
+  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 50px}; }
+  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 50px}; }
+  
+  /* Gnome-specific skills */
+  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 50px}; }
+}
+
 .skill-layout-halforc-assassin {
   /* Base skills - all races have these */
   .cs-pos-listening { --left: #{$cs-pos-listening-left - 100px}; }
@@ -1072,24 +1082,41 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   
   width: 80px;
   height: 40px;
-  font-size: 1.2rem;
+  /*font-size: 1.2rem;*/
   border: 2px solid #4a5568;
   border-radius: 8px;
   background-color: white;
 }
 
-/* Combat tab background - Default (Generic) */
+/* Combat tab background - Base layers for all layouts */
 .tab[data-tab="combat"] {
+  position: relative;
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-generic.webp') !important;
   background-size: contain, contain !important;
-  background-position: top center, left 280px !important;
+  background-position: top center, left 282.75px !important;
   background-repeat: no-repeat, no-repeat !important;
   background-attachment: scroll, scroll !important;
   background-color: transparent !important;
   height: 400px !important;
 }
 
-/* Skill target variants - Class takes priority over race */
+/* Add skill targets bar as a shared layer for all combat tabs */
+.tab[data-tab="combat"]::before {
+  content: "";
+  position: absolute;
+  top: 260px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/skill-targets-bar.webp');
+  background-size: contain;
+  background-position: left top;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Skill target variants - Only override the skill targets image */
 /* Class-based variants */
 .skill-layout-assassin .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp') !important;
@@ -1144,6 +1171,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 .skill-layout-gnome-thief .tab[data-tab="combat"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-gnome-thief.webp') !important;
+  height: 400px !important;
+}
+
+.skill-layout-gnome-cleric .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-gnome-cleric.webp') !important;
   height: 400px !important;
 }
 

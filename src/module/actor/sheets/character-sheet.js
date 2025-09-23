@@ -67,8 +67,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Initialize all handlers
     this.initializeHandlers(html);
 
-    // Temporarily disable skill layout update to isolate infinite loop issue
-    // this.updateSkillLayout(html);
+    // Update skill layout based on character class and race
+    this.updateSkillLayout(html);
 
     // Set up tab system AFTER all other handlers to ensure it has priority
     setTimeout(() => {
@@ -597,15 +597,20 @@ export class OspActorSheetCharacter extends ActorSheet {
         // Note: Dwarves, Gnomes, and Hobbits cannot be Barbarians
         if ((characterClass === 'thief' && race === 'dwarf') ||
             (characterClass === 'thief' && race === 'gnome') ||
+            (characterClass === 'cleric' && race === 'gnome') ||
             (characterClass === 'assassin' && race === 'half-orc') ||
             (characterClass === 'barbarian' && race === 'half-orc')) {
           layoutClass = `skill-layout-${race.replace('-', '')}-${characterClass}`;
         }
       }
     } else if (race && skillRequirements.races[race]) {
-      // Use race-only skills if no qualifying class
-      // Exception: Half-Orcs only get race skills when paired with compatible classes (Assassin/Barbarian)
-      if (race !== 'half-orc') {
+      // Handle classes without specific skills but with race combinations
+      if (characterClass === 'cleric' && race === 'gnome') {
+        requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
+        layoutClass = `skill-layout-${race.replace('-', '')}-${characterClass}`;
+      } else if (race !== 'half-orc') {
+        // Use race-only skills if no qualifying class
+        // Exception: Half-Orcs only get race skills when paired with compatible classes (Assassin/Barbarian)
         requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
         layoutClass = `skill-layout-${race.replace('-', '')}`;
       }

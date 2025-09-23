@@ -12,15 +12,25 @@ export class RaceClassHandler {
     
     // Define class restrictions for each race
     this.raceClassRestrictions = {
-      'Dwarf': ['Assassin', 'Cleric', 'Fighter', 'Thief'],
-      'Elf': ['Assassin', 'Cleric', 'Druid', 'Fighter', 'Knight', 'Magic-User', 'Ranger', 'Thief'],
-      'Gnome': ['Assassin', 'Cleric', 'Fighter', 'Illusionist', 'Thief'],
-      'Hobbit': ['Druid', 'Fighter', 'Thief'],
-      'Half-Orc': ['Assassin', 'Barbarian', 'Cleric', 'Fighter', 'Thief'],
-      'Half-Elf': ['Assassin', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Knight', 'Magic-User', 'Paladin', 'Ranger', 'Thief'],
+      'Dwarf': ['Assassin', 'Cleric', 'Dwarf', 'Fighter', 'Thief'], // Added Dwarf class
+      'Elf': ['Assassin', 'Cleric', 'Druid', 'Elf', 'Fighter', 'Knight', 'Magic-User', 'Ranger', 'Thief'], // Added Elf class
+      'Gnome': ['Assassin', 'Cleric', 'Fighter', 'Gnome', 'Illusionist', 'Thief'], // Added Gnome class
+      'Hobbit': ['Druid', 'Fighter', 'Hobbit', 'Thief'], // Added Hobbit class
+      'Half-Orc': ['Assassin', 'Barbarian', 'Cleric', 'Fighter', 'Half-Orc', 'Thief'], // Added Half-Orc class
+      'Half-Elf': ['Assassin', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Half-Elf', 'Knight', 'Magic-User', 'Paladin', 'Ranger', 'Thief'], // Added Half-Elf class
       'Human': [] // Human gets all classes except race-as-class options, handled by exclusion logic
       // Add other race restrictions here as needed
       // Note: Acrobat class not available in current system
+    };
+    
+    // Define level restrictions for race-as-class combinations
+    this.raceLevelRestrictions = {
+      'Elf': { 'Elf': 10 },
+      'Dwarf': { 'Dwarf': 12 },
+      'Gnome': { 'Gnome': 8 },
+      'Half-Elf': { 'Half-Elf': 12 },
+      'Hobbit': { 'Hobbit': 8 },
+      'Half-Orc': { 'Half-Orc': 8 }
     };
     
     // Store original class options for restoration
@@ -33,11 +43,17 @@ export class RaceClassHandler {
   initialize() {
     this.classSelect.on("change", this.handleClassChange.bind(this));
     this.raceSelect.on("change", this.handleRaceChange.bind(this));
+    
+    // Add level input validation
+    const levelInput = this.html.find('input[name="system.level"]');
+    levelInput.on("change input", this.handleLevelChange.bind(this));
+    
     // Only sync race field if no race restrictions exist
     if (Object.keys(this.raceClassRestrictions).length === 0) {
       this.syncRaceField();
     }
     this.filterClassOptions(); // Apply initial filtering
+    this.validateLevelRestrictions(); // Apply initial level restrictions
   }
 
   /**
@@ -51,7 +67,12 @@ export class RaceClassHandler {
     if (Object.keys(this.raceClassRestrictions).length === 0) {
       this.syncRaceField();
     }
-    // Note: Removed updateSkillLayout() call to prevent infinite re-rendering
+    
+    // Update skill layout when class changes (with delay to prevent loops)
+    this.updateSkillLayout();
+    
+    // Validate level restrictions for race-as-class combinations
+    this.validateLevelRestrictions();
   }
 
   /**
@@ -61,9 +82,34 @@ export class RaceClassHandler {
     this._handlingRaceChange = true;
     try {
       this.filterClassOptions();
-      // Note: Removed updateSkillLayout() call to prevent infinite re-rendering
+      
+      // Update skill layout when race changes (with delay to prevent loops)
+      this.updateSkillLayout();
+      
+      // Validate level restrictions for race-as-class combinations
+      this.validateLevelRestrictions();
     } finally {
       this._handlingRaceChange = false;
+    }
+  }
+
+  /**
+   * Handle level input changes to enforce restrictions
+   */
+  handleLevelChange(event) {
+    const selectedRace = this.raceSelect.val();
+    const selectedClass = this.classSelect.val();
+    const levelInput = $(event.target);
+    const enteredLevel = parseInt(levelInput.val()) || 1;
+    
+    if (selectedRace && selectedClass && this.raceLevelRestrictions[selectedRace] && this.raceLevelRestrictions[selectedRace][selectedClass]) {
+      const maxLevel = this.raceLevelRestrictions[selectedRace][selectedClass];
+      
+      if (enteredLevel > maxLevel) {
+        levelInput.val(maxLevel);
+        // Show a brief warning message
+        ui.notifications.warn(`Maximum level for ${selectedClass} ${selectedRace} is ${maxLevel}`);
+      }
     }
   }
 
@@ -162,10 +208,43 @@ export class RaceClassHandler {
   }
 
   /**
+   * Validate and enforce level restrictions for race-as-class combinations
+   */
+  validateLevelRestrictions() {
+    const selectedRace = this.raceSelect.val();
+    const selectedClass = this.classSelect.val();
+    const levelInput = this.html.find('input[name="system.level"]');
+    
+    if (selectedRace && selectedClass && this.raceLevelRestrictions[selectedRace] && this.raceLevelRestrictions[selectedRace][selectedClass]) {
+      const maxLevel = this.raceLevelRestrictions[selectedRace][selectedClass];
+      const currentLevel = parseInt(levelInput.val()) || 1;
+      
+      // Set max attribute on level input
+      levelInput.attr('max', maxLevel);
+      
+      // If current level exceeds max, reduce to max
+      if (currentLevel > maxLevel) {
+        levelInput.val(maxLevel);
+        // Trigger change event to update actor data
+        levelInput.trigger('change');
+      }
+      
+      // Add visual indicator or tooltip
+      levelInput.attr('title', `Maximum level for ${selectedClass} ${selectedRace}: ${maxLevel}`);
+    } else {
+      // Remove restrictions for non-race-as-class combinations
+      levelInput.removeAttr('max');
+      levelInput.removeAttr('title');
+    }
+  }
+
+  /**
    * Cleanup event listeners
    */
   destroy() {
     this.classSelect.off("change");
     this.raceSelect.off("change");
+    const levelInput = this.html.find('input[name="system.level"]');
+    levelInput.off("change input");
   }
 }

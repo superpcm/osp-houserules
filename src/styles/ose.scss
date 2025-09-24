@@ -48,36 +48,6 @@ form.osp button {
   }
 }
 
-// Layout system styles
-.draggable-field {
-  transition: opacity 0.2s ease, z-index 0.2s ease;
-  
-  &.dragging {
-    opacity: 0.8;
-  z-index: var(--z-overlay, 1000);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  .drag-handle {
-    transition: opacity 0.2s ease;
-  }
-}
-
-.layout-controls {
-  .layout-btn {
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    
-    &:hover {
-      background: #2d3748 !important;
-      transform: scale(1.1);
-    }
-    
-    &:active {
-      transform: scale(0.95);
-    }
-  }
-}
-
 .grid-overlay {
   animation: fadeIn 0.3s ease;
 }

@@ -950,119 +950,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 .cs-force-pointer { pointer-events: auto !important; }
 
-/* ================================================================
-   VISUAL TEXT CENTERING SYSTEM
-   ================================================================
-   
-   This system provides precise text centering that accounts for both
-   mathematical and visual weight. Different font sizes and characters
-   require different compensation for optimal visual centering.
-   
-   ================================================================ */
-
-/* Base centering mixin applied to all centered fields */
-%visual-center-base {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  line-height: 1;
-  box-sizing: border-box;
-  
-  /* Reset any inherited text transformations */
-  text-indent: 0;
-  text-transform: none;
-  
-  /* Ensure consistent baseline alignment */
-  vertical-align: baseline;
-}
-
-/* Size-specific visual adjustments for Handwritten font */
-%visual-center-large {
-  @extend %visual-center-base;
-
-  /* Large text (40px+) - account for descender visual weight */
-  /* transform: translateY(-0.02em); */
-  letter-spacing: -0.01em;
-  
-  /* Optical adjustment for rounded/circular containers */
-  &.in-circle {
-    /*transform: translateY(-0.05em);*/
-  }
-}
-
-%visual-center-medium {
-  @extend %visual-center-base;
-  
-  /* Medium text (20-39px) - subtle baseline adjustment */
-  /* transform: translateY(-0.01em); */
-  /*  letter-spacing: 0;
-  
-  /* Adjustment for serif fonts at medium sizes */
-  &.serif-adjust {
-    /* transform: translateY(0.02em); */
-  }
-}
-
-%visual-center-small {
-  @extend %visual-center-base;
-  
-  /* Small text (12-19px) - minimal adjustment */
-  /*transform: translateY(0);
-  letter-spacing: 0.01em;*/
-}
-
-/* Specific adjustments for common number/character types */
-%numeric-center {
-  /* Numbers often need slight upward adjustment */
-  /*transform: translateY(-0.03em);*/
-  
-  /* Monospace-like spacing for consistency */
-  font-variant-numeric: tabular-nums;
-}
-
-%single-character-center {
-  /* Single characters (ability scores, etc.) */
-  font-weight: normal;
-  
-  /* Prevent character distortion */
-  font-synthesis: none;
-}
-
-/* Input field specific centering (accounts for border/padding visual weight) */
-%input-visual-center {
-  @extend %visual-center-base;
-  
-  /* Ensure text cursor appears centered */
-  &:focus {
-    text-align: center;
-  }
-  
-  /* Placeholder text centering */
-  &::placeholder {
-    text-align: center;
-    /* transform: translateY(-0.01em); */
-  }
-}
-
-/* Container-specific adjustments */
-%round-container-center {
-  /* For circular/rounded containers - text appears lower */
-  /* transform: translateY(-0.06em); */
-}
-
-%rectangular-container-center {
-  /* For rectangular containers - standard centering */
-  /* transform: translateY(-0.02em); */
-}
-
-/* Font loading and fallback management */
-@supports (font-family: 'Handwritten') {
-  .osp {
-  
-  }
-}
-
 /* Cursor helper classes for JS toggles */
 .cs-cursor-pointer { cursor: pointer !important; }
 .cs-cursor-text { cursor: text !important; }
@@ -1336,6 +1223,62 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   font-size: 34px;
 }
 
+/* ================================================================
+   VISUAL CENTERING PLACEHOLDER SELECTORS
+   ================================================================ */
+
+/* Base visual centering placeholders */
+%input-visual-center {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+%visual-center-medium {
+  transform: translateY(-0.02em);
+  text-align: center;
+}
+
+%visual-center-large {
+  transform: translateY(-0.03em);
+  text-align: center;
+  font-weight: normal;
+}
+
+%numeric-center {
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+%single-character-center {
+  /* For single character displays like ability scores */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+%round-container-center {
+  /* For circular containers */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+%rectangular-container-center {
+  /* For rectangular containers */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ================================================================
+   VISUAL CENTERING UTILITY CLASSES
+   ================================================================ */
+
 /* Ensure inputs behave consistently across browsers with visual centering */
 input.cs-field, 
 textarea.cs-bio-textarea, 
@@ -1450,6 +1393,19 @@ input[type="number"] {
   /* Mixed content like "+10%" needs balanced centering */
   text-indent: -0.008em;
   transform: translateY(-0.025em);
+}
+
+/* Debug text centering classes */
+.cs-level-field-adjust {
+  /* Level field adjustment for debug centering */
+  transform: translateY(-0.03em) !important;
+  letter-spacing: -0.005em !important;
+}
+
+.cs-xp-mod-field-adjust {
+  /* XP mod field adjustment for debug centering */
+  text-indent: -0.01em !important;
+  transform: translateY(-0.02em) !important;
 }
 
 /* Disable visual centering for elements that need manual control */
@@ -1745,42 +1701,7 @@ input[type="number"] {
   background: var(--bg, transparent);
 }
 
-/* Draggable field helpers */
-.draggable-field {
-  position: relative !important;
-  cursor: move !important;
-  user-select: none !important;
-  --translate-x: 0px;
-  --translate-y: 0px;
-  transform: translate(var(--translate-x), var(--translate-y));
-}
-.draggable-field.dragging { z-index: var(--z-overlay, 1000) !important; opacity: 0.8 !important; }
-.draggable-field .drag-handle { position: absolute; top: 2px; right: 2px; font-size: 12px; color: #666; cursor: move; opacity: 0.6; z-index: var(--z-sheet,10); pointer-events: auto; font-weight: bold; text-shadow: 1px 1px 1px rgba(255,255,255,0.8); background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 2px; padding: 1px 2px; line-height: 1; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; }
-.draggable-field.drag-hover { border-color: #ddd !important; }
-.draggable-field.drag-hover .drag-handle { opacity: 1 !important; }
 
-/* Drag handle visibility class toggled by JS instead of inline opacity */
-.draggable-field .drag-handle { transition: opacity 0.12s ease; }
-.draggable-field .drag-handle.visible { opacity: 1 !important; }
-
-/* Layout controls (export/import/reset grid buttons) */
-.layout-controls { position: absolute; top: 5px; right: 5px; z-index: calc(var(--z-overlay, 1000) + 1); display: flex; gap: 5px; }
-.layout-controls .layout-btn { width: 24px; height: 24px; border: none; border-radius: 3px; background: #4a5568; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.layout-controls .layout-btn:hover { filter: brightness(1.1); }
-.layout-controls .layout-btn.active { background: #2d3748 !important; }
-
-/* Grid overlay - uses CSS variables for grid size */
-.grid-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: calc(var(--z-overlay, 1000) - 1);
-  background-image: linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px);
-  background-size: var(--grid-size, 10px) var(--grid-size, 10px);
-}
 
 /* Sheet body helper to centralize padding/scrolling */
 .cs-sheet-body {

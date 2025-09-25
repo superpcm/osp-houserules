@@ -867,10 +867,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Ability score box */
 .cs-ability-select {
-  @extend %visual-center-large;
-  @extend %single-character-center;
-  @extend %round-container-center;
-  @extend %numeric-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
   
   width: 87px;
   height: 65px;
@@ -949,8 +950,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 .cs-listening-select {
-  @extend %input-visual-center;
-  @extend %visual-center-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   
   width: 58px;
   height: 58px;
@@ -960,7 +963,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   margin: 0;
   border: none !important;
   pointer-events: auto;
-  text-align: center;
 }
 
 .cs-listening-select:disabled {
@@ -1016,9 +1018,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
 .cs-combat-input {
-  @extend %input-visual-center;
-  @extend %visual-center-medium;
-  @extend %numeric-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
   
   width: 80px;
   height: 40px;
@@ -1194,12 +1198,12 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .save-group-breath { --field-left: 390px; }
 .save-group-spells { --field-left: 516px; }
 .cs-save-value {
-  @extend %visual-center-large;
-  @extend %single-character-center;
-  @extend %round-container-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   
   font-size: 100px !important;
-
 }
 
 /* Misc helpers for textareas in bio */
@@ -1269,8 +1273,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* XP/Next level small field helpers */
 .cs-field {
-  @extend %input-visual-center;
-  @extend %visual-center-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   
   background-color: transparent !important;
   border: none;
@@ -1280,13 +1286,12 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   padding: 0 2px 0 2px;
 }
 .cs-xp-mod-display {
-  @extend %visual-center-medium;
-  @extend %numeric-center;
-  @extend %rectangular-container-center;
-  
+  display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  font-variant-numeric: tabular-nums;
+  
   width: 62px;
   height: 29px;
   pointer-events: none;
@@ -1294,9 +1299,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 .cs-xp-display {
-  @extend %visual-center-medium;
-  @extend %numeric-center;
-  @extend %input-visual-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
   
   width: 131px;
   height: 30px;
@@ -1306,202 +1313,40 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 /* ================================================================
-   VISUAL CENTERING PLACEHOLDER SELECTORS
+   SIMPLIFIED VISUAL CENTERING
    ================================================================ */
 
-/* Base visual centering placeholders */
-%input-visual-center {
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Modern CSS centering - no complex placeholders needed */
 
-%visual-center-medium {
-  transform: translateY(-0.02em);
-  text-align: center;
-}
-
-%visual-center-large {
-  transform: translateY(-0.03em);
-  text-align: center;
-  font-weight: normal;
-}
-
-%numeric-center {
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-
-%single-character-center {
-  /* For single character displays like ability scores */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-%round-container-center {
-  /* For circular containers */
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-%rectangular-container-center {
-  /* For rectangular containers */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-/* ================================================================
-   VISUAL CENTERING UTILITY CLASSES
-   ================================================================ */
-
-/* Ensure inputs behave consistently across browsers with visual centering */
-input.cs-field, 
-textarea.cs-bio-textarea, 
-select.cs-ability-select {
-  
-  /* Apply visual centering to all form elements */
-  @extend %input-visual-center;
-}
-
-/* Additional browser-specific centering fixes */
+/* Basic input styling - simplified centering */
 input[type="text"], 
 input[type="number"], 
 select {
-  /* WebKit browsers need extra centering help */
-  &::-webkit-input-placeholder {
-    text-align: center;
-    line-height: normal;
-  }
+  text-align: center;
   
-  /* Firefox placeholder centering */
-  &::-moz-placeholder {
-    text-align: center;
-    line-height: normal;
-  }
-  
-  /* Edge/IE placeholder centering */
-  &::-ms-input-placeholder {
-    text-align: center;
-    line-height: normal;
-  }
-}
-
-/* Visual centering for specific input types */
-input[type="number"] {
-  @extend %numeric-center;
-  
-  /* Remove spinner arrows that affect visual centering */
+  /* Remove number input spinners for cleaner appearance */
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     appearance: none;
     margin: 0;
   }
-  
-  /* Firefox number input styling */
+}
+
+input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-/* ================================================================
-   MANUAL FINE-TUNING UTILITY CLASSES
-   ================================================================
-   
-   These classes can be applied when the automatic visual centering
-   needs adjustment for specific elements or edge cases.
-   
-   ================================================================ */
 
-/* Vertical adjustment utilities */
-.cs-center-nudge-up-xs { transform: translateY(-0.01em) !important; }
-.cs-center-nudge-up-sm { transform: translateY(-0.02em) !important; }
-.cs-center-nudge-up-md { transform: translateY(-0.04em) !important; }
-.cs-center-nudge-up-lg { transform: translateY(-0.06em) !important; }
-.cs-center-nudge-up-xl { transform: translateY(-0.08em) !important; }
-
-.cs-center-nudge-down-xs { transform: translateY(0.01em) !important; }
-.cs-center-nudge-down-sm { transform: translateY(0.02em) !important; }
-.cs-center-nudge-down-md { transform: translateY(0.04em) !important; }
-.cs-center-nudge-down-lg { transform: translateY(0.06em) !important; }
-.cs-center-nudge-down-xl { transform: translateY(0.08em) !important; }
-
-/* Horizontal adjustment utilities */
-.cs-center-nudge-left-xs { text-indent: -0.01em !important; }
-.cs-center-nudge-left-sm { text-indent: -0.02em !important; }
-.cs-center-nudge-left-md { text-indent: -0.04em !important; }
-
-.cs-center-nudge-right-xs { text-indent: 0.01em !important; }
-.cs-center-nudge-right-sm { text-indent: 0.02em !important; }
-.cs-center-nudge-right-md { text-indent: 0.04em !important; }
-
-/* Letter spacing adjustments for visual centering */
-.cs-letter-spacing-tight { letter-spacing: -0.02em !important; }
-.cs-letter-spacing-normal { letter-spacing: 0 !important; }
-.cs-letter-spacing-loose { letter-spacing: 0.02em !important; }
-
-/* Font weight adjustments that affect visual centering */
-.cs-visual-weight-light { font-weight: 300 !important; transform: translateY(-0.01em) !important; }
-.cs-visual-weight-normal { font-weight: 400 !important; }
-.cs-visual-weight-bold { font-weight: 600 !important; transform: translateY(0.01em) !important; }
-
-/* Character-specific centering adjustments */
-.cs-percentage-center {
-  /* Percentage signs need slight left adjustment */
-  text-indent: -0.01em;
-  transform: translateY(-0.02em);
-}
-
-.cs-plus-sign-center {
-  /* Plus signs in XP modifiers need adjustment */
-  text-indent: -0.005em;
-  transform: translateY(-0.03em);
-}
-
-/* Add more custom classes as needed */
-.cs-number-only-center {
-  /* For fields that only contain single numbers */
-  transform: translateY(-0.02em) !important;
-  font-variant-numeric: tabular-nums !important;
-}
-
-.cs-mixed-alphanumeric-center {
-  /* Mixed content like "+10%" needs balanced centering */
-  text-indent: -0.008em;
-  transform: translateY(-0.025em);
-}
-
-/* Debug text centering classes */
-.cs-level-field-adjust {
-  /* Level field adjustment for debug centering */
-  transform: translateY(-0.03em) !important;
-  letter-spacing: -0.005em !important;
-}
-
-.cs-xp-mod-field-adjust {
-  /* XP mod field adjustment for debug centering */
-  text-indent: -0.01em !important;
-  transform: translateY(-0.02em) !important;
-}
-
-/* Disable visual centering for elements that need manual control */
-.cs-manual-center {
-  transform: none !important;
-  text-indent: 0 !important;
-  letter-spacing: inherit !important;
-}
 
 /* Header field classes (name, class, race, small fields) */
 /*.cs-char-field-group { display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; }*/
 .cs-char-name {
-  @extend %input-visual-center;
-  @extend %visual-center-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   
   width: 268px;
   height: 29px;

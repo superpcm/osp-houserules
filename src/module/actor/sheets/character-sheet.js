@@ -4,13 +4,16 @@ import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
 import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 import { BackgroundHandler } from './handlers/background-handler.js';
+import { PositionToolHandler } from './handlers/position-tool-handler.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
 export class OspActorSheetCharacter extends ActorSheet {
   constructor(...args) {
+    console.log('🚨 OSP CHARACTER SHEET CONSTRUCTOR - DEBUG VERSION 2.0 🚨');
     super(...args);
     this.handlers = new Map();
+    console.log('🚨 CONSTRUCTOR COMPLETE - HANDLERS MAP INITIALIZED 🚨');
   }
 
   static get defaultOptions() {
@@ -56,10 +59,25 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   activateListeners(html) {
+    console.log('🚨🚨🚨 ACTIVATE LISTENERS CALLED - DEBUG VERSION 2.0 🚨🚨🚨');
     super.activateListeners(html);
 
-    // Only initialize handlers if sheet is editable
-    if (!this.options.editable) return;
+    console.log('CharacterSheet: activateListeners called after super', {
+      editable: this.options.editable,
+      isOwner: this.actor?.isOwner,
+      actorId: this.actor?.id,
+      htmlLength: html?.length,
+      hasHandlers: !!this.handlers
+    });
+
+    // ALWAYS initialize position tool handler first, regardless of editable state
+    this.ensurePositionToolHandler(html);
+
+    // Only initialize other handlers if sheet is editable
+    if (!this.options.editable) {
+      console.log('CharacterSheet: Sheet not editable, skipping main handler initialization');
+      return;
+    }
 
     // Temporarily disable font handling to isolate infinite loop issue
     // this.ensureHandwrittenFont(html);
@@ -256,6 +274,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.destroyHandlers();
 
     // All handlers working - infinite loop issue resolved
+    // Note: PositionToolHandler is initialized separately in ensurePositionToolHandler()
     const handlerConfigs = [
       { name: 'raceClass', Handler: RaceClassHandler }, // Fixed infinite loop with Hobbit selection
       { name: 'language', Handler: LanguageHandler }, // Re-enabling with font sizing disabled
@@ -268,14 +287,52 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Initialize handlers
     handlerConfigs.forEach(({ name, Handler }) => {
       try {
+        console.log(`CharacterSheet: Initializing handler: ${name}`);
         const handler = new Handler(html, this.actor);
         handler.initialize();
         this.handlers.set(name, handler);
+        console.log(`CharacterSheet: Successfully initialized handler: ${name}`);
       } catch (error) {
-
+        console.error(`CharacterSheet: Failed to initialize handler: ${name}`, error);
       }
     });
 
+  }
+
+  /**
+   * Ensure position tool handler is initialized (always runs, handles all edge cases)
+   */
+  ensurePositionToolHandler(html) {
+    try {
+      console.log('CharacterSheet: Ensuring position tool handler is initialized...');
+      
+      // Clean up any existing handler first to prevent duplicates
+      if (this.handlers.has('positionTool')) {
+        console.log('CharacterSheet: Cleaning up existing position tool handler');
+        const existingHandler = this.handlers.get('positionTool');
+        if (existingHandler && existingHandler.destroy) {
+          existingHandler.destroy();
+        }
+        this.handlers.delete('positionTool');
+      }
+      
+      console.log('CharacterSheet: Creating new position tool handler...');
+      const handler = new PositionToolHandler(html, this.actor);
+      handler.initialize();
+      this.handlers.set('positionTool', handler);
+      
+      console.log('CharacterSheet: Position tool handler initialized successfully');
+      
+      // Double-check it was added
+      if (this.handlers.has('positionTool')) {
+        console.log('CharacterSheet: Position tool handler confirmed in handlers map');
+      } else {
+        console.error('CharacterSheet: Position tool handler missing from handlers map after creation!');
+      }
+      
+    } catch (error) {
+      console.error('CharacterSheet: Failed to initialize position tool handler:', error);
+    }
   }
 
   /**
@@ -354,15 +411,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     return this.handlers.get(name);
   }
 
-  /**
-   * Reset all draggable fields to their original positions
-   */
-  resetAllFieldsToVisible() {
-    const layoutHandler = this.getHandler('layout');
-    if (layoutHandler) {
-      layoutHandler.resetAllFieldsToVisible();
-    }
-  }
+
 
   /**
    * Compute tab offsets based on index and apply as CSS variables.
@@ -583,7 +632,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // Determine which skills should be shown
     let requiredSkills = [...skillRequirements.base];
-    let layoutClass = 'skill-layout-generic';
+    let layoutClass = 'skill-layout-default';
     
     // Check for class-specific skills first (priority)
     if (characterClass && skillRequirements.classes[characterClass]) {
@@ -637,12 +686,33 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Apply the appropriate skill layout CSS class
     const formElement = this.element.find('form');
     if (formElement.length > 0) {
-      // Remove all skill-layout-* classes
+      // Remove all skill-layout-* and racial-skill-targets-* classes
       const currentClasses = formElement[0].className.split(' ');
-      const filteredClasses = currentClasses.filter(cls => !cls.startsWith('skill-layout-'));
+      const filteredClasses = currentClasses.filter(cls => 
+        !cls.startsWith('skill-layout-') && !cls.startsWith('racial-skill-targets-')
+      );
       
       // Add the new layout class
       formElement[0].className = [...filteredClasses, layoutClass].join(' ');
+      
+      // Apply racial skill target classes (separate from class-based system)
+      let racialSkillTargetClass = 'racial-skill-targets-default';
+      
+      if (race === 'gnome') {
+        // Gnome racial skill targets only if NOT in combination with Gnome class
+        if (characterClass !== 'gnome') {
+          racialSkillTargetClass = 'racial-skill-targets-gnome';
+        }
+      } else if (race === 'dwarf') {
+        // Dwarf racial skill targets only if NOT in combination with Dwarf class
+        if (characterClass !== 'dwarf') {
+          racialSkillTargetClass = 'racial-skill-targets-dwarf';
+        }
+      }
+      // All other races (including half-orc, hobbit, etc.) use default
+      
+      // Add the racial skill target class
+      formElement[0].className = [...formElement[0].className.split(' '), racialSkillTargetClass].join(' ');
       
       // Force style recalculation to ensure background images update
       const combatTab = html.find('.tab[data-tab="combat"]');

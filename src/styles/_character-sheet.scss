@@ -79,6 +79,55 @@ $debug-form-fields: false; // Change to false to disable
     }
   }
   
+  /* Position Adjustment Dialog Styling */
+  .cs-position-dialog {
+    .form-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      
+      label {
+        flex: 0 0 120px;
+        color: #ddd;
+        font-weight: 500;
+        font-size: 12px;
+      }
+      
+      input[type="number"] {
+        flex: 1;
+        padding: 6px 8px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        background: #333;
+        color: #fff;
+        font-size: 12px;
+        margin-right: 8px;
+        
+        &:focus {
+          border-color: #4CAF50;
+          outline: none;
+          box-shadow: 0 0 3px rgba(76, 175, 80, 0.3);
+        }
+      }
+      
+      .unit {
+        color: #aaa;
+        font-size: 11px;
+        font-weight: 500;
+        flex: 0 0 auto;
+      }
+    }
+    
+    h3 {
+      color: #fff;
+      margin-bottom: 15px;
+      font-size: 14px;
+      text-align: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #555;
+    }
+  }
+  
   /* Position Adjustment Tool - Clean, modern styling */
   .cs-position-tool {
     position: fixed !important;
@@ -569,7 +618,7 @@ $cs-pos-hide-dungeons-height: 58px !default;
 }
 
 /* Generic fallback layout (default positioning when no other conditions are met) */
-.skill-layout-generic {
+.skill-layout-default {
   /* Uses default positioning - ensures consistent class-based approach */
   position: relative;
 }
@@ -823,11 +872,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   @extend %round-container-center;
   @extend %numeric-center;
   
-  width: 75px;
-  height: 85px;
+  width: 87px;
+  height: 65px;
   font-size: 100px;
   font-weight: normal;
-
   border: none !important;
   background: transparent !important;
   position: relative; /* Ensure proper positioning context */
@@ -875,7 +923,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 .ability:has(.attr-cha) { 
-  --ability-left: 502px !important;
+  --ability-left: 504px !important;
 }
 
 /* Listening at Doors field styling */
@@ -978,7 +1026,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Combat tab background - Base layers for all layouts */
 .tab[data-tab="combat"] {
   position: relative;
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-generic.webp') !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-default.webp') !important;
   background-size: contain, contain !important;
   background-position: top center, left 282.75px !important;
   background-repeat: no-repeat, no-repeat !important;
@@ -1078,6 +1126,34 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 .cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }
 
+/* Racial skill target system - separate from class-based system */
+/* Default racial skill targets for all races except Gnome and Dwarf */
+.racial-skill-targets-default .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-default.webp') !important;
+  background-size: contain, contain !important;
+  background-position: top center, left 282.75px !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll !important;
+}
+
+/* Gnome racial skill targets (when Gnome race is chosen but NOT Gnome class) */
+.racial-skill-targets-gnome .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-gnome.webp') !important;
+  background-size: contain, contain !important;
+  background-position: top center, left 282.75px !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll !important;
+}
+
+/* Dwarf racial skill targets (when Dwarf race is chosen but NOT Dwarf class) */
+.racial-skill-targets-dwarf .tab[data-tab="combat"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-dwarf.webp') !important;
+  background-size: contain, contain !important;
+  background-position: top center, left 282.75px !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll !important;
+}
+
 /* Save badge system */
 .combat-section {
   position: relative;
@@ -1091,7 +1167,30 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   margin: 0;
 }
 
-/* Individual save positioning - customize these left coordinates as needed */
+/* Ensure ability and save fields are absolutely positioned and resizable */
+.cs-abs,
+.cs-ability-field,
+.cs-save-field {
+  position: absolute !important;
+  left: var(--left, auto);
+  top: var(--top, 54px);
+  width: var(--width, auto);
+  height: var(--height, auto);
+  /* Add z-index if needed for tool overlays */
+  z-index: 2;
+}
+
+/* Specific overrides for ability and save elements that have conflicting CSS */
+.cs-ability.cs-abs,
+.cs-save.cs-abs,
+.cs-ability-select.cs-abs,
+.cs-save-group {
+  position: absolute !important;
+  left: var(--left, auto) !important;
+  top: var(--top, 53px) !important;
+  width: var(--width, 87px) !important;
+  height: var(--height, 65px) !important;
+}/* Individual save positioning - customize these left coordinates as needed */
 .save-group-death { 
   --save-left: 12px; 
 }
@@ -1783,9 +1882,9 @@ input[type="number"] {
   flex-direction: column !important;
   align-items: center !important;
   margin: 0 !important;
-  left: var(--ability-left, 0px);
-  top: var(--ability-top, 40px) !important;
-  width: var(--ability-width, 86px) !important;
+  left: var(--ability-left, 504px);
+  top: var(--ability-top, 53px) !important;
+  width: var(--ability-width, 87px) !important;
   height: var(--ability-height, 66px) !important;
   z-index: var(--z-labels, 15) !important;
   pointer-events: auto !important;

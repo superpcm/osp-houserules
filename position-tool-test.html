@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Position Tool Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #222;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            background: #333;
+            border: 2px solid #555;
+            margin: 20px auto;
+        }
+        
+        .cs-pos-test {
+            position: absolute;
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: 1px solid #66BB6A;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            
+            /* Default position values */
+            left: var(--cs-pos-test-left, 100px);
+            top: var(--cs-pos-test-top, 100px);
+            width: var(--cs-pos-test-width, 120px);
+            height: var(--cs-pos-test-height, 40px);
+        }
+        
+        .cs-pos-name {
+            position: absolute;
+            background: #2196F3;
+            color: white;
+            padding: 8px;
+            border: 1px solid #42A5F5;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            
+            /* Default position values */
+            left: var(--cs-pos-name-left, 200px);
+            top: var(--cs-pos-name-top, 200px);
+            width: var(--cs-pos-name-width, 150px);
+            height: var(--cs-pos-name-height, 30px);
+        }
+        
+        .instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #bbb;
+        }
+        
+        .note {
+            background: #444;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-left: 4px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Position Tool Test</h1>
+    <div class="instructions">
+        Right-click on the colored boxes below to open the position adjustment dialog.
+    </div>
+    
+    <div class="note">
+        <strong>Note:</strong> This test demonstrates how the right-click positioning tool would work in the Foundry VTT character sheet.
+        Each element with a <code>cs-pos-*</code> class should be right-clickable to adjust its x, y, width, and height.
+    </div>
+    
+    <div class="test-container">
+        <div class="cs-pos-test" id="test-element">
+            <strong>Test Element</strong><br>
+            Right-click me!
+        </div>
+        
+        <div class="cs-pos-name" id="name-element">
+            <strong>Name Field</strong><br>
+            Right-click me too!
+        </div>
+    </div>
+
+    <script>
+        // Simple test to verify right-click detection works
+        document.addEventListener('contextmenu', function(event) {
+            const target = event.target;
+            const hasPositionClass = target.className.includes('cs-pos-');
+            
+            if (hasPositionClass) {
+                event.preventDefault();
+                const className = target.className.match(/cs-pos-(\w+)/)[1];
+                alert(`Right-click detected on element: ${className}\n\nIn the actual system, this would open the position adjustment dialog.`);
+            }
+        });
+        
+        console.log('Position tool test loaded. Right-click elements with cs-pos-* classes to test.');
+    </script>
+</body>
+</html>

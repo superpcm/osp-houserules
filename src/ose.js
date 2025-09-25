@@ -14,17 +14,28 @@ import { NumberFormatter } from "./module/ui/number-formatter.js";
 
 import { OspActorSheetCharacter } from "./module/actor/sheets/character-sheet.js";
 import { OspActorSheetMonster } from "./module/actor/sheets/monster-sheet.js";
+import { PositionToolHandler } from "./module/actor/sheets/handlers/position-tool-handler.js";
 import { OspActor } from "./module/actor/actor.js";
 import { OspItem } from "./module/item/item.js";
 import { OspItemSheet } from "./module/item/item-sheet.js";
 
 Hooks.once("init", () => {
+  console.log('🚨🚨🚨 OSP SYSTEM INIT - DIRECT POSITION TOOL FIX 🚨🚨🚨');
+  
   // Make centralized config available globally for templates
   window.OSP = {
     getNextLevelXP,
     calculateXPModifier,
     NumberFormatter
   };
+  
+  // Debug: Expose classes for testing
+  window.OSPDebug = {
+    OspActorSheetCharacter,
+    PositionToolHandler
+  };
+
+  console.log('🚨 Setting up DIRECT position tool auto-init... 🚨');
   
   // Configure Actor document classes
   CONFIG.Actor.documentClass = OspActor;
@@ -55,6 +66,26 @@ Hooks.once("init", () => {
     makeDefault: true,
     label: "OSP Item Sheet"
   });
+
+  console.log('🚨 OSP SYSTEM: About to set up position tool hooks 🚨');
+  
+  // DISABLED: Hook-based position tool initialization (causes duplicates)
+  // Position tool is now properly initialized in character sheet activateListeners
+  /*
+  Hooks.on('renderApplication', (app, html, data) => {
+    // This hook has been disabled to prevent duplicate position tool handlers
+    // Position tool initialization is handled in character-sheet.js ensurePositionToolHandler()
+  });
+  */
+
+  // DISABLED: Timer-based position tool check (causes duplicates)
+  // Position tool is now properly initialized in character sheet activateListeners
+  /*
+  const positionToolTimer = setInterval(() => {
+    // This timer has been disabled to prevent duplicate position tool handlers
+    // Position tool initialization is handled in character-sheet.js ensurePositionToolHandler()
+  }, 3000);
+  */
 
   CONFIG.Actor.typeLabels = {
     character: game.i18n.localize("osp-houserules.Actor.Type.character"),

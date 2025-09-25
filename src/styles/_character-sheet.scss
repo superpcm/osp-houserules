@@ -901,30 +901,35 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   animation: none !important;
 }
 
-/* Individual ability X positioning - customize these left coordinates as needed */
-.ability:has(.attr-str) { 
-  --ability-left: 4px !important;
+/* ================================================================
+   SIMPLIFIED POSITIONING SYSTEM
+   ================================================================
+   Group-based positioning with individual field overrides.
+   Positioning tool uses --left, --top, --width, --height for overrides.
+   
+   Variable Priority (CSS Cascade):
+   1. --left, --top, --width, --height (positioning tool - highest priority)
+   2. --field-left, --group-top, --field-width, --field-height (field defaults)
+   3. Hardcoded fallback values (lowest priority)
+   ================================================================ */
+
+/* Group Defaults - Shared coordinates for field groups */
+:root {
+  --ability-group-top: 53px;
+  --save-group-top: 131px;
+  --ability-group-width: 87px;
+  --ability-group-height: 66px;
+  --save-group-width: 65px;
+  --save-group-height: 87px;
 }
 
-.ability:has(.attr-int) { 
-  --ability-left: 103px !important;
-}
-
-.ability:has(.attr-wis) { 
-  --ability-left: 205px !important;
-}
-
-.ability:has(.attr-dex) { 
-  --ability-left: 305px !important;
-}
-
-.ability:has(.attr-con) { 
-  --ability-left: 404px !important;
-}
-
-.ability:has(.attr-cha) { 
-  --ability-left: 504px !important;
-}
+/* Ability Group Positioning - Individual X coordinates */
+.ability:has(.attr-str) { --field-left: 4px; }
+.ability:has(.attr-int) { --field-left: 103px; }
+.ability:has(.attr-wis) { --field-left: 205px; }
+.ability:has(.attr-dex) { --field-left: 305px; }
+.ability:has(.attr-con) { --field-left: 404px; }
+.ability:has(.attr-cha) { --field-left: 504px; }
 
 /* Listening at Doors field styling */
 .listening-group {
@@ -1180,36 +1185,14 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   z-index: 2;
 }
 
-/* Specific overrides for ability and save elements that have conflicting CSS */
-.cs-ability.cs-abs,
-.cs-save.cs-abs,
-.cs-ability-select.cs-abs,
-.cs-save-group {
-  position: absolute !important;
-  left: var(--left, auto) !important;
-  top: var(--top, 53px) !important;
-  width: var(--width, 87px) !important;
-  height: var(--height, 65px) !important;
-}/* Individual save positioning - customize these left coordinates as needed */
-.save-group-death { 
-  --save-left: 12px; 
-}
+/* Simplified: No override rules needed - positioning tool variables integrated directly */
 
-.save-group-wands { 
-  --save-left: 139px; 
-}
-
-.save-group-paralysis { 
-  --save-left: 262px; 
-}
-
-.save-group-breath { 
-  --save-left: 390px; 
-}
-
-.save-group-spells { 
-  --save-left: 516px;
-}
+/* Save Group Positioning - Individual X coordinates */
+.save-group-death { --field-left: 12px; }
+.save-group-wands { --field-left: 139px; }
+.save-group-paralysis { --field-left: 262px; }
+.save-group-breath { --field-left: 390px; }
+.save-group-spells { --field-left: 516px; }
 .cs-save-value {
   @extend %visual-center-large;
   @extend %single-character-center;
@@ -1863,29 +1846,29 @@ input[type="number"] {
 .cs-pos-background { --left: #{$cs-pos-background-left}; --top: #{$cs-pos-background-top}; --z: var(--z-labels, 15); }
 .cs-pos-listening { --left: #{$cs-pos-listening-left}; --top: #{$cs-pos-listening-top}; --width: #{$cs-pos-listening-width}; --height: #{$cs-pos-listening-height}; --z: var(--z-labels, 15); }
 
-/* Universal Save Positioning - Simplified System */
+/* Universal Save Positioning - Simplified System with Tool Integration */
 .cs-save {
   position: absolute !important;
-  left: var(--save-left, 0px) !important;
-  top: var(--save-top, 131px) !important;
-  width: var(--save-width, 65px) !important;
-  height: var(--save-height, 87px) !important;
+  /* Positioning tool variables take precedence, then field defaults, then group defaults */
+  left: var(--left, var(--field-left, 0px)) !important;
+  top: var(--top, var(--group-top, var(--save-group-top))) !important;
+  width: var(--width, var(--field-width, var(--save-group-width))) !important;
+  height: var(--height, var(--field-height, var(--save-group-height))) !important;
   z-index: var(--z-labels, 15) !important;
 }
 
-/* Universal Ability Score Positioning - Simplified System */
-/* Individual abilities are positioned via inline CSS custom properties like: */
-/* style="--ability-left: 150px; --ability-top: 52px; --ability-width: 65px; --ability-height: 87px;" */
+/* Universal Ability Positioning - Simplified System with Tool Integration */
 .cs-ability {
   position: absolute !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   margin: 0 !important;
-  left: var(--ability-left, 504px);
-  top: var(--ability-top, 53px) !important;
-  width: var(--ability-width, 87px) !important;
-  height: var(--ability-height, 66px) !important;
+  /* Positioning tool variables take precedence, then field defaults, then group defaults */
+  left: var(--left, var(--field-left, 504px)) !important;
+  top: var(--top, var(--group-top, var(--ability-group-top))) !important;
+  width: var(--width, var(--field-width, var(--ability-group-width))) !important;
+  height: var(--height, var(--field-height, var(--ability-group-height))) !important;
   z-index: var(--z-labels, 15) !important;
   pointer-events: auto !important;
 }

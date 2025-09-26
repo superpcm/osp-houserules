@@ -47,8 +47,8 @@ export class LanguageHandler {
     this.tags.text(languageText);
     this.hidden.val(this.languages.join(", "));
     
-    // Temporarily disable auto-adjust font size to prevent infinite loops
-    // this.adjustFontSize();
+    // Re-enable auto-adjust font size (infinite loop protection is built into adjustFontSize)
+    this.adjustFontSize();
   }
 
   /**

@@ -1248,7 +1248,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   width: 178px !important; /* Fixed width - more reliable than CSS variables */
   height: 184px !important; /* Fixed height - more reliable than CSS variables */
   overflow: hidden; 
-  z-index: 5 !important; /* Force portrait below header (header is z-index 10) */
+  z-index: 25 !important; /* Force portrait above header frame */
+  --z: 25; /* Set CSS variable for .cs-abs compatibility */
 }
 .cs-portrait-display,
 .portrait-display { 
@@ -1261,6 +1262,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   border-radius: 3px; 
   overflow: hidden; 
   pointer-events: auto; 
+  z-index: 20 !important; /* Force above header frame */
 }
 .cs-portrait-img,
 .portrait-img { 

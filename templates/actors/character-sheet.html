@@ -828,12 +828,17 @@
 
       // Portrait handling with delayed tooltip setup
       setTimeout(() => {
+        console.log('Portrait setup: searching for portrait element...');
         const portraitDisplay = document.querySelector('.portrait-display');
-
-
+        console.log('Portrait element found:', portraitDisplay);
 
         if (portraitDisplay) {
+          console.log('Setting up portrait event listeners...');
 
+          // Test if any mouse events work at all
+          portraitDisplay.addEventListener('mousemove', (event) => {
+            console.log('Portrait mousemove detected!');
+          });
 
           // Create dedicated portrait tooltip to avoid conflicts with other tooltips
           let portraitTooltip = document.getElementById('portrait-tooltip');
@@ -853,7 +858,7 @@
 
           // Show portrait tooltip on hover
           portraitDisplay._tooltipMouseEnter = () => {
-
+            console.log('Portrait tooltip mouse enter');
             clearTimeout(portraitTooltipTimeout);
             portraitTooltipTimeout = setTimeout(() => {
               const tipText = 'Double-click to select portrait • Right-click to adjust position';
@@ -884,18 +889,23 @@
 
         // Double-click on portrait opens Foundry file picker
         portraitDisplay.addEventListener('dblclick', async (event) => {
-
+          console.log('Portrait double-click event triggered!');
+          event.preventDefault();
+          event.stopPropagation();
 
           try {
             // Use Foundry's FilePicker
             const fp = new FilePicker({
               type: "image",
-              current: "",
+              current: document.querySelector('input[name="system.portrait"]')?.value || "",
               callback: (path) => {
+                console.log('Portrait selected:', path);
 
-
-                // Update the portrait display
-                portraitDisplay.style.backgroundImage = `url('${path}')`;
+                // Update the portrait image src (not background-image)
+                const portraitImg = portraitDisplay.querySelector('.portrait-img, .cs-portrait-img');
+                if (portraitImg) {
+                  portraitImg.src = path;
+                }
 
                 // Update the hidden input with the file path
                 const portraitInput = document.querySelector('input[name="system.portrait"]');
@@ -905,7 +915,12 @@
                   // Trigger a change event to update the actor
                   const changeEvent = new Event('change', { bubbles: true });
                   portraitInput.dispatchEvent(changeEvent);
+                  
+                  console.log('Portrait updated successfully');
                 }
+              },
+              options: {
+                title: "Select Character Portrait"
               }
             });
 
@@ -913,13 +928,25 @@
             fp.render(true);
 
           } catch (error) {
-
+            console.error('Error opening FilePicker:', error);
+            ui.notifications?.error('Failed to open file picker for portrait selection.');
           }
         });
 
         // Right-click to show portrait adjustment controls
         portraitDisplay.addEventListener('contextmenu', (event) => {
+          console.log('Portrait right-click event triggered!', 'Shift:', event.shiftKey, 'Ctrl:', event.ctrlKey, 'Alt:', event.altKey);
+          // Allow positioning tool to work with plain right-click
+          // Only handle portrait controls when Shift is held (or other modifier)
+          if (!event.shiftKey && !event.ctrlKey && !event.altKey) {
+            // Let the positioning tool handle this event
+            console.log('Letting positioning tool handle this event');
+            return;
+          }
+          
+          console.log('Processing portrait controls...');
           event.preventDefault();
+          event.stopPropagation();
 
           const controls = document.getElementById('portrait-controls');
           const container = document.getElementById('portrait-container');
@@ -952,12 +979,12 @@
 
           // Setup portrait adjustment functionality
           setupPortraitAdjustment();
-
+          console.log('Portrait setup completed successfully!');
 
         } else {
-
+          console.log('Portrait element not found!');
         }
-      }, 100);
+      }, 500); // Increased delay to ensure DOM is ready
     }
 
     // Portrait adjustment system
@@ -1526,7 +1553,7 @@
     <input type="hidden" name="system.userPortrait.y" value="{{system.userPortrait.y}}" />
 
     <!-- Portrait display area -->
-    <div class="portrait-display cs-portrait-display">
+    <div class="portrait-display cs-portrait-display" title="Double-click: Change portrait&#10;Right-click: Position tool&#10;Shift+Right-click: Portrait adjustment controls">
       <img class="portrait-img cs-portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" draggable="false" />
     </div>
 

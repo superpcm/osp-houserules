@@ -548,6 +548,10 @@ export class PositionToolHandler {
     const arrowButtons = html.find('.cs-arrow-btn');
     const sizeButtons = html.find('.cs-size-btn');
     console.log(`Found ${arrowButtons.length} arrow buttons and ${sizeButtons.length} size buttons`);
+    console.log('🚨 Size buttons found:', sizeButtons);
+    sizeButtons.each((index, button) => {
+      console.log(`🚨 Size button ${index}:`, button, 'data:', $(button).data());
+    });
     
     // Arrow button handlers with debugging
     html.find('.cs-arrow-btn').on('click', (event) => {
@@ -562,6 +566,10 @@ export class PositionToolHandler {
 
     // Size button handlers with debugging
     html.find('.cs-size-btn').on('click', (event) => {
+      console.log('🚨 SIZE BUTTON CLICKED! Event:', event);
+      console.log('🚨 Button element:', event.currentTarget);
+      console.log('🚨 Button data:', $(event.currentTarget).data());
+      
       event.preventDefault();
       event.stopPropagation();
       

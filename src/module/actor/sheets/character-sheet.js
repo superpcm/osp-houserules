@@ -21,7 +21,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
       width: 600, // Back to original width - tabs extend beyond without scroll
-      height: 653, // Back to original height to fit content without excessive scrolling
+      height: 632, // Back to original height to fit content without excessive scrolling
       resizable: false,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],
     });

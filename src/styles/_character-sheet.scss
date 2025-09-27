@@ -320,7 +320,7 @@ $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields 
 /* Centralized position variables - change these to tweak sheet layout globally */
 $cs-pos-level-left: 466px !default;
 $cs-pos-level-top: 21px !default;
-$cs-pos-portrait-left: 5px !default;
+$cs-pos-portrait-left: 11px !default;
 $cs-pos-portrait-top: 26px !default;
 $cs-pos-languages-left: 324px !default;
 $cs-pos-languages-top: 176px !default;
@@ -632,7 +632,7 @@ form.osp.sheet.actor.character,
 .window-content .osp.sheet.actor.character,
 .window-content .window-content form.osp.sheet.actor.character,
 .osp .window-content {
-  background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') no-repeat center center !important;
+  background: url('/systems/osp-houserules/assets/backgrounds/parchment1.webp') no-repeat center center !important;
   background-size: 100% !important;
   background-attachment: scroll !important;
 }
@@ -730,13 +730,25 @@ form.osp.sheet.actor.character .static-header::before,
   pointer-events: none; /* Allow clicks to pass through */
 }
 
-/* FORCE OVERRIDE: Semi-transparent tabs to show parchment background */
+/* Tab container styling */
+form.osp.sheet.actor.character .sheet-tabs,
+.osp.sheet.actor.character .sheet-tabs,
+.sheet.actor.character .sheet-tabs {
+  background: transparent !important;
+  border: none !important;
+  margin-bottom: 0 !important;
+}
+
+/* Parchment-themed tabs that blend seamlessly with sheet */
 form.osp.sheet.actor.character .sheet-tabs a.item,
 .osp.sheet.actor.character .sheet-tabs a.item,
 .sheet.actor.character .sheet-tabs a.item { 
   opacity: 1 !important; 
-  background: rgba(139, 123, 101, 0.4) !important; /* Semi-transparent brown to blend with parchment */
-
+  background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') center center !important;
+  background-size: cover !important;
+  background-attachment: scroll !important;
+  filter: none !important; /* Remove filters - use same color as sheet */
+  border: 1px solid rgba(112, 66, 20, 0.4) !important; /* Borders on all 4 sides for inactive */
   position: relative !important;
   z-index: 10 !important;
 }
@@ -745,7 +757,11 @@ form.osp.sheet.actor.character .sheet-tabs a.item:hover,
 .osp.sheet.actor.character .sheet-tabs a.item:hover,
 .sheet.actor.character .sheet-tabs a.item:hover { 
   opacity: 1 !important; 
-  background: rgba(139, 123, 101, 0.6) !important; /* Slightly more opaque on hover */
+  background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') center center !important;
+  background-size: cover !important;
+  background-attachment: scroll !important;
+  filter: brightness(1.05) !important; /* Slightly brighter on hover */
+  border: 1px solid rgba(112, 66, 20, 0.6) !important; /* Slightly darker border on hover */
   z-index: 15 !important;
 }
 
@@ -753,14 +769,30 @@ form.osp.sheet.actor.character .sheet-tabs a.item.active,
 .osp.sheet.actor.character .sheet-tabs a.item.active,
 .sheet.actor.character .sheet-tabs a.item.active { 
   opacity: 1 !important; 
-  background: rgba(255, 255, 255, 0.8) !important; /* More opaque white for active tab */
+  background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') center center !important;
+  background-size: cover !important;
+  background-attachment: scroll !important;
+  filter: none !important; /* No filter - exact same appearance as sheet */
+  border: 1px solid rgba(112, 66, 20, 0.4) !important; /* Borders on top, right, left */
+  border-bottom: none !important; /* No bottom border - connects to sheet */
   z-index: 20 !important;
-  border-left: none !important;
+  position: relative !important;
+  margin-bottom: -1px !important; /* Overlap with sheet to hide sheet's top border */
 }
 
-/* Tab content area */
-.sheet-body .tab { display: none; background: none !important; border: none !important; margin-top: -5px !important; }
-.sheet-body .tab.active { display: block; }
+/* Tab content area - seamlessly blends with active tab */
+.sheet-body .tab { 
+  display: none; 
+  background: none !important; 
+  border-top: 1px solid rgba(112, 66, 20, 0.4) !important; /* Top border that active tab will cover */
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  margin-top: 0 !important;
+}
+.sheet-body .tab.active { 
+  display: block; 
+}
 
 /* Height/Weight neutralization */
 .char-height, .char-weight { background: transparent !important; border: none !important; border-radius: 0 !important; outline: none !important; }
@@ -1054,7 +1086,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   left: 0px;
   width: 100%;
   height: 100%;
-  background-image: url('/systems/osp-houserules/assets/character-sheet/skill-targets-bar.webp');
+  background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-bar.webp');
   background-size: contain;
   background-position: left top;
   background-repeat: no-repeat;
@@ -1071,7 +1103,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 .skill-layout-barbarian .tab[data-tab="combat"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-barbarian.webp') !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-barbarian.webp') !important;
   min-height: 450px !important;
   max-height: 470px !important;
 }
@@ -1131,7 +1163,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 .skill-layout-halforc-barbarian .tab[data-tab="combat"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-barbarian.webp') !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-barbarian.webp') !important;
   height: 500px !important;
 }
 
@@ -1244,8 +1276,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Portrait helpers - configurable dimensions via CSS variables */
 .cs-portrait-container { 
   position: absolute; 
-  width: var(--width, 178px) !important; /* Use CSS variable with fallback */
-  height: var(--height, 184px) !important; /* Use CSS variable with fallback */
+  width: var(--width, 166px) !important; /* Use CSS variable with fallback */
+  height: var(--height, 178px) !important; /* Use CSS variable with fallback */
   overflow: hidden; 
   z-index: 25 !important; /* Force portrait above header frame */
   --z: 25; /* Set CSS variable for .cs-abs compatibility */
@@ -1393,7 +1425,7 @@ input[type="number"] {
   box-sizing: border-box;
   width: 131px;
   height: 30px;
-  font-size: var(--background-font-size, 24px);
+  font-size: var(--background-font-size, 34px);
   font-weight: normal;
   letter-spacing: 0;
   background-color: transparent !important;
@@ -1403,6 +1435,9 @@ input[type="number"] {
   pointer-events: auto;
   cursor: pointer;
   vertical-align: middle;
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: visible;
   &:focus {
     outline: none;
   }

@@ -32,9 +32,9 @@ export class BackgroundHandler {
     if (!this.backgroundSelect || !this.backgroundSelect.length) return;
     
     const select = this.backgroundSelect[0];
-    const containerWidth = 132; // Fixed width from CSS (132px minus padding)
-    const maxFontSize = 24; // Default font size
-    const minFontSize = 10; // Minimum readable font size
+    const containerWidth = 115; // Conservative width to account for browser rendering differences
+    const maxFontSize = 34; // Start at 34px like Languages
+    const minFontSize = 8; // Lower minimum to allow more shrinking
     
   // Reset to maximum font size first (use CSS var hook)
   try { this.backgroundSelect[0].style.setProperty('--background-font-size', `${maxFontSize}px`); } catch (e) { if (this.backgroundSelect[0]) this.backgroundSelect[0].style.fontSize = maxFontSize + 'px'; }
@@ -45,6 +45,7 @@ export class BackgroundHandler {
       
       // Get the selected option text
       const selectedText = select.options[select.selectedIndex]?.text || '';
+      console.log(`Background sizing: "${selectedText}" | Container width: ${containerWidth}px`);
       
       // Create a temporary element to measure text width using native DOM
       const tempElement = document.createElement('span');
@@ -62,10 +63,17 @@ export class BackgroundHandler {
       document.body.appendChild(tempElement);
       
     // Check if text overflows and reduce font size accordingly
-    while ((tempElement.offsetWidth || tempElement.getBoundingClientRect().width) > (containerWidth - 8) && fontSize > minFontSize) { // -8px for padding
-  fontSize -= 0.5;
-  tempElement.style.fontSize = fontSize + 'px';
+    let textWidth = tempElement.offsetWidth || tempElement.getBoundingClientRect().width;
+    console.log(`Starting: fontSize=${fontSize}px, textWidth=${textWidth}px`);
+    
+    while (textWidth > containerWidth && fontSize > minFontSize) { // Padding already accounted for in containerWidth
+      fontSize -= 0.5;
+      tempElement.style.fontSize = fontSize + 'px';
+      textWidth = tempElement.offsetWidth || tempElement.getBoundingClientRect().width;
+      console.log(`Reduced: fontSize=${fontSize}px, textWidth=${textWidth}px`);
     }
+    
+    console.log(`Final: fontSize=${fontSize}px, textWidth=${textWidth}px, fits=${textWidth <= containerWidth}`);
       
   // Apply the calculated font size via CSS var when possible
   try { this.backgroundSelect[0].style.setProperty('--background-font-size', `${fontSize}px`); } catch (e) { if (this.backgroundSelect[0]) this.backgroundSelect[0].style.fontSize = fontSize + 'px'; }

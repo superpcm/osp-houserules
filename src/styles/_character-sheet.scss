@@ -321,7 +321,7 @@ $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields 
 $cs-pos-level-left: 466px !default;
 $cs-pos-level-top: 21px !default;
 $cs-pos-portrait-left: 11px !default;
-$cs-pos-portrait-top: 11px !default;
+$cs-pos-portrait-top: 26px !default;
 $cs-pos-languages-left: 324px !default;
 $cs-pos-languages-top: 176px !default;
 $cs-pos-xpmod-left: 530px !default;
@@ -528,6 +528,8 @@ form.osp.sheet.actor.character,
 form.osp.sheet.actor.character {
   position: relative;
   color: #704214 !important; /* Default text color for all sheet content */
+  padding: 15px; /* Add 15px padding on all sides for spacing */
+  box-sizing: border-box; /* Include padding in dimensions */
 }
 
 /* Global form element reset - remove redundant declarations */
@@ -971,8 +973,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   position: absolute;
   top: 260px;
   left: 0px;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-bar.webp');
   background-size: contain;
   background-position: left top;
@@ -1282,7 +1284,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-portrait-container { 
   position: absolute; 
   width: var(--width, 166px) !important; /* Use CSS variable with fallback */
-  height: var(--height, 193px) !important; /* Use CSS variable with fallback */
+  height: var(--height, 178px) !important; /* Use CSS variable with fallback */
   overflow: hidden; 
   z-index: 25 !important; /* Force portrait above header frame */
   --z: 25; /* Set CSS variable for .cs-abs compatibility */

@@ -1825,15 +1825,16 @@
 
     <!-- Right-side Tab Navigation -->
     <nav class="sheet-tabs tabs cs-tabs" data-group="primary">
-  <a class="item cs-tab-item" data-tab="combat">Combat</a>
+  <a class="item cs-tab-item" data-tab="combat">Attributes</a>
   <a class="item cs-tab-item" data-tab="skills">Skills</a>
+  <a class="item cs-tab-item" data-tab="combat-tab">Combat</a>
   <a class="item cs-tab-item" data-tab="equipment">Equipment</a>
   <a class="item cs-tab-item" data-tab="bio">Bio</a>
     </nav>
 
     <!-- Sheet Body - Tab Content Area -->
   <section class="sheet-body cs-sheet-body">
-      <!-- Combat Tab -->
+      <!-- Attributes Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
         <div class="combat-section">
 
@@ -2200,31 +2201,44 @@
       </div>
       <!-- Skills Tab -->
   <div class="tab" data-group="primary" data-tab="skills">
-        <!-- Combat Stats Section -->
-        <div class="combat-stats cs-combat-stats">
-          <div class="combat-stat cs-combat-stat">
-            <label for="char-ac" class="cs-field-label">Armor Class</label>
-            <input class="char-ac cs-combat-input" id="char-ac" name="system.ac" type="number" value="{{system.ac}}" min="0" max="20" />
-          </div>
-          <div class="combat-stat cs-combat-stat">
-            <label class="cs-field-label">Unarmored AC</label>
-            <div class="cs-unarmored-box">
-              {{unarmoredAC system.attributes.dex.value}}
-            </div>
-          </div>
-          <div class="combat-stat cs-combat-stat">
-            <label for="char-hp" class="cs-field-label">Current HP</label>
-            <input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" />
-          </div>
-          <div class="combat-stat cs-combat-stat">
-            <label for="char-max-hp" class="cs-field-label">Max HP</label>
-            <input class="char-max-hp cs-combat-input" id="char-max-hp" name="system.maxhitpoints" type="number" value="{{system.maxhitpoints}}" min="0" />
-          </div>
+        <!-- Skills-specific content will go here -->
+        <div class="skills-content">
+          <p>Skills tab content - to be implemented</p>
         </div>
 
         <!-- Additional Skills content can go here -->
 
       </div>
+      
+      <!-- Combat Tab -->
+      <div class="tab" data-group="primary" data-tab="combat-tab">
+        <section class="combat-tab">
+          <!-- Combat Stats Section -->
+          <div class="combat-stats cs-combat-stats">
+            <div class="combat-stat cs-combat-stat">
+              <label for="char-ac" class="cs-field-label">Armor Class</label>
+              <input class="char-ac cs-combat-input" id="char-ac" name="system.ac" type="number" value="{{system.ac}}" min="0" max="20" />
+            </div>
+            <div class="combat-stat cs-combat-stat">
+              <label class="cs-field-label">Unarmored AC</label>
+              <div class="cs-unarmored-box">
+                {{unarmoredAC system.attributes.dex.value}}
+              </div>
+            </div>
+            <div class="combat-stat cs-combat-stat">
+              <label for="char-hp" class="cs-field-label">Current HP</label>
+              <input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" />
+            </div>
+            <div class="combat-stat cs-combat-stat">
+              <label for="char-max-hp" class="cs-field-label">Max HP</label>
+              <input class="char-max-hp cs-combat-input" id="char-max-hp" name="system.maxhitpoints" type="number" value="{{system.maxhitpoints}}" min="0" />
+            </div>
+          </div>
+
+          <!-- Additional Combat content can go here -->
+        </section>
+      </div>
+      
       <!-- Equipment Tab -->
       <div class="tab" data-group="primary" data-tab="equipment">
         <section class="equipment-tab">

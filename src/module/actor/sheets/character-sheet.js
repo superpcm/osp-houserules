@@ -21,7 +21,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
       width: 600, // Back to original width - tabs extend beyond without scroll
-      height: 632, // Back to original height to fit content without excessive scrolling
+      height: 631, // Back to original height to fit content without excessive scrolling
       resizable: false,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],
     });
@@ -639,29 +639,15 @@ export class OspActorSheetCharacter extends ActorSheet {
       requiredSkills = [...requiredSkills, ...skillRequirements.classes[characterClass]];
       layoutClass = `skill-layout-${characterClass}`;
       
-      // Add race-specific skills if applicable
+      // Add race-specific skills if applicable (simplified logic)
       if (race && skillRequirements.races[race]) {
         requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
-        // Use combined layout class for special combinations
-        // Note: Dwarves, Gnomes, and Hobbits cannot be Barbarians
-        if ((characterClass === 'thief' && race === 'dwarf') ||
-            (characterClass === 'thief' && race === 'gnome') ||
-            (characterClass === 'cleric' && race === 'gnome') ||
-            (characterClass === 'assassin' && race === 'half-orc') ||
-            (characterClass === 'barbarian' && race === 'half-orc')) {
-          layoutClass = `skill-layout-${race.replace('-', '')}-${characterClass}`;
-        }
       }
     } else if (race && skillRequirements.races[race]) {
-      // Handle classes without specific skills but with race combinations
-      if (characterClass === 'cleric' && race === 'gnome') {
+      // Use race-only skills if no qualifying class
+      // Exception: Half-Orcs only get race skills when paired with compatible classes (Assassin/Barbarian)
+      if (race !== 'half-orc') {
         requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
-        layoutClass = `skill-layout-${race.replace('-', '')}-${characterClass}`;
-      } else if (race !== 'half-orc') {
-        // Use race-only skills if no qualifying class
-        // Exception: Half-Orcs only get race skills when paired with compatible classes (Assassin/Barbarian)
-        requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
-        layoutClass = `skill-layout-${race.replace('-', '')}`;
       }
       // Half-Orcs without compatible classes get generic layout
     }
@@ -686,33 +672,32 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Apply the appropriate skill layout CSS class
     const formElement = this.element.find('form');
     if (formElement.length > 0) {
-      // Remove all skill-layout-* and racial-skill-targets-* classes
+      // Remove all skill-layout-* and racial-skill-layout-* classes
       const currentClasses = formElement[0].className.split(' ');
       const filteredClasses = currentClasses.filter(cls => 
-        !cls.startsWith('skill-layout-') && !cls.startsWith('racial-skill-targets-')
+        !cls.startsWith('skill-layout-') && !cls.startsWith('racial-skill-layout-')
       );
       
-      // Add the new layout class
+      // Add the class-based skill layout class
       formElement[0].className = [...filteredClasses, layoutClass].join(' ');
       
-      // Apply racial skill target classes (separate from class-based system)
-      let racialSkillTargetClass = 'racial-skill-targets-default';
+      // Apply racial skill layout classes (3-scenario system)
+      let racialSkillLayoutClass = 'racial-skill-layout-default';
       
-      if (race === 'gnome') {
-        // Gnome racial skill targets only if NOT in combination with Gnome class
-        if (characterClass !== 'gnome') {
-          racialSkillTargetClass = 'racial-skill-targets-gnome';
-        }
-      } else if (race === 'dwarf') {
-        // Dwarf racial skill targets only if NOT in combination with Dwarf class
-        if (characterClass !== 'dwarf') {
-          racialSkillTargetClass = 'racial-skill-targets-dwarf';
-        }
+      // Determine racial skill scenario
+      if (race === 'dwarf' && characterClass !== 'dwarf') {
+        // Dwarf race but not dwarf class - gets dwarf racial skills
+        racialSkillLayoutClass = 'racial-skill-layout-dwarf';
+      } else if (race === 'gnome' && characterClass !== 'gnome') {
+        // Gnome race but not gnome class - gets gnome racial skills
+        racialSkillLayoutClass = 'racial-skill-layout-gnome';
+      } else {
+        // All other scenarios use default (including race-as-class combinations)
+        racialSkillLayoutClass = 'racial-skill-layout-default';
       }
-      // All other races (including half-orc, hobbit, etc.) use default
       
-      // Add the racial skill target class
-      formElement[0].className = [...formElement[0].className.split(' '), racialSkillTargetClass].join(' ');
+      // Add the racial skill layout class
+      formElement[0].className = [...formElement[0].className.split(' '), racialSkillLayoutClass].join(' ');
       
       // Force style recalculation to ensure background images update
       const combatTab = html.find('.tab[data-tab="combat"]');

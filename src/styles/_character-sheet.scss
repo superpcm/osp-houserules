@@ -318,38 +318,38 @@ $debug-form-fields: false; // Change to false to disable
 $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields (Name, Class, Level, XP Mod)
 
 /* Centralized position variables - change these to tweak sheet layout globally */
-$cs-pos-level-left: 482px !default;
-$cs-pos-level-top: 38px !default;
-$cs-pos-portrait-left: 26px !default;
-$cs-pos-portrait-top: 26px !default;
-$cs-pos-languages-left: 324px !default;
-$cs-pos-languages-top: 176px !default;
-$cs-pos-xpmod-left: 531px !default;
-$cs-pos-xpmod-top: 17px !default;
-$cs-pos-xp-left: 461px !default;
-$cs-pos-xp-top: 70px !default;
+$cs-pos-level-left: 502px !default;
+$cs-pos-level-top: 13px !default;
+$cs-pos-portrait-left: 31px !default;
+$cs-pos-portrait-top: 12px !default;
+$cs-pos-languages-left: 437px !default;
+$cs-pos-languages-top: 206px !default;
+$cs-pos-xpmod-left: 694px !default;
+$cs-pos-xpmod-top: 13px !default;
+$cs-pos-xp-left: 608px !default;
+$cs-pos-xp-top: 77px !default;
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
 
 /* Additional header / field position presets discovered during sweep */
-$cs-pos-namegroup-left: 187px !default;
-$cs-pos-namegroup-top: 17px !default;
-$cs-pos-class-left: 324px !default;
-$cs-pos-class-top: 70px !default;
-$cs-pos-alignment-left: 324px !default;
-$cs-pos-alignment-top: 123px !default;
-$cs-pos-race-left: 186px !default;
-$cs-pos-race-top: 70px !default;
-$cs-pos-age-left: 186px !default;
-$cs-pos-age-top: 123px !default;
-$cs-pos-sex-left: 255px !default;
-$cs-pos-sex-top: 123px !default;
-$cs-pos-height-left: 186px !default;
-$cs-pos-height-top: 176px !default;
-$cs-pos-weight-left: 255px !default;
-$cs-pos-weight-top: 176px !default;
-$cs-pos-background-left: 461px !default;
-$cs-pos-background-top: 123px !default;
+$cs-pos-namegroup-left: 263px !default;
+$cs-pos-namegroup-top: 13px !default;
+$cs-pos-class-left: 435px !default;
+$cs-pos-class-top: 77px !default;
+$cs-pos-alignment-left: 436px !default;
+$cs-pos-alignment-top: 142px !default;
+$cs-pos-race-left: 263px !default;
+$cs-pos-race-top: 77px !default;
+$cs-pos-age-left: 263px !default;
+$cs-pos-age-top: 142px !default;
+$cs-pos-sex-left: 352px !default;
+$cs-pos-sex-top: 142px !default;
+$cs-pos-height-left: 263px !default;
+$cs-pos-height-top: 206px !default;
+$cs-pos-weight-left: 350px !default;
+$cs-pos-weight-top: 206px !default;
+$cs-pos-background-left: 608px !default;
+$cs-pos-background-top: 142px !default;
 $cs-pos-listening-left: 381px !default;
 $cs-pos-listening-top: 301px !default;
 $cs-pos-listening-width: 58px !default;
@@ -529,7 +529,7 @@ form.osp.sheet.actor.character,
 form.osp.sheet.actor.character {
   position: relative;
   color: #5703EF !important; /* Default text color for all sheet content */
-  padding: 15px; /* Add 15px padding on all sides for spacing */
+  /*padding: 15px; /* Add 15px padding on all sides for spacing */
   box-sizing: border-box; /* Include padding in dimensions */
 }
 
@@ -590,17 +590,17 @@ form.osp.sheet.actor.character {
 
 /* XP progress bar */
 form.osp.sheet.actor.character .xp-progress-bar,
-.osp.sheet.actor.character .xp-progress-bar { background-color: #4a90e2 !important; }
+.osp.sheet.actor.character .xp-progress-bar { background-color: #ff0000 !important; }
 
 /* Static header - consolidated background image and layout properties */
 form.osp.sheet.actor.character .static-header,
 .static-header,
 .cs-static-header {
-  position: relative;
+  /*position: relative;*/
   background-color: transparent !important;
-  height: 220px !important;
+  height: 286.5px !important;
   z-index: var(--z-sheet, 10);
-  margin: 4px 3.6px 0px 4px !important;
+  /*margin: 4px 3.6px 0px 4px !important;*/
 }
 
 /* Header frame image as pseudo-element with higher z-index */
@@ -935,7 +935,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* XP progress width via CSS variable */
 .xp-progress { --xp-progress-width: 0%; }
-.xp-progress { --xp-progress-color: rgba(112, 66, 21, 0.8); }
+.xp-progress { --xp-progress-color: rgba(255, 0, 0, 1); }
 .xp-progress .xp-progress-fill { width: var(--xp-progress-width); transition: width 0.3s ease; background-color: var(--xp-progress-color, rgba(112, 66, 21, 0.8)); }
 
 /* Combat stat boxes */
@@ -1262,7 +1262,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     left: 0; 
     height: 100%; 
     border-radius: 3px; 
-    background-color: rgba(112, 66, 21, 0.8); 
+    background-color: rgba(255, 0, 0, 1); 
     width: 0%; 
     transition: width 0.3s ease; 
 }
@@ -1284,8 +1284,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Portrait helpers - configurable dimensions via CSS variables */
 .cs-portrait-container { 
   position: absolute; 
-  width: var(--width, 166px) !important; /* Use CSS variable with fallback */
-  height: var(--height, 193px) !important; /* Use CSS variable with fallback */
+  width: var(--width, 215px) !important; /* Use CSS variable with fallback */
+  height: var(--height, 249px) !important; /* Use CSS variable with fallback */
   overflow: hidden; 
   z-index: 25 !important; /* Force portrait above header frame */
   --z: 25; /* Set CSS variable for .cs-abs compatibility */
@@ -1338,10 +1338,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   text-align: center;
   font-variant-numeric: tabular-nums;
   
-  width: 61px;
-  height: 29px;
+  width: 74px;
+  height: 39px;
   pointer-events: none;
-  font-size: 34px;
+  font-size: 36px;
 }
 
 .cs-xp-display {
@@ -1351,11 +1351,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   text-align: center;
   font-variant-numeric: tabular-nums;
   
-  width: 131px;
-  height: 30px;
+  width: 160px;
+  height: 40px;
   cursor: pointer;
   pointer-events: auto;
-  font-size: 34px;
+  font-size: 36px;
 }
 
 /* ================================================================
@@ -1394,9 +1394,9 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   
-  width: 267px;
-  height: 29px;
-  font-size: 34px;
+  width: 332px;
+  height: 39px;
+  font-size: 36px;
   background-color: transparent !important;
   white-space: nowrap;
   text-overflow: clip;
@@ -1412,9 +1412,9 @@ input[type="number"] {
   text-align: center;
   box-sizing: border-box;
   
-  width: 130px;
-  height: 29px;
-  font-size: 34px;
+  width: 160px;
+  height: 39px;
+  font-size: 36px;
   background-color: transparent !important;
 
   margin: 0;
@@ -1431,9 +1431,9 @@ input[type="number"] {
   text-align: center;
   line-height: 1;
   box-sizing: border-box;
-  width: 131px;
-  height: 30px;
-  font-size: var(--background-font-size, 34px);
+  width: 160px;
+  height: 39px;
+  font-size: var(--background-font-size, 36px);
   font-weight: normal;
   letter-spacing: 0;
   background-color: transparent !important;
@@ -1465,11 +1465,11 @@ input[type="number"] {
   box-sizing: border-box;
   
   /* Size and positioning */
-  width: 130px;
-  height: 29px;
+  width: 159px;
+  height: 39px;
   
   /* Typography - customize as needed */
-  font-size: 34px;
+  font-size: 36px;
   font-weight: normal;
   letter-spacing: 0;
   
@@ -1510,9 +1510,9 @@ input[type="number"] {
     position: absolute;
     top: 0px;
     left: 0px;
-    height: 30px;
+    height: 40px;
     width: var(--level-height, 0%);
-    background: var(--level-bg, linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%));
+    background: var(--level-bg, linear-gradient(to right, rgba(255, 0, 0, 0.2) 0%, rgba(255, 0, 0, 1) 100%));
     transition: width 0.3s ease;
     z-index: 1;
     border-radius: 3px;
@@ -1531,9 +1531,9 @@ input[type="number"] {
   display: flex;
   text-align: center;
   box-sizing: border-box;
-  width: 130px;
-  height: 30px;
-  font-size: 34px;
+  width: 159px;
+  height: 39px;
+  font-size: 36px;
   background-color: transparent !important;
   color: inherit;
   border: none;
@@ -1553,9 +1553,9 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  width: 62px;
-  height: 30px;
-  font-size: 34px;
+  width: 74px;
+  height: 39px;
+  font-size: 36px;
   letter-spacing: 0;
   background-color: transparent !important;
   color: inherit;
@@ -1582,9 +1582,9 @@ input[type="number"] {
   text-align: center;
   line-height: 1;
   box-sizing: border-box;
-  width: 62px;
-  height: 30px;
-  font-size: 34px;
+  width: 73px;
+  height: 39px;
+  font-size: 36px;
   letter-spacing: 0;
   background-color: transparent !important;
   color: inherit;
@@ -1610,9 +1610,9 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  width: 268px;
-  height: 30px;
-  font-size: var(--languages-font-size, 34px);
+  width: 331px;
+  height: 39px;
+  font-size: var(--languages-font-size, 36px);
   font-weight: normal;
   letter-spacing: var(--languages-letter-spacing, 0px);
   line-height: var(--languages-line-height, 1);
@@ -1633,9 +1633,9 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  width: 62px;
-  height: 30px;
-  font-size: 34px;
+  width: 74px;
+  height: 40px;
+  font-size: 36px;
   background-color: transparent !important;
   border: none;
   vertical-align: middle;
@@ -1648,9 +1648,9 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  width: 62px;
-  height: 30px;
-  font-size: 34px;
+  width: 73px;
+  height: 39px;
+  font-size: 36px;
   background-color: transparent !important;
   border: none;
   cursor: pointer;

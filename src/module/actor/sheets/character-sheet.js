@@ -20,7 +20,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
-      width: 630, // Increased by 30px (15px padding each side)
+      width: 800, // Increased by 30px (15px padding each side)
       height: 655, // Increased by 30px (15px padding each side)
       resizable: false,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],

@@ -318,11 +318,11 @@ $debug-form-fields: false; // Change to false to disable
 $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields (Name, Class, Level, XP Mod)
 
 /* Centralized position variables - change these to tweak sheet layout globally */
-$cs-pos-level-left: 502px !default;
+$cs-pos-level-left: 514px !default;
 $cs-pos-level-top: 13px !default;
-$cs-pos-portrait-left: 31px !default;
+$cs-pos-portrait-left: 43px !default;
 $cs-pos-portrait-top: 12px !default;
-$cs-pos-languages-left: 437px !default;
+$cs-pos-languages-left: 449px !default;
 $cs-pos-languages-top: 206px !default;
 $cs-pos-xpmod-left: 694px !default;
 $cs-pos-xpmod-top: 13px !default;
@@ -522,7 +522,7 @@ form.osp.sheet.actor.character,
   /*background: url('/systems/osp-houserules/assets/backgrounds/parchment1.webp') no-repeat center center !important;
   background-size: 100% !important;
   background-attachment: scroll !important;*/
-  background-color: #b5ddb0
+  background-color: #b5ddb4
 }
 
 /* Single Background Image System - Applied to window instead of form */
@@ -629,15 +629,13 @@ form.osp.sheet.actor.character .sheet-tabs,
   margin-bottom: 0 !important;
 }
 
-/* Parchment-themed tabs that blend seamlessly with sheet */
+/* Solid color tabs that match the sheet background */
 form.osp.sheet.actor.character .sheet-tabs a.item,
 .osp.sheet.actor.character .sheet-tabs a.item,
 .sheet.actor.character .sheet-tabs a.item { 
   opacity: 1 !important; 
-  background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') center center !important;
-  background-size: cover !important;
-  background-attachment: scroll !important;
-  filter: none !important; /* Remove filters - use same color as sheet */
+  background-color: #b5ddb4 !important;
+  filter: none !important; /* No filters */
   border: 1px solid rgba(112, 66, 20, 0.4) !important; /* Borders on all 4 sides for inactive */
   position: relative !important;
   z-index: 10 !important;
@@ -647,9 +645,7 @@ form.osp.sheet.actor.character .sheet-tabs a.item:hover,
 .osp.sheet.actor.character .sheet-tabs a.item:hover,
 .sheet.actor.character .sheet-tabs a.item:hover { 
   opacity: 1 !important; 
-  background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') center center !important;
-  background-size: cover !important;
-  background-attachment: scroll !important;
+  background-color: #b5ddb4 !important;
   filter: brightness(1.05) !important; /* Slightly brighter on hover */
   border: 1px solid rgba(112, 66, 20, 0.6) !important; /* Slightly darker border on hover */
   z-index: 15 !important;
@@ -659,9 +655,7 @@ form.osp.sheet.actor.character .sheet-tabs a.item.active,
 .osp.sheet.actor.character .sheet-tabs a.item.active,
 .sheet.actor.character .sheet-tabs a.item.active { 
   opacity: 1 !important; 
-  background: url('/systems/osp-houserules/assets/backgrounds/osp-parchment-background.webp') center center !important;
-  background-size: cover !important;
-  background-attachment: scroll !important;
+  background-color: #b5ddb4 !important;
   filter: none !important; /* No filter - exact same appearance as sheet */
   border: 1px solid rgba(112, 66, 20, 0.4) !important; /* Borders on top, right, left */
   border-bottom: none !important; /* No bottom border - connects to sheet */
@@ -1671,7 +1665,7 @@ input[type="number"] {
 /* Sheet body helper to centralize padding/scrolling */
 .cs-sheet-body {
   position: absolute !important;
-  top: var(--sheet-top, 241.75px);
+  top: var(--sheet-top, 300px);
   left: 0;
   right: 0;
   bottom: 0;

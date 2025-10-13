@@ -318,38 +318,36 @@ $debug-form-fields: false; // Change to false to disable
 $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields (Name, Class, Level, XP Mod)
 
 /* Centralized position variables - change these to tweak sheet layout globally */
-$cs-pos-level-left: 514px !default;
-$cs-pos-level-top: 13px !default;
+$cs-pos-level-left: 605px !default;
+$cs-pos-level-top: 25px !default;
 $cs-pos-portrait-left: 32px !default;
 $cs-pos-portrait-top: 24px !default;
 $cs-pos-languages-left: 449px !default;
-$cs-pos-languages-top: 206px !default;
+$cs-pos-languages-top: 218px !default;
 $cs-pos-xpmod-left: 694px !default;
-$cs-pos-xpmod-top: 13px !default;
+$cs-pos-xpmod-top: 25px !default;
 $cs-pos-xp-left: 608px !default;
-$cs-pos-xp-top: 77px !default;
+$cs-pos-xp-top: 90px !default;
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
-
-/* Additional header / field position presets discovered during sweep */
 $cs-pos-namegroup-left: 263px !default;
-$cs-pos-namegroup-top: 13px !default;
+$cs-pos-namegroup-top: 25px !default;
 $cs-pos-class-left: 435px !default;
-$cs-pos-class-top: 77px !default;
+$cs-pos-class-top: 90px !default;
 $cs-pos-alignment-left: 436px !default;
-$cs-pos-alignment-top: 142px !default;
+$cs-pos-alignment-top: 153px !default;
 $cs-pos-race-left: 263px !default;
-$cs-pos-race-top: 77px !default;
+$cs-pos-race-top: 90px !default;
 $cs-pos-age-left: 263px !default;
-$cs-pos-age-top: 142px !default;
+$cs-pos-age-top: 153px !default;
 $cs-pos-sex-left: 352px !default;
-$cs-pos-sex-top: 142px !default;
+$cs-pos-sex-top: 153px !default;
 $cs-pos-height-left: 263px !default;
-$cs-pos-height-top: 206px !default;
+$cs-pos-height-top: 218px !default;
 $cs-pos-weight-left: 350px !default;
-$cs-pos-weight-top: 206px !default;
+$cs-pos-weight-top: 218px !default;
 $cs-pos-background-left: 608px !default;
-$cs-pos-background-top: 142px !default;
+$cs-pos-background-top: 153px !default;
 $cs-pos-listening-left: 381px !default;
 $cs-pos-listening-top: 301px !default;
 $cs-pos-listening-width: 58px !default;
@@ -930,7 +928,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* XP progress width via CSS variable */
 .xp-progress { --xp-progress-width: 0%; }
 .xp-progress { --xp-progress-color: rgba(255, 0, 0, 1); }
-.xp-progress .xp-progress-fill { width: var(--xp-progress-width); transition: width 0.3s ease; background-color: var(--xp-progress-color, rgba(112, 66, 21, 0.8)); }
+.xp-progress .xp-progress-fill { width: var(--xp-progress-width); transition: width 0.3s ease; background-color: var(--xp-progress-color, rgba(255, 0, 0, 0.8)); }
 
 /* Combat stat boxes */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
@@ -1254,7 +1252,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     position: absolute; 
     top: 0; 
     left: 0; 
-    height: 100%; 
+    height: 80%; 
     border-radius: 3px; 
     background-color: rgba(255, 0, 0, 1); 
     width: 0%; 
@@ -1267,9 +1265,9 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  width: 61px;
-  height: 29px;
-  font-size: 34px;
+  width: 73px;
+  height: 39px;
+  font-size: 36px;
   z-index: var(--z-level, -10);
   background: transparent !important;
   padding: 0 0 2px 0;
@@ -1504,7 +1502,7 @@ input[type="number"] {
     position: absolute;
     top: 0px;
     left: 0px;
-    height: 40px;
+    height: 42px;
     width: var(--level-height, 0%);
     background: var(--level-bg, linear-gradient(to right, rgba(255, 0, 0, 0.2) 0%, rgba(255, 0, 0, 1) 100%));
     transition: width 0.3s ease;

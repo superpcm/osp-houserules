@@ -586,10 +586,6 @@ form.osp.sheet.actor.character {
 .application.window-app.sheet.actor.character.osp .window-header .header-button:hover,
 .osp .window-header .header-button:hover { background: rgba(255,255,255,0.2) !important; }
 
-/* XP progress bar */
-form.osp.sheet.actor.character .xp-progress-bar,
-.osp.sheet.actor.character .xp-progress-bar { background-color: #ff0000 !important; }
-
 /* Static header - consolidated background image and layout properties */
 form.osp.sheet.actor.character .static-header,
 .static-header,
@@ -925,10 +921,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-cursor-pointer { cursor: pointer !important; }
 .cs-cursor-text { cursor: text !important; }
 
-/* XP progress width via CSS variable */
-.xp-progress { --xp-progress-width: 0%; }
-.xp-progress { --xp-progress-color: rgba(255, 0, 0, 1); }
-.xp-progress .xp-progress-fill { width: var(--xp-progress-width); transition: width 0.3s ease; background-color: var(--xp-progress-color, rgba(255, 0, 0, 0.8)); }
 
 /* Combat stat boxes */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
@@ -951,9 +943,9 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Combat tab background - Base layers for all layouts */
 .tab[data-tab="combat"] {
   position: relative;
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-default.webp') !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp') !important;
   background-size: contain, contain !important;
-  background-position: center top, left 282.75px !important;
+  /* background-position: center top, left 282.75px !important; */
   background-repeat: no-repeat, no-repeat !important;
   background-attachment: scroll, scroll !important;
   background-color: transparent !important;
@@ -980,7 +972,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .tab[data-tab="combat-tab"] {
   position: relative;
   background-color: transparent;
-  padding: 20px;
+  padding: 0px;
   height: 400px;
   
   .combat-content {
@@ -1248,17 +1240,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .encumbrance-section .encumbrance-bar { width: var(--encumbrance-width, 0%); }
 
 /* Level progress helpers */
-.cs-level-progress-bar { 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    height: 80%; 
-    border-radius: 3px; 
-    background-color: rgba(255, 0, 0, 1); 
-    width: 0%; 
-    transition: width 0.3s ease; 
-}
-
 .cs-level-display {
   display: flex;
   align-items: center;
@@ -1667,7 +1648,7 @@ input[type="number"] {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0 19px 0px 19px;
+  /* padding: 0 19px 0px 19px; */
   /* overflow-y: auto; */
 }
 

@@ -77,6 +77,7 @@ form.osp button {
   font-family: 'Cooper Std', 'Cooper Standard', serif !important;
 }
 
+/* Grid overlay animation */
 .grid-overlay {
   animation: fadeIn 0.3s ease;
 }
@@ -84,16 +85,4 @@ form.osp button {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-// Ensure tab items are clickable
-.sheet-tabs .item {
-  pointer-events: auto !important;
-  cursor: pointer !important;
-}
-
-/* Remove thin 1px separators that appear above the first tab and below the last tab */
-body.game .sheet.app nav.sheet-tabs {
-  border-top: none !important;
-  border-bottom: none !important;
 }

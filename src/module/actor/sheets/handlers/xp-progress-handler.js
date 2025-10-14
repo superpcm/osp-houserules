@@ -9,7 +9,6 @@ export class XPProgressHandler {
     this.actor = actor;
     this.xpDisplay = null;
     this.xpAwardBtn = null;
-    this.progressBar = null;
     this.nextLevelDisplay = null;
     this.isUpdatingXP = false; // Flag to prevent XP display overwrites during updates
   }
@@ -21,7 +20,6 @@ export class XPProgressHandler {
 
 
     // Initialize DOM elements
-    this.progressBar = this.html.find('.xp-progress');
     this.levelXpProgress = this.html.find('.level-xp-progress');
     this.percentageDisplay = this.html.find('.xp-percentage');
     this.xpDisplay = this.html.find('.xp-display');
@@ -53,7 +51,6 @@ export class XPProgressHandler {
    */
   refreshElements() {
     // Re-initialize DOM elements
-    this.progressBar = this.html.find('.xp-progress');
     this.levelXpProgress = this.html.find('.level-xp-progress');
     this.percentageDisplay = this.html.find('.xp-percentage');
     this.xpDisplay = this.html.find('.xp-display');
@@ -429,39 +426,15 @@ export class XPProgressHandler {
       }
     }
 
-
-
-    // Update horizontal progress bar (if it exists)
-    if (this.progressBar.length) {
-      // Use CSS variable for width and color so presentation stays in CSS
-      try {
-        this.progressBar[0].style.setProperty('--xp-progress-width', `${progressPercentage}%`);
-        this.progressBar[0].style.setProperty('--xp-progress-color', currentXP >= nextLevelXP ? 'rgba(112, 66, 21, 0.9)' : 'rgba(112, 66, 21, 0.8)');
-      } catch (e) {
-        // Fallback to direct style assignment when setProperty is unavailable
-        if (this.progressBar[0]) {
-          this.progressBar[0].style.width = `${progressPercentage}%`;
-          this.progressBar[0].style.backgroundColor = currentXP >= nextLevelXP ? 'rgba(112, 66, 21, 0.9)' : 'rgba(112, 66, 21, 0.8)';
-        }
-      }
-    }
-
     // Update vertical level field progress bar (if it exists)
     if (this.levelXpProgress.length) {
-      // Set CSS variables for width, right-radius and background
-      const rightRadius = (progressPercentage >= 90) ? `${Math.min(9, ((progressPercentage - 90) / 10) * 9)}px` : '0px';
+      // Set CSS variable for width (color is defined in CSS)
       try {
-        this.levelXpProgress[0].style.setProperty('--level-height', `${progressPercentage}%`);
-        this.levelXpProgress[0].style.setProperty('--progress-top-radius', rightRadius);
-        this.levelXpProgress[0].style.setProperty('--level-bg', currentXP >= nextLevelXP ? 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)' : 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)');
+        this.levelXpProgress[0].style.setProperty('--xp-progress-width', `${progressPercentage}%`);
       } catch (e) {
-        // Fallback to direct style properties
+        // Fallback to direct width style
         if (this.levelXpProgress[0]) {
           this.levelXpProgress[0].style.width = `${progressPercentage}%`;
-          // apply right radius to both corners for visual parity
-          this.levelXpProgress[0].style.borderTopRightRadius = rightRadius;
-          this.levelXpProgress[0].style.borderBottomRightRadius = rightRadius;
-          this.levelXpProgress[0].style.background = currentXP >= nextLevelXP ? 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)' : 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)';
         }
       }
     }
@@ -591,16 +564,10 @@ export class XPProgressHandler {
 
     if (this.levelXpProgress.length) {
       try {
-        this.levelXpProgress[0].style.setProperty('--level-height', `${percentage}%`);
-        this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)');
+        this.levelXpProgress[0].style.setProperty('--xp-progress-width', `${percentage}%`);
       } catch (e) {
         if (this.levelXpProgress[0]) {
           this.levelXpProgress[0].style.width = `${percentage}%`;
-          try {
-            this.levelXpProgress[0].style.setProperty('--level-bg', 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)');
-          } catch (e2) {
-            this.levelXpProgress[0].style.background = 'linear-gradient(to right, rgba(112, 66, 21, 0.2) 0%, rgba(112, 66, 21, 0.2) 100%)';
-          }
         }
       }
 

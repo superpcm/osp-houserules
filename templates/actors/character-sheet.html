@@ -1918,7 +1918,7 @@
 
           <!-- Paralysis Group -->
           <div class="save-group-paralysis cs-save-group">
-            <div class="save paralysis-save cs-save cs-abs"
+            <div class="save paralysis-save cs-save cs-abs">
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.paralysis.value}}</span>
               </div>
@@ -1940,80 +1940,6 @@
               <div class="cs-save-badge">
                 <span class="cs-save-value">{{saves.spells.value}}</span>
               </div>
-            </div>
-          </div>
-
-
-          <!-- Listening at Doors Field -->
-          <div class="listening-group cs-abs cs-pos-listening">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Listen at Doors</label>
-              <select class="listening-doors cs-listening-select" id="listening-doors" name="system.listeningAtDoors" data-dtype="String">
-                <option value="1" {{#if (eq system.listeningAtDoors "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.listeningAtDoors "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.listeningAtDoors "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.listeningAtDoors "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.listeningAtDoors "5")}}selected{{/if}}>5</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Find Secret Door Field -->
-          <div class="listening-group cs-abs cs-pos-find-secret-door">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Find Secret Door</label>
-              <select class="find-secret-door cs-listening-select" id="find-secret-door" name="system.findSecretDoor" data-dtype="String">
-                <option value="1" {{#if (eq system.findSecretDoor "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.findSecretDoor "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.findSecretDoor "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.findSecretDoor "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.findSecretDoor "5")}}selected{{/if}}>5</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Open Stuck Doors Field -->
-          <div class="listening-group cs-abs cs-pos-open-stuck-doors">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Open Stuck Doors</label>
-              <select class="open-stuck-doors cs-listening-select" id="open-stuck-doors" name="system.openStuckDoors" data-dtype="String">
-                <option value="1" {{#if (eq system.openStuckDoors "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.openStuckDoors "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.openStuckDoors "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.openStuckDoors "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.openStuckDoors "5")}}selected{{/if}}>5</option>
-                <option value="6" {{#if (eq system.openStuckDoors "6")}}selected{{/if}}>6</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Detect Construction Tricks Field -->
-          <div class="listening-group cs-abs cs-pos-detect-construction">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Detect Construction Tricks</label>
-              <select class="detect-construction cs-listening-select" id="detect-construction" name="system.detectConstruction" data-dtype="String">
-                <option value="" {{#if (eq system.detectConstruction "")}}selected{{/if}}></option>
-                <option value="1" {{#if (eq system.detectConstruction "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.detectConstruction "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.detectConstruction "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.detectConstruction "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.detectConstruction "5")}}selected{{/if}}>5</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Detect Room Traps Field -->
-          <div class="listening-group cs-abs cs-pos-detect-room-traps">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Detect Room Traps</label>
-              <select class="detect-room-traps cs-listening-select" id="detect-room-traps" name="system.detectRoomTraps" data-dtype="String">
-                <option value="" {{#if (eq system.detectRoomTraps "")}}selected{{/if}}></option>
-                <option value="1" {{#if (eq system.detectRoomTraps "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.detectRoomTraps "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.detectRoomTraps "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.detectRoomTraps "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.detectRoomTraps "5")}}selected{{/if}}>5</option>
-              </select>
             </div>
           </div>
 
@@ -2201,6 +2127,81 @@
               <option value="3" {{#if (eq system.hideUndergrowth "3")}}selected{{/if}}>3</option>
               <option value="4" {{#if (eq system.hideUndergrowth "4")}}selected{{/if}}>4</option>
               <option value="5" {{#if (eq system.hideUndergrowth "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Racial Skill Fields -->
+        
+        <!-- Listening at Doors Field -->
+        <div class="listening-group cs-abs cs-pos-listening">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Listen at Doors</label>
+            <select class="listening-doors cs-listening-select" id="listening-doors" name="system.listeningAtDoors" data-dtype="String">
+              <option value="1" {{#if (eq system.listeningAtDoors "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.listeningAtDoors "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.listeningAtDoors "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.listeningAtDoors "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.listeningAtDoors "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Find Secret Door Field -->
+        <div class="listening-group cs-abs cs-pos-find-secret-door">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Find Secret Door</label>
+            <select class="find-secret-door cs-listening-select" id="find-secret-door" name="system.findSecretDoor" data-dtype="String">
+              <option value="1" {{#if (eq system.findSecretDoor "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.findSecretDoor "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.findSecretDoor "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.findSecretDoor "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.findSecretDoor "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Open Stuck Doors Field -->
+        <div class="listening-group cs-abs cs-pos-open-stuck-doors">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Open Stuck Doors</label>
+            <select class="open-stuck-doors cs-listening-select" id="open-stuck-doors" name="system.openStuckDoors" data-dtype="String">
+              <option value="1" {{#if (eq system.openStuckDoors "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.openStuckDoors "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.openStuckDoors "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.openStuckDoors "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.openStuckDoors "5")}}selected{{/if}}>5</option>
+              <option value="6" {{#if (eq system.openStuckDoors "6")}}selected{{/if}}>6</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Detect Construction Tricks Field -->
+        <div class="listening-group cs-abs cs-pos-detect-construction">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Detect Construction Tricks</label>
+            <select class="detect-construction cs-listening-select" id="detect-construction" name="system.detectConstruction" data-dtype="String">
+              <option value="" {{#if (eq system.detectConstruction "")}}selected{{/if}}></option>
+              <option value="1" {{#if (eq system.detectConstruction "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.detectConstruction "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.detectConstruction "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.detectConstruction "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.detectConstruction "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Detect Room Traps Field -->
+        <div class="listening-group cs-abs cs-pos-detect-room-traps">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Detect Room Traps</label>
+            <select class="detect-room-traps cs-listening-select" id="detect-room-traps" name="system.detectRoomTraps" data-dtype="String">
+              <option value="" {{#if (eq system.detectRoomTraps "")}}selected{{/if}}></option>
+              <option value="1" {{#if (eq system.detectRoomTraps "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.detectRoomTraps "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.detectRoomTraps "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.detectRoomTraps "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.detectRoomTraps "5")}}selected{{/if}}>5</option>
             </select>
           </div>
         </div>

@@ -4,7 +4,7 @@
 .sheet-tabs {
   position: absolute;
   left: 800px;
-  top: 350px;
+  top: 352px;
   width: 24px;
   height: 385px;
   z-index: var(--z-tabs, 200);
@@ -30,7 +30,7 @@ body.game .sheet.app nav.sheet-tabs {
 .sheet-tabs a.item {
   position: relative;
   width: 24px;
-  height: 80px;
+  height: 75px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,5 +92,5 @@ body.game .sheet.app nav.sheet-tabs {
 
 /* Tab overlap - creates seamless appearance */
 .sheet-tabs a.item + .item {
-  margin-top: -10px !important;
+  margin-top: -30px !important;
 }

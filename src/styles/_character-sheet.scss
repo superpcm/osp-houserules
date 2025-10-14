@@ -652,7 +652,7 @@ form.osp.sheet.actor.character .static-header::before,
   opacity: 1 !important; 
   background-color: #b5ddb4 !important;
   filter: none !important;
-  border: 1px solid rgba(112, 66, 20, 0.4) !important;
+  border: 1px solid #000 !important;
   position: relative !important;
   z-index: 10 !important;
 }
@@ -660,14 +660,15 @@ form.osp.sheet.actor.character .static-header::before,
 /* Tab hover state - slightly brighter */
 .osp.sheet.actor.character .sheet-tabs a.item:hover { 
   filter: brightness(1.05) !important;
-  border-color: rgba(112, 66, 20, 0.6) !important;
+  border-color: #000 !important;
   z-index: 15 !important;
 }
 
 /* Active tab - seamless connection to sheet */
 .osp.sheet.actor.character .sheet-tabs a.item.active { 
   filter: none !important;
-  border-bottom: none !important; /* No bottom border - connects to sheet */
+  border-left: none !important; /* No left border - connects to sheet
+  /*border-bottom: none !important; /* No bottom border - connects to sheet */
   z-index: 20 !important;
   margin-bottom: -1px !important; /* Overlap with sheet to hide sheet's top border */
 }

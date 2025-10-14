@@ -13,11 +13,35 @@
    - Adds personality and character to RPG sheets
    - Aesthetic appropriate for fantasy gaming
    
+   Tab Font: Cooper Standard
+   - Classic serif font for tab labels
+   - Professional and readable
+   
    Fallback Chain:
-   1. 'Handwritten' - Primary choice
+   1. 'Handwritten' - Primary choice for body text
    2. cursive - Generic cursive fallback
+   3. 'Cooper Std' / 'Cooper Standard' - For tabs
+   4. serif - Generic serif fallback for tabs
    
    ================================================================ */
+
+/* Cooper Standard Font - For Tabs */
+/* If you have Cooper Standard font files, place them in assets/fonts/ and uncomment:
+@font-face {
+  font-family: 'Cooper Std';
+  src: url('/systems/osp-houserules/assets/fonts/CooperStd-Black.woff2') format('woff2'),
+       url('/systems/osp-houserules/assets/fonts/CooperStd-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cooper Std';
+  src: url('/systems/osp-houserules/assets/fonts/CooperStd-Bold.woff2') format('woff2'),
+       url('/systems/osp-houserules/assets/fonts/CooperStd-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+*/
 
 /* Global Font Configuration - Handwritten for entire OSP module */
 .osp,
@@ -46,6 +70,11 @@ form.osp button {
   .osp {
     font-family: 'Handwritten', cursive !important;
   }
+}
+
+/* Override: Tabs use Cooper Standard instead of Handwritten */
+.sheet-tabs a.item {
+  font-family: 'Cooper Std', 'Cooper Standard', serif !important;
 }
 
 .grid-overlay {

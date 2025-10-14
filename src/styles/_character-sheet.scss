@@ -322,12 +322,12 @@ $cs-pos-level-left: 605px !default;
 $cs-pos-level-top: 25px !default;
 $cs-pos-portrait-left: 32px !default;
 $cs-pos-portrait-top: 24px !default;
-$cs-pos-languages-left: 449px !default;
+$cs-pos-languages-left: 436px !default;
 $cs-pos-languages-top: 218px !default;
 $cs-pos-xpmod-left: 694px !default;
 $cs-pos-xpmod-top: 25px !default;
 $cs-pos-xp-left: 608px !default;
-$cs-pos-xp-top: 90px !default;
+$cs-pos-xp-top: 88px !default;
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
 $cs-pos-namegroup-left: 263px !default;
@@ -442,6 +442,28 @@ $cs-pos-hide-dungeons-top: 294px !default;
 $cs-pos-hide-dungeons-width: 58px !default;
 $cs-pos-hide-dungeons-height: 58px !default;
 .cs-pos-hide-dungeons { --left: #{$cs-pos-hide-dungeons-left}; --top: #{$cs-pos-hide-dungeons-top}; --width: #{$cs-pos-hide-dungeons-width}; --height: #{$cs-pos-hide-dungeons-height}; --z: var(--z-labels, 15); }
+
+/* ================================================================
+   MASTER FONT SIZE CONTROLS
+   ================================================================ */
+
+/* Master font size for ability scores */
+$cs-ability-font-size: 100px !default;
+
+/* Master font size for saving throw targets */
+$cs-save-target-font-size: 100px !default;
+
+/* ================================================================
+   MASTER DIMENSION CONTROLS
+   ================================================================ */
+
+/* Master dimensions for saving throw boxes */
+$cs-save-width: 99px !default;
+$cs-save-height: 98px !default;
+
+/* Master dimensions for ability score boxes */
+$cs-ability-width: 108px !default;
+$cs-ability-height: 80px !default;
 
 /* Skill Target Position Variants - Adjusts positions based on race/class layout */
 /* Class-based position adjustments (take priority over race) */
@@ -660,13 +682,6 @@ form.osp.sheet.actor.character .sheet-tabs a.item.active,
 
 /* Tab content area - seamlessly blends with active tab */
 .sheet-body .tab { 
-  display: none; 
-  background: none !important; 
-  border-top: 1px solid rgba(112, 66, 20, 0.4) !important; /* Top border that active tab will cover */
-  border-left: none !important;
-  border-right: none !important;
-  border-bottom: none !important;
-  margin-top: 0 !important;
 }
 .sheet-body .tab.active { 
   display: block; 
@@ -772,7 +787,17 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Combat and ability layouts markup helpers */
 .cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
 .cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
-.cs-save-badge { border: none !important; border-radius: 0 !important; background-color: transparent !important; position: relative; width: auto !important; height: auto !important; }
+.cs-save-badge { 
+  border: none !important; 
+  border-radius: 0 !important; 
+  background-color: transparent !important; 
+  position: relative; 
+  width: 100% !important; 
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
 
 /* Ability score box */
 .cs-ability-select {
@@ -785,7 +810,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   /* Remove explicit dimensions - let container (.cs-ability) handle sizing */
   width: 100%;
   height: 100%;
-  font-size: 80px;
+  font-size: $cs-ability-font-size;
   font-weight: normal;
   border: none !important;
   background: transparent !important;
@@ -828,21 +853,21 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Group Defaults - Shared coordinates for field groups */
 :root {
-  --ability-group-top: 53px;
-  --save-group-top: 178px;
-  --ability-group-width: 87px;
-  --ability-group-height: 65px;
-  --save-group-width: 87px;
-  --save-group-height: 65px;
+  --ability-group-top: 39px;
+  --ability-group-width: #{$cs-ability-width};
+  --ability-group-height: #{$cs-ability-height};
+  --save-group-top: 216px;
+  --save-group-width: #{$cs-save-width};
+  --save-group-height: #{$cs-save-height};
 }
 
 /* Ability Group Positioning - Individual X coordinates */
-.ability:has(.attr-str) { --field-left: 1px; }
-.ability:has(.attr-int) { --field-left: 101px; }
-.ability:has(.attr-wis) { --field-left: 202px; }
-.ability:has(.attr-dex) { --field-left: 303px; }
-.ability:has(.attr-con) { --field-left: 404px; }
-.ability:has(.attr-cha) { --field-left: 504px; }
+.ability:has(.attr-str) { --field-left: 32px; }
+.ability:has(.attr-int) { --field-left: 158px; }
+.ability:has(.attr-wis) { --field-left: 284px; }
+.ability:has(.attr-dex) { --field-left: 410px; }
+.ability:has(.attr-con) { --field-left: 536px; }
+.ability:has(.attr-cha) { --field-left: 662px; }
 
 /* Listening at Doors field styling */
 .listening-group {
@@ -949,23 +974,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   background-repeat: no-repeat, no-repeat !important;
   background-attachment: scroll, scroll !important;
   background-color: transparent !important;
-  height: 367px !important;
-}
-
-/* Add skill targets bar as a shared layer for all combat tabs */
-.tab[data-tab="combat"]::before {
-  content: "";
-  position: absolute;
-  top: 242px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-bar.webp');
-  background-size: contain;
-  background-position: left top;
-  background-repeat: no-repeat;
-  pointer-events: none;
-  z-index: 1;
+  height: 360px !important;
 }
 
 /* Combat Tab Styles */
@@ -1039,26 +1048,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   }
 }
 
-/* Skill target variants - Only override the skill targets image */
-/* Class-based variants */
-.skill-layout-assassin .tab[data-tab="combat"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp') !important;
-  min-height: 380px !important;
-  max-height: 400px !important;
-}
-
-.skill-layout-barbarian .tab[data-tab="combat"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-barbarian.webp') !important;
-  min-height: 450px !important;
-  max-height: 470px !important;
-}
-
-.skill-layout-thief .tab[data-tab="combat"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-thief.webp') !important;
-  min-height: 390px !important;
-  max-height: 410px !important;
-}
-
 /* Race-based variants (only applied if no qualifying class) */
 /* OLD RACE-BASED SKILL LAYOUT BACKGROUND IMAGES REMOVED - REPLACED BY RACIAL-SKILL-LAYOUT SYSTEM */
 
@@ -1093,13 +1082,13 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     --height: #{$cs-pos-open-stuck-doors-height}; 
   }
   
-  /* Background image for default racial skills */
-  .tab[data-tab="combat"] {
-    background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-default.webp') !important;
-    background-size: contain, contain !important;
-    background-position: top center, left 282.75px !important;
-    background-repeat: no-repeat, no-repeat !important;
-    background-attachment: scroll, scroll !important;
+  /* Background image for default racial skills - moved to Skills tab */
+  .tab[data-tab="skills"] {
+    background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-default.webp') !important;
+    background-size: contain !important;
+    background-position: center top !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
   }
 }
 
@@ -1139,13 +1128,13 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     --height: #{$cs-pos-detect-room-traps-height}; 
   }
   
-  /* Background image for dwarf racial skills */
-  .tab[data-tab="combat"] {
-    background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-dwarf.webp') !important;
-    background-size: contain, contain !important;
-    background-position: top center, left 282.75px !important;
-    background-repeat: no-repeat, no-repeat !important;
-    background-attachment: scroll, scroll !important;
+  /* Background image for dwarf racial skills - moved to Skills tab */
+  .tab[data-tab="skills"] {
+    background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-dwarf.webp') !important;
+    background-size: contain !important;
+    background-position: center top !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
   }
 }
 
@@ -1179,13 +1168,13 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     --height: #{$cs-pos-detect-construction-height}; 
   }
   
-  /* Background image for gnome racial skills */
-  .tab[data-tab="combat"] {
-    background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-gnome.webp') !important;
-    background-size: contain, contain !important;
-    background-position: top center, left 282.75px !important;
-    background-repeat: no-repeat, no-repeat !important;
-    background-attachment: scroll, scroll !important;
+  /* Background image for gnome racial skills - moved to Skills tab */
+  .tab[data-tab="skills"] {
+    background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-gnome.webp') !important;
+    background-size: contain !important;
+    background-position: center top !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
   }
 }
 
@@ -1194,13 +1183,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   position: relative;
   width: 100%;
   /*height: 400px; /* Set a height to contain the absolutely positioned saves */
-}
-
-/* Simplified positioning - cs-save-group no longer needs absolute positioning 
-   since individual saves handle their own positioning */
-.cs-save-group { 
-  display: inline-block; 
-  margin: 0;
 }
 
 /* Universal absolute positioning for all positioned elements */
@@ -1217,18 +1199,15 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Simplified: No override rules needed - positioning tool variables integrated directly */
 
 /* Save Group Positioning - Individual X coordinates */
-.save-group-death { --field-left: 1px; }
-.save-group-wands { --field-left: 127px; }
-.save-group-paralysis { --field-left: 253px; }
-.save-group-breath { --field-left: 378px; }
-.save-group-spells { --field-left: 504px; }
+.save-group-death { --field-left: 52px; }
+.save-group-wands { --field-left: 201px; }
+.save-group-paralysis { --field-left: 350px; }
+.save-group-breath { --field-left: 499px; }
+.save-group-spells { --field-left: 648px; }
 .cs-save-value {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   text-align: center;
-  
-  font-size: 80px !important;
+  line-height: 1;
+  font-size: $cs-save-target-font-size !important;
 }
 
 /* Misc helpers for textareas in bio */
@@ -1325,7 +1304,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   font-variant-numeric: tabular-nums;
   
   width: 160px;
-  height: 40px;
+  height: 41px;
   cursor: pointer;
   pointer-events: auto;
   font-size: 36px;
@@ -1476,16 +1455,16 @@ input[type="number"] {
 .xp-group {
   position: relative;
   width: 131px;
-  height: 30px;
+  height: 41px;  /* Match progress bar height for consistency */
   
   /* XP Progress bar within XP field */
   .level-xp-progress {
     position: absolute;
     top: 0px;
     left: 0px;
-    height: 42px;
-    width: var(--level-height, 0%);
-    background: var(--level-bg, linear-gradient(to right, rgba(255, 0, 0, 0.2) 0%, rgba(255, 0, 0, 1) 100%));
+    height: 100%;  /* Use parent height */
+    width: var(--xp-progress-width, 0%);  /* Renamed for clarity */
+    background: var(--xp-progress-bg, linear-gradient(to right, rgba(44, 24, 16, 0.2) 0%, rgba(44, 24, 16, 0.2) 100%));
     transition: width 0.3s ease;
     z-index: 1;
     border-radius: 3px;
@@ -1644,7 +1623,7 @@ input[type="number"] {
 /* Sheet body helper to centralize padding/scrolling */
 .cs-sheet-body {
   position: absolute !important;
-  top: var(--sheet-top, 300px);
+  top: var(--sheet-top, 298px);
   left: 0;
   right: 0;
   bottom: 0;
@@ -1741,16 +1720,34 @@ input[type="number"] {
 }
 
 /* Skills tab with class skill bar - For most classes */
-.skills-layout-barbarian .tab[data-tab="skills"],
 .skills-layout-gnome .tab[data-tab="skills"],
 .skills-layout-half-orc .tab[data-tab="skills"],
-.skills-layout-hobbit .tab[data-tab="skills"],
-.skills-layout-thief .tab[data-tab="skills"] {
+.skills-layout-hobbit .tab[data-tab="skills"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp') !important;
   background-size: contain !important;
   background-position: center top !important;
   background-repeat: no-repeat !important;
   background-attachment: scroll !important;
+  background-color: transparent !important;
+}
+
+/* Skills tab for Barbarian - includes class bar and barbarian racial targets */
+.skills-layout-barbarian .tab[data-tab="skills"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-barbarian.webp') !important;
+  background-size: contain, contain !important;
+  background-position: center top, center calc(22px + 0%) !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll !important;
+  background-color: transparent !important;
+}
+
+/* Skills tab for Thief - includes thief-specific targets */
+.skills-layout-thief .tab[data-tab="skills"] {
+  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-thief.webp') !important;
+  background-size: contain, contain !important;
+  background-position: center top, center calc(22px + 0%) !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll !important;
   background-color: transparent !important;
 }
 

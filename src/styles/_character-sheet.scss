@@ -636,53 +636,43 @@ form.osp.sheet.actor.character .static-header::before,
   pointer-events: none; /* Allow clicks to pass through */
 }
 
-/* Tab container styling */
-form.osp.sheet.actor.character .sheet-tabs,
-.osp.sheet.actor.character .sheet-tabs,
-.sheet.actor.character .sheet-tabs {
+/* ================================================================
+   CHARACTER SHEET TAB STYLING
+   ================================================================ */
+
+/* Tab container - transparent background */
+.osp.sheet.actor.character .sheet-tabs {
   background: transparent !important;
   border: none !important;
   margin-bottom: 0 !important;
 }
 
-/* Solid color tabs that match the sheet background */
-form.osp.sheet.actor.character .sheet-tabs a.item,
-.osp.sheet.actor.character .sheet-tabs a.item,
-.sheet.actor.character .sheet-tabs a.item { 
+/* Tab items - match sheet parchment background */
+.osp.sheet.actor.character .sheet-tabs a.item { 
   opacity: 1 !important; 
   background-color: #b5ddb4 !important;
-  filter: none !important; /* No filters */
-  border: 1px solid rgba(112, 66, 20, 0.4) !important; /* Borders on all 4 sides for inactive */
+  filter: none !important;
+  border: 1px solid rgba(112, 66, 20, 0.4) !important;
   position: relative !important;
   z-index: 10 !important;
 }
 
-form.osp.sheet.actor.character .sheet-tabs a.item:hover,
-.osp.sheet.actor.character .sheet-tabs a.item:hover,
-.sheet.actor.character .sheet-tabs a.item:hover { 
-  opacity: 1 !important; 
-  background-color: #b5ddb4 !important;
-  filter: brightness(1.05) !important; /* Slightly brighter on hover */
-  border: 1px solid rgba(112, 66, 20, 0.6) !important; /* Slightly darker border on hover */
+/* Tab hover state - slightly brighter */
+.osp.sheet.actor.character .sheet-tabs a.item:hover { 
+  filter: brightness(1.05) !important;
+  border-color: rgba(112, 66, 20, 0.6) !important;
   z-index: 15 !important;
 }
 
-form.osp.sheet.actor.character .sheet-tabs a.item.active,
-.osp.sheet.actor.character .sheet-tabs a.item.active,
-.sheet.actor.character .sheet-tabs a.item.active { 
-  opacity: 1 !important; 
-  background-color: #b5ddb4 !important;
-  filter: none !important; /* No filter - exact same appearance as sheet */
-  border: 1px solid rgba(112, 66, 20, 0.4) !important; /* Borders on top, right, left */
+/* Active tab - seamless connection to sheet */
+.osp.sheet.actor.character .sheet-tabs a.item.active { 
+  filter: none !important;
   border-bottom: none !important; /* No bottom border - connects to sheet */
   z-index: 20 !important;
-  position: relative !important;
   margin-bottom: -1px !important; /* Overlap with sheet to hide sheet's top border */
 }
 
-/* Tab content area - seamlessly blends with active tab */
-.sheet-body .tab { 
-}
+/* Tab content area - only active tab is visible */
 .sheet-body .tab.active { 
   display: block; 
 }
@@ -1463,8 +1453,8 @@ input[type="number"] {
     top: 0px;
     left: 0px;
     height: 100%;  /* Use parent height */
-    width: var(--xp-progress-width, 0%);  /* Renamed for clarity */
-    background: var(--xp-progress-bg, linear-gradient(to right, rgba(44, 24, 16, 0.2) 0%, rgba(44, 24, 16, 0.2) 100%));
+    width: var(--xp-progress-width, 0%);  /* Dynamically updated by JavaScript */
+    background: rgba(44, 24, 16, 0.2);  /* Solid color - change here to adjust progress bar color */
     transition: width 0.3s ease;
     z-index: 1;
     border-radius: 3px;

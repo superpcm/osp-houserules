@@ -5,6 +5,15 @@
    Migrate presentation out of the template and into this partial. */
 
 /* ================================================================
+   COLOR VARIABLES
+   ================================================================ */
+
+/* Brand colors used throughout the character sheet */
+$color-parchment: #b5ddb4 !default;  /* Main background color */
+$color-wood-dark: #704214 !default;  /* Placeholder text for input fields */
+$color-xp-progress: rgba(44, 24, 16, 0.2) !default;  /* XP progress bar overlay */
+
+/* ================================================================
    DEBUG CONFIGURATION
    ================================================================
    
@@ -314,6 +323,27 @@ $debug-form-fields: false; // Change to false to disable
    END DEBUG CONFIGURATION
    ================================================================ */
 
+/* ========================================
+   REUSABLE MIXINS
+   ======================================== */
+
+/* Flexbox centering mixin - DRY pattern for 15+ field classes */
+@mixin center-flex-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Position field mixin - DRY pattern for positioning variables */
+@mixin position-field($left, $top, $width, $height, $z: 15) {
+  --left: #{$left};
+  --top: #{$top};
+  --width: #{$width};
+  --height: #{$height};
+  --z: var(--z-labels, #{$z});
+}
+
 /* Shared positioning variables */
 $cs-header-row-top: 5px !default; // Shared y-coordinate for main header fields (Name, Class, Level, XP Mod)
 
@@ -356,92 +386,92 @@ $cs-pos-find-secret-door-left: 364px !default;
 $cs-pos-find-secret-door-top: 47px !default;
 $cs-pos-find-secret-door-width: 72px !default;
 $cs-pos-find-secret-door-height: 72px !default;
-.cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left}; --top: #{$cs-pos-find-secret-door-top}; --width: #{$cs-pos-find-secret-door-width}; --height: #{$cs-pos-find-secret-door-height}; --z: var(--z-labels, 15); }
+.cs-pos-find-secret-door { @include position-field($cs-pos-find-secret-door-left, $cs-pos-find-secret-door-top, $cs-pos-find-secret-door-width, $cs-pos-find-secret-door-height); }
 $cs-pos-open-stuck-doors-left: 155px !default;
 $cs-pos-open-stuck-doors-top: 47px !default;
 $cs-pos-open-stuck-doors-width: 72px !default;
 $cs-pos-open-stuck-doors-height: 72px !default;
-.cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left}; --top: #{$cs-pos-open-stuck-doors-top}; --width: #{$cs-pos-open-stuck-doors-width}; --height: #{$cs-pos-open-stuck-doors-height}; --z: var(--z-labels, 15); }
+.cs-pos-open-stuck-doors { @include position-field($cs-pos-open-stuck-doors-left, $cs-pos-open-stuck-doors-top, $cs-pos-open-stuck-doors-width, $cs-pos-open-stuck-doors-height); }
 $cs-pos-detect-construction-left: 190px !default;
 $cs-pos-detect-construction-top: 294px !default;
 $cs-pos-detect-construction-width: 58px !default;
 $cs-pos-detect-construction-height: 58px !default;
-.cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left}; --top: #{$cs-pos-detect-construction-top}; --width: #{$cs-pos-detect-construction-width}; --height: #{$cs-pos-detect-construction-height}; --z: var(--z-labels, 15); }
+.cs-pos-detect-construction { @include position-field($cs-pos-detect-construction-left, $cs-pos-detect-construction-top, $cs-pos-detect-construction-width, $cs-pos-detect-construction-height); }
 $cs-pos-detect-room-traps-left: 256px !default;
 $cs-pos-detect-room-traps-top: 294px !default;
 $cs-pos-detect-room-traps-width: 58px !default;
 $cs-pos-detect-room-traps-height: 58px !default;
-.cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left}; --top: #{$cs-pos-detect-room-traps-top}; --width: #{$cs-pos-detect-room-traps-width}; --height: #{$cs-pos-detect-room-traps-height}; --z: var(--z-labels, 15); }
+.cs-pos-detect-room-traps { @include position-field($cs-pos-detect-room-traps-left, $cs-pos-detect-room-traps-top, $cs-pos-detect-room-traps-width, $cs-pos-detect-room-traps-height); }
 $cs-pos-barbarian-climb-left: 322px !default;
 $cs-pos-barbarian-climb-top: 294px !default;
 $cs-pos-barbarian-climb-width: 58px !default;
 $cs-pos-barbarian-climb-height: 58px !default;
-.cs-pos-barbarian-climb { --left: #{$cs-pos-barbarian-climb-left}; --top: #{$cs-pos-barbarian-climb-top}; --width: #{$cs-pos-barbarian-climb-width}; --height: #{$cs-pos-barbarian-climb-height}; --z: var(--z-labels, 15); }
+.cs-pos-barbarian-climb { @include position-field($cs-pos-barbarian-climb-left, $cs-pos-barbarian-climb-top, $cs-pos-barbarian-climb-width, $cs-pos-barbarian-climb-height); }
 $cs-pos-barbarian-hide-left: 388px !default;
 $cs-pos-barbarian-hide-top: 294px !default;
 $cs-pos-barbarian-hide-width: 58px !default;
 $cs-pos-barbarian-hide-height: 58px !default;
-.cs-pos-barbarian-hide { --left: #{$cs-pos-barbarian-hide-left}; --top: #{$cs-pos-barbarian-hide-top}; --width: #{$cs-pos-barbarian-hide-width}; --height: #{$cs-pos-barbarian-hide-height}; --z: var(--z-labels, 15); }
+.cs-pos-barbarian-hide { @include position-field($cs-pos-barbarian-hide-left, $cs-pos-barbarian-hide-top, $cs-pos-barbarian-hide-width, $cs-pos-barbarian-hide-height); }
 $cs-pos-barbarian-move-left: 454px !default;
 $cs-pos-barbarian-move-top: 294px !default;
 $cs-pos-barbarian-move-width: 58px !default;
 $cs-pos-barbarian-move-height: 58px !default;
-.cs-pos-barbarian-move { --left: #{$cs-pos-barbarian-move-left}; --top: #{$cs-pos-barbarian-move-top}; --width: #{$cs-pos-barbarian-move-width}; --height: #{$cs-pos-barbarian-move-height}; --z: var(--z-labels, 15); }
+.cs-pos-barbarian-move { @include position-field($cs-pos-barbarian-move-left, $cs-pos-barbarian-move-top, $cs-pos-barbarian-move-width, $cs-pos-barbarian-move-height); }
 
 // Additional skill positioning variables for dynamic skills
 $cs-pos-assassination-left: 100px !default;
 $cs-pos-assassination-top: 294px !default;
 $cs-pos-assassination-width: 58px !default;
 $cs-pos-assassination-height: 58px !default;
-.cs-pos-assassination { --left: #{$cs-pos-assassination-left}; --top: #{$cs-pos-assassination-top}; --width: #{$cs-pos-assassination-width}; --height: #{$cs-pos-assassination-height}; --z: var(--z-labels, 15); }
+.cs-pos-assassination { @include position-field($cs-pos-assassination-left, $cs-pos-assassination-top, $cs-pos-assassination-width, $cs-pos-assassination-height); }
 
 $cs-pos-climb-sheer-left: 200px !default;
 $cs-pos-climb-sheer-top: 294px !default;
 $cs-pos-climb-sheer-width: 58px !default;
 $cs-pos-climb-sheer-height: 58px !default;
-.cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left}; --top: #{$cs-pos-climb-sheer-top}; --width: #{$cs-pos-climb-sheer-width}; --height: #{$cs-pos-climb-sheer-height}; --z: var(--z-labels, 15); }
+.cs-pos-climb-sheer { @include position-field($cs-pos-climb-sheer-left, $cs-pos-climb-sheer-top, $cs-pos-climb-sheer-width, $cs-pos-climb-sheer-height); }
 
 $cs-pos-hide-shadows-left: 300px !default;
 $cs-pos-hide-shadows-top: 294px !default;
 $cs-pos-hide-shadows-width: 58px !default;
 $cs-pos-hide-shadows-height: 58px !default;
-.cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left}; --top: #{$cs-pos-hide-shadows-top}; --width: #{$cs-pos-hide-shadows-width}; --height: #{$cs-pos-hide-shadows-height}; --z: var(--z-labels, 15); }
+.cs-pos-hide-shadows { @include position-field($cs-pos-hide-shadows-left, $cs-pos-hide-shadows-top, $cs-pos-hide-shadows-width, $cs-pos-hide-shadows-height); }
 
 $cs-pos-move-silently-left: 400px !default;
 $cs-pos-move-silently-top: 294px !default;
 $cs-pos-move-silently-width: 58px !default;
 $cs-pos-move-silently-height: 58px !default;
-.cs-pos-move-silently { --left: #{$cs-pos-move-silently-left}; --top: #{$cs-pos-move-silently-top}; --width: #{$cs-pos-move-silently-width}; --height: #{$cs-pos-move-silently-height}; --z: var(--z-labels, 15); }
+.cs-pos-move-silently { @include position-field($cs-pos-move-silently-left, $cs-pos-move-silently-top, $cs-pos-move-silently-width, $cs-pos-move-silently-height); }
 
 $cs-pos-find-traps-left: 500px !default;
 $cs-pos-find-traps-top: 294px !default;
 $cs-pos-find-traps-width: 58px !default;
 $cs-pos-find-traps-height: 58px !default;
-.cs-pos-find-traps { --left: #{$cs-pos-find-traps-left}; --top: #{$cs-pos-find-traps-top}; --width: #{$cs-pos-find-traps-width}; --height: #{$cs-pos-find-traps-height}; --z: var(--z-labels, 15); }
+.cs-pos-find-traps { @include position-field($cs-pos-find-traps-left, $cs-pos-find-traps-top, $cs-pos-find-traps-width, $cs-pos-find-traps-height); }
 
 $cs-pos-open-locks-left: 150px !default;
 $cs-pos-open-locks-top: 294px !default;
 $cs-pos-open-locks-width: 58px !default;
 $cs-pos-open-locks-height: 58px !default;
-.cs-pos-open-locks { --left: #{$cs-pos-open-locks-left}; --top: #{$cs-pos-open-locks-top}; --width: #{$cs-pos-open-locks-width}; --height: #{$cs-pos-open-locks-height}; --z: var(--z-labels, 15); }
+.cs-pos-open-locks { @include position-field($cs-pos-open-locks-left, $cs-pos-open-locks-top, $cs-pos-open-locks-width, $cs-pos-open-locks-height); }
 
 $cs-pos-pick-pockets-left: 250px !default;
 $cs-pos-pick-pockets-top: 294px !default;
 $cs-pos-pick-pockets-width: 58px !default;
 $cs-pos-pick-pockets-height: 58px !default;
-.cs-pos-pick-pockets { --left: #{$cs-pos-pick-pockets-left}; --top: #{$cs-pos-pick-pockets-top}; --width: #{$cs-pos-pick-pockets-width}; --height: #{$cs-pos-pick-pockets-height}; --z: var(--z-labels, 15); }
+.cs-pos-pick-pockets { @include position-field($cs-pos-pick-pockets-left, $cs-pos-pick-pockets-top, $cs-pos-pick-pockets-width, $cs-pos-pick-pockets-height); }
 
 $cs-pos-hide-undergrowth-left: 350px !default;
 $cs-pos-hide-undergrowth-top: 294px !default;
 $cs-pos-hide-undergrowth-width: 58px !default;
 $cs-pos-hide-undergrowth-height: 58px !default;
-.cs-pos-hide-undergrowth { --left: #{$cs-pos-hide-undergrowth-left}; --top: #{$cs-pos-hide-undergrowth-top}; --width: #{$cs-pos-hide-undergrowth-width}; --height: #{$cs-pos-hide-undergrowth-height}; --z: var(--z-labels, 15); }
+.cs-pos-hide-undergrowth { @include position-field($cs-pos-hide-undergrowth-left, $cs-pos-hide-undergrowth-top, $cs-pos-hide-undergrowth-width, $cs-pos-hide-undergrowth-height); }
 
 $cs-pos-hide-dungeons-left: 450px !default;
 $cs-pos-hide-dungeons-top: 294px !default;
 $cs-pos-hide-dungeons-width: 58px !default;
 $cs-pos-hide-dungeons-height: 58px !default;
-.cs-pos-hide-dungeons { --left: #{$cs-pos-hide-dungeons-left}; --top: #{$cs-pos-hide-dungeons-top}; --width: #{$cs-pos-hide-dungeons-width}; --height: #{$cs-pos-hide-dungeons-height}; --z: var(--z-labels, 15); }
+.cs-pos-hide-dungeons { @include position-field($cs-pos-hide-dungeons-left, $cs-pos-hide-dungeons-top, $cs-pos-hide-dungeons-width, $cs-pos-hide-dungeons-height); }
 
 /* ================================================================
    MASTER FONT SIZE CONTROLS
@@ -542,7 +572,7 @@ form.osp.sheet.actor.character,
   /*background: url('/systems/osp-houserules/assets/backgrounds/parchment1.webp') no-repeat center center !important;
   background-size: 100% !important;
   background-attachment: scroll !important;*/
-  background-color: #b5ddb4
+  background-color: $color-parchment;
 }
 
 /* Single Background Image System - Applied to window instead of form */
@@ -649,7 +679,7 @@ form.osp.sheet.actor.character .static-header::before,
 /* Tab items - match sheet parchment background */
 .osp.sheet.actor.character .sheet-tabs a.item { 
   opacity: 1 !important;  /* Override Foundry default */
-  background-color: #b5ddb4 !important;  /* Override Foundry default */
+  background-color: $color-parchment !important;  /* Override Foundry default */
   filter: none !important;  /* Override Foundry default */
   border: 1px solid #000 !important;  /* Override Foundry default */
   position: relative;
@@ -972,10 +1002,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Ability score box */
 .cs-ability-select {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   font-variant-numeric: tabular-nums;
   
   /* Remove explicit dimensions - let container (.cs-ability) handle sizing */
@@ -1058,10 +1085,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 .cs-listening-select {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   
   width: 72px;
   height: 72px;
@@ -1136,10 +1160,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Combat input boxes */
 .cs-combat-input {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   font-variant-numeric: tabular-nums;
   
   width: 80px;
@@ -1422,10 +1443,7 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 
 /* Level progress helpers */
 .cs-level-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   box-sizing: border-box;
   width: 73px;
   height: 39px;
@@ -1473,10 +1491,7 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 
 /* XP/Next level small field helpers */
 .cs-field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   
   background-color: transparent !important;
   border: none;
@@ -1485,11 +1500,9 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
   color: inherit;
   padding: 0 2px 0 2px;
 }
+
 .cs-xp-mod-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   font-variant-numeric: tabular-nums;
   
   width: 74px;
@@ -1499,10 +1512,7 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 }
 
 .cs-xp-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   font-variant-numeric: tabular-nums;
   
   width: 160px;
@@ -1540,10 +1550,7 @@ input[type="number"] {
 
 /* Header field classes (name, class, race, small fields) */
 .cs-char-name {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   
   width: 332px;
   height: 39px;
@@ -1557,10 +1564,7 @@ input[type="number"] {
 
 .cs-class-select {
   /* Removed conflicting @extend mixins - using manual centering instead */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   box-sizing: border-box;
   
   width: 160px;
@@ -1576,10 +1580,7 @@ input[type="number"] {
 
 /* Background field - separate class for independent control */
 .cs-background-select {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   line-height: 1;
   box-sizing: border-box;
   width: 160px;
@@ -1609,10 +1610,7 @@ input[type="number"] {
 /* Race field - separate class for independent control */
 .cs-race-select {
   /* Inherit base layout from large selects but allow independent styling */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   box-sizing: border-box;
   
   /* Size and positioning */
@@ -1663,7 +1661,7 @@ input[type="number"] {
     left: 0px;
     height: 100%;  /* Use parent height */
     width: var(--xp-progress-width, 0%);  /* Dynamically updated by JavaScript */
-    background: rgba(44, 24, 16, 0.2);  /* Solid color - change here to adjust progress bar color */
+    background: $color-xp-progress;  /* Solid color - change variable to adjust progress bar color */
     transition: width 0.3s ease;
     z-index: 1;
     border-radius: 3px;
@@ -1679,8 +1677,7 @@ input[type="number"] {
 
 /* Alignment field - separate class for independent control */
 .cs-alignment-select {
-  display: flex;
-  text-align: center;
+  @include center-flex-field;
   box-sizing: border-box;
   width: 159px;
   height: 39px;
@@ -1699,10 +1696,7 @@ input[type="number"] {
 
 /* Height field - separate class for independent control */
 .cs-height-field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   box-sizing: border-box;
   width: 74px;
   height: 39px;
@@ -1720,17 +1714,14 @@ input[type="number"] {
     outline: none;
   }
   &::placeholder {
-    color: #704214;
+    color: $color-wood-dark;
     font-style: italic;
   }
 }
 
 /* Weight field - separate class for independent control */
 .cs-weight-field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   line-height: 1;
   box-sizing: border-box;
   width: 73px;
@@ -1749,17 +1740,14 @@ input[type="number"] {
     outline: none;
   }
   &::placeholder {
-    color: #704214;
+    color: $color-wood-dark;
     font-style: italic;
   }
 }
 
 /* Languages field - separate class for independent control */
 .cs-languages-field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   box-sizing: border-box;
   width: 331px;
   height: 39px;
@@ -1779,10 +1767,7 @@ input[type="number"] {
 
 /* Age field - separate class for independent control */
 .cs-age-field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   box-sizing: border-box;
   width: 74px;
   height: 40px;
@@ -1794,10 +1779,7 @@ input[type="number"] {
 
 /* Sex field - separate class for independent control */
 .cs-sex-field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  @include center-flex-field;
   box-sizing: border-box;
   width: 73px;
   height: 39px;
@@ -1808,7 +1790,7 @@ input[type="number"] {
   vertical-align: middle;
   option {
     font-size: 16px;
-    color: #704214;
+    color: $color-wood-dark;
     background-color: #ffffff;
   }
 }

@@ -45,7 +45,6 @@ export class BackgroundHandler {
       
       // Get the selected option text
       const selectedText = select.options[select.selectedIndex]?.text || '';
-      console.log(`Background sizing: "${selectedText}" | Container width: ${containerWidth}px`);
       
       // Create a temporary element to measure text width using native DOM
       const tempElement = document.createElement('span');
@@ -62,21 +61,23 @@ export class BackgroundHandler {
       tempElement.textContent = selectedText;
       document.body.appendChild(tempElement);
       
-    // Check if text overflows and reduce font size accordingly
-    let textWidth = tempElement.offsetWidth || tempElement.getBoundingClientRect().width;
-    console.log(`Starting: fontSize=${fontSize}px, textWidth=${textWidth}px`);
-    
-    while (textWidth > containerWidth && fontSize > minFontSize) { // Padding already accounted for in containerWidth
-      fontSize -= 0.5;
-      tempElement.style.fontSize = fontSize + 'px';
-      textWidth = tempElement.offsetWidth || tempElement.getBoundingClientRect().width;
-      console.log(`Reduced: fontSize=${fontSize}px, textWidth=${textWidth}px`);
-    }
-    
-    console.log(`Final: fontSize=${fontSize}px, textWidth=${textWidth}px, fits=${textWidth <= containerWidth}`);
+      // Check if text overflows and reduce font size accordingly
+      let textWidth = tempElement.offsetWidth || tempElement.getBoundingClientRect().width;
       
-  // Apply the calculated font size via CSS var when possible
-  try { this.backgroundSelect[0].style.setProperty('--background-font-size', `${fontSize}px`); } catch (e) { if (this.backgroundSelect[0]) this.backgroundSelect[0].style.fontSize = fontSize + 'px'; }
+      while (textWidth > containerWidth && fontSize > minFontSize) {
+        fontSize -= 0.5;
+        tempElement.style.fontSize = fontSize + 'px';
+        textWidth = tempElement.offsetWidth || tempElement.getBoundingClientRect().width;
+      }
+      
+      // Apply the calculated font size via CSS var when possible
+      try { 
+        this.backgroundSelect[0].style.setProperty('--background-font-size', `${fontSize}px`); 
+      } catch (e) { 
+        if (this.backgroundSelect[0]) {
+          this.backgroundSelect[0].style.fontSize = fontSize + 'px';
+        }
+      }
       
       // Clean up temporary element
       // Remove temporary element

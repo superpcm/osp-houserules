@@ -549,7 +549,6 @@ form.osp.sheet.actor.character,
 form.osp.sheet.actor.character {
   position: relative;
   color: #4B4B4B !important; /* Default text color for all sheet content */
-  /*padding: 15px; /* Add 15px padding on all sides for spacing */
   box-sizing: border-box; /* Include padding in dimensions */
 }
 
@@ -612,11 +611,11 @@ form.osp.sheet.actor.character {
 form.osp.sheet.actor.character .static-header,
 .static-header,
 .cs-static-header {
-  /*position: relative;*/
   background-color: transparent !important;
+  /* Height matches the character sheet header background image exactly (286.5px) */
+  /* The .5px ensures crisp alignment with the background image boundaries */
   height: 286.5px !important;
   z-index: var(--z-sheet, 10);
-  /*margin: 4px 3.6px 0px 4px !important;*/
 }
 
 /* Header frame image as pseudo-element with higher z-index */
@@ -668,7 +667,6 @@ form.osp.sheet.actor.character .static-header::before,
 .osp.sheet.actor.character .sheet-tabs a.item.active { 
   filter: none !important;  /* Override Foundry default */
   border-left: none !important;  /* Override Foundry default border */
-  /*border-bottom: none !important; /* No bottom border - connects to sheet */
   z-index: 20;
   margin-bottom: -1px;
 }
@@ -686,16 +684,72 @@ form.osp.sheet.actor.character .static-header::before,
 button.xp-award-btn { background: none !important; border: none !important; outline: none !important; }
 button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important; }
 
-/* Portrait transform now included in main portrait-img rule */
+/* Portrait adjustment controls */
+.portrait-controls { 
+  position: absolute; 
+  top: 100%; 
+  left: 0; 
+  margin-top: 5px; 
+  background: rgba(0,0,0,0.95); 
+  color: white; 
+  padding: 3px; 
+  border-radius: 3px; 
+  display: none; 
+  z-index: var(--z-overlay, 1000); 
+  font-size: 10px; 
+  white-space: nowrap; 
+  border: 1px solid #666; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+}
 
-.portrait-controls { position: absolute; top: 100%; left: 0; margin-top: 5px; background: rgba(0,0,0,0.95); color: white; padding: 3px; border-radius: 3px; display: none; z-index: var(--z-overlay, 1000); font-size: 10px; white-space: nowrap; border: 1px solid #666; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-.portrait-controls[style*="display: block"] { display: block !important; visibility: visible !important; opacity: 1 !important; }
-.portrait-controls button { background: #555; color: white; border: 1px solid #777; padding: 2px 4px; margin: 1px; border-radius: 2px; cursor: pointer; font-size: 10px; width: 18px; height: 18px; line-height: 14px; display: inline-block; text-align: center; box-sizing: border-box; }
-.portrait-controls button:hover { background: #777; border-color: #999; }
-.portrait-controls button:active { background: #333; }
-.portrait-controls .btn-group { display: inline-block; margin: 0 2px; vertical-align: top; }
-.portrait-controls .btn-group:not(:last-child) { border-right: 1px solid #777; padding-right: 3px; }
-.portrait-container.adjusting { outline: 1px dashed #00aaff; overflow: visible !important; z-index: calc(var(--z-overlay, 1000) + 1) !important; }
+.portrait-controls[style*="display: block"] { 
+  display: block !important; 
+  visibility: visible !important; 
+  opacity: 1 !important; 
+}
+
+.portrait-controls button { 
+  background: #555; 
+  color: white; 
+  border: 1px solid #777; 
+  padding: 2px 4px; 
+  margin: 1px; 
+  border-radius: 2px; 
+  cursor: pointer; 
+  font-size: 10px; 
+  width: 18px; 
+  height: 18px; 
+  line-height: 14px; 
+  display: inline-block; 
+  text-align: center; 
+  box-sizing: border-box; 
+}
+
+.portrait-controls button:hover { 
+  background: #777; 
+  border-color: #999; 
+}
+
+.portrait-controls button:active { 
+  background: #333; 
+}
+
+.portrait-controls .btn-group { 
+  display: inline-block; 
+  margin: 0 2px; 
+  vertical-align: top; 
+}
+
+.portrait-controls .btn-group:not(:last-child) { 
+  border-right: 1px solid #777; 
+  padding-right: 3px; 
+}
+
+.portrait-container.adjusting { 
+  outline: 1px dashed #00aaff; 
+  overflow: visible !important; 
+  z-index: calc(var(--z-overlay, 1000) + 1) !important; 
+}
 
 /* Tooltip classes to replace JS-injected cssText */
 .cs-tooltip { 
@@ -742,42 +796,168 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 /* Dialog helper used by XP award dialog to centralize its presentation */
-.cs-xp-dialog { background: white !important; }
-.cs-xp-dialog .window-header { background: black !important; color: white !important; }
-.cs-xp-dialog .window-content { background: white !important; }
+.cs-xp-dialog { 
+  background: white !important; 
+}
+
+.cs-xp-dialog .window-header { 
+  background: black !important; 
+  color: white !important; 
+}
+
+.cs-xp-dialog .window-content { 
+  background: white !important; 
+}
 
 /* Dialog layout and control helpers for handler-generated markup */
-.cs-xp-dialog-container { padding: 10px; }
-.cs-xp-row { margin-bottom: 20px; text-align: center; }
-.cs-xp-inline { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
-.cs-xp-flex { display: flex; gap: 20px; }
-.cs-xp-col { flex: 1; }
-.cs-input-small { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; text-align: center; }
-.cs-input-medium { width: 80px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; text-align: center; }
-.cs-no-border { border: none; background: none; color: inherit; padding: 0; }
-.cs-xp-preview { margin-top: 15px; padding: 8px; background: #f5f5f5; border-radius: 3px; display: none; }
+.cs-xp-dialog-container { 
+  padding: 10px; 
+}
+
+.cs-xp-row { 
+  margin-bottom: 20px; 
+  text-align: center; 
+}
+
+.cs-xp-inline { 
+  margin-bottom: 10px; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  justify-content: center; 
+}
+
+.cs-xp-flex { 
+  display: flex; 
+  gap: 20px; 
+}
+
+.cs-xp-col { 
+  flex: 1; 
+}
+
+.cs-input-small { 
+  width: 60px; 
+  padding: 5px; 
+  background-color: white; 
+  border: 1px solid black; 
+  border-radius: 9px; 
+  text-align: center; 
+}
+
+.cs-input-medium { 
+  width: 80px; 
+  padding: 5px; 
+  background-color: white; 
+  border: 1px solid black; 
+  border-radius: 9px; 
+  text-align: center; 
+}
+
+.cs-no-border { 
+  border: none; 
+  background: none; 
+  color: inherit; 
+  padding: 0; 
+}
+
+.cs-xp-preview { 
+  margin-top: 15px; 
+  padding: 8px; 
+  background: #f5f5f5; 
+  border-radius: 3px; 
+  display: none; 
+}
 
 /* XP dialog side column helpers (replaces small inline wrappers) */
-.cs-xp-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.cs-xp-side-row { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: center; }
+.cs-xp-side { 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+}
+
+.cs-xp-side-row { 
+  margin-bottom: 10px; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  justify-content: center; 
+}
 
 /* Reusable small select style for inline dialogs (appearance reset handled elsewhere) */
-.cs-select-inline { width: 60px; padding: 5px; background-color: white; border: 1px solid black; border-radius: 9px; text-align: center; line-height: 1.2; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
+.cs-select-inline { 
+  width: 60px; 
+  padding: 5px; 
+  background-color: white; 
+  border: 1px solid black; 
+  border-radius: 9px; 
+  text-align: center; 
+  line-height: 1.2; 
+  appearance: none; 
+  -webkit-appearance: none; 
+  -moz-appearance: none; 
+}
 
 /* Language dialog helpers */
-.cs-dialog-row { margin-bottom: 8px; }
-.cs-dialog-columns { display: flex; gap: 40px; }
-.cs-dialog-column { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
-.cs-custom-input { width: 145px; }
-.cs-dialog-label { display: flex; align-items: center; gap: 8px; }
+.cs-dialog-row { 
+  margin-bottom: 8px; 
+}
+
+.cs-dialog-columns { 
+  display: flex; 
+  gap: 40px; 
+}
+
+.cs-dialog-column { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: flex-start; 
+  gap: 6px; 
+}
+
+.cs-custom-input { 
+  width: 145px; 
+}
+
+.cs-dialog-label { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+}
 
 /* Level & portrait container utility classes (migrate inline box-shadow/positioning into class-based rules) */
-.cs-level-container { position: absolute; width: 64px; height: 34px; }
-.cs-level-shadow { position: absolute; top: 0; left: 0; width: 64px; height: 34px; z-index: var(--z-labels, 15); pointer-events: none; border-radius: 6px; }
+.cs-level-container { 
+  position: absolute; 
+  width: 64px; 
+  height: 34px; 
+}
+
+.cs-level-shadow { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 64px; 
+  height: 34px; 
+  z-index: var(--z-labels, 15); 
+  pointer-events: none; 
+  border-radius: 6px; 
+}
 
 /* Combat and ability layouts markup helpers */
-.cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
-.cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
+.cs-combat-stats { 
+  display: flex; 
+  gap: 1.5rem; 
+  justify-content: center; 
+  margin-bottom: 2rem; 
+  flex-wrap: wrap; 
+}
+
+.cs-combat-stat { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+}
 .cs-save-badge { 
   border: none !important; 
   border-radius: 0 !important; 
@@ -886,7 +1066,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   width: 72px;
   height: 72px;
   font-size: 100px;
-  line-height: 0.5;  /* Compressed line-height centers text visually by reducing line box */
+  /* Compressed line-height (0.5) centers large font visually within the 72px box */
+  /* At 100px font-size with line-height 0.5, the line box shrinks to 50px, */
+  /* allowing proper vertical centering of the glyph within the container */
+  line-height: 0.5;
   background-color: transparent !important;  /* Override browser defaults */
 
   margin: 0;
@@ -951,10 +1134,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .cs-cursor-pointer { cursor: pointer !important; }
 .cs-cursor-text { cursor: text !important; }
 
-
-/* Combat stat boxes */
-.cs-combat-stats { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
-.cs-combat-stat { display: flex; flex-direction: column; align-items: center; }
+/* Combat input boxes */
 .cs-combat-input {
   display: flex;
   align-items: center;
@@ -964,7 +1144,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   
   width: 80px;
   height: 40px;
-  /*font-size: 1.2rem;*/
   border: 2px solid #4a5568;
   border-radius: 8px;
   background-color: white;
@@ -1056,7 +1235,18 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Race-based variants (only applied if no qualifying class) */
 /* OLD RACE-BASED SKILL LAYOUT BACKGROUND IMAGES REMOVED - REPLACED BY RACIAL-SKILL-LAYOUT SYSTEM */
 
-.cs-unarmored-box { width: 80px; height: 40px; text-align: center; font-size: 1.2rem; border: 2px solid #4a5568; border-radius: 8px; display: flex; align-items: center; justify-content: center; background-color: white; }
+.cs-unarmored-box { 
+  width: 80px; 
+  height: 40px; 
+  text-align: center; 
+  font-size: 1.2rem; 
+  border: 2px solid #4a5568; 
+  border-radius: 8px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  background-color: white; 
+}
 
 /* OLD RACIAL-SKILL-TARGETS SYSTEM REMOVED - REPLACED BY RACIAL-SKILL-LAYOUT SYSTEM */
 
@@ -1180,7 +1370,6 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 .combat-section {
   position: relative;
   width: 100%;
-  /*height: 400px; /* Set a height to contain the absolutely positioned saves */
 }
 
 /* Universal absolute positioning for all positioned elements */
@@ -1209,12 +1398,27 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 }
 
 /* Misc helpers for textareas in bio */
-.cs-bio-textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; resize: vertical; font-family: inherit; background-color: white; }
+.cs-bio-textarea { 
+  width: 100%; 
+  padding: 0.5rem; 
+  border: 1px solid #ccc; 
+  border-radius: 3px; 
+  resize: vertical; 
+  font-family: inherit; 
+  background-color: white; 
+}
 
 /* Encumbrance bar helpers */
-.encumbrance-section .encumbrance-bar-container { position: relative; }
-.encumbrance-section .encumbrance-bar { height: 12px; background: #22c55e; transition: width 0.3s ease; }
-.encumbrance-section .encumbrance-bar { width: var(--encumbrance-width, 0%); }
+.encumbrance-section .encumbrance-bar-container { 
+  position: relative; 
+}
+
+.encumbrance-section .encumbrance-bar { 
+  height: 12px; 
+  background: #22c55e; 
+  transition: width 0.3s ease; 
+  width: var(--encumbrance-width, 0%); 
+}
 
 /* Level progress helpers */
 .cs-level-display {
@@ -1334,10 +1538,7 @@ input[type="number"] {
   appearance: textfield;
 }
 
-
-
 /* Header field classes (name, class, race, small fields) */
-/*.cs-char-field-group { display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; }*/
 .cs-char-name {
   display: flex;
   align-items: center;
@@ -1733,6 +1934,8 @@ input[type="number"] {
 .skills-layout-barbarian .tab[data-tab="skills"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-barbarian.webp');
   background-size: contain, contain;
+  /* Second image offset by 22px from top to position below the class bar */
+  /* The calc(22px + 0%) syntax ensures CSS accepts it as a valid background-position */
   background-position: center top, center calc(22px + 0%);
   background-repeat: no-repeat, no-repeat;
   background-attachment: scroll, scroll;
@@ -1743,6 +1946,7 @@ input[type="number"] {
 .skills-layout-thief .tab[data-tab="skills"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-thief.webp');
   background-size: contain, contain;
+  /* Second image offset by 22px from top to position below the class bar */
   background-position: center top, center calc(22px + 0%);
   background-repeat: no-repeat, no-repeat;
   background-attachment: scroll, scroll;
@@ -1753,6 +1957,7 @@ input[type="number"] {
 .skills-layout-assassin .tab[data-tab="skills"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp');
   background-size: contain, contain;
+  /* Second image offset by 22px from top to position below the class bar */
   background-position: center top, center calc(22px + 0%);
   background-repeat: no-repeat, no-repeat;
   background-attachment: scroll, scroll;

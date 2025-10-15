@@ -10,10 +10,8 @@ const { ActorSheet } = foundry.appv1.sheets;
 
 export class OspActorSheetCharacter extends ActorSheet {
   constructor(...args) {
-    console.log('🚨 OSP CHARACTER SHEET CONSTRUCTOR - DEBUG VERSION 2.0 🚨');
     super(...args);
     this.handlers = new Map();
-    console.log('🚨 CONSTRUCTOR COMPLETE - HANDLERS MAP INITIALIZED 🚨');
   }
 
   static get defaultOptions() {
@@ -59,28 +57,15 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   activateListeners(html) {
-    console.log('🚨🚨🚨 ACTIVATE LISTENERS CALLED - DEBUG VERSION 2.0 🚨🚨🚨');
     super.activateListeners(html);
-
-    console.log('CharacterSheet: activateListeners called after super', {
-      editable: this.options.editable,
-      isOwner: this.actor?.isOwner,
-      actorId: this.actor?.id,
-      htmlLength: html?.length,
-      hasHandlers: !!this.handlers
-    });
 
     // ALWAYS initialize position tool handler first, regardless of editable state
     this.ensurePositionToolHandler(html);
 
     // Only initialize other handlers if sheet is editable
     if (!this.options.editable) {
-      console.log('CharacterSheet: Sheet not editable, skipping main handler initialization');
       return;
     }
-
-    // Temporarily disable font handling to isolate infinite loop issue
-    // this.ensureHandwrittenFont(html);
 
     // Initialize all handlers
     this.initializeHandlers(html);
@@ -92,35 +77,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     setTimeout(() => {
       this.setupTabSystem(html);
     }, 100);
-
-    // Add broad click detection for debugging
-    html.on('click', '*', (event) => {
-      if ($(event.target).closest('.sheet-tabs').length > 0) {
-
-
-      }
-    });
   }
 
   /**
    * Setup manual tab system
    */
   setupTabSystem(html) {
-
     const tabLinks = html.find('.sheet-tabs a.item');
     const tabSections = html.find('.sheet-body .tab');
 
-
-
-
-    // Debug: Log each tab link found
-    tabLinks.each((i, el) => {
-
-    });
-
-  // Ensure tabs are clickable and use class-based presentation
-  html.find('.sheet-tabs').addClass('cs-tabs');
-  tabLinks.addClass('cs-tab-item');
+    // Ensure tabs are clickable and use class-based presentation
+    html.find('.sheet-tabs').addClass('cs-tabs');
+    tabLinks.addClass('cs-tab-item');
 
     // Set initial active tab
     this.activateTab(html, 'combat');
@@ -143,8 +111,8 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Method 2: Direct element binding with capture phase
     tabLinks.each((i, el) => {
-  // Override any CSS that might block clicks by adding a helper class
-  $(el).addClass('cs-force-pointer');
+      // Override any CSS that might block clicks by adding a helper class
+      $(el).addClass('cs-force-pointer');
 
       // Remove any existing listeners first
       el.removeEventListener('click', this._handleTabClick, true);
@@ -168,7 +136,6 @@ export class OspActorSheetCharacter extends ActorSheet {
         el.addEventListener(eventType, (event) => {
           if (eventType === 'mouseup' || eventType === 'pointerup' || eventType === 'touchend') {
             const tabName = $(event.target).data('tab');
-
             this.activateTab(html, tabName);
           }
         }, true);
@@ -180,13 +147,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       const $target = $(event.currentTarget);
       const tabName = $target.data('tab');
 
-
       // Clear any existing timer
       if (this._tabTimer) clearTimeout(this._tabTimer);
 
       // Activate after short delay
       this._tabTimer = setTimeout(() => {
-
         this.activateTab(html, tabName);
       }, 100);
     });
@@ -196,15 +161,15 @@ export class OspActorSheetCharacter extends ActorSheet {
       event.preventDefault();
       event.stopImmediatePropagation();
       const tabName = $(event.currentTarget).data('tab');
-
       this.activateTab(html, tabName);
     });
-
 
     // Ensure tabs sit below the static header by measuring header height and setting .sheet-tabs top
     try {
       this.setTabsTopToHeader(html);
-    } catch (e) {}
+    } catch (e) {
+      console.error('CharacterSheet: Failed to set tabs position', e);
+    }
 
     // Auto-calibrate offsets from current DOM positions, then apply computed tab offsets (index-based)
     try {
@@ -213,8 +178,16 @@ export class OspActorSheetCharacter extends ActorSheet {
 
       // Recompute on window resize
       this._tabResizeHandler = () => {
-        try { this.setTabsTopToHeader(html); } catch (e) {}
-        try { this.applyComputedTabOffsets(html); } catch (e) {}
+        try { 
+          this.setTabsTopToHeader(html); 
+        } catch (e) {
+          console.error('CharacterSheet: Failed to set tabs position on resize', e);
+        }
+        try { 
+          this.applyComputedTabOffsets(html); 
+        } catch (e) {
+          console.error('CharacterSheet: Failed to apply tab offsets on resize', e);
+        }
       };
       window.addEventListener('resize', this._tabResizeHandler);
 
@@ -225,7 +198,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         this._tabMutationObserver.observe(tabsElement, { childList: true });
       }
     } catch (err) {
-
+      console.error('CharacterSheet: Failed to initialize tab offset system', err);
     }
   }
 
@@ -273,30 +246,25 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Clean up existing handlers
     this.destroyHandlers();
 
-    // All handlers working - infinite loop issue resolved
-    // Note: PositionToolHandler is initialized separately in ensurePositionToolHandler()
     const handlerConfigs = [
-      { name: 'raceClass', Handler: RaceClassHandler }, // Fixed infinite loop with Hobbit selection
-      { name: 'language', Handler: LanguageHandler }, // Re-enabling with font sizing disabled
-      { name: 'item', Handler: ItemHandler }, // Works fine
-      { name: 'ui', Handler: UIHandler }, // Works fine
-      { name: 'xpProgress', Handler: XPProgressHandler }, // Works fine
-      { name: 'background', Handler: BackgroundHandler } // Works fine
+      { name: 'raceClass', Handler: RaceClassHandler },
+      { name: 'language', Handler: LanguageHandler },
+      { name: 'item', Handler: ItemHandler },
+      { name: 'ui', Handler: UIHandler },
+      { name: 'xpProgress', Handler: XPProgressHandler },
+      { name: 'background', Handler: BackgroundHandler }
     ];
 
     // Initialize handlers
     handlerConfigs.forEach(({ name, Handler }) => {
       try {
-        console.log(`CharacterSheet: Initializing handler: ${name}`);
         const handler = new Handler(html, this.actor);
         handler.initialize();
         this.handlers.set(name, handler);
-        console.log(`CharacterSheet: Successfully initialized handler: ${name}`);
       } catch (error) {
         console.error(`CharacterSheet: Failed to initialize handler: ${name}`, error);
       }
     });
-
   }
 
   /**
@@ -304,11 +272,8 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   ensurePositionToolHandler(html) {
     try {
-      console.log('CharacterSheet: Ensuring position tool handler is initialized...');
-      
       // Clean up any existing handler first to prevent duplicates
       if (this.handlers.has('positionTool')) {
-        console.log('CharacterSheet: Cleaning up existing position tool handler');
         const existingHandler = this.handlers.get('positionTool');
         if (existingHandler && existingHandler.destroy) {
           existingHandler.destroy();
@@ -316,20 +281,14 @@ export class OspActorSheetCharacter extends ActorSheet {
         this.handlers.delete('positionTool');
       }
       
-      console.log('CharacterSheet: Creating new position tool handler...');
       const handler = new PositionToolHandler(html, this.actor);
       handler.initialize();
       this.handlers.set('positionTool', handler);
       
-      console.log('CharacterSheet: Position tool handler initialized successfully');
-      
-      // Double-check it was added
-      if (this.handlers.has('positionTool')) {
-        console.log('CharacterSheet: Position tool handler confirmed in handlers map');
-      } else {
+      // Verify handler was added
+      if (!this.handlers.has('positionTool')) {
         console.error('CharacterSheet: Position tool handler missing from handlers map after creation!');
       }
-      
     } catch (error) {
       console.error('CharacterSheet: Failed to initialize position tool handler:', error);
     }
@@ -345,7 +304,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           handler.destroy();
         }
       } catch (error) {
-
+        console.error(`CharacterSheet: Failed to destroy handler: ${name}`, error);
       }
     });
     this.handlers.clear();
@@ -357,14 +316,11 @@ export class OspActorSheetCharacter extends ActorSheet {
    * @param {Object} formData - The form data being submitted
    */
   async _updateObject(event, formData) {
-
-
     // Call the parent class update method
     const result = await super._updateObject(event, formData);
 
     // Force the actor to recalculate derived data
     if (this.actor) {
-
       this.actor.prepareDerivedData();
 
       // Re-render the sheet to show updated values
@@ -395,7 +351,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       this._tabResizeHandler = null;
     }
     if (this._tabMutationObserver) {
-      try { this._tabMutationObserver.disconnect(); } catch(e) {}
+      try { 
+        this._tabMutationObserver.disconnect(); 
+      } catch(e) {
+        console.error('CharacterSheet: Failed to disconnect mutation observer', e);
+      }
       this._tabMutationObserver = null;
     }
 
@@ -435,6 +395,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     try {
       tabsEl = (html && html.find) ? html.find('.sheet-tabs')[0] : document.querySelector('.sheet-tabs');
     } catch (e) {
+      console.error('CharacterSheet: Failed to find tabs element', e);
       tabsEl = document.querySelector('.sheet-tabs');
     }
     if (tabsEl) {
@@ -449,7 +410,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         if (cssBaseLeft) baseLeft = parseFloat(cssBaseLeft);
         if (cssStepLeft) stepLeft = parseFloat(cssStepLeft);
       } catch (e) {
-        // ignore and use defaults
+        console.error('CharacterSheet: Failed to read CSS variables', e);
       }
 
       // Also allow data attributes on the tabs element
@@ -462,7 +423,9 @@ export class OspActorSheetCharacter extends ActorSheet {
         if (dStepTop !== null) stepTop = parseFloat(dStepTop);
         if (dBaseLeft !== null) baseLeft = parseFloat(dBaseLeft);
         if (dStepLeft !== null) stepLeft = parseFloat(dStepLeft);
-      } catch (e) {}
+      } catch (e) {
+        console.error('CharacterSheet: Failed to read data attributes', e);
+      }
     }
 
     // For NodeList/jQuery compatibility iterate with index
@@ -482,7 +445,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         dom.style.setProperty('--tab-top', top);
         dom.style.setProperty('--tab-left', left);
       } catch (err) {
-        // ignore
+        console.error('CharacterSheet: Failed to set tab CSS properties', err);
       }
     }
   }
@@ -503,14 +466,16 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Compute top relative to the sheet container
   // Move tabs slightly upward (5px) so they don't sit flush with the header border
   const topPx = Math.max(0, Math.round(headerRect.bottom - sheetRect.top) - 5);
-  // Apply as a CSS custom property on .sheet-tabs (CSS will pick up via var(--tabs-top))
-  try { tabsEl.style.setProperty('--tabs-top', `${topPx}px`); } catch(e) {}
+      // Apply as a CSS custom property on .sheet-tabs (CSS will pick up via var(--tabs-top))
+      try { 
+        tabsEl.style.setProperty('--tabs-top', `${topPx}px`); 
+      } catch(e) {
+        console.error('CharacterSheet: Failed to set tabs-top CSS property', e);
+      }
     } catch (e) {
-      // ignore
+      console.error('CharacterSheet: Failed to measure header position', e);
     }
-  }
-
-  /**
+  }  /**
    * Measure current tab anchor positions and compute base/step offsets.
    * Writes CSS variables to the .sheet-tabs element so future computations use the calibrated values.
    */
@@ -527,11 +492,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       const hasCssVars = !!cssBaseTop;
       const hasDataAttrs = tabsEl.hasAttribute('data-tab-base-top') || tabsEl.hasAttribute('data-tab-step-top') || tabsEl.hasAttribute('data-tab-base-left') || tabsEl.hasAttribute('data-tab-step-left');
       if (hasCssVars || hasDataAttrs) {
-
         return;
       }
     } catch (e) {
-      // ignore and continue
+      console.error('CharacterSheet: Failed to check for existing tab configuration', e);
     }
 
     // Convert to DOM nodes
@@ -564,8 +528,6 @@ export class OspActorSheetCharacter extends ActorSheet {
     const stepLeft = count > 0 ? (totalLeftStep / count) : (second.left - first.left);
 
     try {
-
-
       tabsEl.style.setProperty('--tab-base-top', `${Math.round(baseTop)}px`);
       tabsEl.style.setProperty('--tab-step-top', `${Math.round(stepTop)}px`);
       tabsEl.style.setProperty('--tab-base-left', `${Math.round(baseLeft)}px`);
@@ -576,7 +538,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       tabsEl.setAttribute('data-tab-base-left', Math.round(baseLeft));
       tabsEl.setAttribute('data-tab-step-left', Math.round(stepLeft));
     } catch (e) {
-      // ignore failures (e.g., non-DOM environment)
+      console.error('CharacterSheet: Failed to write tab calibration values', e);
     }
   }
 
@@ -658,8 +620,6 @@ export class OspActorSheetCharacter extends ActorSheet {
     let layoutClass = 'skill-layout-default';
     let skillsTabClass = 'skills-layout-default';
     
-    console.log(`updateSkillLayout - Class: ${characterClass}, Race: ${race}`);
-    
     // Check for class-specific skills first (priority)
     if (characterClass && skillRequirements.classes[characterClass]) {
       requiredSkills = [...requiredSkills, ...skillRequirements.classes[characterClass]];
@@ -684,16 +644,12 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Half-Orcs without compatible classes get generic layout
     }
     
-    console.log(`Required skills: ${JSON.stringify(requiredSkills)}`);
-    
     // Show/hide skill fields based on requirements
     Object.keys(skillSelectors).forEach(skill => {
       const skillElement = html.find(skillSelectors[skill]);
-      console.log(`Skill: ${skill}, Element found: ${skillElement.length > 0}, Required: ${requiredSkills.includes(skill)}`);
       if (skillElement.length > 0) {
         if (requiredSkills.includes(skill)) {
           skillElement.show();
-          console.log(`Showing skill: ${skill}`);
           // Set default value of 1 if field is empty
           const selectElement = skillElement.find('select');
           if (selectElement.length > 0 && (!selectElement.val() || selectElement.val() === '')) {
@@ -701,10 +657,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           }
         } else {
           skillElement.hide();
-          console.log(`Hiding skill: ${skill}`);
         }
-      } else {
-        console.log(`Skill element not found for: ${skill}`);
       }
     });
     

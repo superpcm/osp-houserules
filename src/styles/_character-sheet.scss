@@ -885,16 +885,30 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   
   width: 72px;
   height: 72px;
-  font-size: 80px;
+  font-size: 100px;
+  line-height: 0.5;  /* Compressed line-height centers text visually by reducing line box */
   background-color: transparent !important;
 
   margin: 0;
+  padding: 0;  /* Ensure no padding reduces available space */
   border: none !important;
   pointer-events: auto;
+  overflow: visible;  /* Allow text to render fully */
+  
+  /* Force horizontal centering - remove browser defaults */
+  text-indent: 0 !important;
+  padding-left: 5px !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+  
+  /* Remove dropdown arrow to prevent offset */
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
 }
 
-.cs-listening-select:disabled {
-  cursor: not-allowed;
+.cs-listening-select option {
+  text-align: center;  /* Center options in dropdown too */
 }
 
 /* Tabs helper (in case nav items had inline styles) */
@@ -1051,31 +1065,19 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
    Clean separation for 3 scenarios: Default, Dwarf, Gnome
    ======================================== */
 
-/* Default racial skills (no race-specific skills, just base skills) */
-.racial-skill-layout-default {
-  /* Base skills positioning - uses default variables */
-  .cs-pos-listening { 
-    --left: #{$cs-pos-listening-left}; 
-    --top: 47px; 
-    --width: #{$cs-pos-listening-width}; 
-    --height: #{$cs-pos-listening-height}; 
-  }
-  .cs-pos-find-secret-door { 
-    --left: #{$cs-pos-find-secret-door-left}; 
-    --top: 47px; 
-    --width: #{$cs-pos-find-secret-door-width}; 
-    --height: #{$cs-pos-find-secret-door-height}; 
-  }
-  .cs-pos-open-stuck-doors { 
-    --left: #{$cs-pos-open-stuck-doors-left}; 
-    --top: 47px; 
-    --width: #{$cs-pos-open-stuck-doors-width}; 
-    --height: #{$cs-pos-open-stuck-doors-height}; 
-  }
-  
-  /* Background image for default racial skills - moved to Skills tab */
+/* Shared base positioning variables for racial skills */
+$racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
+
+/* Shared properties mixin - eliminates repetition */
+@mixin racial-skill-base($left-position) {
+  --left: #{$left-position};
+  --top: #{$racial-skill-top};
+}
+
+/* Shared background mixin - eliminates repetition */
+@mixin racial-skill-background($image-name) {
   .tab[data-tab="skills"] {
-    background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-default.webp') !important;
+    background-image: url('/systems/osp-houserules/assets/character-sheet/#{$image-name}.webp') !important;
     background-size: contain !important;
     background-position: center top !important;
     background-repeat: no-repeat !important;
@@ -1083,90 +1085,95 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   }
 }
 
-/* Dwarf racial skills (includes detect construction and detect room traps) */
-.racial-skill-layout-dwarf {
-  /* Base skills with dwarf-specific positioning */
+/* ========================================
+   Default Layout (3 base skills only)
+   ======================================== */
+.racial-skill-layout-default {
+  /* Uses default variable positions */
   .cs-pos-listening { 
-    --left: 268px; 
-    --top: 300px; 
+    @include racial-skill-base($cs-pos-listening-left);
     --width: #{$cs-pos-listening-width}; 
     --height: #{$cs-pos-listening-height}; 
   }
   .cs-pos-find-secret-door { 
-    --left: 143px; 
-    --top: 300px; 
+    @include racial-skill-base($cs-pos-find-secret-door-left);
     --width: #{$cs-pos-find-secret-door-width}; 
     --height: #{$cs-pos-find-secret-door-height}; 
   }
   .cs-pos-open-stuck-doors { 
-    --left: 19px; 
-    --top: 300px; 
+    @include racial-skill-base($cs-pos-open-stuck-doors-left);
     --width: #{$cs-pos-open-stuck-doors-width}; 
     --height: #{$cs-pos-open-stuck-doors-height}; 
   }
   
-  /* Dwarf-specific racial skills */
+  @include racial-skill-background('racial-skill-targets-default');
+}
+
+/* ========================================
+   Dwarf Layout (5 skills: base 3 + 2 racial)
+   ======================================== */
+.racial-skill-layout-dwarf {
+  /* Base skills with dwarf-specific horizontal positions */
+  .cs-pos-listening { 
+    @include racial-skill-base(268px);
+    --width: #{$cs-pos-listening-width}; 
+    --height: #{$cs-pos-listening-height}; 
+  }
+  .cs-pos-find-secret-door { 
+    @include racial-skill-base(143px);
+    --width: #{$cs-pos-find-secret-door-width}; 
+    --height: #{$cs-pos-find-secret-door-height}; 
+  }
+  .cs-pos-open-stuck-doors { 
+    @include racial-skill-base(19px);
+    --width: #{$cs-pos-open-stuck-doors-width}; 
+    --height: #{$cs-pos-open-stuck-doors-height}; 
+  }
+  
+  /* Dwarf-only racial skills */
   .cs-pos-detect-construction { 
-    --left: 392px; 
-    --top: 300px; 
+    @include racial-skill-base(392px);
     --width: #{$cs-pos-detect-construction-width}; 
     --height: #{$cs-pos-detect-construction-height}; 
   }
   .cs-pos-detect-room-traps { 
-    --left: 516px; 
-    --top: 300px; 
+    @include racial-skill-base(516px);
     --width: #{$cs-pos-detect-room-traps-width}; 
     --height: #{$cs-pos-detect-room-traps-height}; 
   }
   
-  /* Background image for dwarf racial skills - moved to Skills tab */
-  .tab[data-tab="skills"] {
-    background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-dwarf.webp') !important;
-    background-size: contain !important;
-    background-position: center top !important;
-    background-repeat: no-repeat !important;
-    background-attachment: scroll !important;
-  }
+  @include racial-skill-background('racial-skill-targets-dwarf');
 }
 
-/* Gnome racial skills (includes detect construction only) */
+/* ========================================
+   Gnome Layout (4 skills: base 3 + 1 racial)
+   ======================================== */
 .racial-skill-layout-gnome {
-  /* Base skills with gnome-specific positioning */
+  /* Base skills with gnome-specific horizontal positions */
   .cs-pos-listening { 
-    --left: 342px; 
-    --top: 300px; 
+    @include racial-skill-base(342px);
     --width: #{$cs-pos-listening-width}; 
     --height: #{$cs-pos-listening-height}; 
   }
   .cs-pos-find-secret-door { 
-    --left: 193px; 
-    --top: 300px; 
+    @include racial-skill-base(193px);
     --width: #{$cs-pos-find-secret-door-width}; 
     --height: #{$cs-pos-find-secret-door-height}; 
   }
   .cs-pos-open-stuck-doors { 
-    --left: 45px; 
-    --top: 300px; 
+    @include racial-skill-base(45px);
     --width: #{$cs-pos-open-stuck-doors-width}; 
     --height: #{$cs-pos-open-stuck-doors-height}; 
   }
   
-  /* Gnome-specific racial skills */
+  /* Gnome-only racial skill */
   .cs-pos-detect-construction { 
-    --left: 491px; 
-    --top: 300px; 
+    @include racial-skill-base(491px);
     --width: #{$cs-pos-detect-construction-width}; 
     --height: #{$cs-pos-detect-construction-height}; 
   }
   
-  /* Background image for gnome racial skills - moved to Skills tab */
-  .tab[data-tab="skills"] {
-    background-image: url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-gnome.webp') !important;
-    background-size: contain !important;
-    background-position: center top !important;
-    background-repeat: no-repeat !important;
-    background-attachment: scroll !important;
-  }
+  @include racial-skill-background('racial-skill-targets-gnome');
 }
 
 /* Save badge system */

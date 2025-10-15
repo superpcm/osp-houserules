@@ -829,27 +829,27 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 /* Tabs runtime helpers */
 .cs-tabs {
   position: relative !important;
-  z-index: var(--z-top, 10000) !important;
+  z-index: var(--z-tabs, 200) !important;
   pointer-events: auto !important;
   top: var(--tabs-top, 3px);
 }
 .cs-tab-item {
   position: relative !important;
-  z-index: 10 !important; /* Base tab layer */
+  z-index: var(--z-tabs, 200);
   pointer-events: auto !important;
   cursor: pointer !important;
 }
 
 /* Active tab state for cs-tab-item */
 .cs-tab-item.active {
-  z-index: 20 !important; /* Active tab comes forward */
+  z-index: var(--z-tab-active, 250);
   border-left: none !important; /* Seamless connection to page */
   background: rgba(255, 255, 255, 0.8) !important; /* More opaque for active tab */
 }
 
 /* Hover state for cs-tab-item */
 .cs-tab-item:hover {
-  z-index: 15 !important; /* Hover tab comes slightly forward */
+  z-index: var(--z-tab-hover, 225);
   background: rgba(139, 123, 101, 0.6) !important; /* Slightly more opaque on hover */
 }
 .cs-force-pointer { pointer-events: auto !important; }

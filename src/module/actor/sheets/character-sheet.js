@@ -145,7 +145,6 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   setupTabSystem(html) {
     const tabLinks = html.find('.sheet-tabs a.item');
-    const tabSections = html.find('.sheet-body .tab');
 
     // Ensure tabs are clickable and use class-based presentation
     html.find('.sheet-tabs').addClass('cs-tabs');
@@ -154,60 +153,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Set initial active tab
     this.activateTab(html, 'combat');
 
-    // SUPER AGGRESSIVE APPROACH: Multiple layers of event capture
-
-    // Method 1: Body-level capture (even higher than document)
-    $('body').off('click.tabsystem').on('click.tabsystem', (event) => {
-      const $target = $(event.target);
-      const $tabItem = $target.closest('.sheet-tabs a.item');
-      if ($tabItem.length > 0 && $tabItem.closest(html).length > 0) {
-        this.handleTabClick(event, html);
-      }
-    });
-
-    // Method 2: Direct element binding with capture phase
-    tabLinks.each((i, el) => {
-      // Override any CSS that might block clicks by adding a helper class
-      $(el).addClass('cs-force-pointer');
-
-      // Remove any existing listeners first
-      el.removeEventListener('click', this._handleTabClick, true);
-      el.removeEventListener('click', this._handleTabClick, false);
-
-      // Create bound handler
-      this._handleTabClick = (event) => {
-        this.handleTabClick(event, html);
-      };
-
-      // Bind with capture = true (highest priority)
-      el.addEventListener('click', this._handleTabClick, true);
-
-      // Also bind as many event types as possible
-      ['mouseup', 'mousedown', 'pointerup', 'touchend'].forEach(eventType => {
-        el.addEventListener(eventType, (event) => {
-          if (eventType === 'mouseup' || eventType === 'pointerup' || eventType === 'touchend') {
-            const tabName = $(event.target).data('tab');
-            this.activateTab(html, tabName);
-          }
-        }, true);
-      });
-    });
-
-    // Method 3: Timer-based activation as ultimate fallback
-    tabLinks.on('mousedown touchstart', (event) => {
-      const $target = $(event.currentTarget);
-      const tabName = $target.data('tab');
-
-      // Clear any existing timer
-      if (this._tabTimer) clearTimeout(this._tabTimer);
-
-      // Activate after short delay
-      this._tabTimer = setTimeout(() => {
-        this.activateTab(html, tabName);
-      }, 100);
-    });
-
-    // Method 4: Form delegation as backup
+    // Simple event delegation - single handler on the tab container
     html.off('click.tabsystem').on('click.tabsystem', '.sheet-tabs a.item', (event) => {
       this.handleTabClick(event, html);
     });

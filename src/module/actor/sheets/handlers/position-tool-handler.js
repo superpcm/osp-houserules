@@ -6,25 +6,16 @@
  */
 export class PositionToolHandler {
   constructor(html, actor) {
-    console.log('PositionToolHandler: Constructor called', {
-      html: !!html,
-      htmlLength: html?.length,
-      actor: !!actor,
-      actorId: actor?.id
-    });
     this.html = html;
     this.actor = actor;
     this.positionDialog = null;
-    console.log('PositionToolHandler: Constructor complete');
   }
 
   /**
    * Initialize the position tool handler
    */
   initialize() {
-    console.log('PositionToolHandler: Initializing...');
     this.bindContextMenuEvents();
-    console.log('PositionToolHandler: Initialization complete');
   }
 
   /**
@@ -57,15 +48,7 @@ export class PositionToolHandler {
     // Note: We include both .cs-save-group (parent containers) and .cs-save (individual save elements) to give users flexibility
     const positionableElements = this.html.find('[class*="cs-pos-"], .cs-ability, .cs-save-group, .cs-save');
     
-    console.log(`PositionToolHandler: Found ${positionableElements.length} positionable elements (includes cs-pos, cs-ability, and cs-save-group)`);
-    
-    if (positionableElements.length > 0) {
-      console.log('PositionToolHandler: Sample elements found:', positionableElements.slice(0, 3).map(el => el.className).get());
-    }
-    
     positionableElements.on('contextmenu.positiontool', (event) => {
-      console.log('PositionToolHandler: Right-click detected on element:', event.currentTarget.className);
-      
       // Check if this user has permission to use positioning tool
       const sheet = this.html.closest('.sheet');
       const isGM = game?.user?.isGM;
@@ -75,37 +58,22 @@ export class PositionToolHandler {
       // Allow positioning tool if user is GM, actor owner, or in development mode
       const canEditPositions = isGM || isOwner || hasEditableClass || game?.settings?.get('core', 'noCanvas') === true;
       
-      console.log('PositionToolHandler: Permission check:', {
-        isGM: isGM,
-        isOwner: isOwner,
-        hasEditableClass: hasEditableClass,
-        canEditPositions: canEditPositions,
-        userId: game?.user?.id,
-        actorId: this.actor?.id
-      });
-      
       if (!canEditPositions) {
-        console.log('PositionToolHandler: User does not have permission to edit positions');
         return;
       }
 
       event.preventDefault();
       event.stopPropagation();
       
-      console.log('PositionToolHandler: Opening position dialog...');
       const element = $(event.currentTarget);
       this.showPositionDialog(element, event);
     });
-    
-    console.log('PositionToolHandler: Event listeners bound to elements');
   }
 
   /**
    * Show the position adjustment dialog
    */
   async showPositionDialog(element, event) {
-    console.log('PositionToolHandler: showPositionDialog called for element:', element[0].className);
-    
     // Close any existing dialog
     if (this.positionDialog) {
       this.positionDialog.close();
@@ -116,7 +84,6 @@ export class PositionToolHandler {
 
     // Get element position and size information
     const positionData = this.getElementPositionData(element);
-    console.log('PositionToolHandler: Position data:', positionData);
     
     // Create dialog content with arrow controls and size buttons
     const content = `
@@ -344,10 +311,6 @@ export class PositionToolHandler {
    * Update element position with new values
    */
   updateElementPosition(element, newData) {
-    console.log('🔧 updateElementPosition called with:', {
-      elementClass: element[0].className,
-      newData: newData
-    });
 
     const root = document.documentElement;
     
@@ -378,88 +341,64 @@ export class PositionToolHandler {
       position: element[0].style.position
     };
     
-    console.log('🔍 Element styles BEFORE update:', {
-      computed: {
-        left: computedBefore.left,
-        top: computedBefore.top,
-        width: computedBefore.width,
-        height: computedBefore.height,
-        position: computedBefore.position
-      },
-      inline: inlineBefore
-    });
     
     // For ALL elements (cs-pos, cs-ability, cs-save), set CSS custom properties directly on the element
     // When cs-abs class is added, ALL elements use var(--left), var(--top), var(--width), var(--height)
-    console.log('📝 Setting CSS custom properties directly on element...');
     
     if (newData.left !== undefined) {
       element[0].style.setProperty('--left', `${newData.left}px`);
-      console.log(`   Set --left = ${newData.left}px on element`);
     }
     
     if (newData.top !== undefined) {
       element[0].style.setProperty('--top', `${newData.top}px`);
-      console.log(`   Set --top = ${newData.top}px on element`);
     }
     
     if (newData.width !== undefined) {
       element[0].style.setProperty('--width', `${newData.width}px`);
-      console.log(`   Set --width = ${newData.width}px on element`);
     }
     
     if (newData.height !== undefined) {
       element[0].style.setProperty('--height', `${newData.height}px`);
-      console.log(`   Set --height = ${newData.height}px on element`);
     }
     
     // Ensure element has cs-abs class for positioning (if not already present)
     if (!element[0].classList.contains('cs-abs')) {
       element[0].classList.add('cs-abs');
-      console.log('   Added cs-abs class to element');
     }
     
     // Check if CSS custom properties are actually set
-    console.log('✅ Verifying CSS custom properties were set on element:');
     const setProps = {
       left: element[0].style.getPropertyValue('--left'),
       top: element[0].style.getPropertyValue('--top'), 
       width: element[0].style.getPropertyValue('--width'),
       height: element[0].style.getPropertyValue('--height')
     };
-    console.log('   Element custom properties:', setProps);
     
     // Legacy fallback for elements that might need direct styles as well
     if (newData.cssClass === 'cs-ability' || newData.cssClass === 'cs-save' || newData.cssClass === 'cs-save-group') {
-      console.log('🎯 Additional direct styles for cs-ability/cs-save/cs-save-group elements...');
       
       // For cs-ability, cs-save, and cs-save-group elements, also apply direct styles as backup
       const elementStyle = element[0].style;
       
       if (newData.left !== undefined) {
         elementStyle.left = `${newData.left}px`;
-        console.log(`   Also set element.style.left = ${newData.left}px`);
       }
       
       if (newData.top !== undefined) {
         elementStyle.top = `${newData.top}px`;
-        console.log(`   Also set element.style.top = ${newData.top}px`);
       }
       
       if (newData.width !== undefined) {
         elementStyle.width = `${newData.width}px`;
-        console.log(`   Also set element.style.width = ${newData.width}px`);
       }
       
       if (newData.height !== undefined) {
         elementStyle.height = `${newData.height}px`;
-        console.log(`   Also set element.style.height = ${newData.height}px`);
       }
       
       // Ensure the element has absolute positioning as backup
       if (!elementStyle.position || elementStyle.position === 'static') {
         elementStyle.position = 'absolute';
-        console.log('   Also set element.style.position = absolute');
       }
     }
 
@@ -476,18 +415,7 @@ export class PositionToolHandler {
       position: element[0].style.position
     };
     
-    console.log('🔍 Element styles AFTER update:', {
-      computed: {
-        left: computedAfter.left,
-        top: computedAfter.top,
-        width: computedAfter.width,
-        height: computedAfter.height,
-        position: computedAfter.position
-      },
-      inline: inlineAfter
-    });
 
-    console.log(`✅ updateElementPosition complete for ${newData.name} (${newData.cssClass})`);
   }
 
   /**
@@ -511,7 +439,6 @@ export class PositionToolHandler {
     element[0].style.setProperty('border', '0.5px dashed red', 'important');
     element[0].style.setProperty('box-shadow', '0 0 0 1px rgba(255, 0, 0, 0.3)', 'important');
     
-    console.log('PositionToolHandler: Added enhanced border guide to element');
   }
 
   /**
@@ -528,7 +455,6 @@ export class PositionToolHandler {
         this.currentGuideElement[0].style.border = this.originalBorderStyle;
       }
       
-      console.log('PositionToolHandler: Removed enhanced border guide');
     }
     
     // Clean up references
@@ -542,15 +468,11 @@ export class PositionToolHandler {
    * Setup event handlers for dialog controls (arrow buttons, size buttons, keyboard shortcuts)
    */
   setupDialogEventHandlers(html, positionData) {
-    console.log('PositionToolHandler: Setting up dialog event handlers...');
     
     // Debug: Check if buttons exist
     const arrowButtons = html.find('.cs-arrow-btn');
     const sizeButtons = html.find('.cs-size-btn');
-    console.log(`Found ${arrowButtons.length} arrow buttons and ${sizeButtons.length} size buttons`);
-    console.log('🚨 Size buttons found:', sizeButtons);
     sizeButtons.each((index, button) => {
-      console.log(`🚨 Size button ${index}:`, button, 'data:', $(button).data());
     });
     
     // Arrow button handlers with debugging
@@ -559,23 +481,18 @@ export class PositionToolHandler {
       event.stopPropagation();
       
       const direction = $(event.currentTarget).data('direction');
-      console.log(`Arrow button clicked: ${direction}`);
       
       this.handleArrowClick(direction, html, positionData);
     });
 
     // Size button handlers with debugging
     html.find('.cs-size-btn').on('click', (event) => {
-      console.log('🚨 SIZE BUTTON CLICKED! Event:', event);
-      console.log('🚨 Button element:', event.currentTarget);
-      console.log('🚨 Button data:', $(event.currentTarget).data());
       
       event.preventDefault();
       event.stopPropagation();
       
       const dimension = $(event.currentTarget).data('dimension');
       const change = parseInt($(event.currentTarget).data('change'));
-      console.log(`Size button clicked: ${dimension} ${change > 0 ? '+' : '-'}${Math.abs(change)}`);
       
       this.handleSizeClick(dimension, change, html, positionData);
     });
@@ -583,14 +500,12 @@ export class PositionToolHandler {
     // Add keyboard shortcuts support
     this.setupKeyboardShortcuts(html, positionData);
     
-    console.log('PositionToolHandler: Event handlers setup complete');
   }
 
   /**
    * Setup keyboard shortcuts for the positioning dialog
    */
   setupKeyboardShortcuts(html, positionData) {
-    console.log('PositionToolHandler: Setting up keyboard shortcuts...');
     
     // Make the dialog focusable and focus it
     const dialogElement = html.closest('.dialog');
@@ -603,7 +518,6 @@ export class PositionToolHandler {
         // Only handle if this dialog is active/focused
         if (!$(event.target).closest('.dialog')[0] === dialogElement[0]) return;
         
-        console.log(`Key pressed: ${event.key}, shift: ${event.shiftKey}, ctrl: ${event.ctrlKey}`);
         
         let handled = false;
         
@@ -657,14 +571,12 @@ export class PositionToolHandler {
         if (handled) {
           event.preventDefault();
           event.stopPropagation();
-          console.log(`Keyboard shortcut handled: ${event.key}`);
         }
       };
       
       // Attach the keyboard handler
       dialogElement.on('keydown', this.keydownHandler);
       
-      console.log('PositionToolHandler: Keyboard shortcuts setup complete');
     } else {
       console.warn('PositionToolHandler: Could not find dialog element for keyboard shortcuts');
     }
@@ -674,7 +586,6 @@ export class PositionToolHandler {
    * Handle arrow button clicks for 1px position adjustments
    */
   handleArrowClick(direction, html, positionData) {
-    console.log(`handleArrowClick called with direction: ${direction}`);
     
     const leftInput = html.find('#pos-left');
     const topInput = html.find('#pos-top');
@@ -682,28 +593,23 @@ export class PositionToolHandler {
     let currentLeft = parseInt(leftInput.val()) || 0;
     let currentTop = parseInt(topInput.val()) || 0;
     
-    console.log(`Current values - left: ${currentLeft}, top: ${currentTop}`);
 
     switch (direction) {
       case 'up':
         currentTop -= 1;
         topInput.val(currentTop);
-        console.log(`Moving up: new top = ${currentTop}`);
         break;
       case 'down':
         currentTop += 1;
         topInput.val(currentTop);
-        console.log(`Moving down: new top = ${currentTop}`);
         break;
       case 'left':
         currentLeft -= 1;
         leftInput.val(currentLeft);
-        console.log(`Moving left: new left = ${currentLeft}`);
         break;
       case 'right':
         currentLeft += 1;
         leftInput.val(currentLeft);
-        console.log(`Moving right: new left = ${currentLeft}`);
         break;
       default:
         console.warn(`Unknown direction: ${direction}`);
@@ -727,23 +633,19 @@ export class PositionToolHandler {
    * Handle size button clicks for 1px width/height adjustments
    */
   handleSizeClick(dimension, change, html, positionData) {
-    console.log(`handleSizeClick called - dimension: ${dimension}, change: ${change}`);
     
     const input = html.find(`#pos-${dimension}`);
     let currentValue = parseInt(input.val()) || (dimension === 'width' ? positionData.width : positionData.height);
     
-    console.log(`Current ${dimension}: ${currentValue}, applying change: ${change}`);
     
     currentValue += change;
     
     // Ensure minimum size
     if (currentValue < 10) {
-      console.log(`Size ${currentValue} too small, setting to minimum 10`);
       currentValue = 10;
     }
     
     input.val(currentValue);
-    console.log(`New ${dimension}: ${currentValue}`);
 
     // Apply changes immediately for live preview
     const newData = {

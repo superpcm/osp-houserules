@@ -642,35 +642,35 @@ form.osp.sheet.actor.character .static-header::before,
 
 /* Tab container - transparent background */
 .osp.sheet.actor.character .sheet-tabs {
-  background: transparent !important;
-  border: none !important;
-  margin-bottom: 0 !important;
+  background: transparent !important;  /* Override Foundry default */
+  border: none !important;  /* Override Foundry default */
+  margin-bottom: 0;
 }
 
 /* Tab items - match sheet parchment background */
 .osp.sheet.actor.character .sheet-tabs a.item { 
-  opacity: 1 !important; 
-  background-color: #b5ddb4 !important;
-  filter: none !important;
-  border: 1px solid #000 !important;
-  position: relative !important;
-  z-index: 10 !important;
+  opacity: 1 !important;  /* Override Foundry default */
+  background-color: #b5ddb4 !important;  /* Override Foundry default */
+  filter: none !important;  /* Override Foundry default */
+  border: 1px solid #000 !important;  /* Override Foundry default */
+  position: relative;
+  z-index: 10;
 }
 
 /* Tab hover state - slightly brighter */
 .osp.sheet.actor.character .sheet-tabs a.item:hover { 
-  filter: brightness(1.05) !important;
-  border-color: #000 !important;
-  z-index: 15 !important;
+  filter: brightness(1.05) !important;  /* Override Foundry default */
+  border-color: #000;
+  z-index: 15;
 }
 
 /* Active tab - seamless connection to sheet */
 .osp.sheet.actor.character .sheet-tabs a.item.active { 
-  filter: none !important;
-  border-left: none !important; /* No left border - connects to sheet
+  filter: none !important;  /* Override Foundry default */
+  border-left: none !important;  /* Override Foundry default border */
   /*border-bottom: none !important; /* No bottom border - connects to sheet */
-  z-index: 20 !important;
-  margin-bottom: -1px !important; /* Overlap with sheet to hide sheet's top border */
+  z-index: 20;
+  margin-bottom: -1px;
 }
 
 /* Tab content area - only active tab is visible */
@@ -887,22 +887,22 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   height: 72px;
   font-size: 100px;
   line-height: 0.5;  /* Compressed line-height centers text visually by reducing line box */
-  background-color: transparent !important;
+  background-color: transparent !important;  /* Override browser defaults */
 
   margin: 0;
   padding: 0;  /* Ensure no padding reduces available space */
-  border: none !important;
+  border: none !important;  /* Override browser defaults */
   pointer-events: auto;
   overflow: visible;  /* Allow text to render fully */
   
   /* Force horizontal centering - remove browser defaults */
-  text-indent: 0 !important;
-  padding-left: 5px !important;
-  padding-right: 0 !important;
-  box-sizing: border-box !important;
+  text-indent: 0;
+  padding-left: 5px;
+  padding-right: 0;
+  box-sizing: border-box;
   
   /* Remove dropdown arrow to prevent offset */
-  appearance: none !important;
+  appearance: none !important;  /* Browser default override necessary */
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
 }
@@ -1077,11 +1077,11 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 /* Shared background mixin - eliminates repetition */
 @mixin racial-skill-background($image-name) {
   .tab[data-tab="skills"] {
-    background-image: url('/systems/osp-houserules/assets/character-sheet/#{$image-name}.webp') !important;
-    background-size: contain !important;
-    background-position: center top !important;
-    background-repeat: no-repeat !important;
-    background-attachment: scroll !important;
+    background-image: url('/systems/osp-houserules/assets/character-sheet/#{$image-name}.webp');
+    background-size: contain;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
   }
 }
 
@@ -1713,50 +1713,50 @@ input[type="number"] {
 /* Skills tab background - Default layout (no special background) */
 .tab[data-tab="skills"] {
   position: relative;
-  background-color: transparent !important;
-  height: 367px !important;
+  background-color: transparent;
+  height: 367px;
 }
 
 /* Skills tab with class skill bar - For most classes */
 .skills-layout-gnome .tab[data-tab="skills"],
 .skills-layout-half-orc .tab[data-tab="skills"],
 .skills-layout-hobbit .tab[data-tab="skills"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp') !important;
-  background-size: contain !important;
-  background-position: center top !important;
-  background-repeat: no-repeat !important;
-  background-attachment: scroll !important;
-  background-color: transparent !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp');
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-color: transparent;
 }
 
 /* Skills tab for Barbarian - includes class bar and barbarian racial targets */
 .skills-layout-barbarian .tab[data-tab="skills"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-barbarian.webp') !important;
-  background-size: contain, contain !important;
-  background-position: center top, center calc(22px + 0%) !important;
-  background-repeat: no-repeat, no-repeat !important;
-  background-attachment: scroll, scroll !important;
-  background-color: transparent !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-barbarian.webp');
+  background-size: contain, contain;
+  background-position: center top, center calc(22px + 0%);
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: scroll, scroll;
+  background-color: transparent;
 }
 
 /* Skills tab for Thief - includes thief-specific targets */
 .skills-layout-thief .tab[data-tab="skills"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-thief.webp') !important;
-  background-size: contain, contain !important;
-  background-position: center top, center calc(22px + 0%) !important;
-  background-repeat: no-repeat, no-repeat !important;
-  background-attachment: scroll, scroll !important;
-  background-color: transparent !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-thief.webp');
+  background-size: contain, contain;
+  background-position: center top, center calc(22px + 0%);
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: scroll, scroll;
+  background-color: transparent;
 }
 
 /* Skills tab for Assassin - includes both class bar and assassin-specific targets */
 .skills-layout-assassin .tab[data-tab="skills"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp') !important;
-  background-size: contain, contain !important;
-  background-position: center top, center calc(22px + 0%) !important;
-  background-repeat: no-repeat, no-repeat !important;
-  background-attachment: scroll, scroll !important;
-  background-color: transparent !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp');
+  background-size: contain, contain;
+  background-position: center top, center calc(22px + 0%);
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: scroll, scroll;
+  background-color: transparent;
 }
 
 /* ============================

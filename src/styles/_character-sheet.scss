@@ -883,9 +883,9 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   justify-content: center;
   text-align: center;
   
-  width: 58px;
-  height: 58px;
-  font-size: 60px;
+  width: 72px;
+  height: 72px;
+  font-size: 80px;
   background-color: transparent !important;
 
   margin: 0;
@@ -1056,19 +1056,19 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   /* Base skills positioning - uses default variables */
   .cs-pos-listening { 
     --left: #{$cs-pos-listening-left}; 
-    --top: 300px; 
+    --top: 47px; 
     --width: #{$cs-pos-listening-width}; 
     --height: #{$cs-pos-listening-height}; 
   }
   .cs-pos-find-secret-door { 
     --left: #{$cs-pos-find-secret-door-left}; 
-    --top: 300px; 
+    --top: 47px; 
     --width: #{$cs-pos-find-secret-door-width}; 
     --height: #{$cs-pos-find-secret-door-height}; 
   }
   .cs-pos-open-stuck-doors { 
     --left: #{$cs-pos-open-stuck-doors-left}; 
-    --top: 300px; 
+    --top: 47px; 
     --width: #{$cs-pos-open-stuck-doors-width}; 
     --height: #{$cs-pos-open-stuck-doors-height}; 
   }

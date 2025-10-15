@@ -14,6 +14,67 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.handlers = new Map();
   }
 
+  /**
+   * Helper: Get element with jQuery or vanilla JS fallback
+   * @param {jQuery|null} html - jQuery object or null
+   * @param {string} selector - CSS selector
+   * @returns {jQuery|Element|null} Element or null if not found
+   */
+  getElement(html, selector) {
+    if (html && html.find) {
+      const result = html.find(selector);
+      return result.length > 0 ? result : null;
+    }
+    return document.querySelector(selector);
+  }
+
+  /**
+   * Helper: Get all elements with jQuery or vanilla JS fallback
+   * @param {jQuery|null} html - jQuery object or null
+   * @param {string} selector - CSS selector
+   * @returns {jQuery|NodeList} Elements collection
+   */
+  getElements(html, selector) {
+    return (html && html.find) ? html.find(selector) : document.querySelectorAll(selector);
+  }
+
+  /**
+   * Helper: Get CSS variable value from element
+   * @param {Element} element - DOM element
+   * @param {string} varName - CSS variable name (without --)
+   * @param {*} defaultValue - Default value if variable not found
+   * @returns {string|number|*} Parsed value or default
+   */
+  getCSSVariable(element, varName, defaultValue = null) {
+    try {
+      const cs = window.getComputedStyle(element);
+      const value = cs.getPropertyValue(`--${varName}`).trim();
+      if (!value) return defaultValue;
+      
+      // Try to parse as number if it looks numeric
+      const parsed = parseFloat(value);
+      return !isNaN(parsed) ? parsed : value;
+    } catch (e) {
+      console.error(`CharacterSheet: Failed to read CSS variable --${varName}`, e);
+      return defaultValue;
+    }
+  }
+
+  /**
+   * Helper: Handle tab click with common preventDefault/stop logic
+   * @param {Event} event - Click event
+   * @param {jQuery} html - Sheet HTML
+   */
+  handleTabClick(event, html) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const tabName = $(event.target).closest('a.item').data('tab') || $(event.target).data('tab');
+    if (tabName) {
+      this.activateTab(html, tabName);
+    }
+    return false;
+  }
+
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "character"],
@@ -100,12 +161,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const $target = $(event.target);
       const $tabItem = $target.closest('.sheet-tabs a.item');
       if ($tabItem.length > 0 && $tabItem.closest(html).length > 0) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        const tabName = $tabItem.data('tab');
-
-        this.activateTab(html, tabName);
-        return false;
+        this.handleTabClick(event, html);
       }
     });
 
@@ -120,12 +176,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
       // Create bound handler
       this._handleTabClick = (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        const tabName = $(event.target).data('tab');
-
-        this.activateTab(html, tabName);
-        return false;
+        this.handleTabClick(event, html);
       };
 
       // Bind with capture = true (highest priority)
@@ -158,10 +209,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Method 4: Form delegation as backup
     html.off('click.tabsystem').on('click.tabsystem', '.sheet-tabs a.item', (event) => {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      const tabName = $(event.currentTarget).data('tab');
-      this.activateTab(html, tabName);
+      this.handleTabClick(event, html);
     });
 
     // Ensure tabs sit below the static header by measuring header height and setting .sheet-tabs top
@@ -378,47 +426,35 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Uses data attributes as overrides: data-tab-top / data-tab-left
    */
   applyComputedTabOffsets(html) {
-    const tabLinks = (html && html.find) ? html.find('.sheet-tabs a.item') : document.querySelectorAll('.sheet-tabs a.item');
+    const tabLinks = this.getElements(html, '.sheet-tabs a.item');
     if (!tabLinks || tabLinks.length === 0) return;
 
     // Configuration: base offset and step (pixels)
     // These can be overridden by CSS variables on the .sheet-tabs element:
     // --tab-base-top, --tab-step-top, --tab-base-left, --tab-step-left
-  // Defaults (original design): large negative top offsets used previously
-  let baseTop = -215; // px for first tab (original design)
-  let stepTop = 75;   // px between tabs
-  let baseLeft = 0;   // starting left offset
-  let stepLeft = -24; // left delta per index
+    // Defaults (original design): large negative top offsets used previously
+    let baseTop = -215; // px for first tab (original design)
+    let stepTop = 75;   // px between tabs
+    let baseLeft = 0;   // starting left offset
+    let stepLeft = -24; // left delta per index
 
     // If we have a tabs element, attempt to read CSS variables or data attributes
-    let tabsEl = null;
-    try {
-      tabsEl = (html && html.find) ? html.find('.sheet-tabs')[0] : document.querySelector('.sheet-tabs');
-    } catch (e) {
-      console.error('CharacterSheet: Failed to find tabs element', e);
-      tabsEl = document.querySelector('.sheet-tabs');
-    }
+    const tabsEl = this.getElement(html, '.sheet-tabs');
     if (tabsEl) {
-      try {
-        const cs = window.getComputedStyle(tabsEl);
-        const cssBaseTop = cs.getPropertyValue('--tab-base-top').trim();
-        const cssStepTop = cs.getPropertyValue('--tab-step-top').trim();
-        const cssBaseLeft = cs.getPropertyValue('--tab-base-left').trim();
-        const cssStepLeft = cs.getPropertyValue('--tab-step-left').trim();
-        if (cssBaseTop) baseTop = parseFloat(cssBaseTop);
-        if (cssStepTop) stepTop = parseFloat(cssStepTop);
-        if (cssBaseLeft) baseLeft = parseFloat(cssBaseLeft);
-        if (cssStepLeft) stepLeft = parseFloat(cssStepLeft);
-      } catch (e) {
-        console.error('CharacterSheet: Failed to read CSS variables', e);
-      }
+      const unwrappedTabsEl = tabsEl.jquery ? tabsEl[0] : tabsEl;
+      
+      // Read CSS variables using helper
+      baseTop = this.getCSSVariable(unwrappedTabsEl, 'tab-base-top', baseTop);
+      stepTop = this.getCSSVariable(unwrappedTabsEl, 'tab-step-top', stepTop);
+      baseLeft = this.getCSSVariable(unwrappedTabsEl, 'tab-base-left', baseLeft);
+      stepLeft = this.getCSSVariable(unwrappedTabsEl, 'tab-step-left', stepLeft);
 
-      // Also allow data attributes on the tabs element
+      // Also allow data attributes on the tabs element (data attributes override CSS vars)
       try {
-        const dBaseTop = tabsEl.getAttribute('data-tab-base-top');
-        const dStepTop = tabsEl.getAttribute('data-tab-step-top');
-        const dBaseLeft = tabsEl.getAttribute('data-tab-base-left');
-        const dStepLeft = tabsEl.getAttribute('data-tab-step-left');
+        const dBaseTop = unwrappedTabsEl.getAttribute('data-tab-base-top');
+        const dStepTop = unwrappedTabsEl.getAttribute('data-tab-step-top');
+        const dBaseLeft = unwrappedTabsEl.getAttribute('data-tab-base-left');
+        const dStepLeft = unwrappedTabsEl.getAttribute('data-tab-step-left');
         if (dBaseTop !== null) baseTop = parseFloat(dBaseTop);
         if (dStepTop !== null) stepTop = parseFloat(dStepTop);
         if (dBaseLeft !== null) baseLeft = parseFloat(dBaseLeft);
@@ -455,20 +491,26 @@ export class OspActorSheetCharacter extends ActorSheet {
    * This keeps tab placement correct even if the header height changes.
    */
   setTabsTopToHeader(html) {
-    const root = (html && html.find) ? html[0] : document;
-    const tabsEl = (html && html.find) ? html.find('.sheet-tabs')[0] : document.querySelector('.sheet-tabs');
-    const headerEl = (html && html.find) ? html.find('.static-header')[0] : document.querySelector('.static-header');
-    const sheetBody = (html && html.find) ? html.find('.sheet-body')[0] : document.querySelector('.sheet-body');
+    const tabsEl = this.getElement(html, '.sheet-tabs');
+    const headerEl = this.getElement(html, '.static-header');
+    const sheetBody = this.getElement(html, '.sheet-body');
+    
     if (!tabsEl || !headerEl || !sheetBody) return;
+    
+    // Unwrap jQuery if needed
+    const unwrappedTabs = tabsEl.jquery ? tabsEl[0] : tabsEl;
+    const unwrappedHeader = headerEl.jquery ? headerEl[0] : headerEl;
+    const unwrappedBody = sheetBody.jquery ? sheetBody[0] : sheetBody;
+    
     try {
-      const headerRect = headerEl.getBoundingClientRect();
-      const sheetRect = sheetBody.getBoundingClientRect();
+      const headerRect = unwrappedHeader.getBoundingClientRect();
+      const sheetRect = unwrappedBody.getBoundingClientRect();
       // Compute top relative to the sheet container
-  // Move tabs slightly upward (5px) so they don't sit flush with the header border
-  const topPx = Math.max(0, Math.round(headerRect.bottom - sheetRect.top) - 5);
+      // Move tabs slightly upward (5px) so they don't sit flush with the header border
+      const topPx = Math.max(0, Math.round(headerRect.bottom - sheetRect.top) - 5);
       // Apply as a CSS custom property on .sheet-tabs (CSS will pick up via var(--tabs-top))
       try { 
-        tabsEl.style.setProperty('--tabs-top', `${topPx}px`); 
+        unwrappedTabs.style.setProperty('--tabs-top', `${topPx}px`); 
       } catch(e) {
         console.error('CharacterSheet: Failed to set tabs-top CSS property', e);
       }
@@ -481,16 +523,20 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   autoCalibrateTabOffsets(html) {
     // Find tab anchors
-    const tabAnchors = (html && html.find) ? html.find('.sheet-tabs a.item') : document.querySelectorAll('.sheet-tabs a.item');
-    const tabsEl = (html && html.find) ? html.find('.sheet-tabs')[0] : document.querySelector('.sheet-tabs');
+    const tabAnchors = this.getElements(html, '.sheet-tabs a.item');
+    const tabsEl = this.getElement(html, '.sheet-tabs');
     if (!tabAnchors || tabAnchors.length < 2 || !tabsEl) return; // need at least 2 points to compute step
+
+    const unwrappedTabsEl = tabsEl.jquery ? tabsEl[0] : tabsEl;
 
     // If the tabs element already provides CSS variables or explicit data attributes, don't auto-calibrate
     try {
-      const cs = window.getComputedStyle(tabsEl);
-      const cssBaseTop = cs.getPropertyValue('--tab-base-top').trim();
-      const hasCssVars = !!cssBaseTop;
-      const hasDataAttrs = tabsEl.hasAttribute('data-tab-base-top') || tabsEl.hasAttribute('data-tab-step-top') || tabsEl.hasAttribute('data-tab-base-left') || tabsEl.hasAttribute('data-tab-step-left');
+      const cssBaseTop = this.getCSSVariable(unwrappedTabsEl, 'tab-base-top', null);
+      const hasCssVars = cssBaseTop !== null;
+      const hasDataAttrs = unwrappedTabsEl.hasAttribute('data-tab-base-top') || 
+                          unwrappedTabsEl.hasAttribute('data-tab-step-top') || 
+                          unwrappedTabsEl.hasAttribute('data-tab-base-left') || 
+                          unwrappedTabsEl.hasAttribute('data-tab-step-left');
       if (hasCssVars || hasDataAttrs) {
         return;
       }
@@ -506,7 +552,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
 
     // Measure positions relative to tabsEl
-    const tabRect = tabsEl.getBoundingClientRect();
+    const tabRect = unwrappedTabsEl.getBoundingClientRect();
     const measured = nodes.map(n => {
       const r = n.getBoundingClientRect();
       return { top: r.top - tabRect.top, left: r.left - tabRect.left };
@@ -528,15 +574,15 @@ export class OspActorSheetCharacter extends ActorSheet {
     const stepLeft = count > 0 ? (totalLeftStep / count) : (second.left - first.left);
 
     try {
-      tabsEl.style.setProperty('--tab-base-top', `${Math.round(baseTop)}px`);
-      tabsEl.style.setProperty('--tab-step-top', `${Math.round(stepTop)}px`);
-      tabsEl.style.setProperty('--tab-base-left', `${Math.round(baseLeft)}px`);
-      tabsEl.style.setProperty('--tab-step-left', `${Math.round(stepLeft)}px`);
+      unwrappedTabsEl.style.setProperty('--tab-base-top', `${Math.round(baseTop)}px`);
+      unwrappedTabsEl.style.setProperty('--tab-step-top', `${Math.round(stepTop)}px`);
+      unwrappedTabsEl.style.setProperty('--tab-base-left', `${Math.round(baseLeft)}px`);
+      unwrappedTabsEl.style.setProperty('--tab-step-left', `${Math.round(stepLeft)}px`);
       // Also write data attributes for convenience
-      tabsEl.setAttribute('data-tab-base-top', Math.round(baseTop));
-      tabsEl.setAttribute('data-tab-step-top', Math.round(stepTop));
-      tabsEl.setAttribute('data-tab-base-left', Math.round(baseLeft));
-      tabsEl.setAttribute('data-tab-step-left', Math.round(stepLeft));
+      unwrappedTabsEl.setAttribute('data-tab-base-top', Math.round(baseTop));
+      unwrappedTabsEl.setAttribute('data-tab-step-top', Math.round(stepTop));
+      unwrappedTabsEl.setAttribute('data-tab-base-left', Math.round(baseLeft));
+      unwrappedTabsEl.setAttribute('data-tab-step-left', Math.round(stepLeft));
     } catch (e) {
       console.error('CharacterSheet: Failed to write tab calibration values', e);
     }

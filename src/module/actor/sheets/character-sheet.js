@@ -9,6 +9,68 @@ import { PositionToolHandler } from './handlers/position-tool-handler.js';
 const { ActorSheet } = foundry.appv1.sheets;
 
 export class OspActorSheetCharacter extends ActorSheet {
+  // Skill configuration: defines which skills are available for each class and race
+  static SKILL_CONFIG = {
+    // Base skills that all characters have
+    base: ['listening', 'find-secret-door', 'open-stuck-doors'],
+    
+    // Race-specific skills (only if no qualifying class)
+    races: {
+      dwarf: ['detect-construction', 'detect-room-traps'],
+      gnome: ['detect-construction'],
+      'half-orc': ['hide-dungeons'],
+      hobbit: []
+    },
+    
+    // Class-specific skills (take priority over race)
+    classes: {
+      // Core OSE classes
+      fighter: [],
+      cleric: [],
+      'magic-user': [],
+      
+      // Advanced Fantasy classes with special skills
+      assassin: ['assassination', 'climb-sheer', 'hide-shadows', 'move-silently'],
+      barbarian: ['climb-sheer', 'move-silently', 'hide-undergrowth'],
+      bard: [],
+      'beast master': [],
+      druid: [],
+      knight: [],
+      paladin: [],
+      ranger: [],
+      warden: [],
+      illusionist: [],
+      mage: [],
+      thief: ['climb-sheer', 'hide-shadows', 'move-silently', 'find-traps', 'open-locks', 'pick-pockets'],
+      
+      // Race-as-class options
+      dwarf: ['detect-construction', 'detect-room-traps'],
+      elf: [],
+      gnome: ['detect-construction'],
+      'half-elf': [],
+      'half-orc': ['hide-dungeons'],
+      hobbit: []
+    }
+  };
+
+  // Map skill names to their CSS class selectors
+  static SKILL_SELECTORS = {
+    'listening': '.cs-pos-listening',
+    'find-secret-door': '.cs-pos-find-secret-door',
+    'open-stuck-doors': '.cs-pos-open-stuck-doors',
+    'detect-construction': '.cs-pos-detect-construction',
+    'detect-room-traps': '.cs-pos-detect-room-traps',
+    'assassination': '.cs-pos-assassination',
+    'climb-sheer': '.cs-pos-climb-sheer',
+    'hide-shadows': '.cs-pos-hide-shadows',
+    'move-silently': '.cs-pos-move-silently',
+    'find-traps': '.cs-pos-find-traps',
+    'open-locks': '.cs-pos-open-locks',
+    'pick-pockets': '.cs-pos-pick-pockets',
+    'hide-undergrowth': '.cs-pos-hide-undergrowth',
+    'hide-dungeons': '.cs-pos-hide-dungeons'
+  };
+
   constructor(...args) {
     super(...args);
     this.handlers = new Map();
@@ -535,86 +597,20 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Update skill layout based on character class and race
-   * This function dynamically shows/hides skills and applies appropriate positioning
+   * Get required skills for a character based on class and race
+   * @param {string} characterClass - Character class (lowercase)
+   * @param {string} race - Character race (lowercase)
+   * @returns {Object} { skills: string[], layoutClass: string, skillsTabClass: string }
    */
-  updateSkillLayout(html) {
-    if (!html) html = this.element;
-    
-    const actorData = this.actor.system;
-    const characterClass = actorData.class?.toLowerCase() || '';
-    const race = actorData.race?.toLowerCase() || '';
-    
-    // Define skill requirements for each class/race combination
-    const skillRequirements = {
-      // Base skills that all characters have
-      base: ['listening', 'find-secret-door', 'open-stuck-doors'],
-      
-      // Race-specific skills (only if no qualifying class)
-      races: {
-        dwarf: ['detect-construction', 'detect-room-traps'],
-        gnome: ['detect-construction'],
-        'half-orc': ['hide-dungeons'],
-        hobbit: [] // No additional skills beyond base
-      },
-      
-      // Class-specific skills (take priority over race) - Complete profiles for all classes
-      classes: {
-        // Core OSE classes
-        fighter: [], // Fighters get only base skills
-        cleric: [], // Clerics get only base skills
-        'magic-user': [], // Magic-users get only base skills
-        
-        // Advanced Fantasy classes with special skills
-        assassin: ['assassination', 'climb-sheer', 'hide-shadows', 'move-silently'],
-        barbarian: ['climb-sheer', 'move-silently', 'hide-undergrowth'],
-        bard: [], // Bards get only base skills
-        'beast master': [], // Beast masters get only base skills
-        druid: [], // Druids get only base skills
-        knight: [], // Knights get only base skills
-        paladin: [], // Paladins get only base skills
-        ranger: [], // Rangers get only base skills
-        warden: [], // Wardens get only base skills
-        illusionist: [], // Illusionists get only base skills
-        mage: [], // Mages get only base skills
-        thief: ['climb-sheer', 'hide-shadows', 'move-silently', 'find-traps', 'open-locks', 'pick-pockets'],
-        
-        // Race-as-class options (use racial skills when appropriate)
-        dwarf: ['detect-construction', 'detect-room-traps'], // Dwarf class gets racial skills
-        elf: [], // Elf class gets only base skills
-        gnome: ['detect-construction'], // Gnome class gets racial skills
-        'half-elf': [], // Half-elf class gets only base skills
-        'half-orc': ['hide-dungeons'], // Half-orc class gets racial skills
-        hobbit: [] // Hobbit class gets only base skills
-      }
-    };
-    
-    // Map skill names to their CSS class selectors
-    const skillSelectors = {
-      'listening': '.cs-pos-listening',
-      'find-secret-door': '.cs-pos-find-secret-door', 
-      'open-stuck-doors': '.cs-pos-open-stuck-doors',
-      'detect-construction': '.cs-pos-detect-construction',
-      'detect-room-traps': '.cs-pos-detect-room-traps',
-      'assassination': '.cs-pos-assassination',
-      'climb-sheer': '.cs-pos-climb-sheer',
-      'hide-shadows': '.cs-pos-hide-shadows',
-      'move-silently': '.cs-pos-move-silently',
-      'find-traps': '.cs-pos-find-traps',
-      'open-locks': '.cs-pos-open-locks',
-      'pick-pockets': '.cs-pos-pick-pockets',
-      'hide-undergrowth': '.cs-pos-hide-undergrowth',
-      'hide-dungeons': '.cs-pos-hide-dungeons'
-    };
-    
-    // Determine which skills should be shown
-    let requiredSkills = [...skillRequirements.base];
+  getRequiredSkills(characterClass, race) {
+    const config = OspActorSheetCharacter.SKILL_CONFIG;
+    let requiredSkills = [...config.base];
     let layoutClass = 'skill-layout-default';
     let skillsTabClass = 'skills-layout-default';
     
     // Check for class-specific skills first (priority)
-    if (characterClass && skillRequirements.classes[characterClass]) {
-      requiredSkills = [...requiredSkills, ...skillRequirements.classes[characterClass]];
+    if (characterClass && config.classes[characterClass]) {
+      requiredSkills = [...requiredSkills, ...config.classes[characterClass]];
       layoutClass = `skill-layout-${characterClass}`;
       
       // Determine Skills tab class - classes that need the skill targets bar
@@ -623,22 +619,31 @@ export class OspActorSheetCharacter extends ActorSheet {
         skillsTabClass = `skills-layout-${characterClass}`;
       }
       
-      // Add race-specific skills if applicable (simplified logic)
-      if (race && skillRequirements.races[race]) {
-        requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
+      // Add race-specific skills if applicable
+      if (race && config.races[race]) {
+        requiredSkills = [...requiredSkills, ...config.races[race]];
       }
-    } else if (race && skillRequirements.races[race]) {
+    } else if (race && config.races[race]) {
       // Use race-only skills if no qualifying class
-      // Exception: Half-Orcs only get race skills when paired with compatible classes (Assassin/Barbarian)
+      // Exception: Half-Orcs only get race skills when paired with compatible classes
       if (race !== 'half-orc') {
-        requiredSkills = [...requiredSkills, ...skillRequirements.races[race]];
+        requiredSkills = [...requiredSkills, ...config.races[race]];
       }
-      // Half-Orcs without compatible classes get generic layout
     }
     
-    // Show/hide skill fields based on requirements
-    Object.keys(skillSelectors).forEach(skill => {
-      const skillElement = html.find(skillSelectors[skill]);
+    return { skills: requiredSkills, layoutClass, skillsTabClass };
+  }
+
+  /**
+   * Apply skill visibility based on required skills
+   * @param {jQuery} html - Sheet HTML
+   * @param {string[]} requiredSkills - Array of required skill names
+   */
+  applySkillVisibility(html, requiredSkills) {
+    const selectors = OspActorSheetCharacter.SKILL_SELECTORS;
+    
+    Object.keys(selectors).forEach(skill => {
+      const skillElement = html.find(selectors[skill]);
       if (skillElement.length > 0) {
         if (requiredSkills.includes(skill)) {
           skillElement.show();
@@ -652,8 +657,59 @@ export class OspActorSheetCharacter extends ActorSheet {
         }
       }
     });
+  }
+
+  /**
+   * Get racial skill layout class based on race and class combination
+   * @param {string} race - Character race (lowercase)
+   * @param {string} characterClass - Character class (lowercase)
+   * @returns {string} CSS class name for racial skill layout
+   */
+  getRacialSkillLayoutClass(race, characterClass) {
+    // Dwarf race but not dwarf class - gets dwarf racial skills
+    if (race === 'dwarf' && characterClass !== 'dwarf') {
+      return 'racial-skill-layout-dwarf';
+    }
     
-    // Apply the appropriate skill layout CSS class
+    // Gnome race but not gnome class - gets gnome racial skills
+    if (race === 'gnome' && characterClass !== 'gnome') {
+      return 'racial-skill-layout-gnome';
+    }
+    
+    // All other scenarios use default (including race-as-class combinations)
+    return 'racial-skill-layout-default';
+  }
+
+  /**
+   * Trigger style recalculation on an element
+   * @param {jQuery} element - Element to trigger reflow on
+   */
+  triggerReflow(element) {
+    if (element && element.length > 0) {
+      element[0].style.display = 'none';
+      element[0].offsetHeight; // trigger reflow
+      element[0].style.display = '';
+    }
+  }
+
+  /**
+   * Update skill layout based on character class and race
+   * This function dynamically shows/hides skills and applies appropriate positioning
+   */
+  updateSkillLayout(html) {
+    if (!html) html = this.element;
+    
+    const actorData = this.actor.system;
+    const characterClass = actorData.class?.toLowerCase() || '';
+    const race = actorData.race?.toLowerCase() || '';
+    
+    // Get required skills and layout classes
+    const { skills, layoutClass, skillsTabClass } = this.getRequiredSkills(characterClass, race);
+    
+    // Apply skill visibility
+    this.applySkillVisibility(html, skills);
+    
+    // Apply layout CSS classes
     const formElement = this.element.find('form');
     if (formElement.length > 0) {
       // Remove all skill-layout-*, racial-skill-layout-*, and skills-layout-* classes
@@ -664,42 +720,13 @@ export class OspActorSheetCharacter extends ActorSheet {
         !cls.startsWith('skills-layout-')
       );
       
-      // Add the class-based skill layout classes
-      formElement[0].className = [...filteredClasses, layoutClass, skillsTabClass].join(' ');
-      
-      // Apply racial skill layout classes (3-scenario system)
-      let racialSkillLayoutClass = 'racial-skill-layout-default';
-      
-      // Determine racial skill scenario
-      if (race === 'dwarf' && characterClass !== 'dwarf') {
-        // Dwarf race but not dwarf class - gets dwarf racial skills
-        racialSkillLayoutClass = 'racial-skill-layout-dwarf';
-      } else if (race === 'gnome' && characterClass !== 'gnome') {
-        // Gnome race but not gnome class - gets gnome racial skills
-        racialSkillLayoutClass = 'racial-skill-layout-gnome';
-      } else {
-        // All other scenarios use default (including race-as-class combinations)
-        racialSkillLayoutClass = 'racial-skill-layout-default';
-      }
-      
-      // Add the racial skill layout class
-      formElement[0].className = [...formElement[0].className.split(' '), racialSkillLayoutClass].join(' ');
+      // Add the new layout classes
+      const racialLayoutClass = this.getRacialSkillLayoutClass(race, characterClass);
+      formElement[0].className = [...filteredClasses, layoutClass, skillsTabClass, racialLayoutClass].join(' ');
       
       // Force style recalculation to ensure background images update
-      const combatTab = html.find('.tab[data-tab="combat"]');
-      const skillsTab = html.find('.tab[data-tab="skills"]');
-      
-      if (combatTab.length > 0) {
-        combatTab[0].style.display = 'none';
-        combatTab[0].offsetHeight; // trigger reflow
-        combatTab[0].style.display = '';
-      }
-      
-      if (skillsTab.length > 0) {
-        skillsTab[0].style.display = 'none';
-        skillsTab[0].offsetHeight; // trigger reflow
-        skillsTab[0].style.display = '';
-      }
+      this.triggerReflow(html.find('.tab[data-tab="combat"]'));
+      this.triggerReflow(html.find('.tab[data-tab="skills"]'));
     }
   }
 }

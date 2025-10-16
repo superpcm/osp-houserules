@@ -1602,7 +1602,7 @@ input[type="number"] {
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-color: transparent;
-  height: 367px;
+  height: 359px;
 }
 
 /* ============================
@@ -1625,21 +1625,78 @@ input[type="number"] {
    }
    ============================ */
 
-/* ============================
-   CLASS SKILL POSITIONING FOR SKILLS TAB
-   ============================ */
-
-/* Move all class skill target fields to Skills tab when active */
-.tab[data-tab="skills"] {
-  /* Class-specific skill positioning - moved from Combat tab to Skills tab */
-  .cs-pos-assassination { --left: 50px; --top: 50px; }
-  .cs-pos-climb-sheer { --left: 150px; --top: 50px; }
-  .cs-pos-hide-shadows { --left: 250px; --top: 50px; }
-  .cs-pos-move-silently { --left: 350px; --top: 50px; }
-  .cs-pos-find-traps { --left: 450px; --top: 50px; }
-  .cs-pos-open-locks { --left: 100px; --top: 150px; }
-  .cs-pos-pick-pockets { --left: 200px; --top: 150px; }
-  .cs-pos-hide-undergrowth { --left: 300px; --top: 150px; }
+/* Half-Orc class-specific skill background - needs to combine with racial backgrounds */
+/* Half-Orc race + Half-Orc class (race-as-class scenario) */
+.racial-skill-layout-default.skill-layout-half-orc .tab[data-tab="skills"] {
+  background-image: 
+    url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-halforc.webp'),
+    url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-default.webp'),
+    url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp');
+  background-size: contain, contain, contain;
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-attachment: scroll, scroll, scroll;
 }
 
-/* Class skill fields are now physically located in the Skills tab */
+/* Dwarf race + Half-Orc class */
+.racial-skill-layout-dwarf.skill-layout-half-orc .tab[data-tab="skills"] {
+  background-image: 
+    url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-halforc.webp'),
+    url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-dwarf.webp'),
+    url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp');
+  background-size: contain, contain, contain;
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-attachment: scroll, scroll, scroll;
+}
+
+/* Gnome race + Half-Orc class */
+.racial-skill-layout-gnome.skill-layout-half-orc .tab[data-tab="skills"] {
+  background-image: 
+    url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-halforc.webp'),
+    url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-gnome.webp'),
+    url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp');
+  background-size: contain, contain, contain;
+  background-position: center top, center top, center top;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-attachment: scroll, scroll, scroll;
+}
+
+/* ============================
+   CLASS SKILL POSITIONING FOR SKILLS TAB
+   Each class has unique positioning for its skills, even if skills are shared between classes.
+   ============================ */
+
+/* Thief class skill positioning */
+.skill-layout-thief .tab[data-tab="skills"] {
+  .cs-pos-climb-sheer { --left: 100px; --top: 50px; }
+  .cs-pos-hide-shadows { --left: 200px; --top: 50px; }
+  .cs-pos-move-silently { --left: 300px; --top: 50px; }
+  .cs-pos-find-traps { --left: 400px; --top: 50px; }
+  .cs-pos-open-locks { --left: 500px; --top: 50px; }
+  .cs-pos-pick-pockets { --left: 150px; --top: 150px; }
+}
+
+/* Assassin class skill positioning */
+.skill-layout-assassin .tab[data-tab="skills"] {
+  .cs-pos-assassination { --left: 50px; --top: 60px; }
+  .cs-pos-climb-sheer { --left: 150px; --top: 60px; }
+  .cs-pos-hide-shadows { --left: 250px; --top: 60px; }
+  .cs-pos-move-silently { --left: 350px; --top: 60px; }
+}
+
+/* Half-Orc class skill positioning */
+.skill-layout-half-orc .tab[data-tab="skills"] {
+  .cs-pos-hide-shadows { --left: 156px; --top: 218px; }
+  .cs-pos-move-silently { --left: 366px; --top: 218px; }
+  .cs-pos-pick-pockets { --left: 576px; --top: 218px; }
+}
+
+/* Barbarian class skill positioning */
+.skill-layout-barbarian .tab[data-tab="skills"] {
+  .cs-pos-climb-sheer { --left: 110px; --top: 80px; }
+  .cs-pos-move-silently { --left: 210px; --top: 80px; }
+  .cs-pos-hide-undergrowth { --left: 310px; --top: 80px; }
+}
+
+/* Class skill fields are now physically located in the Skills tab with class-specific positioning */

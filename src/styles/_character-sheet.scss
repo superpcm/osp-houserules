@@ -94,83 +94,83 @@ $cs-pos-open-stuck-doors-height: 72px !default;
 .cs-pos-open-stuck-doors { @include position-field($cs-pos-open-stuck-doors-left, $cs-pos-open-stuck-doors-top, $cs-pos-open-stuck-doors-width, $cs-pos-open-stuck-doors-height); }
 $cs-pos-detect-construction-left: 190px !default;
 $cs-pos-detect-construction-top: 294px !default;
-$cs-pos-detect-construction-width: 58px !default;
-$cs-pos-detect-construction-height: 58px !default;
+$cs-pos-detect-construction-width: 72px !default;
+$cs-pos-detect-construction-height: 72px !default;
 .cs-pos-detect-construction { @include position-field($cs-pos-detect-construction-left, $cs-pos-detect-construction-top, $cs-pos-detect-construction-width, $cs-pos-detect-construction-height); }
 $cs-pos-detect-room-traps-left: 256px !default;
 $cs-pos-detect-room-traps-top: 294px !default;
-$cs-pos-detect-room-traps-width: 58px !default;
-$cs-pos-detect-room-traps-height: 58px !default;
+$cs-pos-detect-room-traps-width: 72px !default;
+$cs-pos-detect-room-traps-height: 72px !default;
 .cs-pos-detect-room-traps { @include position-field($cs-pos-detect-room-traps-left, $cs-pos-detect-room-traps-top, $cs-pos-detect-room-traps-width, $cs-pos-detect-room-traps-height); }
 $cs-pos-barbarian-climb-left: 322px !default;
 $cs-pos-barbarian-climb-top: 294px !default;
-$cs-pos-barbarian-climb-width: 58px !default;
-$cs-pos-barbarian-climb-height: 58px !default;
+$cs-pos-barbarian-climb-width: 72px !default;
+$cs-pos-barbarian-climb-height: 72px !default;
 .cs-pos-barbarian-climb { @include position-field($cs-pos-barbarian-climb-left, $cs-pos-barbarian-climb-top, $cs-pos-barbarian-climb-width, $cs-pos-barbarian-climb-height); }
 $cs-pos-barbarian-hide-left: 388px !default;
 $cs-pos-barbarian-hide-top: 294px !default;
-$cs-pos-barbarian-hide-width: 58px !default;
-$cs-pos-barbarian-hide-height: 58px !default;
+$cs-pos-barbarian-hide-width: 72px !default;
+$cs-pos-barbarian-hide-height: 72px !default;
 .cs-pos-barbarian-hide { @include position-field($cs-pos-barbarian-hide-left, $cs-pos-barbarian-hide-top, $cs-pos-barbarian-hide-width, $cs-pos-barbarian-hide-height); }
 $cs-pos-barbarian-move-left: 454px !default;
 $cs-pos-barbarian-move-top: 294px !default;
-$cs-pos-barbarian-move-width: 58px !default;
-$cs-pos-barbarian-move-height: 58px !default;
+$cs-pos-barbarian-move-width: 72px !default;
+$cs-pos-barbarian-move-height: 72px !default;
 .cs-pos-barbarian-move { @include position-field($cs-pos-barbarian-move-left, $cs-pos-barbarian-move-top, $cs-pos-barbarian-move-width, $cs-pos-barbarian-move-height); }
 
 // Additional skill positioning variables for dynamic skills
 $cs-pos-assassination-left: 100px !default;
 $cs-pos-assassination-top: 294px !default;
-$cs-pos-assassination-width: 58px !default;
-$cs-pos-assassination-height: 58px !default;
+$cs-pos-assassination-width: 72px !default;
+$cs-pos-assassination-height: 72px !default;
 .cs-pos-assassination { @include position-field($cs-pos-assassination-left, $cs-pos-assassination-top, $cs-pos-assassination-width, $cs-pos-assassination-height); }
 
 $cs-pos-climb-sheer-left: 200px !default;
 $cs-pos-climb-sheer-top: 294px !default;
-$cs-pos-climb-sheer-width: 58px !default;
-$cs-pos-climb-sheer-height: 58px !default;
+$cs-pos-climb-sheer-width: 72px !default;
+$cs-pos-climb-sheer-height: 72px !default;
 .cs-pos-climb-sheer { @include position-field($cs-pos-climb-sheer-left, $cs-pos-climb-sheer-top, $cs-pos-climb-sheer-width, $cs-pos-climb-sheer-height); }
 
 $cs-pos-hide-shadows-left: 300px !default;
 $cs-pos-hide-shadows-top: 294px !default;
-$cs-pos-hide-shadows-width: 58px !default;
-$cs-pos-hide-shadows-height: 58px !default;
+$cs-pos-hide-shadows-width: 72px !default;
+$cs-pos-hide-shadows-height: 72px !default;
 .cs-pos-hide-shadows { @include position-field($cs-pos-hide-shadows-left, $cs-pos-hide-shadows-top, $cs-pos-hide-shadows-width, $cs-pos-hide-shadows-height); }
 
 $cs-pos-move-silently-left: 400px !default;
 $cs-pos-move-silently-top: 294px !default;
-$cs-pos-move-silently-width: 58px !default;
-$cs-pos-move-silently-height: 58px !default;
+$cs-pos-move-silently-width: 72px !default;
+$cs-pos-move-silently-height: 72px !default;
 .cs-pos-move-silently { @include position-field($cs-pos-move-silently-left, $cs-pos-move-silently-top, $cs-pos-move-silently-width, $cs-pos-move-silently-height); }
 
 $cs-pos-find-traps-left: 500px !default;
 $cs-pos-find-traps-top: 294px !default;
-$cs-pos-find-traps-width: 58px !default;
-$cs-pos-find-traps-height: 58px !default;
+$cs-pos-find-traps-width: 72px !default;
+$cs-pos-find-traps-height: 72px !default;
 .cs-pos-find-traps { @include position-field($cs-pos-find-traps-left, $cs-pos-find-traps-top, $cs-pos-find-traps-width, $cs-pos-find-traps-height); }
 
 $cs-pos-open-locks-left: 150px !default;
 $cs-pos-open-locks-top: 294px !default;
-$cs-pos-open-locks-width: 58px !default;
-$cs-pos-open-locks-height: 58px !default;
+$cs-pos-open-locks-width: 72px !default;
+$cs-pos-open-locks-height: 72px !default;
 .cs-pos-open-locks { @include position-field($cs-pos-open-locks-left, $cs-pos-open-locks-top, $cs-pos-open-locks-width, $cs-pos-open-locks-height); }
 
 $cs-pos-pick-pockets-left: 250px !default;
 $cs-pos-pick-pockets-top: 294px !default;
-$cs-pos-pick-pockets-width: 58px !default;
-$cs-pos-pick-pockets-height: 58px !default;
+$cs-pos-pick-pockets-width: 72px !default;
+$cs-pos-pick-pockets-height: 72px !default;
 .cs-pos-pick-pockets { @include position-field($cs-pos-pick-pockets-left, $cs-pos-pick-pockets-top, $cs-pos-pick-pockets-width, $cs-pos-pick-pockets-height); }
 
 $cs-pos-hide-undergrowth-left: 350px !default;
 $cs-pos-hide-undergrowth-top: 294px !default;
-$cs-pos-hide-undergrowth-width: 58px !default;
-$cs-pos-hide-undergrowth-height: 58px !default;
+$cs-pos-hide-undergrowth-width: 72px !default;
+$cs-pos-hide-undergrowth-height: 72px !default;
 .cs-pos-hide-undergrowth { @include position-field($cs-pos-hide-undergrowth-left, $cs-pos-hide-undergrowth-top, $cs-pos-hide-undergrowth-width, $cs-pos-hide-undergrowth-height); }
 
 $cs-pos-hide-dungeons-left: 450px !default;
 $cs-pos-hide-dungeons-top: 294px !default;
-$cs-pos-hide-dungeons-width: 58px !default;
-$cs-pos-hide-dungeons-height: 58px !default;
+$cs-pos-hide-dungeons-width: 72px !default;
+$cs-pos-hide-dungeons-height: 72px !default;
 .cs-pos-hide-dungeons { @include position-field($cs-pos-hide-dungeons-left, $cs-pos-hide-dungeons-top, $cs-pos-hide-dungeons-width, $cs-pos-hide-dungeons-height); }
 
 /* ================================================================
@@ -801,7 +801,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   
   /* Force horizontal centering - remove browser defaults */
   text-indent: 0;
-  padding-left: 5px;
+  padding-left: 4px;
   padding-right: 0;
   box-sizing: border-box;
   
@@ -982,13 +982,16 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 }
 
 /* Shared background mixin - eliminates repetition */
+/* Layers race-specific image OVER the base skill-targets-background.webp */
 @mixin racial-skill-background($image-name) {
   .tab[data-tab="skills"] {
-    background-image: url('/systems/osp-houserules/assets/character-sheet/#{$image-name}.webp');
-    background-size: contain;
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-attachment: scroll;
+    background-image: 
+      url('/systems/osp-houserules/assets/character-sheet/#{$image-name}.webp'),
+      url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp');
+    background-size: contain, contain;
+    background-position: center top, center top;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: scroll, scroll;
   }
 }
 
@@ -1022,29 +1025,29 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 .racial-skill-layout-dwarf {
   /* Base skills with dwarf-specific horizontal positions */
   .cs-pos-listening { 
-    @include racial-skill-base(268px);
+    @include racial-skill-base(363px);
     --width: #{$cs-pos-listening-width}; 
     --height: #{$cs-pos-listening-height}; 
   }
   .cs-pos-find-secret-door { 
-    @include racial-skill-base(143px);
+    @include racial-skill-base(222px);
     --width: #{$cs-pos-find-secret-door-width}; 
     --height: #{$cs-pos-find-secret-door-height}; 
   }
   .cs-pos-open-stuck-doors { 
-    @include racial-skill-base(19px);
+    @include racial-skill-base(82px);
     --width: #{$cs-pos-open-stuck-doors-width}; 
     --height: #{$cs-pos-open-stuck-doors-height}; 
   }
   
   /* Dwarf-only racial skills */
   .cs-pos-detect-construction { 
-    @include racial-skill-base(392px);
+    @include racial-skill-base(504px);
     --width: #{$cs-pos-detect-construction-width}; 
     --height: #{$cs-pos-detect-construction-height}; 
   }
   .cs-pos-detect-room-traps { 
-    @include racial-skill-base(516px);
+    @include racial-skill-base(644px);
     --width: #{$cs-pos-detect-room-traps-width}; 
     --height: #{$cs-pos-detect-room-traps-height}; 
   }
@@ -1058,24 +1061,24 @@ $racial-skill-top: 47px !default;  /* Master Y position for all racial skills */
 .racial-skill-layout-gnome {
   /* Base skills with gnome-specific horizontal positions */
   .cs-pos-listening { 
-    @include racial-skill-base(342px);
+    @include racial-skill-base(434px);
     --width: #{$cs-pos-listening-width}; 
     --height: #{$cs-pos-listening-height}; 
   }
   .cs-pos-find-secret-door { 
-    @include racial-skill-base(193px);
+    @include racial-skill-base(294px);
     --width: #{$cs-pos-find-secret-door-width}; 
     --height: #{$cs-pos-find-secret-door-height}; 
   }
   .cs-pos-open-stuck-doors { 
-    @include racial-skill-base(45px);
+    @include racial-skill-base(155px);
     --width: #{$cs-pos-open-stuck-doors-width}; 
     --height: #{$cs-pos-open-stuck-doors-height}; 
   }
   
   /* Gnome-only racial skill */
   .cs-pos-detect-construction { 
-    @include racial-skill-base(491px);
+    @include racial-skill-base(574px);
     --width: #{$cs-pos-detect-construction-width}; 
     --height: #{$cs-pos-detect-construction-height}; 
   }
@@ -1590,57 +1593,37 @@ input[type="number"] {
    ============================ */
 
 /* Skills tab background - Default layout (no special background) */
+/* Base skills tab - always has the background layer */
 .tab[data-tab="skills"] {
   position: relative;
-  background-color: transparent;
-  height: 367px;
-}
-
-/* Skills tab with class skill bar - For most classes */
-.skills-layout-gnome .tab[data-tab="skills"],
-.skills-layout-half-orc .tab[data-tab="skills"],
-.skills-layout-hobbit .tab[data-tab="skills"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp');
+  background-image: url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp');
   background-size: contain;
   background-position: center top;
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-color: transparent;
+  height: 367px;
 }
 
-/* Skills tab for Barbarian - includes class bar and barbarian racial targets */
-.skills-layout-barbarian .tab[data-tab="skills"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/racial-skill-targets-barbarian.webp');
-  background-size: contain, contain;
-  /* Second image offset by 22px from top to position below the class bar */
-  /* The calc(22px + 0%) syntax ensures CSS accepts it as a valid background-position */
-  background-position: center top, center calc(22px + 0%);
-  background-repeat: no-repeat, no-repeat;
-  background-attachment: scroll, scroll;
-  background-color: transparent;
-}
-
-/* Skills tab for Thief - includes thief-specific targets */
-.skills-layout-thief .tab[data-tab="skills"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-thief.webp');
-  background-size: contain, contain;
-  /* Second image offset by 22px from top to position below the class bar */
-  background-position: center top, center calc(22px + 0%);
-  background-repeat: no-repeat, no-repeat;
-  background-attachment: scroll, scroll;
-  background-color: transparent;
-}
-
-/* Skills tab for Assassin - includes both class bar and assassin-specific targets */
-.skills-layout-assassin .tab[data-tab="skills"] {
-  background-image: url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-bar.webp'), url('/systems/osp-houserules/assets/character-sheet/skill-targets-assassin.webp');
-  background-size: contain, contain;
-  /* Second image offset by 22px from top to position below the class bar */
-  background-position: center top, center calc(22px + 0%);
-  background-repeat: no-repeat, no-repeat;
-  background-attachment: scroll, scroll;
-  background-color: transparent;
-}
+/* ============================
+   RACE & CLASS-SPECIFIC SKILL BACKGROUNDS
+   Layer 2 & 3: Race and Class overlays
+   
+   To add a race or class-specific background layer:
+   1. Add the appropriate selector (e.g., .skills-layout-thief)
+   2. Set background-image with base + overlay(s)
+   3. Set background-size, background-position, background-repeat
+   
+   Example for Thief:
+   .skills-layout-thief .tab[data-tab="skills"] {
+     background-image: 
+       url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp'),
+       url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-thief.webp');
+     background-size: contain, contain;
+     background-position: center top, center top;
+     background-repeat: no-repeat, no-repeat;
+   }
+   ============================ */
 
 /* ============================
    CLASS SKILL POSITIONING FOR SKILLS TAB

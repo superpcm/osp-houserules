@@ -1,23 +1,8 @@
 // Central z-index variables (Sass module)
-// Scoped to the character sheet form to keep variables local but available to template styles
+// Centralized z-index variable definitions
+// Scoped to the character sheet form so they apply where needed while
+// remaining available for var() fallbacks when used in templates.
 
-form.osp.sheet.actor.character {
-  --z-sheet: 10;
-  --z-tabs: 200;
-  --z-tab-active: 250;
-  --z-tab-hover: 225;
-  --z-portrait: 15;
-  --z-level: 8;
-  --z-labels: 15;
-  --z-lang-row: 101;
-  --z-overlay: 1000;
-  --z-top: 10000;
-}
-/*
- * Centralized z-index variable definitions
- * Scoped to the character sheet form so they apply where needed while
- * remaining available for var() fallbacks when used in templates.
- */
 form.osp.sheet.actor.character {
   --z-sheet: 10;
   --z-tabs: 200;

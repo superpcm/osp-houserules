@@ -269,9 +269,6 @@ form.osp.sheet.actor.character,
 .window-content .osp.sheet.actor.character,
 .window-content .window-content form.osp.sheet.actor.character,
 .osp .window-content {
-  /*background: url('/systems/osp-houserules/assets/backgrounds/parchment1.webp') no-repeat center center !important;
-  background-size: 100% !important;
-  background-attachment: scroll !important;*/
   background-color: $color-parchment;
 }
 
@@ -875,7 +872,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   position: relative;
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp') !important;
   background-size: contain, contain !important;
-  /* background-position: center top, left 282.75px !important; */
   background-repeat: no-repeat, no-repeat !important;
   background-attachment: scroll, scroll !important;
   background-color: transparent !important;

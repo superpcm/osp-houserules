@@ -24,7 +24,8 @@ $color-xp-progress: rgba(44, 24, 16, 0.2) !default;  /* XP progress bar overlay 
 $debug-form-fields: false; // Change to true to enable debug mode
 
 /* Import debug tools (position adjustment tool, form field debugging) */
-@import 'character-sheet-debug';
+/* TEMPORARILY DISABLED FOR TESTING */
+/*@import 'character-sheet-debug';*/
 
 /* ========================================
    REUSABLE MIXINS

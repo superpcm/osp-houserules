@@ -4,9 +4,10 @@ import { calculateXPModifier, getNextLevelXP, getXPTable } from "../../../../con
  * XPProgressHandler - Manages XP progress bar functionality
  */
 export class XPProgressHandler {
-  constructor(html, actor) {
+  constructor(html, actor, sheet) {
     this.html = html;
     this.actor = actor;
+    this.sheet = sheet; // Reference to parent sheet
     this.xpDisplay = null;
     this.xpAwardBtn = null;
     this.nextLevelDisplay = null;
@@ -132,11 +133,24 @@ export class XPProgressHandler {
     // Listen for actor updates (since level is now managed through dialog)
     if (this.actor) {
       this.actor.on?.('update', (actor, updateData) => {
-
+        // If parent sheet is ignoring race changes, skip this update
+        if (this.sheet && this.sheet._ignoringRaceChange) {
+          return;
+        }
+        
+        // Only update progress bar if XP, level, or class changed
+        // Race changes don't affect XP requirements, so we can skip them
+        const xpChanged = updateData.system?.xp !== undefined;
+        const levelChanged = updateData.system?.level !== undefined;
+        const classChanged = updateData.system?.class !== undefined;
+        
+        if (!xpChanged && !levelChanged && !classChanged) {
+          return; // Skip update for other changes (like race)
+        }
 
         // If XP was updated, immediately update the display to prevent flash
         let skipXPUpdate = false;
-        if (updateData.system?.xp !== undefined && this.xpDisplay.length) {
+        if (xpChanged && this.xpDisplay.length) {
           this.xpDisplay.val(updateData.system.xp);
           skipXPUpdate = true; // Don't let updateProgressBar overwrite our manual update
         }

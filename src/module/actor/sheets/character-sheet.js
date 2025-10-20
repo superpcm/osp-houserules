@@ -48,7 +48,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       elf: [],
       gnome: ['detect-construction'],
       'half-elf': [],
-      'half-orc': ['hide-dungeons'],
+      'half-orc': ['hide-shadows', 'move-silently', 'pick-pockets'],
       hobbit: []
     }
   };
@@ -212,8 +212,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.sheet-tabs').addClass('cs-tabs');
     tabLinks.addClass('cs-tab-item');
 
-    // Set initial active tab
-    this.activateTab(html, 'combat');
+    // Restore previously active tab, or default to 'combat'
+    const activeTab = this._activeTab || 'combat';
+    this.activateTab(html, activeTab);
 
     // Simple event delegation - single handler on the tab container
     html.off('click.tabsystem').on('click.tabsystem', '.sheet-tabs a.item', (event) => {
@@ -275,6 +276,41 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     activeLink.addClass('active');
     activeSection.addClass('active').show();
+    
+    // Store the active tab so it persists across re-renders
+    this._activeTab = tabName;
+  }
+
+  /**
+   * Override form submission to prevent re-render for race/class changes
+   * Updates skill layout dynamically instead
+   */
+  async _onSubmit(event, options = {}) {
+    // Check if this is a race or class change
+    const target = event.target;
+    const isRaceChange = target?.name === 'system.race';
+    const isClassChange = target?.name === 'system.class';
+    
+    // For race changes, tell XP handler to ignore updates
+    if (isRaceChange) {
+      this._ignoringRaceChange = true;
+    }
+    
+    // Call parent to handle the actual data update
+    await super._onSubmit(event, { ...options, preventRender: (isRaceChange || isClassChange) });
+    
+    // Clear the flag
+    if (isRaceChange) {
+      setTimeout(() => {
+        this._ignoringRaceChange = false;
+      }, 100);
+    }
+    
+    // If race or class changed, update skill layout without full re-render
+    if (isRaceChange || isClassChange) {
+      const html = this.element;
+      this.updateSkillLayout(html);
+    }
   }
 
   /**
@@ -314,7 +350,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Initialize handlers
     handlerConfigs.forEach(({ name, Handler }) => {
       try {
-        const handler = new Handler(html, this.actor);
+        const handler = new Handler(html, this.actor, this);
         handler.initialize();
         this.handlers.set(name, handler);
       } catch (error) {

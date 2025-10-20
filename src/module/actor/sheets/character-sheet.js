@@ -19,7 +19,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     races: {
       dwarf: ['detect-construction', 'detect-room-traps'],
       gnome: ['detect-construction'],
-      'half-orc': ['hide-dungeons'],
+      'half-orc': [],
       hobbit: []
     },
     

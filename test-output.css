@@ -1,0 +1,2006 @@
+/* Character sheet specific styles extracted from templates/actors/character-sheet.html
+   Migrate presentation out of the template and into this partial. */
+/* ================================================================
+   COLOR VARIABLES
+   ================================================================ */
+/* Brand colors used throughout the character sheet */
+/* Main background color */
+/* Placeholder text for input fields */
+/* XP progress bar overlay */
+/* ================================================================
+   DEBUG TOOLS
+   ================================================================ */
+/* Form Field Debug - Master Switch */
+/* Set to true to enable red dashed borders on all form fields */
+/* Import debug tools (position adjustment tool, form field debugging) */
+/* ================================================================
+   CHARACTER SHEET DEBUG TOOLS
+   ================================================================
+
+   This file contains all debug-related styling for the character sheet.
+   Includes:
+   - Form field visual debugging (red borders)
+   - Position adjustment tool interface
+
+   To enable form field debugging, set $debug-form-fields to true
+   in _character-sheet.scss
+
+   ================================================================ */
+/* Form Field Debug - Master Switch */
+/* This variable can be configured in _character-sheet.scss */
+/* Form Field Debug - Controlled by $debug-form-fields variable */
+/* ========================================
+   REUSABLE MIXINS
+   ======================================== */
+/* Flexbox centering mixin - DRY pattern for 15+ field classes */
+/* Position field mixin - DRY pattern for positioning variables */
+/* Centralized position variables - change these to tweak sheet layout globally */
+/* Header fields - position and dimensions */
+.cs-pos-find-secret-door {
+  --left: 180px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-open-stuck-doors {
+  --left: 58px;
+  --top: 67px;
+  --width: 70px;
+  --height: 70px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-detect-construction {
+  --left: 190px;
+  --top: 294px;
+  --width: 70px;
+  --height: 70px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-detect-room-traps {
+  --left: 256px;
+  --top: 294px;
+  --width: 70px;
+  --height: 70px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-barbarian-climb {
+  --left: 322px;
+  --top: 294px;
+  --width: 70px;
+  --height: 70px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-barbarian-hide {
+  --left: 388px;
+  --top: 294px;
+  --width: 70px;
+  --height: 70px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-barbarian-move {
+  --left: 454px;
+  --top: 294px;
+  --width: 70px;
+  --height: 70px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-assassination {
+  --left: 100px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-climb-sheer {
+  --left: 200px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-hide-shadows {
+  --left: 300px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-move-silently {
+  --left: 400px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-find-traps {
+  --left: 500px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-open-locks {
+  --left: 150px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-pick-pockets {
+  --left: 250px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-hide-undergrowth {
+  --left: 350px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-hide-dungeons {
+  --left: 450px;
+  --top: 294px;
+  --width: 72px;
+  --height: 72px;
+  --z: var(--z-labels, 15);
+}
+
+/* ================================================================
+   MASTER FONT SIZE CONTROLS
+   ================================================================ */
+/* Master font size for ability scores */
+/* Master font size for saving throw targets */
+/* ================================================================
+   MASTER DIMENSION CONTROLS
+   ================================================================ */
+/* Master dimensions for saving throw boxes */
+/* Master dimensions for ability score boxes */
+/* Race-based position adjustments (only if no qualifying class) */
+/* OLD RACE-BASED SKILL LAYOUTS REMOVED - REPLACED BY RACIAL-SKILL-LAYOUT SYSTEM */
+/* COMPLEX RACE+CLASS COMBINATIONS REMOVED - REPLACED BY SIMPLIFIED RACIAL-SKILL-LAYOUT SYSTEM */
+/* Generic fallback layout (default positioning when no other conditions are met) */
+.skill-layout-default {
+  /* Uses default positioning - ensures consistent class-based approach */
+  position: relative;
+}
+
+/* Background Image Override - Apply to entire sheet and window */
+form.osp.sheet.actor.character,
+.osp.sheet.actor.character,
+.application.window-app.sheet.actor.character.osp,
+.application.window-app.sheet.actor.character.osp .window-content,
+.window-content form.osp.sheet.actor.character,
+.window-content .osp.sheet.actor.character,
+.window-content .window-content form.osp.sheet.actor.character,
+.osp .window-content {
+  background-color: #b5ddb4;
+}
+
+/* Single Background Image System - Applied to window instead of form */
+form.osp.sheet.actor.character {
+  position: relative;
+  color: #4B4B4B !important; /* Default text color for all sheet content */
+  box-sizing: border-box; /* Include padding in dimensions */
+}
+
+/* Global form element reset - remove redundant declarations */
+form.osp.sheet.actor.character input,
+form.osp.sheet.actor.character select,
+form.osp.sheet.actor.character textarea,
+form.osp.sheet.actor.character button {
+  box-shadow: none !important;
+  color: inherit !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+/* Ensure the application window allows tabs to extend beyond right edge */
+.application.window-app.sheet.actor.character.osp {
+  overflow: visible !important;
+}
+
+/* Prevent accidental stacking-contexts on ancestors which can break z-index ordering */
+.application.window-app.sheet.actor.character.osp,
+.application.window-app.sheet.actor.character.osp .window-content,
+.osp.sheet.actor.character,
+.window-content,
+.window-content .window-content,
+.osp .window-content,
+form.osp.sheet.actor.character {
+  transform: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+}
+
+/* Window content wrapper - inherits background from main declaration above */
+.application.window-app.sheet.actor.character.osp .window-content,
+.osp .window-content {
+  /* Background already set by main rule above */
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* Black title bar for character sheet window */
+.application.window-app.sheet.actor.character.osp .window-header,
+.osp .window-header {
+  background: black !important;
+  background-color: black !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+.application.window-app.sheet.actor.character.osp .window-header .window-title,
+.osp .window-header .window-title {
+  color: white !important;
+}
+
+.application.window-app.sheet.actor.character.osp .window-header .header-button,
+.osp .window-header .header-button {
+  color: white !important;
+}
+
+.application.window-app.sheet.actor.character.osp .window-header .header-button:hover,
+.osp .window-header .header-button:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Static header - consolidated background image and layout properties */
+form.osp.sheet.actor.character .static-header,
+.static-header,
+.cs-static-header {
+  background-color: transparent !important;
+  /* Height matches the character sheet header background image exactly (286.5px) */
+  /* The .5px ensures crisp alignment with the background image boundaries */
+  height: 250px !important;
+  z-index: var(--z-sheet, 10);
+}
+
+/* Header frame image as pseudo-element with higher z-index */
+form.osp.sheet.actor.character .static-header::before,
+.static-header::before,
+.cs-static-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/systems/osp-houserules/assets/character-sheet/basics.webp") no-repeat !important;
+  background-position: left top !important;
+  background-size: contain !important;
+  z-index: 15 !important; /* Higher than portrait (z-index 5) to overlay it */
+  pointer-events: none; /* Allow clicks to pass through */
+}
+
+/* ================================================================
+   CHARACTER SHEET TAB STYLING
+   ================================================================ */
+/* Tab container - transparent background */
+.osp.sheet.actor.character .sheet-tabs {
+  background: transparent !important; /* Override Foundry default */
+  border: none !important; /* Override Foundry default */
+  margin-bottom: 0;
+}
+
+/* Tab items - match sheet parchment background */
+.osp.sheet.actor.character .sheet-tabs a.item {
+  opacity: 1 !important; /* Override Foundry default */
+  background-color: #b5ddb4 !important; /* Override Foundry default */
+  filter: none !important; /* Override Foundry default */
+  border: 1px solid #000 !important; /* Override Foundry default */
+  position: relative;
+  z-index: 10;
+}
+
+/* Tab hover state - slightly brighter */
+.osp.sheet.actor.character .sheet-tabs a.item:hover {
+  filter: brightness(1.05) !important; /* Override Foundry default */
+  border-color: #000;
+  z-index: 15;
+}
+
+/* Active tab - seamless connection to sheet */
+.osp.sheet.actor.character .sheet-tabs a.item.active {
+  filter: none !important; /* Override Foundry default */
+  border-left: none !important; /* Override Foundry default border */
+  z-index: 20;
+  margin-bottom: -1px;
+}
+
+/* Tab content area - only active tab is visible */
+.sheet-body .tab.active {
+  display: block;
+}
+
+/* Height/Weight neutralization */
+.char-height, .char-weight {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+}
+
+.height-group, .weight-group {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* XP Award Button */
+button.xp-award-btn {
+  background: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+button.xp-award-btn:hover, button.xp-award-btn:focus {
+  color: #8B4513 !important;
+}
+
+/* Portrait adjustment controls */
+.portrait-controls {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 5px;
+  background: rgba(0, 0, 0, 0.95);
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
+  display: none;
+  z-index: var(--z-overlay, 1000);
+  font-size: 10px;
+  white-space: nowrap;
+  border: 1px solid #666;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.portrait-controls[style*="display: block"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.portrait-controls button {
+  background: #555;
+  color: white;
+  border: 1px solid #777;
+  padding: 2px 4px;
+  margin: 1px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  line-height: 14px;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.portrait-controls button:hover {
+  background: #777;
+  border-color: #999;
+}
+
+.portrait-controls button:active {
+  background: #333;
+}
+
+.portrait-controls .btn-group {
+  display: inline-block;
+  margin: 0 2px;
+  vertical-align: top;
+}
+
+.portrait-controls .btn-group:not(:last-child) {
+  border-right: 1px solid #777;
+  padding-right: 3px;
+}
+
+.portrait-container.adjusting {
+  outline: 1px dashed #00aaff;
+  overflow: visible !important;
+  z-index: calc(var(--z-overlay, 1000) + 1) !important;
+}
+
+/* Tooltip classes to replace JS-injected cssText */
+.cs-tooltip {
+  position: absolute;
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  z-index: var(--z-overlay, 1000);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  /* Auto-hide animation for stuck tooltips */
+  animation: tooltip-auto-hide 3s ease-out forwards;
+}
+
+@keyframes tooltip-auto-hide {
+  0% {
+    opacity: var(--tooltip-opacity, 0);
+  }
+  20% {
+    opacity: var(--tooltip-opacity, 0);
+  }
+  80% {
+    opacity: var(--tooltip-opacity, 0);
+  }
+  100% {
+    opacity: 0 !important;
+  }
+}
+.cs-tooltip--xp {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: var(--z-top, 10000);
+}
+
+.cs-tooltip--portrait {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: var(--z-top, 10000);
+}
+
+.cs-tooltip--ability {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: var(--z-top, 10000);
+  pointer-events: none !important;
+  /* Faster auto-hide for ability tooltips since they're more prone to sticking */
+  animation: tooltip-auto-hide-fast 2s ease-out forwards;
+}
+
+@keyframes tooltip-auto-hide-fast {
+  0% {
+    opacity: var(--tooltip-opacity, 0);
+  }
+  10% {
+    opacity: var(--tooltip-opacity, 0);
+  }
+  70% {
+    opacity: var(--tooltip-opacity, 0);
+  }
+  100% {
+    opacity: 0 !important;
+  }
+}
+/* Dialog helper used by XP award dialog to centralize its presentation */
+.cs-xp-dialog {
+  background: white !important;
+}
+
+.cs-xp-dialog .window-header {
+  background: black !important;
+  color: white !important;
+}
+
+.cs-xp-dialog .window-content {
+  background: white !important;
+}
+
+/* Dialog layout and control helpers for handler-generated markup */
+.cs-xp-dialog-container {
+  padding: 10px;
+}
+
+.cs-xp-row {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.cs-xp-inline {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.cs-xp-flex {
+  display: flex;
+  gap: 20px;
+}
+
+.cs-xp-col {
+  flex: 1;
+}
+
+.cs-input-small {
+  width: 60px;
+  padding: 5px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 9px;
+  text-align: center;
+}
+
+.cs-input-medium {
+  width: 80px;
+  padding: 5px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 9px;
+  text-align: center;
+}
+
+.cs-no-border {
+  border: none;
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
+.cs-xp-preview {
+  margin-top: 15px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 3px;
+  display: none;
+}
+
+/* XP dialog side column helpers (replaces small inline wrappers) */
+.cs-xp-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cs-xp-side-row {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Reusable small select style for inline dialogs (appearance reset handled elsewhere) */
+.cs-select-inline {
+  width: 60px;
+  padding: 5px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 9px;
+  text-align: center;
+  line-height: 1.2;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Language dialog helpers */
+.cs-dialog-row {
+  margin-bottom: 8px;
+}
+
+.cs-dialog-columns {
+  display: flex;
+  gap: 40px;
+}
+
+.cs-dialog-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.cs-custom-input {
+  width: 145px;
+}
+
+.cs-dialog-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Level & portrait container utility classes (migrate inline box-shadow/positioning into class-based rules) */
+.cs-level-container {
+  position: absolute;
+  width: 64px;
+  height: 34px;
+}
+
+.cs-level-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 64px;
+  height: 34px;
+  z-index: var(--z-labels, 15);
+  pointer-events: none;
+  border-radius: 6px;
+}
+
+/* Combat and ability layouts markup helpers */
+.cs-combat-stats {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.cs-combat-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cs-save-badge {
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  position: relative;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Ability score box */
+.cs-ability-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  /* Remove explicit dimensions - let container (.cs-ability) handle sizing */
+  width: 100%;
+  height: 100%;
+  font-size: 100px;
+  font-weight: normal;
+  border: none !important;
+  background: transparent !important;
+  position: relative; /* Ensure proper positioning context */
+  z-index: var(--z-labels, 15); /* Ensure tooltips work properly */
+  pointer-events: auto; /* Ensure mouse events work */
+  line-height: 1;
+  transform: translateY(-0.1em); /* Vertical centering adjustment for select elements */
+}
+
+/* NOTE: Old .cs-ability positioning removed - now uses simplified system at bottom of file */
+/* Hide tooltips when dropdown is active/focused */
+.cs-ability-select:focus ~ .cs-tooltip,
+.cs-ability-select:active ~ .cs-tooltip,
+.cs-ability-select:focus-within ~ .cs-tooltip {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  animation: none !important;
+}
+
+/* Hide tooltips when any dropdown in the ability section is open */
+.ability-scores-section:focus-within .cs-tooltip {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  animation: none !important;
+}
+
+/* ================================================================
+   SIMPLIFIED POSITIONING SYSTEM
+   ================================================================
+   Group-based positioning with individual field overrides.
+   Positioning tool uses --left, --top, --width, --height for overrides.
+
+   Variable Priority (CSS Cascade):
+   1. --left, --top, --width, --height (positioning tool - highest priority)
+   2. --field-left, --group-top, --field-width, --field-height (field defaults)
+   3. Hardcoded fallback values (lowest priority)
+   ================================================================ */
+/* Group Defaults - Shared coordinates for field groups */
+:root {
+  --ability-group-top: 39px;
+  --ability-group-width: 108px;
+  --ability-group-height: 80px;
+  --save-group-top: 216px;
+  --save-group-width: 99px;
+  --save-group-height: 98px;
+}
+
+/* Ability Group Positioning - Individual X coordinates */
+.ability:has(.attr-str) {
+  --field-left: 32px;
+}
+
+.ability:has(.attr-int) {
+  --field-left: 158px;
+}
+
+.ability:has(.attr-wis) {
+  --field-left: 284px;
+}
+
+.ability:has(.attr-dex) {
+  --field-left: 410px;
+}
+
+.ability:has(.attr-con) {
+  --field-left: 536px;
+}
+
+.ability:has(.attr-cha) {
+  --field-left: 662px;
+}
+
+/* Listening at Doors field styling */
+.listening-group {
+  z-index: var(--z-labels, 15);
+  pointer-events: auto;
+}
+
+/* Hide Barbarian skill fields by default - JavaScript will show them when needed */
+.cs-pos-barbarian-climb,
+.cs-pos-barbarian-hide,
+.cs-pos-barbarian-move {
+  display: none;
+}
+
+/* Hide Half-Orc racial skill field by default - JavaScript will show it when needed */
+.cs-pos-hide-dungeons {
+  display: none;
+}
+
+.listening-group .cs-field-label {
+  display: none !important;
+}
+
+.cs-listening-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 70px;
+  height: 70px;
+  font-size: 100px;
+  /* Compressed line-height (0.5) centers large font visually within the 72px box */
+  /* At 100px font-size with line-height 0.5, the line box shrinks to 50px, */
+  /* allowing proper vertical centering of the glyph within the container */
+  line-height: 0.5;
+  background-color: transparent !important; /* Override browser defaults */
+  margin: 0;
+  padding: 0; /* Ensure no padding reduces available space */
+  border: none !important; /* Override browser defaults */
+  pointer-events: auto;
+  overflow: visible; /* Allow text to render fully */
+  /* Force horizontal centering - remove browser defaults */
+  text-indent: 0;
+  padding-left: 4px;
+  padding-right: 0;
+  box-sizing: border-box;
+  /* Remove dropdown arrow to prevent offset */
+  appearance: none !important; /* Browser default override necessary */
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+.cs-listening-select option {
+  text-align: center; /* Center options in dropdown too */
+}
+
+/* Tabs helper (in case nav items had inline styles) */
+.cs-tabs {
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-tab-item {
+  opacity: 1 !important;
+  background: rgba(139, 123, 101, 0.4) !important; /* Semi-transparent to show parchment */
+}
+
+/* Tabs runtime helpers */
+.cs-tabs {
+  position: relative !important;
+  z-index: var(--z-tabs, 200) !important;
+  pointer-events: auto !important;
+  top: var(--tabs-top, 3px);
+}
+
+.cs-tab-item {
+  position: relative !important;
+  z-index: var(--z-tabs, 200);
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Active tab state for cs-tab-item */
+.cs-tab-item.active {
+  z-index: var(--z-tab-active, 250);
+  border-left: none !important; /* Seamless connection to page */
+  background: rgba(255, 255, 255, 0.8) !important; /* More opaque for active tab */
+}
+
+/* Hover state for cs-tab-item */
+.cs-tab-item:hover {
+  z-index: var(--z-tab-hover, 225);
+  background: rgba(139, 123, 101, 0.6) !important; /* Slightly more opaque on hover */
+}
+
+.cs-force-pointer {
+  pointer-events: auto !important;
+}
+
+/* Cursor helper classes for JS toggles */
+.cs-cursor-pointer {
+  cursor: pointer !important;
+}
+
+.cs-cursor-text {
+  cursor: text !important;
+}
+
+/* Combat input boxes */
+.cs-combat-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  width: 80px;
+  height: 40px;
+  border: 2px solid #4a5568;
+  border-radius: 8px;
+  background-color: white;
+}
+
+/* Combat tab background - Base layers for all layouts */
+.tab[data-tab=combat] {
+  position: relative;
+  background-image: url("/systems/osp-houserules/assets/character-sheet/abilities-saves.webp") !important;
+  background-size: contain, contain !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: scroll, scroll !important;
+  background-color: transparent !important;
+  height: 360px !important;
+}
+
+/* Combat Tab Styles */
+.tab[data-tab=combat-tab] {
+  position: relative;
+  background-color: transparent;
+  padding: 0px;
+  height: 400px;
+  /* Combat Stats in Combat Tab */
+}
+.tab[data-tab=combat-tab] .combat-content {
+  padding: 20px;
+  text-align: center;
+  font-size: 16px;
+  color: #2c1810;
+}
+.tab[data-tab=combat-tab] .combat-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.tab[data-tab=combat-tab] .combat-stats .combat-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+.tab[data-tab=combat-tab] .combat-stats .combat-stat .cs-field-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c1810;
+  text-align: center;
+}
+.tab[data-tab=combat-tab] .combat-stats .combat-stat .cs-combat-input {
+  width: 80px;
+  height: 40px;
+  text-align: center;
+  font-size: 16px;
+  border: 2px solid #8b4513;
+  border-radius: 4px;
+  background-color: rgba(240, 228, 188, 0.8);
+  color: #2c1810;
+}
+.tab[data-tab=combat-tab] .combat-stats .combat-stat .cs-combat-input:focus {
+  outline: none;
+  border-color: #654321;
+  background-color: rgb(240, 228, 188);
+}
+.tab[data-tab=combat-tab] .combat-stats .combat-stat .cs-unarmored-box {
+  width: 80px;
+  height: 40px;
+  text-align: center;
+  font-size: 16px;
+  border: 2px solid #8b4513;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(240, 228, 188, 0.6);
+  color: #2c1810;
+  font-weight: bold;
+}
+
+/* Race-based variants (only applied if no qualifying class) */
+/* OLD RACE-BASED SKILL LAYOUT BACKGROUND IMAGES REMOVED - REPLACED BY RACIAL-SKILL-LAYOUT SYSTEM */
+.cs-unarmored-box {
+  width: 80px;
+  height: 40px;
+  text-align: center;
+  font-size: 1.2rem;
+  border: 2px solid #4a5568;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+/* OLD RACIAL-SKILL-TARGETS SYSTEM REMOVED - REPLACED BY RACIAL-SKILL-LAYOUT SYSTEM */
+/* ========================================
+   RACIAL SKILL LAYOUT SYSTEM 
+   Clean separation for 3 scenarios: Default, Dwarf, Gnome
+   ======================================== */
+/* Shared base positioning variables for racial skills */
+/* Master Y position for all racial skills */
+/* Shared properties mixin - eliminates repetition */
+/* Shared background mixin - eliminates repetition */
+/* Layers race-specific image OVER the base skill-targets-background.webp */
+/* ========================================
+   Default Layout (3 base skills only)
+   ======================================== */
+.racial-skill-layout-default {
+  /* Uses default variable positions */
+}
+.racial-skill-layout-default .cs-pos-listening {
+  --left: 304px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-default .cs-pos-find-secret-door {
+  --left: 180px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-default .cs-pos-open-stuck-doors {
+  --left: 58px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-default .tab[data-tab=skills] {
+  background-image: url("/systems/osp-houserules/assets/character-sheet/racial-skill-targets-default.webp"), url("/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp");
+  background-size: contain, contain;
+  background-position: center top, center top;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: scroll, scroll;
+}
+
+/* ========================================
+   Dwarf Layout (5 skills: base 3 + 2 racial)
+   ======================================== */
+.racial-skill-layout-dwarf {
+  /* Base skills with dwarf-specific horizontal positions */
+  /* Dwarf-only racial skills */
+}
+.racial-skill-layout-dwarf .cs-pos-listening {
+  --left: 363px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-dwarf .cs-pos-find-secret-door {
+  --left: 222px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-dwarf .cs-pos-open-stuck-doors {
+  --left: 82px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-dwarf .cs-pos-detect-construction {
+  --left: 504px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-dwarf .cs-pos-detect-room-traps {
+  --left: 644px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-dwarf .tab[data-tab=skills] {
+  background-image: url("/systems/osp-houserules/assets/character-sheet/racial-skill-targets-dwarf.webp"), url("/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp");
+  background-size: contain, contain;
+  background-position: center top, center top;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: scroll, scroll;
+}
+
+/* ========================================
+   Gnome Layout (4 skills: base 3 + 1 racial)
+   ======================================== */
+.racial-skill-layout-gnome {
+  /* Base skills with gnome-specific horizontal positions */
+  /* Gnome-only racial skill */
+}
+.racial-skill-layout-gnome .cs-pos-listening {
+  --left: 434px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-gnome .cs-pos-find-secret-door {
+  --left: 294px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-gnome .cs-pos-open-stuck-doors {
+  --left: 155px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-gnome .cs-pos-detect-construction {
+  --left: 574px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+}
+.racial-skill-layout-gnome .tab[data-tab=skills] {
+  background-image: url("/systems/osp-houserules/assets/character-sheet/racial-skill-targets-gnome.webp"), url("/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp");
+  background-size: contain, contain;
+  background-position: center top, center top;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: scroll, scroll;
+}
+
+/* Save badge system */
+.combat-section {
+  position: relative;
+  width: 100%;
+}
+
+/* Universal absolute positioning for all positioned elements */
+.cs-abs {
+  position: absolute !important;
+  /* Use consistent variable cascade that matches specific positioning systems */
+  left: var(--left, var(--field-left, auto)) !important;
+  top: var(--top, var(--group-top, auto)) !important;
+  width: var(--width, var(--field-width, auto)) !important;
+  height: var(--height, var(--field-height, auto)) !important;
+  z-index: var(--z, 2) !important;
+}
+
+/* Simplified: No override rules needed - positioning tool variables integrated directly */
+/* Save Group Positioning - Individual X coordinates */
+.save-group-death {
+  --field-left: 52px;
+}
+
+.save-group-wands {
+  --field-left: 201px;
+}
+
+.save-group-paralysis {
+  --field-left: 350px;
+}
+
+.save-group-breath {
+  --field-left: 499px;
+}
+
+.save-group-spells {
+  --field-left: 648px;
+}
+
+.cs-save-value {
+  text-align: center;
+  line-height: 1;
+  font-size: 100px !important;
+}
+
+/* Misc helpers for textareas in bio */
+.cs-bio-textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  resize: vertical;
+  font-family: inherit;
+  background-color: white;
+}
+
+/* Encumbrance bar helpers */
+.encumbrance-section .encumbrance-bar-container {
+  position: relative;
+}
+
+.encumbrance-section .encumbrance-bar {
+  height: 12px;
+  background: #22c55e;
+  transition: width 0.3s ease;
+  width: var(--encumbrance-width, 0%);
+}
+
+/* Level progress helpers */
+.cs-level-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  width: var(--width, 72px);
+  height: var(--height, 39px);
+  font-size: 36px;
+  z-index: var(--z-level, -10);
+  background: transparent !important;
+  padding: 0 0 2px 0;
+}
+
+/* Portrait helpers - configurable dimensions via CSS variables */
+.cs-portrait-container {
+  position: absolute;
+  width: var(--width, 205px) !important;
+  height: var(--height, 239px) !important;
+  overflow: hidden;
+  z-index: 5 !important; /* Force portrait above header frame */
+  --z: 5; /* Set CSS variable for .cs-abs compatibility */
+}
+
+.cs-portrait-display,
+.portrait-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border-radius: 1px;
+  overflow: hidden;
+  pointer-events: auto;
+  z-index: 20 !important; /* Force above header frame */
+}
+
+.cs-portrait-img,
+.portrait-img {
+  /* Default size: fit within container while maintaining aspect ratio */
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  /* Player can resize and reposition from this starting size */
+  transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px));
+  transform-origin: center center;
+  transition: transform 0.2s ease;
+}
+
+/* XP/Next level small field helpers */
+.cs-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: transparent !important;
+  border: none;
+  margin: 0;
+  color: inherit;
+  padding: 0 2px 0 2px;
+}
+
+.cs-xp-mod-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  width: var(--width, 73px);
+  height: var(--height, 39px);
+  pointer-events: none;
+  font-size: 36px;
+}
+
+.cs-xp-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  width: var(--width, 155px);
+  height: var(--height, 39px);
+  cursor: pointer;
+  pointer-events: auto;
+  font-size: 36px;
+}
+
+/* ================================================================
+   SIMPLIFIED VISUAL CENTERING
+   ================================================================ */
+/* Modern CSS centering - no complex placeholders needed */
+/* Basic input styling - simplified centering */
+input[type=text],
+input[type=number],
+select {
+  text-align: center;
+  /* Remove number input spinners for cleaner appearance */
+}
+input[type=text]::-webkit-outer-spin-button, input[type=text]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button,
+select::-webkit-outer-spin-button,
+select::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Header field classes (name, class, race, small fields) */
+.cs-char-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: var(--width, 319px);
+  height: var(--height, 39px);
+  font-size: 36px;
+  background-color: transparent !important;
+  white-space: nowrap;
+  text-overflow: clip;
+  border: none;
+  padding: 0 2px 0 2px;
+}
+
+.cs-class-select {
+  /* Removed conflicting @extend mixins - using manual centering instead */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  width: var(--width, 154px);
+  height: var(--height, 39px);
+  font-size: 36px;
+  background-color: transparent !important;
+  margin: 0;
+  border: none;
+  pointer-events: auto;
+  padding: 0 2px 0 2px;
+}
+
+/* Background field - separate class for independent control */
+.cs-background-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  width: var(--width, 155px);
+  height: var(--height, 39px);
+  font-size: var(--background-font-size, 36px);
+  font-weight: normal;
+  letter-spacing: 0;
+  background-color: transparent !important;
+  border: none;
+  margin: 0;
+  padding: 0 5px 0 5px;
+  pointer-events: auto;
+  cursor: pointer;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: visible;
+}
+.cs-background-select:focus {
+  outline: none;
+}
+.cs-background-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Race field - separate class for independent control */
+.cs-race-select {
+  /* Inherit base layout from large selects but allow independent styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  /* Size and positioning */
+  width: var(--width, 155px);
+  height: var(--height, 39px);
+  /* Typography - customize as needed */
+  font-size: 36px;
+  font-weight: normal;
+  letter-spacing: 0;
+  /* Appearance */
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  /* Layout */
+  margin: 0;
+  padding: 0 5px 2px 5px;
+  /* Interaction */
+  pointer-events: auto;
+  cursor: pointer;
+  /* Focus states - customize as needed */
+  /* Disabled states (for race-as-class synchronization) */
+}
+.cs-race-select:focus {
+  outline: none;
+}
+.cs-race-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* XP container with XP progress bar */
+.xp-group {
+  position: relative;
+  width: var(--width, 155px);
+  height: var(--height, 39px);
+  /* XP Progress bar within XP field */
+  /* XP display sits on top of progress bar */
+}
+.xp-group .level-xp-progress {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%; /* Use parent height */
+  width: var(--xp-progress-width, 0%); /* Dynamically updated by JavaScript */
+  background: rgba(44, 24, 16, 0.2); /* Solid color - change variable to adjust progress bar color */
+  transition: width 0.3s ease;
+  z-index: 1;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.xp-group .cs-xp-display {
+  position: relative;
+  z-index: 2;
+}
+
+/* Alignment field - separate class for independent control */
+.cs-alignment-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  width: var(--width, 154px);
+  height: var(--height, 39px);
+  font-size: 36px;
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  padding: 0 5px 0 5px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.cs-alignment-select:focus {
+  outline: none;
+}
+
+/* Height field - separate class for independent control */
+.cs-height-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  width: var(--width, 72px);
+  height: var(--height, 39px);
+  font-size: 36px;
+  letter-spacing: 0;
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  margin: 0;
+  padding: 0 2px 0 2px;
+  pointer-events: auto;
+  cursor: text;
+  vertical-align: middle;
+}
+.cs-height-field:focus {
+  outline: none;
+}
+.cs-height-field::placeholder {
+  color: #704214;
+  font-style: italic;
+}
+
+/* Weight field - separate class for independent control */
+.cs-weight-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  width: var(--width, 72px);
+  height: var(--height, 39px);
+  font-size: 36px;
+  letter-spacing: 0;
+  background-color: transparent !important;
+  color: inherit;
+  border: none;
+  margin: 0;
+  padding: 0;
+  pointer-events: auto;
+  cursor: text;
+  vertical-align: middle;
+}
+.cs-weight-field:focus {
+  outline: none;
+}
+.cs-weight-field::placeholder {
+  color: #704214;
+  font-style: italic;
+}
+
+/* Languages field - separate class for independent control */
+.cs-languages-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  width: var(--width, 318px);
+  height: var(--height, 39px);
+  font-size: var(--languages-font-size, 36px);
+  font-weight: normal;
+  letter-spacing: var(--languages-letter-spacing, 0px);
+  line-height: var(--languages-line-height, 1);
+  background: transparent !important;
+  border: none !important;
+  margin: 0;
+  padding: 2px 3px 2px 3px;
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+}
+
+/* Age field - separate class for independent control */
+.cs-age-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  width: var(--width, 72px);
+  height: var(--height, 39px);
+  font-size: 36px;
+  background-color: transparent !important;
+  border: none;
+  vertical-align: middle;
+}
+
+/* Sex field - separate class for independent control */
+.cs-sex-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  width: var(--width, 72px);
+  height: var(--height, 39px);
+  font-size: 36px;
+  background-color: transparent !important;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.cs-sex-field option {
+  font-size: 16px;
+  color: #704214;
+  background-color: #ffffff;
+}
+
+/* Keep this partial focused on presentation only; behavior remains in JS. */
+/* Note: .cs-abs positioning now handled by the unified system above */
+/* Sheet body helper to centralize padding/scrolling */
+.cs-sheet-body {
+  position: absolute !important;
+  top: var(--sheet-top, 263px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 0 0 1px;
+  /* overflow-y: auto; */
+}
+
+/* Generic small field label */
+.cs-field-label {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Languages row and tags reset for consistent layout */
+.languages-row.open-language-dialog {
+  width: var(--languages-row-width, 272px);
+  height: 33px;
+  min-height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  z-index: var(--z-lang-row, 101);
+}
+
+.languages-tags {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  line-height: 0.6;
+  white-space: wrap; /* Allow wrapping when needed */
+  overflow: hidden;
+  font-size: var(--languages-font-size, 34px) !important;
+  padding: 0 4px;
+  text-align: center;
+  word-wrap: break-word; /* Allow breaking long words if needed */
+  /* When not empty, ensure our font size applies - higher specificity */
+}
+.languages-tags:not(:empty) {
+  font-size: var(--languages-font-size, 34px) !important;
+}
+
+/* Bio content wrapper */
+.bio-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Position presets (centralize numeric offsets) */
+.cs-pos-level {
+  --left: 597px;
+  --top: 18px;
+  --width: 72px;
+  --height: 39px;
+  --z: var(--z-labels, 8);
+}
+
+.cs-pos-portrait {
+  --left: 49px;
+  --top: 18px;
+  --width: 205px;
+  --height: 239px;
+  --z: var(--z-labels, 5);
+}
+
+.cs-pos-languages {
+  --left: 436px;
+  --top: 207px;
+  --width: 318px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+  --pointer: auto;
+}
+
+.cs-pos-xpmod {
+  --left: 682px;
+  --top: 18px;
+  --width: 73px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-xp {
+  --left: 600px;
+  --top: 81px;
+  --width: 155px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-next {
+  --left: 462px;
+  --top: 68px;
+  --width: 80px;
+  --height: 40px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-sep {
+  --bottom: 0;
+  --left: 0;
+  --right: 0;
+  --height: 1px;
+  --bg: transparent;
+  --z: var(--z-labels, 15);
+}
+
+/* Header / small-field presets discovered during the sweep */
+.cs-pos-namegroup {
+  --left: 270px;
+  --top: 18px;
+  --width: 319px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-class {
+  --left: 435px;
+  --top: 81px;
+  --width: 154px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-alignment {
+  --left: 436px;
+  --top: 144px;
+  --width: 154px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-race {
+  --left: 269px;
+  --top: 81px;
+  --width: 155px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-age {
+  --left: 270px;
+  --top: 144px;
+  --width: 72px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-sex {
+  --left: 355px;
+  --top: 144px;
+  --width: 72px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-height {
+  --left: 270px;
+  --top: 207px;
+  --width: 72px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-weight {
+  --left: 353px;
+  --top: 207px;
+  --width: 72px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-background {
+  --left: 600px;
+  --top: 144px;
+  --width: 155px;
+  --height: 39px;
+  --z: var(--z-labels, 15);
+}
+
+.cs-pos-listening {
+  --left: 304px;
+  --top: 65px;
+  --width: 70px;
+  --height: 70px;
+  --z: var(--z-labels, 15);
+}
+
+/* Universal Save Positioning - Simplified System with Tool Integration */
+.cs-save {
+  position: absolute !important;
+  /* Positioning tool variables take precedence, then field defaults, then group defaults */
+  left: var(--left, var(--field-left, 0px)) !important;
+  top: var(--top, var(--group-top, var(--save-group-top))) !important;
+  width: var(--width, var(--field-width, var(--save-group-width))) !important;
+  height: var(--height, var(--field-height, var(--save-group-height))) !important;
+  z-index: var(--z-labels, 15) !important;
+}
+
+/* Universal Ability Positioning - Simplified System with Tool Integration */
+.cs-ability {
+  /* Positioning tool variables take precedence, then field defaults, then group defaults */
+  left: var(--left, var(--field-left, 504px)) !important;
+  top: var(--top, var(--group-top, var(--ability-group-top))) !important;
+  width: var(--width, var(--field-width, var(--ability-group-width))) !important;
+  height: var(--height, var(--field-height, var(--ability-group-height))) !important;
+  z-index: var(--z-labels, 15) !important;
+  pointer-events: auto !important;
+}
+
+/* Small helpers found useful during migration */
+.cs-tab-relative {
+  position: relative;
+}
+
+.cs-bio-heading {
+  margin: 0 0 0.5rem 0;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #ccc;
+  font-size: 1.1em;
+}
+
+/* ============================
+   SKILLS TAB BACKGROUND SYSTEM
+   ============================ */
+/* Skills tab background - Default layout (no special background) */
+/* Base skills tab - always has the background layer */
+.tab[data-tab=skills] {
+  position: relative;
+  background-image: url("/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp");
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: local; /* Background stays fixed while content scrolls */
+  background-color: transparent;
+  min-height: 384px;
+  overflow-y: scroll !important; /* Force scrollbar to always show */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  /* Style the scrollbar for better appearance */
+}
+.tab[data-tab=skills]::-webkit-scrollbar {
+  width: 12px; /* Make scrollbar more visible */
+}
+.tab[data-tab=skills]::-webkit-scrollbar-track {
+  background: rgba(139, 69, 19, 0.2); /* More visible brown track */
+  border-radius: 6px;
+}
+.tab[data-tab=skills]::-webkit-scrollbar-thumb {
+  background: rgba(139, 69, 19, 0.6); /* More visible brown thumb */
+  border-radius: 6px;
+  border: 2px solid rgba(139, 69, 19, 0.2);
+}
+.tab[data-tab=skills]::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 69, 19, 0.8);
+}
+
+/* ============================
+   RACE & CLASS-SPECIFIC SKILL BACKGROUNDS
+   Layer 2 & 3: Race and Class overlays
+
+   To add a race or class-specific background layer:
+   1. Add the appropriate selector (e.g., .skills-layout-thief)
+   2. Set background-image with base + overlay(s)
+   3. Set background-size, background-position, background-repeat
+
+   Example for Thief:
+   .skills-layout-thief .tab[data-tab="skills"] {
+     background-image: 
+       url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp'),
+       url('/systems/osp-houserules/assets/character-sheet/class-skill-targets-thief.webp');
+     background-size: contain, contain;
+     background-position: center top, center top;
+     background-repeat: no-repeat, no-repeat;
+   }
+   ============================ */
+/* Half-Orc class-specific skill background - needs to combine with racial backgrounds */
+/* Half-Orc race + Half-Orc class (race-as-class scenario) */
+.racial-skill-layout-default.skill-layout-half-orc .tab[data-tab=skills] {
+  background-image: url("/systems/osp-houserules/assets/character-sheet/class-halforc.webp");
+  /*url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp');*/
+  background-size: 100%;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+/* Dwarf race + Half-Orc class */
+.racial-skill-layout-dwarf.skill-layout-half-orc .tab[data-tab=skills] {
+  background-image: url("/systems/osp-houserules/assets/character-sheet/class-halforc.webp");
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Gnome race + Half-Orc class */
+.racial-skill-layout-gnome.skill-layout-half-orc .tab[data-tab=skills] {
+  background-image: url("/systems/osp-houserules/assets/character-sheet/class-halforc.webp");
+  background-size: 100%;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+/* ============================
+   CLASS SKILL POSITIONING FOR SKILLS TAB
+   Each class has unique positioning for its skills, even if skills are shared between classes.
+   ============================ */
+/* Default class skill positioning (for classes without specific positioning) */
+.skill-layout-default .tab[data-tab=skills] {
+  /* Base skills - all races have these */
+}
+.skill-layout-default .tab[data-tab=skills] .cs-pos-listening {
+  --left: 304px;
+  --top: 47px;
+}
+.skill-layout-default .tab[data-tab=skills] .cs-pos-find-secret-door {
+  --left: 180px;
+  --top: 47px;
+}
+.skill-layout-default .tab[data-tab=skills] .cs-pos-open-stuck-doors {
+  --left: 58px;
+  --top: 47px;
+}
+
+/* Thief class skill positioning */
+.skill-layout-thief .tab[data-tab=skills] {
+  /* Base skills - all races have these */
+  /* Thief-specific skills */
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-listening {
+  --left: 304px;
+  --top: 47px;
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-find-secret-door {
+  --left: 180px;
+  --top: 47px;
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-open-stuck-doors {
+  --left: 58px;
+  --top: 47px;
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-climb-sheer {
+  --left: 100px;
+  --top: 50px;
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-hide-shadows {
+  --left: 200px;
+  --top: 50px;
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-move-silently {
+  --left: 300px;
+  --top: 50px;
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-find-traps {
+  --left: 400px;
+  --top: 50px;
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-open-locks {
+  --left: 500px;
+  --top: 50px;
+}
+.skill-layout-thief .tab[data-tab=skills] .cs-pos-pick-pockets {
+  --left: 150px;
+  --top: 150px;
+}
+
+/* Assassin class skill positioning */
+.skill-layout-assassin .tab[data-tab=skills] {
+  /* Base skills - all races have these */
+  /* Assassin-specific skills */
+}
+.skill-layout-assassin .tab[data-tab=skills] .cs-pos-listening {
+  --left: 304px;
+  --top: 47px;
+}
+.skill-layout-assassin .tab[data-tab=skills] .cs-pos-find-secret-door {
+  --left: 180px;
+  --top: 47px;
+}
+.skill-layout-assassin .tab[data-tab=skills] .cs-pos-open-stuck-doors {
+  --left: 58px;
+  --top: 47px;
+}
+.skill-layout-assassin .tab[data-tab=skills] .cs-pos-assassination {
+  --left: 50px;
+  --top: 60px;
+}
+.skill-layout-assassin .tab[data-tab=skills] .cs-pos-climb-sheer {
+  --left: 150px;
+  --top: 60px;
+}
+.skill-layout-assassin .tab[data-tab=skills] .cs-pos-hide-shadows {
+  --left: 250px;
+  --top: 60px;
+}
+.skill-layout-assassin .tab[data-tab=skills] .cs-pos-move-silently {
+  --left: 350px;
+  --top: 60px;
+}
+
+/* Half-Orc class skill positioning */
+.skill-layout-half-orc .tab[data-tab=skills] {
+  /* Base skills - all races have these */
+  /* Half-Orc-specific skills */
+}
+.skill-layout-half-orc .tab[data-tab=skills] .cs-pos-open-stuck-doors {
+  --left: 58px;
+  --top: 65px;
+}
+.skill-layout-half-orc .tab[data-tab=skills] .cs-pos-find-secret-door {
+  --left: 180px;
+  --top: 65px;
+}
+.skill-layout-half-orc .tab[data-tab=skills] .cs-pos-listening {
+  --left: 304px;
+  --top: 65px;
+}
+.skill-layout-half-orc .tab[data-tab=skills] .cs-pos-hide-shadows {
+  --left: 429px;
+  --top: 65px;
+}
+.skill-layout-half-orc .tab[data-tab=skills] .cs-pos-move-silently {
+  --left: 553px;
+  --top: 65px;
+}
+.skill-layout-half-orc .tab[data-tab=skills] .cs-pos-pick-pockets {
+  --left: 676px;
+  --top: 65px;
+}
+
+/* Barbarian class skill positioning */
+.skill-layout-barbarian .tab[data-tab=skills] {
+  /* Base skills - all races have these */
+  /* Barbarian-specific skills */
+}
+.skill-layout-barbarian .tab[data-tab=skills] .cs-pos-listening {
+  --left: 304px;
+  --top: 47px;
+}
+.skill-layout-barbarian .tab[data-tab=skills] .cs-pos-find-secret-door {
+  --left: 180px;
+  --top: 47px;
+}
+.skill-layout-barbarian .tab[data-tab=skills] .cs-pos-open-stuck-doors {
+  --left: 58px;
+  --top: 47px;
+}
+.skill-layout-barbarian .tab[data-tab=skills] .cs-pos-climb-sheer {
+  --left: 110px;
+  --top: 80px;
+}
+.skill-layout-barbarian .tab[data-tab=skills] .cs-pos-move-silently {
+  --left: 210px;
+  --top: 80px;
+}
+.skill-layout-barbarian .tab[data-tab=skills] .cs-pos-hide-undergrowth {
+  --left: 310px;
+  --top: 80px;
+}
+
+/* Class skill fields are now physically located in the Skills tab with class-specific positioning */

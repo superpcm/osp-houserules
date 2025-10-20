@@ -1988,23 +1988,6 @@
             </div>
           </div>
 
-
-
-          <!-- Hide in Dungeons Field -->
-          <div class="listening-group cs-abs cs-pos-hide-dungeons">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Hide in Dungeons</label>
-              <select class="hide-dungeons cs-listening-select" id="hide-dungeons" name="system.hideDungeons" data-dtype="String">
-                <option value="" {{#if (eq system.hideDungeons "")}}selected{{/if}}></option>
-                <option value="1" {{#if (eq system.hideDungeons "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.hideDungeons "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.hideDungeons "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.hideDungeons "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.hideDungeons "5")}}selected{{/if}}>5</option>
-              </select>
-            </div>
-          </div>
-
         </div>
       </div>
       <!-- Skills Tab -->
@@ -2202,6 +2185,21 @@
               <option value="3" {{#if (eq system.detectRoomTraps "3")}}selected{{/if}}>3</option>
               <option value="4" {{#if (eq system.detectRoomTraps "4")}}selected{{/if}}>4</option>
               <option value="5" {{#if (eq system.detectRoomTraps "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Hide in Dungeons Field -->
+        <div class="listening-group cs-abs cs-pos-hide-dungeons">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Hide in Dungeons</label>
+            <select class="hide-dungeons cs-listening-select" id="hide-dungeons" name="system.hideDungeons" data-dtype="String">
+              <option value="" {{#if (eq system.hideDungeons "")}}selected{{/if}}></option>
+              <option value="1" {{#if (eq system.hideDungeons "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.hideDungeons "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.hideDungeons "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.hideDungeons "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.hideDungeons "5")}}selected{{/if}}>5</option>
             </select>
           </div>
         </div>

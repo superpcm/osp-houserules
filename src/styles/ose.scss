@@ -1,8 +1,8 @@
-// Import styles first (required by Sass @use rules)
-@use 'equipment' as *;
-@use 'z-index' as *;
-@use '_tabs' as *;
-@use 'character-sheet' as *;
+// Import all component stylesheets
+@import 'equipment';
+@import 'z-index';
+@import '_tabs';
+@import 'character-sheet';
 
 /* ================================================================
    OSP House Rules Font Configuration

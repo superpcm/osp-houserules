@@ -1,6 +1,3 @@
-// ...existing code...
-
-// Place after $cs-pos-listening-top is defined
 /* Character sheet specific styles extracted from templates/actors/character-sheet.html
    Migrate presentation out of the template and into this partial. */
 
@@ -48,36 +45,82 @@ $debug-form-fields: false; // Change to true to enable debug mode
 }
 
 /* Centralized position variables - change these to tweak sheet layout globally */
-$cs-pos-level-left: 605px !default;
-$cs-pos-level-top: 25px !default;
+/* Header fields - position and dimensions */
+$cs-pos-level-left: 597px !default;
+$cs-pos-level-top: 18px !default;
+$cs-pos-level-width: 72px !default;
+$cs-pos-level-height: 39px !default;
+
 $cs-pos-portrait-left: 49px !default;
 $cs-pos-portrait-top: 18px !default;
+$cs-pos-portrait-width: 205px !default;
+$cs-pos-portrait-height: 239px !default;
+
 $cs-pos-languages-left: 436px !default;
-$cs-pos-languages-top: 218px !default;
-$cs-pos-xpmod-left: 694px !default;
-$cs-pos-xpmod-top: 25px !default;
-$cs-pos-xp-left: 608px !default;
-$cs-pos-xp-top: 88px !default;
+$cs-pos-languages-top: 207px !default;
+$cs-pos-languages-width: 318px !default;
+$cs-pos-languages-height: 39px !default;
+
+$cs-pos-xpmod-left: 682px !default;
+$cs-pos-xpmod-top: 18px !default;
+$cs-pos-xpmod-width: 73px !default;
+$cs-pos-xpmod-height: 39px !default;
+
+$cs-pos-xp-left: 600px !default;
+$cs-pos-xp-top: 81px !default;
+$cs-pos-xp-width: 155px !default;
+$cs-pos-xp-height: 39px !default;
+
 $cs-pos-next-left: 462px !default;
 $cs-pos-next-top: 68px !default;
-$cs-pos-namegroup-left: 263px !default;
-$cs-pos-namegroup-top: 25px !default;
+$cs-pos-next-width: 80px !default;
+$cs-pos-next-height: 40px !default;
+
+$cs-pos-namegroup-left: 270px !default;
+$cs-pos-namegroup-top: 18px !default;
+$cs-pos-namegroup-width: 319px !default;
+$cs-pos-namegroup-height: 39px !default;
+
 $cs-pos-class-left: 435px !default;
-$cs-pos-class-top: 90px !default;
+$cs-pos-class-top: 81px !default;
+$cs-pos-class-width: 154px !default;
+$cs-pos-class-height: 39px !default;
+
 $cs-pos-alignment-left: 436px !default;
-$cs-pos-alignment-top: 153px !default;
-$cs-pos-race-left: 263px !default;
-$cs-pos-race-top: 90px !default;
-$cs-pos-age-left: 263px !default;
-$cs-pos-age-top: 153px !default;
-$cs-pos-sex-left: 352px !default;
-$cs-pos-sex-top: 153px !default;
-$cs-pos-height-left: 263px !default;
-$cs-pos-height-top: 218px !default;
-$cs-pos-weight-left: 350px !default;
-$cs-pos-weight-top: 218px !default;
-$cs-pos-background-left: 608px !default;
-$cs-pos-background-top: 153px !default;
+$cs-pos-alignment-top: 144px !default;
+$cs-pos-alignment-width: 154px !default;
+$cs-pos-alignment-height: 39px !default;
+
+$cs-pos-race-left: 269px !default;
+$cs-pos-race-top: 81px !default;
+$cs-pos-race-width: 155px !default;
+$cs-pos-race-height: 39px !default;
+
+$cs-pos-age-left: 270px !default;
+$cs-pos-age-top: 144px !default;
+$cs-pos-age-width: 72px !default;
+$cs-pos-age-height: 39px !default;
+
+$cs-pos-sex-left: 355px !default;
+$cs-pos-sex-top: 144px !default;
+$cs-pos-sex-width: 72px !default;
+$cs-pos-sex-height: 39px !default;
+
+$cs-pos-height-left: 270px !default;
+$cs-pos-height-top: 207px !default;
+$cs-pos-height-width: 72px !default;
+$cs-pos-height-height: 39px !default;
+
+$cs-pos-weight-left: 353px !default;
+$cs-pos-weight-top: 207px !default;
+$cs-pos-weight-width: 72px !default;
+$cs-pos-weight-height: 39px !default;
+
+$cs-pos-background-left: 600px !default;
+$cs-pos-background-top: 144px !default;
+$cs-pos-background-width: 155px !default;
+$cs-pos-background-height: 39px !default;
+
 $cs-pos-listening-left: 304px !default;
 $cs-pos-listening-top: 65px !default;
 $cs-pos-listening-width: 70px !default;
@@ -194,60 +237,6 @@ $cs-save-height: 98px !default;
 /* Master dimensions for ability score boxes */
 $cs-ability-width: 108px !default;
 $cs-ability-height: 80px !default;
-
-/* Skill Target Position Variants - Adjusts positions based on race/class layout */
-/* Class-based position adjustments (take priority over race) */
-.skill-layout-assassin {
-  /* Base skills - all races have these */
-  .cs-pos-listening { --left: #{$cs-pos-listening-left - 20px}; }
-  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 20px}; }
-  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 20px}; }
-  
-  /* Assassin-specific skills */
-  .cs-pos-assassination { --left: #{$cs-pos-assassination-left - 20px}; }
-  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left - 20px}; }
-  .cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left - 20px}; }
-  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left - 20px}; }
-  
-  /* Skills that might be present from race */
-  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 20px}; }
-  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 20px}; }
-}
-
-.skill-layout-barbarian {
-  /* Base skills - all races have these */
-  .cs-pos-listening { --left: #{$cs-pos-listening-left + 20px}; }
-  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left + 20px}; }
-  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left + 20px}; }
-  
-  /* Barbarian-specific skills */
-  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left + 20px}; }
-  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left + 20px}; }
-  .cs-pos-hide-undergrowth { --left: #{$cs-pos-hide-undergrowth-left + 20px}; }
-  
-  /* Skills that might be present from race */
-  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left + 20px}; }
-  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left + 20px}; }
-}
-
-.skill-layout-thief {
-  /* Base skills - all races have these */
-  .cs-pos-listening { --left: #{$cs-pos-listening-left - 40px}; }
-  .cs-pos-find-secret-door { --left: #{$cs-pos-find-secret-door-left - 40px}; }
-  .cs-pos-open-stuck-doors { --left: #{$cs-pos-open-stuck-doors-left - 40px}; }
-  
-  /* Thief-specific skills */
-  .cs-pos-climb-sheer { --left: #{$cs-pos-climb-sheer-left - 40px}; }
-  .cs-pos-hide-shadows { --left: #{$cs-pos-hide-shadows-left - 40px}; }
-  .cs-pos-move-silently { --left: #{$cs-pos-move-silently-left - 40px}; }
-  .cs-pos-find-traps { --left: #{$cs-pos-find-traps-left - 40px}; }
-  .cs-pos-open-locks { --left: #{$cs-pos-open-locks-left - 40px}; }
-  .cs-pos-pick-pockets { --left: #{$cs-pos-pick-pockets-left - 40px}; }
-  
-  /* Skills that might be present from race */
-  .cs-pos-detect-construction { --left: #{$cs-pos-detect-construction-left - 40px}; }
-  .cs-pos-detect-room-traps { --left: #{$cs-pos-detect-room-traps-left - 40px}; }
-}
 
 /* Race-based position adjustments (only if no qualifying class) */
 /* OLD RACE-BASED SKILL LAYOUTS REMOVED - REPLACED BY RACIAL-SKILL-LAYOUT SYSTEM */
@@ -777,6 +766,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   display: none;
 }
 
+/* Hide Half-Orc racial skill field by default - JavaScript will show it when needed */
+.cs-pos-hide-dungeons {
+  display: none;
+}
+
 .listening-group .cs-field-label {
   display: none !important;
 }
@@ -1144,8 +1138,8 @@ $racial-skill-top: 65px !default;  /* Master Y position for all racial skills */
 .cs-level-display {
   @include center-flex-field;
   box-sizing: border-box;
-  width: 73px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-level-width});
+  height: var(--height, #{$cs-pos-level-height});
   font-size: 36px;
   z-index: var(--z-level, -10);
   background: transparent !important;
@@ -1155,8 +1149,8 @@ $racial-skill-top: 65px !default;  /* Master Y position for all racial skills */
 /* Portrait helpers - configurable dimensions via CSS variables */
 .cs-portrait-container { 
   position: absolute; 
-  width: var(--width, 205px) !important; /* Use CSS variable with fallback */
-  height: var(--height, 239px) !important; /* Use CSS variable with fallback */
+  width: var(--width, #{$cs-pos-portrait-width}) !important;
+  height: var(--height, #{$cs-pos-portrait-height}) !important;
   overflow: hidden; 
   z-index: 5 !important; /* Force portrait above header frame */
   --z: 5; /* Set CSS variable for .cs-abs compatibility */
@@ -1204,8 +1198,8 @@ $racial-skill-top: 65px !default;  /* Master Y position for all racial skills */
   @include center-flex-field;
   font-variant-numeric: tabular-nums;
   
-  width: 74px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-xpmod-width});
+  height: var(--height, #{$cs-pos-xpmod-height});
   pointer-events: none;
   font-size: 36px;
 }
@@ -1214,8 +1208,8 @@ $racial-skill-top: 65px !default;  /* Master Y position for all racial skills */
   @include center-flex-field;
   font-variant-numeric: tabular-nums;
   
-  width: 160px;
-  height: 41px;
+  width: var(--width, #{$cs-pos-xp-width});
+  height: var(--height, #{$cs-pos-xp-height});
   cursor: pointer;
   pointer-events: auto;
   font-size: 36px;
@@ -1251,8 +1245,8 @@ input[type="number"] {
 .cs-char-name {
   @include center-flex-field;
   
-  width: 332px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-namegroup-width});
+  height: var(--height, #{$cs-pos-namegroup-height});
   font-size: 36px;
   background-color: transparent !important;
   white-space: nowrap;
@@ -1266,8 +1260,8 @@ input[type="number"] {
   @include center-flex-field;
   box-sizing: border-box;
   
-  width: 160px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-class-width});
+  height: var(--height, #{$cs-pos-class-height});
   font-size: 36px;
   background-color: transparent !important;
 
@@ -1282,8 +1276,8 @@ input[type="number"] {
   @include center-flex-field;
   line-height: 1;
   box-sizing: border-box;
-  width: 160px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-background-width});
+  height: var(--height, #{$cs-pos-background-height});
   font-size: var(--background-font-size, 36px);
   font-weight: normal;
   letter-spacing: 0;
@@ -1313,8 +1307,8 @@ input[type="number"] {
   box-sizing: border-box;
   
   /* Size and positioning */
-  width: 159px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-race-width});
+  height: var(--height, #{$cs-pos-race-height});
   
   /* Typography - customize as needed */
   font-size: 36px;
@@ -1350,8 +1344,8 @@ input[type="number"] {
 /* XP container with XP progress bar */
 .xp-group {
   position: relative;
-  width: 131px;
-  height: 41px;  /* Match progress bar height for consistency */
+  width: var(--width, #{$cs-pos-xp-width});
+  height: var(--height, #{$cs-pos-xp-height});
   
   /* XP Progress bar within XP field */
   .level-xp-progress {
@@ -1378,8 +1372,8 @@ input[type="number"] {
 .cs-alignment-select {
   @include center-flex-field;
   box-sizing: border-box;
-  width: 159px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-alignment-width});
+  height: var(--height, #{$cs-pos-alignment-height});
   font-size: 36px;
   background-color: transparent !important;
   color: inherit;
@@ -1397,8 +1391,8 @@ input[type="number"] {
 .cs-height-field {
   @include center-flex-field;
   box-sizing: border-box;
-  width: 74px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-height-width});
+  height: var(--height, #{$cs-pos-height-height});
   font-size: 36px;
   letter-spacing: 0;
   background-color: transparent !important;
@@ -1423,8 +1417,8 @@ input[type="number"] {
   @include center-flex-field;
   line-height: 1;
   box-sizing: border-box;
-  width: 73px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-weight-width});
+  height: var(--height, #{$cs-pos-weight-height});
   font-size: 36px;
   letter-spacing: 0;
   background-color: transparent !important;
@@ -1448,8 +1442,8 @@ input[type="number"] {
 .cs-languages-field {
   @include center-flex-field;
   box-sizing: border-box;
-  width: 331px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-languages-width});
+  height: var(--height, #{$cs-pos-languages-height});
   font-size: var(--languages-font-size, 36px);
   font-weight: normal;
   letter-spacing: var(--languages-letter-spacing, 0px);
@@ -1468,8 +1462,8 @@ input[type="number"] {
 .cs-age-field {
   @include center-flex-field;
   box-sizing: border-box;
-  width: 74px;
-  height: 40px;
+  width: var(--width, #{$cs-pos-age-width});
+  height: var(--height, #{$cs-pos-age-height});
   font-size: 36px;
   background-color: transparent !important;
   border: none;
@@ -1480,8 +1474,8 @@ input[type="number"] {
 .cs-sex-field {
   @include center-flex-field;
   box-sizing: border-box;
-  width: 73px;
-  height: 39px;
+  width: var(--width, #{$cs-pos-sex-width});
+  height: var(--height, #{$cs-pos-sex-height});
   font-size: 36px;
   background-color: transparent !important;
   border: none;
@@ -1541,24 +1535,24 @@ input[type="number"] {
 .bio-content { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
 
 /* Position presets (centralize numeric offsets) */
-.cs-pos-level { --left: #{$cs-pos-level-left}; --top: #{$cs-pos-level-top}; --z: var(--z-level, 8); }
-.cs-pos-portrait { --left: #{$cs-pos-portrait-left}; --top: #{$cs-pos-portrait-top}; --z: 5; }
-.cs-pos-languages { --left: #{$cs-pos-languages-left}; --top: #{$cs-pos-languages-top}; --z: var(--z-labels, 15); --pointer: auto; }
-.cs-pos-xpmod { --left: #{$cs-pos-xpmod-left}; --top: #{$cs-pos-xpmod-top}; --z: var(--z-labels, 15); }
-.cs-pos-xp { --left: #{$cs-pos-xp-left}; --top: #{$cs-pos-xp-top}; --z: var(--z-portrait, 15); }
-.cs-pos-next { --left: #{$cs-pos-next-left}; --top: #{$cs-pos-next-top}; --z: var(--z-labels, 15); }
+.cs-pos-level { @include position-field($cs-pos-level-left, $cs-pos-level-top, $cs-pos-level-width, $cs-pos-level-height, 8); }
+.cs-pos-portrait { @include position-field($cs-pos-portrait-left, $cs-pos-portrait-top, $cs-pos-portrait-width, $cs-pos-portrait-height, 5); }
+.cs-pos-languages { @include position-field($cs-pos-languages-left, $cs-pos-languages-top, $cs-pos-languages-width, $cs-pos-languages-height); --pointer: auto; }
+.cs-pos-xpmod { @include position-field($cs-pos-xpmod-left, $cs-pos-xpmod-top, $cs-pos-xpmod-width, $cs-pos-xpmod-height); }
+.cs-pos-xp { @include position-field($cs-pos-xp-left, $cs-pos-xp-top, $cs-pos-xp-width, $cs-pos-xp-height); }
+.cs-pos-next { @include position-field($cs-pos-next-left, $cs-pos-next-top, $cs-pos-next-width, $cs-pos-next-height); }
 .cs-pos-sep { --bottom: 0; --left: 0; --right: 0; --height: 1px; --bg: transparent; --z: var(--z-labels, 15); }
 
 /* Header / small-field presets discovered during the sweep */
-.cs-pos-namegroup { --left: #{$cs-pos-namegroup-left}; --top: #{$cs-pos-namegroup-top}; --z: var(--z-labels, 15); }
-.cs-pos-class { --left: #{$cs-pos-class-left}; --top: #{$cs-pos-class-top}; --z: var(--z-labels, 15); }
-.cs-pos-alignment { --left: #{$cs-pos-alignment-left}; --top: #{$cs-pos-alignment-top}; --z: var(--z-labels, 15); }
-.cs-pos-race { --left: #{$cs-pos-race-left}; --top: #{$cs-pos-race-top}; --z: var(--z-labels, 15); }
-.cs-pos-age { --left: #{$cs-pos-age-left}; --top: #{$cs-pos-age-top}; --z: var(--z-labels, 15); }
-.cs-pos-sex { --left: #{$cs-pos-sex-left}; --top: #{$cs-pos-sex-top}; --z: var(--z-labels, 15); }
-.cs-pos-height { --left: #{$cs-pos-height-left}; --top: #{$cs-pos-height-top}; --z: var(--z-labels, 15); }
-.cs-pos-weight { --left: #{$cs-pos-weight-left}; --top: #{$cs-pos-weight-top}; --z: var(--z-labels, 15); }
-.cs-pos-background { --left: #{$cs-pos-background-left}; --top: #{$cs-pos-background-top}; --z: var(--z-labels, 15); }
+.cs-pos-namegroup { @include position-field($cs-pos-namegroup-left, $cs-pos-namegroup-top, $cs-pos-namegroup-width, $cs-pos-namegroup-height); }
+.cs-pos-class { @include position-field($cs-pos-class-left, $cs-pos-class-top, $cs-pos-class-width, $cs-pos-class-height); }
+.cs-pos-alignment { @include position-field($cs-pos-alignment-left, $cs-pos-alignment-top, $cs-pos-alignment-width, $cs-pos-alignment-height); }
+.cs-pos-race { @include position-field($cs-pos-race-left, $cs-pos-race-top, $cs-pos-race-width, $cs-pos-race-height); }
+.cs-pos-age { @include position-field($cs-pos-age-left, $cs-pos-age-top, $cs-pos-age-width, $cs-pos-age-height); }
+.cs-pos-sex { @include position-field($cs-pos-sex-left, $cs-pos-sex-top, $cs-pos-sex-width, $cs-pos-sex-height); }
+.cs-pos-height { @include position-field($cs-pos-height-left, $cs-pos-height-top, $cs-pos-height-width, $cs-pos-height-height); }
+.cs-pos-weight { @include position-field($cs-pos-weight-left, $cs-pos-weight-top, $cs-pos-weight-width, $cs-pos-weight-height); }
+.cs-pos-background { @include position-field($cs-pos-background-left, $cs-pos-background-top, $cs-pos-background-width, $cs-pos-background-height); }
 .cs-pos-listening { --left: #{$cs-pos-listening-left}; --top: #{$cs-pos-listening-top}; --width: #{$cs-pos-listening-width}; --height: #{$cs-pos-listening-height}; --z: var(--z-labels, 15); }
 
 /* Universal Save Positioning - Simplified System with Tool Integration */

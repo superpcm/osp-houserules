@@ -5,6 +5,7 @@ import { UIHandler } from './handlers/ui-handler.js';
 import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 import { BackgroundHandler } from './handlers/background-handler.js';
 import { PositionToolHandler } from './handlers/position-tool-handler.js';
+import { PortraitTool } from './portrait-tool.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -344,15 +345,23 @@ export class OspActorSheetCharacter extends ActorSheet {
       { name: 'item', Handler: ItemHandler },
       { name: 'ui', Handler: UIHandler },
       { name: 'xpProgress', Handler: XPProgressHandler },
-      { name: 'background', Handler: BackgroundHandler }
+      { name: 'background', Handler: BackgroundHandler },
+      { name: 'portrait', Handler: PortraitTool }
     ];
 
     // Initialize handlers
     handlerConfigs.forEach(({ name, Handler }) => {
       try {
-        const handler = new Handler(html, this.actor, this);
-        handler.initialize();
-        this.handlers.set(name, handler);
+        // PortraitTool uses different constructor signature
+        if (name === 'portrait') {
+          const handler = new Handler(this);
+          handler.initialize();
+          this.handlers.set(name, handler);
+        } else {
+          const handler = new Handler(html, this.actor, this);
+          handler.initialize();
+          this.handlers.set(name, handler);
+        }
       } catch (error) {
         console.error(`CharacterSheet: Failed to initialize handler: ${name}`, error);
       }

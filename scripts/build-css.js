@@ -6,7 +6,10 @@ import { resolve } from 'path';
 const input = resolve(process.cwd(), 'src/styles/ose.scss');
 const out = resolve(process.cwd(), 'dist/ose.css');
 console.log('Compiling:', input);
-const result = compile(input, { loadPaths: [resolve(process.cwd(), 'src/styles')] });
+const result = compile(input, { 
+  loadPaths: [resolve(process.cwd(), 'src/styles')],
+  silenceDeprecations: ['import'] // Suppress @import deprecation warnings
+});
 console.log('CSS output length:', result.css.length, 'bytes');
 console.log('Searching for test class...');
 const hasTest = result.css.includes('test-character-sheet-import');

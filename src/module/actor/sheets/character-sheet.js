@@ -145,7 +145,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       width: 800, // Increased by 30px (15px padding each side)
       height: 687, // Increased by 30px (15px padding each side)
       resizable: false,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }],
     });
   }
 
@@ -770,7 +770,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       formElement[0].className = [...filteredClasses, layoutClass, skillsTabClass, racialLayoutClass].join(' ');
       
       // Force style recalculation to ensure background images update
-      this.triggerReflow(html.find('.tab[data-tab="combat"]'));
+      this.triggerReflow(html.find('.tab[data-tab="attributes"]'));
       this.triggerReflow(html.find('.tab[data-tab="skills"]'));
     }
   }

@@ -868,8 +868,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   background-color: white;
 }
 
-/* Combat tab background - Base layers for all layouts */
-.tab[data-tab="combat"] {
+/* ============================
+   ATTRIBUTES TAB BACKGROUND
+   ============================ */
+.tab[data-tab="attributes"] {
   position: relative;
   background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp') !important;
   background-size: contain;
@@ -880,13 +882,21 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   margin: 0 0.5px 0 -0.5px;
 }
 
-/* Combat Tab Styles */
-.tab[data-tab="combat-tab"] {
+/* ============================
+   COMBAT TAB BACKGROUND
+   ============================ */
+.tab[data-tab="combat"] {
   position: relative;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/combat.webp');
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: local;
   background-color: transparent;
   padding: 0px;
   height: 384px;
-  
+  margin: 0 0.5px 0 -0.5px;
+
   .combat-content {
     padding: 20px;
     text-align: center;
@@ -900,8 +910,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     flex-wrap: wrap;
     gap: 15px;
     justify-content: center;
-    margin-top: 20px;
-    
+    margin: 0 0.5px 0 -0.5px;
+
     .combat-stat {
       display: flex;
       flex-direction: column;
@@ -1625,6 +1635,42 @@ input[type="number"] {
       background: rgba(139, 69, 19, 0.8);
     }
   }
+}
+
+/* ============================
+   BIO TAB BACKGROUND
+   ============================ */
+.tab[data-tab="bio"] {
+  position: relative;
+  background-image: 
+    url('/systems/osp-houserules/assets/character-sheet/bio-fields.webp'),
+    url('/systems/osp-houserules/assets/character-sheet/bio.webp');
+  background-size: 100%, contain;
+  background-position: center top, center top;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: local, local; /* Background stays fixed while content scrolls */
+  background-color: transparent;
+  min-height: 384px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0 0.5px 0 -0.5px;
+}
+
+/* ============================
+   EQUIPMENT TAB BACKGROUND
+   ============================ */
+.tab[data-tab="equipment"] {
+  position: relative;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/equipment.webp');
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: local; /* Background stays fixed while content scrolls */
+  background-color: transparent;
+  min-height: 384px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0 0.5px 0 -0.5px;
 }
 
 /* ============================

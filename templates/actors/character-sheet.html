@@ -1825,9 +1825,9 @@
 
     <!-- Right-side Tab Navigation -->
     <nav class="sheet-tabs tabs cs-tabs" data-group="primary">
-  <a class="item cs-tab-item" data-tab="combat">Attributes</a>
+  <a class="item cs-tab-item" data-tab="attributes">Attributes</a>
   <a class="item cs-tab-item" data-tab="skills">Skills</a>
-  <a class="item cs-tab-item" data-tab="combat-tab">Combat</a>
+  <a class="item cs-tab-item" data-tab="combat">Combat</a>
   <a class="item cs-tab-item" data-tab="equipment">Equipment</a>
   <a class="item cs-tab-item" data-tab="bio">Bio</a>
     </nav>
@@ -1835,7 +1835,7 @@
     <!-- Sheet Body - Tab Content Area -->
   <section class="sheet-body cs-sheet-body">
       <!-- Attributes Tab -->
-      <div class="tab" data-group="primary" data-tab="combat">
+      <div class="tab" data-group="primary" data-tab="attributes">
         <div class="combat-section">
 
           <!-- Ability Scores Section -->
@@ -2207,7 +2207,7 @@
       </div>
       
       <!-- Combat Tab -->
-      <div class="tab" data-group="primary" data-tab="combat-tab">
+      <div class="tab" data-group="primary" data-tab="combat">
         <section class="combat-tab">
           <!-- Combat Stats Section -->
           <div class="combat-stats cs-combat-stats">
@@ -2506,38 +2506,7 @@
 
       <!-- Bio Tab -->
       <div class="tab" data-group="primary" data-tab="bio">
-        <div class="bio-content">          
-          <!-- Character Appearance -->
-          <div class="bio-section">
-            <h3 class="cs-bio-heading">Appearance</h3>
-            <textarea class="cs-bio-textarea" name="system.bio.appearance" placeholder="Describe your character's physical appearance...">{{system.bio.appearance}}</textarea>
-          </div>
-
-          <!-- Character Personality -->
-          <div class="bio-section">
-            <h3 class="cs-bio-heading">Personality</h3>
-            <textarea class="cs-bio-textarea" name="system.bio.personality" placeholder="Describe your character's personality, traits, and mannerisms...">{{system.bio.personality}}</textarea>
-          </div>
-
-          <!-- Character Background/History -->
-          <div class="bio-section">
-            <h3 class="cs-bio-heading">Background & History</h3>
-            <textarea class="cs-bio-textarea" name="system.bio.history" placeholder="Tell your character's story, background, and important life events...">{{system.bio.history}}</textarea>
-          </div>
-
-          <!-- Character Goals & Motivations -->
-          <div class="bio-section">
-            <h3 class="cs-bio-heading">Goals & Motivations</h3>
-            <textarea class="cs-bio-textarea" name="system.bio.goals" placeholder="What drives your character? What are their goals and motivations...">{{system.bio.goals}}</textarea>
-          </div>
-
-          <!-- Additional Notes -->
-          <div class="bio-section">
-            <h3 class="cs-bio-heading">Additional Notes</h3>
-            <textarea class="cs-bio-textarea" name="system.bio.notes" placeholder="Any additional notes, relationships, or important details...">{{system.bio.notes}}</textarea>
-          </div>
-
-        </div>
+        <!-- Blank slate - ready for custom content -->
       </div>
     </section>
 </form>

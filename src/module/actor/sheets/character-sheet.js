@@ -150,6 +150,11 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   getData(options) {
+    // If we're in the process of closing, don't render
+    if (this._isClosing) {
+      return {};
+    }
+    
     const context = super.getData(options);
     context.system = this.actor.system;
 
@@ -180,6 +185,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     return context;
   }
 
+  /**
+   * Override render to prevent rendering while closing
+   */
+  async render(force = false, options = {}) {
+    // If we're closing, don't render
+    if (this._isClosing) {
+      return this;
+    }
+    
+    return super.render(force, options);
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
 
@@ -197,10 +214,79 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Update skill layout based on character class and race
     this.updateSkillLayout(html);
 
+    // Handle all bio textarea changes - use both blur and change events
+    html.find('.bio-text-field').on('blur change', async (event) => {
+      const fieldName = event.target.name;
+      const value = event.target.value;
+      console.log(`Bio field ${fieldName} updated:`, value);
+      await this.actor.update({ [fieldName]: value });
+    });
+
+    // Auto-resize bio textareas as user types
+    this.initializeBioFieldAutoResize(html);
+
+    // Ensure the window close button always works for this sheet instance.
+    // Some tools register capturing handlers that can prevent the normal close.
+    try {
+      const windowApp = html.closest('.window-app')[0];
+      if (windowApp) {
+        const closeBtn = windowApp.querySelector('.window-header .window-close');
+        if (closeBtn) {
+          // Cleanup any existing handler for this instance
+          if (this._ospCloseHandler && this._ospCloseEl) {
+            try { this._ospCloseEl.removeEventListener('click', this._ospCloseHandler, true); } catch(e) {}
+            this._ospCloseHandler = null;
+            this._ospCloseEl = null;
+          }
+          this._ospCloseEl = closeBtn;
+          this._ospCloseHandler = (e) => {
+            // Prevent other handlers from swallowing this click and close the sheet
+            e.stopPropagation();
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            this.close();
+            return false;
+          };
+          // Use capture phase so our handler runs before potential interfering handlers
+          closeBtn.addEventListener('click', this._ospCloseHandler, true);
+        }
+      }
+    } catch (err) {
+      console.error('CharacterSheet: failed to attach explicit close handler', err);
+    }
+
     // Set up tab system AFTER all other handlers to ensure it has priority
     setTimeout(() => {
       this.setupTabSystem(html);
     }, 100);
+  }
+
+  /**
+   * Initialize auto-resize functionality for bio text fields
+   */
+  initializeBioFieldAutoResize(html) {
+    const bioFields = html.find('.bio-text-field');
+    
+    // Function to auto-resize a textarea based on content
+    const autoResize = (textarea) => {
+      // Reset height to minimum to get accurate scrollHeight
+      textarea.style.height = 'auto';
+      // Set height to content height (scrollHeight includes padding)
+      textarea.style.height = textarea.scrollHeight + 'px';
+    };
+
+    bioFields.each((index, field) => {
+      // Auto-resize on input (as user types)
+      $(field).on('input', function() {
+        autoResize(this);
+      });
+
+      // Initial resize to fit existing content - run after a brief delay
+      // to ensure DOM is fully ready
+      setTimeout(() => {
+        autoResize(field);
+      }, 50);
+    });
   }
 
   /**
@@ -435,6 +521,9 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Override close to clean up handlers
    */
   async close(options = {}) {
+    // Set flag to prevent rendering during close
+    this._isClosing = true;
+    
     this.destroyHandlers();
     // Clean up all tab-related event handlers
     $(document).off('click.tabsystem');
@@ -460,7 +549,23 @@ export class OspActorSheetCharacter extends ActorSheet {
       this._tabMutationObserver = null;
     }
 
-    return super.close(options);
+    // Remove any explicit close-button handler we attached
+    try {
+      if (this._ospCloseEl && this._ospCloseHandler) {
+        try { this._ospCloseEl.removeEventListener('click', this._ospCloseHandler, true); } catch(e) {}
+      }
+    } catch (err) {
+      /* ignore */
+    }
+    this._ospCloseHandler = null;
+    this._ospCloseEl = null;
+
+    const result = await super.close(options);
+    
+    // Clear the closing flag (though sheet should be destroyed at this point)
+    this._isClosing = false;
+    
+    return result;
   }
 
   /**

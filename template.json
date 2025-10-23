@@ -26,6 +26,13 @@
         "barbarianClimb": "",
         "barbarianHide": "",
         "barbarianMove": "",
+        "details": {
+          "appearance": "",
+          "personality": "",
+          "background": "",
+          "goals": "",
+          "notes": ""
+        },
         "imageTransform": {
           "translateX": 0,
           "translateY": 0,

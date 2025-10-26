@@ -7,6 +7,8 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
       height: 480,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }],
+      submitOnChange: true,
+      closeOnSubmit: false,
     });
   }
 
@@ -23,6 +25,10 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     // Add the item's system data for easy access
     context.system = this.item.system;
     context.flags = this.item.flags;
+    
+    // Ensure img is available
+    context.img = this.item.img;
+    context.name = this.item.name;
     
     // Add configuration data
     context.config = {
@@ -43,6 +49,16 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
 
     // Add or remove tags
     html.find(".tag-control").click(this._onTagControl.bind(this));
+  }
+
+  /** @override */
+  async _updateObject(event, formData) {
+    // Ensure name is never empty or undefined
+    if (!formData.name || formData.name.trim() === "") {
+      formData.name = this.item.name || "Unnamed Item";
+    }
+    
+    return super._updateObject(event, formData);
   }
 
   /**

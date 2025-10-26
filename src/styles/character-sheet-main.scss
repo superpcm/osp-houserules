@@ -115,7 +115,6 @@ $cs-pos-weight-top: 212px !default;
 $cs-pos-weight-width: 72px !default;
 $cs-pos-weight-height: 39px !default;
 
-
 $cs-pos-languages-left: 436px !default;
 $cs-pos-languages-top: 212px !default;
 $cs-pos-languages-width: 318px !default;
@@ -1663,6 +1662,21 @@ input[type="number"] {
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+}
+
+/* Bio field label styling */
+.osp .bio-field-label,
+.tab[data-tab="bio"] .bio-field-label {
+  position: relative;
+  top: 23px;
+  left: 49px;
+  width: 706px;
+  display: block;
+  text-align: center;
+  font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
+  font-size: 16px !important;
+  color: black;;
+  margin-bottom: 4px; /* 5px space between title and text field */
 }
 
 /* Bio text field styling - Appearance */

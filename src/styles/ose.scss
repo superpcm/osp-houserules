@@ -43,17 +43,17 @@
 }
 */
 
-/* Global Font Configuration - Handwritten for entire OSP module */
+/* Global Font Configuration - Cursive fallback font for entire OSP module */
 .osp,
 .osp *,
 form.osp,
 form.osp *,
 .application.window-app.sheet.actor.character.osp,
 .application.window-app.sheet.actor.character.osp * {
-  font-family: 'Handwritten', cursive !important;
+  font-family: handwritten !important;
 }
 
-/* Ensure all form elements inherit Handwritten */
+/* Ensure all form elements inherit handwritten font */
 .osp input,
 .osp select,
 .osp textarea,
@@ -62,13 +62,13 @@ form.osp input,
 form.osp select,
 form.osp textarea,
 form.osp button {
-  font-family: 'Handwritten', cursive !important;
+  font-family: handwritten !important;
 }
 
 /* Font loading and fallback management */
-@supports (font-family: 'Handwritten') {
-  .osp {
-    font-family: 'Handwritten', cursive !important;
+@supports (font-family: handwritten) {
+  .osp, .osp * {
+    font-family: handwritten !important;
   }
 }
 

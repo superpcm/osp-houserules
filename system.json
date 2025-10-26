@@ -5,6 +5,7 @@
   "name": "osp-houserules",
   "title": "OSP's House Rules",
   "version": "1.0.1",
+  "description": "OSP's House Rules is a Foundry VTT system that implements a set of house rules and modifications specific so Old School Player's specific gaming group.",
   "compatibility": {
     "minimum": "13.0.0",
     "verified": "13.0.0"
@@ -12,6 +13,7 @@
   "author": "Old School Player",
   "esmodules": ["dist/ose.js"],
   "styles": ["dist/ose.css"],
+  "background": "systems/osp-houserules/system-image.webp",
   "template": "template.json",
   "languages": [
     {

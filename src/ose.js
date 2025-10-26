@@ -39,7 +39,7 @@ Hooks.once("init", () => {
   
   // Configure Actor document classes
   CONFIG.Actor.documentClass = OspActor;
-  CONFIG.Actor.label = game.i18n.localize("osp-houserules.Actor.documentLabel");
+  CONFIG.Actor.label = game.i18n.localize("ose.Actor.documentLabel");
 
   // Configure Item document classes
   CONFIG.Item.documentClass = OspItem;
@@ -49,19 +49,19 @@ Hooks.once("init", () => {
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
 
   // Register Actor sheets
-  foundry.documents.collections.Actors.registerSheet("osp-houserules", OspActorSheetCharacter, {
+  foundry.documents.collections.Actors.registerSheet("ose", OspActorSheetCharacter, {
     types: ["character"],
     makeDefault: true,
-    label: game.i18n.localize("osp-houserules.Actor.Type.character")
+    label: game.i18n.localize("ose.Actor.Type.character")
   });
-  foundry.documents.collections.Actors.registerSheet("osp-houserules", OspActorSheetMonster, {
+  foundry.documents.collections.Actors.registerSheet("ose", OspActorSheetMonster, {
     types: ["monster"],
     makeDefault: true,
-    label: game.i18n.localize("osp-houserules.Actor.Type.monster")
+    label: game.i18n.localize("ose.Actor.Type.monster")
   });
 
   // Register Item sheets
-  foundry.documents.collections.Items.registerSheet("osp-houserules", OspItemSheet, {
+  foundry.documents.collections.Items.registerSheet("ose", OspItemSheet, {
     types: ["weapon", "armor", "item", "container"],
     makeDefault: true,
     label: "OSP Item Sheet"
@@ -88,8 +88,8 @@ Hooks.once("init", () => {
   */
 
   CONFIG.Actor.typeLabels = {
-    character: game.i18n.localize("osp-houserules.Actor.Type.character"),
-    monster: game.i18n.localize("osp-houserules.Actor.Type.monster")
+    character: game.i18n.localize("ose.Actor.Type.character"),
+    monster: game.i18n.localize("ose.Actor.Type.monster")
   };
 
   Hooks.on("renderActorConfig", (app, html, data) => {
@@ -100,14 +100,14 @@ Hooks.once("init", () => {
     // Insert a placeholder option if not present
     if ($select.find('option[value=""]').length === 0) {
       $select.prepend(
-        `<option value="" disabled>${game.i18n.localize("osp-houserules.ChooseType")}</option>`
+        `<option value="" disabled>${game.i18n.localize("ose.ChooseType")}</option>`
       );
       $select.val(""); // Set the select to the placeholder
     }
 
     // Localize type options
-    $select.find('option[value="character"]').text(game.i18n.localize("osp-houserules.Actor.Type.character"));
-    $select.find('option[value="monster"]').text(game.i18n.localize("osp-houserules.Actor.Type.monster"));
+    $select.find('option[value="character"]').text(game.i18n.localize("ose.Actor.Type.character"));
+    $select.find('option[value="monster"]').text(game.i18n.localize("ose.Actor.Type.monster"));
 
     // Disable submit if no type is selected
     $submit.prop("disabled", $select.val() === "");

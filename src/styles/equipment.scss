@@ -221,6 +221,8 @@
   border-radius: 4px;
   border: 1px solid #ccc;
   cursor: pointer;
+  object-fit: cover;
+  pointer-events: auto !important;
 }
 
 /* Portrait transform: read user variables set by the portrait adjustment script */
@@ -245,6 +247,7 @@
   border: none;
   background: none;
   width: 100%;
+  pointer-events: auto !important;
 }
 
 .osp.sheet.item .details {

@@ -55,69 +55,69 @@ $cs-pos-portrait-top: 23px !default;
 $cs-pos-portrait-width: 205px !default;
 $cs-pos-portrait-height: 239px !default;
 
-$cs-pos-namegroup-left: 270px !default;
+$cs-pos-namegroup-left: 269px !default;
 $cs-pos-namegroup-top: 23px !default;
-$cs-pos-namegroup-width: 319px !default;
+$cs-pos-namegroup-width: 318px !default;
 $cs-pos-namegroup-height: 39px !default;
 
-$cs-pos-level-left: 597px !default;
+$cs-pos-level-left: 599px !default;
 $cs-pos-level-top: 23px !default;
 $cs-pos-level-width: 72px !default;
 $cs-pos-level-height: 39px !default;
 
 $cs-pos-xpmod-left: 682px !default;
 $cs-pos-xpmod-top: 23px !default;
-$cs-pos-xpmod-width: 73px !default;
+$cs-pos-xpmod-width: 71px !default;
 $cs-pos-xpmod-height: 39px !default;
 
 $cs-pos-race-left: 269px !default;
 $cs-pos-race-top: 86px !default;
-$cs-pos-race-width: 155px !default;
+$cs-pos-race-width: 153px !default;
 $cs-pos-race-height: 39px !default;
 
-$cs-pos-class-left: 435px !default;
+$cs-pos-class-left: 434px !default;
 $cs-pos-class-top: 86px !default;
 $cs-pos-class-width: 154px !default;
 $cs-pos-class-height: 39px !default;
 
-$cs-pos-xp-left: 600px !default;
+$cs-pos-xp-left: 599px !default;
 $cs-pos-xp-top: 86px !default;
 $cs-pos-xp-width: 155px !default;
 $cs-pos-xp-height: 39px !default;
 
-$cs-pos-age-left: 270px !default;
+$cs-pos-age-left: 269px !default;
 $cs-pos-age-top: 149px !default;
 $cs-pos-age-width: 72px !default;
 $cs-pos-age-height: 39px !default;
 
-$cs-pos-sex-left: 355px !default;
+$cs-pos-sex-left: 351px !default;
 $cs-pos-sex-top: 149px !default;
 $cs-pos-sex-width: 72px !default;
 $cs-pos-sex-height: 39px !default;
 
-$cs-pos-alignment-left: 436px !default;
+$cs-pos-alignment-left: 434px !default;
 $cs-pos-alignment-top: 149px !default;
-$cs-pos-alignment-width: 154px !default;
+$cs-pos-alignment-width: 153px !default;
 $cs-pos-alignment-height: 39px !default;
 
-$cs-pos-background-left: 600px !default;
+$cs-pos-background-left: 599px !default;
 $cs-pos-background-top: 149px !default;
 $cs-pos-background-width: 155px !default;
 $cs-pos-background-height: 39px !default;
 
-$cs-pos-height-left: 270px !default;
+$cs-pos-height-left: 269px !default;
 $cs-pos-height-top: 212px !default;
 $cs-pos-height-width: 72px !default;
 $cs-pos-height-height: 39px !default;
 
-$cs-pos-weight-left: 353px !default;
+$cs-pos-weight-left: 351px !default;
 $cs-pos-weight-top: 212px !default;
 $cs-pos-weight-width: 72px !default;
 $cs-pos-weight-height: 39px !default;
 
-$cs-pos-languages-left: 436px !default;
+$cs-pos-languages-left: 434px !default;
 $cs-pos-languages-top: 212px !default;
-$cs-pos-languages-width: 318px !default;
+$cs-pos-languages-width: 320px !default;
 $cs-pos-languages-height: 39px !default;
 
 $cs-pos-listening-left: 304px !default;
@@ -1160,7 +1160,6 @@ $racial-skill-top: 65px !default;  /* Master Y position for all racial skills */
   font-size: 36px;
   z-index: var(--z-level, -10);
   background: transparent !important;
-  padding: 0 0 2px 0;
 }
 
 /* Portrait helpers - configurable dimensions via CSS variables */
@@ -1339,7 +1338,7 @@ input[type="number"] {
 
   /* Layout */
   margin: 0;
-  padding: 0 5px 2px 5px;
+  padding: 0 5px 0 5px;
   
   /* Interaction */
   pointer-events: auto;
@@ -1416,7 +1415,6 @@ input[type="number"] {
   color: inherit;
   border: none;
   margin: 0;
-  padding: 0 2px 0 2px;
   pointer-events: auto;
   cursor: text;
   vertical-align: middle;
@@ -1468,7 +1466,7 @@ input[type="number"] {
   background: transparent !important;
   border: none !important;
   margin: 0;
-  padding: 2px 3px 2px 3px;
+  padding: 0 3px 0 3px;
   pointer-events: auto;
   cursor: pointer;
   user-select: none;

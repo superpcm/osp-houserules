@@ -45,11 +45,18 @@
 
 /* Global Font Configuration - Cursive fallback font for entire OSP module */
 .osp,
-.osp *,
 form.osp,
-form.osp *,
-.application.window-app.sheet.actor.character.osp,
-.application.window-app.sheet.actor.character.osp * {
+.application.window-app.sheet.actor.character.osp {
+  font-family: handwritten !important;
+}
+
+/* Apply to common text elements, but NOT all elements with * */
+.osp div:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon),
+.osp span:not(i),
+.osp p,
+.osp h1, .osp h2, .osp h3, .osp h4, .osp h5, .osp h6,
+.osp label,
+.osp a:not(.item-control) {
   font-family: handwritten !important;
 }
 
@@ -67,7 +74,16 @@ form.osp button {
 
 /* Font loading and fallback management */
 @supports (font-family: handwritten) {
-  .osp, .osp * {
+  .osp {
+    font-family: handwritten !important;
+  }
+  
+  .osp div:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon),
+  .osp span:not(i),
+  .osp p,
+  .osp h1, .osp h2, .osp h3, .osp h4, .osp h5, .osp h6,
+  .osp label,
+  .osp a:not(.item-control) {
     font-family: handwritten !important;
   }
 }

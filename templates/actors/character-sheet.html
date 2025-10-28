@@ -2240,8 +2240,9 @@
         <section class="equipment-tab">
           {{!-- Weapons Section --}}
           <div class="item-category">
-            <div class="item-category-title flexrow">
+            <div class="item-category-title weapons-title flexrow">
               <div class="category-caret"><i class="fas fa-caret-down"></i></div>
+              <div class="item-roll-icon"></div>
               <div class="category-name">Weapons</div>
               <div class="field-short">Damage</div>
               <div class="field-short">Weight</div>
@@ -2254,8 +2255,11 @@
             <ol class="item-list">
               {{#each weapons as |item|}}
               <li class="item-entry item" data-item-id="{{item.id}}">
-                <div class="item-header flexrow {{#if item.isWeapon}}item-rollable{{/if}}">
-                  <div class="item-image"></div>
+                <div class="item-header weapon-header flexrow">
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                  <a class="item-roll-icon {{#if item.isWeapon}}item-rollable{{/if}}" title="Roll Attack">
+                    <img src="systems/osp-houserules/assets/character-sheet/d20-ico.webp" alt="Roll" />
+                  </a>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{item.system.damage}}</div>
                   <div class="field-short">{{item.system.weight}}</div>
@@ -2310,9 +2314,9 @@
               {{#each armor as |item|}}
               <li class="item-entry item" data-item-id="{{item.id}}">
                 <div class="item-header flexrow">
-                  <div class="item-image"></div>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-                  <div class="field-short">{{item.system.ac.value}}</div>
+                  <div class="field-short">{{item.system.aac.value}}</div>
                   <div class="field-short">{{item.system.weight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
@@ -2358,7 +2362,7 @@
               {{#each containers as |item|}}
               <li class="item-entry item" data-item-id="{{item.id}}">
                 <div class="item-header flexrow">
-                  <div class="item-image"></div>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{item.system.capacity.value}}/{{item.system.capacity.max}}</div>
                   <div class="field-short">{{item.system.weight}}</div>
@@ -2406,7 +2410,7 @@
               {{#each items as |item|}}
               <li class="item-entry item" data-item-id="{{item.id}}">
                 <div class="item-header flexrow">
-                  <div class="item-image"></div>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short quantity">
                     <input 
@@ -2465,7 +2469,7 @@
               {{#each treasures as |item|}}
               <li class="item-entry item" data-item-id="{{item.id}}">
                 <div class="item-header flexrow">
-                  <div class="item-image"></div>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{item.system.cumulativeCost}} gp</div>
                   <div class="field-short">{{item.system.cumulativeWeight}}</div>

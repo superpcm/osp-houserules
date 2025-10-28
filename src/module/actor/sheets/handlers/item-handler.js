@@ -51,6 +51,7 @@ export class ItemHandler {
    */
   onItemEdit(event) {
     event.preventDefault();
+    event.stopPropagation(); // Prevent triggering item roll
     const item = this.getItemFromEvent(event);
     if (item) {
       item.sheet.render(true);
@@ -62,6 +63,7 @@ export class ItemHandler {
    */
   onItemDelete(event) {
     event.preventDefault();
+    event.stopPropagation(); // Prevent triggering item roll
     const li = $(event.currentTarget).parents(".item-entry");
     const item = this.getItemFromEvent(event);
     if (item) {
@@ -75,6 +77,7 @@ export class ItemHandler {
    */
   onItemToggle(event) {
     event.preventDefault();
+    event.stopPropagation(); // Prevent triggering item roll
     const item = this.getItemFromEvent(event);
     if (item) {
       const equipped = !item.system.equipped;
@@ -87,6 +90,7 @@ export class ItemHandler {
    */
   onItemShow(event) {
     event.preventDefault();
+    event.stopPropagation(); // Prevent triggering item roll
     const item = this.getItemFromEvent(event);
     if (!item) return;
     

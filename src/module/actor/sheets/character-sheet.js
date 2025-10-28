@@ -299,8 +299,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.sheet-tabs').addClass('cs-tabs');
     tabLinks.addClass('cs-tab-item');
 
-    // Restore previously active tab, or default to 'combat'
-    const activeTab = this._activeTab || 'combat';
+    // Restore previously active tab, or default to 'attributes'
+    const activeTab = this._activeTab || 'attributes';
     this.activateTab(html, activeTab);
 
     // Simple event delegation - single handler on the tab container

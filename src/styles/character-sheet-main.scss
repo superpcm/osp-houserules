@@ -1705,15 +1705,25 @@ input[type="number"] {
 .tab[data-tab="equipment"] {
   position: relative;
   background-image: url('/systems/osp-houserules/assets/character-sheet/equipment.webp');
-  background-size: contain;
+  background-size: 800px 383px;
   background-position: center top;
   background-repeat: no-repeat;
-  background-attachment: local; /* Background stays fixed while content scrolls */
+  background-attachment: scroll; /* Background stays fixed to element, doesn't scroll with content */
   background-color: transparent;
-  min-height: 384px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin: 0 0.5px 0 -0.5px;
+  height: 383px; /* Fixed height to enable scrolling */
+  max-height: 383px; /* Prevent extending beyond tab boundaries */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Hide horizontal overflow */
+  margin: 0 0 0 -1px;
+  padding-bottom: 20px; /* Add bottom padding for last item */
+  
+  /* Hide scrollbar while still allowing scrolling */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 }
 
 /* ============================

@@ -1,6 +1,8 @@
 /**
  * Handles item management operations (CRUD, equipment, etc.)
  */
+import { getAttackBonus, getAbilityModifier } from "../../../../config/classes.js";
+
 export class ItemHandler {
   constructor(html, actor) {
     this.html = html;
@@ -111,10 +113,54 @@ export class ItemHandler {
     const item = this.getItemFromEvent(event);
     
     if (item && item.type === "weapon") {
-      const roll = new Roll("1d20");
+      // Get character stats
+      const characterClass = this.actor.system.class || 'fighter';
+      const level = parseInt(this.actor.system.level) || 1;
+      const strScore = parseInt(this.actor.system.attributes?.str?.value) || 10;
+      const dexScore = parseInt(this.actor.system.attributes?.dex?.value) || 10;
+      
+      // Calculate attack bonus from class/level
+      const classAttackBonus = getAttackBonus(characterClass, level);
+      
+      // Get weapon's inherent bonus
+      const weaponBonus = parseInt(item.system.bonus) || 0;
+      
+      // Determine ability modifier based on weapon type
+      let abilityModifier = 0;
+      let abilityName = '';
+      
+      if (item.system.melee) {
+        // Melee weapons use STR
+        abilityModifier = getAbilityModifier(strScore);
+        abilityName = 'STR';
+      } else if (item.system.missile) {
+        // Missile weapons use DEX
+        abilityModifier = getAbilityModifier(dexScore);
+        abilityName = 'DEX';
+      } else {
+        // Default to STR for unspecified weapons
+        abilityModifier = getAbilityModifier(strScore);
+        abilityName = 'STR';
+      }
+      
+      // Calculate total bonus
+      const totalBonus = classAttackBonus + weaponBonus + abilityModifier;
+      
+      // Build formula and flavor text
+      const formula = totalBonus >= 0 ? `1d20 + ${totalBonus}` : `1d20 - ${Math.abs(totalBonus)}`;
+      const bonusBreakdown = [
+        `Class: +${classAttackBonus}`,
+        weaponBonus !== 0 ? `Weapon: ${weaponBonus >= 0 ? '+' : ''}${weaponBonus}` : null,
+        `${abilityName}: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}`
+      ].filter(b => b !== null).join(', ');
+      
+      const flavor = `${item.name} Attack Roll<br><small>${bonusBreakdown}</small>`;
+      
+      // Roll the attack
+      const roll = new Roll(formula);
       roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: `${item.name} Attack Roll`
+        flavor: flavor
       });
     }
   }

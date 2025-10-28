@@ -3,6 +3,56 @@
  * Centralized source of truth for all class-related data
  */
 
+// Attack bonus progression tables by class group (Ascending AC bonuses)
+// Based on house_rules_v1.5.txt THAC0 tables
+export const ATTACK_BONUS_TABLES = {
+  // Fighter group (Fighter, Knight, Barbarian, Ranger, Beast Master, Warden, etc.)
+  // Levels 1-3: +0, 4-6: +2, 7-9: +5, 10-12: +7, 13-14: +9
+  'fighter': [0, 0, 0, 2, 2, 2, 5, 5, 5, 7, 7, 7, 9, 9],
+  
+  // Cleric group (Cleric, Druid, Paladin)
+  // Levels 1-4: +0, 5-8: +2, 9-12: +5, 13-14: +7
+  'cleric': [0, 0, 0, 0, 2, 2, 2, 2, 5, 5, 5, 5, 7, 7],
+  
+  // Magic-User group (Magic-User, Illusionist, Mage)
+  // Levels 1-5: +0, 6-10: +2, 11-14: +5
+  'magic-user': [0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 5, 5, 5, 5],
+  
+  // Thief group (Thief, Assassin, Bard)
+  // Levels 1-4: +0, 5-8: +2, 9-12: +5, 13-14: +7
+  'thief': [0, 0, 0, 0, 2, 2, 2, 2, 5, 5, 5, 5, 7, 7]
+};
+
+// Map character classes to their attack bonus progression
+export const CLASS_ATTACK_BONUS_MAPPING = {
+  // Core OSE classes
+  'fighter': 'fighter',
+  'cleric': 'cleric',
+  'magic-user': 'magic-user',
+  'thief': 'thief',
+
+  // Advanced Fantasy classes
+  'assassin': 'thief',
+  'barbarian': 'fighter',
+  'bard': 'thief',
+  'beast master': 'fighter',
+  'druid': 'cleric',
+  'knight': 'fighter',
+  'paladin': 'cleric',
+  'ranger': 'fighter',
+  'warden': 'fighter',
+  'illusionist': 'magic-user',
+  'mage': 'magic-user',
+
+  // Race-as-class
+  'dwarf': 'fighter',
+  'elf': 'fighter',
+  'gnome': 'cleric',
+  'half-elf': 'fighter',
+  'half-orc': 'fighter',
+  'hobbit': 'thief'
+};
+
 // XP progression tables by base class
 export const XP_TABLES = {
   // Fighter progression (and similar classes)
@@ -112,6 +162,36 @@ export function getNextLevelXP(characterClass, currentLevel) {
  */
 export function getPrimeRequisites(characterClass) {
   return PRIME_REQUISITES[characterClass.toLowerCase()] || ['str'];
+}
+
+/**
+ * Get attack bonus for a character based on class and level
+ * @param {string} characterClass - The character class name
+ * @param {number} level - Character level (1-14)
+ * @returns {number} Attack bonus
+ */
+export function getAttackBonus(characterClass, level) {
+  const mappedClass = CLASS_ATTACK_BONUS_MAPPING[characterClass.toLowerCase()] || 'fighter';
+  const bonusTable = ATTACK_BONUS_TABLES[mappedClass];
+  const levelIndex = Math.min(Math.max(level - 1, 0), 13); // Levels 1-14, array index 0-13
+  return bonusTable[levelIndex] || 0;
+}
+
+/**
+ * Calculate ability modifier for a given score
+ * @param {number} score - Ability score (3-18)
+ * @returns {number} Modifier (-3 to +3)
+ */
+export function getAbilityModifier(score) {
+  const numScore = parseInt(score) || 10;
+  if (numScore === 3) return -3;
+  if (numScore >= 4 && numScore <= 5) return -2;
+  if (numScore >= 6 && numScore <= 8) return -1;
+  if (numScore >= 9 && numScore <= 12) return 0;
+  if (numScore >= 13 && numScore <= 15) return 1;
+  if (numScore >= 16 && numScore <= 17) return 2;
+  if (numScore >= 18) return 3;
+  return 0;
 }
 
 /**

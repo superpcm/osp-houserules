@@ -72,6 +72,7 @@
         "description": "",
         "cost": 0,
         "weight": 0,
+        "sizecat": "M",
         "quantity": {
           "value": 1,
           "max": 0

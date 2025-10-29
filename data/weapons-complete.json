@@ -1,0 +1,358 @@
+[
+  {
+    "name": "Battle Axe",
+    "type": "weapon",
+    "img": "icons/weapons/axes/axe-battle-worn.webp",
+    "system": {
+      "description": "A heavy single-bladed axe designed for combat. Two-handed, deals 1d8 damage.",
+      "cost": 7,
+      "weight": 50,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d8",
+      "bonus": 0,
+      "tags": ["slow", "melee", "two-handed"],
+      "melee": true,
+      "missile": false,
+      "slow": true,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Hand Axe",
+    "type": "weapon",
+    "img": "icons/weapons/axes/axe-broad-black.webp",
+    "system": {
+      "description": "A small axe that can be used in melee or thrown.",
+      "cost": 4,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee", "missile"],
+      "melee": true,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 10, "medium": 20, "long": 30 }
+    }
+  },
+  {
+    "name": "Sword",
+    "type": "weapon",
+    "img": "icons/weapons/swords/sword-guard-steel.webp",
+    "system": {
+      "description": "A standard one-handed sword.",
+      "cost": 10,
+      "weight": 60,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d8",
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Short Sword",
+    "type": "weapon",
+    "img": "icons/weapons/swords/sword-short-steel.webp",
+    "system": {
+      "description": "A short blade, ideal for close combat.",
+      "cost": 7,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Two-Handed Sword",
+    "type": "weapon",
+    "img": "icons/weapons/swords/greatsword-crossguard-steel.webp",
+    "system": {
+      "description": "A massive blade requiring two hands to wield. Slow, but devastating.",
+      "cost": 15,
+      "weight": 150,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d10",
+      "bonus": 0,
+      "tags": ["melee", "two-handed", "slow"],
+      "melee": true,
+      "missile": false,
+      "slow": true,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Dagger",
+    "type": "weapon",
+    "img": "icons/weapons/daggers/dagger-straight-steel.webp",
+    "system": {
+      "description": "A short blade that can be thrown. Deals 1d4 damage.",
+      "cost": 3,
+      "weight": 10,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["melee", "missile"],
+      "melee": true,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 10, "medium": 20, "long": 30 }
+    }
+  },
+  {
+    "name": "Longbow",
+    "type": "weapon",
+    "img": "icons/weapons/bows/bow-recurve-leather.webp",
+    "system": {
+      "description": "A tall bow for long-range combat. Cannot be used while mounted. Requires two hands.",
+      "cost": 40,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["missile", "two-handed"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 70, "medium": 140, "long": 210 }
+    }
+  },
+  {
+    "name": "Short Bow",
+    "type": "weapon",
+    "img": "icons/weapons/bows/shortbow-recurve-leather.webp",
+    "system": {
+      "description": "A compact bow suitable for mounted combat.",
+      "cost": 25,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["missile", "two-handed"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 50, "medium": 100, "long": 150 }
+    }
+  },
+  {
+    "name": "Crossbow",
+    "type": "weapon",
+    "img": "icons/weapons/crossbows/crossbow-worn-brown.webp",
+    "system": {
+      "description": "A mechanical bow that fires bolts. Slow to reload but powerful.",
+      "cost": 30,
+      "weight": 50,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["missile", "two-handed", "slow"],
+      "melee": false,
+      "missile": true,
+      "slow": true,
+      "range": { "short": 60, "medium": 120, "long": 180 }
+    }
+  },
+  {
+    "name": "Spear",
+    "type": "weapon",
+    "img": "icons/weapons/polearms/spear-flared-steel.webp",
+    "system": {
+      "description": "A versatile weapon that can be used in melee or thrown. Can be set against charge.",
+      "cost": 3,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee", "missile", "brace"],
+      "melee": true,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 20, "medium": 40, "long": 60 }
+    }
+  },
+  {
+    "name": "Pole Arm",
+    "type": "weapon",
+    "img": "icons/weapons/polearms/halberd-crescent-engraved.webp",
+    "system": {
+      "description": "A two-handed polearm with axe and spear point. Slow but devastating. Can be set against charge.",
+      "cost": 7,
+      "weight": 150,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d10",
+      "bonus": 0,
+      "tags": ["melee", "two-handed", "slow", "brace"],
+      "melee": true,
+      "missile": false,
+      "slow": true,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Mace",
+    "type": "weapon",
+    "img": "icons/weapons/maces/mace-flanged-steel.webp",
+    "system": {
+      "description": "A one-handed club with a heavy metal head.",
+      "cost": 5,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "War Hammer",
+    "type": "weapon",
+    "img": "icons/weapons/hammers/hammer-war-spiked.webp",
+    "system": {
+      "description": "A heavy hammer designed for battle.",
+      "cost": 5,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Club",
+    "type": "weapon",
+    "img": "icons/weapons/clubs/club-wooden-spiked.webp",
+    "system": {
+      "description": "A simple wooden club.",
+      "cost": 0.02,
+      "weight": 50,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Quarterstaff",
+    "type": "weapon",
+    "img": "icons/weapons/staves/staff-simple-spiral.webp",
+    "system": {
+      "description": "A wooden staff used with two hands.",
+      "cost": 0.02,
+      "weight": 40,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee", "two-handed"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Sling",
+    "type": "weapon",
+    "img": "icons/weapons/thrown/sling-leather-tan.webp",
+    "system": {
+      "description": "A leather sling for hurling stones.",
+      "cost": 0.02,
+      "weight": 2,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["missile"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 40, "medium": 80, "long": 160 }
+    }
+  },
+  {
+    "name": "Arrow (20)",
+    "type": "item",
+    "img": "icons/weapons/ammunition/arrows-bundle-teal.webp",
+    "system": {
+      "description": "A quiver of 20 arrows for bows.",
+      "cost": 5,
+      "weight": 10,
+      "quantity": { "value": 20, "max": 0 },
+      "equipped": false,
+      "treasure": false
+    }
+  },
+  {
+    "name": "Crossbow Bolts (30)",
+    "type": "item",
+    "img": "icons/weapons/ammunition/bolts-triple-steel.webp",
+    "system": {
+      "description": "A case of 30 bolts for crossbows.",
+      "cost": 10,
+      "weight": 10,
+      "quantity": { "value": 30, "max": 0 },
+      "equipped": false,
+      "treasure": false
+    }
+  },
+  {
+    "name": "Silver Arrow",
+    "type": "item",
+    "img": "icons/weapons/ammunition/arrow-head-war-silver.webp",
+    "system": {
+      "description": "A silvered arrow for fighting lycanthropes and other creatures.",
+      "cost": 5,
+      "weight": 0.5,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "treasure": false
+    }
+  },
+  {
+    "name": "Sling Stones (20)",
+    "type": "item",
+    "img": "icons/commodities/stone/pebbles-grey.webp",
+    "system": {
+      "description": "A pouch of 20 stones or lead bullets for slings.",
+      "cost": 0.01,
+      "weight": 10,
+      "quantity": { "value": 20, "max": 0 },
+      "equipped": false,
+      "treasure": false
+    }
+  }
+]

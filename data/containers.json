@@ -1,0 +1,262 @@
+[
+  {
+    "name": "Backpack",
+    "type": "container",
+    "img": "icons/containers/bags/pack-leather-brown-tan.webp",
+    "system": {
+      "description": "A leather backpack that can hold up to 400 coins worth of weight (40 lbs).",
+      "cost": 5,
+      "weight": 20,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 400
+      }
+    }
+  },
+  {
+    "name": "Sack, Small",
+    "type": "container",
+    "img": "icons/containers/bags/sack-simple-leather-brown.webp",
+    "system": {
+      "description": "A small cloth or leather sack. Holds up to 200 coins worth of weight (20 lbs).",
+      "cost": 1,
+      "weight": 5,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 200
+      }
+    }
+  },
+  {
+    "name": "Sack, Large",
+    "type": "container",
+    "img": "icons/containers/bags/sack-leather-brown-tied.webp",
+    "system": {
+      "description": "A large cloth or leather sack. Holds up to 600 coins worth of weight (60 lbs).",
+      "cost": 2,
+      "weight": 10,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 600
+      }
+    }
+  },
+  {
+    "name": "Belt Pouch",
+    "type": "container",
+    "img": "icons/containers/bags/pouch-leather-tan-simple.webp",
+    "system": {
+      "description": "A small pouch worn on the belt. Holds up to 50 coins worth of weight (5 lbs) - perfect for coins and small items.",
+      "cost": 1,
+      "weight": 2,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 50
+      }
+    }
+  },
+  {
+    "name": "Chest, Small",
+    "type": "container",
+    "img": "icons/containers/chest/chest-worn-oak-tan.webp",
+    "system": {
+      "description": "A small wooden chest with lock. Can hold 500 coins worth of weight (50 lbs). Must be carried or transported.",
+      "cost": 20,
+      "weight": 100,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 500
+      }
+    }
+  },
+  {
+    "name": "Chest, Large",
+    "type": "container",
+    "img": "icons/containers/chest/chest-reinforced-steel-brown.webp",
+    "system": {
+      "description": "A large wooden chest with reinforced iron bands and lock. Can hold 1500 coins worth of weight (150 lbs). Requires cart or multiple people to move.",
+      "cost": 50,
+      "weight": 250,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 1500
+      }
+    }
+  },
+  {
+    "name": "Quiver",
+    "type": "container",
+    "img": "icons/containers/ammunition/quiver-leather-brown-tan.webp",
+    "system": {
+      "description": "A leather quiver for holding arrows. Holds up to 20 arrows.",
+      "cost": 5,
+      "weight": 10,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 20
+      }
+    }
+  },
+  {
+    "name": "Bolt Case",
+    "type": "container",
+    "img": "icons/containers/ammunition/case-bolts-steel.webp",
+    "system": {
+      "description": "A leather case for holding crossbow bolts. Holds up to 30 bolts.",
+      "cost": 5,
+      "weight": 10,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 30
+      }
+    }
+  },
+  {
+    "name": "Scroll Case",
+    "type": "container",
+    "img": "icons/containers/ammunition/case-leather-brown-tan.webp",
+    "system": {
+      "description": "A waterproof leather or metal tube for storing scrolls and maps. Holds 10 sheets of parchment.",
+      "cost": 5,
+      "weight": 5,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 10
+      }
+    }
+  },
+  {
+    "name": "Vial or Bottle",
+    "type": "container",
+    "img": "icons/containers/bottles/bottle-round-corked-empty.webp",
+    "system": {
+      "description": "A small glass vial or bottle. Perfect for potions, holy water, or samples.",
+      "cost": 1,
+      "weight": 1,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 5
+      }
+    }
+  },
+  {
+    "name": "Belt, Leather",
+    "type": "container",
+    "img": "icons/equipment/waist/belt-leather-simple-brown.webp",
+    "system": {
+      "description": "A sturdy leather belt with loops and hooks for carrying items. Can hold small items totaling 30 coins weight.",
+      "cost": 1,
+      "weight": 3,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 30
+      }
+    }
+  },
+  {
+    "name": "Saddle Bags",
+    "type": "container",
+    "img": "icons/containers/bags/pack-leather-tan-worn.webp",
+    "system": {
+      "description": "Leather bags that hang over a horse or mule. Can hold 1000 coins worth of weight (100 lbs).",
+      "cost": 10,
+      "weight": 50,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 1000
+      }
+    }
+  },
+  {
+    "name": "Barrel",
+    "type": "container",
+    "img": "icons/containers/barrels/barrel-walnut-brown.webp",
+    "system": {
+      "description": "A wooden barrel for storing liquids or dry goods. Holds approximately 40 gallons or 2000 coins weight (200 lbs).",
+      "cost": 2,
+      "weight": 300,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "capacity": {
+        "type": "weight",
+        "value": 0,
+        "max": 2000
+      }
+    }
+  }
+]

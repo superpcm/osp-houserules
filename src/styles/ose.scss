@@ -93,6 +93,19 @@ form.osp button {
   font-family: 'Cooper Std', 'Cooper Standard', serif !important;
 }
 
+/* Override: Window header elements use Cooper Standard */
+.osp.sheet .window-header .window-title,
+.application.window-app.sheet.actor.character.osp .window-header .window-title,
+.osp.sheet .window-header .header-button,
+.application.window-app.sheet.actor.character.osp .window-header .header-button,
+.osp.sheet .window-header .window-minimize,
+.application.window-app.sheet.actor.character.osp .window-header .window-minimize,
+.osp.sheet .window-header .window-close,
+.application.window-app.sheet.actor.character.osp .window-header .window-close {
+  font-family: 'Cooper Std', 'Cooper Standard', serif !important;
+  font-size: 10px !important;
+}
+
 /* Grid overlay animation */
 .grid-overlay {
   animation: fadeIn 0.3s ease;

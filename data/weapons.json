@@ -1,0 +1,420 @@
+[
+  {
+    "name": "Battle axe",
+    "type": "weapon",
+    "img": "icons/weapons/axes/axe-broad-steel.webp",
+    "system": {
+      "description": "A heavy two-handed axe capable of dealing devastating blows.",
+      "cost": 7,
+      "weight": 50,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d8",
+      "bonus": 0,
+      "tags": ["melee", "slow", "two-handed"],
+      "melee": true,
+      "missile": false,
+      "slow": true,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Club",
+    "type": "weapon",
+    "img": "icons/weapons/clubs/club-wood.webp",
+    "system": {
+      "description": "A simple wooden bludgeon usable by clerics.",
+      "cost": 3,
+      "weight": 50,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["blunt", "melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Crossbow",
+    "type": "weapon",
+    "img": "icons/weapons/crossbows/crossbow-bolt-steel.webp",
+    "system": {
+      "description": "A powerful ranged weapon that requires a round to reload between shots.",
+      "cost": 30,
+      "weight": 50,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["missile", "reload", "slow", "two-handed"],
+      "melee": false,
+      "missile": true,
+      "slow": true,
+      "range": { "short": 80, "medium": 160, "long": 240 }
+    }
+  },
+  {
+    "name": "Dagger",
+    "type": "weapon",
+    "img": "icons/weapons/daggers/dagger-straight-steel.webp",
+    "system": {
+      "description": "A short blade that can be used in melee or thrown.",
+      "cost": 3,
+      "weight": 10,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["melee", "missile"],
+      "melee": true,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 10, "medium": 20, "long": 30 }
+    }
+  },
+  {
+    "name": "Hand axe",
+    "type": "weapon",
+    "img": "icons/weapons/axes/axe-short-steel.webp",
+    "system": {
+      "description": "A small axe usable in melee or as a thrown weapon.",
+      "cost": 4,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee", "missile"],
+      "melee": true,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 10, "medium": 20, "long": 30 }
+    }
+  },
+  {
+    "name": "Holy water (vial)",
+    "type": "weapon",
+    "img": "icons/consumables/potions/potion-vial-holy.webp",
+    "system": {
+      "description": "A vial of consecrated water harmful to undead and infernal creatures.",
+      "cost": 25,
+      "weight": 0,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d8",
+      "bonus": 0,
+      "tags": ["missile", "splash-weapon"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 10, "medium": 30, "long": 50 }
+    }
+  },
+  {
+    "name": "Javelin",
+    "type": "weapon",
+    "img": "icons/weapons/polearms/spear-javelin.webp",
+    "system": {
+      "description": "A light spear designed for throwing or thrusting.",
+      "cost": 1,
+      "weight": 20,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["missile"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 30, "medium": 60, "long": 90 }
+    }
+  },
+  {
+    "name": "Lance",
+    "type": "weapon",
+    "img": "icons/weapons/polearms/lance-steel.webp",
+    "system": {
+      "description": "A long spear used for mounted charges.",
+      "cost": 5,
+      "weight": 120,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee", "charge"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Long bow",
+    "type": "weapon",
+    "img": "icons/weapons/bows/longbow-wood.webp",
+    "system": {
+      "description": "A tall two-handed bow with powerful draw and long range.",
+      "cost": 40,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["missile", "two-handed"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 70, "medium": 140, "long": 210 }
+    }
+  },
+  {
+    "name": "Mace",
+    "type": "weapon",
+    "img": "icons/weapons/maces/mace-flanged-steel.webp",
+    "system": {
+      "description": "A blunt-headed weapon effective against armored foes.",
+      "cost": 5,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["blunt", "melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Oil (flask), burning",
+    "type": "weapon",
+    "img": "icons/consumables/potions/flask-oil-fire.webp",
+    "system": {
+      "description": "A flask of oil that ignites on impact, burning for two rounds.",
+      "cost": 2,
+      "weight": 0,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d8",
+      "bonus": 0,
+      "tags": ["missile", "splash-weapon"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 10, "medium": 30, "long": 50 }
+    }
+  },
+  {
+    "name": "Pole arm",
+    "type": "weapon",
+    "img": "icons/weapons/polearms/halberd-steel.webp",
+    "system": {
+      "description": "A long-bladed pole weapon effective against charging foes.",
+      "cost": 7,
+      "weight": 150,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d10",
+      "bonus": 0,
+      "tags": ["brace", "melee", "slow", "two-handed"],
+      "melee": true,
+      "missile": false,
+      "slow": true,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Short bow",
+    "type": "weapon",
+    "img": "icons/weapons/bows/shortbow-wood.webp",
+    "system": {
+      "description": "A compact two-handed bow suitable for smaller adventurers.",
+      "cost": 25,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["missile", "two-handed"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 50, "medium": 100, "long": 150 }
+    }
+  },
+  {
+    "name": "Short sword",
+    "type": "weapon",
+    "img": "icons/weapons/swords/sword-short-steel.webp",
+    "system": {
+      "description": "A light sword favored by thieves and halflings.",
+      "cost": 7,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Silver dagger",
+    "type": "weapon",
+    "img": "icons/weapons/daggers/dagger-silver.webp",
+    "system": {
+      "description": "A silvered dagger effective against creatures immune to normal weapons.",
+      "cost": 30,
+      "weight": 10,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["melee", "missile"],
+      "melee": true,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 10, "medium": 20, "long": 30 }
+    }
+  },
+  {
+    "name": "Sling",
+    "type": "weapon",
+    "img": "icons/weapons/slings/sling-leather.webp",
+    "system": {
+      "description": "A simple leather sling for throwing stones or bullets.",
+      "cost": 2,
+      "weight": 20,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["blunt", "missile"],
+      "melee": false,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 40, "medium": 80, "long": 160 }
+    }
+  },
+  {
+    "name": "Spear",
+    "type": "weapon",
+    "img": "icons/weapons/polearms/spear-wood-steel.webp",
+    "system": {
+      "description": "A thrusting spear that may also be thrown.",
+      "cost": 3,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["brace", "melee", "missile"],
+      "melee": true,
+      "missile": true,
+      "slow": false,
+      "range": { "short": 20, "medium": 40, "long": 60 }
+    }
+  },
+  {
+    "name": "Staff",
+    "type": "weapon",
+    "img": "icons/weapons/staves/staff-wood.webp",
+    "system": {
+      "description": "A long wooden staff usable by clerics and magic-users.",
+      "cost": 2,
+      "weight": 40,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["blunt", "melee", "slow", "two-handed"],
+      "melee": true,
+      "missile": false,
+      "slow": true,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Sword",
+    "type": "weapon",
+    "img": "icons/weapons/swords/sword-broad-steel.webp",
+    "system": {
+      "description": "A balanced one-handed sword common among adventurers.",
+      "cost": 10,
+      "weight": 60,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d8",
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Torch",
+    "type": "weapon",
+    "img": "icons/sundries/lights/torch.webp",
+    "system": {
+      "description": "A burning torch that can be used as a weapon in close combat.",
+      "cost": 1,
+      "weight": 0,
+      "quantity": { "value": 6, "max": 0 },
+      "equipped": false,
+      "damage": "1d4",
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Two-handed sword",
+    "type": "weapon",
+    "img": "icons/weapons/swords/greatsword-steel.webp",
+    "system": {
+      "description": "A massive two-handed sword that deals heavy damage but is slow to wield.",
+      "cost": 15,
+      "weight": 150,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d10",
+      "bonus": 0,
+      "tags": ["melee", "slow", "two-handed"],
+      "melee": true,
+      "missile": false,
+      "slow": true,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "War hammer",
+    "type": "weapon",
+    "img": "icons/weapons/hammers/hammer-war-steel.webp",
+    "system": {
+      "description": "A one-handed blunt weapon capable of crushing armor.",
+      "cost": 5,
+      "weight": 30,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "damage": "1d6",
+      "bonus": 0,
+      "tags": ["blunt", "melee"],
+      "melee": true,
+      "missile": false,
+      "slow": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  }
+]

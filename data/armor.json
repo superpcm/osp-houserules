@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Leather Armor",
+    "type": "armor",
+    "img": "icons/armor/leather/breastplate-brown.webp",
+    "system": {
+      "description": "Light armor made from boiled and hardened leather. Favored by thieves and lightly equipped adventurers.",
+      "cost": 20,
+      "weight": 200,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "ac": 12,
+      "bonus": 0,
+      "tags": ["light"],
+      "slow": false
+    }
+  },
+  {
+    "name": "Chainmail",
+    "type": "armor",
+    "img": "icons/armor/chain/chainmail-shirt-steel.webp",
+    "system": {
+      "description": "Interlinked steel rings offering solid protection while allowing mobility.",
+      "cost": 40,
+      "weight": 400,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "ac": 14,
+      "bonus": 0,
+      "tags": ["medium"],
+      "slow": false
+    }
+  },
+  {
+    "name": "Plate Mail",
+    "type": "armor",
+    "img": "icons/armor/plate/plate-chest-steel.webp",
+    "system": {
+      "description": "Full metal armor offering maximum protection at the cost of weight and mobility.",
+      "cost": 60,
+      "weight": 500,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "ac": 16,
+      "bonus": 0,
+      "tags": ["heavy"],
+      "slow": true
+    }
+  },
+  {
+    "name": "Shield",
+    "type": "armor",
+    "img": "icons/equipment/shield/heater-iron-boss.webp",
+    "system": {
+      "description": "A sturdy shield providing an additional +1 bonus to Armor Class when equipped.",
+      "cost": 10,
+      "weight": 100,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "ac": 1,
+      "bonus": 1,
+      "tags": ["shield"],
+      "slow": false
+    }
+  }
+]

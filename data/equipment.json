@@ -1,0 +1,341 @@
+[
+  {
+    "name": "Backpack",
+    "type": "container",
+    "img": "icons/sundries/backpack-leather.webp",
+    "system": {
+      "description": "A leather bag that can be strapped over the shoulders, requiring no hands. Holds 6M or 12S (600 coins).",
+      "cost": 5,
+      "weight": 2,
+      "sizecat": "M",
+      "capacity": "6M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["container"]
+    }
+  },
+  {
+    "name": "Crowbar",
+    "type": "item",
+    "img": "icons/tools/hand/crowbar-steel.webp",
+    "system": {
+      "description": "An iron bar, 2–3' long. Used for prying open doors, chest lids, etc.",
+      "cost": 10,
+      "weight": 4,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["tool"]
+    }
+  },
+  {
+    "name": "Garlic",
+    "type": "item",
+    "img": "icons/consumables/food/garlic-bulbs.webp",
+    "system": {
+      "description": "A bunch of garlic, sometimes used to repel undead creatures.",
+      "cost": 5,
+      "weight": 0,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["herb"]
+    }
+  },
+  {
+    "name": "Grappling hook",
+    "type": "item",
+    "img": "icons/tools/hand/grappling-hook-iron.webp",
+    "system": {
+      "description": "Made of iron, with 3–4 hooks and a ring to attach a rope. Designed to be thrown by hand and attached to 50 ft. of rope (~6 lbs if hemp rope). The combined 'grappling hook + rope' kit typically weighs about 9 lbs total.",
+      "cost": 25,
+      "weight": 3,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["tool", "climbing"]
+    }
+  },
+  {
+    "name": "Hammer (small)",
+    "type": "item",
+    "img": "icons/tools/hand/hammer-small.webp",
+    "system": {
+      "description": "Comparable to a carpenter's or small blacksmith's hammer — light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
+      "cost": 2,
+      "weight": 2,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["tool"]
+    }
+  },
+  {
+    "name": "Holy symbol",
+    "type": "item",
+    "img": "icons/sundries/religious/holy-symbol-sun-gold.webp",
+    "system": {
+      "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
+      "cost": 25,
+      "weight": 0.3,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["religious", "focus"]
+    }
+  },
+  {
+    "name": "Holy water (vial)",
+    "type": "item",
+    "img": "icons/consumables/potions/potion-vial-holy.webp",
+    "system": {
+      "description": "Water blessed by a holy person, stored in a special vial for use in rituals. Inflicts damage on undead when used as a weapon. A vial is easily held in one hand or stored in a pouch.",
+      "cost": 25,
+      "weight": 0.75,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["consumable", "religious"]
+    }
+  },
+  {
+    "name": "Iron spikes (12)",
+    "type": "item",
+    "img": "icons/tools/masonry/spike-iron.webp",
+    "system": {
+      "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6–8 inches long, about ½ inch thick. Typically carried in a small leather pouch or tool roll.",
+      "cost": 1,
+      "weight": 4,
+      "sizecat": "M",
+      "quantity": { "value": 12, "max": 12 },
+      "equipped": false,
+      "tags": ["tool", "dungeon"]
+    }
+  },
+  {
+    "name": "Lantern",
+    "type": "item",
+    "img": "icons/sundries/lights/lantern-iron.webp",
+    "system": {
+      "description": "Durable and wind-resistant; the shutters allow stealthy use underground or at night. Heavier than a simple hooded lantern due to extra metal housing. Burns one flask of oil per 4 hours (24 turns). Casts light in a 30' radius.",
+      "cost": 10,
+      "weight": 2,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["light-source"]
+    }
+  },
+  {
+    "name": "Mirror (hand-sized, steel)",
+    "type": "item",
+    "img": "icons/tools/surveying/mirror-hand-steel.webp",
+    "system": {
+      "description": "Durable and unbreakable compared to glass. Commonly used for signaling, checking around corners, or personal grooming. Often stored in a thin leather sleeve or wooden case.",
+      "cost": 5,
+      "weight": 0.5,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["tool"]
+    }
+  },
+  {
+    "name": "Oil (1 flask)",
+    "type": "item",
+    "img": "icons/consumables/potions/flask-oil.webp",
+    "system": {
+      "description": "Used to fuel lanterns or as a weapon when ignited. Burns for 4 hours in a lantern or 1 turn when used to create a pool of fire. Often carried in a padded or leather-lined pouch to prevent breakage.",
+      "cost": 2,
+      "weight": 1,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["consumable", "flammable"]
+    }
+  },
+  {
+    "name": "Pole (10' long)",
+    "type": "item",
+    "img": "icons/tools/measurement/rod-wooden.webp",
+    "system": {
+      "description": "A 10-foot wooden pole used for prodding suspicious areas or measuring distances in a dungeon. Carried with difficulty indoors or underground; too long to strap to a pack, usually dragged or carried in hand. May be split into two 5-ft. sections for easier transport.",
+      "cost": 1,
+      "weight": 7,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["tool", "dungeon"]
+    }
+  },
+  {
+    "name": "Rations (iron, 7 days)",
+    "type": "item",
+    "img": "icons/consumables/food/meat-dried.webp",
+    "system": {
+      "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact — but heavy and bland. Often divided into daily pouches for easy rationing.",
+      "cost": 15,
+      "weight": 7,
+      "sizecat": "M",
+      "quantity": { "value": 7, "max": 7 },
+      "equipped": false,
+      "tags": ["consumable", "food"]
+    }
+  },
+  {
+    "name": "Rations (standard, 7 days)",
+    "type": "item",
+    "img": "icons/consumables/food/bread-loaf.webp",
+    "system": {
+      "description": "Fresh, unpreserved food suitable for shorter trips. Tastier but bulkier than iron rations. Cannot be carried indefinitely without spoilage unless kept cool or magically preserved. Common among caravan travelers or short expeditions.",
+      "cost": 5,
+      "weight": 14,
+      "sizecat": "M",
+      "quantity": { "value": 7, "max": 7 },
+      "equipped": false,
+      "tags": ["consumable", "food"]
+    }
+  },
+  {
+    "name": "Rope (50')",
+    "type": "item",
+    "img": "icons/tools/climbing/rope-coiled-brown.webp",
+    "system": {
+      "description": "Strong rope capable of supporting the weight of three people with equipment. Hemp rope is coarse, durable, and water-resistant but heavier when wet. Roughly 1 inch thick.",
+      "cost": 1,
+      "weight": 9,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["tool", "climbing"]
+    }
+  },
+  {
+    "name": "Sack (large)",
+    "type": "container",
+    "img": "icons/containers/bags/sack-large.webp",
+    "system": {
+      "description": "Commonly slung over the shoulder or tied to a pack. Not waterproof. Holds 600 coins.",
+      "cost": 2,
+      "weight": 0.5,
+      "sizecat": "L",
+      "capacity": "1L",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["container"]
+    }
+  },
+  {
+    "name": "Sack (small)",
+    "type": "container",
+    "img": "icons/containers/bags/sack-small.webp",
+    "system": {
+      "description": "Often used for rations, tools, or loot. Can be tied to a belt or slung from a pack. Light, flexible, and easy to stow when empty. Not waterproof. Holds 4M or 8S (400 coins).",
+      "cost": 1,
+      "weight": 0.25,
+      "sizecat": "M",
+      "capacity": "4M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["container"]
+    }
+  },
+  {
+    "name": "Stakes (3) and mallet",
+    "type": "item",
+    "img": "icons/tools/hand/hammer-wooden-stakes.webp",
+    "system": {
+      "description": "A wooden mallet and three stakes. Useful for setting up tents, restraints, defensive setups (trip lines, traps, etc.)...and vampires. Wooden mallet is quieter than a hammer, making it useful for stealthy camp setup.",
+      "cost": 3,
+      "weight": 3,
+      "sizecat": "M",
+      "quantity": { "value": 3, "max": 3 },
+      "equipped": false,
+      "tags": ["tool", "religious"]
+    }
+  },
+  {
+    "name": "Thieves' tools",
+    "type": "item",
+    "img": "icons/tools/smithing/lockpicks-steel.webp",
+    "system": {
+      "description": "Picks, tension wrench(s), small pliers, razor file, awl, miniature mirror on a stick, small oiler, spare springs/pins, leather roll or wooden/metal case. Used by thieves to open locks and disable traps.",
+      "cost": 25,
+      "weight": 1.5,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["tool", "thief"]
+    }
+  },
+  {
+    "name": "Tinder box (flint & steel)",
+    "type": "item",
+    "img": "icons/tools/fire/fire-starter.webp",
+    "system": {
+      "description": "Flint, steel, and tinder in a small box. Used to light fires or torches with a 2-in-6 success chance per round.",
+      "cost": 3,
+      "weight": 0.5,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["tool", "fire"]
+    }
+  },
+  {
+    "name": "Torches (6)",
+    "type": "item",
+    "img": "icons/sundries/lights/torch.webp",
+    "system": {
+      "description": "A bundle of six torches, wooden shafts wrapped with oil-soaked rags. Each burns for 1 hour (6 turns) and casts light in a 30' radius.",
+      "cost": 1,
+      "weight": 6,
+      "sizecat": "M",
+      "quantity": { "value": 6, "max": 6 },
+      "equipped": false,
+      "tags": ["light-source"]
+    }
+  },
+  {
+    "name": "Waterskin",
+    "type": "item",
+    "img": "icons/consumables/drinks/wineskin-leather-brown.webp",
+    "system": {
+      "description": "Treated animal hide (goatskin or cowhide), sealed with wax or pitch that holds up to 2 pints (1 quart) of liquid.Slung over the shoulder or tied to a belt. One full waterskin provides about 1 day's drinking water for one person under normal conditions. May leak if punctured or dried out; periodic oiling extends lifespan.",
+      "cost": 1,
+      "weight": 3,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["consumable"]
+    }
+  },
+  {
+    "name": "Wine (2 pints)",
+    "type": "item",
+    "img": "icons/consumables/drinks/wine-bottle-red.webp",
+    "system": {
+      "description": "Stoppered glass bottle, clay jug, or wineskin containing two pints of table or fortified wine.",
+      "cost": 1,
+      "weight": 2.5,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["consumable", "drink"]
+    }
+  },
+  {
+    "name": "Wolfsbane (1 bunch)",
+    "type": "item",
+    "img": "icons/commodities/herbs/herb-wolfsbane-purple.webp",
+    "system": {
+      "description": "A flowering herb that is highly toxic if ingested or absorbed through open skin. Used in alchemy, rituals, or to repel lycanthropes. Loses potency after a few weeks unless kept dried and sealed. Must be struck in melee to be effective.",
+      "cost": 10,
+      "weight": 0.5,
+      "sizecat": "M",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["herb", "religious"]
+    }
+  }
+]

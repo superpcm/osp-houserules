@@ -57,6 +57,16 @@
             Equipped
           </label>
         </div>
+
+        <div class="form-group">
+          <label>Carry Location</label>
+          <select name="system.carryLocation">
+            <option value="">-- Select --</option>
+            <option value="worn" {{#if (eq system.carryLocation "worn")}}selected{{/if}}>Worn</option>
+            <option value="hand-secondary" {{#if (eq system.carryLocation "hand-secondary")}}selected{{/if}}>Hand (Shield)</option>
+            <option value="stored" {{#if (eq system.carryLocation "stored")}}selected{{/if}}>Stored in Container</option>
+          </select>
+        </div>
       </div>
 
       <div class="description">

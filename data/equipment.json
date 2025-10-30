@@ -14,6 +14,20 @@
       "tags": ["container"]
     }
   },
+    "name": "Belt Pouch",
+    "type": "container",
+    "img": "icons/sundries/belt-pouch.webp",
+    "system": {
+      "description": "A leather bag that can be strapped over the shoulders, requiring no hands. Holds 6M or 12S (600 coins).",
+      "cost": 5,
+      "weight": 2,
+      "sizecat": "S",
+      "capacity": "2S",
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "tags": ["container"]
+    }
+  },
   {
     "name": "Crowbar",
     "type": "item",
@@ -35,8 +49,8 @@
     "system": {
       "description": "A bunch of garlic, sometimes used to repel undead creatures.",
       "cost": 5,
-      "weight": 0,
-      "sizecat": "M",
+      "weight": 0.1,
+      "sizecat": "T",
       "quantity": { "value": 1, "max": 0 },
       "equipped": false,
       "tags": ["herb"]

@@ -16,7 +16,13 @@
         </div>
         <div class="form-group">
           <label>Size</label>
-          <input type="text" name="system.sizecat" value="{{system.sizecat}}" maxlength="2" placeholder="M" />
+          <select name="system.sizecat">
+            <option value="T" {{#if (eq system.sizecat "T")}}selected{{/if}}>T (Tiny)</option>
+            <option value="S" {{#if (eq system.sizecat "S")}}selected{{/if}}>S (Small)</option>
+            <option value="M" {{#if (eq system.sizecat "M")}}selected{{/if}}>M (Medium)</option>
+            <option value="L" {{#if (eq system.sizecat "L")}}selected{{/if}}>L (Large)</option>
+            <option value="W" {{#if (eq system.sizecat "W")}}selected{{/if}}>W (Worn)</option>
+          </select>
         </div>
       </div>
     </div>

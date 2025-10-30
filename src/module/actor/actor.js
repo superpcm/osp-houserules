@@ -286,26 +286,135 @@ export class OspActor extends Actor {
    * @private
    */
   _calculateEncumbrance() {
+    // Calculate total weight - ALL items count regardless of equipped status
     let totalWeight = 0;
 
-    // Sum up all item weights
     this.items.forEach(item => {
-      if (item.system.equipped || item.type === "armor" || item.type === "weapon") {
-        const quantity = item.system.quantity?.value || 1;
-        const weight = item.system.weight || 0;
-        totalWeight += weight * quantity;
-      }
+      const quantity = item.system.quantity?.value || 1;
+      const weight = item.system.weight || 0;
+      totalWeight += weight * quantity;
     });
 
-    // Basic encumbrance calculation (can be made more sophisticated)
-    const maxWeight = 100; // Base carrying capacity
+    // Calculate max weight from STR (STR × 15)
+    const strScore = parseInt(this.system.attributes?.str?.value) || 10;
+    const maxWeight = strScore * 15;
+
+    // Calculate encumbrance thresholds
+    const unencumberedThreshold = maxWeight / 3;
+    const lightThreshold = (maxWeight * 2) / 3;
+
+    // Determine encumbrance level
+    let encumbranceLevel = "";
+    let movementPenalty = 0;
+
+    if (totalWeight <= unencumberedThreshold) {
+      encumbranceLevel = "unencumbered";
+      movementPenalty = 0;
+    } else if (totalWeight <= lightThreshold) {
+      encumbranceLevel = "light";
+      movementPenalty = -10;
+    } else if (totalWeight <= maxWeight) {
+      encumbranceLevel = "heavy";
+      movementPenalty = -20;
+    } else {
+      encumbranceLevel = "overloaded";
+      movementPenalty = 0; // Cannot move
+    }
+
+    // Calculate base movement rate based on race
+    const race = (this.system.race || "").toLowerCase();
+    let baseMovement = 40; // Default for most races
+    
+    if (race === "dwarf" || race === "gnome" || race === "hobbit") {
+      baseMovement = 30;
+    }
+
+    // Calculate final movement rate
+    let finalMovement = baseMovement;
+    if (encumbranceLevel === "overloaded") {
+      finalMovement = 0; // Cannot move
+    } else {
+      finalMovement = Math.max(0, baseMovement + movementPenalty);
+    }
+
+    // Calculate encumbrance percentage for UI
     const encumbrancePercentage = Math.min(100, (totalWeight / maxWeight) * 100);
 
+    // Update the encumbrance object in system data (matches template.json structure)
     this.system.encumbrance = {
-      totalWeight: totalWeight,
+      weight: {
+        value: Math.round(totalWeight * 10) / 10, // Round to 1 decimal
+        max: maxWeight
+      },
+      level: encumbranceLevel,
+      movement: finalMovement,
+      // Legacy properties for character sheet compatibility
+      totalWeight: Math.round(totalWeight * 10) / 10,
       maxWeight: maxWeight,
-      percentage: encumbrancePercentage,
-      encumbered: encumbrancePercentage > 50
+      percentage: Math.round(encumbrancePercentage),
+      encumbered: totalWeight > unencumberedThreshold
     };
+
+    // Calculate capacity usage for containers
+    this._calculateCapacity();
+  }
+
+  /**
+   * Calculate capacity usage in containers
+   * @private
+   */
+  _calculateCapacity() {
+    // Size conversion table: how many of each smaller size fits in one unit
+    // 1L = 600 coins, 1M = 100 coins, 1S = 50 coins, 1T = 25 coins
+    // 1L = 6M = 12S = 24T
+    const sizeToSlots = {
+      'T': 1,    // Tiny = 1 slot
+      'S': 2,    // Small = 2 slots (2T)
+      'M': 4,    // Medium = 4 slots (2S, 4T)
+      'L': 24,   // Large = 24 slots (6M, 12S, 24T)
+      'W': 0,    // Worn items don't consume capacity
+      'B': 0     // Beast-sized items don't fit in standard containers
+    };
+
+    // Parse capacity notation (e.g., "6M", "1L", "4M") to slot count
+    const parseCapacity = (capacityStr) => {
+      if (!capacityStr) return 0;
+      const match = capacityStr.match(/^(\d+)([TSMLWB])$/);
+      if (!match) return 0;
+      const [, count, size] = match;
+      return parseInt(count) * (sizeToSlots[size] || 0);
+    };
+
+    // Calculate capacity for each container
+    const containers = this.items.filter(item => item.type === "container");
+    
+    containers.forEach(container => {
+      const maxCapacitySlots = parseCapacity(container.system.capacity);
+      let usedCapacitySlots = 0;
+
+      // Find all items stored in this container (equipped=false means stored)
+      this.items.forEach(item => {
+        // Skip the container itself and items that are equipped (carried on person)
+        if (item.id === container.id || item.system.equipped) return;
+        
+        // For simplicity, assume items with equipped=false are in containers
+        // A more sophisticated system would track which specific container
+        const itemSize = item.system.sizecat || 'M';
+        const quantity = item.system.quantity?.value || 1;
+        
+        // Worn items (W) don't consume container capacity
+        if (itemSize === 'W') return;
+        
+        const slotsPerItem = sizeToSlots[itemSize] || 0;
+        usedCapacitySlots += slotsPerItem * quantity;
+      });
+
+      // Store capacity info on the container (for UI display)
+      container.system.capacityUsed = usedCapacitySlots;
+      container.system.capacityMax = maxCapacitySlots;
+      container.system.capacityPercentage = maxCapacitySlots > 0 
+        ? Math.round((usedCapacitySlots / maxCapacitySlots) * 100)
+        : 0;
+    });
   }
 }

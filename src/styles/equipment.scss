@@ -1,4 +1,8 @@
 /* Equipment Tab Styles */
+
+/* Color variables to match character sheet */
+$color-parchment: #b5ddb4;  /* Main background color - matches character sheet */
+
 .equipment-tab {
   max-width: 706px;
   margin: 0 auto; /* Center the content */
@@ -288,6 +292,11 @@
 /* Item Sheet Styles */
 .osp.sheet.item {
   min-width: 400px;
+  background-color: $color-parchment;
+}
+
+.osp.sheet.item .window-content {
+  background-color: $color-parchment;
 }
 
 .osp.sheet.item .sheet-header {
@@ -295,8 +304,13 @@
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background: #f0f0f0;
-  border-bottom: 1px solid #ccc;
+  background: $color-parchment;
+  border-bottom: 2px solid #8ab889;
+}
+
+.osp.sheet.item .sheet-body {
+  background-color: $color-parchment;
+  padding: 16px;
 }
 
 .osp.sheet.item .profile-img {

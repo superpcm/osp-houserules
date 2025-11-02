@@ -1,28 +1,27 @@
 <form class="{{cssClass}}" autocomplete="off">
   <header class="sheet-header">
-    <img class="profile-img" src="{{img}}" data-edit="img" title="{{name}}" />
+    <img class="profile-img is-pos-item-image" src="{{img}}" title="{{name}}" />
     <div class="header-col">
-      <h1 class="charname">
-        <input name="name" type="text" value="{{name}}" placeholder="Item Name" />
+      <h1 class="charname is-pos-item-name">
+        <span>{{name}}</span>
       </h1>
       <div class="details">
         <div class="form-group">
-          <label>Cost (sp)</label>
-          <input type="number" name="system.cost" value="{{system.cost}}" min="0" />
+          <input type="number" class="is-pos-cost" name="system.cost" value="{{system.cost}}" min="0" readonly disabled />
         </div>
         <div class="form-group">
-          <label>Weight</label>
-          <input type="number" name="system.weight" value="{{system.weight}}" min="0" step="0.1" />
+          <input type="number" class="is-pos-weight" name="system.weight" value="{{system.weight}}" min="0" step="0.1" readonly disabled />
         </div>
         <div class="form-group">
-          <label>Size</label>
-          <select name="system.sizeCat">
-            <option value="T" {{#if (eq system.sizeCat "T")}}selected{{/if}}>T (Tiny)</option>
-            <option value="S" {{#if (eq system.sizeCat "S")}}selected{{/if}}>S (Small)</option>
-            <option value="M" {{#if (eq system.sizeCat "M")}}selected{{/if}}>M (Medium)</option>
-            <option value="L" {{#if (eq system.sizeCat "L")}}selected{{/if}}>L (Large)</option>
-            <option value="W" {{#if (eq system.sizeCat "W")}}selected{{/if}}>W (Worn)</option>
+          <div class="size-wrapper">
+            <select class="is-pos-size" name="system.sizeCat" disabled>
+              <option value="T" {{#if (eq system.sizeCat "T")}}selected{{/if}}>T</option>
+            <option value="S" {{#if (eq system.sizeCat "S")}}selected{{/if}}>S</option>
+            <option value="M" {{#if (eq system.sizeCat "M")}}selected{{/if}}>M</option>
+            <option value="L" {{#if (eq system.sizeCat "L")}}selected{{/if}}>L</option>
+            <option value="W" {{#if (eq system.sizeCat "W")}}selected{{/if}}>W</option>
           </select>
+          </div>
         </div>
       </div>
     </div>
@@ -32,16 +31,17 @@
     <div class="flexrow">
       <div class="stats">
         <div class="form-group">
-          <label>Quantity</label>
-          <input type="number" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
+          <input type="number" class="is-pos-quantity" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
         </div>
 
+        {{#if (gt system.quantity.max 0)}}
         <div class="form-group">
-          <label>Max Uses (0 = unlimited)</label>
-          <input type="number" name="system.quantity.max" value="{{system.quantity.max}}" min="0" />
+          <label>Max Uses</label>
+          <input type="number" class="is-pos-max-uses" value="{{system.quantity.max}}" min="0" readonly disabled />
         </div>
+        {{/if}}
 
-        <div class="form-group">
+        <div class="form-group is-pos-equipped-checkbox">
           <label>
             <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
             Equipped/Carried
@@ -49,8 +49,7 @@
         </div>
 
         <div class="form-group">
-          <label>Carry Location</label>
-          <select name="system.carryLocation">
+          <select class="is-pos-carry-location" name="system.carryLocation">
             <option value="">-- Select --</option>
             <option value="hand-primary" {{#if (eq system.carryLocation "hand-primary")}}selected{{/if}}>Hand (Primary)</option>
             <option value="hand-secondary" {{#if (eq system.carryLocation "hand-secondary")}}selected{{/if}}>Hand (Secondary)</option>
@@ -62,18 +61,10 @@
             <option value="stored" {{#if (eq system.carryLocation "stored")}}selected{{/if}}>Stored in Container</option>
           </select>
         </div>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" name="system.treasure" {{checked system.treasure}} />
-            Is Treasure
-          </label>
-        </div>
       </div>
 
       <div class="description">
-        <label>Description</label>
-        <textarea name="system.description" placeholder="Item description...">{{system.description}}</textarea>
+        <textarea class="is-pos-description" name="system.description" readonly disabled>{{system.description}}</textarea>
       </div>
     </div>
   </section>

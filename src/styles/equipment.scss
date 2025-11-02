@@ -292,11 +292,145 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 /* Item Sheet Styles */
 .osp.sheet.item {
   min-width: 400px;
-  background-color: $color-parchment;
+  background-color: #b5ddb4 !important;
+  background-image: url('../assets/character-sheet/item-sheet.webp');
+  background-repeat: no-repeat;
+  background-position: left 10px top 40px;
+  background-size: calc(100% - 20px) auto;
+  font-family: 'Handwritten', cursive !important;
+}
+
+/* Apply Handwritten font to all text elements in item sheets */
+.osp.sheet.item input,
+.osp.sheet.item select,
+.osp.sheet.item textarea,
+.osp.sheet.item label,
+.osp.sheet.item span,
+.osp.sheet.item h1,
+.osp.sheet.item h2,
+.osp.sheet.item h3,
+.osp.sheet.item option {
+  font-family: 'Handwritten', cursive !important;
+}
+
+/* Position tool support for item sheets */
+.osp.sheet.item .is-abs {
+  position: absolute !important;
+  left: var(--left, 0) !important;
+  top: var(--top, 0) !important;
+  width: var(--width, auto) !important;
+  height: var(--height, auto) !important;
+}
+
+/* Item sheet positioned elements - add your custom positions here */
+/* Right-click an element as GM and use the position tool to get values */
+/* Then uncomment and update the positioning below */
+
+/* Container Sheet Positioning Rules */
+.osp.sheet.item .is-pos-container-image {
+    position: absolute !important; 
+    left: 10px !important; 
+    top: 40px !important; 
+    width: 173px !important; 
+    height: 173px !important;
+    border: 0.5px solid #000 !important;
+}
+
+.osp.sheet.item .is-pos-container-name {
+    position: absolute; left: 211px; top: 41px; width: 296px; height: 39px;
+    font-size: 60px;
+    text-align: center;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.osp.sheet.item .is-pos-cost {
+    position: absolute; left: 210px; top: 97px; width: 40px; height: 40px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.osp.sheet.item .is-pos-weight {
+    position: absolute; left: 291px; top: 97px; width: 40px; height: 40px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.osp.sheet.item .size-wrapper {
+    position: absolute;
+    left: 292px;
+    top: 161px;
+    width: 39px;
+    height: 39px;
+    cursor: default;
+}
+
+.osp.sheet.item .is-pos-size {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 36px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.osp.sheet.item .is-pos-carry-location {
+    position: absolute; left: 373px; top: 161px; width: 134px; height: 39px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.osp.sheet.item .is-pos-quantity {
+    position: absolute; left: 210px; top: 160px; width: 40px; height: 40px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.osp.sheet.item .is-pos-equipped-checkbox {
+    position: absolute; left: 50px; top: 319px; width: 236px; height: 36px;
+}
+
+.osp.sheet.item .is-pos-capacity {
+    position: absolute; left: 372px; top: 97px; width: 135px; height: 40px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.osp.sheet.item .is-pos-description {
+    position: absolute; left: 12px; top: 227px; width: 495px; height: 86px;
+    font-size: 24px;
+    padding: 5px !important;
 }
 
 .osp.sheet.item .window-content {
-  background-color: $color-parchment;
+  background-color: transparent !important;
+  background-image: none !important;
 }
 
 .osp.sheet.item .sheet-header {
@@ -304,12 +438,11 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background: $color-parchment;
-  border-bottom: 2px solid #8ab889;
+  background: transparent;
 }
 
 .osp.sheet.item .sheet-body {
-  background-color: $color-parchment;
+  background-color: transparent;
   padding: 16px;
 }
 
@@ -321,6 +454,12 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   cursor: pointer;
   object-fit: cover;
   pointer-events: auto !important;
+}
+
+/* When image is absolutely positioned, use positioning dimensions not defaults */
+.osp.sheet.item .profile-img.is-abs {
+  width: var(--width, 173px) !important;
+  height: var(--height, 173px) !important;
 }
 
 /* Portrait transform: read user variables set by the portrait adjustment script */
@@ -364,6 +503,49 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   margin-bottom: 4px;
 }
 
+/* Read-only fields: remove borders and background */
+.osp.sheet.item input[readonly],
+.osp.sheet.item input[disabled],
+.osp.sheet.item select[disabled],
+.osp.sheet.item textarea[readonly],
+.osp.sheet.item textarea[disabled] {
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  color: inherit;
+  opacity: 1;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Quantity input: uses absolute positioning, no width needed here */
+.osp.sheet.item input[name="system.quantity.value"] {
+  padding: 5px;
+  text-align: center;
+}
+
+/* Editable field styling for item sheets */
+.osp.sheet.item input[type="number"]:not([readonly]):not([disabled]),
+.osp.sheet.item input[type="text"]:not([readonly]):not([disabled]),
+.osp.sheet.item select:not([disabled]),
+.osp.sheet.item textarea:not([readonly]):not([disabled]) {
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.osp.sheet.item input[type="number"]:focus,
+.osp.sheet.item input[type="text"]:focus,
+.osp.sheet.item select:focus,
+.osp.sheet.item textarea:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
 .osp.sheet.item .flexrow {
   display: flex;
   gap: 16px;
@@ -378,8 +560,6 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 .osp.sheet.item .description textarea {
-  width: 100%;
-  height: 200px;
   resize: vertical;
 }
 

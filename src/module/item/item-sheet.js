@@ -1,4 +1,11 @@
+import { ItemPositionToolHandler } from './handlers/item-position-tool-handler.js';
+
 export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
+  constructor(...args) {
+    super(...args);
+    this.handlers = new Map();
+  }
+
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -44,11 +51,116 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Initialize position tool handler only if GM or in development
+    if (game.user.isGM) {
+      this.ensurePositionToolHandler(html);
+    }
+
+    // Setup Size field tooltip to show storedSize
+    this._setupSizeTooltip(html);
+
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
     // Add or remove tags
     html.find(".tag-control").click(this._onTagControl.bind(this));
+  }
+
+  /**
+   * Ensure position tool handler is initialized
+   */
+  ensurePositionToolHandler(html) {
+    try {
+      // Check if there are any positionable elements first
+      const positionableElements = html.find('[class*="is-pos-"]');
+      if (positionableElements.length === 0) {
+        console.log('ItemSheet: No positionable elements found (no is-pos-* classes), skipping position tool');
+        return;
+      }
+
+      if (this.handlers.has('positionTool')) {
+        const existingHandler = this.handlers.get('positionTool');
+        if (existingHandler && typeof existingHandler.destroy === 'function') {
+          existingHandler.destroy();
+        }
+        this.handlers.delete('positionTool');
+      }
+      
+      const handler = new ItemPositionToolHandler(html, this.item);
+      handler.initialize();
+      this.handlers.set('positionTool', handler);
+      
+      console.log('ItemSheet: Position tool handler initialized successfully');
+    } catch (error) {
+      console.error('ItemSheet: Failed to initialize position tool handler:', error);
+    }
+  }
+
+  /**
+   * Setup tooltip for Size field to show storedSize value
+   */
+  _setupSizeTooltip(html) {
+    const sizeWrapper = html.find('.size-wrapper');
+    if (!sizeWrapper || sizeWrapper.length === 0) {
+      console.log('ItemSheet: Size wrapper not found');
+      return;
+    }
+
+    const storedSize = this.item.system.storedSize;
+    if (!storedSize) {
+      console.log('ItemSheet: No storedSize value found');
+      return;
+    }
+
+    console.log('ItemSheet: Setting up size tooltip with storedSize:', storedSize);
+
+    // Create tooltip element
+    let tooltip = document.getElementById('item-size-tooltip');
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.id = 'item-size-tooltip';
+      tooltip.className = 'cs-tooltip';
+      tooltip.style.cssText = `
+        position: absolute;
+        background: #333;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        line-height: 1.4;
+        z-index: 10000;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(tooltip);
+      console.log('ItemSheet: Created tooltip element');
+    }
+
+    let tooltipTimeout;
+
+    // Attach events to the wrapper div which can receive mouse events
+    sizeWrapper.on('mouseenter', (e) => {
+      console.log('ItemSheet: Size field mouseenter');
+      clearTimeout(tooltipTimeout);
+      tooltipTimeout = setTimeout(() => {
+        tooltip.textContent = `Stored Size: ${storedSize}`;
+        
+        const rect = e.currentTarget.getBoundingClientRect();
+        tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+        tooltip.style.top = (rect.top - 30) + 'px';
+        tooltip.style.transform = 'translateX(-50%)';
+        tooltip.style.opacity = '1';
+        console.log('ItemSheet: Tooltip shown');
+      }, 500);
+    });
+
+    sizeWrapper.on('mouseleave', () => {
+      console.log('ItemSheet: Size field mouseleave');
+      clearTimeout(tooltipTimeout);
+      tooltip.style.opacity = '0';
+    });
   }
 
   /** @override */

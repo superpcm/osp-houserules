@@ -1,27 +1,26 @@
 <form class="{{cssClass}}" autocomplete="off">
   <header class="sheet-header">
-    <img class="profile-img" src="{{img}}" data-edit="img" title="{{name}}" />
+    <img class="profile-img is-pos-armor-image" src="{{img}}" title="{{name}}" />
     <div class="header-col">
-      <h1 class="charname">
-        <input name="name" type="text" value="{{name}}" placeholder="Armor Name" />
+      <h1 class="charname is-pos-armor-name">
+        <span>{{name}}</span>
       </h1>
       <div class="details">
         <div class="form-group">
-          <label>Cost (sp)</label>
-          <input type="number" name="system.cost" value="{{system.cost}}" min="0" />
+          <input type="number" class="is-pos-cost" name="system.cost" value="{{system.cost}}" min="0" readonly disabled />
         </div>
         <div class="form-group">
-          <label>Weight</label>
-          <input type="number" name="system.weight" value="{{system.weight}}" min="0" step="0.1" />
+          <input type="number" class="is-pos-weight" name="system.weight" value="{{system.weight}}" min="0" step="0.1" readonly disabled />
         </div>
         <div class="form-group">
-          <label>Size</label>
-          <select name="system.sizeCat">
-            <option value="W" {{#if (eq system.sizeCat "W")}}selected{{/if}}>W (Worn)</option>
-            <option value="S" {{#if (eq system.sizeCat "S")}}selected{{/if}}>S (Small)</option>
-            <option value="M" {{#if (eq system.sizeCat "M")}}selected{{/if}}>M (Medium)</option>
-            <option value="L" {{#if (eq system.sizeCat "L")}}selected{{/if}}>L (Large)</option>
+          <div class="size-wrapper">
+            <select class="is-pos-size" name="system.sizeCat" disabled>
+              <option value="W" {{#if (eq system.sizeCat "W")}}selected{{/if}}>W</option>
+            <option value="S" {{#if (eq system.sizeCat "S")}}selected{{/if}}>S</option>
+            <option value="M" {{#if (eq system.sizeCat "M")}}selected{{/if}}>M</option>
+            <option value="L" {{#if (eq system.sizeCat "L")}}selected{{/if}}>L</option>
           </select>
+          </div>
         </div>
       </div>
     </div>
@@ -32,12 +31,12 @@
       <div class="stats">
         <div class="form-group">
           <label>Armor Class (Ascending)</label>
-          <input type="number" name="system.aac.value" value="{{system.aac.value}}" min="0" max="20" />
+          <input type="number" class="is-pos-armor-class" value="{{system.aac.value}}" min="0" max="20" readonly disabled />
         </div>
 
         <div class="form-group">
           <label>Armor Type</label>
-          <select name="system.type">
+          <select class="is-pos-armor-type" disabled>
             <option value="">Select Type</option>
             <option value="light" {{#if (eq system.type "light")}}selected{{/if}}>Light</option>
             <option value="medium" {{#if (eq system.type "medium")}}selected{{/if}}>Medium</option>
@@ -48,10 +47,10 @@
 
         <div class="form-group">
           <label>Quantity</label>
-          <input type="number" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
+          <input type="number" class="is-pos-quantity" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
         </div>
 
-        <div class="form-group">
+        <div class="form-group is-pos-equipped-checkbox">
           <label>
             <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
             Equipped
@@ -59,8 +58,7 @@
         </div>
 
         <div class="form-group">
-          <label>Carry Location</label>
-          <select name="system.carryLocation">
+          <select class="is-pos-carry-location" name="system.carryLocation">
             <option value="">-- Select --</option>
             <option value="worn" {{#if (eq system.carryLocation "worn")}}selected{{/if}}>Worn</option>
             <option value="hand-secondary" {{#if (eq system.carryLocation "hand-secondary")}}selected{{/if}}>Hand (Shield)</option>
@@ -70,8 +68,7 @@
       </div>
 
       <div class="description">
-        <label>Description</label>
-        <textarea name="system.description" placeholder="Armor description...">{{system.description}}</textarea>
+        <textarea class="is-pos-description" name="system.description" readonly disabled>{{system.description}}</textarea>
       </div>
     </div>
   </section>

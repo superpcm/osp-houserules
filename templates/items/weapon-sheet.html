@@ -1,27 +1,26 @@
 <form class="{{cssClass}}" autocomplete="off">
   <header class="sheet-header">
-    <img class="profile-img" src="{{img}}" data-edit="img" title="{{name}}" />
+    <img class="profile-img is-pos-weapon-image" src="{{img}}" title="{{name}}" />
     <div class="header-col">
-      <h1 class="charname">
-        <input name="name" type="text" value="{{name}}" placeholder="Weapon Name" />
+      <h1 class="charname is-pos-weapon-name">
+        <span>{{name}}</span>
       </h1>
       <div class="details">
         <div class="form-group">
-          <label>Cost (sp)</label>
-          <input type="number" name="system.cost" value="{{system.cost}}" min="0" />
+          <input type="number" class="is-pos-cost" name="system.cost" value="{{system.cost}}" min="0" readonly disabled />
         </div>
         <div class="form-group">
-          <label>Weight</label>
-          <input type="number" name="system.weight" value="{{system.weight}}" min="0" step="0.1" />
+          <input type="number" class="is-pos-weight" name="system.weight" value="{{system.weight}}" min="0" step="0.1" readonly disabled />
         </div>
         <div class="form-group">
-          <label>Size</label>
-          <select name="system.sizeCat">
-            <option value="T" {{#if (eq system.sizeCat "T")}}selected{{/if}}>T (Tiny)</option>
-            <option value="S" {{#if (eq system.sizeCat "S")}}selected{{/if}}>S (Small)</option>
-            <option value="M" {{#if (eq system.sizeCat "M")}}selected{{/if}}>M (Medium)</option>
-            <option value="L" {{#if (eq system.sizeCat "L")}}selected{{/if}}>L (Large)</option>
+          <div class="size-wrapper">
+            <select class="is-pos-size" name="system.sizeCat" disabled>
+              <option value="T" {{#if (eq system.sizeCat "T")}}selected{{/if}}>T</option>
+            <option value="S" {{#if (eq system.sizeCat "S")}}selected{{/if}}>S</option>
+            <option value="M" {{#if (eq system.sizeCat "M")}}selected{{/if}}>M</option>
+            <option value="L" {{#if (eq system.sizeCat "L")}}selected{{/if}}>L</option>
           </select>
+          </div>
         </div>
       </div>
     </div>
@@ -32,25 +31,27 @@
       <div class="stats">
         <div class="form-group">
           <label>Damage</label>
-          <input type="text" name="system.damage" value="{{system.damage}}" placeholder="1d6" />
+          <input type="text" class="is-pos-damage" value="{{system.damage}}" placeholder="1d6" readonly disabled />
         </div>
         
         <div class="form-group">
           <label>Attack Bonus</label>
-          <input type="number" name="system.bonus" value="{{system.bonus}}" />
+          <input type="number" class="is-pos-bonus" value="{{system.bonus}}" readonly disabled />
         </div>
 
         <div class="form-group">
           <label>Quantity</label>
-          <input type="number" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
+          <input type="number" class="is-pos-quantity" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
         </div>
 
+        {{#if (gt system.quantity.max 0)}}
         <div class="form-group">
-          <label>Max Uses (0 = unlimited)</label>
-          <input type="number" name="system.quantity.max" value="{{system.quantity.max}}" min="0" />
+          <label>Max Uses</label>
+          <input type="number" class="is-pos-max-uses" value="{{system.quantity.max}}" min="0" readonly disabled />
         </div>
+        {{/if}}
 
-        <div class="form-group">
+        <div class="form-group is-pos-equipped-checkbox">
           <label>
             <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
             Equipped
@@ -58,8 +59,7 @@
         </div>
 
         <div class="form-group">
-          <label>Carry Location</label>
-          <select name="system.carryLocation">
+          <select class="is-pos-carry-location" name="system.carryLocation">
             <option value="">-- Select --</option>
             <option value="hand-primary" {{#if (eq system.carryLocation "hand-primary")}}selected{{/if}}>Hand (Primary)</option>
             <option value="hand-secondary" {{#if (eq system.carryLocation "hand-secondary")}}selected{{/if}}>Hand (Secondary)</option>
@@ -71,64 +71,32 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label>
-            <input type="checkbox" name="system.melee" {{checked system.melee}} />
-            Melee Weapon
-          </label>
+        <div class="form-group is-pos-melee-checkbox">
+          <label>Melee Weapon</label>
+          <input type="checkbox" {{checked system.melee}} disabled />
         </div>
 
-        <div class="form-group">
-          <label>
-            <input type="checkbox" name="system.missile" {{checked system.missile}} />
-            Missile Weapon
-          </label>
+        <div class="form-group is-pos-missile-checkbox">
+          <label>Missile Weapon</label>
+          <input type="checkbox" {{checked system.missile}} disabled />
         </div>
 
         {{#if system.missile}}
         <div class="form-group">
           <label>Range (Short/Medium/Long)</label>
-          <div class="range-inputs">
-            <input type="number" name="system.range.short" value="{{system.range.short}}" placeholder="30" />
+          <div class="range-inputs is-pos-range">
+            <input type="number" value="{{system.range.short}}" placeholder="30" readonly disabled />
             <span>/</span>
-            <input type="number" name="system.range.medium" value="{{system.range.medium}}" placeholder="60" />
+            <input type="number" value="{{system.range.medium}}" placeholder="60" readonly disabled />
             <span>/</span>
-            <input type="number" name="system.range.long" value="{{system.range.long}}" placeholder="90" />
+            <input type="number" value="{{system.range.long}}" placeholder="90" readonly disabled />
           </div>
         </div>
         {{/if}}
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" name="system.slow" {{checked system.slow}} />
-            Slow Weapon
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label>Tags</label>
-          <div class="tag-input">
-            <input type="text" placeholder="Enter tag" />
-            <button type="button" class="tag-control" data-action="add">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-          <div class="tag-list">
-            {{#each system.tags as |tag|}}
-            <span class="tag">
-              {{tag}}
-              <button type="button" class="tag-control" data-action="remove" data-tag="{{tag}}">
-                <i class="fas fa-times"></i>
-              </button>
-            </span>
-            {{/each}}
-          </div>
-        </div>
       </div>
 
       <div class="description">
-        <label>Description</label>
-        <textarea name="system.description" placeholder="Weapon description...">{{system.description}}</textarea>
+        <textarea class="is-pos-description" name="system.description" readonly disabled>{{system.description}}</textarea>
       </div>
     </div>
   </section>

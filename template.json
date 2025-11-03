@@ -87,7 +87,8 @@
           "max": 0
         },
         "equipped": false,
-        "carryLocation": ""
+        "carryLocation": "",
+        "containerId": null
       }
     },
     "weapon": {

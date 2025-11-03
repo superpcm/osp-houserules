@@ -1,25 +1,23 @@
 <form class="{{cssClass}}" autocomplete="off">
   <header class="sheet-header">
-    <img class="profile-img is-pos-container-image" src="{{img}}" title="{{name}}" />
+    <img class="profile-img is-pos-container-image" src="{{img}}" data-edit="img" title="{{name}}" />
     <div class="header-col">
       <h1 class="charname is-pos-container-name">
-        <span>{{name}}</span>
+        {{#if @root.isGM}}
+          <input type="text" name="name" value="{{name}}" />
+        {{else}}
+          <span>{{name}}</span>
+        {{/if}}
       </h1>
       <div class="details">
         <div class="form-group">
-          <input type="number" class="is-pos-cost" name="system.cost" value="{{system.cost}}" min="0" readonly disabled />
+          <input type="number" class="is-pos-cost" name="system.cost" value="{{system.cost}}" min="0" {{#unless @root.isGM}}readonly disabled{{/unless}} />
         </div>
         <div class="form-group">
-          <input type="number" class="is-pos-weight" name="system.weight" value="{{system.weight}}" min="0" step="0.1" readonly disabled />
+          <input type="number" class="is-pos-weight" name="system.weight" value="{{system.weight}}" min="0" step="0.1" {{#unless @root.isGM}}readonly disabled{{/unless}} />
         </div>
         <div class="form-group">
-          <div class="size-wrapper">
-            <select class="is-pos-size" name="system.sizeCat" disabled>
-              <option value="S" {{#if (eq system.sizeCat "S")}}selected{{/if}}>S</option>
-            <option value="M" {{#if (eq system.sizeCat "M")}}selected{{/if}}>M</option>
-            <option value="L" {{#if (eq system.sizeCat "L")}}selected{{/if}}>L</option>
-          </select>
-          </div>
+          <input type="text" class="is-pos-size" name="system.sizeCat" value="{{system.sizeCat}}" maxlength="3" {{#unless @root.isGM}}readonly disabled{{/unless}} />
         </div>
       </div>
     </div>
@@ -29,7 +27,7 @@
     <div class="flexrow">
       <div class="stats">
       <div class="form-group">
-        <input type="text" class="is-pos-capacity" name="system.capacity" value="{{system.capacity}}" placeholder="6M" readonly disabled />
+        <input type="text" class="is-pos-capacity" name="system.capacity" value="{{system.capacity}}" placeholder="6M" {{#unless @root.isGM}}readonly disabled{{/unless}} />
       </div>        <div class="form-group">
           <input type="number" class="is-pos-quantity" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
         </div>
@@ -37,7 +35,6 @@
         <div class="form-group is-pos-equipped-checkbox">
           <label>
             <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
-            Equipped/Carried
           </label>
         </div>
 
@@ -57,7 +54,7 @@
       </div>
 
       <div class="description">
-        <textarea class="is-pos-description" name="system.description" readonly disabled>{{system.description}}</textarea>
+        <textarea class="is-pos-description" name="system.description" {{#unless @root.isGM}}readonly disabled{{/unless}}>{{system.description}}</textarea>
       </div>
     </div>
   </section>

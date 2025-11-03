@@ -37,6 +37,9 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     context.img = this.item.img;
     context.name = this.item.name;
     
+    // Add GM status for conditional editing
+    context.isGM = game.user.isGM;
+    
     // Add configuration data
     context.config = {
       damageTypes: ["d4", "d6", "d8", "d10", "d12"],
@@ -58,6 +61,9 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
 
     // Setup Size field tooltip to show storedSize
     this._setupSizeTooltip(html);
+
+    // Setup Equipped checkbox tooltip
+    this._setupEquippedTooltip(html);
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
@@ -100,9 +106,9 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
    * Setup tooltip for Size field to show storedSize value
    */
   _setupSizeTooltip(html) {
-    const sizeWrapper = html.find('.size-wrapper');
-    if (!sizeWrapper || sizeWrapper.length === 0) {
-      console.log('ItemSheet: Size wrapper not found');
+    const sizeElement = html.find('.is-pos-size');
+    if (!sizeElement || sizeElement.length === 0) {
+      console.log('ItemSheet: Size element not found');
       return;
     }
 
@@ -140,8 +146,8 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
 
     let tooltipTimeout;
 
-    // Attach events to the wrapper div which can receive mouse events
-    sizeWrapper.on('mouseenter', (e) => {
+    // Attach events to the size select element
+    sizeElement.on('mouseenter', (e) => {
       console.log('ItemSheet: Size field mouseenter');
       clearTimeout(tooltipTimeout);
       tooltipTimeout = setTimeout(() => {
@@ -156,8 +162,68 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
       }, 500);
     });
 
-    sizeWrapper.on('mouseleave', () => {
+    sizeElement.on('mouseleave', () => {
       console.log('ItemSheet: Size field mouseleave');
+      clearTimeout(tooltipTimeout);
+      tooltip.style.opacity = '0';
+    });
+  }
+
+  /**
+   * Setup tooltip for Equipped checkbox
+   */
+  _setupEquippedTooltip(html) {
+    const equippedWrapper = html.find('.is-pos-equipped-checkbox');
+    if (!equippedWrapper || equippedWrapper.length === 0) {
+      console.log('ItemSheet: Equipped checkbox not found');
+      return;
+    }
+
+    console.log('ItemSheet: Setting up equipped checkbox tooltip');
+
+    // Create tooltip element
+    let tooltip = document.getElementById('item-equipped-tooltip');
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.id = 'item-equipped-tooltip';
+      tooltip.className = 'cs-tooltip';
+      tooltip.style.cssText = `
+        position: absolute;
+        background: #333;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        line-height: 1.4;
+        z-index: 10000;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(tooltip);
+      console.log('ItemSheet: Created equipped tooltip element');
+    }
+
+    let tooltipTimeout;
+
+    equippedWrapper.on('mouseenter', (e) => {
+      console.log('ItemSheet: Equipped checkbox mouseenter');
+      clearTimeout(tooltipTimeout);
+      tooltipTimeout = setTimeout(() => {
+        tooltip.textContent = 'Equip/Unequip';
+        
+        const rect = e.currentTarget.getBoundingClientRect();
+        tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+        tooltip.style.top = (rect.top - 30) + 'px';
+        tooltip.style.transform = 'translateX(-50%)';
+        tooltip.style.opacity = '1';
+        console.log('ItemSheet: Equipped tooltip shown');
+      }, 500);
+    });
+
+    equippedWrapper.on('mouseleave', () => {
+      console.log('ItemSheet: Equipped checkbox mouseleave');
       clearTimeout(tooltipTimeout);
       tooltip.style.opacity = '0';
     });

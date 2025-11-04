@@ -161,8 +161,50 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Prepare items for template
     context.weapons = this.actor.system.weapons || [];
     context.armor = this.actor.system.armor || [];
-    context.containers = this.actor.system.containers || [];
-    context.items = this.actor.system.items || [];
+    
+    // Organize containers with nested items
+    const allContainers = this.actor.system.containers || [];
+    const allItems = this.actor.system.items || [];
+    const allWeapons = this.actor.system.weapons || [];
+    const allArmor = this.actor.system.armor || [];
+    
+    // Only show TOP-LEVEL containers (not nested in other containers)
+    const topLevelContainers = allContainers.filter(container => !container.system.containerId);
+    
+    context.containers = topLevelContainers.map(container => {
+      // Explicitly preserve the id and other properties
+      const containerData = {
+        id: container.id,
+        name: container.name,
+        img: container.img,
+        type: container.type,
+        system: container.system,
+        ...container
+      };
+      
+      // Find ALL items in this container - items, weapons, armor, AND nested containers
+      const containedItems = allItems.filter(item => item.system.containerId === container.id);
+      const containedWeapons = allWeapons.filter(weapon => weapon.system.containerId === container.id);
+      const containedArmor = allArmor.filter(armor => armor.system.containerId === container.id);
+      const containedContainers = allContainers.filter(c => c.system.containerId === container.id);
+      
+      // Combine all contained items
+      containerData.containedItems = [
+        ...containedItems,
+        ...containedWeapons,
+        ...containedArmor,
+        ...containedContainers
+      ];
+      
+      // Check if container is collapsed (stored in flags)
+      containerData.collapsed = this.actor.getFlag('osp-houserules', `container-${container.id}-collapsed`) || false;
+      
+      return containerData;
+    });
+    
+    // Only show items that are NOT in containers AND are not containers themselves
+    context.items = allItems.filter(item => !item.system.containerId && item.type !== 'container');
+    
     context.treasures = this.actor.system.treasures || [];
 
     // Encumbrance data
@@ -202,6 +244,9 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // ALWAYS initialize position tool handler first, regardless of editable state
     this.ensurePositionToolHandler(html);
+
+    // Container collapse/expand toggle
+    html.find('.container-toggle').click(this._onContainerToggle.bind(this));
 
     // Only initialize other handlers if sheet is editable
     if (!this.options.editable) {
@@ -878,5 +923,303 @@ export class OspActorSheetCharacter extends ActorSheet {
       this.triggerReflow(html.find('.tab[data-tab="attributes"]'));
       this.triggerReflow(html.find('.tab[data-tab="skills"]'));
     }
+  }
+
+  /**
+   * Handle toggling container collapsed state
+   */
+  async _onContainerToggle(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const containerEntry = $(event.currentTarget).closest('.item-entry');
+    const containerId = containerEntry.data('item-id');
+    const currentState = this.actor.getFlag('osp-houserules', `container-${containerId}-collapsed`) || false;
+    
+    await this.actor.setFlag('osp-houserules', `container-${containerId}-collapsed`, !currentState);
+    this.render(false);
+  }
+
+  /**
+   * Handle dropping an item onto the sheet
+   */
+  async _onDrop(event) {
+    const data = TextEditor.getDragEventData(event);
+
+    // We only handle Item drops with our custom logic
+    if (data.type === "Item") {
+      return this._onDropItem(event, data);
+    }
+
+    // For other types (Actor, etc), use default behavior
+    return super._onDrop(event);
+  }
+
+  /**
+   * Handle dropping an item
+   */
+  async _onDropItem(event, data) {
+    if (!this.actor.isOwner) return false;
+
+    const item = await Item.implementation.fromDropData(data);
+    const itemData = item.toObject();
+
+    // Check if dropping onto a container
+    const dropTarget = event.target.closest('.item-entry[data-item-id]');
+    const targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
+    
+    console.log('=== DROP DEBUG ===');
+    console.log('Drop data:', data);
+    console.log('Item being dropped:', itemData.name, 'Type:', itemData.type, 'ID:', itemData._id);
+    console.log('Drop target element:', dropTarget);
+    console.log('Target container:', targetContainer?.name, 'Type:', targetContainer?.type);
+    console.log('Item object:', item);
+    console.log('Item has actor?', !!item.actor, 'Item actor ID:', item.actor?.id, 'This actor ID:', this.actor.id);
+    
+    // Check if this item already exists on this actor
+    const existingItemCheck = this.actor.items.get(itemData._id);
+    console.log('Existing item on actor?', !!existingItemCheck);
+    
+    // Check if this is a reordering operation or a new item
+    const isReordering = item.actor && item.actor.id === this.actor.id;
+
+    // Special validation for Backpacks - only one can be at top-level
+    if (itemData.type === "container" && itemData.name.toLowerCase().includes('backpack')) {
+      // Check if adding as top-level (no target container)
+      if (!targetContainer || targetContainer.type !== "container") {
+        // Count existing top-level backpacks (excluding the one being moved if reordering)
+        const existingBackpacks = this.actor.items.filter(i => 
+          i.type === "container" && 
+          i.name.toLowerCase().includes('backpack') &&
+          !i.system.containerId &&
+          (!isReordering || i.id !== itemData._id) // Exclude self if reordering
+        );
+        
+        if (existingBackpacks.length > 0) {
+          ui.notifications.error("You can only carry one Backpack at a time. Store additional backpacks inside containers.");
+          return false;
+        }
+      }
+    }
+    
+    // Special validation for Belt Pouches - only two can be at top-level
+    if (itemData.type === "container" && itemData.name.toLowerCase().includes('pouch')) {
+      // Check if adding as top-level (no target container)
+      if (!targetContainer || targetContainer.type !== "container") {
+        // Count existing top-level pouches (excluding the one being moved if reordering)
+        const existingPouches = this.actor.items.filter(i => 
+          i.type === "container" && 
+          i.name.toLowerCase().includes('pouch') &&
+          !i.system.containerId &&
+          (!isReordering || i.id !== itemData._id) // Exclude self if reordering
+        );
+        
+        if (existingPouches.length >= 2) {
+          ui.notifications.error("You can only carry two Belt Pouches at a time. Store additional pouches inside containers.");
+          return false;
+        }
+      }
+    }
+
+    // If the item is of type "item" (not weapon/armor/container), it MUST go into a container
+    if (itemData.type === "item") {
+      if (!targetContainer || targetContainer.type !== "container") {
+        ui.notifications.error("Items must be stored in a container. Drag the item onto a container.");
+        return false;
+      }
+
+      // Check if there's enough space in the container
+      if (!this._hasContainerSpace(targetContainer, itemData)) {
+        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
+        return false;
+      }
+
+      // Set the container ID
+      itemData.system.containerId = targetContainer.id;
+    } 
+    // Allow containers to be stored in other containers if they're empty
+    // Only check for emptiness when reordering (new containers from compendium are always empty)
+    else if (itemData.type === "container" && targetContainer && targetContainer.type === "container") {
+      // If reordering, check if the container being dropped has any items in it
+      if (isReordering) {
+        const droppedContainerId = item.id;
+        const itemsInDroppedContainer = droppedContainerId ? 
+          this.actor.items.filter(i => i.system.containerId === droppedContainerId) : [];
+        
+        if (itemsInDroppedContainer.length > 0) {
+          ui.notifications.error(`Cannot store ${item.name} - it contains ${itemsInDroppedContainer.length} item(s). Empty it first.`);
+          return false;
+        }
+      }
+      
+      // Check if there's enough space in the target container
+      if (!this._hasContainerSpace(targetContainer, itemData)) {
+        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
+        return false;
+      }
+      
+      itemData.system.containerId = targetContainer.id;
+      console.log('Container-in-container: Setting containerId to', targetContainer.id);
+    }
+    // Weapons/armor can be dropped onto containers
+    else if (targetContainer && targetContainer.type === "container") {
+      if (!this._hasContainerSpace(targetContainer, itemData)) {
+        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
+        return false;
+      }
+      itemData.system.containerId = targetContainer.id;
+    }
+    // If reordering and not dropped on a container, clear the containerId
+    else if (isReordering) {
+      itemData.system.containerId = null;
+    }
+    // For new items from compendium/sidebar not dropped on container, don't set containerId
+    // They'll be added as top-level items
+
+    console.log('Final containerId to set:', itemData.system.containerId);
+
+    // Handle item from another actor
+    if (item.actor && item.actor.id !== this.actor.id) {
+      console.log('Path: Item from another actor - delete and create');
+      return item.actor.deleteEmbeddedDocuments("Item", [item.id]).then(() => {
+        return this.actor.createEmbeddedDocuments("Item", [itemData]);
+      });
+    }
+
+    // Handle item from this actor (reordering/moving between containers)
+    if (item.actor && item.actor.id === this.actor.id) {
+      console.log('Path: Updating item with containerId:', itemData.system.containerId);
+      return item.update({"system.containerId": itemData.system.containerId});
+    }
+
+    // Check if this item already exists on this actor (handles case where item.actor is null)
+    const existingItem = this.actor.items.get(itemData._id);
+    if (existingItem) {
+      console.log('Path: Item exists but item.actor was null - updating existing item');
+      return existingItem.update({"system.containerId": itemData.system.containerId});
+    }
+
+    // Handle item from compendium or elsewhere
+    console.log('Path: Creating new item from compendium or elsewhere');
+    return this.actor.createEmbeddedDocuments("Item", [itemData]);
+  }
+
+  /**
+   * Check if container has enough space for an item
+   */
+  _hasContainerSpace(container, itemData) {
+    // Get capacity from the container
+    const actorItem = this.actor.items.get(container.id || container._id);
+    let capacityStr = actorItem?.system?.capacity;
+    
+    // Handle corrupted data - if capacity is stringified object or contains "[o"
+    if (typeof capacityStr === 'string' && (
+      capacityStr.includes('[o') || 
+      capacityStr === '[object Object]' || 
+      capacityStr === 'undefined' ||
+      !capacityStr
+    )) {
+      console.error('ERROR: Container has corrupted capacity data:', capacityStr);
+      ui.notifications.error(`Container "${container.name}" has corrupted capacity data. Please delete and re-add it from the compendium.`);
+      return false;
+    }
+    
+    // If capacity is still an object (not stringified), try to extract value
+    if (typeof capacityStr === 'object' && capacityStr !== null) {
+      // Try various common Foundry DataModel properties
+      capacityStr = capacityStr.value 
+        || capacityStr._value 
+        || capacityStr.default
+        || capacityStr._default;
+      
+      if (!capacityStr) {
+        console.error('ERROR: Could not extract capacity string from object');
+        ui.notifications.error(`Container "${container.name}" capacity is in an unexpected format.`);
+        return false;
+      }
+    }
+    
+    const maxCapacity = this._parseCapacity(capacityStr);
+    const usedCapacity = this._getUsedCapacity(container);
+    const itemSize = this._getItemSlotSize(itemData.system.storedSize || itemData.system.sizeCat);
+    
+    return (usedCapacity + itemSize) <= maxCapacity;
+  }
+
+  /**
+   * Get available space in a container
+   */
+  _getAvailableSpace(container) {
+    const capacityStr = container.system?.capacity;
+    const maxCapacity = this._parseCapacity(capacityStr);
+    const usedCapacity = this._getUsedCapacity(container);
+    return maxCapacity - usedCapacity;
+  }
+
+  /**
+   * Calculate used capacity in a container
+   */
+  _getUsedCapacity(container) {
+    let total = 0;
+    
+    // Find all items in this container
+    const itemsInContainer = this.actor.items.filter(item => 
+      item.system.containerId === container.id
+    );
+    
+    itemsInContainer.forEach(item => {
+      const itemSize = this._getItemSlotSize(item.system.storedSize || item.system.sizeCat);
+      const quantity = item.system.quantity?.value || 1;
+      total += itemSize * quantity;
+    });
+    
+    return total;
+  }
+
+  /**
+   * Parse capacity string (e.g., "6M", "1L") to slot count
+   */
+  _parseCapacity(capacityStr) {
+    if (!capacityStr) return 0;
+    
+    // If it's a string that looks like "[object Object]", it means we need the actual value
+    if (typeof capacityStr === 'string' && capacityStr === '[object Object]') {
+      console.error('Capacity is stringified object - this should not happen');
+      return 0;
+    }
+    
+    // Ensure it's a string
+    capacityStr = String(capacityStr);
+    
+    const match = capacityStr.match(/^(\d+)([TSMLWB])$/);
+    
+    if (!match) return 0;
+    
+    const count = parseInt(match[1]);
+    const size = match[2];
+    
+    return count * this._getItemSlotSize(size);
+  }
+
+  /**
+   * Convert size category to slot count
+   * T = 1 slot (25 coins)
+   * S = 2 slots (50 coins)
+   * M = 4 slots (100 coins)
+   * L = 24 slots (600 coins)
+   * W (worn) = 0 slots
+   * B (bulk) = special handling
+   */
+  _getItemSlotSize(sizeCat) {
+    const sizeMap = {
+      'T': 1,
+      'S': 2,
+      'M': 4,
+      'L': 24,
+      'W': 0,
+      'B': 0
+    };
+    
+    return sizeMap[sizeCat] || 0;
   }
 }

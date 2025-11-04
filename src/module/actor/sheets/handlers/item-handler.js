@@ -77,14 +77,57 @@ export class ItemHandler {
   /**
    * Handle toggling item equipment status
    */
-  onItemToggle(event) {
+  async onItemToggle(event) {
     event.preventDefault();
     event.stopPropagation(); // Prevent triggering item roll
     const item = this.getItemFromEvent(event);
-    if (item) {
-      const equipped = !item.system.equipped;
-      item.update({"system.equipped": equipped});
+    if (!item) return;
+    
+    const newEquippedState = !item.system.equipped;
+    
+    // If equipping a Large Sack, validate hand requirements
+    if (newEquippedState && item.type === "container" && 
+        item.name.toLowerCase().includes('sack') && item.name.toLowerCase().includes('large') &&
+        !item.system.containerId) { // Only check if it's a top-level container
+      
+      // Count currently equipped large sacks (excluding this one)
+      const equippedLargeSacks = this.actor.items.filter(i => 
+        i.type === "container" &&
+        i.name.toLowerCase().includes('sack') &&
+        i.name.toLowerCase().includes('large') &&
+        i.system.equipped &&
+        !i.system.containerId &&
+        i.id !== item.id
+      );
+      
+      // Count equipped hand-held items (weapons and shields)
+      const equippedHandItems = this.actor.items.filter(i => 
+        i.system.equipped &&
+        (i.type === "weapon" || 
+         (i.type === "armor" && i.name.toLowerCase().includes('shield')))
+      );
+      
+      if (equippedLargeSacks.length === 0) {
+        // Equipping first large sack - requires 1 hand, so max 1 hand-held item
+        if (equippedHandItems.length > 1) {
+          ui.notifications.error("Large Sack requires one hand. You can only have one hand-held item equipped (unequip weapons/shields first).");
+          return;
+        }
+      } else if (equippedLargeSacks.length === 1) {
+        // Equipping second large sack - requires both hands, so no hand-held items
+        if (equippedHandItems.length > 0) {
+          ui.notifications.error("Two Large Sacks require both hands. Unequip all weapons and shields first.");
+          return;
+        }
+      } else {
+        // Already have 2 large sacks equipped
+        ui.notifications.error("You can only equip two Large Sacks at a time.");
+        return;
+      }
     }
+    
+    // Proceed with equip toggle
+    item.update({"system.equipped": newEquippedState});
   }
 
   /**

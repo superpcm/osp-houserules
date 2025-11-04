@@ -4,8 +4,6 @@ import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
 import { ImageHandler } from './handlers/image-handler.js';
 
-const { ActorSheet } = foundry.appv1.sheets;
-
 export class OspActorSheetCharacter extends ActorSheet {
   constructor(...args) {
     super(...args);
@@ -21,6 +19,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       resizable: true,
       minimizable: true,
       maximizable: false,
+      dragDrop: [{dragSelector: ".item", dropSelector: null}],
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "combat" }],
     });
   }
@@ -87,6 +86,14 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Initialize all handlers
     this.initializeHandlers(html);
+  }
+
+  /**
+   * Override to enable drag-drop
+   */
+  _canDragDrop(selector) {
+    console.log('_canDragDrop called:', selector);
+    return true;
   }
 
   /**
@@ -221,14 +228,15 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   async _onDrop(event) {
     const data = TextEditor.getDragEventData(event);
-    const actor = this.actor;
+    
+    console.log('_onDrop called:', data.type);
 
-    // Handle different drop types
+    // We only handle Item drops with our custom logic
     if (data.type === "Item") {
       return this._onDropItem(event, data);
     }
 
-    // Fall back to default behavior for other drop types
+    // For other types (Actor, etc), use default behavior
     return super._onDrop(event);
   }
 
@@ -244,6 +252,15 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Check if dropping onto a container
     const dropTarget = event.target.closest('.item-entry[data-item-id]');
     const targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
+
+    console.log('Drop event:', {
+      eventTarget: event.target,
+      dropTarget: dropTarget,
+      targetContainerId: dropTarget?.dataset.itemId,
+      targetContainer: targetContainer,
+      itemType: itemData.type,
+      itemName: itemData.name
+    });
 
     // If the item is of type "item" (not weapon/armor/container), it MUST go into a container
     if (itemData.type === "item") {

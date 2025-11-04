@@ -268,6 +268,16 @@ export class OspActor extends Actor {
     this.system.items = this.items.filter(item => item.type === "item" && !item.system.treasure);
     this.system.treasures = this.items.filter(item => item.type === "item" && item.system.treasure);
 
+    // Sync container equipped state based on location
+    // Top-level containers = equipped, nested containers = unequipped
+    this.system.containers.forEach(container => {
+      const shouldBeEquipped = !container.system.containerId;
+      if (container.system.equipped !== shouldBeEquipped) {
+        // Silently sync the state (don't trigger update, just fix display)
+        container.system.equipped = shouldBeEquipped;
+      }
+    });
+
     // Calculate encumbrance
     this._calculateEncumbrance();
 

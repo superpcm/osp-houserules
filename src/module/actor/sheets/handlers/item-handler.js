@@ -85,49 +85,201 @@ export class ItemHandler {
     
     const newEquippedState = !item.system.equipped;
     
-    // If equipping a Large Sack, validate hand requirements
-    if (newEquippedState && item.type === "container" && 
-        item.name.toLowerCase().includes('sack') && item.name.toLowerCase().includes('large') &&
-        !item.system.containerId) { // Only check if it's a top-level container
-      
-      // Count currently equipped large sacks (excluding this one)
-      const equippedLargeSacks = this.actor.items.filter(i => 
-        i.type === "container" &&
-        i.name.toLowerCase().includes('sack') &&
-        i.name.toLowerCase().includes('large') &&
-        i.system.equipped &&
-        !i.system.containerId &&
-        i.id !== item.id
-      );
-      
-      // Count equipped hand-held items (weapons and shields)
-      const equippedHandItems = this.actor.items.filter(i => 
-        i.system.equipped &&
-        (i.type === "weapon" || 
-         (i.type === "armor" && i.name.toLowerCase().includes('shield')))
-      );
-      
-      if (equippedLargeSacks.length === 0) {
-        // Equipping first large sack - requires 1 hand, so max 1 hand-held item
-        if (equippedHandItems.length > 1) {
-          ui.notifications.error("Large Sack requires one hand. You can only have one hand-held item equipped (unequip weapons/shields first).");
-          return;
+    // Special handling for containers: equipped = top-level, unequipped = nested
+    if (item.type === "container") {
+      if (newEquippedState) {
+        // Equipping = moving to top-level
+        // If it's a Large Sack, validate hand requirements
+        if (item.name.toLowerCase().includes('sack') && item.name.toLowerCase().includes('large')) {
+          // Count currently equipped large sacks (excluding this one)
+          const equippedLargeSacks = this.actor.items.filter(i => 
+            i.type === "container" &&
+            i.name.toLowerCase().includes('sack') &&
+            i.name.toLowerCase().includes('large') &&
+            !i.system.containerId &&
+            i.id !== item.id
+          );
+          
+          // Count equipped hand-held items (weapons and shields)
+          const equippedHandItems = this.actor.items.filter(i => 
+            i.system.equipped &&
+            (i.type === "weapon" || 
+             (i.type === "armor" && i.name.toLowerCase().includes('shield')))
+          );
+          
+          if (equippedLargeSacks.length === 0) {
+            // Equipping first large sack - requires 1 hand, so max 1 hand-held item
+            if (equippedHandItems.length > 1) {
+              ui.notifications.error("Large Sack requires one hand. You can only have one hand-held item equipped (unequip weapons/shields first).");
+              return;
+            }
+          } else if (equippedLargeSacks.length === 1) {
+            // Equipping second large sack - requires both hands, so no hand-held items
+            if (equippedHandItems.length > 0) {
+              ui.notifications.error("Two Large Sacks require both hands. Unequip all weapons and shields first.");
+              return;
+            }
+          } else {
+            // Already have 2 large sacks equipped
+            ui.notifications.error("You can only equip two Large Sacks at a time.");
+            return;
+          }
         }
-      } else if (equippedLargeSacks.length === 1) {
-        // Equipping second large sack - requires both hands, so no hand-held items
-        if (equippedHandItems.length > 0) {
-          ui.notifications.error("Two Large Sacks require both hands. Unequip all weapons and shields first.");
-          return;
+        
+        // Check container count limits
+        if (item.name.toLowerCase().includes('backpack')) {
+          const existingBackpacks = this.actor.items.filter(i => 
+            i.type === "container" && 
+            i.name.toLowerCase().includes('backpack') &&
+            !i.system.containerId &&
+            i.id !== item.id
+          );
+          
+          if (existingBackpacks.length > 0) {
+            ui.notifications.error("You can only carry one Backpack at a time. Store additional backpacks inside containers.");
+            return;
+          }
         }
+        
+        if (item.name.toLowerCase().includes('pouch')) {
+          const existingPouches = this.actor.items.filter(i => 
+            i.type === "container" && 
+            i.name.toLowerCase().includes('pouch') &&
+            !i.system.containerId &&
+            i.id !== item.id
+          );
+          
+          if (existingPouches.length >= 2) {
+            ui.notifications.error("You can only carry two Belt Pouches at a time. Store additional pouches inside containers.");
+            return;
+          }
+        }
+        
+        // Move to top-level by clearing containerId and setting equipped
+        await item.update({
+          "system.containerId": null,
+          "system.equipped": true
+        });
       } else {
-        // Already have 2 large sacks equipped
-        ui.notifications.error("You can only equip two Large Sacks at a time.");
-        return;
+        // Unequipping = moving to a container
+        // Find container with most available capacity
+        const availableContainers = this.actor.items.filter(i => 
+          i.type === "container" &&
+          !i.system.containerId && // Top-level only
+          i.id !== item.id // Not itself
+        );
+        
+        if (availableContainers.length === 0) {
+          ui.notifications.error(`Cannot unequip ${item.name} - no containers available to store it in.`);
+          return;
+        }
+        
+        // Calculate available space for each container
+        const containerSpaces = availableContainers.map(container => {
+          const capacity = this._parseCapacity(container.system.capacity);
+          const used = this._getUsedCapacity(container);
+          return {
+            container: container,
+            available: capacity - used
+          };
+        }).filter(c => c.available > 0);
+        
+        if (containerSpaces.length === 0) {
+          ui.notifications.error(`Cannot unequip ${item.name} - no containers have enough space.`);
+          return;
+        }
+        
+        // Sort by most available space
+        containerSpaces.sort((a, b) => b.available - a.available);
+        const bestContainer = containerSpaces[0].container;
+        
+        // Check if item fits
+        const itemSize = this._getItemSlotSize(item);
+        if (itemSize > containerSpaces[0].available) {
+          ui.notifications.error(`Cannot unequip ${item.name} - requires ${itemSize} slots but largest container only has ${containerSpaces[0].available} available.`);
+          return;
+        }
+        
+        // Move into best container by setting containerId and unequipped
+        await item.update({
+          "system.containerId": bestContainer.id,
+          "system.equipped": false
+        });
+        
+        ui.notifications.info(`${item.name} stored in ${bestContainer.name}.`);
       }
+    } else {
+      // Non-container items: check hand requirements before equipping
+      if (newEquippedState) {
+        // Check if this is a hand-held item (weapon or shield)
+        const isHandHeld = item.type === "weapon" || 
+                          (item.type === "armor" && item.name.toLowerCase().includes('shield'));
+        
+        if (isHandHeld) {
+          // Count equipped large sacks
+          const equippedLargeSacks = this.actor.items.filter(i => 
+            i.type === "container" &&
+            i.name.toLowerCase().includes('sack') &&
+            i.name.toLowerCase().includes('large') &&
+            !i.system.containerId // Top-level only
+          );
+          
+          if (equippedLargeSacks.length >= 2) {
+            ui.notifications.error("Cannot equip - both hands are occupied by two Large Sacks.");
+            return;
+          }
+          
+          if (equippedLargeSacks.length === 1) {
+            // One large sack equipped - can only have 1 hand-held item total
+            const otherEquippedHandItems = this.actor.items.filter(i => 
+              i.system.equipped &&
+              i.id !== item.id &&
+              (i.type === "weapon" || 
+               (i.type === "armor" && i.name.toLowerCase().includes('shield')))
+            );
+            
+            if (otherEquippedHandItems.length >= 1) {
+              ui.notifications.error("Cannot equip - one hand is occupied by a Large Sack and the other by " + otherEquippedHandItems[0].name + ".");
+              return;
+            }
+          }
+        }
+      }
+      
+      // Proceed with toggle
+      await item.update({"system.equipped": newEquippedState});
     }
+  }
+  
+  /**
+   * Parse capacity string (e.g., "6M" = 24 slots)
+   */
+  _parseCapacity(capacityStr) {
+    if (!capacityStr || typeof capacityStr !== 'string') return 0;
     
-    // Proceed with equip toggle
-    item.update({"system.equipped": newEquippedState});
+    const match = capacityStr.match(/^(\d+)([TSMLWB])$/);
+    if (!match) return 0;
+    
+    const [, count, size] = match;
+    const multipliers = { T: 1, S: 2, M: 4, L: 24, W: 0, B: 0 };
+    return parseInt(count) * (multipliers[size] || 0);
+  }
+  
+  /**
+   * Get used capacity in a container
+   */
+  _getUsedCapacity(container) {
+    const containedItems = this.actor.items.filter(i => i.system.containerId === container.id);
+    return containedItems.reduce((total, item) => total + this._getItemSlotSize(item), 0);
+  }
+  
+  /**
+   * Get item size in slots
+   */
+  _getItemSlotSize(item) {
+    const size = item.system.storedSize;
+    const multipliers = { T: 1, S: 2, M: 4, L: 24, W: 0, B: 0 };
+    return multipliers[size] || 0;
   }
 
   /**

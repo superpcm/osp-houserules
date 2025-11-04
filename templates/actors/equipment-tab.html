@@ -116,15 +116,17 @@
       </div>
     </div>
     <ol class="item-list">
+      <li style="background: red; color: white; padding: 10px;">DEBUG: Containers array length = {{containers.length}}</li>
       {{#each containers as |container|}}
       <li class="item-entry item container-entry" data-item-id="{{container.id}}">
+        <div style="background: blue; color: white; padding: 5px;">DEBUG: Rendering container {{container.name}}</div>
         <div class="item-header flexrow">
-          <a class="container-toggle">
-            <i class="fas {{#if container.collapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
+          <a class="container-toggle" style="background: green; padding: 10px;">
+            <i class="fas {{#if container.collapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}" style="font-size: 24px; color: red;"></i>
           </a>
           <div class="item-image" style="background-image: url({{container.img}})"></div>
           <h4 class="item-name" title="{{container.name}}">{{container.name}}</h4>
-          <div class="field-short">{{container.system.capacity.value}}/{{container.system.capacity.max}}</div>
+          <div class="field-short">{{container.system.capacity}}</div>
           <div class="field-short">{{container.system.weight}}</div>
           <div class="item-controls">
             {{#if @root.owner}}
@@ -146,10 +148,13 @@
         
         {{!-- Nested items in this container --}}
         {{#unless container.collapsed}}
-        {{#if container.containedItems}}
-        <ol class="contained-items-list">
-          {{#each container.containedItems as |item|}}
-          <li class="item-entry item contained-item" data-item-id="{{item.id}}">
+        <div class="container-contents">
+          <div style="background: yellow; padding: 5px; margin: 5px;">
+            DEBUG: Container={{container.name}}, Collapsed={{container.collapsed}}, ItemCount={{container.containedItems.length}}
+          </div>
+          <ol class="contained-items-list">
+            {{#each container.containedItems as |item|}}
+            <li class="item-entry item contained-item" data-item-id="{{item.id}}">
             <div class="item-header flexrow">
               <div class="item-image" style="background-image: url({{item.img}})"></div>
               <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
@@ -184,9 +189,9 @@
               </div>
             </div>
           </li>
-          {{/each}}
-        </ol>
-        {{/if}}
+            {{/each}}
+          </ol>
+        </div>
         {{/unless}}
         
         <div class="item-summary {{#if container.isExpanded}}expanded{{/if}}">

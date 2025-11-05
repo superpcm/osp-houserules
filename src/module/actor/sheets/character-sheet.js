@@ -196,6 +196,15 @@ export class OspActorSheetCharacter extends ActorSheet {
         ...containedContainers
       ];
       
+      // Calculate total weight: container weight + all contained items' weights
+      const containerWeight = parseFloat(container.system.weight) || 0;
+      const containedWeight = containerData.containedItems.reduce((total, item) => {
+        const itemWeight = parseFloat(item.system.weight) || 0;
+        const quantity = item.system.quantity?.value || 1;
+        return total + (itemWeight * quantity);
+      }, 0);
+      containerData.totalWeight = containerWeight + containedWeight;
+      
       // Check if container is collapsed (stored in flags)
       containerData.collapsed = this.actor.getFlag('osp-houserules', `container-${container.id}-collapsed`) || false;
       

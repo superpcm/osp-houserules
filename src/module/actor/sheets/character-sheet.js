@@ -1105,43 +1105,20 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Check if container has enough space for an item
+   * Check if container has space for an item
    */
   _hasContainerSpace(container, itemData) {
-    // Get capacity from the container
-    const actorItem = this.actor.items.get(container.id || container._id);
-    let capacityStr = actorItem?.system?.capacity;
+    const capacity = container.system?.capacity;
     
-    // Handle corrupted data - if capacity is stringified object or contains "[o"
-    if (typeof capacityStr === 'string' && (
-      capacityStr.includes('[o') || 
-      capacityStr === '[object Object]' || 
-      capacityStr === 'undefined' ||
-      !capacityStr
-    )) {
-      console.error('ERROR: Container has corrupted capacity data:', capacityStr);
-      ui.notifications.error(`Container "${container.name}" has corrupted capacity data. Please delete and re-add it from the compendium.`);
+    if (typeof capacity !== 'number' || capacity <= 0) {
+      console.error('ERROR: Container capacity must be a positive number', capacity);
+      ui.notifications.error(`Container "${container.name}" has invalid capacity. Delete and re-add the container.`);
       return false;
     }
     
-    // If capacity is still an object (not stringified), try to extract value
-    if (typeof capacityStr === 'object' && capacityStr !== null) {
-      // Try various common Foundry DataModel properties
-      capacityStr = capacityStr.value 
-        || capacityStr._value 
-        || capacityStr.default
-        || capacityStr._default;
-      
-      if (!capacityStr) {
-        console.error('ERROR: Could not extract capacity string from object');
-        ui.notifications.error(`Container "${container.name}" capacity is in an unexpected format.`);
-        return false;
-      }
-    }
-    
-    const maxCapacity = this._parseCapacity(capacityStr);
+    const maxCapacity = capacity;
     const usedCapacity = this._getUsedCapacity(container);
-    const itemSize = this._getItemSlotSize(itemData.system.storedSize || itemData.system.sizeCat);
+    const itemSize = itemData.system.storedSize || 4;
     
     return (usedCapacity + itemSize) <= maxCapacity;
   }
@@ -1150,8 +1127,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Get available space in a container
    */
   _getAvailableSpace(container) {
-    const capacityStr = container.system?.capacity;
-    const maxCapacity = this._parseCapacity(capacityStr);
+    const maxCapacity = container.system?.capacity || 0;
     const usedCapacity = this._getUsedCapacity(container);
     return maxCapacity - usedCapacity;
   }
@@ -1168,58 +1144,11 @@ export class OspActorSheetCharacter extends ActorSheet {
     );
     
     itemsInContainer.forEach(item => {
-      const itemSize = this._getItemSlotSize(item.system.storedSize || item.system.sizeCat);
+      const itemSize = item.system.storedSize || 4;
       const quantity = item.system.quantity?.value || 1;
       total += itemSize * quantity;
     });
     
     return total;
-  }
-
-  /**
-   * Parse capacity string (e.g., "6M", "1L") to slot count
-   */
-  _parseCapacity(capacityStr) {
-    if (!capacityStr) return 0;
-    
-    // If it's a string that looks like "[object Object]", it means we need the actual value
-    if (typeof capacityStr === 'string' && capacityStr === '[object Object]') {
-      console.error('Capacity is stringified object - this should not happen');
-      return 0;
-    }
-    
-    // Ensure it's a string
-    capacityStr = String(capacityStr);
-    
-    const match = capacityStr.match(/^(\d+)([TSMLWB])$/);
-    
-    if (!match) return 0;
-    
-    const count = parseInt(match[1]);
-    const size = match[2];
-    
-    return count * this._getItemSlotSize(size);
-  }
-
-  /**
-   * Convert size category to slot count
-   * T = 1 slot (25 coins)
-   * S = 2 slots (50 coins)
-   * M = 4 slots (100 coins)
-   * L = 24 slots (600 coins)
-   * W (worn) = 0 slots
-   * B (bulk) = special handling
-   */
-  _getItemSlotSize(sizeCat) {
-    const sizeMap = {
-      'T': 1,
-      'S': 2,
-      'M': 4,
-      'L': 24,
-      'W': 0,
-      'B': 0
-    };
-    
-    return sizeMap[sizeCat] || 0;
   }
 }

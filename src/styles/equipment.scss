@@ -1,7 +1,54 @@
 /* Equipment Tab Styles */
 
+/* ============================================
+   EASY ADJUSTMENT VARIABLES
+   Change these values to adjust spacing and sizing
+   ============================================ */
+
+/* Column Widths */
+$col-caret: 0px;        // Width of collapse/expand caret
+$col-image: 32px;        // Width of item image/icon
+$col-name: 276px;        // Width of item name column
+$col-field-short: 96px;  // Width of short fields (damage, AC, weight, etc.)
+$col-controls: 108px;    // Width of item controls section
+
+/* Spacing */
+$grid-gap: 17px;          // Gap between grid columns
+$item-padding-x: 8px;   // Horizontal padding inside items
+$item-padding-y: 0px;    // Vertical padding inside items
+$category-margin: 20px 0 16px 0;  // Margin around category sections
+
+/* Font Sizes */
+$font-category-title: 14px;   // Category title font size
+$font-item-name: 24px;        // Item name font size
+$font-item-field: 24px;       // Item field font size
+$font-nested-item: 24px;      // Nested item font size
+
+/* Nested Item Indentation */
+$nested-indent: 60px;    // Left margin for nested items
+$nested-padding: 0px;    // Additional padding for nested items
+
+/* Item Images */
+$image-size: 32px;       // Size of item images (square)
+
 /* Color variables to match character sheet */
 $color-parchment: #b5ddb4;  /* Main background color - matches character sheet */
+
+/* ============================================
+   QUICK REFERENCE - Total Grid Width Calculation:
+   
+   Weapons/Armor/Containers:
+   $col-caret + $col-image + $col-name + $col-field-short + $col-field-short + $col-controls
+   + ($grid-gap × 5)
+   = 36px + 32px + 200px + 80px + 80px + 108px + (8px × 5)
+   = 536px + 40px = 576px total
+   
+   Treasure:
+   $col-caret + $col-name + $col-field-short + $col-field-short + $col-controls
+   + ($grid-gap × 4)
+   = 36px + 200px + 80px + 80px + 108px + (8px × 4)
+   = 504px + 32px = 536px total
+   ============================================ */
 
 .equipment-tab {
   max-width: 706px;
@@ -9,7 +56,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 .item-category {
-  margin: 20px 0 16px 0;
+  margin: $category-margin;
   border: 1.5px solid #000;
   border-radius: 5px;
 }
@@ -18,21 +65,33 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .osp.sheet.actor .item-category-title {
   background: #000;
   border-bottom: 1px solid #000;
-  padding: 2px 12px;
+  padding: $item-padding-y $item-padding-x;
   font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
-  font-size: 14px !important;
+  font-size: $font-category-title !important;
   color: #fff;
   font-weight: bold !important;
   cursor: pointer;
   display: grid;
-  grid-template-columns: 48px 1fr 80px 80px 108px;
+  grid-template-columns: $col-caret $col-name $col-field-short $col-field-short $col-controls;  // Default
   align-items: center;
   text-align: center;
-  gap: 8px;
+  gap: $grid-gap;
   
   &.weapons-title {
-    grid-template-columns: 48px 32px 1fr 80px 80px 108px;
+    grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
   }
+  
+    &.armor-title {
+      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+    }
+
+    &.containers-title {
+      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+    }
+    
+    &.treasure-title {
+      grid-template-columns: $col-caret $col-name $col-field-short $col-field-short $col-controls;
+    }
 }
 
 .osp .item-category-title .category-name,
@@ -45,22 +104,19 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .osp .item-category-title .field-long,
 .osp.sheet.actor .item-category-title .field-long {
   font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
-  font-size: 14px !important;
+  font-size: $font-category-title !important;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.item-category-title:hover {
-  /* background: #e8e8e8; */
-}
-
 .osp .category-caret,
 .osp.sheet.actor .category-caret {
-  width: 48px;
+  width: $col-caret;
   display: flex;
   align-items: center;
-  font-size: 14px;
+  justify-content: center;
+  font-size: $font-category-title;
   flex-shrink: 0;
 }
 
@@ -76,14 +132,20 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .item-header .field-short,
 .item-header .field-long {
   text-align: center;
-  font-size: 36px;
+  font-size: $font-item-field;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .field-short {
-  width: 80px;
-  min-width: 80px;
+  width: $col-field-short;
+  min-width: $col-field-short;
   flex-shrink: 0;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .field-long {
@@ -91,13 +153,16 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   min-width: 120px;
   flex-shrink: 0;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .item-controls {
   display: flex;
   gap: 4px;
   flex-shrink: 0;
-  width: 108px;
+  width: $col-controls;
   justify-content: flex-end;
 }
 
@@ -111,7 +176,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   cursor: pointer;
   color: #fff;
   text-decoration: none;
-  font-size: 14px;
+  font-size: $font-category-title;
 }
 
 .item-header .item-control {
@@ -133,26 +198,38 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   padding: 0;
 }
 
-.item-entry {
-  border-bottom: 1px solid #666;
+// Alternating row shading for items
+.item-entry:nth-child(odd) {
+  background: rgba(0, 0, 0, 0.03);
 }
 
-.item-entry:last-child {
-  border-bottom: none;
+.item-entry:nth-child(even) {
+  background: rgba(0, 0, 0, 0.01);
 }
 
   // Item header row (aligns with category title)
   .item-header {
     display: grid;
-    grid-template-columns: 48px 1fr 80px 80px 108px; // image, name, field1, field2, controls
+    grid-template-columns: $col-caret $col-name $col-field-short $col-field-short $col-controls; // Default: caret, name, field1, field2, controls
     align-items: center;
-    gap: 8px;
-    padding: 4px 12px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    gap: $grid-gap;
+    padding: $item-padding-y $item-padding-x;
     
     // Weapon items with roll icon column
     &.weapon-header {
-      grid-template-columns: 48px 32px 1fr 80px 80px 108px; // image, roll icon, name, field1, field2, controls
+      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+    }
+    
+        &.armor-header {
+      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+    }
+
+    &.container-header {
+      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+    }
+    
+    &.treasure-header {
+      grid-template-columns: $col-caret $col-name $col-field-short $col-field-short $col-controls;
     }
   }
 
@@ -165,10 +242,10 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 .item-image {
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 48px !important;
-  max-width: 48px !important;
+  width: $image-size !important;
+  height: $image-size !important;
+  min-width: $image-size !important;
+  max-width: $image-size !important;
   background-size: cover;
   background-position: center;
   border: 1px solid #000;
@@ -181,8 +258,8 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: $col-image;
+  height: $col-image;
   cursor: pointer;
   border: none;
   background: none;
@@ -204,9 +281,12 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   flex: 1;
   min-width: 0;
   margin: 0;
-  font-size: 36px;
+  font-size: $font-item-name;
   font-weight: normal;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .quantity input {
@@ -605,7 +685,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   color: #c00;
 }
 
-/* Container nesting styles */
+/* Container nesting styles - Tree Structure */
 .container-entry {
   position: relative;
 }
@@ -628,17 +708,52 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   list-style: none;
   margin: 0;
   padding: 0;
-  border-left: 2px solid #ccc;
-  margin-left: 10px;
+  margin-left: $nested-indent;
+  position: relative;
 }
 
 .contained-item {
-  padding-left: 20px;
+  padding-left: $nested-padding;
   background: rgba(0, 0, 0, 0.02);
-  border-top: 1px solid #e0e0e0;
+  position: relative;
+  
+  // Tree branch line (vertical connector from parent) - extends full height by default
+  &::before {
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: -1px;  // Start 1px above to overlap with previous item
+    bottom: -1px;  // Extend 1px below to overlap with next item
+    width: 2px;
+    background: #666;
+  }
+  
+  // Horizontal connector to item
+  &::after {
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    width: 20px;
+    height: 2px;
+    background: #666;
+  }
+  
+  // Last item gets an L-shaped connector instead of T (vertical line stops at middle)
+  &:last-child::before {
+    bottom: 50%;
+  }
   
   .item-header {
     padding-left: 10px;
+  }
+  
+  .item-name {
+    font-size: $font-nested-item;
+  }
+  
+  .field-short {
+    font-size: $font-nested-item;
   }
 }
 

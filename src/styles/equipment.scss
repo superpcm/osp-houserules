@@ -8,15 +8,22 @@
 /* Column Widths */
 $col-caret: 0px;        // Width of collapse/expand caret
 $col-image: 32px;        // Width of item image/icon
-$col-name: 276px;        // Width of item name column
+$col-name: 281px;        // Width of item name column
 $col-field-short: 96px;  // Width of short fields (damage, AC, weight, etc.)
 $col-controls: 108px;    // Width of item controls section
+
+/* Nested Item Column Widths (for items inside containers) */
+$nested-col-image: 0px;        // Width of nested item image
+$nested-col-name: 268px;        // Width of nested item name column
+$nested-col-field-short: 96px;  // Width of nested item short fields
+$nested-col-controls: 108px;    // Width of nested item controls section
 
 /* Spacing */
 $grid-gap: 17px;          // Gap between grid columns
 $item-padding-x: 8px;   // Horizontal padding inside items
-$item-padding-y: 0px;    // Vertical padding inside items
+$item-padding-y: 6px;    // Vertical padding inside items
 $category-margin: 20px 0 16px 0;  // Margin around category sections
+$container-left-shift: -10px;  // Shift container icon/caret left (negative moves left, e.g., -3px, -5px, -10px)
 
 /* Font Sizes */
 $font-category-title: 14px;   // Category title font size
@@ -27,6 +34,11 @@ $font-nested-item: 24px;      // Nested item font size
 /* Nested Item Indentation */
 $nested-indent: 60px;    // Left margin for nested items
 $nested-padding: 0px;    // Additional padding for nested items
+$tree-line-position: -30px;  // Position of tree line from left edge (more negative = further left, less negative = closer to items, e.g., -5px, -10px, -15px)
+
+/* Tree Line Styling */
+$tree-line-thickness: 1px;  // Thickness of tree connector lines (try 1px for thin, 2px for default, 3px for thick)
+$tree-line-color: #000000;     // Color of tree connector lines
 
 /* Item Images */
 $image-size: 32px;       // Size of item images (square)
@@ -226,6 +238,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
     &.container-header {
       grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+      margin-left: $container-left-shift;
     }
     
     &.treasure-header {
@@ -721,22 +734,22 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   &::before {
     content: '';
     position: absolute;
-    left: -30px;
+    left: $tree-line-position;
     top: -1px;  // Start 1px above to overlap with previous item
     bottom: -1px;  // Extend 1px below to overlap with next item
-    width: 2px;
-    background: #666;
+    width: $tree-line-thickness;
+    background: $tree-line-color;
   }
   
   // Horizontal connector to item
   &::after {
     content: '';
     position: absolute;
-    left: -30px;
+    left: $tree-line-position;
     top: 50%;
-    width: 20px;
-    height: 2px;
-    background: #666;
+    width: calc(-5px + #{abs($tree-line-position)});
+    height: $tree-line-thickness;
+    background: $tree-line-color;
   }
   
   // Last item gets an L-shaped connector instead of T (vertical line stops at middle)
@@ -745,15 +758,23 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   }
   
   .item-header {
-    padding-left: 10px;
+    padding-left: 0px;
+    // Override grid template for nested items
+    grid-template-columns: $nested-col-image $nested-col-name $nested-col-field-short $nested-col-field-short $nested-col-controls !important;
   }
   
   .item-name {
     font-size: $font-nested-item;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .field-short {
     font-size: $font-nested-item;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 

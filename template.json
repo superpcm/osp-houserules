@@ -80,8 +80,7 @@
         "description": "",
         "cost": 0,
         "weight": 0,
-        "sizeCat": "M",
-        "storedSize": "M",
+        "storedSize": 4,
         "quantity": {
           "value": 1,
           "max": 0
@@ -128,7 +127,8 @@
     "container": {
       "templates": ["base"],
       "system": {
-        "capacity": "6M"
+        "capacity": 16,
+        "lashSlots": 0
       }
     }
   }

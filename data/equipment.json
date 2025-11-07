@@ -156,14 +156,14 @@
         }
     },
     {
-        "name": "Iron spikes (12)",
+        "name": "Iron Spikes",
         "type": "item",
         "img": "assets/images/icons/spikes.webp",
         "system": {
             "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6–8 inches long, about ½ inch thick. Typically carried in a small leather pouch or tool roll.",
             "cost": 1,
             "weight": 4,
-            "storedSize": 4,
+            "storedSize": 3,
             "quantity": {
                 "value": 12,
                 "max": 12

@@ -5,17 +5,52 @@
    Change these values to adjust spacing and sizing
    ============================================ */
 
-/* Column Widths */
-$col-caret: 0px;        // Width of collapse/expand caret
-$col-image: 32px;        // Width of item image/icon
-$col-name: 281px;        // Width of item name column
-$col-field-short: 96px;  // Width of short fields (damage, AC, weight, etc.)
-$col-controls: 108px;    // Width of item controls section
+/* Global Column Widths (shared) */
+$col-caret: 2px;        // Width of collapse/expand caret
+$col-controls: 108px;   // Width of item controls section
+$col-field-short: 96px;  // Generic short field width (fallback for .field-short class)
+$col-image: 74px;        // Generic image column width (used by .item-roll-icon)
+
+/* Weapons Section Column Widths (Combat Tab) */
+$weapons-col-image: 74px;        // Width of weapon image/roll icon
+$weapons-col-name: 140px;        // Width of weapon name column
+$weapons-col-qty: 63px;          // Width of quantity column
+$weapons-col-damage: 96px;       // Width of damage column
+$weapons-col-weight: 96px;       // Width of weight column
+
+/* Armor Section Column Widths (Combat Tab) */
+$armor-col-image: 74px;          // Width of armor image
+$armor-col-name: 138px;          // Width of armor name column
+$armor-col-qty: 63px;            // Width of quantity column
+$armor-col-type: 96px;           // Width of type column
+$armor-col-ac: 96px;             // Width of AC column
+$armor-col-weight: 96px;         // Width of weight column
+
+/* Containers Section Column Widths (Equipment Tab - Adventuring Gear) */
+$containers-col-image: 30px;     // Width of container image
+$containers-col-name: 228px;     // Width of container name column
+$containers-col-qty: 68px;       // Width of quantity column
+$containers-col-capacity: 88px;  // Width of capacity column
+$containers-col-weight: 60px;    // Width of weight column
+
+/* Containers Header Title Column Widths (Equipment Tab - Header Row) */
+$containers-header-image: 30px;     // Width of container header image column
+$containers-header-name: 233px;     // Width of container header name column
+$containers-header-qty: 69px;       // Width of container header quantity column
+$containers-header-capacity: 87px;  // Width of container header capacity column
+$containers-header-weight: 60px;    // Width of container header weight column
+
+/* Treasure Section Column Widths (Equipment Tab) */
+$treasure-col-name: 138px;       // Width of treasure name column
+$treasure-col-value: 96px;       // Width of value column
+$treasure-col-weight: 96px;      // Width of weight column
 
 /* Nested Item Column Widths (for items inside containers) */
-$nested-col-image: 0px;        // Width of nested item image
-$nested-col-name: 268px;        // Width of nested item name column
-$nested-col-field-short: 96px;  // Width of nested item short fields
+$nested-col-image: 31px;        // Width of nested item image
+$nested-col-name: 190px;        // Width of nested item name column
+$nested-col-qty: 57px;          // Width of nested item quantity column
+$nested-col-storedsize: 95px;   // Width of nested item storedSize column
+$nested-col-weight: 58px;       // Width of nested item weight column
 $nested-col-controls: 108px;    // Width of nested item controls section
 
 /* Spacing */
@@ -34,7 +69,7 @@ $font-nested-item: 24px;      // Nested item font size
 /* Nested Item Indentation */
 $nested-indent: 60px;    // Left margin for nested items
 $nested-padding: 0px;    // Additional padding for nested items
-$tree-line-position: -30px;  // Position of tree line from left edge (more negative = further left, less negative = closer to items, e.g., -5px, -10px, -15px)
+$tree-line-position: -27px;  // Position of tree line from left edge (more negative = further left, less negative = closer to items, e.g., -5px, -10px, -15px)
 
 /* Tree Line Styling */
 $tree-line-thickness: 1px;  // Thickness of tree connector lines (try 1px for thin, 2px for default, 3px for thick)
@@ -49,17 +84,18 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 /* ============================================
    QUICK REFERENCE - Total Grid Width Calculation:
    
-   Weapons/Armor/Containers:
-   $col-caret + $col-image + $col-name + $col-field-short + $col-field-short + $col-controls
-   + ($grid-gap × 5)
-   = 36px + 32px + 200px + 80px + 80px + 108px + (8px × 5)
-   = 536px + 40px = 576px total
+   Weapons (Combat Tab):
+   $col-caret + $weapons-col-image + $weapons-col-name + $weapons-col-qty + $weapons-col-damage + $weapons-col-weight + $col-controls + ($grid-gap × 6)
    
-   Treasure:
-   $col-caret + $col-name + $col-field-short + $col-field-short + $col-controls
-   + ($grid-gap × 4)
-   = 36px + 200px + 80px + 80px + 108px + (8px × 4)
-   = 504px + 32px = 536px total
+   Armor (Combat Tab):
+   $col-caret + $armor-col-image + $armor-col-name + $armor-col-qty + $armor-col-type + $armor-col-ac + $armor-col-weight + $col-controls + ($grid-gap × 7)
+   
+   Containers/Adventuring Gear (Equipment Tab):
+   Headers use: $containers-header-image + $containers-header-name + $containers-header-qty + $containers-header-capacity + $containers-header-weight + $col-controls + ($grid-gap × 5)
+   Rows use: $col-caret + $containers-col-image + $containers-col-name + $containers-col-qty + $containers-col-capacity + $containers-col-weight + $col-controls + ($grid-gap × 6)
+   
+   Treasure (Equipment Tab):
+   $col-caret + $treasure-col-name + $treasure-col-value + $treasure-col-weight + $col-controls + ($grid-gap × 4)
    ============================================ */
 
 .equipment-tab {
@@ -84,25 +120,28 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   font-weight: bold !important;
   cursor: pointer;
   display: grid;
-  grid-template-columns: $col-caret $col-name $col-field-short $col-field-short $col-controls;  // Default
+  grid-template-columns: $col-caret $treasure-col-name $treasure-col-value $treasure-col-weight $col-controls;  // Default (matches treasure)
   align-items: center;
   text-align: center;
   gap: $grid-gap;
   
   &.weapons-title {
-    grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+    grid-template-columns: $col-caret $weapons-col-image $weapons-col-name $weapons-col-qty $weapons-col-damage $weapons-col-weight $col-controls;
   }
   
     &.armor-title {
-      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+      grid-template-columns: $col-caret $armor-col-image $armor-col-name $armor-col-qty $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
     }
 
     &.containers-title {
-      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
-    }
-    
-    &.treasure-title {
-      grid-template-columns: $col-caret $col-name $col-field-short $col-field-short $col-controls;
+      grid-template-columns: $containers-header-image $containers-header-name $containers-header-qty $containers-header-capacity $containers-header-weight $col-controls;
+      padding: 6px $item-padding-x 4px;  // 6px top, 4px bottom padding
+      min-height: 0;  // Override any min-height
+      
+      .item-roll-icon {
+        width: 0;  // Remove width from placeholder
+        height: 0;  // Remove height from placeholder
+      }
     }
 }
 
@@ -158,6 +197,46 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   display: flex;
   align-items: center;
   justify-content: center;
+  justify-self: center;  // Center the field within its grid column
+}
+
+// Capacity bar styling for containers - matches XP progress bar
+.capacity-bar-cell {
+  padding: 0 !important;  // Remove padding to use full cell width
+  justify-self: center;  // Center the capacity bar within its grid column
+}
+
+.capacity-bar-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #000000;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.capacity-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--capacity-progress, 0%);
+  background: rgba(44, 24, 16, 0.2);  // Same color as XP progress bar
+  transition: width 0.3s ease;
+  z-index: 1;
+  border-radius: 3px;
+}
+
+.capacity-value {
+  position: relative;
+  z-index: 2;
+  font-size: 24px;
+  color: #4B4B4B;
+  font-weight: normal;
 }
 
 .field-long {
@@ -219,30 +298,36 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   background: rgba(0, 0, 0, 0.01);
 }
 
+// Drag-over highlight for containers
+.container-entry.drag-over {
+  border: 5px solid #00ff00 !important;
+  border-radius: 5px;
+}
+
   // Item header row (aligns with category title)
   .item-header {
     display: grid;
-    grid-template-columns: $col-caret $col-name $col-field-short $col-field-short $col-controls; // Default: caret, name, field1, field2, controls
+    grid-template-columns: $col-caret $treasure-col-name $treasure-col-value $treasure-col-weight $col-controls; // Default (matches treasure)
     align-items: center;
     gap: $grid-gap;
     padding: $item-padding-y $item-padding-x;
     
     // Weapon items with roll icon column
     &.weapon-header {
-      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+      grid-template-columns: $col-caret $weapons-col-image $weapons-col-name $weapons-col-qty $weapons-col-damage $weapons-col-weight $col-controls;
     }
     
         &.armor-header {
-      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+      grid-template-columns: $col-caret $armor-col-image $armor-col-name $armor-col-qty $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
     }
 
     &.container-header {
-      grid-template-columns: $col-caret $col-image $col-name $col-field-short $col-field-short $col-controls;
+      grid-template-columns: $col-caret $containers-col-image $containers-col-name $containers-col-qty $containers-col-capacity $containers-col-weight $col-controls;
       margin-left: $container-left-shift;
     }
     
     &.treasure-header {
-      grid-template-columns: $col-caret $col-name $col-field-short $col-field-short $col-controls;
+      grid-template-columns: $col-image $treasure-col-name $treasure-col-value $treasure-col-weight $col-controls;
     }
   }
 
@@ -296,10 +381,10 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   margin: 0;
   font-size: $font-item-name;
   font-weight: normal;
-  text-align: center;
+  text-align: left;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .quantity input {
@@ -760,14 +845,14 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   .item-header {
     padding-left: 0px;
     // Override grid template for nested items
-    grid-template-columns: $nested-col-image $nested-col-name $nested-col-field-short $nested-col-field-short $nested-col-controls !important;
+    grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
   }
   
   .item-name {
     font-size: $font-nested-item;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
   }
   
   .field-short {
@@ -775,6 +860,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     display: flex;
     align-items: center;
     justify-content: center;
+    justify-self: center;  // Center the field within its grid column
   }
 }
 

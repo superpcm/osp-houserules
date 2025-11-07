@@ -168,8 +168,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     const allWeapons = this.actor.system.weapons || [];
     const allArmor = this.actor.system.armor || [];
     
+    console.log('getData - allContainers count:', allContainers.length);
+    
     // Only show TOP-LEVEL containers (not nested in other containers)
-    const topLevelContainers = allContainers.filter(container => !container.system.containerId);
+    const topLevelContainers = allContainers.filter(container => !container.system?.containerId);
     
     context.containers = topLevelContainers.map(container => {
       // Explicitly preserve the id and other properties
@@ -188,22 +190,70 @@ export class OspActorSheetCharacter extends ActorSheet {
       const containedArmor = allArmor.filter(armor => armor.system.containerId === container.id);
       const containedContainers = allContainers.filter(c => c.system.containerId === container.id);
       
-      // Combine all contained items
-      containerData.containedItems = [
+      // Combine all contained items and add display weight
+      const allContainedItems = [
         ...containedItems,
         ...containedWeapons,
         ...containedArmor,
         ...containedContainers
       ];
       
+      // Calculate display weight for each item
+      containerData.containedItems = allContainedItems.map(item => {
+        // Calculate proportional weight for stackable items
+        const itemWeight = parseFloat(item.system.weight) || 0;
+        const currentQuantity = item.system.quantity?.value || 1;
+        const maxQuantity = item.system.quantity?.max || 0;
+        
+        let displayWeight;
+        if (maxQuantity > 0) {
+          // Stackable item: calculate proportionally (weight / max) * current
+          displayWeight = (itemWeight / maxQuantity) * currentQuantity;
+        } else {
+          // Non-stackable item: multiply by quantity
+          displayWeight = itemWeight * currentQuantity;
+        }
+        
+        // Add displayWeight property to the item
+        item.displayWeight = displayWeight;
+        return item;
+      });
+      
       // Calculate total weight: container weight + all contained items' weights
       const containerWeight = parseFloat(container.system.weight) || 0;
       const containedWeight = containerData.containedItems.reduce((total, item) => {
-        const itemWeight = parseFloat(item.system.weight) || 0;
-        const quantity = item.system.quantity?.value || 1;
-        return total + (itemWeight * quantity);
+        return total + item.displayWeight;
       }, 0);
       containerData.totalWeight = containerWeight + containedWeight;
+      
+      // Calculate used capacity: sum of all contained items' proportional storedSize
+      // For stackable items (with max > 0): (storedSize / max) * currentQuantity
+      // For non-stackable items: storedSize as-is
+      const usedCapacity = containerData.containedItems.reduce((total, item) => {
+        const storedSize = parseFloat(item.system.storedSize) || 0;
+        const currentQuantity = item.system.quantity?.value || 1;
+        const maxQuantity = item.system.quantity?.max || 0;
+        
+        let itemCapacity;
+        if (maxQuantity > 0) {
+          // Stackable item: calculate proportionally
+          itemCapacity = (storedSize / maxQuantity) * currentQuantity;
+        } else {
+          // Non-stackable item: use storedSize as-is
+          itemCapacity = storedSize;
+        }
+        
+        console.log(`Item: ${item.name}, storedSize: ${storedSize}, current: ${currentQuantity}, max: ${maxQuantity}, capacity: ${itemCapacity.toFixed(2)}`);
+        return total + itemCapacity;
+      }, 0);
+      containerData.usedCapacity = usedCapacity;
+      containerData.maxCapacity = container.system.capacity || 0;
+      containerData.remainingCapacity = Math.max(0, containerData.maxCapacity - usedCapacity);
+      containerData.capacityPercentage = containerData.maxCapacity > 0 
+        ? Math.min(100, (usedCapacity / containerData.maxCapacity) * 100) 
+        : 0;
+      
+      console.log(`Container: ${container.name}, usedCapacity: ${usedCapacity.toFixed(2)}, maxCapacity: ${containerData.maxCapacity}, percentage: ${containerData.capacityPercentage.toFixed(1)}%`);
       
       // Check if container is collapsed (stored in flags)
       containerData.collapsed = this.actor.getFlag('osp-houserules', `container-${container.id}-collapsed`) || false;
@@ -256,6 +306,35 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Container collapse/expand toggle
     html.find('.container-toggle').click(this._onContainerToggle.bind(this));
+
+    // Add drag-over highlight for containers
+    html.find('.container-entry').each((i, el) => {
+      let dragCounter = 0; // Track enter/leave events to handle nested elements
+      
+      el.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        dragCounter++;
+        el.classList.add('drag-over');
+      });
+      
+      el.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dragCounter--;
+        // Only remove highlight when we've left all nested elements
+        if (dragCounter === 0) {
+          el.classList.remove('drag-over');
+        }
+      });
+      
+      el.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+      
+      el.addEventListener('drop', (e) => {
+        dragCounter = 0; // Reset counter
+        el.classList.remove('drag-over');
+      });
+    });
 
     // Only initialize other handlers if sheet is editable
     if (!this.options.editable) {
@@ -973,9 +1052,17 @@ export class OspActorSheetCharacter extends ActorSheet {
     const item = await Item.implementation.fromDropData(data);
     const itemData = item.toObject();
 
-    // Check if dropping onto a container
-    const dropTarget = event.target.closest('.item-entry[data-item-id]');
-    const targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
+    // Check if dropping onto a container or a contained item
+    let dropTarget = event.target.closest('.item-entry[data-item-id]');
+    let targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
+    
+    // If we dropped on a contained item (not a container), find its parent container
+    if (targetContainer && targetContainer.type !== "container" && targetContainer.system.containerId) {
+      // This is a contained item, find its parent container
+      const parentContainerId = targetContainer.system.containerId;
+      targetContainer = this.actor.items.get(parentContainerId);
+      console.log('Dropped on contained item, using parent container:', targetContainer?.name);
+    }
     
     console.log('=== DROP DEBUG ===');
     console.log('Drop data:', data);
@@ -1097,7 +1184,37 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Handle item from this actor (reordering/moving between containers)
     if (item.actor && item.actor.id === this.actor.id) {
-      console.log('Path: Updating item with containerId:', itemData.system.containerId);
+      console.log('Path: Reordering item, checking for stacking');
+      
+      // Check if we should stack this item with an existing one in the target container
+      if (targetContainer && itemData.type === "item") {
+        // Find matching item in the target container (excluding the item being moved)
+        const matchingItem = this.actor.items.find(i => 
+          i.id !== item.id && // Don't match with itself
+          i.name === itemData.name &&
+          i.type === itemData.type &&
+          i.system.containerId === targetContainer.id &&
+          i.system.storedSize === itemData.system.storedSize
+        );
+        
+        if (matchingItem) {
+          // Stack: increase quantity of existing item and delete the moved item
+          const currentQty = matchingItem.system.quantity?.value || 1;
+          const addingQty = itemData.system.quantity?.value || 1;
+          const newQty = currentQty + addingQty;
+          
+          console.log(`Stacking (reorder): ${itemData.name} - ${currentQty} + ${addingQty} = ${newQty}`);
+          ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
+          
+          // Delete the item being moved and update the matching item's quantity
+          return item.delete().then(() => {
+            return matchingItem.update({"system.quantity.value": newQty});
+          });
+        }
+      }
+      
+      // No matching item found, just update the containerId
+      console.log('No match found, updating containerId:', itemData.system.containerId);
       return item.update({"system.containerId": itemData.system.containerId});
     }
 
@@ -1108,8 +1225,33 @@ export class OspActorSheetCharacter extends ActorSheet {
       return existingItem.update({"system.containerId": itemData.system.containerId});
     }
 
-    // Handle item from compendium or elsewhere
+    // Handle item from compendium or elsewhere - check for stacking
     console.log('Path: Creating new item from compendium or elsewhere');
+    
+    // Check if we should stack this item with an existing one
+    if (targetContainer && itemData.type === "item") {
+      // Find matching item in the same container
+      const matchingItem = this.actor.items.find(i => 
+        i.name === itemData.name &&
+        i.type === itemData.type &&
+        i.system.containerId === targetContainer.id &&
+        i.system.storedSize === itemData.system.storedSize
+      );
+      
+      if (matchingItem) {
+        // Stack: increase quantity of existing item
+        const currentQty = matchingItem.system.quantity?.value || 1;
+        const addingQty = itemData.system.quantity?.value || 1;
+        const newQty = currentQty + addingQty;
+        
+        console.log(`Stacking: ${itemData.name} - ${currentQty} + ${addingQty} = ${newQty}`);
+        ui.notifications.info(`Added ${addingQty} ${itemData.name}(s) to existing stack.`);
+        
+        return matchingItem.update({"system.quantity.value": newQty});
+      }
+    }
+    
+    // No matching item found, create new
     return this.actor.createEmbeddedDocuments("Item", [itemData]);
   }
 
@@ -1117,17 +1259,32 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Check if container has space for an item
    */
   _hasContainerSpace(container, itemData) {
-    const capacity = container.system?.capacity;
+    const capacity = parseFloat(container.system?.capacity);
     
-    if (typeof capacity !== 'number' || capacity <= 0) {
-      console.error('ERROR: Container capacity must be a positive number', capacity);
+    if (isNaN(capacity) || capacity <= 0) {
+      console.error('ERROR: Container capacity must be a positive number', container.system?.capacity);
       ui.notifications.error(`Container "${container.name}" has invalid capacity. Delete and re-add the container.`);
       return false;
     }
     
     const maxCapacity = capacity;
     const usedCapacity = this._getUsedCapacity(container);
-    const itemSize = itemData.system.storedSize || 4;
+    
+    // Calculate the space needed for the item being added
+    const storedSize = parseFloat(itemData.system.storedSize) || 0;
+    const currentQuantity = itemData.system.quantity?.value || 1;
+    const maxQuantity = itemData.system.quantity?.max || 0;
+    
+    let itemSize;
+    if (maxQuantity > 0) {
+      // Stackable item: calculate proportionally
+      itemSize = (storedSize / maxQuantity) * currentQuantity;
+    } else {
+      // Non-stackable item: use storedSize as-is
+      itemSize = storedSize;
+    }
+    
+    console.log(`Space check - Used: ${usedCapacity.toFixed(2)}, Item: ${itemSize.toFixed(2)}, Max: ${maxCapacity}, Available: ${(maxCapacity - usedCapacity).toFixed(2)}`);
     
     return (usedCapacity + itemSize) <= maxCapacity;
   }
@@ -1153,9 +1310,20 @@ export class OspActorSheetCharacter extends ActorSheet {
     );
     
     itemsInContainer.forEach(item => {
-      const itemSize = item.system.storedSize || 4;
-      const quantity = item.system.quantity?.value || 1;
-      total += itemSize * quantity;
+      const storedSize = parseFloat(item.system.storedSize) || 0;
+      const currentQuantity = item.system.quantity?.value || 1;
+      const maxQuantity = item.system.quantity?.max || 0;
+      
+      let itemCapacity;
+      if (maxQuantity > 0) {
+        // Stackable item: calculate proportionally
+        itemCapacity = (storedSize / maxQuantity) * currentQuantity;
+      } else {
+        // Non-stackable item: use storedSize as-is
+        itemCapacity = storedSize;
+      }
+      
+      total += itemCapacity;
     });
     
     return total;

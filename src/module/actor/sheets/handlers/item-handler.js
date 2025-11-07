@@ -254,32 +254,56 @@ export class ItemHandler {
   /**
    * Parse capacity string (e.g., "6M" = 24 slots)
    */
-  _parseCapacity(capacityStr) {
-    if (!capacityStr || typeof capacityStr !== 'string') return 0;
-    
-    const match = capacityStr.match(/^(\d+)([TSMLWB])$/);
-    if (!match) return 0;
-    
-    const [, count, size] = match;
-    const multipliers = { T: 1, S: 2, M: 4, L: 24, W: 0, B: 0 };
-    return parseInt(count) * (multipliers[size] || 0);
+  _parseCapacity(capacity) {
+    // Capacity is now a direct numeric value
+    const parsed = parseFloat(capacity);
+    return isNaN(parsed) ? 0 : parsed;
   }
   
   /**
    * Get used capacity in a container
    */
   _getUsedCapacity(container) {
-    const containedItems = this.actor.items.filter(i => i.system.containerId === container.id);
-    return containedItems.reduce((total, item) => total + this._getItemSlotSize(item), 0);
+    let total = 0;
+    
+    // Find all items in this container
+    const itemsInContainer = this.actor.items.filter(i => i.system.containerId === container.id);
+    
+    itemsInContainer.forEach(item => {
+      const storedSize = parseFloat(item.system.storedSize) || 0;
+      const currentQuantity = item.system.quantity?.value || 1;
+      const maxQuantity = item.system.quantity?.max || 0;
+      
+      let itemCapacity;
+      if (maxQuantity > 0) {
+        // Stackable item: calculate proportionally
+        itemCapacity = (storedSize / maxQuantity) * currentQuantity;
+      } else {
+        // Non-stackable item: use storedSize as-is
+        itemCapacity = storedSize;
+      }
+      
+      total += itemCapacity;
+    });
+    
+    return total;
   }
   
   /**
    * Get item size in slots
    */
   _getItemSlotSize(item) {
-    const size = item.system.storedSize;
-    const multipliers = { T: 1, S: 2, M: 4, L: 24, W: 0, B: 0 };
-    return multipliers[size] || 0;
+    const storedSize = parseFloat(item.system.storedSize) || 0;
+    const currentQuantity = item.system.quantity?.value || 1;
+    const maxQuantity = item.system.quantity?.max || 0;
+    
+    if (maxQuantity > 0) {
+      // Stackable item: calculate proportionally
+      return (storedSize / maxQuantity) * currentQuantity;
+    } else {
+      // Non-stackable item: use storedSize as-is
+      return storedSize;
+    }
   }
 
   /**

@@ -13,6 +13,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "container"
             ],
@@ -34,6 +35,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [],
             "capacity": 2
         }
@@ -52,6 +54,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": true,
             "tags": [
                 "tool"
             ]
@@ -71,6 +74,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "herb"
             ]
@@ -90,6 +94,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": true,
             "tags": [
                 "tool",
                 "climbing"
@@ -110,6 +115,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "tool"
             ]
@@ -129,6 +135,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "religious",
                 "focus"
@@ -149,6 +156,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "consumable",
                 "religious"
@@ -169,6 +177,7 @@
                 "max": 12
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "tool",
                 "dungeon"
@@ -189,6 +198,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": true,
             "tags": [
                 "light-source"
             ]
@@ -208,6 +218,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "tool"
             ]
@@ -227,6 +238,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "consumable",
                 "flammable"
@@ -247,6 +259,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": true,
             "tags": [
                 "tool",
                 "dungeon"
@@ -267,6 +280,7 @@
                 "max": 7
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "consumable",
                 "food"
@@ -287,6 +301,7 @@
                 "max": 7
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "consumable",
                 "food"
@@ -307,6 +322,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": true,
             "tags": [
                 "tool",
                 "climbing"
@@ -327,6 +343,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": true,
             "tags": [],
             "capacity": 24
         }
@@ -345,12 +362,13 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [],
             "capacity": 8
         }
     },
     {
-        "name": "Stakes (3) and mallet",
+        "name": "Stakes and mallet",
         "type": "item",
         "img": "assets/images/icons/mallet-stakes.webp",
         "system": {
@@ -363,6 +381,7 @@
                 "max": 3
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "tool",
                 "religious"
@@ -383,6 +402,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "tool",
                 "thief"
@@ -403,6 +423,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "tool",
                 "fire"
@@ -410,19 +431,20 @@
         }
     },
     {
-        "name": "Torches (6)",
+        "name": "Torch",
         "type": "item",
         "img": "assets/images/icons/torch.webp",
         "system": {
             "description": "A bundle of six torches, wooden shafts wrapped with oil-soaked rags. Each burns for 1 hour (6 turns) and casts light in a 30' radius.",
             "cost": 1,
-            "weight": 6,
-            "storedSize": 4,
+            "weight": 1,
+            "storedSize": 0.75,
             "quantity": {
                 "value": 6,
                 "max": 6
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "light-source"
             ]
@@ -442,6 +464,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "container"
             ]
@@ -461,6 +484,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "consumable",
                 "drink"
@@ -481,6 +505,7 @@
                 "max": 0
             },
             "equipped": false,
+            "lashable": false,
             "tags": [
                 "herb",
                 "religious"

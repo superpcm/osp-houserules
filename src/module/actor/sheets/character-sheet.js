@@ -1201,14 +1201,32 @@ export class OspActorSheetCharacter extends ActorSheet {
           // Stack: increase quantity of existing item and delete the moved item
           const currentQty = matchingItem.system.quantity?.value || 1;
           const addingQty = itemData.system.quantity?.value || 1;
+          const maxQty = matchingItem.system.quantity?.max || 0;
           const newQty = currentQty + addingQty;
           
           console.log(`Stacking (reorder): ${itemData.name} - ${currentQty} + ${addingQty} = ${newQty}`);
           ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
           
-          // Delete the item being moved and update the matching item's quantity
+          // For stackable items (max > 0), also update weight and storedSize proportionally
+          const updateData = {"system.quantity.value": newQty};
+          
+          if (maxQty > 0) {
+            const baseWeight = parseFloat(matchingItem.system.weight) || 0;
+            const baseStoredSize = parseFloat(matchingItem.system.storedSize) || 0;
+            const addingWeight = parseFloat(itemData.system.weight) || 0;
+            const addingStoredSize = parseFloat(itemData.system.storedSize) || 0;
+            
+            // Calculate new totals by adding the proportional amounts
+            updateData["system.weight"] = baseWeight + addingWeight;
+            updateData["system.storedSize"] = baseStoredSize + addingStoredSize;
+            
+            console.log(`Updating weight: ${baseWeight} + ${addingWeight} = ${updateData["system.weight"]}`);
+            console.log(`Updating storedSize: ${baseStoredSize} + ${addingStoredSize} = ${updateData["system.storedSize"]}`);
+          }
+          
+          // Delete the item being moved and update the matching item
           return item.delete().then(() => {
-            return matchingItem.update({"system.quantity.value": newQty});
+            return matchingItem.update(updateData);
           });
         }
       }
@@ -1242,12 +1260,30 @@ export class OspActorSheetCharacter extends ActorSheet {
         // Stack: increase quantity of existing item
         const currentQty = matchingItem.system.quantity?.value || 1;
         const addingQty = itemData.system.quantity?.value || 1;
+        const maxQty = matchingItem.system.quantity?.max || 0;
         const newQty = currentQty + addingQty;
         
         console.log(`Stacking: ${itemData.name} - ${currentQty} + ${addingQty} = ${newQty}`);
         ui.notifications.info(`Added ${addingQty} ${itemData.name}(s) to existing stack.`);
         
-        return matchingItem.update({"system.quantity.value": newQty});
+        // For stackable items (max > 0), also update weight and storedSize proportionally
+        const updateData = {"system.quantity.value": newQty};
+        
+        if (maxQty > 0) {
+          const baseWeight = parseFloat(matchingItem.system.weight) || 0;
+          const baseStoredSize = parseFloat(matchingItem.system.storedSize) || 0;
+          const addingWeight = parseFloat(itemData.system.weight) || 0;
+          const addingStoredSize = parseFloat(itemData.system.storedSize) || 0;
+          
+          // Calculate new totals by adding the proportional amounts
+          updateData["system.weight"] = baseWeight + addingWeight;
+          updateData["system.storedSize"] = baseStoredSize + addingStoredSize;
+          
+          console.log(`Updating weight: ${baseWeight} + ${addingWeight} = ${updateData["system.weight"]}`);
+          console.log(`Updating storedSize: ${baseStoredSize} + ${addingStoredSize} = ${updateData["system.storedSize"]}`);
+        }
+        
+        return matchingItem.update(updateData);
       }
     }
     

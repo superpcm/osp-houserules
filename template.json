@@ -86,6 +86,7 @@
           "max": 0
         },
         "equipped": false,
+        "lashable": false,
         "carryLocation": "",
         "containerId": null
       }

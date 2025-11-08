@@ -335,6 +335,25 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   background:  rgba(44, 24, 16, 0.2);
 }
 
+.item-header.container-header {
+  position: relative;
+  
+  &:hover {
+    background: none;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: calc(-1 * #{$container-left-shift});
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: rgba(44, 24, 16, 0.2);
+      z-index: -1;
+    }
+  }
+}
+
 .item-header.item-rollable:hover {
   background: #e8f4e8;
 }

@@ -20,6 +20,7 @@ export class ItemHandler {
     this.html.find('.item-edit').click(this.onItemEdit.bind(this));
     this.html.find('.item-delete').click(this.onItemDelete.bind(this));
     this.html.find('.item-toggle').click(this.onItemToggle.bind(this));
+    this.html.find('.item-lash-toggle').click(this.onItemLashToggle.bind(this));
     this.html.find('.item-show').click(this.onItemShow.bind(this));
     this.html.find('.item-rollable').click(this.onItemRoll.bind(this));
     this.html.find('.quantity input').change(this.onQuantityChange.bind(this));
@@ -250,6 +251,65 @@ export class ItemHandler {
       await item.update({"system.equipped": newEquippedState});
     }
   }
+
+  /**
+   * Handle toggling item lashed status
+   */
+  async onItemLashToggle(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const item = this.getItemFromEvent(event);
+    if (!item) return;
+    
+    // Check if item is lashable
+    if (!item.system.lashable) {
+      ui.notifications.warn(`${item.name} cannot be lashed to a backpack.`);
+      return;
+    }
+    
+    // Get the container this item is in
+    const containerId = item.system.containerId;
+    if (!containerId) {
+      ui.notifications.warn(`${item.name} must be in a container to be lashed.`);
+      return;
+    }
+    
+    const container = this.actor.items.get(containerId);
+    if (!container || container.type !== "container") {
+      ui.notifications.error("Container not found.");
+      return;
+    }
+    
+    // Check if container has lash slots
+    const lashSlots = container.system.lashSlots || 0;
+    if (lashSlots === 0) {
+      ui.notifications.warn(`${container.name} does not support lashing items.`);
+      return;
+    }
+    
+    const newLashedState = !item.system.lashed;
+    
+    if (newLashedState) {
+      // Lashing the item - check if lash slots available
+      const lashedItems = this.actor.items.filter(i => 
+        i.system.containerId === containerId && 
+        i.system.lashed &&
+        i.id !== item.id
+      );
+      
+      if (lashedItems.length >= lashSlots) {
+        ui.notifications.error(`${container.name} has no available lash slots (${lashedItems.length}/${lashSlots} used).`);
+        return;
+      }
+      
+      ui.notifications.info(`${item.name} lashed to ${container.name}.`);
+    } else {
+      ui.notifications.info(`${item.name} unlashed from ${container.name}.`);
+    }
+    
+    // Toggle lashed status
+    await item.update({"system.lashed": newLashedState});
+  }
   
   /**
    * Parse capacity string (e.g., "6M" = 24 slots)
@@ -266,8 +326,10 @@ export class ItemHandler {
   _getUsedCapacity(container) {
     let total = 0;
     
-    // Find all items in this container
-    const itemsInContainer = this.actor.items.filter(i => i.system.containerId === container.id);
+    // Find all items in this container (ONLY stored items, not lashed items)
+    const itemsInContainer = this.actor.items.filter(i => 
+      i.system.containerId === container.id && !i.system.lashed
+    );
     
     itemsInContainer.forEach(item => {
       const storedSize = parseFloat(item.system.storedSize) || 0;

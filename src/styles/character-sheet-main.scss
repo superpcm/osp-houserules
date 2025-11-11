@@ -1710,8 +1710,8 @@ input[type="number"] {
   background-repeat: no-repeat;
   background-attachment: scroll; /* Background stays fixed to element, doesn't scroll with content */
   background-color: transparent;
-  height: 383px; /* Fixed height to enable scrolling */
-  max-height: 383px; /* Prevent extending beyond tab boundaries */
+  height: 400px; /* Fixed height to enable scrolling */
+  max-height: 400px; /* Prevent extending beyond tab boundaries */
   overflow-y: auto; /* Enable vertical scrolling */
   overflow-x: hidden; /* Hide horizontal overflow */
   margin: 0 0 0 -1px;

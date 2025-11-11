@@ -386,20 +386,11 @@ export class OspActor extends Actor {
       'B': 0     // Beast-sized items don't fit in standard containers
     };
 
-    // Parse capacity notation (e.g., "6M", "1L", "4M") to slot count
-    const parseCapacity = (capacityStr) => {
-      if (!capacityStr) return 0;
-      const match = capacityStr.match(/^(\d+)([TSMLWB])$/);
-      if (!match) return 0;
-      const [, count, size] = match;
-      return parseInt(count) * (sizeToSlots[size] || 0);
-    };
-
     // Calculate capacity for each container
     const containers = this.items.filter(item => item.type === "container");
     
     containers.forEach(container => {
-      const maxCapacitySlots = parseCapacity(container.system.capacity);
+      const maxCapacitySlots = parseFloat(container.system.capacity) || 0;
       let usedCapacitySlots = 0;
 
       // Find all items stored in this container (equipped=false means stored)

@@ -268,6 +268,12 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   color: #fff;
   text-decoration: none;
   font-size: $font-category-title;
+  
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
 }
 
 .item-header .item-control {
@@ -281,6 +287,19 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
 .item-control.item-unequipped {
   opacity: 0.5;
+}
+
+.item-control.item-lash-toggle {
+  opacity: 0.3;
+  
+  &.item-lashed {
+    opacity: 1;
+    color: #000; // Black color for lashed items
+  }
+  
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .item-list {
@@ -880,6 +899,59 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     align-items: center;
     justify-content: center;
     justify-self: center;  // Center the field within its grid column
+  }
+}
+
+// Lashed items section
+.lashed-items-section {
+  margin-top: 8px;
+  margin-left: $nested-indent;
+  border-top: 1px solid #000;
+  padding-top: 4px;
+  margin-right: 1px;
+}
+
+.lashed-header {
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  margin-bottom: 4px;
+}
+
+.lashed-title {
+  font-size: $font-nested-item;
+  color: #4B4B4B;
+}
+
+.lashed-items-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lashed-item {
+  padding-left: $nested-padding;
+  background: rgba(139, 69, 19, 0.05);
+  position: relative;
+  
+  .item-header {
+    padding-left: 0px;
+    grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
+  }
+  
+  .item-name {
+    font-size: $font-nested-item;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .field-short {
+    font-size: $font-nested-item;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
   }
 }
 

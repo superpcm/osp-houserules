@@ -190,7 +190,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const containedArmor = allArmor.filter(armor => armor.system.containerId === container.id);
       const containedContainers = allContainers.filter(c => c.system.containerId === container.id);
       
-      // Combine all contained items and add display weight
+      // Combine all contained items
       const allContainedItems = [
         ...containedItems,
         ...containedWeapons,
@@ -198,8 +198,12 @@ export class OspActorSheetCharacter extends ActorSheet {
         ...containedContainers
       ];
       
-      // Calculate display weight for each item
-      containerData.containedItems = allContainedItems.map(item => {
+      // Separate lashed items from stored items
+      const storedItems = [];
+      const lashedItems = [];
+      
+      // Calculate display weight for each item and separate by lashed status
+      allContainedItems.forEach(item => {
         // Calculate proportional weight for stackable items
         const itemWeight = parseFloat(item.system.weight) || 0;
         const currentQuantity = item.system.quantity?.value || 1;
@@ -216,20 +220,32 @@ export class OspActorSheetCharacter extends ActorSheet {
         
         // Add displayWeight property to the item
         item.displayWeight = displayWeight;
-        return item;
+        
+        // Debug: Log lashable property
+        console.log(`Item: ${item.name}, lashable: ${item.system.lashable}, lashed: ${item.system.lashed}`);
+        
+        // Separate lashed from stored items
+        if (item.system.lashed) {
+          lashedItems.push(item);
+        } else {
+          storedItems.push(item);
+        }
       });
       
-      // Calculate total weight: container weight + all contained items' weights
+      containerData.containedItems = storedItems;
+      containerData.lashedItems = lashedItems;
+      
+      // Calculate total weight: container weight + all contained items' weights (both stored and lashed)
       const containerWeight = parseFloat(container.system.weight) || 0;
-      const containedWeight = containerData.containedItems.reduce((total, item) => {
+      const containedWeight = allContainedItems.reduce((total, item) => {
         return total + item.displayWeight;
       }, 0);
       containerData.totalWeight = containerWeight + containedWeight;
       
-      // Calculate used capacity: sum of all contained items' proportional storedSize
+      // Calculate used capacity: ONLY stored items count, not lashed items
       // For stackable items (with max > 0): (storedSize / max) * currentQuantity
       // For non-stackable items: storedSize as-is
-      const usedCapacity = containerData.containedItems.reduce((total, item) => {
+      const usedCapacity = storedItems.reduce((total, item) => {
         const storedSize = parseFloat(item.system.storedSize) || 0;
         const currentQuantity = item.system.quantity?.value || 1;
         const maxQuantity = item.system.quantity?.max || 0;
@@ -253,7 +269,14 @@ export class OspActorSheetCharacter extends ActorSheet {
         ? Math.min(100, (usedCapacity / containerData.maxCapacity) * 100) 
         : 0;
       
-      console.log(`Container: ${container.name}, usedCapacity: ${usedCapacity.toFixed(2)}, maxCapacity: ${containerData.maxCapacity}, percentage: ${containerData.capacityPercentage.toFixed(1)}%`);
+      // Calculate lash slot usage
+      const lashSlots = container.system.lashSlots || 0;
+      const usedLashSlots = lashedItems.length;
+      containerData.lashSlots = lashSlots;
+      containerData.usedLashSlots = usedLashSlots;
+      containerData.remainingLashSlots = Math.max(0, lashSlots - usedLashSlots);
+      
+      console.log(`Container: ${container.name}, usedCapacity: ${usedCapacity.toFixed(2)}, maxCapacity: ${containerData.maxCapacity}, percentage: ${containerData.capacityPercentage.toFixed(1)}%, lashed: ${usedLashSlots}/${lashSlots}`);
       
       // Check if container is collapsed (stored in flags)
       containerData.collapsed = this.actor.getFlag('osp-houserules', `container-${container.id}-collapsed`) || false;
@@ -1340,9 +1363,9 @@ export class OspActorSheetCharacter extends ActorSheet {
   _getUsedCapacity(container) {
     let total = 0;
     
-    // Find all items in this container
+    // Find all items in this container (ONLY stored items, not lashed items)
     const itemsInContainer = this.actor.items.filter(item => 
-      item.system.containerId === container.id
+      item.system.containerId === container.id && !item.system.lashed
     );
     
     itemsInContainer.forEach(item => {

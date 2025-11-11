@@ -87,6 +87,7 @@
         },
         "equipped": false,
         "lashable": false,
+        "lashed": false,
         "carryLocation": "",
         "containerId": null
       }

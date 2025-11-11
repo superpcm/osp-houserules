@@ -281,7 +281,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 .item-control:hover {
-  background: #f0f0f0;
+  background: transparent;
   color: #000;
 }
 
@@ -299,6 +299,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   
   &:hover {
     opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(255, 0, 0, 0.8));
   }
 }
 
@@ -311,10 +312,14 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 // Alternating row shading for items
 .item-entry:nth-child(odd) {
   background: rgba(0, 0, 0, 0.03);
+  border-radius: 3px;
+  margin-right: 2px;
 }
 
 .item-entry:nth-child(even) {
-  background: rgba(0, 0, 0, 0.01);
+  background: rgba(0, 0, 0, 0.0);
+  border-radius: 3px;
+  margin-right: 0px;
 }
 
 // Drag-over highlight for containers

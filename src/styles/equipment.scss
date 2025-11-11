@@ -482,7 +482,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   top: 0;
   z-index: 10;
   background: $color-parchment; /* Match tab background so it doesn't show content behind */
-  padding-bottom: 10px; /* 10px space before scrollable content */
+  padding-bottom: 11px; /* 11px space before scrollable content */
   flex-shrink: 0; /* Don't shrink when in flex container */
 }
 
@@ -491,6 +491,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  margin-top: -15px; /* Move content up 5px closer to encumbrance bar */
 }
 
 .encumbrance-bar-container {

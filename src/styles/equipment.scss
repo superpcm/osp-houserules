@@ -101,6 +101,11 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .equipment-tab {
   max-width: 710px;  // Increased from 706px for wider layout
   margin: 0 auto; /* Center the content */
+  position: relative; /* Establish positioning context for sticky children */
+  height: 100%; /* Fill available height */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevent outer scroll, content will scroll internally */
 }
 
 .item-category {
@@ -468,11 +473,24 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 /* Encumbrance Section */
-// Encumbrance bar at top of Equipment tab - styled to match XP bar
+// Encumbrance bar at top of Equipment tab - styled to match XP bar, sticky position
 .encumbrance-bar-wrapper {
   width: 100%;
   margin-bottom: 0px;
   margin-top: 15px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: $color-parchment; /* Match tab background so it doesn't show content behind */
+  padding-bottom: 10px; /* 10px space before scrollable content */
+  flex-shrink: 0; /* Don't shrink when in flex container */
+}
+
+// Scrollable content area below encumbrance bar
+.equipment-scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .encumbrance-bar-container {

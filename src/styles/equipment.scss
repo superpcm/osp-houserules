@@ -99,7 +99,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
    ============================================ */
 
 .equipment-tab {
-  max-width: 706px;
+  max-width: 710px;  // Increased from 706px for wider layout
   margin: 0 auto; /* Center the content */
 }
 
@@ -463,46 +463,50 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 /* Encumbrance Section */
-.encumbrance-section {
-  margin-top: 16px;
-  padding: 12px;
-  border: 1px solid #bcbcbc;
-  border-radius: 4px;
-  background: #f9f9f9;
-}
-
-.encumbrance-label {
-  font-weight: bold;
-  margin-bottom: 8px;
+// Encumbrance bar at top of Equipment tab - styled to match XP bar
+.encumbrance-bar-wrapper {
+  width: 100%;
+  margin-bottom: 0px;
+  margin-top: 15px;
 }
 
 .encumbrance-bar-container {
   position: relative;
-  height: 20px;
-  background: #ddd;
-  border-radius: 10px;
+  height: 39px;
+  background: transparent;
+  border-radius: 3px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 1);
   overflow: hidden;
 }
 
 .encumbrance-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #4CAF50 0%, #FFC107 50%, #F44336 100%);
-  transition: width 0.3s ease;
-}
-
-.encumbrance-text {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  height: 100%;
+  background: rgba(44, 24, 16, 0.2);  // Match XP bar color
+  transition: width 0.3s ease;
+  border-radius: 3px;
+  z-index: 1;
+}
+
+.encumbrance-text {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9em;
+  height: 100%;
+  font-size: 34px;
   font-weight: bold;
   color: #333;
-  text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
+  z-index: 2;
+}
+
+// Remove old encumbrance section styling
+.encumbrance-section {
+  display: none;  // Hide old section if it somehow still exists
 }
 
 /* Item Sheet Styles */

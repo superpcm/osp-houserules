@@ -2345,6 +2345,14 @@
       <!-- Equipment Tab -->
       <div class="tab" data-group="primary" data-tab="equipment">
         <section class="equipment-tab">
+          {{!-- Encumbrance Bar --}}
+          <div class="encumbrance-bar-wrapper">
+            <div class="encumbrance-bar-container">
+              <div class="encumbrance-bar" data-encumbrance="{{encumbrancePercentage}}"></div>
+              <span class="encumbrance-text">{{totalWeight}} / {{maxWeight}} lbs</span>
+            </div>
+          </div>
+
           {{!-- Gear & Treasure Section --}}
           <div class="item-category">
             <div class="item-category-title containers-title flexrow">
@@ -2540,14 +2548,6 @@
             </ol>
           </div>
 
-          {{!-- Encumbrance Bar --}}
-          <section class="encumbrance-section">
-            <div class="encumbrance-label">Encumbrance</div>
-            <div class="encumbrance-bar-container">
-              <div class="encumbrance-bar" data-encumbrance="{{encumbrancePercentage}}"></div>
-              <span class="encumbrance-text">{{totalWeight}} / {{maxWeight}} lbs</span>
-            </div>
-          </section>
           </section>
         </div>
 

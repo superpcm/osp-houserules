@@ -1712,18 +1712,17 @@ input[type="number"] {
   background-color: transparent;
   height: 400px; /* Fixed height to enable scrolling */
   max-height: 400px; /* Prevent extending beyond tab boundaries */
-  overflow-y: auto; /* Enable vertical scrolling */
-  overflow-x: hidden; /* Hide horizontal overflow */
+  overflow: visible; /* Changed from overflow-y: auto - scrolling handled by inner content */
   margin: 0 0 0 -1px;
   padding-bottom: 20px; /* Add bottom padding for last item */
   
-  /* Hide scrollbar while still allowing scrolling */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  /* Hide scrollbar while still allowing scrolling - no longer needed on parent */
+  /* scrollbar-width: none; */
+  /* -ms-overflow-style: none; */
   
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
+  /* &::-webkit-scrollbar {
+    display: none;
+  } */
 }
 
 /* ============================

@@ -2356,17 +2356,19 @@
           {{!-- Scrollable Content Area --}}
           <div class="equipment-scrollable-content">
           
+          {{!-- Gear & Treasure Title - Sticky Header --}}
+          <div class="item-category-title containers-title flexrow">
+            <div class="item-roll-icon"></div>
+            <div class="category-name">Gear & Treasure</div>
+            <div class="field-short">Qty</div>
+            <div class="field-short">Capacity</div>
+            <div class="field-short">Weight</div>
+            <div class="item-controls">
+            </div>
+          </div>
+          
           {{!-- Gear & Treasure Section --}}
           <div class="item-category">
-            <div class="item-category-title containers-title flexrow">
-              <div class="item-roll-icon"></div>
-              <div class="category-name">Gear & Treasure</div>
-              <div class="field-short">Qty</div>
-              <div class="field-short">Capacity</div>
-              <div class="field-short">Weight</div>
-              <div class="item-controls">
-              </div>
-            </div>
             <ol class="item-list">
               {{#each containers as |container|}}
               <li class="item-entry item container-entry" data-item-id="{{container.id}}">

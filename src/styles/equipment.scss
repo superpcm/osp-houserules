@@ -57,7 +57,7 @@ $nested-col-controls: 108px;    // Width of nested item controls section
 $grid-gap: 17px;          // Gap between grid columns
 $item-padding-x: 8px;   // Horizontal padding inside items
 $item-padding-y: 6px;    // Vertical padding inside items
-$category-margin: 20px 0 16px 0;  // Margin around category sections
+$category-margin: 3px 0 16px 0;  // Margin around category sections
 $container-left-shift: -10px;  // Shift container icon/caret left (negative moves left, e.g., -3px, -5px, -10px)
 
 /* Font Sizes */
@@ -476,7 +476,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 // Encumbrance bar at top of Equipment tab - styled to match XP bar, sticky position
 .encumbrance-bar-wrapper {
   width: 100%;
-  margin-bottom: 0px;
+  margin-bottom: 0px; /* Reset to 0 - was causing scrollbar cutoff */
   margin-top: 15px;
   position: sticky;
   top: 0;
@@ -491,7 +491,30 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  margin-top: -15px; /* Move content up 5px closer to encumbrance bar */
+  padding-right: 0px; /* Space for scrollbar on the right edge */
+  
+  /* Custom scrollbar styling - very thin */
+  scrollbar-width: thin; /* Firefox - thin scrollbar */
+  scrollbar-color: rgba(0, 0, 0, 0.4) transparent; /* Firefox - thumb and track colors */
+  
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  &::-webkit-scrollbar {
+    width: 3px; /* Very thin scrollbar width */
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent; /* Transparent track */
+    margin-top: 0; /* Start scrollbar track at the top of container */
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.4); /* Semi-transparent dark thumb */
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.6); /* Slightly darker on hover */
+  }
 }
 
 .encumbrance-bar-container {

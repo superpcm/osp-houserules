@@ -113,6 +113,8 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   border-radius: 0 0 5px 5px; /* Only round bottom corners since title is separate */
   border-top: none; /* No top border - title provides visual separation */
   margin-top: 0; /* Remove negative margin */
+  position: relative; /* Establish stacking context */
+  z-index: 1; /* Below mask layer (z-index: 8) and title bar (z-index: 9) */
   
   /* Remove top margin from first category to prevent sticky title from shifting */
   &:first-child {
@@ -505,6 +507,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 0px; /* Space for scrollbar on the right edge */
+  position: relative; /* Establish positioning context */
   
   /* Custom scrollbar styling - very thin */
   scrollbar-width: thin; /* Firefox - thin scrollbar */
@@ -528,6 +531,19 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   &::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.6); /* Slightly darker on hover */
   }
+}
+
+/* Border mask layer - hides item-category borders as they scroll under title bar */
+.title-border-mask {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 29px; /* Same height as title bar */
+  margin-bottom: -29px; /* Remove from document flow so it doesn't push title bar down */
+  background: $color-parchment; /* Match sheet background */
+  z-index: 8; /* Between item-category (z-index: 1) and title bar (z-index: 9) */
+  pointer-events: none; /* Allow clicks to pass through to title bar */
 }
 
 .encumbrance-bar-container {

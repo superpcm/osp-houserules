@@ -168,8 +168,6 @@ export class OspActorSheetCharacter extends ActorSheet {
     const allWeapons = this.actor.system.weapons || [];
     const allArmor = this.actor.system.armor || [];
     
-    console.log('getData - allContainers count:', allContainers.length);
-    
     // Only show TOP-LEVEL containers (not nested in other containers)
     const topLevelContainers = allContainers.filter(container => !container.system?.containerId);
     
@@ -221,9 +219,6 @@ export class OspActorSheetCharacter extends ActorSheet {
         // Add displayWeight property to the item
         item.displayWeight = displayWeight;
         
-        // Debug: Log lashable property
-        console.log(`Item: ${item.name}, lashable: ${item.system.lashable}, lashed: ${item.system.lashed}`);
-        
         // Separate lashed from stored items
         if (item.system.lashed) {
           lashedItems.push(item);
@@ -259,7 +254,6 @@ export class OspActorSheetCharacter extends ActorSheet {
           itemCapacity = storedSize;
         }
         
-        console.log(`Item: ${item.name}, storedSize: ${storedSize}, current: ${currentQuantity}, max: ${maxQuantity}, capacity: ${itemCapacity.toFixed(2)}`);
         return total + itemCapacity;
       }, 0);
       containerData.usedCapacity = usedCapacity;
@@ -276,10 +270,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       containerData.usedLashSlots = usedLashSlots;
       containerData.remainingLashSlots = Math.max(0, lashSlots - usedLashSlots);
       
-      console.log(`Container: ${container.name}, usedCapacity: ${usedCapacity.toFixed(2)}, maxCapacity: ${containerData.maxCapacity}, percentage: ${containerData.capacityPercentage.toFixed(1)}%, lashed: ${usedLashSlots}/${lashSlots}`);
-      
       // Check if container is collapsed (stored in flags)
       containerData.collapsed = this.actor.getFlag('osp-houserules', `container-${container.id}-collapsed`) || false;
+      
+      // Check if lashed items section is collapsed
+      containerData.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${container.id}-collapsed`) || false;
       
       return containerData;
     });
@@ -293,6 +288,15 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.totalWeight = this.actor.system.encumbrance?.totalWeight || 0;
     context.maxWeight = this.actor.system.encumbrance?.maxWeight || 100;
     context.encumbrancePercentage = this.actor.system.encumbrance?.percentage || 0;
+    
+    // Determine encumbrance threshold level for color coding
+    if (context.encumbrancePercentage < 33) {
+      context.encumbranceLevel = 'light';
+    } else if (context.encumbrancePercentage < 66) {
+      context.encumbranceLevel = 'normal';
+    } else {
+      context.encumbranceLevel = 'heavy';
+    }
 
     // Ensure saving throws are available
 
@@ -329,6 +333,9 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Container collapse/expand toggle
     html.find('.container-toggle').click(this._onContainerToggle.bind(this));
+    
+    // Lashed items collapse/expand toggle
+    html.find('.lashed-toggle').click(this._onLashedToggle.bind(this));
 
     // Add drag-over highlight for containers
     html.find('.container-entry').each((i, el) => {
@@ -374,9 +381,23 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.bio-text-field').on('blur change', async (event) => {
       const fieldName = event.target.name;
       const value = event.target.value;
-      console.log(`Bio field ${fieldName} updated:`, value);
       await this.actor.update({ [fieldName]: value });
     });
+
+    // Set encumbrance bar widths - each bar shows its portion relative to its section
+    const encumbrancePercentage = this.actor.system.encumbrance?.percentage || 0;
+    
+    // Light bar (0-33%): shows from 0 to min(encumbrance, 33)
+    const lightWidth = Math.min(encumbrancePercentage, 33);
+    html.find('.encumbrance-bar-light').css('width', `${lightWidth}%`);
+    
+    // Normal bar (33-66%): shows from 33 to min(encumbrance, 66), but width is relative to its starting position
+    const normalWidth = Math.max(0, Math.min(encumbrancePercentage, 66) - 33);
+    html.find('.encumbrance-bar-normal').css('width', `${normalWidth}%`);
+    
+    // Heavy bar (66-100%): shows from 66 to encumbrance, but width is relative to its starting position
+    const heavyWidth = Math.max(0, encumbrancePercentage - 66);
+    html.find('.encumbrance-bar-heavy').css('width', `${heavyWidth}%`);
 
     // Auto-resize bio textareas as user types
     this.initializeBioFieldAutoResize(html);
@@ -1051,6 +1072,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.render(false);
   }
 
+  async _onLashedToggle(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const lashedSection = $(event.currentTarget).closest('.lashed-items-section');
+    const containerId = lashedSection.data('container-id');
+    const currentState = this.actor.getFlag('osp-houserules', `lashed-${containerId}-collapsed`) || false;
+    
+    await this.actor.setFlag('osp-houserules', `lashed-${containerId}-collapsed`, !currentState);
+    this.render(false);
+  }
+
   /**
    * Handle dropping an item onto the sheet
    */
@@ -1084,20 +1117,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       // This is a contained item, find its parent container
       const parentContainerId = targetContainer.system.containerId;
       targetContainer = this.actor.items.get(parentContainerId);
-      console.log('Dropped on contained item, using parent container:', targetContainer?.name);
     }
-    
-    console.log('=== DROP DEBUG ===');
-    console.log('Drop data:', data);
-    console.log('Item being dropped:', itemData.name, 'Type:', itemData.type, 'ID:', itemData._id);
-    console.log('Drop target element:', dropTarget);
-    console.log('Target container:', targetContainer?.name, 'Type:', targetContainer?.type);
-    console.log('Item object:', item);
-    console.log('Item has actor?', !!item.actor, 'Item actor ID:', item.actor?.id, 'This actor ID:', this.actor.id);
     
     // Check if this item already exists on this actor
     const existingItemCheck = this.actor.items.get(itemData._id);
-    console.log('Existing item on actor?', !!existingItemCheck);
     
     // Check if this is a reordering operation or a new item
     const isReordering = item.actor && item.actor.id === this.actor.id;
@@ -1178,7 +1201,6 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
       
       itemData.system.containerId = targetContainer.id;
-      console.log('Container-in-container: Setting containerId to', targetContainer.id);
     }
     // Weapons/armor can be dropped onto containers
     else if (targetContainer && targetContainer.type === "container") {
@@ -1195,11 +1217,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     // For new items from compendium/sidebar not dropped on container, don't set containerId
     // They'll be added as top-level items
 
-    console.log('Final containerId to set:', itemData.system.containerId);
-
     // Handle item from another actor
     if (item.actor && item.actor.id !== this.actor.id) {
-      console.log('Path: Item from another actor - delete and create');
       return item.actor.deleteEmbeddedDocuments("Item", [item.id]).then(() => {
         return this.actor.createEmbeddedDocuments("Item", [itemData]);
       });
@@ -1207,7 +1226,6 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Handle item from this actor (reordering/moving between containers)
     if (item.actor && item.actor.id === this.actor.id) {
-      console.log('Path: Reordering item, checking for stacking');
       
       // Check if we should stack this item with an existing one in the target container
       if (targetContainer && itemData.type === "item") {
@@ -1227,7 +1245,6 @@ export class OspActorSheetCharacter extends ActorSheet {
           const maxQty = matchingItem.system.quantity?.max || 0;
           const newQty = currentQty + addingQty;
           
-          console.log(`Stacking (reorder): ${itemData.name} - ${currentQty} + ${addingQty} = ${newQty}`);
           ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
           
           // For stackable items (max > 0), also update weight and storedSize proportionally
@@ -1242,9 +1259,6 @@ export class OspActorSheetCharacter extends ActorSheet {
             // Calculate new totals by adding the proportional amounts
             updateData["system.weight"] = baseWeight + addingWeight;
             updateData["system.storedSize"] = baseStoredSize + addingStoredSize;
-            
-            console.log(`Updating weight: ${baseWeight} + ${addingWeight} = ${updateData["system.weight"]}`);
-            console.log(`Updating storedSize: ${baseStoredSize} + ${addingStoredSize} = ${updateData["system.storedSize"]}`);
           }
           
           // Delete the item being moved and update the matching item
@@ -1255,19 +1269,16 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
       
       // No matching item found, just update the containerId
-      console.log('No match found, updating containerId:', itemData.system.containerId);
       return item.update({"system.containerId": itemData.system.containerId});
     }
 
     // Check if this item already exists on this actor (handles case where item.actor is null)
     const existingItem = this.actor.items.get(itemData._id);
     if (existingItem) {
-      console.log('Path: Item exists but item.actor was null - updating existing item');
       return existingItem.update({"system.containerId": itemData.system.containerId});
     }
 
     // Handle item from compendium or elsewhere - check for stacking
-    console.log('Path: Creating new item from compendium or elsewhere');
     
     // Check if we should stack this item with an existing one
     if (targetContainer && itemData.type === "item") {
@@ -1286,7 +1297,6 @@ export class OspActorSheetCharacter extends ActorSheet {
         const maxQty = matchingItem.system.quantity?.max || 0;
         const newQty = currentQty + addingQty;
         
-        console.log(`Stacking: ${itemData.name} - ${currentQty} + ${addingQty} = ${newQty}`);
         ui.notifications.info(`Added ${addingQty} ${itemData.name}(s) to existing stack.`);
         
         // For stackable items (max > 0), also update weight and storedSize proportionally
@@ -1301,9 +1311,6 @@ export class OspActorSheetCharacter extends ActorSheet {
           // Calculate new totals by adding the proportional amounts
           updateData["system.weight"] = baseWeight + addingWeight;
           updateData["system.storedSize"] = baseStoredSize + addingStoredSize;
-          
-          console.log(`Updating weight: ${baseWeight} + ${addingWeight} = ${updateData["system.weight"]}`);
-          console.log(`Updating storedSize: ${baseStoredSize} + ${addingStoredSize} = ${updateData["system.storedSize"]}`);
         }
         
         return matchingItem.update(updateData);
@@ -1342,8 +1349,6 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Non-stackable item: use storedSize as-is
       itemSize = storedSize;
     }
-    
-    console.log(`Space check - Used: ${usedCapacity.toFixed(2)}, Item: ${itemSize.toFixed(2)}, Max: ${maxCapacity}, Available: ${(maxCapacity - usedCapacity).toFixed(2)}`);
     
     return (usedCapacity + itemSize) <= maxCapacity;
   }

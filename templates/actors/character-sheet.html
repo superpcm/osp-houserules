@@ -2348,7 +2348,11 @@
           {{!-- Encumbrance Bar --}}
           <div class="encumbrance-bar-wrapper">
             <div class="encumbrance-bar-container">
-              <div class="encumbrance-bar" data-encumbrance="{{encumbrancePercentage}}"></div>
+              <div class="encumbrance-bar encumbrance-bar-light" data-encumbrance="{{encumbrancePercentage}}"></div>
+              <div class="encumbrance-bar encumbrance-bar-normal" data-encumbrance="{{encumbrancePercentage}}"></div>
+              <div class="encumbrance-bar encumbrance-bar-heavy" data-encumbrance="{{encumbrancePercentage}}"></div>
+              <div class="encumbrance-threshold-line" style="left: 33%;"></div>
+              <div class="encumbrance-threshold-line" style="left: 66%;"></div>
               <span class="encumbrance-text">{{totalWeight}} / {{maxWeight}} lbs</span>
             </div>
           </div>
@@ -2460,10 +2464,14 @@
                   {{!-- Lashed items section --}}
                   {{#if container.lashSlots}}
                   {{#if (or container.lashedItems.length (gt container.lashSlots 0))}}
-                  <div class="lashed-items-section">
+                  <div class="lashed-items-section" data-container-id="{{container.id}}">
                     <div class="lashed-header">
+                      <a class="lashed-toggle">
+                        <i class="fas {{#if container.lashedCollapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
+                      </a>
                       <span class="lashed-title">Lashed Items ({{container.usedLashSlots}}/{{container.lashSlots}})</span>
                     </div>
+                    {{#unless container.lashedCollapsed}}
                     <ol class="lashed-items-list">
                       {{#each container.lashedItems as |item|}}
                       <li class="item-entry item lashed-item" data-item-id="{{item.id}}">
@@ -2506,6 +2514,7 @@
                       </li>
                       {{/each}}
                     </ol>
+                    {{/unless}}
                   </div>
                   {{/if}}
                   {{/if}}

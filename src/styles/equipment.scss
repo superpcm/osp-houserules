@@ -99,8 +99,9 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
    ============================================ */
 
 .equipment-tab {
-  max-width: 710px;  // Increased from 706px for wider layout
+  max-width: 708px;  // Reduced from 710px to compensate for 6px left margin
   margin: 0 auto; /* Center the content */
+  margin-left: calc(50% - 352px); /* Offset 6px to the right (352px = 704/2) */
   position: relative; /* Establish positioning context for sticky children */
   height: 100%; /* Fill available height */
   display: flex;
@@ -113,9 +114,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   border-radius: 0 0 5px 5px; /* Only round bottom corners since title is separate */
   border-top: none; /* No top border - title provides visual separation */
   margin-top: 0; /* Remove negative margin */
-  position: relative; /* Establish stacking context */
-  z-index: 1; /* Below mask layer (z-index: 8) and title bar (z-index: 9) */
-  
+  margin-bottom: 10px;
   /* Remove top margin from first category to prevent sticky title from shifting */
   &:first-child {
     margin-top: 0;
@@ -230,7 +229,11 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   position: relative;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3);
+  background: transparent;
+  background-image: url('../assets/character-sheet/capacity-back.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border: 1px solid #000000;
   border-radius: 3px;
   overflow: hidden;
@@ -490,7 +493,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 /* Encumbrance Section */
 // Encumbrance bar at top of Equipment tab - styled to match XP bar, sticky position
 .encumbrance-bar-wrapper {
-  width: 100%;
+  width: calc(100% - 1px);
   margin-bottom: 0px; /* Reset to 0 - was causing scrollbar cutoff */
   margin-top: 15px;
   position: sticky;
@@ -548,8 +551,12 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
 .encumbrance-bar-container {
   position: relative;
-  height: 39px;
+  height: 20px;
   background: transparent;
+  background-image: url('../assets/character-sheet/encumbrance-back.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 3px;
   border-width: 1.5px;
   border-style: solid;
@@ -560,12 +567,36 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .encumbrance-bar {
   position: absolute;
   top: 0;
-  left: 0;
   height: 100%;
-  background: rgba(44, 24, 16, 0.2);  // Match XP bar color
   transition: width 0.3s ease;
-  border-radius: 3px;
   z-index: 1;
+}
+
+.encumbrance-bar-light {
+  left: 0;
+  background: rgba(44, 24, 16, 0.1);  // Lighter shade for 0-33%
+  max-width: 33%;  // Can't extend beyond 33%
+}
+
+.encumbrance-bar-normal {
+  left: 33%;
+  background: rgba(44, 24, 16, 0.2);  // Normal shade for 33-66%
+  max-width: 33%;  // Can't extend beyond 33%
+}
+
+.encumbrance-bar-heavy {
+  left: 66%;
+  background: rgba(44, 24, 16, 0.35);  // Darker shade for 66-100%
+  max-width: 34%;  // Can't extend beyond 34%
+}
+
+.encumbrance-threshold-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2;
 }
 
 .encumbrance-text {
@@ -574,7 +605,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   align-items: center;
   justify-content: center;
   height: 100%;
-  font-size: 34px;
+  font-size: 18px;
   font-weight: bold;
   color: #333;
   z-index: 2;
@@ -996,6 +1027,27 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   background: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.25);
+  }
+}
+
+.lashed-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  color: #4B4B4B;
+  cursor: pointer;
+  
+  i {
+    font-size: 14px;
+  }
 }
 
 .lashed-title {

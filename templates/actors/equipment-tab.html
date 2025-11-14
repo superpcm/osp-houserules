@@ -19,7 +19,7 @@
           <div class="item-image" style="background-image: url({{item.img}})"></div>
           <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
           <div class="field-short">{{item.system.damage}}</div>
-          <div class="field-short">{{item.system.weight}}</div>
+          <div class="field-short">{{item.system.unitWeight}}</div>
           <div class="item-controls">
             {{#if @root.owner}}
             <a class="item-control item-show" title="Show Item">
@@ -73,8 +73,9 @@
         <div class="item-header flexrow">
           <div class="item-image" style="background-image: url({{item.img}})"></div>
           <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+                    <div class="field-short">{{item.system.type}}</div>
           <div class="field-short">{{item.system.ac.value}}</div>
-          <div class="field-short">{{item.system.weight}}</div>
+          <div class="field-short">{{item.system.unitWeight}}</div>
           <div class="item-controls">
             {{#if @root.owner}}
             <a class="item-control item-show" title="Show Item">
@@ -127,7 +128,7 @@
           <div class="item-image" style="background-image: url({{container.img}})"></div>
           <h4 class="item-name" title="{{container.name}}">{{container.name}}</h4>
           <div class="field-short">{{container.system.capacity}}</div>
-          <div class="field-short">{{container.system.weight}}</div>
+          <div class="field-short">{{container.system.unitWeight}}</div>
           <div class="item-controls">
             {{#if @root.owner}}
             <a class="item-control item-show" title="Show Item">
@@ -170,7 +171,7 @@
                 <span>/{{item.system.quantity.max}}</span>
                 {{/if}}
               </div>
-              <div class="field-short">{{multiply item.system.weight item.system.quantity.value}}</div>
+              <div class="field-short">{{item.displayWeight}}</div>
               <div class="item-controls">
                 {{#if @root.owner}}
                 <a class="item-control item-show" title="Show Item">
@@ -235,7 +236,7 @@
             <span>/{{item.system.quantity.max}}</span>
             {{/if}}
           </div>
-          <div class="field-short">{{multiply item.system.weight item.system.quantity.value}}</div>
+          <div class="field-short">{{item.displayWeight}}</div>
           <div class="item-controls">
             {{#if @root.owner}}
             <a class="item-control item-show" title="Show Item">

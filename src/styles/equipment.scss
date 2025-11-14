@@ -509,9 +509,9 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 0px; /* Space for scrollbar on the right edge */
   position: relative; /* Establish positioning context */
-  
+  margin-right: -1px; /* Compensate for scrollbar width to prevent cutoff */
+
   /* Custom scrollbar styling - very thin */
   scrollbar-width: thin; /* Firefox - thin scrollbar */
   scrollbar-color: rgba(0, 0, 0, 0.4) transparent; /* Firefox - thumb and track colors */

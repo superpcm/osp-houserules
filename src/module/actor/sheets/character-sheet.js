@@ -202,22 +202,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       
       // Calculate display weight for each item and separate by lashed status
       allContainedItems.forEach(item => {
-        // Calculate proportional weight for stackable items
-        const itemWeight = parseFloat(item.system.weight) || 0;
+        const itemWeight = parseFloat(item.system.unitWeight) || 0;
         const currentQuantity = item.system.quantity?.value || 1;
-        const maxQuantity = item.system.quantity?.max || 0;
         
-        let displayWeight;
-        if (maxQuantity > 0) {
-          // Stackable item: calculate proportionally (weight / max) * current
-          displayWeight = (itemWeight / maxQuantity) * currentQuantity;
-        } else {
-          // Non-stackable item: multiply by quantity
-          displayWeight = itemWeight * currentQuantity;
-        }
-        
-        // Add displayWeight property to the item
-        item.displayWeight = displayWeight;
+        // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
+        item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
         
         // Separate lashed from stored items
         if (item.system.lashed) {
@@ -231,7 +220,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       containerData.lashedItems = lashedItems;
       
       // Calculate total weight: container weight + all contained items' weights (both stored and lashed)
-      const containerWeight = parseFloat(container.system.weight) || 0;
+      const containerWeight = parseFloat(container.system.unitWeight) || 0;
       const containedWeight = allContainedItems.reduce((total, item) => {
         return total + item.displayWeight;
       }, 0);
@@ -280,7 +269,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     });
     
     // Only show items that are NOT in containers AND are not containers themselves
-    context.items = allItems.filter(item => !item.system.containerId && item.type !== 'container');
+    const generalItems = allItems.filter(item => !item.system.containerId && item.type !== 'container');
+    
+    // Calculate displayWeight for general items
+    generalItems.forEach(item => {
+      const itemWeight = parseFloat(item.system.unitWeight) || 0;
+      const currentQuantity = item.system.quantity?.value || 1;
+      
+      // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
+      item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
+    });
+    
+    context.items = generalItems;
     
     context.treasures = this.actor.system.treasures || [];
 
@@ -1247,19 +1247,8 @@ export class OspActorSheetCharacter extends ActorSheet {
           
           ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
           
-          // For stackable items (max > 0), also update weight and storedSize proportionally
+          // Just update quantity - unitWeight stays the same (it's per unit!)
           const updateData = {"system.quantity.value": newQty};
-          
-          if (maxQty > 0) {
-            const baseWeight = parseFloat(matchingItem.system.weight) || 0;
-            const baseStoredSize = parseFloat(matchingItem.system.storedSize) || 0;
-            const addingWeight = parseFloat(itemData.system.weight) || 0;
-            const addingStoredSize = parseFloat(itemData.system.storedSize) || 0;
-            
-            // Calculate new totals by adding the proportional amounts
-            updateData["system.weight"] = baseWeight + addingWeight;
-            updateData["system.storedSize"] = baseStoredSize + addingStoredSize;
-          }
           
           // Delete the item being moved and update the matching item
           return item.delete().then(() => {
@@ -1299,19 +1288,8 @@ export class OspActorSheetCharacter extends ActorSheet {
         
         ui.notifications.info(`Added ${addingQty} ${itemData.name}(s) to existing stack.`);
         
-        // For stackable items (max > 0), also update weight and storedSize proportionally
+        // Just update quantity - unitWeight stays the same (it's per unit!)
         const updateData = {"system.quantity.value": newQty};
-        
-        if (maxQty > 0) {
-          const baseWeight = parseFloat(matchingItem.system.weight) || 0;
-          const baseStoredSize = parseFloat(matchingItem.system.storedSize) || 0;
-          const addingWeight = parseFloat(itemData.system.weight) || 0;
-          const addingStoredSize = parseFloat(itemData.system.storedSize) || 0;
-          
-          // Calculate new totals by adding the proportional amounts
-          updateData["system.weight"] = baseWeight + addingWeight;
-          updateData["system.storedSize"] = baseStoredSize + addingStoredSize;
-        }
         
         return matchingItem.update(updateData);
       }

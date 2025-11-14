@@ -489,8 +489,8 @@ export class ItemHandler {
       content += `<p><strong>AC:</strong> ${item.system.ac.value}</p>`;
     }
     
-    if (item.system.weight) {
-      content += `<p><strong>Weight:</strong> ${item.system.weight} lbs</p>`;
+    if (item.system.unitWeight) {
+      content += `<p><strong>Weight:</strong> ${item.system.unitWeight} lbs</p>`;
     }
     
     content += `</div>`;

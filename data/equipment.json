@@ -6,7 +6,7 @@
         "system": {
             "description": "A leather bag that can be strapped over the shoulders, requiring no hands. Internal capacity: 16 slots (400 coins). Can lash 4 items externally.",
             "cost": 5,
-            "weight": 2,
+            "unitWeight": 2,
             "storedSize": 4,
             "quantity": {
                 "value": 1,
@@ -28,7 +28,7 @@
         "system": {
             "description": "A small leather pouch that attaches to a belt. Capacity: 2 slots (50 coins). 2 pouches can be attached to a single belt.",
             "cost": 2,
-            "weight": 0.5,
+            "unitWeight": 0.5,
             "storedSize": 1,
             "quantity": {
                 "value": 1,
@@ -47,7 +47,7 @@
         "system": {
             "description": "An iron bar, 2–3' long. Used for prying open doors, chest lids, etc.",
             "cost": 10,
-            "weight": 4,
+            "unitWeight": 4,
             "storedSize": 4,
             "quantity": {
                 "value": 1,
@@ -67,7 +67,7 @@
         "system": {
             "description": "A bunch of garlic, sometimes used to repel undead creatures.",
             "cost": 5,
-            "weight": 0,
+            "unitWeight": 0,
             "storedSize": 1,
             "quantity": {
                 "value": 1,
@@ -87,7 +87,7 @@
         "system": {
             "description": "Made of iron, with 3-4 hooks and a ring to attach a rope. Designed to be thrown by hand and attached to 50 ft. of rope (~6 lbs if hemp rope). The combined 'grappling hook + rope' kit typically weighs about 9 lbs total.",
             "cost": 25,
-            "weight": 3,
+            "unitWeight": 3,
             "storedSize": 2,
             "quantity": {
                 "value": 1,
@@ -108,7 +108,7 @@
         "system": {
             "description": "Comparable to a carpenter's or small blacksmith's hammer — light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
             "cost": 2,
-            "weight": 2,
+            "unitWeight": 2,
             "storedSize": 2,
             "quantity": {
                 "value": 1,
@@ -128,7 +128,7 @@
         "system": {
             "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
             "cost": 25,
-            "weight": 0.3,
+            "unitWeight": 0.3,
             "storedSize": 1,
             "quantity": {
                 "value": 1,
@@ -149,7 +149,7 @@
         "system": {
             "description": "Water blessed by a holy person, stored in a special vial for use in rituals. Inflicts damage on undead when used as a weapon. A vial is easily held in one hand or stored in a pouch.",
             "cost": 25,
-            "weight": 0.75,
+            "unitWeight": 0.75,
             "storedSize": 1,
             "quantity": {
                 "value": 1,
@@ -170,7 +170,7 @@
         "system": {
             "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6–8 inches long, about ½ inch thick. Typically carried in a small leather pouch or tool roll.",
             "cost": 1,
-            "weight": 4,
+            "unitWeight": 0.333333,
             "storedSize": 3,
             "quantity": {
                 "value": 12,
@@ -191,7 +191,7 @@
         "system": {
             "description": "Durable and wind-resistant; the shutters allow stealthy use underground or at night. Heavier than a simple hooded lantern due to extra metal housing. Burns one flask of oil per 4 hours (24 turns). Casts light in a 30' radius.",
             "cost": 10,
-            "weight": 2,
+            "unitWeight": 2,
             "storedSize": 4,
             "quantity": {
                 "value": 1,
@@ -211,7 +211,7 @@
         "system": {
             "description": "Durable and unbreakable compared to glass. Commonly used for signaling, checking around corners, or personal grooming. Often stored in a thin leather sleeve or wooden case.",
             "cost": 5,
-            "weight": 0.5,
+            "unitWeight": 0.5,
             "storedSize": 1,
             "quantity": {
                 "value": 1,
@@ -231,7 +231,7 @@
         "system": {
             "description": "Used to fuel lanterns or as a weapon when ignited. Burns for 4 hours in a lantern or 1 turn when used to create a pool of fire. Often carried in a padded or leather-lined pouch to prevent breakage.",
             "cost": 2,
-            "weight": 1,
+            "unitWeight": 1,
             "storedSize": 2,
             "quantity": {
                 "value": 1,
@@ -252,7 +252,7 @@
         "system": {
             "description": "A 10-foot wooden pole used for prodding suspicious areas or measuring distances in a dungeon. Carried with difficulty indoors or underground; too long to strap to a pack, usually dragged or carried in hand. May be split into two 5-ft. sections for easier transport.",
             "cost": 1,
-            "weight": 7,
+            "unitWeight": 7,
             "storedSize": 4,
             "quantity": {
                 "value": 1,
@@ -273,7 +273,7 @@
         "system": {
             "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact — but heavy and bland. Often divided into daily pouches for easy rationing.",
             "cost": 15,
-            "weight": 7,
+            "unitWeight": 1,
             "storedSize": 4,
             "quantity": {
                 "value": 7,
@@ -294,7 +294,7 @@
         "system": {
             "description": "Fresh, unpreserved food suitable for shorter trips. Tastier but bulkier than iron rations. Cannot be carried indefinitely without spoilage unless kept cool or magically preserved. Common among caravan travelers or short expeditions.",
             "cost": 5,
-            "weight": 14,
+            "unitWeight": 2,
             "storedSize": 4,
             "quantity": {
                 "value": 7,
@@ -315,7 +315,7 @@
         "system": {
             "description": "Strong rope capable of supporting the weight of three people with equipment. Hemp rope is coarse, durable, and water-resistant but heavier when wet. Roughly 1 inch thick.",
             "cost": 1,
-            "weight": 9,
+            "unitWeight": 9,
             "storedSize": 4,
             "quantity": {
                 "value": 1,
@@ -336,7 +336,7 @@
         "system": {
             "description": "Commonly slung over the shoulder or tied to a pack. Not waterproof. Capacity: 24 slots (600 coins).",
             "cost": 2,
-            "weight": 0.5,
+            "unitWeight": 0.5,
             "storedSize": 2,
             "quantity": {
                 "value": 1,
@@ -355,7 +355,7 @@
         "system": {
             "description": "Often used for rations, tools, or loot. Can be tied to a belt or slung from a pack. Light, flexible, and easy to stow when empty. Not waterproof. Capacity: 8 slots (200 coins).",
             "cost": 1,
-            "weight": 0.25,
+            "unitWeight": 0.25,
             "storedSize": 2,
             "quantity": {
                 "value": 1,
@@ -374,7 +374,7 @@
         "system": {
             "description": "A wooden mallet and three stakes. Useful for setting up tents, restraints, defensive setups (trip lines, traps, etc.)...and vampires. Wooden mallet is quieter than a hammer, making it useful for stealthy camp setup.",
             "cost": 3,
-            "weight": 3,
+            "unitWeight": 1,
             "storedSize": 4,
             "quantity": {
                 "value": 3,
@@ -395,7 +395,7 @@
         "system": {
             "description": "Picks, tension wrench(s), small pliers, razor file, awl, miniature mirror on a stick, small oiler, spare springs/pins, leather roll or wooden/metal case. Used by thieves to open locks and disable traps.",
             "cost": 25,
-            "weight": 1.5,
+            "unitWeight": 1.5,
             "storedSize": 2,
             "quantity": {
                 "value": 1,
@@ -416,7 +416,7 @@
         "system": {
             "description": "Flint, steel, and tinder in a small box. Used to light fires or torches with a 2-in-6 success chance per round.",
             "cost": 3,
-            "weight": 0.5,
+            "unitWeight": 0.5,
             "storedSize": 1,
             "quantity": {
                 "value": 1,
@@ -437,7 +437,7 @@
         "system": {
             "description": "A bundle of six torches, wooden shafts wrapped with oil-soaked rags. Each burns for 1 hour (6 turns) and casts light in a 30' radius.",
             "cost": 1,
-            "weight": 1,
+            "unitWeight": 0.166667,
             "storedSize": 0.75,
             "quantity": {
                 "value": 6,
@@ -457,7 +457,7 @@
         "system": {
             "description": "Treated animal hide (goatskin or cowhide), sealed with wax or pitch that holds up to 2 pints (1 quart) of liquid.Slung over the shoulder or tied to a belt. One full waterskin provides about 1 day's drinking water for one person under normal conditions. May leak if punctured or dried out; periodic oiling extends lifespan.",
             "cost": 1,
-            "weight": 3,
+            "unitWeight": 3,
             "storedSize": 2,
             "quantity": {
                 "value": 1,
@@ -477,7 +477,7 @@
         "system": {
             "description": "Stoppered glass bottle, clay jug, or wineskin containing two pints of table or fortified wine.",
             "cost": 1,
-            "weight": 2.5,
+            "unitWeight": 2.5,
             "storedSize": 2,
             "quantity": {
                 "value": 1,
@@ -498,7 +498,7 @@
         "system": {
             "description": "A flowering herb that is highly toxic if ingested or absorbed through open skin. Used in alchemy, rituals, or to repel lycanthropes. Loses potency after a few weeks unless kept dried and sealed. Must be struck in melee to be effective.",
             "cost": 10,
-            "weight": 0.5,
+            "unitWeight": 0.5,
             "storedSize": 1,
             "quantity": {
                 "value": 1,

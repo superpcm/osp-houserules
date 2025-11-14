@@ -301,7 +301,7 @@ export class OspActor extends Actor {
 
     this.items.forEach(item => {
       const quantity = item.system.quantity?.value || 1;
-      const weight = item.system.weight || 0;
+      const weight = item.system.unitWeight || 0;
       totalWeight += weight * quantity;
     });
 

@@ -2257,7 +2257,7 @@
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{item.system.quantity.value}}</div>
                   <div class="field-short">{{item.system.damage}}</div>
-                  <div class="field-short">{{item.system.weight}}</div>
+                  <div class="field-short">{{item.system.unitWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
                     <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">
@@ -2314,7 +2314,7 @@
                   <div class="field-short">{{item.system.quantity.value}}</div>
                   <div class="field-short">{{item.system.type}}</div>
                   <div class="field-short">{{item.system.aac.value}}</div>
-                  <div class="field-short">{{item.system.weight}}</div>
+                  <div class="field-short">{{item.system.unitWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
                     <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">

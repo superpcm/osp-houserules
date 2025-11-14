@@ -79,7 +79,7 @@
       "base": {
         "description": "",
         "cost": 0,
-        "weight": 0,
+        "unitWeight": 0,
         "storedSize": 4,
         "quantity": {
           "value": 1,

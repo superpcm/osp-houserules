@@ -593,6 +593,33 @@
       "range": { "short": 0, "medium": 0, "long": 0 }
     }
   },
+    {
+    "name": "Khopesh",
+    "type": "weapon",
+    "img": "assets/images/weapons/khopesh.webp",
+    "system": {
+      "description": "This khopesh is a single-edged bronze or steel blade that curves forward into a sickle-like hook, mounted on a simple hilt with a wrapped grip. It is typically used to deliver powerful chopping blows and to hook shields or limbs, making it a brutal and versatile weapon favored by warriors of ancient, desert-born cultures.",
+      "cost": 10,
+      "unitWeight": 7,
+      "storedSize": 99,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "2d4",
+      "damageL": "1d6",
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 9,
+      "rof": 1,
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
   {
     "name": "Long Sword",
     "type": "weapon",
@@ -600,7 +627,7 @@
     "system": {
       "description": "This finely forged longsword features a straight, double-edged blade with a broad fuller running down its center, balanced for both cutting and thrusting. A simple steel crossguard, leather-wrapped grip, and brass-capped pommel give it a practical yet noble look, befitting the standard weapon of knights and seasoned adventurers.",
       "cost": 15,
-      "unitWeight": 40,
+      "unitWeight": 4,
       "storedSize": 6,
       "quantity": { "value": 1, "max": 0 },
       "equipped": false,
@@ -615,6 +642,68 @@
       "rof": 1,
       "bonus": 0,
       "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Broad Sword",
+    "type": "weapon",
+    "img": "assets/images/weapons/broadsword.webp",
+    "system": {
+      "description": "This broadsword has a wide, double-edged steel blade with a simple crossguard and a leather-wrapped grip ending in a solid pommel for balance. It is typically used by heavily armed warriors as a primary melee weapon, delivering powerful chopping and slashing blows in close combat.",
+      "cost": 10,
+      "unitWeight": 4,
+      "storedSize": 99,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "2d4",
+      "damageL": "1d6+1",
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 5,
+      "rof": 1,
+      "bonus": 0,
+      "tags": ["melee"],
+      "melee": true,
+      "missile": false,
+      "range": { "short": 0, "medium": 0, "long": 0 }
+    }
+  },
+  {
+    "name": "Bastard Sword",
+    "type": "weapon",
+    "img": "assets/images/weapons/bastardsword.webp",
+    "system": {
+      "description": "This bastard sword features a long, double-edged blade with a simple yet elegant crossguard and an extended leather-wrapped grip suited for either one- or two-handed use. It is typically favored by versatile knights and adventurers who want the option to strike with the speed of a longsword or the heavier blows of a greatsword as the situation demands.",
+      "cost": 25,
+      "unitWeight": 10,
+      "storedSize": 99,
+      "quantity": { "value": 1, "max": 0 },
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": {
+        "oneHanded": {
+          "normal": "1d8",
+          "large": "1d12"
+        },
+        "twoHanded": {
+          "normal": "2d4",
+          "large": "2d8"
+        }
+      },
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 5,
+      "rof": 1,
+      "bonus": 0,
+      "tags": ["melee", "versatile"],
       "melee": true,
       "missile": false,
       "range": { "short": 0, "medium": 0, "long": 0 }

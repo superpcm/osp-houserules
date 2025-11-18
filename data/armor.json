@@ -1,67 +1,69 @@
 [
   {
-    "name": "Brigandine",
-    "type": "armor",
-    "img": "assets/images/armor/brigandine.webp",
-    "system": {
-        "description": "Brigandine is a flexible armor made of small overlapping steel plates riveted between layers of sturdy fabric or leather, creating a protective yet maneuverable defense. Its distinctive grid of visible rivets gives it a rugged, utilitarian appearance favored by soldiers and mercenaries.",
-        "cost": 120,
-        "unitWeight": 35,
-        "storedSize": 16,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "armorClass": 13,
-        "armorType": "medium"
-    }
-  },
-  {
-    "name": "Chain mail",
-    "type": "armor",
-    "img": "assets/images/armor/chain-mail.webp",
-    "system": {
-        "description": "Chain mail consists of thousands of interlinked metal rings forming a flexible mesh that protects against cuts and thrusts. It is one of the most reliable and widely used armors among seasoned soldiers and adventurers.",
-        "cost": 75,
-        "unitWeight": 40,
-        "storedSize": 16,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "armorClass": 14,
-        "armorType": "medium"
-    }
-  },
-  {
     "name": "Banded mail",
     "type": "armor",
     "img": "assets/images/armor/banded-mail.webp",
     "system": {
-        "description": "Banded mail is made of broad horizontal metal bands fitted over a backing of leather or chain, creating a rigid yet reliable defensive shell. Though heavy and somewhat restrictive, it offers strong protection for frontline warriors who can bear its weight.",
-        "cost": 200,
-        "unitWeight": 35,
-        "storedSize": 24,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "aac": {
-            "value": 15
-        },
-        "type": "medium"
+      "description": "Banded mail is made of broad horizontal metal bands fitted over a backing of leather or chain, creating a rigid yet reliable defensive shell. Though heavy and somewhat restrictive, it offers strong protection for frontline warriors who can bear its weight.",
+      "cost": 200,
+      "unitWeight": 35,
+      "storedSize": 24,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 15
+      },
+      "type": "medium"
+    }
+  },
+  {
+    "name": "Body Shield",
+    "type": "armor",
+    "img": "assets/images/armor/body-shield.webp",
+    "system": {
+      "description": "This tall, kite-shaped body shield is built from stout wooden planks banded with dark iron and anchored by a heavy central boss, broad enough to cover a warrior from shoulder to knee. Designed for shield-wall fighting and holding ground, it trades agility for tremendous frontal protection.",
+      "cost": 10,
+      "unitWeight": 15,
+      "storedSize": 60,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 2
+      },
+      "type": "shield"
+    }
+  },
+  {
+    "name": "Brigandine",
+    "type": "armor",
+    "img": "assets/images/armor/brigandine.webp",
+    "system": {
+      "description": "Brigandine is a flexible armor made of small overlapping steel plates riveted between layers of sturdy fabric or leather, creating a protective yet maneuverable defense. Its distinctive grid of visible rivets gives it a rugged, utilitarian appearance favored by soldiers and mercenaries.",
+      "cost": 120,
+      "unitWeight": 35,
+      "storedSize": 16,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "armorClass": 13,
+      "armorType": "medium"
     }
   },
   {
@@ -69,22 +71,43 @@
     "type": "armor",
     "img": "assets/images/armor/bronze-plate-mail.webp",
     "system": {
-        "description": "Bronze plate mail features solid, fitted plates of hammered bronze forged into a rigid cuirass and limb guards. Though heavier and less advanced than steel plate, it offers superior defense and a distinctive ancient-warrior aesthetic.",
-        "cost": 400,
-        "unitWeight": 55,
-        "storedSize": 36,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "aac": {
-            "value": 17
-        },
-        "type": "heavy"
+      "description": "Bronze plate mail features solid, fitted plates of hammered bronze forged into a rigid cuirass and limb guards. Though heavier and less advanced than steel plate, it offers superior defense and a distinctive ancient-warrior aesthetic.",
+      "cost": 400,
+      "unitWeight": 55,
+      "storedSize": 36,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 17
+      },
+      "type": "heavy"
+    }
+  },
+  {
+    "name": "Chain mail",
+    "type": "armor",
+    "img": "assets/images/armor/chain-mail.webp",
+    "system": {
+      "description": "Chain mail consists of thousands of interlinked metal rings forming a flexible mesh that protects against cuts and thrusts. It is one of the most reliable and widely used armors among seasoned soldiers and adventurers.",
+      "cost": 75,
+      "unitWeight": 40,
+      "storedSize": 16,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "armorClass": 14,
+      "armorType": "medium"
     }
   },
   {
@@ -92,22 +115,22 @@
     "type": "armor",
     "img": "assets/images/armor/field-plate.webp",
     "system": {
-        "description": "Field plate is a well-crafted suit of articulated steel plates that balances protection with mobility, making it ideal for mounted knights. It is less refined than full plate but still represents elite craftsmanship and reliability.",
-        "cost": 2000,
-        "unitWeight": 60,
-        "storedSize": 36,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "aac": {
-            "value": 17
-        },
-        "type": "heavy"
+      "description": "Field plate is a well-crafted suit of articulated steel plates that balances protection with mobility, making it ideal for mounted knights. It is less refined than full plate but still represents elite craftsmanship and reliability.",
+      "cost": 2000,
+      "unitWeight": 60,
+      "storedSize": 36,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 17
+      },
+      "type": "heavy"
     }
   },
   {
@@ -115,22 +138,22 @@
     "type": "armor",
     "img": "assets/images/armor/full-plate.webp",
     "system": {
-        "description": "Full plate is the pinnacle of personal armor, a custom-fitted suit of interlocking steel plates that maximizes both protection and freedom of movement. Reserved for nobility and elite champions, it is incredibly expensive but unmatched in defense.",
-        "cost": 10000,
-        "unitWeight": 70,
-        "storedSize": 50,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "aac": {
-            "value": 18
-        },
-        "type": "heavy"
+      "description": "Full plate is the pinnacle of personal armor, a custom-fitted suit of interlocking steel plates that maximizes both protection and freedom of movement. Reserved for nobility and elite champions, it is incredibly expensive but unmatched in defense.",
+      "cost": 10000,
+      "unitWeight": 70,
+      "storedSize": 50,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 18
+      },
+      "type": "heavy"
     }
   },
   {
@@ -138,22 +161,22 @@
     "type": "armor",
     "img": "assets/images/armor/hide.webp",
     "system": {
-        "description": "Hide armor is made from thick animal pelts and furs, often crudely stitched together to create a rugged, heavy garment. While bulky, it provides solid protection for tribal warriors, druids, and creatures of the wild.",
-        "cost": 15,
-        "unitWeight": 30,
-        "storedSize": 16,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "aac": {
-            "value": 13
-        },
-        "type": "light"
+      "description": "Hide armor is made from thick animal pelts and furs, often crudely stitched together to create a rugged, heavy garment. While bulky, it provides solid protection for tribal warriors, druids, and creatures of the wild.",
+      "cost": 15,
+      "unitWeight": 30,
+      "storedSize": 16,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 13
+      },
+      "type": "light"
     }
   },
   {
@@ -161,45 +184,22 @@
     "type": "armor",
     "img": "assets/images/armor/leather.webp",
     "system": {
-        "description": "Leather armor is crafted from hardened animal hide, molded and stitched into a flexible protective vest. It is lightweight, durable, and favored by characters who rely on stealth and mobility.",
-        "cost": 20,
-        "unitWeight": 15,
-        "storedSize": 8,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "aac": {
-            "value": 12
-        },
-        "type": "light"
-    }
-  },
-  {
-    "name": "Studded Leather",
-    "type": "armor",
-    "img": "assets/images/armor/studded-leather.webp",
-    "system": {
-        "description": "Studded leather armor reinforces hardened leather with rows of metal rivets or studs, improving its ability to deflect or absorb strikes. It is a popular midpoint between flexibility and protection for rogues, rangers, and mercenaries.",
-        "cost": 25,
-        "unitWeight": 25,
-        "storedSize": 10,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "aac": {
-            "value": 13
-        },
-        "type": "light"
+      "description": "Leather armor is crafted from hardened animal hide, molded and stitched into a flexible protective vest. It is lightweight, durable, and favored by characters who rely on stealth and mobility.",
+      "cost": 20,
+      "unitWeight": 15,
+      "storedSize": 8,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 12
+      },
+      "type": "light"
     }
   },
   {
@@ -207,22 +207,22 @@
     "type": "armor",
     "img": "assets/images/armor/padded.webp",
     "system": {
-        "description": "Padded armor is a thick, quilted garment made from layered cloth and batting, offering basic protection against glancing blows. It is inexpensive, quiet to move in, and commonly worn by scouts, thieves, and novice adventurers.",
-        "cost": 4,
-        "unitWeight": 10,
-        "storedSize": 8,
-        "quantity": {
-            "value": 1,
-            "max": 0
-        },
-        "equipped": false,
-        "lashable": false,
-        "lashed": false,
-        "containerId": null,
-        "aac": {
-            "value": 11
-        },
-        "type": "light"
+      "description": "Padded armor is a thick, quilted garment made from layered cloth and batting, offering basic protection against glancing blows. It is inexpensive, quiet to move in, and commonly worn by scouts, thieves, and novice adventurers.",
+      "cost": 4,
+      "unitWeight": 10,
+      "storedSize": 8,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 11
+      },
+      "type": "light"
     }
   },
   {
@@ -248,15 +248,15 @@
       "type": "shield"
     }
   },
-    {
-    "name": "Body Shield",
+  {
+    "name": "Studded Leather",
     "type": "armor",
-    "img": "assets/images/armor/body-shield.webp",
+    "img": "assets/images/armor/studded-leather.webp",
     "system": {
-      "description": "This tall, kite-shaped body shield is built from stout wooden planks banded with dark iron and anchored by a heavy central boss, broad enough to cover a warrior from shoulder to knee. Designed for shield-wall fighting and holding ground, it trades agility for tremendous frontal protection.",
-      "cost": 10,
-      "unitWeight": 15,
-      "storedSize": 60,
+      "description": "Studded leather armor reinforces hardened leather with rows of metal rivets or studs, improving its ability to deflect or absorb strikes. It is a popular midpoint between flexibility and protection for rogues, rangers, and mercenaries.",
+      "cost": 25,
+      "unitWeight": 25,
+      "storedSize": 10,
       "quantity": {
         "value": 1,
         "max": 0
@@ -266,9 +266,9 @@
       "lashed": false,
       "containerId": null,
       "aac": {
-        "value": 2
+        "value": 13
       },
-      "type": "shield"
+      "type": "light"
     }
   }
 ]

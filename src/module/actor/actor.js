@@ -265,7 +265,7 @@ export class OspActor extends Actor {
     this.system.weapons = this.items.filter(item => item.type === "weapon");
     this.system.armor = this.items.filter(item => item.type === "armor");
     this.system.containers = this.items.filter(item => item.type === "container");
-    this.system.items = this.items.filter(item => item.type === "item" && !item.system.treasure);
+    this.system.items = this.items.filter(item => (item.type === "item" || item.type === "coin") && !item.system.treasure);
     this.system.treasures = this.items.filter(item => item.type === "item" && item.system.treasure);
 
     // Sync container equipped state based on location

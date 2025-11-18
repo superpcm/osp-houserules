@@ -12,19 +12,19 @@ $col-field-short: 96px;  // Generic short field width (fallback for .field-short
 $col-image: 74px;        // Generic image column width (used by .item-roll-icon)
 
 /* Weapons Section Column Widths (Combat Tab) */
-$weapons-col-image: 74px;        // Width of weapon image/roll icon
-$weapons-col-name: 140px;        // Width of weapon name column
-$weapons-col-qty: 63px;          // Width of quantity column
-$weapons-col-damage: 96px;       // Width of damage column
-$weapons-col-weight: 96px;       // Width of weight column
+$weapons-col-image: 30px;        // Width of weapon image/roll icon (matches containers)
+$weapons-col-name: 228px;        // Width of weapon name column (matches containers)
+$weapons-col-qty: 68px;          // Width of quantity column (matches containers)
+$weapons-col-damage: 88px;       // Width of damage column (matches containers capacity)
+$weapons-col-weight: 60px;       // Width of weight column (matches containers)
 
 /* Armor Section Column Widths (Combat Tab) */
-$armor-col-image: 74px;          // Width of armor image
-$armor-col-name: 138px;          // Width of armor name column
-$armor-col-qty: 63px;            // Width of quantity column
-$armor-col-type: 96px;           // Width of type column
-$armor-col-ac: 96px;             // Width of AC column
-$armor-col-weight: 96px;         // Width of weight column
+$armor-col-image: 30px;          // Width of armor image (matches containers)
+$armor-col-name: 228px;          // Width of armor name column (matches containers)
+$armor-col-qty: 68px;            // Width of quantity column (matches containers)
+$armor-col-type: 88px;           // Width of type column (matches containers capacity)
+$armor-col-ac: 88px;             // Width of AC column (matches containers capacity)
+$armor-col-weight: 60px;         // Width of weight column (matches containers)
 
 /* Containers Section Column Widths (Equipment Tab - Adventuring Gear) */
 $containers-col-image: 30px;     // Width of container image
@@ -98,7 +98,8 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
    $col-caret + $treasure-col-name + $treasure-col-value + $treasure-col-weight + $col-controls + ($grid-gap × 4)
    ============================================ */
 
-.equipment-tab {
+.equipment-tab,
+.combat-tab {
   max-width: 708px;  // Reduced from 710px to compensate for 6px left margin
   margin: 0 auto; /* Center the content */
   margin-left: calc(50% - 352px); /* Offset 6px to the right (352px = 704/2) */
@@ -107,6 +108,32 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Prevent outer scroll, content will scroll internally */
+}
+
+.combat-tab {
+  overflow-y: auto; /* Allow scrolling for combat tab */
+  padding-top: 15px; /* Match equipment tab spacing */
+  
+  /* Match scrollbar styling from equipment tab */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+  
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.6);
+  }
 }
 
 .item-category {
@@ -138,11 +165,11 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   gap: $grid-gap;
   
   &.weapons-title {
-    grid-template-columns: $col-caret $weapons-col-image $weapons-col-name $weapons-col-qty $weapons-col-damage $weapons-col-weight $col-controls;
+    grid-template-columns: $weapons-col-image $weapons-col-name $weapons-col-qty $weapons-col-damage $weapons-col-weight $col-controls;
   }
   
     &.armor-title {
-      grid-template-columns: $col-caret $armor-col-image $armor-col-name $armor-col-qty $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
+      grid-template-columns: $armor-col-image $armor-col-name $armor-col-qty $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
     }
 
     &.containers-title {
@@ -361,11 +388,11 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     
     // Weapon items with roll icon column
     &.weapon-header {
-      grid-template-columns: $col-caret $weapons-col-image $weapons-col-name $weapons-col-qty $weapons-col-damage $weapons-col-weight $col-controls;
+      grid-template-columns: $weapons-col-image $weapons-col-name $weapons-col-qty $weapons-col-damage $weapons-col-weight $col-controls;
     }
     
         &.armor-header {
-      grid-template-columns: $col-caret $armor-col-image $armor-col-name $armor-col-qty $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
+      grid-template-columns: $armor-col-image $armor-col-name $armor-col-qty $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
     }
 
     &.container-header {
@@ -659,7 +686,8 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .osp.sheet.item .is-pos-container-image,
 .osp.sheet.item .is-pos-weapon-image,
 .osp.sheet.item .is-pos-armor-image,
-.osp.sheet.item .is-pos-item-image {
+.osp.sheet.item .is-pos-item-image,
+.osp.sheet.item .is-pos-coin-image {
     position: absolute !important; 
     left: 10px !important; 
     top: 40px !important; 
@@ -672,7 +700,8 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .osp.sheet.item .is-pos-container-name,
 .osp.sheet.item .is-pos-weapon-name,
 .osp.sheet.item .is-pos-armor-name,
-.osp.sheet.item .is-pos-item-name {
+.osp.sheet.item .is-pos-item-name,
+.osp.sheet.item .is-pos-coin-name {
     position: absolute; left: 198px; top: 40px; width: 312px; height: 40px;
     font-size: 48px;
     text-align: center;

@@ -1,0 +1,36 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img is-pos-coin-image" src="{{img}}" data-edit="img" title="{{name}} - Weight: {{system.unitWeight}} lbs/coin, Size: {{system.storedSize}} slots/coin" />
+    <div class="header-col">
+      <h1 class="charname is-pos-coin-name">
+        {{#if @root.isGM}}
+          <input type="text" name="name" value="{{name}}" />
+        {{else}}
+          <span>{{name}}</span>
+        {{/if}}
+      </h1>
+      <div class="details">
+        <div class="form-group">
+          <input type="number" class="is-pos-weight" name="system.unitWeight" value="{{system.unitWeight}}" min="0" step="0.01" {{#unless @root.isGM}}readonly disabled{{/unless}} />
+        </div>
+        <div class="form-group">
+          <input type="number" class="is-pos-size" name="system.storedSize" value="{{system.storedSize}}" min="0" step="0.01" {{#unless @root.isGM}}readonly disabled{{/unless}} />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sheet-body">
+    <div class="flexrow">
+      <div class="stats">
+        <div class="form-group">
+          <input type="number" class="is-pos-quantity" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
+        </div>
+      </div>
+
+      <div class="description">
+        <textarea class="is-pos-description" name="system.description" {{#unless @root.isGM}}readonly disabled{{/unless}}>{{system.description}}</textarea>
+      </div>
+    </div>
+  </section>
+</form>

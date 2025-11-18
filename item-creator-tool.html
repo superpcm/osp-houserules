@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSP Item Creator Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .output-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .output-section.visible {
+            display: block;
+        }
+        
+        .output-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .output-box {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .copy-btn {
+            margin-top: 10px;
+            background: #28a745;
+            color: white;
+        }
+        
+        .copy-btn:hover {
+            background: #218838;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .type-specific {
+            display: none;
+        }
+        
+        .type-specific.visible {
+            display: block;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ OSP Item Creator Tool</h1>
+            <p>Create items, weapons, armor, and treasures with ease</p>
+        </div>
+        
+        <div class="content">
+            <form id="itemForm">
+                <!-- Item Type Selection -->
+                <div class="form-section">
+                    <h2>Item Type</h2>
+                    <div class="form-group">
+                        <label for="itemType">Select Item Type *</label>
+                        <select id="itemType" required>
+                            <option value="">-- Select Type --</option>
+                            <option value="item">Item (Equipment)</option>
+                            <option value="weapon">Weapon</option>
+                            <option value="armor">Armor</option>
+                            <option value="container">Container</option>
+                            <option value="treasure">Treasure</option>
+                            <option value="coin">Coin</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h2>Basic Information</h2>
+                    <div class="form-group">
+                        <label for="name">Item Name *</label>
+                        <input type="text" id="name" required placeholder="e.g., Iron Sword, Leather Armor, Holy Water">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Describe the item's appearance, uses, or special properties"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cost">Cost (in silver pieces)</label>
+                            <input type="number" id="cost" value="0" min="0" step="0.01">
+                            <div class="help-text">Cost in silver pieces (SP)</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="img">Image Path</label>
+                            <input type="text" id="img" placeholder="assets/images/icons/">
+                            <div class="help-text">Path to item icon</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weight & Storage -->
+                <div class="form-section">
+                    <h2>Weight & Storage</h2>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label for="unitWeight">Unit Weight (lbs)</label>
+                            <input type="number" id="unitWeight" value="0" min="0" step="0.01">
+                            <div class="help-text">Weight per unit</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="storedSize">Stored Size (slots)</label>
+                            <input type="number" id="storedSize" value="0" min="0" step="0.01">
+                            <div class="help-text">Slots in container</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="quantityMax">Max Stack</label>
+                            <input type="number" id="quantityMax" value="0" min="0">
+                            <div class="help-text">0 = no limit</div>
+                        </div>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="lashable">
+                        <label for="lashable">Lashable (can be lashed to container)</label>
+                    </div>
+                </div>
+                
+                <!-- Weapon-specific fields -->
+                <div id="weaponFields" class="form-section type-specific">
+                    <h2>Weapon Properties</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="damage">Damage</label>
+                            <input type="text" id="damage" placeholder="e.g., 1d6, 1d8, 2d4">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bonus">Bonus</label>
+                            <input type="number" id="bonus" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="range">Range (if missile)</label>
+                            <input type="text" id="range" placeholder="e.g., 60/120/180">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="weaponType">Weapon Type</label>
+                            <select id="weaponType">
+                                <option value="melee">Melee</option>
+                                <option value="missile">Missile</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="melee">
+                        <label for="melee">Melee</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="missile">
+                        <label for="missile">Missile</label>
+                    </div>
+                </div>
+                
+                <!-- Armor-specific fields -->
+                <div id="armorFields" class="form-section type-specific">
+                    <h2>Armor Properties</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="armorClassAsc">Armor Class (AAC)</label>
+                            <input type="number" id="armorClassAsc" value="10" min="0" max="30">
+                            <div class="help-text">Ascending AC (higher is better)</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="armorType">Armor Type</label>
+                            <select id="armorType">
+                                <option value="light">Light</option>
+                                <option value="medium">Medium</option>
+                                <option value="heavy">Heavy</option>
+                                <option value="shield">Shield</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Treasure-specific fields -->
+                <div id="treasureFields" class="form-section type-specific">
+                    <h2>Treasure Properties</h2>
+                    <div class="form-group">
+                        <label for="treasureValue">Treasure Value (GP)</label>
+                        <input type="number" id="treasureValue" value="0" min="0" step="0.01">
+                        <div class="help-text">Actual value of the treasure</div>
+                    </div>
+                </div>
+                
+                <!-- Container-specific fields -->
+                <div id="containerFields" class="form-section type-specific">
+                    <h2>Container Properties</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="capacity">Capacity (slots)</label>
+                            <input type="number" id="capacity" value="0" min="0" step="1">
+                            <div class="help-text">Total storage slots</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lashSlots">Lash Slots</label>
+                            <input type="number" id="lashSlots" value="0" min="0" step="1">
+                            <div class="help-text">Number of lash points</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Generate JSON</button>
+                    <button type="button" id="resetBtn" class="btn btn-secondary">Reset Form</button>
+                </div>
+            </form>
+            
+            <!-- Output Section -->
+            <div id="outputSection" class="output-section">
+                <h2>Generated JSON</h2>
+                <div class="output-box" id="output"></div>
+                <button id="copyBtn" class="btn copy-btn">📋 Copy to Clipboard</button>
+                <div class="help-text" style="margin-top: 10px;">
+                    Add this JSON object to the appropriate array in your data file (equipment.json, weapons.json, armor.json, or treasure.json)
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('itemForm');
+        const itemTypeSelect = document.getElementById('itemType');
+        const outputSection = document.getElementById('outputSection');
+        const output = document.getElementById('output');
+        const copyBtn = document.getElementById('copyBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // Show/hide type-specific fields
+        itemTypeSelect.addEventListener('change', function() {
+            document.querySelectorAll('.type-specific').forEach(el => {
+                el.classList.remove('visible');
+            });
+            
+            const selectedType = this.value;
+            if (selectedType === 'weapon') {
+                document.getElementById('weaponFields').classList.add('visible');
+            } else if (selectedType === 'armor') {
+                document.getElementById('armorFields').classList.add('visible');
+            } else if (selectedType === 'treasure') {
+                document.getElementById('treasureFields').classList.add('visible');
+            } else if (selectedType === 'container') {
+                document.getElementById('containerFields').classList.add('visible');
+            }
+        });
+        
+        // Generate JSON
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const itemType = document.getElementById('itemType').value;
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            const cost = parseFloat(document.getElementById('cost').value) || 0;
+            const img = document.getElementById('img').value || `assets/images/icons/`;
+            const unitWeight = parseFloat(document.getElementById('unitWeight').value) || 0;
+            const storedSize = parseFloat(document.getElementById('storedSize').value) || 0;
+            const quantityMax = parseInt(document.getElementById('quantityMax').value) || 0;
+            const lashable = document.getElementById('lashable').checked;
+            
+            const itemData = {
+                name: name,
+                type: itemType === 'treasure' ? 'item' : itemType,
+                img: img,
+                system: {
+                    description: description,
+                    cost: cost,
+                    unitWeight: unitWeight,
+                    storedSize: storedSize,
+                    quantity: {
+                        value: 0,
+                        max: quantityMax
+                    },
+                    equipped: false,
+                    lashable: lashable,
+                    lashed: false,
+                    containerId: null
+                }
+            };
+            
+            // Add treasure flag
+            if (itemType === 'treasure') {
+                itemData.system.treasure = true;
+                itemData.system.treasureValue = parseFloat(document.getElementById('treasureValue').value) || 0;
+            }
+            
+            // Add weapon-specific properties
+            if (itemType === 'weapon') {
+                itemData.system.damage = document.getElementById('damage').value || '1d6';
+                itemData.system.bonus = parseInt(document.getElementById('bonus').value) || 0;
+                itemData.system.range = document.getElementById('range').value || '';
+                itemData.system.melee = document.getElementById('melee').checked;
+                itemData.system.missile = document.getElementById('missile').checked;
+            }
+            
+            // Add armor-specific properties
+            if (itemType === 'armor') {
+                itemData.system.aac = {
+                    value: parseInt(document.getElementById('armorClassAsc').value) || 10
+                };
+                itemData.system.type = document.getElementById('armorType').value || 'light';
+            }
+            
+            // Add container-specific properties
+            if (itemType === 'container') {
+                itemData.system.capacity = parseInt(document.getElementById('capacity').value) || 0;
+                itemData.system.lashSlots = parseInt(document.getElementById('lashSlots').value) || 0;
+            }
+            
+            // Display JSON
+            const jsonString = JSON.stringify(itemData, null, 4);
+            output.textContent = jsonString;
+            outputSection.classList.add('visible');
+            outputSection.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Copy to clipboard
+        copyBtn.addEventListener('click', function() {
+            const text = output.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+            });
+        });
+        
+        // Reset form
+        resetBtn.addEventListener('click', function() {
+            form.reset();
+            outputSection.classList.remove('visible');
+            document.querySelectorAll('.type-specific').forEach(el => {
+                el.classList.remove('visible');
+            });
+        });
+    </script>
+</body>
+</html>

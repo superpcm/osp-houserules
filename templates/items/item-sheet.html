@@ -29,12 +29,6 @@
         <div class="form-group">
           <input type="number" class="is-pos-quantity" name="system.quantity.value" value="{{system.quantity.value}}" min="0" />
         </div>
-
-        {{#if (gt system.quantity.max 0)}}
-        <div class="form-group">
-          <input type="number" class="is-pos-max-uses" value="{{system.quantity.max}}" min="0" readonly disabled />
-        </div>
-        {{/if}}
       </div>
 
       <div class="description">

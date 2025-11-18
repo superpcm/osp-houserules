@@ -204,9 +204,28 @@ export class OspActorSheetCharacter extends ActorSheet {
       allContainedItems.forEach(item => {
         const itemWeight = parseFloat(item.system.unitWeight) || 0;
         const currentQuantity = item.system.quantity?.value || 1;
+        const storedSize = parseFloat(item.system.storedSize) || 0;
+        const maxQuantity = item.system.quantity?.max || 0;
         
         // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
         item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
+        
+        // Calculate display capacity based on item type
+        let itemCapacity;
+        if (item.type === "coin") {
+          // Coins: each coin takes storedSize slots
+          itemCapacity = storedSize * currentQuantity;
+        } else if (maxQuantity > 0) {
+          // Stackable item with max > 0: calculate proportionally
+          itemCapacity = (storedSize / maxQuantity) * currentQuantity;
+        } else if (currentQuantity > 1) {
+          // Item with quantity > 1 but max = 0: multiply by quantity (unlimited stacking)
+          itemCapacity = storedSize * currentQuantity;
+        } else {
+          // Non-stackable item with quantity = 1: use storedSize as-is
+          itemCapacity = storedSize;
+        }
+        item.displayCapacity = Math.round(itemCapacity); // Round to whole number
         
         // Separate lashed from stored items
         if (item.system.lashed) {
@@ -227,6 +246,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       containerData.totalWeight = containerWeight + containedWeight;
       
       // Calculate used capacity: ONLY stored items count, not lashed items
+      // For coins: storedSize * quantity (each coin takes 0.04 slots)
       // For stackable items (with max > 0): (storedSize / max) * currentQuantity
       // For non-stackable items: storedSize as-is
       const usedCapacity = storedItems.reduce((total, item) => {
@@ -235,21 +255,29 @@ export class OspActorSheetCharacter extends ActorSheet {
         const maxQuantity = item.system.quantity?.max || 0;
         
         let itemCapacity;
-        if (maxQuantity > 0) {
-          // Stackable item: calculate proportionally
+        if (item.type === "coin") {
+          // Coins: each coin takes storedSize slots
+          itemCapacity = storedSize * currentQuantity;
+        } else if (maxQuantity > 0) {
+          // Stackable item with max > 0: calculate proportionally
           itemCapacity = (storedSize / maxQuantity) * currentQuantity;
+        } else if (currentQuantity > 1) {
+          // Item with quantity > 1 but max = 0: multiply by quantity (unlimited stacking)
+          itemCapacity = storedSize * currentQuantity;
         } else {
-          // Non-stackable item: use storedSize as-is
+          // Non-stackable item with quantity = 1: use storedSize as-is
           itemCapacity = storedSize;
         }
         
         return total + itemCapacity;
       }, 0);
-      containerData.usedCapacity = usedCapacity;
+      
+      // Round capacity values to whole numbers
+      containerData.usedCapacity = Math.round(usedCapacity);
       containerData.maxCapacity = container.system.capacity || 0;
-      containerData.remainingCapacity = Math.max(0, containerData.maxCapacity - usedCapacity);
+      containerData.remainingCapacity = Math.max(0, containerData.maxCapacity - containerData.usedCapacity);
       containerData.capacityPercentage = containerData.maxCapacity > 0 
-        ? Math.min(100, (usedCapacity / containerData.maxCapacity) * 100) 
+        ? Math.min(100, (containerData.usedCapacity / containerData.maxCapacity) * 100) 
         : 0;
       
       // Calculate lash slot usage
@@ -1119,6 +1147,19 @@ export class OspActorSheetCharacter extends ActorSheet {
       targetContainer = this.actor.items.get(parentContainerId);
     }
     
+    // If target container is itself stored inside another container (and not equipped/worn),
+    // traverse up to find the top-level equipped/worn container
+    if (targetContainer && targetContainer.type === "container" && targetContainer.system.containerId && !targetContainer.system.equipped) {
+      // Container is stored in another container and not equipped - find the top-level container
+      let topContainer = targetContainer;
+      while (topContainer.system.containerId) {
+        const parentContainer = this.actor.items.get(topContainer.system.containerId);
+        if (!parentContainer) break; // Safety check
+        topContainer = parentContainer;
+      }
+      targetContainer = topContainer;
+    }
+    
     // Check if this item already exists on this actor
     const existingItemCheck = this.actor.items.get(itemData._id);
     
@@ -1164,10 +1205,15 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
 
     // If the item is of type "item" (not weapon/armor/container), it MUST go into a container
-    if (itemData.type === "item") {
+    if (itemData.type === "item" || itemData.type === "coin") {
       if (!targetContainer || targetContainer.type !== "container") {
         ui.notifications.error("Items must be stored in a container. Drag the item onto a container.");
         return false;
+      }
+
+      // For coins, show quantity dialog
+      if (itemData.type === "coin") {
+        return this._handleCoinDrop(item, itemData, targetContainer, isReordering);
       }
 
       // Check if there's enough space in the container
@@ -1227,8 +1273,17 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Handle item from this actor (reordering/moving between containers)
     if (item.actor && item.actor.id === this.actor.id) {
       
+      // For stacked items (quantity > 1) moving to a different container, show dialog
+      const movingQty = itemData.system.quantity?.value || 1;
+      const currentContainerId = item.system.containerId;
+      const targetContainerId = targetContainer?.id || null;
+      
+      if (movingQty > 1 && currentContainerId !== targetContainerId && (itemData.type === "item" || itemData.type === "container")) {
+        return this._handleStackedItemDrop(item, itemData, targetContainer, currentContainerId);
+      }
+      
       // Check if we should stack this item with an existing one in the target container
-      if (targetContainer && itemData.type === "item") {
+      if (targetContainer && (itemData.type === "item" || itemData.type === "container")) {
         // Find matching item in the target container (excluding the item being moved)
         const matchingItem = this.actor.items.find(i => 
           i.id !== item.id && // Don't match with itself
@@ -1270,7 +1325,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Handle item from compendium or elsewhere - check for stacking
     
     // Check if we should stack this item with an existing one
-    if (targetContainer && itemData.type === "item") {
+    if (targetContainer && (itemData.type === "item" || itemData.type === "container")) {
       // Find matching item in the same container
       const matchingItem = this.actor.items.find(i => 
         i.name === itemData.name &&
@@ -1320,11 +1375,17 @@ export class OspActorSheetCharacter extends ActorSheet {
     const maxQuantity = itemData.system.quantity?.max || 0;
     
     let itemSize;
-    if (maxQuantity > 0) {
-      // Stackable item: calculate proportionally
+    if (itemData.type === "coin") {
+      // Coins: each coin takes storedSize slots
+      itemSize = storedSize * currentQuantity;
+    } else if (maxQuantity > 0) {
+      // Stackable item with max > 0: calculate proportionally
       itemSize = (storedSize / maxQuantity) * currentQuantity;
+    } else if (currentQuantity > 1) {
+      // Item with quantity > 1 but max = 0: multiply by quantity (unlimited stacking)
+      itemSize = storedSize * currentQuantity;
     } else {
-      // Non-stackable item: use storedSize as-is
+      // Non-stackable item with quantity = 1: use storedSize as-is
       itemSize = storedSize;
     }
     
@@ -1357,11 +1418,17 @@ export class OspActorSheetCharacter extends ActorSheet {
       const maxQuantity = item.system.quantity?.max || 0;
       
       let itemCapacity;
-      if (maxQuantity > 0) {
-        // Stackable item: calculate proportionally
+      if (item.type === "coin") {
+        // Coins: each coin takes storedSize slots
+        itemCapacity = storedSize * currentQuantity;
+      } else if (maxQuantity > 0) {
+        // Stackable item with max > 0: calculate proportionally
         itemCapacity = (storedSize / maxQuantity) * currentQuantity;
+      } else if (currentQuantity > 1) {
+        // Item with quantity > 1 but max = 0: multiply by quantity (unlimited stacking)
+        itemCapacity = storedSize * currentQuantity;
       } else {
-        // Non-stackable item: use storedSize as-is
+        // Non-stackable item with quantity = 1: use storedSize as-is
         itemCapacity = storedSize;
       }
       
@@ -1369,5 +1436,271 @@ export class OspActorSheetCharacter extends ActorSheet {
     });
     
     return total;
+  }
+
+  /**
+   * Handle dropping stacked items with quantity dialog
+   */
+  async _handleStackedItemDrop(item, itemData, targetContainer, currentContainerId) {
+    const totalQuantity = itemData.system.quantity?.value || 1;
+    
+    // Show dialog to ask how many to move
+    return new Promise((resolve) => {
+      const content = `
+        <form>
+          <div class="form-group">
+            <label>Current Quantity: <strong>${totalQuantity}</strong></label>
+            <label style="margin-top: 10px;">Move how many to ${targetContainer ? targetContainer.name : 'top level'}?</label>
+            <input type="number" name="moveQuantity" value="${totalQuantity}" min="1" max="${totalQuantity}" style="width: 100%;" autofocus />
+          </div>
+        </form>
+      `;
+
+      new Dialog({
+        title: `Move ${item.name}`,
+        content: content,
+        buttons: {
+          moveAll: {
+            icon: '<i class="fas fa-arrows-alt"></i>',
+            label: "Move All",
+            callback: async () => {
+              // Check if there's a matching item in target to stack with
+              const matchingItem = this.actor.items.find(i => 
+                i.id !== item.id &&
+                i.name === itemData.name &&
+                i.type === itemData.type &&
+                i.system.containerId === (targetContainer?.id || null) &&
+                i.system.storedSize === itemData.system.storedSize
+              );
+              
+              if (matchingItem) {
+                // Stack with existing item
+                const newTargetQty = (matchingItem.system.quantity?.value || 1) + totalQuantity;
+                await matchingItem.update({"system.quantity.value": newTargetQty});
+                await item.delete();
+                ui.notifications.info(`Merged ${totalQuantity} ${itemData.name}(s) with existing stack.`);
+              } else {
+                // Move all - just update the containerId
+                await item.update({"system.containerId": itemData.system.containerId});
+              }
+              resolve(true);
+            }
+          },
+          moveSpecific: {
+            icon: '<i class="fas fa-hand-holding"></i>',
+            label: "Move Quantity",
+            callback: async (html) => {
+              const moveQty = parseInt(html.find('[name="moveQuantity"]').val());
+              
+              if (moveQty <= 0 || moveQty > totalQuantity) {
+                ui.notifications.error(`Invalid quantity. Must be between 1 and ${totalQuantity}`);
+                resolve(false);
+                return;
+              }
+              
+              if (moveQty === totalQuantity) {
+                // Moving all - check if there's a matching item in target to stack with
+                const matchingItemAll = this.actor.items.find(i => 
+                  i.id !== item.id &&
+                  i.name === itemData.name &&
+                  i.type === itemData.type &&
+                  i.system.containerId === (targetContainer?.id || null) &&
+                  i.system.storedSize === itemData.system.storedSize
+                );
+                
+                if (matchingItemAll) {
+                  // Stack with existing item
+                  const newTargetQty = (matchingItemAll.system.quantity?.value || 1) + totalQuantity;
+                  await matchingItemAll.update({"system.quantity.value": newTargetQty});
+                  await item.delete();
+                  ui.notifications.info(`Merged ${totalQuantity} ${itemData.name}(s) with existing stack.`);
+                } else {
+                  // Just update the containerId
+                  await item.update({"system.containerId": itemData.system.containerId});
+                }
+                resolve(true);
+                return;
+              }
+              
+              // Moving partial quantity - check if there's a matching item in target
+              const matchingItem = this.actor.items.find(i => 
+                i.id !== item.id &&
+                i.name === itemData.name &&
+                i.type === itemData.type &&
+                i.system.containerId === (targetContainer?.id || null) &&
+                i.system.storedSize === itemData.system.storedSize
+              );
+              
+              if (matchingItem) {
+                // Stack with existing item
+                const newTargetQty = (matchingItem.system.quantity?.value || 1) + moveQty;
+                const newSourceQty = totalQuantity - moveQty;
+                
+                await matchingItem.update({"system.quantity.value": newTargetQty});
+                await item.update({"system.quantity.value": newSourceQty});
+                ui.notifications.info(`Moved ${moveQty} ${itemData.name}(s) to existing stack.`);
+              } else {
+                // Create new item in target location
+                const newItemData = foundry.utils.duplicate(itemData);
+                newItemData.system.quantity.value = moveQty;
+                newItemData.system.containerId = targetContainer?.id || null;
+                delete newItemData._id; // Remove ID so a new one is generated
+                
+                // Reduce quantity of source item
+                const newSourceQty = totalQuantity - moveQty;
+                await item.update({"system.quantity.value": newSourceQty});
+                await this.actor.createEmbeddedDocuments("Item", [newItemData]);
+                ui.notifications.info(`Moved ${moveQty} ${itemData.name}(s).`);
+              }
+              
+              resolve(true);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Cancel",
+            callback: () => resolve(false)
+          }
+        },
+        default: "moveSpecific"
+      }).render(true);
+    });
+  }
+
+  /**
+   * Handle dropping coins into a container with quantity dialog
+   */
+  async _handleCoinDrop(item, itemData, targetContainer, isReordering) {
+    const currentQuantity = itemData.system.quantity?.value || 0;
+    const availableSpace = this._getAvailableSpace(targetContainer);
+    const storedSize = parseFloat(itemData.system.storedSize) || 0.04;
+    const maxCoins = Math.floor(availableSpace / storedSize);
+    
+    // Show dialog to ask how many coins to add
+    return new Promise((resolve) => {
+      const content = `
+        <form>
+          <div class="form-group">
+            <label>How many coins to add to ${targetContainer.name}?</label>
+            <input type="number" name="coinQuantity" value="${Math.min(currentQuantity, maxCoins)}" min="0" style="width: 100%;" autofocus />
+            <p style="margin-top: 8px; font-size: 12px; color: #666;">
+              Available space in container: ${availableSpace} slots<br>
+              Maximum coins that fit: ${maxCoins} (each coin = ${storedSize} slots)
+            </p>
+          </div>
+        </form>
+      `;
+
+      new Dialog({
+        title: `Add ${item.name}`,
+        content: content,
+        buttons: {
+          add: {
+            icon: '<i class="fas fa-coins"></i>',
+            label: "Add Coins",
+            callback: async (html) => {
+              const quantity = parseInt(html.find('[name="coinQuantity"]').val());
+              
+              if (quantity <= 0) {
+                ui.notifications.warn("Quantity must be greater than 0");
+                resolve(false);
+                return;
+              }
+
+              if (quantity > maxCoins) {
+                ui.notifications.error(`Not enough space in ${targetContainer.name}. Maximum coins that fit: ${maxCoins}`);
+                resolve(false);
+                return;
+              }
+              
+              // Check if there's already a coin of this type in the target container
+              const existingCoin = this.actor.items.find(i => 
+                i.type === "coin" &&
+                i.name === itemData.name &&
+                i.system.containerId === targetContainer.id &&
+                (!item.actor || i.id !== item.id) // Don't match with the coin being moved
+              );
+              
+              // Validate space based on whether we're stacking or creating new
+              if (existingCoin) {
+                // Stacking: check if adding MORE coins to existing stack will fit
+                const additionalSpace = storedSize * quantity;
+                const availableSpace = this._getAvailableSpace(targetContainer);
+                
+                if (additionalSpace > availableSpace) {
+                  ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${additionalSpace} slots, have ${availableSpace} available.`);
+                  resolve(false);
+                  return;
+                }
+              } else {
+                // New stack: validate all coins will fit
+                itemData.system.quantity.value = quantity;
+                
+                if (!this._hasContainerSpace(targetContainer, itemData)) {
+                  ui.notifications.error(`Not enough space in ${targetContainer.name} for ${quantity} coins.`);
+                  resolve(false);
+                  return;
+                }
+              }
+              
+              // Update the item data with the specified quantity
+              itemData.system.quantity.value = quantity;
+              
+              // Set the container ID
+              itemData.system.containerId = targetContainer.id;
+              
+              // Handle item from another actor
+              if (item.actor && item.actor.id !== this.actor.id) {
+                if (existingCoin) {
+                  // Stack with existing coin
+                  const newQuantity = (existingCoin.system.quantity?.value || 0) + quantity;
+                  await existingCoin.update({"system.quantity.value": newQuantity});
+                  await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
+                } else {
+                  await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+                  await this.actor.createEmbeddedDocuments("Item", [itemData]);
+                }
+              } 
+              // Handle reordering within same actor
+              else if (item.actor && item.actor.id === this.actor.id) {
+                if (existingCoin) {
+                  // Stack with existing coin and delete the one being moved
+                  const newQuantity = (existingCoin.system.quantity?.value || 0) + quantity;
+                  await existingCoin.update({"system.quantity.value": newQuantity});
+                  await item.delete();
+                  ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack`);
+                } else {
+                  await item.update(itemData);
+                }
+              }
+              // Handle new item from compendium/sidebar (no actor)
+              else {
+                if (existingCoin) {
+                  // Stack with existing coin
+                  const newQuantity = (existingCoin.system.quantity?.value || 0) + quantity;
+                  await existingCoin.update({"system.quantity.value": newQuantity});
+                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
+                } else {
+                  await this.actor.createEmbeddedDocuments("Item", [itemData]);
+                }
+              }
+              
+              resolve(true);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Cancel",
+            callback: () => resolve(false)
+          }
+        },
+        default: "add",
+        render: (html) => {
+          // Focus and select the input field
+          html.find('input[name="coinQuantity"]').focus().select();
+        }
+      }).render(true);
+    });
   }
 }

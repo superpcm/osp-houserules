@@ -64,15 +64,68 @@ export class ItemHandler {
   /**
    * Handle deleting an item
    */
-  onItemDelete(event) {
+  async onItemDelete(event) {
     event.preventDefault();
     event.stopPropagation(); // Prevent triggering item roll
     const li = $(event.currentTarget).parents(".item-entry");
     const item = this.getItemFromEvent(event);
-    if (item) {
+    if (!item) return;
+
+    const currentQuantity = item.system.quantity?.value || 1;
+
+    // If quantity is 1 or item doesn't use quantity system, just delete
+    if (currentQuantity <= 1) {
       item.delete();
       li.slideUp(200, () => this.actor.sheet.render(false));
+      return;
     }
+
+    // For items with quantity > 1, show dialog
+    const content = `
+      <form>
+        <div class="form-group">
+          <label>Current Quantity: <strong>${currentQuantity}</strong></label>
+          <label style="margin-top: 10px;">Delete how many?</label>
+          <input type="number" name="deleteQuantity" value="1" min="1" max="${currentQuantity}" style="width: 100%;" />
+        </div>
+      </form>
+    `;
+
+    new Dialog({
+      title: `Delete ${item.name}`,
+      content: content,
+      buttons: {
+        deleteAll: {
+          icon: '<i class="fas fa-trash"></i>',
+          label: "Delete All",
+          callback: () => {
+            item.delete();
+            li.slideUp(200, () => this.actor.sheet.render(false));
+          }
+        },
+        deleteSpecific: {
+          icon: '<i class="fas fa-minus"></i>',
+          label: "Delete Quantity",
+          callback: (html) => {
+            const deleteQty = parseInt(html.find('[name="deleteQuantity"]').val());
+            if (deleteQty >= currentQuantity) {
+              // Delete entire item if quantity would be 0 or less
+              item.delete();
+              li.slideUp(200, () => this.actor.sheet.render(false));
+            } else if (deleteQty > 0) {
+              // Reduce quantity
+              const newQuantity = currentQuantity - deleteQty;
+              item.update({ "system.quantity.value": newQuantity });
+            }
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "deleteSpecific"
+    }).render(true);
   }
 
   /**

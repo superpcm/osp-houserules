@@ -4,7 +4,7 @@
         "type": "container",
         "img": "assets/images/gear/backpack.webp",
         "system": {
-            "description": "A leather bag that can be strapped over the shoulders, requiring no hands. Internal capacity: 16 slots (400 coins). Can lash 4 items externally.",
+            "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing.",
             "cost": 5,
             "unitWeight": 2,
             "storedSize": 4,
@@ -22,11 +22,51 @@
         }
     },
     {
-        "name": "Belt Pouch",
-        "type": "container",
-        "img": "assets/images/gear/pouch.webp",
+        "name": "Bedroll",
+        "type": "item",
+        "img": "assets/images/gear/bedroll.webp",
         "system": {
-            "description": "A small leather pouch that attaches to a belt. Capacity: 2 slots (50 coins). 2 pouches can be attached to a single belt.",
+            "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone.",
+            "cost": 2,
+            "unitWeight": 2,
+            "storedSize": 6,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": true,
+            "tags": [
+                "sleep"
+            ]
+        }
+    },
+    {
+        "name": "Belt",
+        "type": "item",
+        "img": "assets/images/gear/belt.webp",
+        "system": {
+            "description": "This sturdy leather belt features a worn brass buckle and reinforced stitching, showing the marks of long travel and hard use. Adventurers typically use it to secure pouches, sheaths, and other gear, keeping essential items within easy reach on the road.",
+            "cost": 1,
+            "unitWeight": 0.25,
+            "storedSize": 1,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": false,
+            "tags": [
+                "clothing"
+            ]
+        }
+    },
+    {
+        "name": "Belt Pouch (small)",
+        "type": "container",
+        "img": "assets/images/gear/pouchS.webp",
+        "system": {
+            "description": "A small leather pouch that attaches to a belt. 2 pouches can be attached to a single belt.",
             "cost": 2,
             "unitWeight": 0.5,
             "storedSize": 1,
@@ -38,6 +78,85 @@
             "lashable": false,
             "tags": [],
             "capacity": 2
+        }
+    },
+    {
+        "name": "Belt Pouch (large)",
+        "type": "container",
+        "img": "assets/images/gear/pouchL.webp",
+        "system": {
+            "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials—rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt.",
+            "cost": 4,
+            "unitWeight": 1,
+            "storedSize": 2,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": false,
+            "tags": [],
+            "capacity": 4
+        }
+    },
+        {
+        "name": "Boots",
+        "type": "item",
+        "img": "assets/images/gear/boots.webp",
+        "system": {
+            "description": "These rugged leather boots are built for long travel, with thick soles and reinforced stitching to withstand miles of harsh terrain. Adventurers rely on them for protection and stability, whether crossing wilderness trails, dungeon floors, or city streets.",
+            "cost": 3,
+            "unitWeight": 1,
+            "storedSize": 3,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": false,
+            "tags": [
+                "clothing"
+            ]
+        }
+    },
+    {
+        "name": "Bracers",
+        "type": "item",
+        "img": "assets/images/gear/bracers.webp",
+        "system": {
+            "description": "These leather bracers are shaped to protect the forearms, with reinforced stitching and a simple lace-up closure that allows for a snug, secure fit. Adventurers wear them for light protection against scrapes, bowstring snap, and glancing blows without the weight of metal armor.",
+            "cost": 3,
+            "unitWeight": 0.2,
+            "storedSize": 0.5,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": false,
+            "tags": [
+                "clothing"
+            ]
+        }
+    },
+    {
+        "name": "Breeches",
+        "type": "item",
+        "img": "assets/images/gear/breeches.webp",
+        "system": {
+            "description": "These breeches are made of sturdy, earth-toned cloth, gathered at the waist with a simple drawstring and fitted loosely through the legs for comfort and mobility. They are commonly worn by travelers, laborers, and adventurers who need durable everyday trousers that won’t restrict movement in the field.",
+            "cost": 2,
+            "unitWeight": 0.2,
+            "storedSize": 1,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": false,
+            "tags": [
+                "clothing"
+            ]
         }
     },
     {
@@ -77,6 +196,26 @@
             "lashable": false,
             "tags": [
                 "herb"
+            ]
+        }
+    },
+    {
+        "name": "Gloves",
+        "type": "item",
+        "img": "assets/images/gear/gloves.webp",
+        "system": {
+            "description": "These rugged leather gloves are well-worn and creased, offering protection from rope burn, rough surfaces, and cold weather. Adventurers rely on them for climbing, handling gear, and general travel without sacrificing dexterity.",
+            "cost": 2,
+            "unitWeight": 0.2,
+            "storedSize": 0.25,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": false,
+            "tags": [
+                "clothing"
             ]
         }
     },
@@ -246,6 +385,27 @@
         }
     },
     {
+        "name": "Piton",
+        "type": "item",
+        "img": "assets/images/gear/piton.webp",
+        "system": {
+            "description": "This metal piton is a tapered spike with a forged eyelet for threading rope, its surface worn and scuffed from repeated climbing use. Adventurers hammer it into cracks or seams in stone to create secure anchor points for climbing, rappelling, and traversing dangerous terrain.",
+            "cost": 0.1,
+            "unitWeight": 0.25,
+            "storedSize": 0.25,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": false,
+            "tags": [
+                "tool",
+                "dungeon"
+            ]
+        }
+    },
+    {
         "name": "Pole (10' long)",
         "type": "item",
         "img": "assets/images/gear/10-foot-pole.webp",
@@ -334,7 +494,7 @@
         "type": "container",
         "img": "assets/images/gear/sackL.webp",
         "system": {
-            "description": "Commonly slung over the shoulder or tied to a pack. Not waterproof. Capacity: 24 slots (600 coins).",
+            "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won’t fit neatly into a pack. Capacity: 24 slots (600 coins).",
             "cost": 2,
             "unitWeight": 0.5,
             "storedSize": 2,
@@ -353,7 +513,7 @@
         "type": "container",
         "img": "assets/images/gear/sackS.webp",
         "system": {
-            "description": "Often used for rations, tools, or loot. Can be tied to a belt or slung from a pack. Light, flexible, and easy to stow when empty. Not waterproof. Capacity: 8 slots (200 coins).",
+            "description": "This small sack is a soft burlap pouch cinched tight with a simple cord, its rough fibers worn from frequent handling. Adventurers typically use it to store rations, coins, or loose gear that needs to be kept separate inside a pack. Capacity: 8 slots (200 coins).",
             "cost": 1,
             "unitWeight": 0.25,
             "storedSize": 2,
@@ -368,14 +528,14 @@
         }
     },
     {
-        "name": "Stakes and mallet",
+        "name": "Wooden stake",
         "type": "item",
-        "img": "assets/images/gear/mallet-stakes.webp",
+        "img": "assets/images/gear/stake.webp",
         "system": {
-            "description": "A wooden mallet and three stakes. Useful for setting up tents, restraints, defensive setups (trip lines, traps, etc.)...and vampires. Wooden mallet is quieter than a hammer, making it useful for stealthy camp setup.",
-            "cost": 3,
-            "unitWeight": 1,
-            "storedSize": 4,
+            "description": "This wooden spike is a rough-hewn stake with one end whittled to a sharp point and the other left blunt for hammering. It’s typically used to secure tents and ropes, mark trails, or improvise simple traps and defenses in the field.",
+            "cost": 0.25,
+            "unitWeight": 0.5,
+            "storedSize": 3,
             "quantity": {
                 "value": 3,
                 "max": 3
@@ -383,7 +543,6 @@
             "equipped": false,
             "lashable": false,
             "tags": [
-                "tool",
                 "religious"
             ]
         }
@@ -410,11 +569,11 @@
         }
     },
     {
-        "name": "Tinder box (flint & steel)",
+        "name": "Tinder box",
         "type": "item",
         "img": "assets/images/gear/flint-tinder.webp",
         "system": {
-            "description": "Flint, steel, and tinder in a small box. Used to light fires or torches with a 2-in-6 success chance per round.",
+            "description": "This flint and tinder kit includes a sharp-edged flint stone, a curved steel striker, and a bundled nest of dry fibers for catching sparks. Adventurers use it to start campfires, ignite torches, and light oil in situations where magical fire is unavailable.",
             "cost": 3,
             "unitWeight": 0.5,
             "storedSize": 1,
@@ -451,11 +610,31 @@
         }
     },
     {
+        "name": "Tunic",
+        "type": "item",
+        "img": "assets/images/gear/tunic.webp",
+        "system": {
+            "description": "This simple wool or linen tunic falls to mid-thigh, with short sleeves, a laced collar, and a rough cord belt gathering it at the waist. It serves as basic everyday clothing for commoners and adventurers alike, and as a comfortable base layer beneath armor.",
+            "cost": 8,
+            "unitWeight": 0.2,
+            "storedSize": 0.5,
+            "quantity": {
+                "value": 1,
+                "max": 0
+            },
+            "equipped": false,
+            "lashable": false,
+            "tags": [
+                "clothing"
+            ]
+        }
+    },
+    {
         "name": "Waterskin",
         "type": "item",
         "img": "assets/images/gear/waterskin.webp",
         "system": {
-            "description": "Treated animal hide (goatskin or cowhide), sealed with wax or pitch that holds up to 2 pints (1 quart) of liquid.Slung over the shoulder or tied to a belt. One full waterskin provides about 1 day's drinking water for one person under normal conditions. May leak if punctured or dried out; periodic oiling extends lifespan.",
+            "description": "A waterskin is a durable leather container used to carry drinking water while traveling or adventuring. It is lightweight, easy to strap to a belt or pack, and essential for surviving long journeys where fresh water is scarce.",
             "cost": 1,
             "unitWeight": 3,
             "storedSize": 2,

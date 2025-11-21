@@ -1,0 +1,287 @@
+[
+  {
+    "name": "Barding, Chain mail",
+    "type": "item",
+    "img": "assets/images/tack/barding-chain.webp",
+    "system": {
+      "description": "Chain mail barding is a flexible suit of interlocking metal rings designed to protect a horse from cuts and punctures while maintaining mobility. It is typically used for light and medium cavalry, offering a balance of protection and movement without the restrictive weight of full plate barding.",
+      "cost": 500,
+      "unitWeight": 60,
+      "storedSize": 99,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "armor",
+        "horse"
+      ],
+      "armorBonus": 4,
+      "movementPenalty": -60,
+      "animalType": "horse"
+    }
+  },
+  {
+    "name": "Barding, Leather",
+    "type": "item",
+    "img": "assets/images/tack/barding-leather.webp",
+    "system": {
+      "description": "This leather barding set consists of layered, hardened-leather plates shaped for a horse’s head, neck, chest, and flanks, reinforced with rivets and fitted with thick straps and buckles for secure mounting. It is typically used by light and medium cavalry to give their mounts flexible, reliable protection while avoiding the heavy weight and cost of metal barding.",
+      "cost": 150,
+      "unitWeight": 40,
+      "storedSize": 99,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "armor",
+        "horse"
+      ],
+      "armorBonus": 2,
+      "movementPenalty": -30,
+      "animalType": "horse"
+    }
+  },
+  {
+    "name": "Barding, Plate",
+    "type": "item",
+    "img": "assets/images/tack/barding-plate.webp",
+    "system": {
+      "description": "Plate barding is a full set of articulated metal armor designed to protect a warhorse in battle, covering the head, neck, chest, and flanks with shaped steel plates. It is typically used by heavily armed cavalry, allowing a mounted warrior to charge into combat with both rider and horse protected from blades, arrows, and other battlefield dangers.",
+      "cost": 2000,
+      "unitWeight": 80,
+      "storedSize": 99,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "armor",
+        "horse"
+      ],
+      "armorBonus": 6,
+      "movementPenalty": -90,
+      "animalType": "horse"
+    }
+  },
+  {
+    "name": "Barding, Scale",
+    "type": "item",
+    "img": "assets/images/tack/barding-scale.webp",
+    "system": {
+      "description": "Scale barding is a full set of articulated metal armor designed to protect a warhorse in battle, covering the head, neck, chest, and flanks with shaped steel plates. It is typically used by heavily armed cavalry, allowing a mounted warrior to charge into combat with both rider and horse protected from blades, arrows, and other battlefield dangers.",
+      "cost": 1000,
+      "unitWeight": 75,
+      "storedSize": 99,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "armor",
+        "horse"
+      ],
+      "armorBonus": 6,
+      "movementPenalty": -90,
+      "animalType": "horse"
+    }
+  },
+  {
+    "name": "Bit & Bridle",
+    "type": "item",
+    "img": "assets/images/tack/bit-bridle.webp",
+    "system": {
+      "description": "This bit and bridle set is made of worn brown leather straps fitted with a simple steel bit and rings, shaped to sit comfortably on a horse’s head. It is typically used to guide and control a mount, transmitting the rider’s cues through the reins and bit for steering, stopping, and managing pace.",
+      "cost": 15,
+      "unitWeight": 3,
+      "storedSize": 6,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "riding"
+      ]
+    }
+  },
+  {
+    "name": "Cart",
+    "type": "container",
+    "img": "assets/images/tack/cart.webp",
+    "system": {
+      "description": "This sturdy two-wheeled wooden cart has iron-banded wheels, a slatted cargo bed, and long shafts ready to be hitched to a beast of burden. It is typically used by farmers, merchants, and traveling parties to haul goods, supplies, and sometimes passengers along rough roads and village lanes.",
+      "cost": 115,
+      "unitWeight": 200,
+      "storedSize": 99,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "vehicle",
+        "container"
+      ],
+      "capacity": 80,
+      "requiresAnimal": "draft"
+    }
+  },
+  {
+    "name": "Lantern, mount",
+    "type": "item",
+    "img": "assets/images/tack/mount-lantern.webp",
+    "system": {
+      "description": "A specialized lantern designed to hang from a saddle or harness, illuminating the path ahead without requiring a hand to hold it. Features protective guards to keep it from swinging wildly or spooking the mount.",
+      "cost": 15,
+      "unitWeight": 3,
+      "storedSize": 8,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": true,
+      "tags": [
+        "tack",
+        "light source"
+      ],
+      "lightRadius": 30,
+      "burnTime": 4
+    }
+  },
+  {
+    "name": "Saddle, pack",
+    "type": "container",
+    "img": "assets/images/tack/saddle-pack.webp",
+    "system": {
+      "description": "A sturdy wooden frame with leather straps designed to secure cargo on a pack animal's back. It distributes weight evenly and includes attachment points for bundled goods, making it essential for mules and donkeys carrying supplies.",
+      "cost": 5,
+      "unitWeight": 15,
+      "storedSize": 24,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "container",
+        "pack animal"
+      ],
+      "capacity": 40,
+      "lashSlots": 6
+    }
+  },
+  {
+    "name": "Saddle",
+    "type": "item",
+    "img": "assets/images/tack/saddle.webp",
+    "system": {
+      "description": "A leather riding saddle with stirrups, pommel, and cantle, designed for comfort on long journeys. Well-crafted and essential for any serious rider, it provides security in the saddle and reduces fatigue for both horse and rider.",
+      "cost": 25,
+      "unitWeight": 10,
+      "storedSize": 30,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "riding"
+      ]
+    }
+  },
+  {
+    "name": "Saddlebags, Small",
+    "type": "container",
+    "img": "assets/images/tack/saddlebags-small.webp",
+    "system": {
+      "description": "A pair of sturdy leather pouches that drape across a saddle or pack frame, secured with buckled straps. Each side offers storage for personal gear and supplies without interfering with riding, making them popular with travelers and scouts.",
+      "cost": 5,
+      "unitWeight": 4,
+      "storedSize": 6,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "container",
+        "riding"
+      ],
+      "capacity": 12,
+      "requiresMounted": true
+    }
+  },
+    {
+    "name": "Saddlebags, Large",
+    "type": "container",
+    "img": "assets/images/tack/saddlebags-large.webp",
+    "system": {
+      "description": "These large over-the-saddle bags are a hefty pair of deep leather pouches joined by a wide strap, built to drape securely across a horse’s back. They are typically used by caravans, couriers, and long-range adventuring parties to carry bulk supplies, trade goods, or treasure while keeping the load balanced and off the rider’s body.",
+      "cost": 10,
+      "unitWeight": 7,
+      "storedSize": 12,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "container",
+        "riding"
+      ],
+      "capacity": 24,
+      "requiresMounted": true
+    }
+  },
+  {
+    "name": "Wagon",
+    "type": "container",
+    "img": "assets/images/tack/wagon.webp",
+    "system": {
+      "description": "A large four-wheeled covered wagon with a canvas top and reinforced axles, capable of transporting huge loads across country. Requires multiple draft animals to pull and is the primary means of moving goods, supplies, and even entire households overland.",
+      "cost": 200,
+      "unitWeight": 500,
+      "storedSize": 99,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "vehicle",
+        "container"
+      ],
+      "capacity": 200,
+      "requiresAnimal": "draft (2+)"
+    }
+  }
+]

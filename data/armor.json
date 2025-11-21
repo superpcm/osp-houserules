@@ -62,8 +62,10 @@
       "lashable": false,
       "lashed": false,
       "containerId": null,
-      "armorClass": 13,
-      "armorType": "medium"
+      "aac": {
+        "value": 13
+      },
+      "type": "medium"
     }
   },
   {
@@ -106,8 +108,10 @@
       "lashable": false,
       "lashed": false,
       "containerId": null,
-      "armorClass": 14,
-      "armorType": "medium"
+      "aac": {
+        "value": 14
+      },
+      "type": "medium"
     }
   },
   {
@@ -154,6 +158,52 @@
         "value": 18
       },
       "type": "heavy"
+    }
+  },
+  {
+    "name": "Great helm",
+    "type": "armor",
+    "img": "assets/images/armor/great-helm.webp",
+    "system": {
+      "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head\u2014though at the cost of limited vision and airflow.",
+      "cost": 30,
+      "unitWeight": 10,
+      "storedSize": 12,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 0
+      },
+      "type": "helmet"
+    }
+  },
+  {
+    "name": "Helmet",
+    "type": "armor",
+    "img": "assets/images/armor/helmet.webp",
+    "system": {
+      "description": "This standard helmet is a sturdy steel cap with a reinforced brow and a simple nasal guard, offering balanced protection without restricting vision. Common among soldiers and adventurers, it provides reliable head defense while remaining light enough for extended wear.",
+      "cost": 6,
+      "unitWeight": 2,
+      "storedSize": 8,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 0
+      },
+      "type": "helmet"
     }
   },
   {
@@ -221,6 +271,29 @@
       "containerId": null,
       "aac": {
         "value": 11
+      },
+      "type": "light"
+    }
+  },
+  {
+    "name": "Ring mail",
+    "type": "armor",
+    "img": "assets/images/armor/ring-mail.webp",
+    "system": {
+      "description": "Ring mail consists of a leather or cloth garment reinforced with metal rings sewn directly onto its surface, providing basic protection without the full weight of true chain mail. It is typically worn by low-status soldiers or adventurers needing inexpensive armor that offers better defense than padded or leather options, though it remains less effective than more advanced mail types.",
+      "cost": 75,
+      "unitWeight": 30,
+      "storedSize": 16,
+      "quantity": {
+        "value": 1,
+        "max": 0
+      },
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "aac": {
+        "value": 13
       },
       "type": "light"
     }

@@ -5,7 +5,7 @@ export class OspItem extends Item {
     
     // Calculate cumulative properties for items
     if (this.type === "item" && this.system.treasure) {
-      const quantity = this.system.quantity?.value || 1;
+      const quantity = this.system.quantity || 1;
       
       this.system.cumulativeCost = this.system.cost * quantity;
       this.system.cumulativeWeight = this.system.unitWeight * quantity;

@@ -300,7 +300,7 @@ export class OspActor extends Actor {
     let totalWeight = 0;
 
     this.items.forEach(item => {
-      const quantity = item.system.quantity?.value || 1;
+      const quantity = item.system.quantity || 1;
       const weight = item.system.unitWeight || 0;
       totalWeight += weight * quantity;
     });
@@ -401,7 +401,7 @@ export class OspActor extends Actor {
         // For simplicity, assume items with equipped=false are in containers
         // A more sophisticated system would track which specific container
         const itemSize = item.system.sizeCat || 'M';
-        const quantity = item.system.quantity?.value || 1;
+        const quantity = item.system.quantity || 1;
         
         // Worn items (W) don't consume container capacity
         if (itemSize === 'W') return;

@@ -27,8 +27,8 @@
         weight: item.system.weight || 0,
         storedSize: item.system.storedSize || 4,
         quantity: {
-          value: item.system.quantity?.value || 1,
-          max: item.system.quantity?.max || 0
+          value: item.system.quantity || 1,
+          max: item
         },
         equipped: false,
         tags: item.system.tags || []

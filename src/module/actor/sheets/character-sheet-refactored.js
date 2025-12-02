@@ -340,7 +340,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     itemsInContainer.forEach(item => {
       const itemSize = this._getItemSlotSize(item.system.storedSize || item.system.sizeCat);
-      const quantity = item.system.quantity?.value || 1;
+      const quantity = item.system.quantity || 1;
       total += itemSize * quantity;
     });
     

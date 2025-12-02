@@ -2251,7 +2251,7 @@
                     <img src="systems/osp-houserules/assets/character-sheet/d20-ico.webp" alt="Roll" />
                   </a>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-                  <div class="field-short">{{item.system.quantity.value}}</div>
+                  <div class="field-short">{{item.system.quantity}}</div>
                   <div class="field-short">{{item.system.damage}}</div>
                   <div class="field-short">{{item.system.unitWeight}}</div>
                   <div class="item-controls">
@@ -2306,7 +2306,7 @@
                 <div class="item-header armor-header flexrow">
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-                  <div class="field-short">{{item.system.quantity.value}}</div>
+                  <div class="field-short">{{item.system.quantity}}</div>
                   <div class="field-short">{{item.system.type}}</div>
                   <div class="field-short">{{item.system.aac.value}}</div>
                   <div class="field-short">{{item.system.unitWeight}}</div>
@@ -2380,7 +2380,7 @@
                   </a>
                   <div class="item-image" style="background-image: url('{{container.img}}');"></div>
                   <h4 class="item-name" title="{{container.name}}">{{container.name}}</h4>
-                  <div class="field-short">{{container.system.quantity.value}}</div>
+                  <div class="field-short">{{container.system.quantity}}</div>
                   <div class="field-short capacity-bar-cell">
                     <div class="capacity-bar-background" style="--capacity-progress: {{container.capacityPercentage}}%;">
                       <div class="capacity-bar-fill"></div>
@@ -2414,10 +2414,10 @@
                         <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                         <div class="field-short quantity">
                           <input 
-                            value="{{item.system.quantity.value}}" 
+                            value="{{item.system.quantity}}" 
                             type="number" 
                             min="0" 
-                            data-field="system.quantity.value"
+                            data-field="system.quantity"
                             data-item-id="{{item.id}}"
                           />
                         </div>
@@ -2475,10 +2475,10 @@
                           <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                           <div class="field-short quantity">
                             <input 
-                              value="{{item.system.quantity.value}}" 
+                              value="{{item.system.quantity}}" 
                               type="number" 
                               min="0" 
-                              data-field="system.quantity.value"
+                              data-field="system.quantity"
                               data-item-id="{{item.id}}"
                             />
                           </div>

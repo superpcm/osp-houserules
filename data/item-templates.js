@@ -16,10 +16,7 @@ const weaponTemplate = {
     description: "Description of the weapon",
     cost: 10,              // Cost in gold pieces
     weight: 50,            // Weight in coins (10 coins = 1 lb)
-    quantity: { 
-      value: 1,            // Current quantity
-      max: 0               // Max quantity (0 = unlimited)
-    },
+    quantity: 1,
     equipped: false,       // Is it currently equipped?
     damage: "1d8",         // Damage dice
     bonus: 0,              // Magic bonus (usually 0 for normal items)
@@ -46,10 +43,7 @@ const armorTemplate = {
     description: "Description of the armor",
     cost: 50,              // Cost in gold pieces
     weight: 400,           // Weight in coins
-    quantity: { 
-      value: 1, 
-      max: 0 
-    },
+    quantity: 1,
     equipped: false,
     ac: {                  // Ascending AC (descending, lower is better)
       value: 5             // Armor Class value
@@ -72,10 +66,7 @@ const itemTemplate = {
     description: "Description of the item",
     cost: 1,               // Cost in gold pieces
     weight: 10,            // Weight in coins
-    quantity: { 
-      value: 1, 
-      max: 0 
-    },
+    quantity: 1,
     equipped: false,
     treasure: false        // Is this a treasure item?
   }
@@ -92,10 +83,7 @@ const containerTemplate = {
     description: "Description of the container",
     cost: 5,
     weight: 20,
-    quantity: { 
-      value: 1, 
-      max: 0 
-    },
+    quantity: 1,
     equipped: false,
     capacity: {
       type: "weight",      // Capacity type
@@ -288,7 +276,7 @@ const examples = [
       description: "A finely crafted blade with a +1 magical bonus to attack and damage.",
       cost: 1000,
       weight: 60,
-      quantity: { value: 1, max: 0 },
+      quantity: 1,
       equipped: false,
       damage: "1d8",
       bonus: 1,
@@ -309,7 +297,7 @@ const examples = [
       description: "A powerful composite bow that adds STR bonus to damage.",
       cost: 100,
       weight: 30,
-      quantity: { value: 1, max: 0 },
+      quantity: 1,
       equipped: false,
       damage: "1d6",
       bonus: 0,
@@ -330,7 +318,7 @@ const examples = [
       description: "Enchanted chain mail that provides better protection than normal.",
       cost: 2000,
       weight: 400,
-      quantity: { value: 1, max: 0 },
+      quantity: 1,
       equipped: false,
       ac: { value: 4 },
       aac: { value: 15 },
@@ -347,7 +335,7 @@ const examples = [
       description: "Restores 1d8 hit points when consumed.",
       cost: 50,
       weight: 1,
-      quantity: { value: 1, max: 0 },
+      quantity: 1,
       equipped: false,
       treasure: true
     }

@@ -1,62 +1,71 @@
 [
-  {
-    "name": "Arrows (quiver of 20)",
-    "type": "ammunition",
-    "img": "icons/weapons/ammunition/arrows-fletched-white.webp",
-    "system": {
-      "description": "A quiver containing 20 arrows for use with bows.",
-      "cost": 5,
-      "weight": 0,
-      "quantity": { "value": 20, "max": 20 },
-      "equipped": false,
-      "bonus": 0,
-      "tags": ["arrows"],
-      "slow": false
+    {
+        "name": "Arrows (quiver of 20)",
+        "type": "ammunition",
+        "img": "icons/weapons/ammunition/arrows-fletched-white.webp",
+        "system": {
+            "description": "A quiver containing 20 arrows for use with bows.",
+            "cost": 5,
+            "weight": 0,
+            "quantity": 20,
+            "equipped": false,
+            "bonus": 0,
+            "tags": [
+                "arrows"
+            ],
+            "slow": false
+        }
+    },
+    {
+        "name": "Crossbow bolts (case of 30)",
+        "type": "ammunition",
+        "img": "icons/weapons/ammunition/bolt-case-steel.webp",
+        "system": {
+            "description": "A case containing 30 bolts designed for use with a crossbow.",
+            "cost": 10,
+            "weight": 0,
+            "quantity": 30,
+            "equipped": false,
+            "bonus": 0,
+            "tags": [
+                "bolts"
+            ],
+            "slow": false
+        }
+    },
+    {
+        "name": "Silver tipped arrow (1)",
+        "type": "ammunition",
+        "img": "icons/weapons/ammunition/arrow-silver.webp",
+        "system": {
+            "description": "A single arrow with a silvered tip, effective against supernatural creatures.",
+            "cost": 5,
+            "weight": 0,
+            "quantity": 1,
+            "equipped": false,
+            "bonus": 0,
+            "tags": [
+                "arrows",
+                "silver"
+            ],
+            "slow": false
+        }
+    },
+    {
+        "name": "Sling stones",
+        "type": "ammunition",
+        "img": "icons/weapons/ammunition/stones-smooth.webp",
+        "system": {
+            "description": "Smooth stones suitable for use in a sling. Common and freely available.",
+            "cost": 0,
+            "weight": 0,
+            "quantity": 20,
+            "equipped": false,
+            "bonus": 0,
+            "tags": [
+                "stones"
+            ],
+            "slow": false
+        }
     }
-  },
-  {
-    "name": "Crossbow bolts (case of 30)",
-    "type": "ammunition",
-    "img": "icons/weapons/ammunition/bolt-case-steel.webp",
-    "system": {
-      "description": "A case containing 30 bolts designed for use with a crossbow.",
-      "cost": 10,
-      "weight": 0,
-      "quantity": { "value": 30, "max": 30 },
-      "equipped": false,
-      "bonus": 0,
-      "tags": ["bolts"],
-      "slow": false
-    }
-  },
-  {
-    "name": "Silver tipped arrow (1)",
-    "type": "ammunition",
-    "img": "icons/weapons/ammunition/arrow-silver.webp",
-    "system": {
-      "description": "A single arrow with a silvered tip, effective against supernatural creatures.",
-      "cost": 5,
-      "weight": 0,
-      "quantity": { "value": 1, "max": 0 },
-      "equipped": false,
-      "bonus": 0,
-      "tags": ["arrows", "silver"],
-      "slow": false
-    }
-  },
-  {
-    "name": "Sling stones",
-    "type": "ammunition",
-    "img": "icons/weapons/ammunition/stones-smooth.webp",
-    "system": {
-      "description": "Smooth stones suitable for use in a sling. Common and freely available.",
-      "cost": 0,
-      "weight": 0,
-      "quantity": { "value": 20, "max": 0 },
-      "equipped": false,
-      "bonus": 0,
-      "tags": ["stones"],
-      "slow": false
-    }
-  }
 ]

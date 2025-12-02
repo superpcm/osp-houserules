@@ -71,7 +71,7 @@ export class ItemHandler {
     const item = this.getItemFromEvent(event);
     if (!item) return;
 
-    const currentQuantity = item.system.quantity?.value || 1;
+    const currentQuantity = item.system.quantity || 1;
 
     // If quantity is 1 or item doesn't use quantity system, just delete
     if (currentQuantity <= 1) {
@@ -115,7 +115,7 @@ export class ItemHandler {
             } else if (deleteQty > 0) {
               // Reduce quantity
               const newQuantity = currentQuantity - deleteQty;
-              item.update({ "system.quantity.value": newQuantity });
+              item.update({ "system.quantity": newQuantity });
             }
           }
         },
@@ -386,8 +386,8 @@ export class ItemHandler {
     
     itemsInContainer.forEach(item => {
       const storedSize = parseFloat(item.system.storedSize) || 0;
-      const currentQuantity = item.system.quantity?.value || 1;
-      const maxQuantity = item.system.quantity?.max || 0;
+      const currentQuantity = item.system.quantity || 1;
+      const maxQuantity = item;
       
       let itemCapacity;
       if (maxQuantity > 0) {
@@ -409,8 +409,8 @@ export class ItemHandler {
    */
   _getItemSlotSize(item) {
     const storedSize = parseFloat(item.system.storedSize) || 0;
-    const currentQuantity = item.system.quantity?.value || 1;
-    const maxQuantity = item.system.quantity?.max || 0;
+    const currentQuantity = item.system.quantity || 1;
+    const maxQuantity = item;
     
     if (maxQuantity > 0) {
       // Stackable item: calculate proportionally

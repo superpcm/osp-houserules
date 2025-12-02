@@ -107,7 +107,7 @@ Edit the JSON files in the `data/` folder. Each item needs:
     "description": "A versatile blade.",
     "cost": 10,
     "weight": 40,
-    "quantity": { "value": 1, "max": 0 },
+    "quantity": 1,
     "equipped": false,
     "damage": "1d8",
     "bonus": 0,

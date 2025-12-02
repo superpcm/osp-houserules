@@ -944,7 +944,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 /* Quantity input: uses absolute positioning, no width needed here */
-.osp.sheet.item input[name="system.quantity.value"] {
+.osp.sheet.item input[name="system.quantity"] {
   padding: 5px;
   text-align: center;
 }

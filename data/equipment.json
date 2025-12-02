@@ -8,10 +8,7 @@
             "cost": 5,
             "unitWeight": 2,
             "storedSize": 4,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -30,10 +27,7 @@
             "cost": 2,
             "unitWeight": 2,
             "storedSize": 6,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": true,
             "tags": [
@@ -50,10 +44,7 @@
             "cost": 1,
             "unitWeight": 0.25,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -70,10 +61,7 @@
             "cost": 2,
             "unitWeight": 0.5,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [],
@@ -85,21 +73,18 @@
         "type": "container",
         "img": "assets/images/gear/pouchL.webp",
         "system": {
-            "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials—rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt.",
+            "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials\u2014rations, tools, or extra coin\u2014when a small pouch simply won\u2019t suffice. 1 pouch can be attached to a single belt.",
             "cost": 4,
             "unitWeight": 1,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [],
             "capacity": 4
         }
     },
-        {
+    {
         "name": "Boots",
         "type": "item",
         "img": "assets/images/gear/boots.webp",
@@ -108,10 +93,7 @@
             "cost": 3,
             "unitWeight": 1,
             "storedSize": 3,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -128,10 +110,7 @@
             "cost": 3,
             "unitWeight": 0.2,
             "storedSize": 0.5,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -144,14 +123,11 @@
         "type": "item",
         "img": "assets/images/gear/breeches.webp",
         "system": {
-            "description": "These breeches are made of sturdy, earth-toned cloth, gathered at the waist with a simple drawstring and fitted loosely through the legs for comfort and mobility. They are commonly worn by travelers, laborers, and adventurers who need durable everyday trousers that won’t restrict movement in the field.",
+            "description": "These breeches are made of sturdy, earth-toned cloth, gathered at the waist with a simple drawstring and fitted loosely through the legs for comfort and mobility. They are commonly worn by travelers, laborers, and adventurers who need durable everyday trousers that won\u2019t restrict movement in the field.",
             "cost": 2,
             "unitWeight": 0.2,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -164,14 +140,11 @@
         "type": "item",
         "img": "assets/images/gear/crowbar.webp",
         "system": {
-            "description": "An iron bar, 2–3' long. Used for prying open doors, chest lids, etc.",
+            "description": "An iron bar, 2\u20133' long. Used for prying open doors, chest lids, etc.",
             "cost": 10,
             "unitWeight": 4,
             "storedSize": 4,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": true,
             "tags": [
@@ -188,10 +161,7 @@
             "cost": 5,
             "unitWeight": 0,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -208,10 +178,7 @@
             "cost": 2,
             "unitWeight": 0.2,
             "storedSize": 0.25,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -228,10 +195,7 @@
             "cost": 25,
             "unitWeight": 3,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": true,
             "tags": [
@@ -245,14 +209,11 @@
         "type": "item",
         "img": "assets/images/gear/hammer.webp",
         "system": {
-            "description": "Comparable to a carpenter's or small blacksmith's hammer — light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
+            "description": "Comparable to a carpenter's or small blacksmith's hammer \u2014 light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
             "cost": 2,
             "unitWeight": 2,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -265,14 +226,11 @@
         "type": "item",
         "img": "assets/images/gear/holy-symbol.webp",
         "system": {
-            "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
+            "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed \u00bd lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
             "cost": 25,
             "unitWeight": 0.3,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -290,10 +248,7 @@
             "cost": 25,
             "unitWeight": 0.75,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -307,14 +262,11 @@
         "type": "item",
         "img": "assets/images/gear/spikes.webp",
         "system": {
-            "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6–8 inches long, about ½ inch thick. Typically carried in a small leather pouch or tool roll.",
+            "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6\u20138 inches long, about \u00bd inch thick. Typically carried in a small leather pouch or tool roll.",
             "cost": 1,
             "unitWeight": 0.333333,
             "storedSize": 3,
-            "quantity": {
-                "value": 12,
-                "max": 12
-            },
+            "quantity": 12,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -332,10 +284,7 @@
             "cost": 10,
             "unitWeight": 2,
             "storedSize": 4,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": true,
             "tags": [
@@ -352,10 +301,7 @@
             "cost": 5,
             "unitWeight": 0.5,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -372,10 +318,7 @@
             "cost": 2,
             "unitWeight": 1,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -393,10 +336,7 @@
             "cost": 0.1,
             "unitWeight": 0.25,
             "storedSize": 0.25,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -414,10 +354,7 @@
             "cost": 1,
             "unitWeight": 7,
             "storedSize": 4,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": true,
             "tags": [
@@ -431,14 +368,11 @@
         "type": "item",
         "img": "assets/images/gear/rations-iron.webp",
         "system": {
-            "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact — but heavy and bland. Often divided into daily pouches for easy rationing.",
+            "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact \u2014 but heavy and bland. Often divided into daily pouches for easy rationing.",
             "cost": 15,
             "unitWeight": 1,
             "storedSize": 4,
-            "quantity": {
-                "value": 7,
-                "max": 7
-            },
+            "quantity": 7,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -456,10 +390,7 @@
             "cost": 5,
             "unitWeight": 2,
             "storedSize": 4,
-            "quantity": {
-                "value": 7,
-                "max": 7
-            },
+            "quantity": 7,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -477,10 +408,7 @@
             "cost": 1,
             "unitWeight": 9,
             "storedSize": 4,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": true,
             "tags": [
@@ -494,14 +422,11 @@
         "type": "container",
         "img": "assets/images/gear/sackL.webp",
         "system": {
-            "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won’t fit neatly into a pack. Capacity: 24 slots (600 coins).",
+            "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won\u2019t fit neatly into a pack. Capacity: 24 slots (600 coins).",
             "cost": 2,
             "unitWeight": 0.5,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": true,
             "tags": [],
@@ -517,10 +442,7 @@
             "cost": 1,
             "unitWeight": 0.25,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [],
@@ -532,14 +454,11 @@
         "type": "item",
         "img": "assets/images/gear/stake.webp",
         "system": {
-            "description": "This wooden spike is a rough-hewn stake with one end whittled to a sharp point and the other left blunt for hammering. It’s typically used to secure tents and ropes, mark trails, or improvise simple traps and defenses in the field.",
+            "description": "This wooden spike is a rough-hewn stake with one end whittled to a sharp point and the other left blunt for hammering. It\u2019s typically used to secure tents and ropes, mark trails, or improvise simple traps and defenses in the field.",
             "cost": 0.25,
             "unitWeight": 0.5,
             "storedSize": 3,
-            "quantity": {
-                "value": 3,
-                "max": 3
-            },
+            "quantity": 3,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -556,10 +475,7 @@
             "cost": 25,
             "unitWeight": 1.5,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -577,10 +493,7 @@
             "cost": 3,
             "unitWeight": 0.5,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -598,10 +511,7 @@
             "cost": 1,
             "unitWeight": 0.166667,
             "storedSize": 0.75,
-            "quantity": {
-                "value": 6,
-                "max": 6
-            },
+            "quantity": 6,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -618,10 +528,7 @@
             "cost": 8,
             "unitWeight": 0.2,
             "storedSize": 0.5,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -638,10 +545,7 @@
             "cost": 1,
             "unitWeight": 3,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -658,10 +562,7 @@
             "cost": 1,
             "unitWeight": 2.5,
             "storedSize": 2,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -679,10 +580,7 @@
             "cost": 10,
             "unitWeight": 0.5,
             "storedSize": 1,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "tags": [
@@ -700,10 +598,7 @@
             "cost": 0,
             "unitWeight": 0.02,
             "storedSize": 0.04,
-            "quantity": {
-                "value": 0,
-                "max": 0
-            },
+            "quantity": 0,
             "equipped": false,
             "lashable": false,
             "lashed": false,
@@ -719,10 +614,7 @@
             "cost": 0,
             "unitWeight": 0.02,
             "storedSize": 0.04,
-            "quantity": {
-                "value": 0,
-                "max": 0
-            },
+            "quantity": 0,
             "equipped": false,
             "lashable": false,
             "lashed": false,
@@ -738,10 +630,7 @@
             "cost": 0,
             "unitWeight": 0.02,
             "storedSize": 0.04,
-            "quantity": {
-                "value": 0,
-                "max": 0
-            },
+            "quantity": 0,
             "equipped": false,
             "lashable": false,
             "lashed": false,
@@ -757,10 +646,7 @@
             "cost": 9,
             "unitWeight": 3,
             "storedSize": 4,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "lashed": false,
@@ -778,10 +664,7 @@
             "cost": 8,
             "unitWeight": 3,
             "storedSize": 4,
-            "quantity": {
-                "value": 1,
-                "max": 0
-            },
+            "quantity": 1,
             "equipped": false,
             "lashable": false,
             "lashed": false,

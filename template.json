@@ -81,10 +81,7 @@
         "cost": 0,
         "unitWeight": 0,
         "storedSize": 4,
-        "quantity": {
-          "value": 1,
-          "max": 0
-        },
+        "quantity": 1,
         "equipped": false,
         "lashable": false,
         "lashed": false,

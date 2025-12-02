@@ -18,7 +18,7 @@ if (!actor) {
   
   console.log("\n--- Items ---");
   actor.items.forEach(item => {
-    console.log(`${item.name}: ${item.system.weight}lbs x${item.system.quantity?.value || 1} = ${(item.system.weight * (item.system.quantity?.value || 1))}lbs (Size: ${item.system.sizecat}, Equipped: ${item.system.equipped})`);
+    console.log(`${item.name}: ${item.system.weight}lbs x${item.system.quantity || 1} = ${(item.system.weight * (item.system.quantity || 1))}lbs (Size: ${item.system.sizecat}, Equipped: ${item.system.equipped})`);
   });
   
   console.log("\n--- Encumbrance Results ---");

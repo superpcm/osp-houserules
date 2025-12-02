@@ -38,10 +38,7 @@ async function addCoinsToFoundry() {
         cost: 0,
         unitWeight: 0.02,
         storedSize: 0.04,
-        quantity: {
-          value: 0,
-          max: 0
-        },
+        quantity: 0,
         equipped: false,
         lashable: false,
         lashed: false,
@@ -57,10 +54,7 @@ async function addCoinsToFoundry() {
         cost: 0,
         unitWeight: 0.02,
         storedSize: 0.04,
-        quantity: {
-          value: 0,
-          max: 0
-        },
+        quantity: 0,
         equipped: false,
         lashable: false,
         lashed: false,
@@ -76,10 +70,7 @@ async function addCoinsToFoundry() {
         cost: 0,
         unitWeight: 0.02,
         storedSize: 0.04,
-        quantity: {
-          value: 0,
-          max: 0
-        },
+        quantity: 0,
         equipped: false,
         lashable: false,
         lashed: false,

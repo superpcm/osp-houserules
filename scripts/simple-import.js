@@ -25,7 +25,7 @@
         description: "A heavy single-bladed axe designed for combat.",
         cost: 7,
         weight: 50,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         damage: "1d8",
         bonus: 0,
@@ -44,7 +44,7 @@
         description: "A short blade, ideal for close combat.",
         cost: 7,
         weight: 30,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         damage: "1d6",
         bonus: 0,
@@ -63,7 +63,7 @@
         description: "A tall bow for long-range combat.",
         cost: 40,
         weight: 30,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         damage: "1d6",
         bonus: 0,
@@ -85,7 +85,7 @@
         description: "Light armor made of hardened leather.",
         cost: 20,
         weight: 200,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         ac: { value: 7 },
         aac: { value: 12 },
@@ -100,7 +100,7 @@
         description: "Armor made of interlocking metal rings.",
         cost: 40,
         weight: 400,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         ac: { value: 5 },
         aac: { value: 14 },
@@ -118,7 +118,7 @@
         description: "A 50-foot length of rope.",
         cost: 1,
         weight: 20,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         treasure: false
       }
@@ -131,7 +131,7 @@
         description: "A wooden torch that burns for 1 hour.",
         cost: 0.01,
         weight: 1,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         treasure: false
       }
@@ -147,7 +147,7 @@
         description: "A leather backpack that can hold up to 400 coins worth of weight.",
         cost: 5,
         weight: 20,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         capacity: { type: "weight", value: 0, max: 400 }
       }
@@ -160,7 +160,7 @@
         description: "A small cloth or leather sack. Holds up to 200 coins weight.",
         cost: 1,
         weight: 5,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         capacity: { type: "weight", value: 0, max: 200 }
       }
@@ -173,7 +173,7 @@
         description: "A small pouch worn on the belt. Holds up to 50 coins weight.",
         cost: 1,
         weight: 2,
-        quantity: { value: 1, max: 0 },
+        quantity: 1,
         equipped: false,
         capacity: { type: "weight", value: 0, max: 50 }
       }

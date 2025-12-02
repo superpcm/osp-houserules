@@ -203,9 +203,9 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Calculate display weight for each item and separate by lashed status
       allContainedItems.forEach(item => {
         const itemWeight = parseFloat(item.system.unitWeight) || 0;
-        const currentQuantity = item.system.quantity?.value || 1;
+        const currentQuantity = item.system.quantity || 1;
         const storedSize = parseFloat(item.system.storedSize) || 0;
-        const maxQuantity = item.system.quantity?.max || 0;
+        const maxQuantity = item;
         
         // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
         item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
@@ -251,8 +251,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       // For non-stackable items: storedSize as-is
       const usedCapacity = storedItems.reduce((total, item) => {
         const storedSize = parseFloat(item.system.storedSize) || 0;
-        const currentQuantity = item.system.quantity?.value || 1;
-        const maxQuantity = item.system.quantity?.max || 0;
+        const currentQuantity = item.system.quantity || 1;
+        const maxQuantity = item;
         
         let itemCapacity;
         if (item.type === "coin") {
@@ -302,7 +302,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Calculate displayWeight for general items
     generalItems.forEach(item => {
       const itemWeight = parseFloat(item.system.unitWeight) || 0;
-      const currentQuantity = item.system.quantity?.value || 1;
+      const currentQuantity = item.system.quantity || 1;
       
       // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
@@ -1274,7 +1274,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (item.actor && item.actor.id === this.actor.id) {
       
       // For stacked items (quantity > 1) moving to a different container, show dialog
-      const movingQty = itemData.system.quantity?.value || 1;
+      const movingQty = itemData.system.quantity || 1;
       const currentContainerId = item.system.containerId;
       const targetContainerId = targetContainer?.id || null;
       
@@ -1295,15 +1295,15 @@ export class OspActorSheetCharacter extends ActorSheet {
         
         if (matchingItem) {
           // Stack: increase quantity of existing item and delete the moved item
-          const currentQty = matchingItem.system.quantity?.value || 1;
-          const addingQty = itemData.system.quantity?.value || 1;
-          const maxQty = matchingItem.system.quantity?.max || 0;
+          const currentQty = matchingItem.system.quantity || 1;
+          const addingQty = itemData.system.quantity || 1;
+          const maxQty = matchingItem;
           const newQty = currentQty + addingQty;
           
           ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
           
           // Just update quantity - unitWeight stays the same (it's per unit!)
-          const updateData = {"system.quantity.value": newQty};
+          const updateData = {"system.quantity": newQty};
           
           // Delete the item being moved and update the matching item
           return item.delete().then(() => {
@@ -1336,15 +1336,15 @@ export class OspActorSheetCharacter extends ActorSheet {
       
       if (matchingItem) {
         // Stack: increase quantity of existing item
-        const currentQty = matchingItem.system.quantity?.value || 1;
-        const addingQty = itemData.system.quantity?.value || 1;
-        const maxQty = matchingItem.system.quantity?.max || 0;
+        const currentQty = matchingItem.system.quantity || 1;
+        const addingQty = itemData.system.quantity || 1;
+        const maxQty = matchingItem;
         const newQty = currentQty + addingQty;
         
         ui.notifications.info(`Added ${addingQty} ${itemData.name}(s) to existing stack.`);
         
         // Just update quantity - unitWeight stays the same (it's per unit!)
-        const updateData = {"system.quantity.value": newQty};
+        const updateData = {"system.quantity": newQty};
         
         return matchingItem.update(updateData);
       }
@@ -1371,8 +1371,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // Calculate the space needed for the item being added
     const storedSize = parseFloat(itemData.system.storedSize) || 0;
-    const currentQuantity = itemData.system.quantity?.value || 1;
-    const maxQuantity = itemData.system.quantity?.max || 0;
+    const currentQuantity = itemData.system.quantity || 1;
+    const maxQuantity = itemData;
     
     let itemSize;
     if (itemData.type === "coin") {
@@ -1414,8 +1414,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     itemsInContainer.forEach(item => {
       const storedSize = parseFloat(item.system.storedSize) || 0;
-      const currentQuantity = item.system.quantity?.value || 1;
-      const maxQuantity = item.system.quantity?.max || 0;
+      const currentQuantity = item.system.quantity || 1;
+      const maxQuantity = item;
       
       let itemCapacity;
       if (item.type === "coin") {
@@ -1442,7 +1442,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Handle dropping stacked items with quantity dialog
    */
   async _handleStackedItemDrop(item, itemData, targetContainer, currentContainerId) {
-    const totalQuantity = itemData.system.quantity?.value || 1;
+    const totalQuantity = itemData.system.quantity || 1;
     
     // Show dialog to ask how many to move
     return new Promise((resolve) => {
@@ -1475,8 +1475,8 @@ export class OspActorSheetCharacter extends ActorSheet {
               
               if (matchingItem) {
                 // Stack with existing item
-                const newTargetQty = (matchingItem.system.quantity?.value || 1) + totalQuantity;
-                await matchingItem.update({"system.quantity.value": newTargetQty});
+                const newTargetQty = (matchingItem.system.quantity || 1) + totalQuantity;
+                await matchingItem.update({"system.quantity": newTargetQty});
                 await item.delete();
                 ui.notifications.info(`Merged ${totalQuantity} ${itemData.name}(s) with existing stack.`);
               } else {
@@ -1510,8 +1510,8 @@ export class OspActorSheetCharacter extends ActorSheet {
                 
                 if (matchingItemAll) {
                   // Stack with existing item
-                  const newTargetQty = (matchingItemAll.system.quantity?.value || 1) + totalQuantity;
-                  await matchingItemAll.update({"system.quantity.value": newTargetQty});
+                  const newTargetQty = (matchingItemAll.system.quantity || 1) + totalQuantity;
+                  await matchingItemAll.update({"system.quantity": newTargetQty});
                   await item.delete();
                   ui.notifications.info(`Merged ${totalQuantity} ${itemData.name}(s) with existing stack.`);
                 } else {
@@ -1533,22 +1533,22 @@ export class OspActorSheetCharacter extends ActorSheet {
               
               if (matchingItem) {
                 // Stack with existing item
-                const newTargetQty = (matchingItem.system.quantity?.value || 1) + moveQty;
+                const newTargetQty = (matchingItem.system.quantity || 1) + moveQty;
                 const newSourceQty = totalQuantity - moveQty;
                 
-                await matchingItem.update({"system.quantity.value": newTargetQty});
-                await item.update({"system.quantity.value": newSourceQty});
+                await matchingItem.update({"system.quantity": newTargetQty});
+                await item.update({"system.quantity": newSourceQty});
                 ui.notifications.info(`Moved ${moveQty} ${itemData.name}(s) to existing stack.`);
               } else {
                 // Create new item in target location
                 const newItemData = foundry.utils.duplicate(itemData);
-                newItemData.system.quantity.value = moveQty;
+                newItemData.system.quantity = moveQty;
                 newItemData.system.containerId = targetContainer?.id || null;
                 delete newItemData._id; // Remove ID so a new one is generated
                 
                 // Reduce quantity of source item
                 const newSourceQty = totalQuantity - moveQty;
-                await item.update({"system.quantity.value": newSourceQty});
+                await item.update({"system.quantity": newSourceQty});
                 await this.actor.createEmbeddedDocuments("Item", [newItemData]);
                 ui.notifications.info(`Moved ${moveQty} ${itemData.name}(s).`);
               }
@@ -1571,7 +1571,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Handle dropping coins into a container with quantity dialog
    */
   async _handleCoinDrop(item, itemData, targetContainer, isReordering) {
-    const currentQuantity = itemData.system.quantity?.value || 0;
+    const currentQuantity = itemData.system.quantity || 0;
     const availableSpace = this._getAvailableSpace(targetContainer);
     const storedSize = parseFloat(itemData.system.storedSize) || 0.04;
     const maxCoins = Math.floor(availableSpace / storedSize);
@@ -1634,7 +1634,7 @@ export class OspActorSheetCharacter extends ActorSheet {
                 }
               } else {
                 // New stack: validate all coins will fit
-                itemData.system.quantity.value = quantity;
+                itemData.system.quantity = quantity;
                 
                 if (!this._hasContainerSpace(targetContainer, itemData)) {
                   ui.notifications.error(`Not enough space in ${targetContainer.name} for ${quantity} coins.`);
@@ -1644,7 +1644,7 @@ export class OspActorSheetCharacter extends ActorSheet {
               }
               
               // Update the item data with the specified quantity
-              itemData.system.quantity.value = quantity;
+              itemData.system.quantity = quantity;
               
               // Set the container ID
               itemData.system.containerId = targetContainer.id;
@@ -1653,8 +1653,8 @@ export class OspActorSheetCharacter extends ActorSheet {
               if (item.actor && item.actor.id !== this.actor.id) {
                 if (existingCoin) {
                   // Stack with existing coin
-                  const newQuantity = (existingCoin.system.quantity?.value || 0) + quantity;
-                  await existingCoin.update({"system.quantity.value": newQuantity});
+                  const newQuantity = (existingCoin.system.quantity || 0) + quantity;
+                  await existingCoin.update({"system.quantity": newQuantity});
                   await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
                   ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
                 } else {
@@ -1666,8 +1666,8 @@ export class OspActorSheetCharacter extends ActorSheet {
               else if (item.actor && item.actor.id === this.actor.id) {
                 if (existingCoin) {
                   // Stack with existing coin and delete the one being moved
-                  const newQuantity = (existingCoin.system.quantity?.value || 0) + quantity;
-                  await existingCoin.update({"system.quantity.value": newQuantity});
+                  const newQuantity = (existingCoin.system.quantity || 0) + quantity;
+                  await existingCoin.update({"system.quantity": newQuantity});
                   await item.delete();
                   ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack`);
                 } else {
@@ -1678,8 +1678,8 @@ export class OspActorSheetCharacter extends ActorSheet {
               else {
                 if (existingCoin) {
                   // Stack with existing coin
-                  const newQuantity = (existingCoin.system.quantity?.value || 0) + quantity;
-                  await existingCoin.update({"system.quantity.value": newQuantity});
+                  const newQuantity = (existingCoin.system.quantity || 0) + quantity;
+                  await existingCoin.update({"system.quantity": newQuantity});
                   ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
                 } else {
                   await this.actor.createEmbeddedDocuments("Item", [itemData]);

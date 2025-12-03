@@ -260,7 +260,7 @@
     {
         "name": "Iron Spikes",
         "type": "item",
-        "img": "assets/images/gear/spikes.webp",
+        "img": "assets/images/gear/iron-spike.webp",
         "system": {
             "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6\u20138 inches long, about \u00bd inch thick. Typically carried in a small leather pouch or tool roll.",
             "cost": 1,

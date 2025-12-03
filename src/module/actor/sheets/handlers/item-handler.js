@@ -2,6 +2,7 @@
  * Handles item management operations (CRUD, equipment, etc.)
  */
 import { getAttackBonus, getAbilityModifier } from "../../../../config/classes.js";
+import { ItemCardDialog } from "../../../cards/item-card-dialog.js";
 
 export class ItemHandler {
   constructor(html, actor) {
@@ -24,6 +25,9 @@ export class ItemHandler {
     this.html.find('.item-show').click(this.onItemShow.bind(this));
     this.html.find('.item-rollable').click(this.onItemRoll.bind(this));
     this.html.find('.quantity input').change(this.onQuantityChange.bind(this));
+    
+    // Add click handler for item names to show card
+    this.html.find('.item-name').click(this.onItemNameClick.bind(this));
   }
 
   /**
@@ -422,21 +426,42 @@ export class ItemHandler {
   }
 
   /**
-   * Handle showing item details in chat
+   * Handle showing item card (eyeball icon)
    */
   onItemShow(event) {
+    console.log('onItemShow called', event.target);
     event.preventDefault();
     event.stopPropagation(); // Prevent triggering item roll
     const item = this.getItemFromEvent(event);
+    console.log('Item retrieved:', item);
     if (!item) return;
     
-    const chatData = {
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: this.buildItemChatContent(item)
-    };
+    // Open item card dialog
+    const dialog = new ItemCardDialog(item);
+    dialog.render(true);
+  }
+
+  /**
+   * Handle clicking item name to show card
+   */
+  onItemNameClick(event) {
+    console.log('onItemNameClick called', event.target);
+    // Don't trigger if clicking edit/delete/etc buttons
+    if ($(event.target).closest('.item-controls').length > 0) {
+      console.log('Clicked on control, ignoring');
+      return;
+    }
     
-    ChatMessage.create(chatData);
+    console.log('Processing item name click');
+    event.preventDefault();
+    event.stopPropagation();
+    const item = this.getItemFromEvent(event);
+    console.log('Item retrieved:', item);
+    if (!item) return;
+    
+    // Open item card dialog
+    const dialog = new ItemCardDialog(item);
+    dialog.render(true);
   }
 
   /**

@@ -1,4 +1,5 @@
 import { ItemPositionToolHandler } from './handlers/item-position-tool-handler.js';
+import { ItemCardDialog } from '../cards/item-card-dialog.js';
 
 export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
   constructor(...args) {
@@ -17,6 +18,22 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
       submitOnChange: true,
       closeOnSubmit: false,
     });
+  }
+
+  /** @override */
+  async render(force, options = {}) {
+    // For displayable items (item, weapon, armor, container, coin), show card instead of sheet
+    const displayableTypes = ['item', 'weapon', 'armor', 'container', 'coin'];
+    if (displayableTypes.includes(this.item.type)) {
+      // Show card dialog instead of traditional sheet
+      const cardDialog = new ItemCardDialog(this.item);
+      cardDialog.render(true);
+      // Return this to satisfy the promise but don't actually render the sheet
+      return this;
+    }
+    
+    // For other types (abilities, spells, etc.), use traditional sheet
+    return super.render(force, options);
   }
 
   /** @override */

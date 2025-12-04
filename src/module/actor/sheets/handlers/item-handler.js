@@ -429,11 +429,9 @@ export class ItemHandler {
    * Handle showing item card (eyeball icon)
    */
   onItemShow(event) {
-    console.log('onItemShow called', event.target);
     event.preventDefault();
     event.stopPropagation(); // Prevent triggering item roll
     const item = this.getItemFromEvent(event);
-    console.log('Item retrieved:', item);
     if (!item) return;
     
     // Open item card dialog
@@ -445,18 +443,14 @@ export class ItemHandler {
    * Handle clicking item name to show card
    */
   onItemNameClick(event) {
-    console.log('onItemNameClick called', event.target);
     // Don't trigger if clicking edit/delete/etc buttons
     if ($(event.target).closest('.item-controls').length > 0) {
-      console.log('Clicked on control, ignoring');
       return;
     }
     
-    console.log('Processing item name click');
     event.preventDefault();
     event.stopPropagation();
     const item = this.getItemFromEvent(event);
-    console.log('Item retrieved:', item);
     if (!item) return;
     
     // Open item card dialog

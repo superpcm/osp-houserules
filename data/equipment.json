@@ -55,7 +55,7 @@
     {
         "name": "Belt Pouch (small)",
         "type": "container",
-        "img": "assets/images/gear/pouchS.webp",
+        "img": "assets/images/gear/pouch-small.webp",
         "system": {
             "description": "A small leather pouch that attaches to a belt. 2 pouches can be attached to a single belt.",
             "cost": 2,
@@ -71,7 +71,7 @@
     {
         "name": "Belt Pouch (large)",
         "type": "container",
-        "img": "assets/images/gear/pouchL.webp",
+        "img": "assets/images/gear/pouch-large.webp",
         "system": {
             "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials\u2014rations, tools, or extra coin\u2014when a small pouch simply won\u2019t suffice. 1 pouch can be attached to a single belt.",
             "cost": 4,
@@ -140,7 +140,7 @@
         "type": "item",
         "img": "assets/images/gear/crowbar.webp",
         "system": {
-            "description": "An iron bar, 2\u20133' long. Used for prying open doors, chest lids, etc.",
+            "description": "An iron bar, 2' long. Used for prying open doors, chest lids, etc.",
             "cost": 10,
             "unitWeight": 4,
             "storedSize": 4,
@@ -207,7 +207,7 @@
     {
         "name": "Hammer (small)",
         "type": "item",
-        "img": "assets/images/gear/hammer.webp",
+        "img": "assets/images/gear/hammer-small.webp",
         "system": {
             "description": "Comparable to a carpenter's or small blacksmith's hammer \u2014 light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
             "cost": 2,
@@ -278,7 +278,7 @@
     {
         "name": "Lantern",
         "type": "item",
-        "img": "assets/images/gear/lantern.webp",
+        "img": "assets/images/gear/lantern-hooded.webp",
         "system": {
             "description": "Durable and wind-resistant; the shutters allow stealthy use underground or at night. Heavier than a simple hooded lantern due to extra metal housing. Burns one flask of oil per 4 hours (24 turns). Casts light in a 30' radius.",
             "cost": 10,
@@ -295,7 +295,7 @@
     {
         "name": "Mirror (hand-sized, steel)",
         "type": "item",
-        "img": "assets/images/gear/steel-mirror.webp",
+        "img": "assets/images/gear/mirror.webp",
         "system": {
             "description": "Durable and unbreakable compared to glass. Commonly used for signaling, checking around corners, or personal grooming. Often stored in a thin leather sleeve or wooden case.",
             "cost": 5,
@@ -348,7 +348,7 @@
     {
         "name": "Pole (10' long)",
         "type": "item",
-        "img": "assets/images/gear/10-foot-pole.webp",
+        "img": "assets/images/gear/ten-foot-pole.webp",
         "system": {
             "description": "A 10-foot wooden pole used for prodding suspicious areas or measuring distances in a dungeon. Carried with difficulty indoors or underground; too long to strap to a pack, usually dragged or carried in hand. May be split into two 5-ft. sections for easier transport.",
             "cost": 1,
@@ -420,7 +420,7 @@
     {
         "name": "Sack (large)",
         "type": "container",
-        "img": "assets/images/gear/sackL.webp",
+        "img": "assets/images/gear/sack-large.webp",
         "system": {
             "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won\u2019t fit neatly into a pack. Capacity: 24 slots (600 coins).",
             "cost": 2,
@@ -436,7 +436,7 @@
     {
         "name": "Sack (small)",
         "type": "container",
-        "img": "assets/images/gear/sackS.webp",
+        "img": "assets/images/gear/sack-small.webp",
         "system": {
             "description": "This small sack is a soft burlap pouch cinched tight with a simple cord, its rough fibers worn from frequent handling. Adventurers typically use it to store rations, coins, or loose gear that needs to be kept separate inside a pack. Capacity: 8 slots (200 coins).",
             "cost": 1,
@@ -487,7 +487,7 @@
     {
         "name": "Tinder box",
         "type": "item",
-        "img": "assets/images/gear/flint-tinder.webp",
+        "img": "assets/images/gear/flint-steel.webp",
         "system": {
             "description": "This flint and tinder kit includes a sharp-edged flint stone, a curved steel striker, and a bundled nest of dry fibers for catching sparks. Adventurers use it to start campfires, ignite torches, and light oil in situations where magical fire is unavailable.",
             "cost": 3,
@@ -590,57 +590,9 @@
         }
     },
     {
-        "name": "Gold Coins",
-        "type": "coin",
-        "img": "assets/images/gear/gold-coin.webp",
-        "system": {
-            "description": "Standard gold coins used throughout the realm. 100 coins weigh approximately 2 pounds.",
-            "cost": 0,
-            "unitWeight": 0.02,
-            "storedSize": 0.04,
-            "quantity": 0,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null
-        }
-    },
-    {
-        "name": "Silver Coins",
-        "type": "coin",
-        "img": "assets/images/gear/silver-coins.webp",
-        "system": {
-            "description": "Standard silver coins used throughout the realm. 10 silver coins = 1 gold coin. 100 coins weigh approximately 2 pounds.",
-            "cost": 0,
-            "unitWeight": 0.02,
-            "storedSize": 0.04,
-            "quantity": 0,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null
-        }
-    },
-    {
-        "name": "Copper Coins",
-        "type": "coin",
-        "img": "assets/images/gear/copper-coins.webp",
-        "system": {
-            "description": "Standard copper coins used throughout the realm. 100 copper coins = 1 gold coin. 100 coins weigh approximately 2 pounds.",
-            "cost": 0,
-            "unitWeight": 0.02,
-            "storedSize": 0.04,
-            "quantity": 0,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null
-        }
-    },
-    {
         "name": "Robes",
         "type": "container",
-        "img": "assets/images/gear/robes.webp",
+        "img": "assets/images/gear/wizards-robes.webp",
         "system": {
             "description": "Robe worn by wizards and illusionists.",
             "cost": 9,

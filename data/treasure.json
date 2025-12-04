@@ -1,0 +1,50 @@
+[
+        {
+        "name": "Gold Coins",
+        "type": "coin",
+        "img": "assets/images/gear/gold-coin.webp",
+        "system": {
+            "description": "Standard gold coins used throughout the realm. 100 coins weigh approximately 2 pounds.",
+            "cost": 0,
+            "unitWeight": 0.02,
+            "storedSize": 0.04,
+            "quantity": 0,
+            "equipped": false,
+            "lashable": false,
+            "lashed": false,
+            "containerId": null
+        }
+    },
+    {
+        "name": "Silver Coins",
+        "type": "coin",
+        "img": "assets/images/gear/silver-coins.webp",
+        "system": {
+            "description": "Standard silver coins used throughout the realm. 10 silver coins = 1 gold coin. 100 coins weigh approximately 2 pounds.",
+            "cost": 0,
+            "unitWeight": 0.02,
+            "storedSize": 0.04,
+            "quantity": 0,
+            "equipped": false,
+            "lashable": false,
+            "lashed": false,
+            "containerId": null
+        }
+    },
+    {
+        "name": "Copper Coins",
+        "type": "coin",
+        "img": "assets/images/gear/copper-coins.webp",
+        "system": {
+            "description": "Standard copper coins used throughout the realm. 100 copper coins = 1 gold coin. 100 coins weigh approximately 2 pounds.",
+            "cost": 0,
+            "unitWeight": 0.02,
+            "storedSize": 0.04,
+            "quantity": 0,
+            "equipped": false,
+            "lashable": false,
+            "lashed": false,
+            "containerId": null
+        }
+    }
+]

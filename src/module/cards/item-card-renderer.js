@@ -14,18 +14,18 @@ export class ItemCardRenderer {
     this.FONTS = {
       NAME_SIZE: 100,
       TYPE_SIZE: 24,
-      DESC_SIZE: 36,
-      METADATA_SIZE: 40,
+      DESC_SIZE: 24,
+      METADATA_SIZE: 30,
       WEAPON_META_SIZE: 30
     };
     
     // Field coordinates adapted from field_coordinates_item.json
     this.COORDS = {
-      item_image: [300, 180],    // Centered X, top Y
-      item_name: [300, 450],      // Centered X, Y position
-      item_type: [300, 500],      // Centered X below name
-      description: [50, 600],     // Left X, top Y of description area
-      equipment_metadata: [300, 780], // Centered X, bottom metadata line
+      item_image: [300, 170],    // Centered X, top Y
+      item_name: [300, 85],       // Centered X, Y position (70px from top)
+      item_type: [300, 50],       // Centered X, Y position (50px from top)
+      description: [50, 580],     // Left X, top Y of description area
+      equipment_metadata: [300, 830], // Centered X, bottom metadata line
       weapon_metadata_offset: 10  // Pixels below name for weapon stats
     };
     
@@ -43,7 +43,6 @@ export class ItemCardRenderer {
     // Font loading would go here when custom font is available
     // For now, using system serif fonts which work well for cards
     this.fontLoaded = true;
-    console.log('Item card renderer initialized with system fonts');
   }
   
   /**
@@ -63,14 +62,12 @@ export class ItemCardRenderer {
       
       img.onerror = (error) => {
         // Template not found - create programmatic parchment background
-        console.error('item-card.webp failed to load:', error);
-        console.log('Using programmatic template instead');
         this.templateImage = this._createParchmentTemplate();
         resolve(this.templateImage);
       };
       
-      // Try to load template with cache busting
-      img.src = `systems/osp-houserules/assets/character-sheet/item-card.webp?v=${Date.now()}`;
+      // Try to load template with aggressive cache busting
+      img.src = `systems/osp-houserules/assets/character-sheet/item-card.webp?v=${Date.now()}&r=${Math.random()}`;
     });
   }
   
@@ -144,8 +141,8 @@ export class ItemCardRenderer {
       this._drawArmorMetadata(ctx, item, nameBottomY);
     }
     
-    // Common equipment metadata (cost, weight, capacity)
-    this._drawEquipmentMetadata(ctx, item);
+    // Common equipment metadata (cost, weight, capacity) with icons
+    await this._drawEquipmentMetadata(ctx, item);
     
     return canvas;
   }
@@ -156,7 +153,6 @@ export class ItemCardRenderer {
   async _drawItemImage(ctx, item) {
     return new Promise((resolve) => {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
       
       img.onload = () => {
         const [centerX, topY] = this.COORDS.item_image;
@@ -185,14 +181,20 @@ export class ItemCardRenderer {
       
       img.onerror = (error) => {
         // Draw placeholder if image fails
-        console.warn('Item image failed to load:', item.img, error);
         this._drawPlaceholder(ctx);
         resolve();
       };
       
-      // Use item image with cache busting, or placeholder
-      const imgSrc = item.img || 'systems/osp-houserules/assets/character-sheet/item_placeholder.png';
-      img.src = `${imgSrc}?v=${Date.now()}`;
+      // Use item image with aggressive cache busting, or placeholder
+      let imgSrc = item.img || 'systems/osp-houserules/assets/character-sheet/item_placeholder.png';
+      
+      // Ensure proper system path prefix for relative paths
+      if (imgSrc && !imgSrc.startsWith('systems/') && !imgSrc.startsWith('http')) {
+        imgSrc = `systems/osp-houserules/${imgSrc}`;
+      }
+      
+      // Use both timestamp and random to defeat all caching
+      img.src = `${imgSrc}?v=${Date.now()}&r=${Math.random()}`;
     });
   }
   
@@ -418,43 +420,93 @@ export class ItemCardRenderer {
   /**
    * Draw equipment metadata (cost, weight, capacity, lashable)
    */
-  _drawEquipmentMetadata(ctx, item) {
+  async _drawEquipmentMetadata(ctx, item) {
     const [centerX, y] = this.COORDS.equipment_metadata;
-    const parts = [];
+    const iconSize = 30;
+    const iconPadding = 5;
+    const itemSpacing = 20;
     
-    // Cost
+    const items = [];
+    
+    // Cost with coin icon
     if (item.system.cost !== undefined && item.system.cost !== '') {
       let costValue = item.system.cost;
-      // Format with comma for thousands
       if (costValue >= 1000) {
         costValue = costValue.toLocaleString();
       }
-      parts.push(`${costValue}sp`);
+      items.push({ icon: 'coin-icon.webp', text: `${costValue}sp` });
     }
     
-    // Weight (skip for livestock)
+    // Weight with weight icon (skip for livestock)
     if (item.type !== 'livestock' && item.system.unitWeight !== undefined && item.system.unitWeight !== '') {
-      parts.push(`${item.system.unitWeight}lbs`);
+      items.push({ icon: 'weight-icon.webp', text: `${item.system.unitWeight}lbs` });
     }
     
-    // Stored size (capacity)
+    // Stored size with capacity icon (skip for livestock)
     if (item.type !== 'livestock' && item.system.storedSize !== undefined && item.system.storedSize !== '') {
-      parts.push(`${item.system.storedSize}S`);
+      items.push({ icon: 'capacity-icon.webp', text: `${item.system.storedSize}S` });
     }
     
-    // Lashable indicator (boolean in Foundry, not "Yes"/"No" string)
-    if (item.system.lashable === true) {
-      parts.push('Lashable');
-    }
+    if (items.length === 0 && item.system.lashable !== true) return;
     
-    if (parts.length === 0) return;
-    
-    ctx.fillStyle = this.TEXT_COLOR;
+    // Calculate total width needed
     ctx.font = `${this.FONTS.METADATA_SIZE}px "Segoe Script", "Comic Sans MS", "Bradley Hand", cursive`;
-    ctx.textAlign = 'center';
+    let totalWidth = 0;
+    for (const item of items) {
+      const textWidth = ctx.measureText(item.text).width;
+      totalWidth += iconSize + iconPadding + textWidth + itemSpacing;
+    }
+    
+    // Add lashable icon width if needed
+    if (item.system.lashable === true) {
+      totalWidth += iconSize + itemSpacing;
+    }
+    
+    totalWidth -= itemSpacing; // Remove last spacing
+    
+    // Start position (centered)
+    let x = centerX - (totalWidth / 2);
+    
+    // Set text properties once before loop
+    ctx.fillStyle = this.TEXT_COLOR;
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     
-    const metadataText = parts.join(' • ');
-    ctx.fillText(metadataText, centerX, y);
+    // Draw each metadata item with icon
+    for (const metaItem of items) {
+      // Load and draw icon centered vertically at y
+      const icon = await this._loadIcon(`systems/osp-houserules/assets/images/icons/${metaItem.icon}`);
+      if (icon) {
+        // Center icon vertically: y is middle, so top = y - (iconSize / 2)
+        ctx.drawImage(icon, x, y - (iconSize / 2), iconSize, iconSize);
+      }
+      x += iconSize + iconPadding;
+      
+      // Draw text 3px lower than icon center
+      ctx.fillText(metaItem.text, x, y + 3);
+      
+      const textWidth = ctx.measureText(metaItem.text).width;
+      x += textWidth + itemSpacing;
+    }
+    
+    // Draw lashable icon at the end if applicable, centered at y
+    if (item.system.lashable === true) {
+      const lashIcon = await this._loadIcon('systems/osp-houserules/assets/images/icons/lash.webp');
+      if (lashIcon) {
+        ctx.drawImage(lashIcon, x, y - (iconSize / 2), iconSize, iconSize);
+      }
+    }
+  }
+  
+  /**
+   * Load an icon image
+   */
+  async _loadIcon(path) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = `${path}?v=${Date.now()}`;
+    });
   }
 }

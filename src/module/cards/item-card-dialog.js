@@ -23,6 +23,7 @@ export class ItemCardDialog extends Application {
       resizable: false,
       popOut: true,
       minimizable: false,
+      zIndex: 9999,
       dragDrop: [{ dragSelector: null, dropSelector: null }]
     });
   }
@@ -42,6 +43,30 @@ export class ItemCardDialog extends Application {
     
     // Close dialog when double-clicking the card
     html.find('.card-preview-container').dblclick(() => this.close());
+    
+    // Keep card always on top
+    this._keepOnTop();
+  }
+  
+  /**
+   * Keep this dialog always on top
+   */
+  _keepOnTop() {
+    const app = this;
+    
+    // Bring to front on any click anywhere
+    $(document).on('mousedown.itemcard', function() {
+      if (app.element && app.element[0]) {
+        app.bringToTop();
+      }
+    });
+  }
+  
+  /** @override */
+  close(options) {
+    // Remove the global click listener when closing
+    $(document).off('mousedown.itemcard');
+    return super.close(options);
   }
   
   /**

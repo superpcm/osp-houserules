@@ -1,355 +1,355 @@
 [
-    {
-        "name": "Chicken",
-        "type": "livestock",
-        "img": "assets/images/livestock/chicken.webp",
-        "system": {
-            "description": "This chicken is a plump farm hen with mottled brown feathers, a bright red comb, and sturdy yellow legs, rendered in warm, earthy tones. It is typically kept by villagers and homesteaders for eggs and meat, scratching around yards and barnyards in search of grain and insects.",
-            "cost": 0.2,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "food source"
-            ],
-            "movement": 30,
-            "carrying": 0,
-            "feedCost": 0.1,
-            "hp": 1,
-            "ac": 10,
-            "temperament": "docile"
-        }
-    },
-    {
-        "name": "Dog, Guard",
-        "type": "livestock",
-        "img": "assets/images/livestock/dog-guard.webp",
-        "system": {
-            "description": "This guard dog is a muscular, broad-chested hound with a cropped tail, thick neck, and heavy leather collar, its stance braced and expression wary. It is typically used by nobles, merchants, and watchmen to protect homes, caravans, and strongholds, barking warnings and attacking intruders on command.",
-            "cost": 25,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "guard",
-                "companion"
-            ],
-            "movement": 180,
-            "carrying": 10,
-            "feedCost": 0.5,
-            "hp": 6,
-            "ac": 13,
-            "temperament": "loyal",
-            "attacks": "1 bite for 1d4 damage"
-        }
-    },
-    {
-        "name": "Dog, Hunting",
-        "type": "livestock",
-        "img": "assets/images/livestock/dog-hunting.webp",
-        "system": {
-            "description": "This hunting dog is a lean, alert hound with a short, tawny coat and a simple leather collar, standing poised as if ready to track a scent. It is typically used by rangers, hunters, and gamekeepers to help locate prey, follow trails, and warn of approaching danger in the wilds.",
-            "cost": 17,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "tracking",
-                "companion"
-            ],
-            "movement": 180,
-            "carrying": 5,
-            "feedCost": 0.5,
-            "hp": 4,
-            "ac": 12,
-            "temperament": "loyal",
-            "attacks": "1 bite for 1d3 damage",
-            "special": "Can track by scent"
-        }
-    },
-    {
-        "name": "Donkey",
-        "type": "livestock",
-        "img": "assets/images/livestock/donkey.webp",
-        "system": {
-            "description": "This donkey is a small, sturdy beast with long ears, a rough coat, and a patient expression, rendered in muted browns and greys. It is typically used by farmers and travelers to carry packs or pull small carts, prized for its endurance and surefootedness more than for speed.",
-            "cost": 8,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "pack animal"
-            ],
-            "movement": 120,
-            "carrying": 40,
-            "feedCost": 1,
-            "hp": 8,
-            "ac": 12,
-            "temperament": "stubborn"
-        }
-    },
-    {
-        "name": "Goat",
-        "type": "livestock",
-        "img": "assets/images/livestock/goat.webp",
-        "system": {
-            "description": "This goat is a surefooted, bearded animal with curved horns and a rough, shaggy coat rendered in muted browns. It is typically kept by rural folk for its milk, meat, and hide, and it can also serve as a hardy pack animal in rugged, rocky terrain.",
-            "cost": 1,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "food source"
-            ],
-            "movement": 90,
-            "carrying": 5,
-            "feedCost": 0.3,
-            "hp": 4,
-            "ac": 12,
-            "temperament": "ornery"
-        }
-    },
-    {
-        "name": "Hawk, Trained",
-        "type": "livestock",
-        "img": "assets/images/livestock/hawk.webp",
-        "system": {
-            "description": "This hawk is a sharp-eyed raptor with mottled brown plumage, curved talons, and a hooked beak, rendered in earthy tones with careful feather detail. It is typically used by hunters, scouts, and rangers as a trained companion for scouting, tracking, or delivering swift, deadly strikes from above.",
-            "cost": 1000,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "hunting",
-                "scout"
-            ],
-            "movement": 480,
-            "carrying": 0,
-            "feedCost": 0.2,
-            "hp": 2,
-            "ac": 14,
-            "temperament": "wild",
-            "attacks": "1 claw for 1d2 damage",
-            "special": "Can scout from above, hunting small game"
-        }
-    },
-    {
-        "name": "Horse, Draft",
-        "type": "livestock",
-        "img": "assets/images/livestock/horse-draft.webp",
-        "system": {
-            "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world.",
-            "cost": 200,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "draft animal"
-            ],
-            "movement": 90,
-            "carrying": 120,
-            "feedCost": 2,
-            "hp": 15,
-            "ac": 12,
-            "temperament": "docile"
-        }
-    },
-    {
-        "name": "Horse, Riding",
-        "type": "livestock",
-        "img": "assets/images/livestock/horse-riding.webp",
-        "system": {
-            "description": "This riding horse is a lean, well-muscled bay with a worn leather saddle and bridle, built for speed and endurance rather than brute strength. It is typically used by messengers, travelers, and light cavalry to cover long distances quickly across roads, fields, and open country.",
-            "cost": 75,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "mount",
-                "rideable"
-            ],
-            "movement": 240,
-            "carrying": 60,
-            "feedCost": 1.5,
-            "hp": 12,
-            "ac": 12,
-            "temperament": "skittish",
-            "special": "Usable as mount"
-        }
-    },
-    {
-        "name": "Horse, War",
-        "type": "livestock",
-        "img": "assets/images/livestock/horse-war.webp",
-        "system": {
-            "description": "This war horse is a powerful, broad-chested steed with sturdy legs and a worn leather war saddle, built to carry an armored rider into the thick of battle. Trained not to panic at blood, noise, or steel, it is typically used by knights and heavy cavalry to charge enemy lines and break formations.",
-            "cost": 250,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "mount",
-                "rideable",
-                "combat"
-            ],
-            "movement": 240,
-            "carrying": 80,
-            "feedCost": 2,
-            "hp": 18,
-            "ac": 13,
-            "temperament": "aggressive",
-            "attacks": "2 hooves for 1d6 each",
-            "special": "Usable as mount, does not flee in combat"
-        }
-    },
-    {
-        "name": "Mule",
-        "type": "livestock",
-        "img": "assets/images/livestock/mule.webp",
-        "system": {
-            "description": "This mule is a sturdy, surefooted beast of burden with simple tack and bulging saddlebags, built more for endurance than for speed or glamour. It is typically used by merchants and adventurers to haul gear, supplies, and treasure across rough terrain where wagons and fine horses would struggle.",
-            "cost": 8,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "pack animal"
-            ],
-            "movement": 120,
-            "carrying": 80,
-            "feedCost": 1.5,
-            "hp": 10,
-            "ac": 12,
-            "temperament": "stubborn"
-        }
-    },
-    {
-        "name": "Ox",
-        "type": "livestock",
-        "img": "assets/images/livestock/ox.webp",
-        "system": {
-            "description": "This ox is a broad-shouldered, thick-necked beast with curved horns and a heavy frame, built more for endurance than speed. It is typically used to pull plows and wagons, serving as a reliable draft animal for farmers, caravans, and frontier settlers.",
-            "cost": 15,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "draft animal"
-            ],
-            "movement": 60,
-            "carrying": 140,
-            "feedCost": 2,
-            "hp": 15,
-            "ac": 12,
-            "temperament": "docile"
-        }
-    },
-    {
-        "name": "Pig",
-        "type": "livestock",
-        "img": "assets/images/livestock/pig.webp",
-        "system": {
-            "description": "This pig is a stout, bristly farm animal with a rounded body, pointed ears, and a curled tail, rendered in warm, earthy tones. It is typically raised by villagers and farmers for meat, fat, and sometimes trade, rooting around pens and farmyards in search of scraps and forage.",
-            "cost": 3,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "food source"
-            ],
-            "movement": 60,
-            "carrying": 0,
-            "feedCost": 0.5,
-            "hp": 5,
-            "ac": 11,
-            "temperament": "docile"
-        }
-    },
-    {
-        "name": "Pony",
-        "type": "livestock",
-        "img": "assets/images/livestock/pony.webp",
-        "system": {
-            "description": "This pony is a sturdy, short-legged mount with a shaggy mane and thick coat, built for surefooted travel rather than great speed. It is typically used by children, small folk, and lightly equipped riders, as well as for pulling small carts or carrying loads in rough terrain.",
-            "cost": 30,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "mount",
-                "rideable",
-                "pack animal"
-            ],
-            "movement": 180,
-            "carrying": 40,
-            "feedCost": 1,
-            "hp": 8,
-            "ac": 12,
-            "temperament": "docile",
-            "special": "Usable as mount by small characters"
-        }
-    },
-    {
-        "name": "Sheep",
-        "type": "livestock",
-        "img": "assets/images/livestock/sheep.webp",
-        "system": {
-            "description": "This sheep is a woolly, thick-fleeced animal with a calm expression and sturdy legs, rendered in soft, earthy tones. It is typically raised by villagers and herders for its wool, milk, and meat, grazing in flocks across hillsides and pastures around rural settlements.",
-            "cost": 2,
-            "unitWeight": 0,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "tags": [
-                "livestock",
-                "food source"
-            ],
-            "movement": 60,
-            "carrying": 0,
-            "feedCost": 0.3,
-            "hp": 3,
-            "ac": 11,
-            "temperament": "timid"
-        }
+  {
+    "name": "Chicken",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/chicken.webp",
+    "system": {
+      "description": "This chicken is a plump farm hen with mottled brown feathers, a bright red comb, and sturdy yellow legs, rendered in warm, earthy tones. It is typically kept by villagers and homesteaders for eggs and meat, scratching around yards and barnyards in search of grain and insects.",
+      "cost": 0.2,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "food source"
+      ],
+      "movement": 30,
+      "carrying": 0,
+      "feedCost": 0.1,
+      "hp": 1,
+      "ac": 10,
+      "temperament": "docile"
     }
+  },
+  {
+    "name": "Dog, Guard",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/dog-guard.webp",
+    "system": {
+      "description": "This guard dog is a muscular, broad-chested hound with a cropped tail, thick neck, and heavy leather collar, its stance braced and expression wary. It is typically used by nobles, merchants, and watchmen to protect homes, caravans, and strongholds, barking warnings and attacking intruders on command.",
+      "cost": 25,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "guard",
+        "companion"
+      ],
+      "movement": 180,
+      "carrying": 10,
+      "feedCost": 0.5,
+      "hp": 6,
+      "ac": 13,
+      "temperament": "loyal",
+      "attacks": "1 bite for 1d4 damage"
+    }
+  },
+  {
+    "name": "Dog, Hunting",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/dog-hunting.webp",
+    "system": {
+      "description": "This hunting dog is a lean, alert hound with a short, tawny coat and a simple leather collar, standing poised as if ready to track a scent. It is typically used by rangers, hunters, and gamekeepers to help locate prey, follow trails, and warn of approaching danger in the wilds.",
+      "cost": 17,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "tracking",
+        "companion"
+      ],
+      "movement": 180,
+      "carrying": 5,
+      "feedCost": 0.5,
+      "hp": 4,
+      "ac": 12,
+      "temperament": "loyal",
+      "attacks": "1 bite for 1d3 damage",
+      "special": "Can track by scent"
+    }
+  },
+  {
+    "name": "Donkey",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/donkey.webp",
+    "system": {
+      "description": "This donkey is a small, sturdy beast with long ears, a rough coat, and a patient expression, rendered in muted browns and greys. It is typically used by farmers and travelers to carry packs or pull small carts, prized for its endurance and surefootedness more than for speed.",
+      "cost": 8,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "pack animal"
+      ],
+      "movement": 120,
+      "carrying": 40,
+      "feedCost": 1,
+      "hp": 8,
+      "ac": 12,
+      "temperament": "stubborn"
+    }
+  },
+  {
+    "name": "Goat",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/goat.webp",
+    "system": {
+      "description": "This goat is a surefooted, bearded animal with curved horns and a rough, shaggy coat rendered in muted browns. It is typically kept by rural folk for its milk, meat, and hide, and it can also serve as a hardy pack animal in rugged, rocky terrain.",
+      "cost": 1,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "food source"
+      ],
+      "movement": 90,
+      "carrying": 5,
+      "feedCost": 0.3,
+      "hp": 4,
+      "ac": 12,
+      "temperament": "ornery"
+    }
+  },
+  {
+    "name": "Hawk, Trained",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/hawk.webp",
+    "system": {
+      "description": "This hawk is a sharp-eyed raptor with mottled brown plumage, curved talons, and a hooked beak, rendered in earthy tones with careful feather detail. It is typically used by hunters, scouts, and rangers as a trained companion for scouting, tracking, or delivering swift, deadly strikes from above.",
+      "cost": 1000,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "hunting",
+        "scout"
+      ],
+      "movement": 480,
+      "carrying": 0,
+      "feedCost": 0.2,
+      "hp": 2,
+      "ac": 14,
+      "temperament": "wild",
+      "attacks": "1 claw for 1d2 damage",
+      "special": "Can scout from above, hunting small game"
+    }
+  },
+  {
+    "name": "Horse, Draft",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/horse-draft.webp",
+    "system": {
+      "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world.",
+      "cost": 200,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "draft animal"
+      ],
+      "movement": 90,
+      "carrying": 120,
+      "feedCost": 2,
+      "hp": 15,
+      "ac": 12,
+      "temperament": "docile"
+    }
+  },
+  {
+    "name": "Horse, Riding",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/horse-riding.webp",
+    "system": {
+      "description": "This riding horse is a lean, well-muscled bay with a worn leather saddle and bridle, built for speed and endurance rather than brute strength. It is typically used by messengers, travelers, and light cavalry to cover long distances quickly across roads, fields, and open country.",
+      "cost": 75,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "mount",
+        "rideable"
+      ],
+      "movement": 240,
+      "carrying": 60,
+      "feedCost": 1.5,
+      "hp": 12,
+      "ac": 12,
+      "temperament": "skittish",
+      "special": "Usable as mount"
+    }
+  },
+  {
+    "name": "Horse, War",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/horse-war.webp",
+    "system": {
+      "description": "This war horse is a powerful, broad-chested steed with sturdy legs and a worn leather war saddle, built to carry an armored rider into the thick of battle. Trained not to panic at blood, noise, or steel, it is typically used by knights and heavy cavalry to charge enemy lines and break formations.",
+      "cost": 250,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "mount",
+        "rideable",
+        "combat"
+      ],
+      "movement": 240,
+      "carrying": 80,
+      "feedCost": 2,
+      "hp": 18,
+      "ac": 13,
+      "temperament": "aggressive",
+      "attacks": "2 hooves for 1d6 each",
+      "special": "Usable as mount, does not flee in combat"
+    }
+  },
+  {
+    "name": "Mule",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/mule.webp",
+    "system": {
+      "description": "This mule is a sturdy, surefooted beast of burden with simple tack and bulging saddlebags, built more for endurance than for speed or glamour. It is typically used by merchants and adventurers to haul gear, supplies, and treasure across rough terrain where wagons and fine horses would struggle.",
+      "cost": 8,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "pack animal"
+      ],
+      "movement": 120,
+      "carrying": 80,
+      "feedCost": 1.5,
+      "hp": 10,
+      "ac": 12,
+      "temperament": "stubborn"
+    }
+  },
+  {
+    "name": "Ox",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/ox.webp",
+    "system": {
+      "description": "This ox is a broad-shouldered, thick-necked beast with curved horns and a heavy frame, built more for endurance than speed. It is typically used to pull plows and wagons, serving as a reliable draft animal for farmers, caravans, and frontier settlers.",
+      "cost": 15,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "draft animal"
+      ],
+      "movement": 60,
+      "carrying": 140,
+      "feedCost": 2,
+      "hp": 15,
+      "ac": 12,
+      "temperament": "docile"
+    }
+  },
+  {
+    "name": "Pig",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/pig.webp",
+    "system": {
+      "description": "This pig is a stout, bristly farm animal with a rounded body, pointed ears, and a curled tail, rendered in warm, earthy tones. It is typically raised by villagers and farmers for meat, fat, and sometimes trade, rooting around pens and farmyards in search of scraps and forage.",
+      "cost": 3,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "food source"
+      ],
+      "movement": 60,
+      "carrying": 0,
+      "feedCost": 0.5,
+      "hp": 5,
+      "ac": 11,
+      "temperament": "docile"
+    }
+  },
+  {
+    "name": "Pony",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/pony.webp",
+    "system": {
+      "description": "This pony is a sturdy, short-legged mount with a shaggy mane and thick coat, built for surefooted travel rather than great speed. It is typically used by children, small folk, and lightly equipped riders, as well as for pulling small carts or carrying loads in rough terrain.",
+      "cost": 30,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "mount",
+        "rideable",
+        "pack animal"
+      ],
+      "movement": 180,
+      "carrying": 40,
+      "feedCost": 1,
+      "hp": 8,
+      "ac": 12,
+      "temperament": "docile",
+      "special": "Usable as mount by small characters"
+    }
+  },
+  {
+    "name": "Sheep",
+    "type": "livestock",
+    "img": "systems/osp-houserules/assets/images/livestock/sheep.webp",
+    "system": {
+      "description": "This sheep is a woolly, thick-fleeced animal with a calm expression and sturdy legs, rendered in soft, earthy tones. It is typically raised by villagers and herders for its wool, milk, and meat, grazing in flocks across hillsides and pastures around rural settlements.",
+      "cost": 2,
+      "unitWeight": 0,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "livestock",
+        "food source"
+      ],
+      "movement": 60,
+      "carrying": 0,
+      "feedCost": 0.3,
+      "hp": 3,
+      "ac": 11,
+      "temperament": "timid"
+    }
+  }
 ]

@@ -1,71 +1,93 @@
 [
-    {
-        "name": "Arrows (quiver of 20)",
-        "type": "ammunition",
-        "img": "icons/weapons/ammunition/arrows-fletched-white.webp",
-        "system": {
-            "description": "A quiver containing 20 arrows for use with bows.",
-            "cost": 5,
-            "weight": 0,
-            "quantity": 20,
-            "equipped": false,
-            "bonus": 0,
-            "tags": [
-                "arrows"
-            ],
-            "slow": false
-        }
-    },
-    {
-        "name": "Crossbow bolts (case of 30)",
-        "type": "ammunition",
-        "img": "icons/weapons/ammunition/bolt-case-steel.webp",
-        "system": {
-            "description": "A case containing 30 bolts designed for use with a crossbow.",
-            "cost": 10,
-            "weight": 0,
-            "quantity": 30,
-            "equipped": false,
-            "bonus": 0,
-            "tags": [
-                "bolts"
-            ],
-            "slow": false
-        }
-    },
-    {
-        "name": "Silver tipped arrow (1)",
-        "type": "ammunition",
-        "img": "icons/weapons/ammunition/arrow-silver.webp",
-        "system": {
-            "description": "A single arrow with a silvered tip, effective against supernatural creatures.",
-            "cost": 5,
-            "weight": 0,
-            "quantity": 1,
-            "equipped": false,
-            "bonus": 0,
-            "tags": [
-                "arrows",
-                "silver"
-            ],
-            "slow": false
-        }
-    },
-    {
-        "name": "Sling stones",
-        "type": "ammunition",
-        "img": "icons/weapons/ammunition/stones-smooth.webp",
-        "system": {
-            "description": "Smooth stones suitable for use in a sling. Common and freely available.",
-            "cost": 0,
-            "weight": 0,
-            "quantity": 20,
-            "equipped": false,
-            "bonus": 0,
-            "tags": [
-                "stones"
-            ],
-            "slow": false
-        }
+  {
+    "name": "Arrow",
+    "type": "ammunition",
+    "img": "systems/osp-houserules/assets/items/ammunition/arrow.webp",
+    "system": {
+      "description": "An arrow is a lightweight wooden shaft tipped with a metal point, used as ammunition for bows. Its feathered fletching ensures stable flight, allowing it to strike targets accurately at range.",
+      "cost": 0.2,
+      "quantity": 1,
+      "equipped": false,
+      "bonus": 0,
+      "tags": [
+        "arrows"
+      ],
+      "slow": false,
+      "unitWeight": 0.1,
+      "storedSize": 0.25
     }
+  },
+  {
+    "name": "Crossbow Bolt, Light",
+    "type": "ammunition",
+    "img": "systems/osp-houserules/assets/items/ammunition/bolt-light.webp",
+    "system": {
+      "description": "A light crossbow bolt is a short, narrow projectile designed for use with light crossbows, optimized for speed and accuracy. Its compact weight allows for quick reloading and consistent performance in ranged combat.",
+      "cost": 0.3,
+      "quantity": 1,
+      "equipped": false,
+      "bonus": 0,
+      "tags": [
+        "bolts"
+      ],
+      "slow": false,
+      "unitWeight": 0.1,
+      "storedSize": 0.2
+    }
+  },
+  {
+    "name": "Crossbow Bolt, Heavy",
+    "type": "ammunition",
+    "img": "systems/osp-houserules/assets/items/ammunition/bolt-heavy.webp",
+    "system": {
+      "description": "A heavy crossbow bolt is a thicker, sturdier projectile built for high-powered crossbows, delivering deep penetration even against armored foes. Its reinforced shaft and weight make it slower to load but devastating on impact.",
+      "cost": 0.5,
+      "quantity": 1,
+      "equipped": false,
+      "bonus": 0,
+      "tags": [
+        "bolts"
+      ],
+      "slow": false,
+      "unitWeight": 0.15,
+      "storedSize": 0.25
+    }
+  },
+  {
+    "name": "Silver-tipped Arrow",
+    "type": "ammunition",
+    "img": "systems/osp-houserules/assets/items/ammunition/arrow-silver.webp",
+    "system": {
+      "description": "A silver-tipped arrow is a standard arrow fitted with a finely crafted silver head instead of iron or steel. It is prized for its effectiveness against supernatural creatures vulnerable to silver, making it a valuable tool for hunters and adventurers.",
+      "cost": 5,
+      "quantity": 1,
+      "equipped": false,
+      "bonus": 0,
+      "tags": [
+        "arrows",
+        "silver"
+      ],
+      "slow": false,
+      "unitWeight": 0.2,
+      "storedSize": 0.25
+    }
+  },
+  {
+    "name": "Sling Stone",
+    "type": "ammunition",
+    "img": "systems/osp-houserules/assets/items/ammunition/sling-stone.webp",
+    "system": {
+      "description": "A sling stone is a smooth, oval projectile shaped for optimal release from a sling's pouch. It is commonly used by hunters and skirmishers for its simplicity, low cost, and surprising lethality when launched at high speed.",
+      "cost": 0,
+      "quantity": 1,
+      "equipped": false,
+      "bonus": 0,
+      "tags": [
+        "stones"
+      ],
+      "slow": false,
+      "unitWeight": 0.1,
+      "storedSize": 0.1
+    }
+  }
 ]

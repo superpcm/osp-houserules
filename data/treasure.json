@@ -1,50 +1,50 @@
 [
-        {
-        "name": "Gold Coins",
-        "type": "coin",
-        "img": "assets/images/gear/gold-coin.webp",
-        "system": {
-            "description": "Standard gold coins used throughout the realm. 100 coins weigh approximately 2 pounds.",
-            "cost": 0,
-            "unitWeight": 0.02,
-            "storedSize": 0.04,
-            "quantity": 0,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null
-        }
-    },
-    {
-        "name": "Silver Coins",
-        "type": "coin",
-        "img": "assets/images/gear/silver-coins.webp",
-        "system": {
-            "description": "Standard silver coins used throughout the realm. 10 silver coins = 1 gold coin. 100 coins weigh approximately 2 pounds.",
-            "cost": 0,
-            "unitWeight": 0.02,
-            "storedSize": 0.04,
-            "quantity": 0,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null
-        }
-    },
-    {
-        "name": "Copper Coins",
-        "type": "coin",
-        "img": "assets/images/gear/copper-coins.webp",
-        "system": {
-            "description": "Standard copper coins used throughout the realm. 100 copper coins = 1 gold coin. 100 coins weigh approximately 2 pounds.",
-            "cost": 0,
-            "unitWeight": 0.02,
-            "storedSize": 0.04,
-            "quantity": 0,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null
-        }
+  {
+    "name": "Copper Coins",
+    "type": "coin",
+    "img": "systems/osp-houserules/assets/images/treasure/copper-coins.webp",
+    "system": {
+      "description": "The Penny is the smallest denomination of currency, used for common transactions such as food, lodging, or simple goods. Though individually modest in worth, Pennies are essential to daily trade and circulate widely among all classes. 10 Pennies match the worth of 1 Sovereign, and one 100 Pennies weigh approximately 2 pounds.",
+      "cost": 0.1,
+      "unitWeight": 0.02,
+      "storedSize": 0.04,
+      "quantity": 0,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null
     }
+  },
+  {
+    "name": "Gold Coins",
+    "type": "coin",
+    "img": "systems/osp-houserules/assets/images/treasure/gold-coins.webp",
+    "system": {
+      "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds.",
+      "cost": 10,
+      "unitWeight": 0.04,
+      "storedSize": 0.04,
+      "quantity": 0,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null
+    }
+  },
+  {
+    "name": "Silver Coins",
+    "type": "coin",
+    "img": "systems/osp-houserules/assets/images/treasure/silver-coins.webp",
+    "system": {
+      "description": "The Sovereign is the standard coin of the realm and the foundation of everyday commerce. Trusted in every market and kingdom hall, 10 Sovereigns equal 1 Gold Crown in value. 10 Sovereigns match the worth of 1 Crown and 100 weigh roughly 2 pounds.",
+      "cost": 1,
+      "unitWeight": 0.02,
+      "storedSize": 0.04,
+      "quantity": 0,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null
+    }
+  }
 ]

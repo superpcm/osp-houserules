@@ -158,6 +158,20 @@ export class OspActorSheetCharacter extends ActorSheet {
     const context = super.getData(options);
     context.system = this.actor.system;
 
+    // Initialize position and portrait data if missing
+    if (!context.system.levelPosition) {
+      context.system.levelPosition = { x: 0, y: 0, zIndex: 0 };
+    }
+    if (!context.system.userPortrait) {
+      context.system.userPortrait = { scale: 1, x: 0, y: 0 };
+    }
+    if (!context.system.namePosition) {
+      context.system.namePosition = { x: 0, y: 0, zIndex: 0 };
+    }
+    if (!context.system.classPosition) {
+      context.system.classPosition = { x: 0, y: 0, zIndex: 0 };
+    }
+
     // Prepare items for template
     context.weapons = this.actor.system.weapons || [];
     context.armor = this.actor.system.armor || [];
@@ -202,8 +216,9 @@ export class OspActorSheetCharacter extends ActorSheet {
       
       // Calculate display weight for each item and separate by lashed status
       allContainedItems.forEach(item => {
-        const itemWeight = parseFloat(item.system.unitWeight) || 0;
-        const currentQuantity = item.system.quantity || 1;
+        // Handle both 'unitWeight' and 'weight' field names
+        const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
+        const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
         const storedSize = parseFloat(item.system.storedSize) || 0;
         const maxQuantity = item;
         
@@ -239,9 +254,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       containerData.lashedItems = lashedItems;
       
       // Calculate total weight: container weight + all contained items' weights (both stored and lashed)
-      const containerWeight = parseFloat(container.system.unitWeight) || 0;
+      // Handle both 'unitWeight' and 'weight' field names
+      const containerWeight = parseFloat(container.system.unitWeight || container.system.weight) || 0;
       const containedWeight = allContainedItems.reduce((total, item) => {
-        return total + item.displayWeight;
+        return total + (item.displayWeight || 0);
       }, 0);
       containerData.totalWeight = containerWeight + containedWeight;
       
@@ -274,7 +290,16 @@ export class OspActorSheetCharacter extends ActorSheet {
       
       // Round capacity values to whole numbers
       containerData.usedCapacity = Math.round(usedCapacity);
-      containerData.maxCapacity = container.system.capacity || 0;
+      
+      // Handle capacity as either a number or an object {type, value, max}
+      let maxCapacity = 0;
+      if (typeof container.system.capacity === 'object' && container.system.capacity !== null) {
+        maxCapacity = container.system.capacity.max || 0;
+      } else {
+        maxCapacity = container.system.capacity || 0;
+      }
+      
+      containerData.maxCapacity = maxCapacity;
       containerData.remainingCapacity = Math.max(0, containerData.maxCapacity - containerData.usedCapacity);
       containerData.capacityPercentage = containerData.maxCapacity > 0 
         ? Math.min(100, (containerData.usedCapacity / containerData.maxCapacity) * 100) 
@@ -301,8 +326,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // Calculate displayWeight for general items
     generalItems.forEach(item => {
-      const itemWeight = parseFloat(item.system.unitWeight) || 0;
-      const currentQuantity = item.system.quantity || 1;
+      // Handle both 'unitWeight' and 'weight' field names
+      const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
+      const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
       
       // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;

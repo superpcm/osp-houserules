@@ -16,8 +16,13 @@ async function addItemsToFoundry(forceUpdate = false) {
   console.log("Force update mode:", forceUpdate);
   
   const dataFiles = [
+    'systems/osp-houserules/data/ammunition.json',
+    'systems/osp-houserules/data/armor.json',
     'systems/osp-houserules/data/equipment.json',
-    'systems/osp-houserules/data/treasure.json'
+    'systems/osp-houserules/data/livestock.json',
+    'systems/osp-houserules/data/tack.json',
+    'systems/osp-houserules/data/treasure.json',
+    'systems/osp-houserules/data/weapons.json'
   ];
   
   let allItems = [];
@@ -83,8 +88,14 @@ async function addItemsToFoundry(forceUpdate = false) {
         console.log(`Item "${itemInfo.name}" already exists in world (ID: ${existing.id}, Type: ${existing.type})`);
         
         if (forceUpdate) {
+          // Prepare update data - fix image path if needed
+          const updateData = { ...itemInfo };
+          if (updateData.img && !updateData.img.startsWith('systems/')) {
+            updateData.img = `systems/osp-houserules/${updateData.img}`;
+          }
+          
           // Update existing item
-          await existing.update(itemInfo);
+          await existing.update(updateData);
           console.log(`  ✅ Updated existing item`);
           updatedItems.push(itemInfo.name);
         } else {
@@ -92,9 +103,15 @@ async function addItemsToFoundry(forceUpdate = false) {
           skippedItems.push(itemInfo.name);
         }
       } else {
+        // Prepare item data - fix image path if needed
+        const itemData = { ...itemInfo };
+        if (itemData.img && !itemData.img.startsWith('systems/') && !itemData.img.startsWith('icons/')) {
+          itemData.img = `systems/osp-houserules/${itemData.img}`;
+        }
+        
         // Create the item
-        console.log(`Creating new item: ${itemInfo.name} (${itemInfo.type})`);
-        const item = await Item.create(itemInfo);
+        console.log(`Creating new item: ${itemData.name} (${itemData.type})`);
+        const item = await Item.create(itemData);
         console.log(`✅ Created: ${item.name} (${item.type}) - ID: ${item.id}`);
         createdItems.push(item);
       }
@@ -125,5 +142,8 @@ async function addItemsToFoundry(forceUpdate = false) {
   };
 }
 
-// Run the function
+// Make function globally available
+window.addItemsToFoundry = addItemsToFoundry;
+
+// Run the function automatically on paste
 addItemsToFoundry();

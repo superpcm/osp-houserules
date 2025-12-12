@@ -1,1062 +1,1002 @@
 [
-    {
-        "name": "Bastard Sword",
-        "type": "weapon",
-        "img": "assets/images/weapons/bastardsword.webp",
-        "system": {
-            "description": "This bastard sword features a long, double-edged blade with a simple yet elegant crossguard and an extended leather-wrapped grip suited for either one- or two-handed use. It is typically favored by versatile knights and adventurers who want the option to strike with the speed of a longsword or the heavier blows of a greatsword as the situation demands.",
-            "cost": 25,
-            "unitWeight": 10,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": {
-                "oneHanded": {
-                    "normal": "1d8",
-                    "large": "1d12"
-                },
-                "twoHanded": {
-                    "normal": "2d4",
-                    "large": "2d8"
-                }
-            },
-            "damageType": "S",
-            "size": "M",
-            "speedFactor": 5,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee",
-                "versatile"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
+  {
+    "name": "Bastard Sword",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/bastardsword.webp",
+    "system": {
+      "description": "This bastard sword features a long, double-edged blade with a simple yet elegant crossguard and an extended leather-wrapped grip suited for either one- or two-handed use. It is typically favored by versatile knights and adventurers who want the option to strike with the speed of a longsword or the heavier blows of a greatsword as the situation demands.",
+      "cost": 25,
+      "unitWeight": 10,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": {
+        "oneHanded": {
+          "normal": "1d8",
+          "large": "1d12"
+        },
+        "twoHanded": {
+          "normal": "2d4",
+          "large": "2d8"
         }
-    },
-    {
-        "name": "Battle axe",
-        "type": "weapon",
-        "img": "assets/images/weapons/battleaxe.webp",
-        "system": {
-            "description": "The battle axe features a heavy, crescent-shaped steel blade mounted on a sturdy wooden haft wrapped for improved grip. Designed for both cleaving and crushing, it is a brutal but reliable weapon favored by soldiers, raiders, and front-line adventurers.",
-            "cost": 5,
-            "unitWeight": 7,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d8",
-            "damageL": "1d8",
-            "damageType": "S",
-            "size": "M",
-            "speedFactor": 7,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee",
-                "two-handed"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Battle axe, two handed",
-        "type": "weapon",
-        "img": "assets/images/weapons/battleaxe-twohanded.webp",
-        "system": {
-            "description": "A two-headed, two-handed battle axe is a brutal heavy weapon featuring twin crescent blades mounted on a long reinforced haft, designed to deliver devastating cleaving strikes. It is typically used by powerful warriors capable of wielding its weight to split shields, armor, and even large creatures with overwhelming force.",
-            "cost": 15,
-            "unitWeight": 15,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d10",
-            "damageL": "1d12",
-            "damageType": "S",
-            "size": "L",
-            "speedFactor": 8,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee",
-                "two-handed"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Broad Sword",
-        "type": "weapon",
-        "img": "assets/images/weapons/broadsword.webp",
-        "system": {
-            "description": "This broadsword has a wide, double-edged steel blade with a simple crossguard and a leather-wrapped grip ending in a solid pommel for balance. It is typically used by heavily armed warriors as a primary melee weapon, delivering powerful chopping and slashing blows in close combat.",
-            "cost": 10,
-            "unitWeight": 4,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "2d4",
-            "damageL": "1d6+1",
-            "damageType": "S",
-            "size": "M",
-            "speedFactor": 5,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Club",
-        "type": "weapon",
-        "img": "assets/images/weapons/club.webp",
-        "system": {
-            "description": "This simple wooden club is carved from a single solid branch, its head slightly thickened and scarred from repeated use. Favored by commoners and seasoned warriors alike, it delivers brutal, crushing blows despite its humble construction.",
-            "cost": 3,
-            "unitWeight": 3,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d3",
-            "damageType": "B",
-            "size": "M",
-            "speedFactor": 4,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "blunt",
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Great Club",
-        "type": "weapon",
-        "img": "assets/images/weapons/great-club.webp",
-        "system": {
-            "description": "This great club is a massive, two-handed cudgel carved from a single length of hardwood, its head thick and knotted with age while the lower grip is wrapped in worn leather. It is typically used by barbarians, ogres, and other brute warriors to deliver bone-crushing blows that rely more on raw strength than finesse.",
-            "cost": 5,
-            "unitWeight": 12,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d8",
-            "damageL": "1d10",
-            "damageType": "B",
-            "size": "L",
-            "speedFactor": 8,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "blunt",
-                "melee",
-                "two-handed"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Crossbow, Heavy",
-        "type": "weapon",
-        "img": "assets/images/weapons/crossbow-heavy.webp",
-        "system": {
-            "description": "This heavy crossbow features a thick wooden tiller reinforced with iron bands and a powerful steel bow, its cord drawn taut for immense penetrating force. It is typically used by soldiers and siege troops to deliver slow but devastating bolts that can punch through armor or pin targets at long range.",
-            "cost": 50,
-            "unitWeight": 14,
-            "storedSize": 20,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d8+1",
-            "damageType": "P",
-            "size": "M",
-            "speedFactor": 10,
-            "rof": 0.5,
-            "bonus": 0,
-            "tags": [
-                "missile",
-                "reload",
-                "two-handed"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 80,
-                "medium": 160,
-                "long": 240
-            }
-        }
-    },
-    {
-        "name": "Crossbow, Light",
-        "type": "weapon",
-        "img": "assets/images/weapons/crossbow-light.webp",
-        "system": {
-            "description": "This sturdy crossbow features a polished wooden tiller paired with a reinforced steel bow, built for power and reliability. Its simple winding stirrup and taut string make it a favored weapon for soldiers and hunters who rely on precision and punch from afar.",
-            "cost": 35,
-            "unitWeight": 7,
-            "storedSize": 12,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d4",
-            "damageL": "1d4",
-            "damageType": "P",
-            "size": "S",
-            "speedFactor": 7,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "missile",
-                "reload",
-                "two-handed"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 60,
-                "medium": 120,
-                "long": 180
-            }
-        }
-    },
-    {
-        "name": "Dagger",
-        "type": "weapon",
-        "img": "assets/images/weapons/dagger.webp",
-        "system": {
-            "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike.",
-            "cost": 2,
-            "unitWeight": 1,
-            "storedSize": 3,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d4",
-            "damageL": "1d3",
-            "damageType": "P",
-            "size": "S",
-            "speedFactor": 2,
-            "rof": 2,
-            "bonus": 0,
-            "tags": [
-                "melee",
-                "missile"
-            ],
-            "melee": true,
-            "missile": true,
-            "range": {
-                "short": 10,
-                "medium": 20,
-                "long": 30
-            }
-        }
-    },
-    {
-        "name": "Dart",
-        "type": "weapon",
-        "img": "assets/images/weapons/dart.webp",
-        "system": {
-            "description": "This dart is a small throwing missile with a slim wooden shaft, a leaf-shaped steel head, and feather fletching at the tail for stability in flight. It is typically used by rogues, hunters, and lightly armed warriors to deliver quick, accurate ranged attacks or poisoned strikes at short distances.",
-            "cost": 5,
-            "unitWeight": 0.5,
-            "storedSize": 1,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d3",
-            "damageL": "1d2",
-            "damageType": "P",
-            "size": "S",
-            "speedFactor": 2,
-            "rof": 3,
-            "bonus": 0,
-            "tags": [
-                "missile",
-                "reload",
-                "two-handed"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 10,
-                "medium": 20,
-                "long": 40
-            }
-        }
-    },
-    {
-        "name": "Flail",
-        "type": "weapon",
-        "img": "assets/images/weapons/flail.webp",
-        "system": {
-            "description": "This flail consists of a sturdy wooden haft attached by a length of chain to a heavy spiked iron ball. It is typically used by warriors to swing in wide, crushing arcs that can bypass shields and batter armored foes with brutal, momentum-driven blows.",
-            "cost": 15,
-            "unitWeight": 15,
-            "storedSize": 1,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6+1",
-            "damageL": "2d4",
-            "damageType": "B",
-            "size": "M",
-            "speedFactor": 7,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Hand axe",
-        "type": "weapon",
-        "img": "assets/images/weapons/handaxe.webp",
-        "system": {
-            "description": "This compact hand axe has a single crescent-shaped steel blade set into a sturdy wooden haft, its grip wrapped in leather for better control. Balanced for both chopping and throwing, it\u2019s a favorite sidearm of woodsmen, skirmishers, and lightly armored adventurers.",
-            "cost": 1,
-            "unitWeight": 5,
-            "storedSize": 4,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d4",
-            "damageType": "S",
-            "size": "M",
-            "speedFactor": 4,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee",
-                "missile"
-            ],
-            "melee": true,
-            "missile": true,
-            "range": {
-                "short": 10,
-                "medium": 20,
-                "long": 30
-            }
-        }
-    },
-    {
-        "name": "Holy water",
-        "type": "weapon",
-        "img": "assets/images/weapons/holy-water.webp",
-        "system": {
-            "description": "This small glass vial is etched with a simple cross and sealed with a carved wooden stopper, its clear contents faintly shimmering with divine purity. When thrown, the consecrated water bursts outward in a radiant splash, scorching undead and unholy creatures with sacred force.",
-            "cost": 20,
-            "unitWeight": 1,
-            "storedSize": 2,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d6",
-            "damageType": "B",
-            "size": "S",
-            "speedFactor": 2,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "missile",
-                "splash-weapon"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 10,
-                "medium": 30,
-                "long": 50
-            }
-        }
-    },
-    {
-        "name": "Javelin",
-        "type": "weapon",
-        "img": "assets/images/weapons/javelin.webp",
-        "system": {
-            "description": "This slim throwing spear has a straight ash-wood shaft tipped with a narrow, leaf-shaped steel head bound in place with dark wire. Light and well-balanced, it\u2019s made to fly true over distance, ideal for skirmishers and warriors who soften their foes before closing to melee.",
-            "cost": 5,
-            "unitWeight": 2,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d6",
-            "damageType": "P",
-            "size": "M",
-            "speedFactor": 4,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "missile"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 20,
-                "medium": 40,
-                "long": 60
-            }
-        }
-    },
-    {
-        "name": "Khopesh",
-        "type": "weapon",
-        "img": "assets/images/weapons/khopesh.webp",
-        "system": {
-            "description": "This khopesh is a single-edged bronze or steel blade that curves forward into a sickle-like hook, mounted on a simple hilt with a wrapped grip. It is typically used to deliver powerful chopping blows and to hook shields or limbs, making it a brutal and versatile weapon favored by warriors of ancient, desert-born cultures.",
-            "cost": 10,
-            "unitWeight": 7,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "2d4",
-            "damageL": "1d6",
-            "damageType": "S",
-            "size": "M",
-            "speedFactor": 9,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Lance",
-        "type": "weapon",
-        "img": "assets/images/weapons/lance.webp",
-        "system": {
-            "description": "A lance is a long, heavy spear designed for mounted warriors, optimized for delivering powerful charges at high speed. Its length allows a rider to strike opponents before they can close in, making it a devastating weapon in cavalry combat.",
-            "cost": 10,
-            "unitWeight": 10,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6+1",
-            "damageL": "2d6",
-            "damageType": "P",
-            "size": "L",
-            "speedFactor": 7,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee",
-                "charge"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Long Sword",
-        "type": "weapon",
-        "img": "assets/images/weapons/longsword.webp",
-        "system": {
-            "description": "This finely forged longsword features a straight, double-edged blade with a broad fuller running down its center, balanced for both cutting and thrusting. A simple steel crossguard, leather-wrapped grip, and brass-capped pommel give it a practical yet noble look, befitting the standard weapon of knights and seasoned adventurers.",
-            "cost": 15,
-            "unitWeight": 4,
-            "storedSize": 6,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d8",
-            "damageL": "1d12",
-            "damageType": "S",
-            "size": "M",
-            "speedFactor": 5,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Long bow",
-        "type": "weapon",
-        "img": "assets/images/weapons/longbow.webp",
-        "system": {
-            "description": "This longbow is a tall, recurved wooden bow with a leather-wrapped grip and a taut dark string, built for power and accuracy at great distances. It is typically used by hunters and archers who rely on strong draw weight and long-range volleys to strike foes before they can close to melee.",
-            "cost": 75,
-            "unitWeight": 3,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d8",
-            "damageType": "P",
-            "size": "L",
-            "speedFactor": 8,
-            "rof": 2,
-            "bonus": 0,
-            "tags": [
-                "missile",
-                "two-handed"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 70,
-                "medium": 140,
-                "long": 210
-            }
-        }
-    },
-    {
-        "name": "Mace",
-        "type": "weapon",
-        "img": "assets/images/weapons/mace.webp",
-        "system": {
-            "description": "This mace features a flanged steel head mounted on a sturdy wooden haft, its grip wrapped in worn leather for a secure hold. Designed to crush armor and bone alike, it is typically used by clerics and heavy infantry who favor blunt, bone-shattering blows over cutting edges.",
-            "cost": 8,
-            "unitWeight": 10,
-            "storedSize": 20,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6+1",
-            "damageL": "1d6",
-            "damageType": "B",
-            "size": "M",
-            "speedFactor": 7,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "blunt",
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Morning star",
-        "type": "weapon",
-        "img": "assets/images/weapons/morning-star.webp",
-        "system": {
-            "description": "This morning star is a stout wooden haft topped with a heavy iron sphere bristling with sharp spikes, built to deliver crushing, armor-piercing blows. It is typically used by warriors and temple knights who favor blunt weapons, swinging it in powerful arcs to smash shields and batter foes into submission.",
-            "cost": 10,
-            "unitWeight": 12,
-            "storedSize": 1,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "2d4",
-            "damageL": "1d6+1",
-            "damageType": "P",
-            "size": "M",
-            "speedFactor": 7,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Oil (flask)",
-        "type": "weapon",
-        "img": "assets/images/weapons/oil-flask.webp",
-        "system": {
-            "description": "This oil flask is a rounded glass bottle filled with thick, flammable oil, its cork stoppered and topped with a burning rag fuse. Adventurers typically light and hurl it at foes or into crowded areas, where it shatters on impact and splashes burning oil across the ground.",
-            "cost": 10,
-            "unitWeight": 2,
-            "storedSize": 3,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null,
-            "damage": "2d6",
-            "damageL": "2d6",
-            "damageType": "B",
-            "size": "S",
-            "speedFactor": 2,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "missile",
-                "splash-weapon"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 10,
-                "medium": 20,
-                "long": 30
-            }
-        }
-    },
-    {
-        "name": "Pole arm",
-        "type": "weapon",
-        "img": "assets/images/weapons/polearm.webp",
-        "system": {
-            "description": "This pole arm combines a spear point, an axe-like blade, and a back hook mounted on a long wooden shaft with a leather-wrapped grip. It is typically used by infantry to keep foes at reach, pierce armor, hook riders from the saddle, or strike over the front ranks in formation.",
-            "cost": 10,
-            "unitWeight": 15,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d10",
-            "damageL": "1d10",
-            "damageType": "P",
-            "size": "L",
-            "speedFactor": 9,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "brace",
-                "melee",
-                "two-handed"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Short bow",
-        "type": "weapon",
-        "img": "assets/images/weapons/shortbow.webp",
-        "system": {
-            "description": "This short bow is a compact, lightly recurved wooden bow with a leather-wrapped grip and a taut bowstring suited for quick shots. It is typically used by scouts, hunters, and light skirmishers who value mobility and close-to-mid range accuracy over extreme distance.",
-            "cost": 30,
-            "unitWeight": 2,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d6",
-            "damageType": "P",
-            "size": "M",
-            "speedFactor": 7,
-            "rof": 2,
-            "bonus": 0,
-            "tags": [
-                "missile",
-                "two-handed"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 50,
-                "medium": 100,
-                "long": 150
-            }
-        }
-    },
-    {
-        "name": "Short sword",
-        "type": "weapon",
-        "img": "assets/images/weapons/shortsword.webp",
-        "system": {
-            "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers.",
-            "cost": 10,
-            "unitWeight": 3,
-            "storedSize": 8,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d8",
-            "damageType": "P",
-            "size": "S",
-            "speedFactor": 3,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Sickle",
-        "type": "weapon",
-        "img": "assets/images/weapons/sickle.webp",
-        "system": {
-            "description": "This sickle has a crescent-shaped steel blade fixed to a short wooden haft, its grip bound in worn leather for a firmer hold. Originally a farming tool for cutting grain and brush, it is also used in battle by druids, cultists, and opportunistic fighters who favor quick, hooking slashes at close range.",
-            "cost": 6,
-            "unitWeight": 3,
-            "storedSize": 8,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d4+1",
-            "damageL": "1d4",
-            "damageType": "S",
-            "size": "S",
-            "speedFactor": 4,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Sling",
-        "type": "weapon",
-        "img": "assets/images/weapons/sling.webp",
-        "system": {
-            "description": "This sling consists of a leather pouch attached to two braided cords, often with a smooth stone or lead bullet nestled in the cradle. It is typically whirled overhead or to the side and then released at just the right moment, hurling its projectile at surprising speed and range for such a simple weapon.",
-            "cost": 1,
-            "unitWeight": 2,
-            "storedSize": 3,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d4",
-            "damageL": "1d4",
-            "damageType": "B",
-            "size": "S",
-            "speedFactor": 4,
-            "rof": 2,
-            "bonus": 0,
-            "tags": [
-                "blunt",
-                "missile"
-            ],
-            "melee": false,
-            "missile": true,
-            "range": {
-                "short": 30,
-                "medium": 60,
-                "long": 90
-            }
-        }
-    },
-    {
-        "name": "Spear",
-        "type": "weapon",
-        "img": "assets/images/weapons/spear.webp",
-        "system": {
-            "description": "This spear has a straight wooden shaft tipped with a leaf-shaped steel head, the joint bound in place with a wrapped leather grip. It is typically used by infantry and hunters alike, ideal for thrusting in close combat or bracing against charging foes.",
-            "cost": 8,
-            "unitWeight": 5,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d8",
-            "damageType": "P",
-            "size": "M",
-            "speedFactor": 6,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "brace",
-                "melee",
-                "missile"
-            ],
-            "melee": true,
-            "missile": true,
-            "range": {
-                "short": 10,
-                "medium": 20,
-                "long": 30
-            }
-        }
-    },
-    {
-        "name": "Staff",
-        "type": "weapon",
-        "img": "assets/images/weapons/staff.webp",
-        "system": {
-            "description": "A quarterstaff is a long, sturdy wooden staff, often reinforced at the ends, used both as a walking aid and as a weapon. It is typically wielded with two hands to deliver swift jabs, sweeping strikes, and defensive parries, favored by monks, peasants, and wanderers who travel light.",
-            "cost": 1,
-            "unitWeight": 4,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d6",
-            "damageL": "1d6",
-            "damageType": "B",
-            "size": "L",
-            "speedFactor": 4,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "blunt",
-                "melee",
-                "two-handed"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Torch",
-        "type": "weapon",
-        "img": "assets/images/weapons/torch.webp",
-        "system": {
-            "description": "This torch is a rough wooden haft wrapped at the head with oil-soaked rags, its bright flame licking upward in warm yellows and oranges. It is typically used by adventurers to light their way through dark dungeons and wilderness paths, and can be pressed into service as an improvised burning weapon when needed.",
-            "cost": 1,
-            "unitWeight": 1,
-            "storedSize": 3,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": false,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d4",
-            "damageL": "1d3",
-            "damageType": "B",
-            "size": "S",
-            "speedFactor": 4,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Warhammer",
-        "type": "weapon",
-        "img": "assets/images/weapons/warhammer.webp",
-        "system": {
-            "description": "This war hammer features a heavy steel head with a flat striking face on one side and a tapered beak on the other, mounted on a stout wooden haft wrapped in leather. It is typically used by warriors and clerics to smash armor, shatter shields, and deliver crushing blows that bypass conventional defenses.",
-            "cost": 2,
-            "unitWeight": 6,
-            "storedSize": 8,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d4+1",
-            "damageL": "1d4",
-            "damageType": "B",
-            "size": "M",
-            "speedFactor": 4,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "blunt",
-                "melee"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
-    },
-    {
-        "name": "Zweihander",
-        "type": "weapon",
-        "img": "assets/images/weapons/zweihander.webp",
-        "system": {
-            "description": "This zweihander is a massive two-handed sword with a long, straight double-edged blade, parrying hooks above the crossguard, and a leather-wrapped grip ending in a heavy pommel. It is typically wielded by elite infantry to break pike formations, sweep aside enemy weapons, and deliver devastating cleaving blows on the battlefield.",
-            "cost": 50,
-            "unitWeight": 15,
-            "storedSize": 99,
-            "quantity": 1,
-            "equipped": false,
-            "lashable": true,
-            "lashed": false,
-            "containerId": null,
-            "damage": "1d10",
-            "damageL": "3d6",
-            "damageType": "S",
-            "size": "L",
-            "speedFactor": 10,
-            "rof": 1,
-            "bonus": 0,
-            "tags": [
-                "melee",
-                "two-handed"
-            ],
-            "melee": true,
-            "missile": false,
-            "range": {
-                "short": 0,
-                "medium": 0,
-                "long": 0
-            }
-        }
+      },
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 5,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee",
+        "versatile"
+      ],
+      "melee": true,
+      "missile": false
     }
+  },
+  {
+    "name": "Battle Axe",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/battle-axe.webp",
+    "system": {
+      "description": "The battle axe features a heavy, crescent-shaped steel blade mounted on a sturdy wooden haft wrapped for improved grip. Designed for both cleaving and crushing, it is a brutal but reliable weapon favored by soldiers, raiders, and front-line adventurers.",
+      "cost": 5,
+      "unitWeight": 7,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d8",
+      "damageL": "1d8",
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 7,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee",
+        "two-handed"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Battle Axe, 2-Handed",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/axe-two-handed.webp",
+    "system": {
+      "description": "A two-headed, two-handed battle axe is a brutal heavy weapon featuring twin crescent blades mounted on a long reinforced haft, designed to deliver devastating cleaving strikes. It is typically used by powerful warriors capable of wielding its weight to split shields, armor, and even large creatures with overwhelming force.",
+      "cost": 15,
+      "unitWeight": 15,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d10",
+      "damageL": "1d12",
+      "damageType": "S",
+      "size": "L",
+      "speedFactor": 8,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee",
+        "two-handed"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Broad Sword",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/broadsword.webp",
+    "system": {
+      "description": "This broadsword has a wide, double-edged steel blade with a simple crossguard and a leather-wrapped grip ending in a solid pommel for balance. It is typically used by heavily armed warriors as a primary melee weapon, delivering powerful chopping and slashing blows in close combat.",
+      "cost": 10,
+      "unitWeight": 4,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "2d4",
+      "damageL": "1d6+1",
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 5,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Club",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/club.webp",
+    "system": {
+      "description": "This simple wooden club is carved from a single solid branch, its head slightly thickened and scarred from repeated use. Favored by commoners and seasoned warriors alike, it delivers brutal, crushing blows despite its humble construction.",
+      "cost": 3,
+      "unitWeight": 3,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d3",
+      "damageType": "B",
+      "size": "M",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "blunt",
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Crossbow, Heavy",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/crossbow-heavy.webp",
+    "system": {
+      "description": "This heavy crossbow features a thick wooden tiller reinforced with iron bands and a powerful steel bow, its cord drawn taut for immense penetrating force. It is typically used by soldiers and siege troops to deliver slow but devastating bolts that can punch through armor or pin targets at long range.",
+      "cost": 50,
+      "unitWeight": 14,
+      "storedSize": 20,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d8+1",
+      "damageType": "P",
+      "size": "M",
+      "speedFactor": 10,
+      "rof": 0.5,
+      "bonus": 0,
+      "tags": [
+        "missile",
+        "reload",
+        "two-handed"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 80,
+        "medium": 160,
+        "long": 240
+      }
+    }
+  },
+  {
+    "name": "Crossbow, Light",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/crossbow.webp",
+    "system": {
+      "description": "This sturdy crossbow features a polished wooden tiller paired with a reinforced steel bow, built for power and reliability. Its simple winding stirrup and taut string make it a favored weapon for soldiers and hunters who rely on precision and punch from afar.",
+      "cost": 35,
+      "unitWeight": 7,
+      "storedSize": 12,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d4",
+      "damageL": "1d4",
+      "damageType": "P",
+      "size": "S",
+      "speedFactor": 7,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "missile",
+        "reload",
+        "two-handed"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 60,
+        "medium": 120,
+        "long": 180
+      }
+    }
+  },
+  {
+    "name": "Dagger",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/dagger.webp",
+    "system": {
+      "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike.",
+      "cost": 2,
+      "unitWeight": 1,
+      "storedSize": 3,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d4",
+      "damageL": "1d3",
+      "damageType": "P",
+      "size": "S",
+      "speedFactor": 2,
+      "rof": 2,
+      "bonus": 0,
+      "tags": [
+        "melee",
+        "missile"
+      ],
+      "melee": true,
+      "missile": true,
+      "range": {
+        "short": 10,
+        "medium": 20,
+        "long": 30
+      }
+    }
+  },
+  {
+    "name": "Dart",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/dart.webp",
+    "system": {
+      "description": "This dart is a small throwing missile with a slim wooden shaft, a leaf-shaped steel head, and feather fletching at the tail for stability in flight. It is typically used by rogues, hunters, and lightly armed warriors to deliver quick, accurate ranged attacks or poisoned strikes at short distances.",
+      "cost": 5,
+      "unitWeight": 0.5,
+      "storedSize": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d3",
+      "damageL": "1d2",
+      "damageType": "P",
+      "size": "S",
+      "speedFactor": 2,
+      "rof": 3,
+      "bonus": 0,
+      "tags": [
+        "missile",
+        "reload",
+        "two-handed"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 10,
+        "medium": 20,
+        "long": 40
+      }
+    }
+  },
+  {
+    "name": "Flail",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/flail.webp",
+    "system": {
+      "description": "This flail consists of a sturdy wooden haft attached by a length of chain to a heavy spiked iron ball. It is typically used by warriors to swing in wide, crushing arcs that can bypass shields and batter armored foes with brutal, momentum-driven blows.",
+      "cost": 15,
+      "unitWeight": 15,
+      "storedSize": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6+1",
+      "damageL": "2d4",
+      "damageType": "B",
+      "size": "M",
+      "speedFactor": 7,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Great Club",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/club-great.webp",
+    "system": {
+      "description": "This great club is a massive, two-handed cudgel carved from a single length of hardwood, its head thick and knotted with age while the lower grip is wrapped in worn leather. It is typically used by barbarians, ogres, and other brute warriors to deliver bone-crushing blows that rely more on raw strength than finesse.",
+      "cost": 5,
+      "unitWeight": 12,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d8",
+      "damageL": "1d10",
+      "damageType": "B",
+      "size": "L",
+      "speedFactor": 8,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "blunt",
+        "melee",
+        "two-handed"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Hand Axe",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/hand-axe.webp",
+    "system": {
+      "description": "This compact hand axe has a single crescent-shaped steel blade set into a sturdy wooden haft, its grip wrapped in leather for better control. Balanced for both chopping and throwing, it\u2019s a favorite sidearm of woodsmen, skirmishers, and lightly armored adventurers.",
+      "cost": 1,
+      "unitWeight": 5,
+      "storedSize": 4,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d4",
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee",
+        "missile"
+      ],
+      "melee": true,
+      "missile": true,
+      "range": {
+        "short": 10,
+        "medium": 20,
+        "long": 30
+      }
+    }
+  },
+  {
+    "name": "Holy Water",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/holy-water.webp",
+    "system": {
+      "description": "This small glass vial is etched with a simple cross and sealed with a carved wooden stopper, its clear contents faintly shimmering with divine purity. When thrown, the consecrated water bursts outward in a radiant splash, scorching undead and unholy creatures with sacred force.",
+      "cost": 20,
+      "unitWeight": 1,
+      "storedSize": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d6",
+      "damageType": "B",
+      "size": "S",
+      "speedFactor": 2,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "missile",
+        "splash-weapon"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 10,
+        "medium": 30,
+        "long": 50
+      }
+    }
+  },
+  {
+    "name": "Javelin",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/javelin.webp",
+    "system": {
+      "description": "This slim throwing spear has a straight ash-wood shaft tipped with a narrow, leaf-shaped steel head bound in place with dark wire. Light and well-balanced, it\u2019s made to fly true over distance, ideal for skirmishers and warriors who soften their foes before closing to melee.",
+      "cost": 5,
+      "unitWeight": 2,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d6",
+      "damageType": "P",
+      "size": "M",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "missile"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 20,
+        "medium": 40,
+        "long": 60
+      }
+    }
+  },
+  {
+    "name": "Khopesh",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/khopesh.webp",
+    "system": {
+      "description": "This khopesh is a single-edged bronze or steel blade that curves forward into a sickle-like hook, mounted on a simple hilt with a wrapped grip. It is typically used to deliver powerful chopping blows and to hook shields or limbs, making it a brutal and versatile weapon favored by warriors of ancient, desert-born cultures.",
+      "cost": 10,
+      "unitWeight": 7,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "2d4",
+      "damageL": "1d6",
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 9,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Lance",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/lance.webp",
+    "system": {
+      "description": "A lance is a long, heavy spear designed for mounted warriors, optimized for delivering powerful charges at high speed. Its length allows a rider to strike opponents before they can close in, making it a devastating weapon in cavalry combat.",
+      "cost": 10,
+      "unitWeight": 10,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6+1",
+      "damageL": "2d6",
+      "damageType": "P",
+      "size": "L",
+      "speedFactor": 7,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee",
+        "charge"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Longbow",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/longbow.webp",
+    "system": {
+      "description": "This longbow is a tall, recurved wooden bow with a leather-wrapped grip and a taut dark string, built for power and accuracy at great distances. It is typically used by hunters and archers who rely on strong draw weight and long-range volleys to strike foes before they can close to melee.",
+      "cost": 75,
+      "unitWeight": 3,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d8",
+      "damageType": "P",
+      "size": "L",
+      "speedFactor": 8,
+      "rof": 2,
+      "bonus": 0,
+      "tags": [
+        "missile",
+        "two-handed"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 70,
+        "medium": 140,
+        "long": 210
+      }
+    }
+  },
+  {
+    "name": "Longsword",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/long-sword.webp",
+    "system": {
+      "description": "This finely forged longsword features a straight, double-edged blade with a broad fuller running down its center, balanced for both cutting and thrusting. A simple steel crossguard, leather-wrapped grip, and brass-capped pommel give it a practical yet noble look, befitting the standard weapon of knights and seasoned adventurers.",
+      "cost": 15,
+      "unitWeight": 4,
+      "storedSize": 6,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d8",
+      "damageL": "1d12",
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 5,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Mace",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/mace.webp",
+    "system": {
+      "description": "This mace features a flanged steel head mounted on a sturdy wooden haft, its grip wrapped in worn leather for a secure hold. Designed to crush armor and bone alike, it is typically used by clerics and heavy infantry who favor blunt, bone-shattering blows over cutting edges.",
+      "cost": 8,
+      "unitWeight": 10,
+      "storedSize": 20,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6+1",
+      "damageL": "1d6",
+      "damageType": "B",
+      "size": "M",
+      "speedFactor": 7,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "blunt",
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Morning Star",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/morningstar.webp",
+    "system": {
+      "description": "This morning star is a stout wooden haft topped with a heavy iron sphere bristling with sharp spikes, built to deliver crushing, armor-piercing blows. It is typically used by warriors and temple knights who favor blunt weapons, swinging it in powerful arcs to smash shields and batter foes into submission.",
+      "cost": 10,
+      "unitWeight": 12,
+      "storedSize": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "2d4",
+      "damageL": "1d6+1",
+      "damageType": "P",
+      "size": "M",
+      "speedFactor": 7,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Oil Flask",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/gear/oil-flask.webp",
+    "system": {
+      "description": "This oil flask is a rounded glass bottle filled with thick, flammable oil, its cork stoppered and topped with a burning rag fuse. Adventurers typically light and hurl it at foes or into crowded areas, where it shatters on impact and splashes burning oil across the ground.",
+      "cost": 10,
+      "unitWeight": 2,
+      "storedSize": 3,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "damage": "2d6",
+      "damageL": "2d6",
+      "damageType": "B",
+      "size": "S",
+      "speedFactor": 2,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "missile",
+        "splash-weapon"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 10,
+        "medium": 20,
+        "long": 30
+      }
+    }
+  },
+  {
+    "name": "Pole Arm",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/pole-arm.webp",
+    "system": {
+      "description": "This pole arm combines a spear point, an axe-like blade, and a back hook mounted on a long wooden shaft with a leather-wrapped grip. It is typically used by infantry to keep foes at reach, pierce armor, hook riders from the saddle, or strike over the front ranks in formation.",
+      "cost": 10,
+      "unitWeight": 15,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d10",
+      "damageL": "1d10",
+      "damageType": "P",
+      "size": "L",
+      "speedFactor": 9,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "brace",
+        "melee",
+        "two-handed"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Shortbow",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/shortbow.webp",
+    "system": {
+      "description": "This short bow is a compact, lightly recurved wooden bow with a leather-wrapped grip and a taut bowstring suited for quick shots. It is typically used by scouts, hunters, and light skirmishers who value mobility and close-to-mid range accuracy over extreme distance.",
+      "cost": 30,
+      "unitWeight": 2,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d6",
+      "damageType": "P",
+      "size": "M",
+      "speedFactor": 7,
+      "rof": 2,
+      "bonus": 0,
+      "tags": [
+        "missile",
+        "two-handed"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 50,
+        "medium": 100,
+        "long": 150
+      }
+    }
+  },
+  {
+    "name": "Shortsword",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/short-sword.webp",
+    "system": {
+      "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers.",
+      "cost": 10,
+      "unitWeight": 3,
+      "storedSize": 8,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d8",
+      "damageType": "P",
+      "size": "S",
+      "speedFactor": 3,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Sickle",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/sickle.webp",
+    "system": {
+      "description": "This sickle has a crescent-shaped steel blade fixed to a short wooden haft, its grip bound in worn leather for a firmer hold. Originally a farming tool for cutting grain and brush, it is also used in battle by druids, cultists, and opportunistic fighters who favor quick, hooking slashes at close range.",
+      "cost": 6,
+      "unitWeight": 3,
+      "storedSize": 8,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d4+1",
+      "damageL": "1d4",
+      "damageType": "S",
+      "size": "S",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Sling",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/sling.webp",
+    "system": {
+      "description": "This sling consists of a leather pouch attached to two braided cords, often with a smooth stone or lead bullet nestled in the cradle. It is typically whirled overhead or to the side and then released at just the right moment, hurling its projectile at surprising speed and range for such a simple weapon.",
+      "cost": 1,
+      "unitWeight": 0.25,
+      "storedSize": 0.25,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d4",
+      "damageL": "1d4",
+      "damageType": "B",
+      "size": "S",
+      "speedFactor": 4,
+      "rof": 2,
+      "bonus": 0,
+      "tags": [
+        "blunt",
+        "missile"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 30,
+        "medium": 60,
+        "long": 90
+      }
+    }
+  },
+  {
+    "name": "Sling, Staff",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/sling-staff.webp",
+    "system": {
+      "description": "A sling staff is a wooden pole fitted with a sling at one end, allowing the user to hurl stones or similar projectiles with far greater force than a hand sling. It is typically used for long-range attacks or hunting, leveraging the staff’s length to generate powerful, whip-like acceleration.",
+      "cost": 2,
+      "unitWeight": 2,
+      "storedSize": 20,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d6",
+      "damageType": "B",
+      "size": "M",
+      "speedFactor": 6,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "blunt",
+        "missile",
+        "two-handed"
+      ],
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 30,
+        "medium": 60,
+        "long": 120
+      }
+    }
+  },
+  {
+    "name": "Spear",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/spear.webp",
+    "system": {
+      "description": "This spear has a straight wooden shaft tipped with a leaf-shaped steel head, the joint bound in place with a wrapped leather grip. It is typically used by infantry and hunters alike, ideal for thrusting in close combat or bracing against charging foes.",
+      "cost": 8,
+      "unitWeight": 5,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d8",
+      "damageType": "P",
+      "size": "M",
+      "speedFactor": 6,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "brace",
+        "melee",
+        "missile"
+      ],
+      "melee": true,
+      "missile": true,
+      "range": {
+        "short": 10,
+        "medium": 20,
+        "long": 30
+      }
+    }
+  },
+  {
+    "name": "Staff",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/quarterstaff.webp",
+    "system": {
+      "description": "A quarterstaff is a long, sturdy wooden staff, often reinforced at the ends, used both as a walking aid and as a weapon. It is typically wielded with two hands to deliver swift jabs, sweeping strikes, and defensive parries, favored by monks, peasants, and wanderers who travel light.",
+      "cost": 1,
+      "unitWeight": 4,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d6",
+      "damageL": "1d6",
+      "damageType": "B",
+      "size": "L",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "blunt",
+        "melee",
+        "two-handed"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Torch",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/torch.webp",
+    "system": {
+      "description": "This torch is a rough wooden haft wrapped at the head with oil-soaked rags, its bright flame licking upward in warm yellows and oranges. It is typically used by adventurers to light their way through dark dungeons and wilderness paths, and can be pressed into service as an improvised burning weapon when needed.",
+      "cost": 1,
+      "unitWeight": 1,
+      "storedSize": 3,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d4",
+      "damageL": "1d3",
+      "damageType": "B",
+      "size": "S",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Warhammer",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/warhammer.webp",
+    "system": {
+      "description": "This war hammer features a heavy steel head with a flat striking face on one side and a tapered beak on the other, mounted on a stout wooden haft wrapped in leather. It is typically used by warriors and clerics to smash armor, shatter shields, and deliver crushing blows that bypass conventional defenses.",
+      "cost": 2,
+      "unitWeight": 6,
+      "storedSize": 8,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d4+1",
+      "damageL": "1d4",
+      "damageType": "B",
+      "size": "M",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "blunt",
+        "melee"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  },
+  {
+    "name": "Zweihander",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/zweihander.webp",
+    "system": {
+      "description": "This zweihander is a massive two-handed sword with a long, straight double-edged blade, parrying hooks above the crossguard, and a leather-wrapped grip ending in a heavy pommel. It is typically wielded by elite infantry to break pike formations, sweep aside enemy weapons, and deliver devastating cleaving blows on the battlefield.",
+      "cost": 50,
+      "unitWeight": 15,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "damage": "1d10",
+      "damageL": "3d6",
+      "damageType": "S",
+      "size": "L",
+      "speedFactor": 10,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "melee",
+        "two-handed"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  }
 ]

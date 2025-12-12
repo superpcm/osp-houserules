@@ -12,7 +12,7 @@ export class ItemCardRenderer {
     
     // Font configuration (scaled from reference 300 PPI to 72 PPI for web)
     this.FONTS = {
-      NAME_SIZE: 100,
+      NAME_SIZE: 80,
       TYPE_SIZE: 24,
       DESC_SIZE: 24,
       METADATA_SIZE: 30,
@@ -24,8 +24,8 @@ export class ItemCardRenderer {
       item_image: [300, 170],    // Centered X, top Y
       item_name: [300, 85],       // Centered X, Y position (70px from top)
       item_type: [300, 50],       // Centered X, Y position (50px from top)
-      description: [50, 580],     // Left X, top Y of description area
-      equipment_metadata: [300, 830], // Centered X, bottom metadata line
+      description: [50, 550],     // Left X, top Y of description area (moved up 10px)
+      equipment_metadata: [300, 835], // Centered X, bottom metadata line
       weapon_metadata_offset: 10  // Pixels below name for weapon stats
     };
     
@@ -126,12 +126,17 @@ export class ItemCardRenderer {
       ctx.drawImage(this.templateImage, 0, 0, this.CARD_WIDTH, this.CARD_HEIGHT);
     }
     
-    // Load and draw item image
-    await this._drawItemImage(ctx, item);
-    
-    // Draw text elements
+    // Draw text elements first to get positioning
     const nameBottomY = this._drawItemName(ctx, item.name);
     this._drawItemType(ctx, item.type);
+    
+    // Calculate image position - center between name and description
+    const descriptionTopY = this.COORDS.description[1];
+    const availableSpace = descriptionTopY - nameBottomY;
+    
+    // Load and draw item image centered in available space
+    await this._drawItemImage(ctx, item, nameBottomY, availableSpace);
+    
     this._drawDescription(ctx, item.system.description || '');
     
     // Type-specific metadata
@@ -148,21 +153,20 @@ export class ItemCardRenderer {
   }
   
   /**
-   * Load and draw item image (centered, scaled to fit)
+   * Load and draw item image (centered vertically in available space)
    */
-  async _drawItemImage(ctx, item) {
+  async _drawItemImage(ctx, item, topBoundary, availableHeight) {
     return new Promise((resolve) => {
       const img = new Image();
       
       img.onload = () => {
-        const [centerX, topY] = this.COORDS.item_image;
+        const centerX = this.CARD_WIDTH / 2;
         const padding = 100;
         const maxWidth = this.CARD_WIDTH - (padding * 2);  // 400px
-        const maxHeight = 380;  // Room before description
+        const maxHeight = availableHeight * 0.9;  // Use 90% of available space
         
         let width = img.width;
         let height = img.height;
-        const aspectRatio = width / height;
         
         // Scale down if needed
         if (width > maxWidth || height > maxHeight) {
@@ -173,15 +177,21 @@ export class ItemCardRenderer {
           height = Math.floor(height * scale);
         }
         
-        // Center horizontally
+        // Reduce by 10%
+        width = Math.floor(width * 0.9);
+        height = Math.floor(height * 0.9);
+        
+        // Center horizontally and vertically in available space
         const x = centerX - (width / 2);
-        ctx.drawImage(img, x, topY, width, height);
+        const y = topBoundary + (availableHeight - height) / 2;
+        
+        ctx.drawImage(img, x, y, width, height);
         resolve();
       };
       
       img.onerror = (error) => {
         // Draw placeholder if image fails
-        this._drawPlaceholder(ctx);
+        this._drawPlaceholder(ctx, topBoundary, availableHeight);
         resolve();
       };
       
@@ -201,23 +211,24 @@ export class ItemCardRenderer {
   /**
    * Draw placeholder when no image available
    */
-  _drawPlaceholder(ctx) {
-    const [centerX, topY] = this.COORDS.item_image;
-    const size = 200;
+  _drawPlaceholder(ctx, topBoundary, availableHeight) {
+    const centerX = this.CARD_WIDTH / 2;
+    const size = Math.min(200, availableHeight * 0.8);
     const x = centerX - (size / 2);
+    const y = topBoundary + (availableHeight - size) / 2;
     
     ctx.fillStyle = '#E0E0E0';
-    ctx.fillRect(x, topY, size, size);
+    ctx.fillRect(x, y, size, size);
     ctx.strokeStyle = '#999999';
     ctx.lineWidth = 2;
-    ctx.strokeRect(x, topY, size, size);
+    ctx.strokeRect(x, y, size, size);
     
     // Draw "?" in center
     ctx.fillStyle = '#666666';
     ctx.font = 'bold 80px "Segoe Script", "Comic Sans MS", "Bradley Hand", cursive';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('?', centerX, topY + (size / 2));
+    ctx.fillText('?', centerX, y + (size / 2));
   }
   
   /**
@@ -383,20 +394,32 @@ export class ItemCardRenderer {
       parts.push(`SF:${item.system.speedFactor}`);
     }
     
-    // Rate of fire
-    if (item.system.rof !== undefined && item.system.rof !== '') {
+    // Rate of fire (only for missile weapons)
+    if (item.system.missile === true && item.system.rof !== undefined && item.system.rof !== '') {
       parts.push(`RoF:${item.system.rof}`);
     }
     
     if (parts.length === 0) return;
     
-    // Draw weapon metadata line
+    // Draw weapon metadata line with dynamic font sizing
+    const maxWidth = 500; // Card width (600) minus padding
     ctx.fillStyle = this.TEXT_COLOR;
-    ctx.font = `${this.FONTS.WEAPON_META_SIZE}px "Segoe Script", "Comic Sans MS", "Bradley Hand", cursive`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
     const metadataText = parts.join(' • ');
+    
+    // Start with base font size
+    let fontSize = this.FONTS.WEAPON_META_SIZE;
+    ctx.font = `${fontSize}px "Segoe Script", "Comic Sans MS", "Bradley Hand", cursive`;
+    
+    // Scale down if text too wide
+    let textWidth = ctx.measureText(metadataText).width;
+    if (textWidth > maxWidth) {
+      fontSize = Math.floor(fontSize * (maxWidth / textWidth));
+      ctx.font = `${fontSize}px "Segoe Script", "Comic Sans MS", "Bradley Hand", cursive`;
+    }
+    
     ctx.fillText(metadataText, centerX, metadataY);
   }
   
@@ -444,7 +467,12 @@ export class ItemCardRenderer {
     
     // Stored size with capacity icon (skip for livestock)
     if (item.type !== 'livestock' && item.system.storedSize !== undefined && item.system.storedSize !== '') {
-      items.push({ icon: 'capacity-icon.webp', text: `${item.system.storedSize}S` });
+      items.push({ icon: 'stored-icon.webp', text: `${item.system.storedSize}S` });
+    }
+    
+    // Container capacity with capacity icon
+    if (item.type === 'container' && item.system.capacity !== undefined && item.system.capacity !== '') {
+      items.push({ icon: 'capacity-icon.webp', text: `${item.system.capacity}C` });
     }
     
     if (items.length === 0 && item.system.lashable !== true) return;
@@ -491,7 +519,7 @@ export class ItemCardRenderer {
     
     // Draw lashable icon at the end if applicable, centered at y
     if (item.system.lashable === true) {
-      const lashIcon = await this._loadIcon('systems/osp-houserules/assets/images/icons/lash.webp');
+      const lashIcon = await this._loadIcon('systems/osp-houserules/assets/images/icons/lash-icon.webp');
       if (lashIcon) {
         ctx.drawImage(lashIcon, x, y - (iconSize / 2), iconSize, iconSize);
       }

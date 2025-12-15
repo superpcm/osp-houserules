@@ -106,27 +106,6 @@
     }
   },
   {
-    "name": "Cart",
-    "type": "container",
-    "img": "systems/osp-houserules/assets/images/tack/cart.webp",
-    "system": {
-      "description": "This sturdy two-wheeled wooden cart has iron-banded wheels, a slatted cargo bed, and long shafts ready to be hitched to a beast of burden. It is typically used by farmers, merchants, and traveling parties to haul goods, supplies, and sometimes passengers along rough roads and village lanes.",
-      "cost": 115,
-      "unitWeight": 200,
-      "storedSize": 99,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "tack",
-        "vehicle",
-        "container"
-      ],
-      "capacity": 80,
-      "requiresAnimal": "draft"
-    }
-  },
-  {
     "name": "Lantern, Mount",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/tack/lantern-saddle.webp",
@@ -226,27 +205,6 @@
       ],
       "capacity": 12,
       "requiresMounted": true
-    }
-  },
-  {
-    "name": "Wagon",
-    "type": "container",
-    "img": "systems/osp-houserules/assets/images/tack/wagon-covered.webp",
-    "system": {
-      "description": "A large four-wheeled covered wagon with a canvas top and reinforced axles, capable of transporting huge loads across country. Requires multiple draft animals to pull and is the primary means of moving goods, supplies, and even entire households overland.",
-      "cost": 200,
-      "unitWeight": 500,
-      "storedSize": 99,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "tack",
-        "vehicle",
-        "container"
-      ],
-      "capacity": 200,
-      "requiresAnimal": "draft (2+)"
     }
   }
 ]

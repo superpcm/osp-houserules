@@ -22,11 +22,11 @@ export class ItemCardRenderer {
     // Field coordinates adapted from field_coordinates_item.json
     this.COORDS = {
       item_image: [300, 170],    // Centered X, top Y
-      item_name: [300, 85],       // Centered X, Y position (70px from top)
-      item_type: [300, 50],       // Centered X, Y position (50px from top)
+      item_name: [300, 95],       // Centered X, Y position (70px from top)
+      item_type: [300, 70],       // Centered X, Y position (50px from top)
       description: [50, 550],     // Left X, top Y of description area (moved up 10px)
       equipment_metadata: [300, 835], // Centered X, bottom metadata line
-      weapon_metadata_offset: 10  // Pixels below name for weapon stats
+      weapon_metadata_offset: 40  // Pixels below name for weapon stats
     };
     
     this.templateImage = null;
@@ -128,7 +128,6 @@ export class ItemCardRenderer {
     
     // Draw text elements first to get positioning
     const nameBottomY = this._drawItemName(ctx, item.name);
-    this._drawItemType(ctx, item.type);
     
     // Calculate image position - center between name and description
     const descriptionTopY = this.COORDS.description[1];
@@ -161,14 +160,14 @@ export class ItemCardRenderer {
       
       img.onload = () => {
         const centerX = this.CARD_WIDTH / 2;
-        const padding = 100;
-        const maxWidth = this.CARD_WIDTH - (padding * 2);  // 400px
-        const maxHeight = availableHeight * 0.9;  // Use 90% of available space
+        const padding = 50; // Reduced padding for more space
+        const maxWidth = this.CARD_WIDTH - (padding * 2);
+        const maxHeight = availableHeight - 20; // Small margin to prevent overlap
         
         let width = img.width;
         let height = img.height;
         
-        // Scale down if needed
+        // Scale to fit within available space while maintaining aspect ratio
         if (width > maxWidth || height > maxHeight) {
           const widthScale = maxWidth / width;
           const heightScale = maxHeight / height;
@@ -176,10 +175,6 @@ export class ItemCardRenderer {
           width = Math.floor(width * scale);
           height = Math.floor(height * scale);
         }
-        
-        // Reduce by 10%
-        width = Math.floor(width * 0.9);
-        height = Math.floor(height * 0.9);
         
         // Center horizontally and vertically in available space
         const x = centerX - (width / 2);
@@ -213,7 +208,7 @@ export class ItemCardRenderer {
    */
   _drawPlaceholder(ctx, topBoundary, availableHeight) {
     const centerX = this.CARD_WIDTH / 2;
-    const size = Math.min(200, availableHeight * 0.8);
+    const size = Math.min(availableHeight - 20, this.CARD_WIDTH - 100); // Fill space with small margin
     const x = centerX - (size / 2);
     const y = topBoundary + (availableHeight - size) / 2;
     
@@ -344,7 +339,7 @@ export class ItemCardRenderer {
    * Draw weapon metadata line (damage, type, size, speed, ROF)
    */
   _drawWeaponMetadata(ctx, item, nameBottomY) {
-    const metadataY = nameBottomY + this.COORDS.weapon_metadata_offset;
+    const [, metadataY] = this.COORDS.item_type;
     const centerX = this.CARD_WIDTH / 2;
     
     const parts = [];
@@ -402,7 +397,7 @@ export class ItemCardRenderer {
     if (parts.length === 0) return;
     
     // Draw weapon metadata line with dynamic font sizing
-    const maxWidth = 500; // Card width (600) minus padding
+    const maxWidth = 460; // Card width (600) minus padding (increased by 10px per side)
     ctx.fillStyle = this.TEXT_COLOR;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -430,7 +425,7 @@ export class ItemCardRenderer {
     const armorClass = item.system.aac?.value;
     if (!armorClass) return;
     
-    const metadataY = nameBottomY + this.COORDS.weapon_metadata_offset;
+    const [, metadataY] = this.COORDS.item_type;
     const centerX = this.CARD_WIDTH / 2;
     
     ctx.fillStyle = this.TEXT_COLOR;

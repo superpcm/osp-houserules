@@ -74,7 +74,7 @@
     }
   },
   "Item": {
-    "types": ["weapon", "armor", "item", "container", "coin"],
+    "types": ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock"],
     "templates": {
       "base": {
         "description": "",
@@ -132,6 +132,24 @@
     "coin": {
       "templates": ["base"],
       "system": {}
+    },
+    "clothing": {
+      "templates": ["base"],
+      "system": {
+        "equipped": false
+      }
+    },
+    "ammunition": {
+      "templates": ["base"],
+      "system": {
+        "weaponType": ""
+      }
+    },
+    "livestock": {
+      "templates": ["base"],
+      "system": {
+        "animalType": ""
+      }
     }
   }
 }

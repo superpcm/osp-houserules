@@ -19,23 +19,6 @@
     }
   },
   {
-    "name": "Barrel",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/misc/barrel.webp",
-    "system": {
-      "description": "A wooden barrel is a stout, reinforced container made from curved wooden staves bound by metal hoops. It is typically used for storing and transporting liquids or dry goods such as ale, wine, grain, or salted provisions.",
-      "cost": 5,
-      "unitWeight": 30,
-      "storedSize": 200,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "liquid-storage"
-      ]
-    }
-  },
-  {
     "name": "Bedroll",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/bedroll.webp",
@@ -54,28 +37,11 @@
     }
   },
   {
-    "name": "Belt",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/belt.webp",
-    "system": {
-      "description": "This sturdy leather belt features a worn brass buckle and reinforced stitching, showing the marks of long travel and hard use. Adventurers typically use it to secure pouches, sheaths, and other gear, keeping essential items within easy reach on the road.",
-      "cost": 1,
-      "unitWeight": 0.25,
-      "storedSize": 1,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "clothing"
-      ]
-    }
-  },
-  {
     "name": "Belt Pouch, Large",
     "type": "container",
     "img": "systems/osp-houserules/assets/images/gear/pouch-large.webp",
     "system": {
-      "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt.",
+      "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin\u2014when a small pouch simply won\u2019t suffice. 1 pouch can be attached to a single belt.",
       "cost": 4,
       "unitWeight": 1,
       "storedSize": 2,
@@ -121,111 +87,6 @@
     }
   },
   {
-    "name": "Boots",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/boots.webp",
-    "system": {
-      "description": "These rugged leather boots are built for long travel, with thick soles and reinforced stitching to withstand miles of harsh terrain. Adventurers rely on them for protection and stability, whether crossing wilderness trails, dungeon floors, or city streets.",
-      "cost": 3,
-      "unitWeight": 1,
-      "storedSize": 3,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "clothing"
-      ]
-    }
-  },
-  {
-    "name": "Bracers",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/bracers.webp",
-    "system": {
-      "description": "These leather bracers are shaped to protect the forearms, with reinforced stitching and a simple lace-up closure that allows for a snug, secure fit. Adventurers wear them for light protection against scrapes, bowstring snap, and glancing blows without the weight of metal armor.",
-      "cost": 3,
-      "unitWeight": 0.2,
-      "storedSize": 0.5,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "clothing"
-      ]
-    }
-  },
-  {
-    "name": "Breeches",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/breeches.webp",
-    "system": {
-      "description": "These breeches are made of sturdy, earth-toned cloth, gathered at the waist with a simple drawstring and fitted loosely through the legs for comfort and mobility. They are commonly worn by travelers, laborers, and adventurers who need durable everyday trousers that won’t restrict movement in the field.",
-      "cost": 2,
-      "unitWeight": 0.2,
-      "storedSize": 1,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "clothing"
-      ]
-    }
-  },
-  {
-    "name": "Chest, Large",
-    "type": "container",
-    "img": "systems/osp-houserules/icons/containers/chest/chest-reinforced-steel-brown.webp",
-    "system": {
-      "description": "This large ('24\" × 16\" × 16\"') wooden chest, reinforced with iron bands and secured by a heavy lock, is built to store valuables, equipment, or important supplies. Adventurers and merchants alike rely on such chests to keep their belongings safe from theft, weather, and the dangers of travel.",
-      "cost": 50,
-      "unitWeight": 20,
-      "storedSize": 150,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "capacity": 150,
-      "tags": [
-        "container"
-      ]
-    }
-  },
-  {
-    "name": "Chest, Small",
-    "type": "container",
-    "img": "systems/osp-houserules/icons/containers/chest/chest-worn-oak-tan.webp",
-    "system": {
-      "description": "This small ('12\" × 8\" × 8\"') wooden chest is a sturdy, lockable container used to safeguard valuables, coins, documents, or precious keepsakes. Its compact size makes it ideal for travelers or adventurers who need secure storage without added bulk.",
-      "cost":15,
-      "unitWeight": 5,
-      "storedSize": 20,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "capacity": 20,
-      "tags": [
-        "container"
-      ]
-    }
-  },
-  {
-    "name": "Cloak",
-    "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/cloak.webp",
-    "system": {
-      "description": "A loose, draping garment fastened at the neck or shoulder, providing warmth and protection from wind and rain. Adventurers favor it for its practicality, concealment, and the ease with which it can be thrown over armor or travel gear.",
-      "cost": 8,
-      "unitWeight": 3,
-      "storedSize": 4,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "lashed": false,
-      "containerId": null,
-      "capacity": 2,
-      "lashSlots": 0
-    }
-  },
-  {
     "name": "Crowbar",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/crowbar.webp",
@@ -261,23 +122,6 @@
     }
   },
   {
-    "name": "Gloves",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/gloves.webp",
-    "system": {
-      "description": "These rugged leather gloves are well-worn and creased, offering protection from rope burn, rough surfaces, and cold weather. Adventurers rely on them for climbing, handling gear, and general travel without sacrificing dexterity.",
-      "cost": 2,
-      "unitWeight": 0.2,
-      "storedSize": 0.25,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "clothing"
-      ]
-    }
-  },
-  {
     "name": "Grappling Hook",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/grappling-hook.webp",
@@ -297,28 +141,11 @@
     }
   },
   {
-    "name": "Hammer (small)",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/hammer-small.webp",
-    "system": {
-      "description": "Comparable to a carpenter's or small blacksmith's hammer — light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
-      "cost": 2,
-      "unitWeight": 2,
-      "storedSize": 2,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "tool"
-      ]
-    }
-  },
-  {
     "name": "Hammer, Small",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/hammer-small.webp",
     "system": {
-      "description": "Comparable to a carpenter's or small blacksmith's hammer — light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
+      "description": "Comparable to a carpenter's or small blacksmith's hammer light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
       "cost": 2,
       "unitWeight": 2,
       "storedSize": 2,
@@ -335,7 +162,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/holy-symbol.webp",
     "system": {
-      "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
+      "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed \u00bd lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
       "cost": 25,
       "unitWeight": 0.3,
       "storedSize": 1,
@@ -371,7 +198,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/iron-spike.webp",
     "system": {
-      "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6 to 8 inches long, about ½ inch thick. Typically carried in a small leather pouch or tool roll.",
+      "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6-8 inches long, about \u00bd inch thick. Typically carried in a small leather pouch or tool roll.",
       "cost": 0.1,
       "unitWeight": 0.25,
       "storedSize": 3,
@@ -381,24 +208,6 @@
       "tags": [
         "tool",
         "dungeon"
-      ]
-    }
-  },
-  {
-    "name": "Lantern",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/lantern-hooded.webp",
-    "system": {
-      "description": "Durable and wind-resistant; the shutters allow stealthy use underground or at night. Heavier than a simple hooded lantern due to extra metal housing. Burns one flask of oil per 4 hours (24 turns). Casts light in a 30' radius.",
-      "cost": 10,
-      "unitWeight": 2,
-      "storedSize": 4,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": true,
-      "lashed": false,
-      "tags": [
-        "light-source"
       ]
     }
   },
@@ -454,7 +263,7 @@
     }
   },
   {
-    "name": "Mirror. Handheld",
+    "name": "Mirror, Handheld",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/mirror.webp",
     "system": {
@@ -564,7 +373,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/rations-iron.webp",
     "system": {
-      "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact — but heavy and bland. Often divided into daily pouches for easy rationing.",
+      "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact but heavy and bland. Often divided into daily pouches for easy rationing.",
       "cost": 15,
       "unitWeight": 1,
       "storedSize": 4,
@@ -596,32 +405,14 @@
     }
   },
   {
-    "name": "Robes",
-    "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/wizards-robes.webp",
-    "system": {
-      "description": "Wizard’s robes are long, flowing garments tailored for ease of movement and often inscribed—subtly or boldly—with symbols of arcane study. Though they offer little physical protection, they feature numerous hidden pockets for storing spell components and serve as a mark of training, tradition, and mystical authority.",
-      "cost": 9,
-      "unitWeight": 3,
-      "storedSize": 4,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "lashed": false,
-      "containerId": null,
-      "capacity": 2,
-      "lashSlots": 0
-    }
-  },
-  {
-    "name": "Rope (50')",
+    "name": "Rope, Hempen (50')",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/rope-hempen.webp",
     "system": {
-      "description": "Strong rope capable of supporting the weight of three people with equipment. Hemp rope is coarse, durable, and water-resistant but heavier when wet. Roughly 1 inch thick.",
+      "description": "Hempen rope is a thick, coarse rope made from natural plant fibers, valued for its strength and reliability. A 50-foot length is commonly used for climbing, hauling gear, binding objects, or securing camps and equipment in the field.",
       "cost": 1,
-      "unitWeight": 9,
-      "storedSize": 4,
+      "unitWeight": 10,
+      "storedSize": 6,
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -635,11 +426,11 @@
   {
     "name": "Rope, Silken (50')",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/rope-hempen.webp",
+    "img": "systems/osp-houserules/assets/images/gear/rope-silken.webp",
     "system": {
-      "description": "Strong rope capable of supporting the weight of three people with equipment. Hemp rope is coarse, durable, and water-resistant but heavier when wet. Roughly 1 inch thick.",
+      "description": "Silken rope is a finely woven, lightweight yet strong cordage prized for its smooth texture and durability. Adventurers commonly use a 50-foot length for climbing, securing loads, setting traps, or safely descending into pits and ruins.",
       "cost": 1,
-      "unitWeight": 9,
+      "unitWeight": 5,
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
@@ -656,7 +447,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/images/gear/sack-large.webp",
     "system": {
-      "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won’t fit neatly into a pack. Capacity: 24 slots (600 coins).",
+      "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins).",
       "cost": 2,
       "unitWeight": 0.5,
       "storedSize": 2,
@@ -741,30 +532,13 @@
     "system": {
       "description": "A bundle of six torches, wooden shafts wrapped with oil-soaked rags. Each burns for 1 hour (6 turns) and casts light in a 30' radius.",
       "cost": 1,
-      "unitWeight": 0.166667,
+      "unitWeight": 0.5,
       "storedSize": 0.75,
       "quantity": 6,
       "equipped": false,
       "lashable": false,
       "tags": [
         "light-source"
-      ]
-    }
-  },
-  {
-    "name": "Tunic",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/tunic.webp",
-    "system": {
-      "description": "This simple wool or linen tunic falls to mid-thigh, with short sleeves, a laced collar, and a rough cord belt gathering it at the waist. It serves as basic everyday clothing for commoners and adventurers alike, and as a comfortable base layer beneath armor.",
-      "cost": 8,
-      "unitWeight": 0.2,
-      "storedSize": 0.5,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "clothing"
       ]
     }
   },
@@ -840,7 +614,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/stake-wooden.webp",
     "system": {
-      "description": "This wooden spike is a rough-hewn stake with one end whittled to a sharp point and the other left blunt for hammering. It’s typically used to secure tents and ropes, mark trails, or improvise simple traps and defenses in the field.",
+      "description": "This wooden spike is a rough-hewn stake with one end whittled to a sharp point and the other left blunt for hammering. It's typically used to secure tents and ropes, mark trails, or improvise simple traps and defenses in the field.",
       "cost": 0.25,
       "unitWeight": 0.5,
       "storedSize": 3,

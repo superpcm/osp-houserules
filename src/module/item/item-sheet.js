@@ -22,8 +22,8 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
 
   /** @override */
   async render(force, options = {}) {
-    // For displayable items (item, weapon, armor, container, coin), show card instead of sheet
-    const displayableTypes = ['item', 'weapon', 'armor', 'container', 'coin'];
+    // For displayable items, show card instead of sheet
+    const displayableTypes = ['item', 'weapon', 'armor', 'container', 'coin', 'clothing', 'ammunition', 'livestock'];
     if (displayableTypes.includes(this.item.type)) {
       // Show card dialog instead of traditional sheet
       const cardDialog = new ItemCardDialog(this.item);

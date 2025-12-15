@@ -62,7 +62,7 @@ Hooks.once("init", () => {
 
   // Register Item sheets
   foundry.documents.collections.Items.registerSheet("ose", OspItemSheet, {
-    types: ["weapon", "armor", "item", "container", "coin"],
+    types: ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock"],
     makeDefault: true,
     label: "OSP Item Sheet"
   });

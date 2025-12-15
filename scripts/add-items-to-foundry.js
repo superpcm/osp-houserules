@@ -18,6 +18,7 @@ async function addItemsToFoundry(forceUpdate = false) {
   const dataFiles = [
     'systems/osp-houserules/data/ammunition.json',
     'systems/osp-houserules/data/armor.json',
+    'systems/osp-houserules/data/clothing.json',
     'systems/osp-houserules/data/equipment.json',
     'systems/osp-houserules/data/livestock.json',
     'systems/osp-houserules/data/tack.json',

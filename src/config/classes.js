@@ -3,6 +3,36 @@
  * Centralized source of truth for all class-related data
  */
 
+// Hit dice maximum by class (used for calculating max HP)
+export const HIT_DICE_MAX = {
+  // d4 classes
+  'magic-user': 4,
+  'illusionist': 4,
+  'mage': 4,
+  
+  // d6 classes
+  'thief': 6,
+  'assassin': 6,
+  'bard': 6,
+  'beast master': 6,
+  'cleric': 6,
+  'druid': 6,
+  'hobbit': 6,
+  
+  // d8 classes
+  'fighter': 8,
+  'barbarian': 8,
+  'knight': 8,
+  'paladin': 8,
+  'ranger': 8,
+  'warden': 8,
+  'dwarf': 8,
+  'elf': 8,
+  'gnome': 8,
+  'half-elf': 8,
+  'half-orc': 8
+};
+
 // Attack bonus progression tables by class group (Ascending AC bonuses)
 // Based on house_rules_v1.5.txt THAC0 tables
 export const ATTACK_BONUS_TABLES = {
@@ -225,4 +255,29 @@ export function calculateXPModifier(characterClass, attributes) {
   }
 
   return totalModifier;
+}
+
+/**
+ * Get hit die maximum for a character class
+ * @param {string} characterClass - The character class name
+ * @returns {number} Maximum value of hit die (4, 6, or 8)
+ */
+export function getHitDieMax(characterClass) {
+  return HIT_DICE_MAX[characterClass.toLowerCase()] || 6;
+}
+
+/**
+ * Calculate maximum hit points for a character
+ * Max HP = (Hit Die Max × Level) + (CON Modifier × Level)
+ * @param {string} characterClass - The character class name
+ * @param {number} level - Character level
+ * @param {number} conScore - Constitution ability score
+ * @returns {number} Maximum hit points
+ */
+export function calculateMaxHP(characterClass, level, conScore) {
+  const hitDieMax = getHitDieMax(characterClass);
+  const conModifier = getAbilityModifier(conScore);
+  const baseHP = hitDieMax * level;
+  const conBonus = conModifier * level;
+  return Math.max(1, baseHP + conBonus); // Minimum 1 HP
 }

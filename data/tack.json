@@ -106,27 +106,6 @@
     }
   },
   {
-    "name": "Lantern, Mount",
-    "type": "item",
-    "img": "systems/osp-houserules/assets/images/tack/lantern-saddle.webp",
-    "system": {
-      "description": "A specialized lantern designed to hang from a saddle or harness, illuminating the path ahead without requiring a hand to hold it. Features protective guards to keep it from swinging wildly or spooking the mount.",
-      "cost": 15,
-      "unitWeight": 3,
-      "storedSize": 8,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": true,
-      "lashed": false,
-      "tags": [
-        "tack",
-        "light source"
-      ],
-      "lightRadius": 30,
-      "burnTime": 4
-    }
-  },
-  {
     "name": "Saddle",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/tack/saddle.webp",

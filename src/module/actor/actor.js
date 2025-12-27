@@ -265,7 +265,7 @@ export class OspActor extends Actor {
     this.system.weapons = this.items.filter(item => item.type === "weapon");
     this.system.armor = this.items.filter(item => item.type === "armor");
     this.system.containers = this.items.filter(item => item.type === "container");
-    this.system.items = this.items.filter(item => (item.type === "item" || item.type === "coin") && !item.system.treasure);
+    this.system.items = this.items.filter(item => (item.type === "item" || item.type === "coin" || item.type === "clothing" || item.type === "ammunition" || item.type === "livestock") && !item.system.treasure);
     this.system.treasures = this.items.filter(item => item.type === "item" && item.system.treasure);
 
     // Sync container equipped state based on location
@@ -300,7 +300,14 @@ export class OspActor extends Actor {
     let totalWeight = 0;
 
     this.items.forEach(item => {
-      const quantity = item.system.quantity || 1;
+      // Handle quantity as either a number or an object with a value property
+      let quantity = 1;
+      if (typeof item.system.quantity === 'number') {
+        quantity = item.system.quantity;
+      } else if (typeof item.system.quantity === 'object' && item.system.quantity !== null) {
+        quantity = item.system.quantity.value || 1;
+      }
+      
       const weight = item.system.unitWeight || 0;
       totalWeight += weight * quantity;
     });

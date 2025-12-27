@@ -143,12 +143,40 @@ export class ItemHandler {
     
     const newEquippedState = !item.system.equipped;
     
-    // Special handling for containers: equipped = top-level, unequipped = nested
-    if (item.type === "container") {
+    // Special handling for containers and clothing: equipped = top-level, unequipped = nested
+    if (item.type === "container" || item.type === "clothing") {
       if (newEquippedState) {
         // Equipping = moving to top-level
+        
+        // For clothing: Only one set of "Clothes" can be equipped at a time
+        if (item.type === "clothing" && item.name.startsWith("Clothes,")) {
+          const equippedClothes = this.actor.items.filter(i => 
+            i.type === "clothing" &&
+            i.name.startsWith("Clothes,") &&
+            i.system.equipped &&
+            i.id !== item.id
+          );
+          
+          if (equippedClothes.length > 0) {
+            const currentClothes = equippedClothes[0];
+            
+            // Check if current clothes has items stored in it
+            if (currentClothes.system.capacity) {
+              const storedItems = this.actor.items.filter(i => i.system.containerId === currentClothes.id);
+              if (storedItems.length > 0) {
+                ui.notifications.error(`Cannot equip ${item.name} - remove items from ${currentClothes.name} pockets first.`);
+                return;
+              }
+            }
+            
+            // Current clothes is empty (or has no capacity), safe to unequip
+            await currentClothes.update({"system.equipped": false});
+            ui.notifications.info(`Unequipped ${currentClothes.name} to equip ${item.name}.`);
+          }
+        }
+        
         // If it's a Large Sack, validate hand requirements
-        if (item.name.toLowerCase().includes('sack') && item.name.toLowerCase().includes('large')) {
+        if (item.type === "container" && item.name.toLowerCase().includes('sack') && item.name.toLowerCase().includes('large')) {
           // Count currently equipped large sacks (excluding this one)
           const equippedLargeSacks = this.actor.items.filter(i => 
             i.type === "container" &&
@@ -184,8 +212,9 @@ export class ItemHandler {
           }
         }
         
-        // Check container count limits
-        if (item.name.toLowerCase().includes('backpack')) {
+        // Check container count limits (only for containers, not clothing)
+        if (item.type === "container") {
+          if (item.name.toLowerCase().includes('backpack')) {
           const existingBackpacks = this.actor.items.filter(i => 
             i.type === "container" && 
             i.name.toLowerCase().includes('backpack') &&
@@ -212,6 +241,7 @@ export class ItemHandler {
             return;
           }
         }
+        } // End of container-specific checks
         
         // Move to top-level by clearing containerId and setting equipped
         await item.update({

@@ -14,35 +14,10 @@
 async function refreshAllItems() {
   ui.notifications.info("Starting item refresh and duplicate removal...");
   
-  // Step 1: Remove duplicates
+  // Step 1: Remove duplicates and wrong-type items
   console.log("=== STEP 1: REMOVING DUPLICATES ===");
-  const itemsByNameAndType = new Map();
   
-  for (const item of game.items) {
-    const key = `${item.name}|${item.type}`;
-    if (!itemsByNameAndType.has(key)) {
-      itemsByNameAndType.set(key, []);
-    }
-    itemsByNameAndType.get(key).push(item);
-  }
-  
-  let duplicatesRemoved = 0;
-  for (const [key, items] of itemsByNameAndType) {
-    if (items.length > 1) {
-      console.log(`Found ${items.length} duplicates of: ${key.split('|')[0]}`);
-      // Keep the first one, delete the rest
-      for (let i = 1; i < items.length; i++) {
-        await items[i].delete();
-        duplicatesRemoved++;
-      }
-    }
-  }
-  
-  console.log(`Removed ${duplicatesRemoved} duplicate items\n`);
-  
-  // Step 2: Load and refresh items from JSON
-  console.log("=== STEP 2: LOADING ITEMS FROM JSON ===");
-  
+  // First, load JSON data to know the correct types
   const dataFiles = [
     'systems/osp-houserules/data/ammunition.json',
     'systems/osp-houserules/data/armor.json',
@@ -56,27 +31,73 @@ async function refreshAllItems() {
   ];
   
   let allItems = [];
-  
-  // Load all data files with cache busting
   for (const filePath of dataFiles) {
     try {
       const cacheBuster = `?v=${Date.now()}&r=${Math.random()}`;
       const response = await fetch(`${filePath}${cacheBuster}`);
       const items = await response.json();
-      const fileName = filePath.split('/').pop();
-      console.log(`Loaded ${items.length} items from ${fileName}`);
       allItems = allItems.concat(items);
     } catch (error) {
       console.error(`Failed to load ${filePath}:`, error);
-      ui.notifications.warn(`Failed to load ${filePath.split('/').pop()}`);
     }
   }
   
-  if (allItems.length === 0) {
-    ui.notifications.error("No items loaded from JSON files!");
-    return;
+  // Create a map of item name to correct type from JSON
+  const correctTypes = new Map();
+  for (const item of allItems) {
+    correctTypes.set(item.name, item.type);
   }
   
+  const itemsByNameAndType = new Map();
+  const itemsByNameOnly = new Map();
+  
+  for (const item of game.items) {
+    const key = `${item.name}|${item.type}`;
+    if (!itemsByNameAndType.has(key)) {
+      itemsByNameAndType.set(key, []);
+    }
+    itemsByNameAndType.get(key).push(item);
+    
+    // Also track by name only
+    if (!itemsByNameOnly.has(item.name)) {
+      itemsByNameOnly.set(item.name, []);
+    }
+    itemsByNameOnly.get(item.name).push(item);
+  }
+  
+  let duplicatesRemoved = 0;
+  const deletedItemNames = new Set();
+  
+  // First pass: Remove duplicates with same name AND type
+  for (const [key, items] of itemsByNameAndType) {
+    if (items.length > 1) {
+      console.log(`Found ${items.length} duplicates of: ${key.split('|')[0]}`);
+      // Keep the first one, delete the rest
+      for (let i = 1; i < items.length; i++) {
+        await items[i].delete();
+        duplicatesRemoved++;
+      }
+    }
+  }
+  
+  // Second pass: Remove items with same name but WRONG type
+  for (const [name, items] of itemsByNameOnly) {
+    const correctType = correctTypes.get(name);
+    if (correctType) {
+      for (const item of items) {
+        if (item.type !== correctType) {
+          console.log(`Removing wrong-type item: "${name}" (${item.type} → should be ${correctType})`);
+          await item.delete();
+          deletedItemNames.add(name);
+          duplicatesRemoved++;
+        }
+      }
+    }
+  }
+  
+  console.log(`Removed ${duplicatesRemoved} duplicate/wrong-type items\n`);
+  
+  // Step 2: Already loaded in Step 1
   console.log(`Total items loaded: ${allItems.length}\n`);
   
   console.log("=== STEP 3: UPDATING/CREATING ITEMS ===");
@@ -87,6 +108,21 @@ async function refreshAllItems() {
   
   for (const itemData of allItems) {
     try {
+      // If this item was just deleted for wrong type, force-create it
+      if (deletedItemNames.has(itemData.name)) {
+        const createData = { ...itemData };
+        
+        if (createData.img && !createData.img.startsWith('systems/') && !createData.img.startsWith('icons/')) {
+          createData.img = `systems/osp-houserules/${createData.img}`;
+        }
+        
+        await Item.create(createData);
+        console.log(`➕ Created (was wrong type): ${itemData.name}`);
+        createdItemsList.push(`${itemData.name} (${itemData.type})`);
+        created++;
+        continue;
+      }
+      
       // Find existing item by name and type, or by image path if name changed
       let existing = game.items.find(i => 
         i.name === itemData.name && 
@@ -200,9 +236,9 @@ async function refreshAllItems() {
   }
   
   console.log(`✅ Updated ${actorItemsUpdated} items on actors`);
-  console.log(`⏭️  Skipped ${actorItemsSkipped} actor items`);
+  console.log(`⏭️  Skipped ${actorItemsSkipped} items on actors\n`);
   
-  console.log("\n=== REFRESH COMPLETE ===");
+  console.log("=== REFRESH COMPLETE ===");
   console.log(`🗑️  Duplicates removed: ${duplicatesRemoved}`);
   console.log(`✅ World items updated: ${updated}`);
   console.log(`➕ World items created: ${created}`);
@@ -210,7 +246,7 @@ async function refreshAllItems() {
   console.log(`✅ Actor items updated: ${actorItemsUpdated}`);
   console.log(`⏭️  Actor items skipped: ${actorItemsSkipped}`);
   
-  ui.notifications.info(`Refresh complete! World: ${updated} updated, ${created} created. Actors: ${actorItemsUpdated} updated. Duplicates removed: ${duplicatesRemoved}`);
+  ui.notifications.info(`Refresh complete! Duplicates: ${duplicatesRemoved}, World items: ${updated} updated/${created} created, Actor items: ${actorItemsUpdated} updated`);
 }
 
 // Run the refresh

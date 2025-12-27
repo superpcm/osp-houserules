@@ -6,6 +6,7 @@ import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 import { BackgroundHandler } from './handlers/background-handler.js';
 import { PositionToolHandler } from './handlers/position-tool-handler.js';
 import { PortraitTool } from './portrait-tool.js';
+import { calculateMaxHP } from '../../../config/classes.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -173,7 +174,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
 
     // Prepare items for template
-    context.weapons = this.actor.system.weapons || [];
+    // Include regular weapons and items with weapon properties (like Holy Water, Oil Flask)
+    const regularWeapons = this.actor.system.weapons || [];
+    const itemsWithWeaponProperties = (this.actor.system.items || []).filter(item => 
+      item.system.damage && item.system.range && (item.system.melee || item.system.missile)
+    );
+    context.weapons = [...regularWeapons, ...itemsWithWeaponProperties];
     context.armor = this.actor.system.armor || [];
     
     // Organize containers with nested items
@@ -181,6 +187,64 @@ export class OspActorSheetCharacter extends ActorSheet {
     const allItems = this.actor.system.items || [];
     const allWeapons = this.actor.system.weapons || [];
     const allArmor = this.actor.system.armor || [];
+    
+    // Filter top-level clothing items (equipped, not in containers)
+    const topLevelClothing = allItems.filter(item => 
+      item.type === "clothing" && 
+      !item.system.containerId
+    );
+    
+    context.clothing = topLevelClothing.map(item => {
+      // Calculate display weight: unitWeight * quantity
+      const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
+      const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
+      item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
+      
+      // If clothing has capacity, treat it like a container
+      if (item.system.capacity) {
+        // Find items stored in this clothing
+        const containedItems = allItems.filter(i => i.system.containerId === item.id);
+        const containedWeapons = allWeapons.filter(w => w.system.containerId === item.id);
+        const containedArmor = allArmor.filter(a => a.system.containerId === item.id);
+        const containedContainers = allContainers.filter(c => c.system.containerId === item.id);
+        const containedClothing = topLevelClothing.filter(c => c.system.containerId === item.id);
+        
+        const allContainedItems = [
+          ...containedItems,
+          ...containedWeapons,
+          ...containedArmor,
+          ...containedContainers,
+          ...containedClothing
+        ];
+        
+        // Calculate display values for nested items
+        allContainedItems.forEach(nestedItem => {
+          const nestedWeight = parseFloat(nestedItem.system.unitWeight || nestedItem.system.weight) || 0;
+          const nestedQuantity = nestedItem.system.quantity !== undefined ? nestedItem.system.quantity : 1;
+          nestedItem.displayWeight = Math.round(nestedWeight * nestedQuantity * 10) / 10;
+          
+          const storedSize = parseFloat(nestedItem.system.storedSize) || 0;
+          nestedItem.displayCapacity = Math.round(storedSize * nestedQuantity);
+        });
+        
+        item.containedItems = allContainedItems;
+        
+        // Calculate capacity usage
+        const capacity = parseFloat(item.system.capacity) || 0;
+        let usedCapacity = 0;
+        allContainedItems.forEach(nestedItem => {
+          const storedSize = parseFloat(nestedItem.system.storedSize) || 0;
+          const qty = nestedItem.system.quantity || 1;
+          usedCapacity += storedSize * qty;
+        });
+        
+        item.remainingCapacity = Math.round((capacity - usedCapacity) * 10) / 10;
+        item.capacityPercentage = capacity > 0 ? Math.round((usedCapacity / capacity) * 100) : 0;
+        item.collapsed = this.actor.getFlag('osp-houserules', `container-${item.id}-collapsed`) || false;
+      }
+      
+      return item;
+    });
     
     // Only show TOP-LEVEL containers (not nested in other containers)
     const topLevelContainers = allContainers.filter(container => !container.system?.containerId);
@@ -321,8 +385,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       return containerData;
     });
     
-    // Only show items that are NOT in containers AND are not containers themselves
-    const generalItems = allItems.filter(item => !item.system.containerId && item.type !== 'container');
+    // Only show items that are NOT in containers AND are not containers or clothing themselves
+    const generalItems = allItems.filter(item => !item.system.containerId && item.type !== 'container' && item.type !== 'clothing');
     
     // Calculate displayWeight for general items
     generalItems.forEach(item => {
@@ -362,7 +426,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       spells: { value: 0 }
     };
 
-
+    // Calculate Max HP based on class, level, and CON modifier
+    const characterClass = this.actor.system.class || '';
+    const level = this.actor.system.level || 1;
+    const conScore = this.actor.system.attributes?.con?.value || 10;
+    context.calculatedMaxHP = calculateMaxHP(characterClass, level, conScore);
 
     return context;
   }
@@ -1166,8 +1234,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     let dropTarget = event.target.closest('.item-entry[data-item-id]');
     let targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
     
-    // If we dropped on a contained item (not a container), find its parent container
-    if (targetContainer && targetContainer.type !== "container" && targetContainer.system.containerId) {
+    // If we dropped on a contained item (not a container or clothing with capacity), find its parent container
+    if (targetContainer && targetContainer.type !== "container" && !(targetContainer.type === "clothing" && targetContainer.system.capacity) && targetContainer.system.containerId) {
       // This is a contained item, find its parent container
       const parentContainerId = targetContainer.system.containerId;
       targetContainer = this.actor.items.get(parentContainerId);
@@ -1175,7 +1243,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // If target container is itself stored inside another container (and not equipped/worn),
     // traverse up to find the top-level equipped/worn container
-    if (targetContainer && targetContainer.type === "container" && targetContainer.system.containerId && !targetContainer.system.equipped) {
+    if (targetContainer && (targetContainer.type === "container" || (targetContainer.type === "clothing" && targetContainer.system.capacity)) && targetContainer.system.containerId && !targetContainer.system.equipped) {
       // Container is stored in another container and not equipped - find the top-level container
       let topContainer = targetContainer;
       while (topContainer.system.containerId) {
@@ -1231,15 +1299,41 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
 
     // If the item is of type "item" (not weapon/armor/container), it MUST go into a container
-    if (itemData.type === "item" || itemData.type === "coin") {
-      if (!targetContainer || targetContainer.type !== "container") {
+    if (itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition") {
+      // Check if target is a valid container (container type OR clothing with capacity)
+      const isValidContainer = targetContainer && 
+        (targetContainer.type === "container" || 
+         (targetContainer.type === "clothing" && targetContainer.system.capacity));
+      
+      if (!isValidContainer) {
         ui.notifications.error("Items must be stored in a container. Drag the item onto a container.");
+        return false;
+      }
+
+      // Check container type restrictions BEFORE handling coins/ammunition
+      if (!this._isItemAllowedInContainer(itemData, targetContainer)) {
+        const allowedTypes = targetContainer.system.allowedTypes || [];
+        const restriction = allowedTypes.length > 0 ? allowedTypes.join(', ') : 'any';
+        ui.notifications.error(`${targetContainer.name} can only hold: ${restriction}`);
+        return false;
+      }
+
+      // Check maximum item size restriction
+      if (targetContainer.system.maxItemSize !== null && 
+          targetContainer.system.maxItemSize !== undefined &&
+          itemData.system.storedSize > targetContainer.system.maxItemSize) {
+        ui.notifications.error(`${item.name} (size ${itemData.system.storedSize}) is too large for ${targetContainer.name} (max size ${targetContainer.system.maxItemSize})`);
         return false;
       }
 
       // For coins, show quantity dialog
       if (itemData.type === "coin") {
         return this._handleCoinDrop(item, itemData, targetContainer, isReordering);
+      }
+
+      // For ammunition, show quantity dialog
+      if (itemData.type === "ammunition") {
+        return this._handleAmmunitionDrop(item, itemData, targetContainer, isReordering);
       }
 
       // Check if there's enough space in the container
@@ -1266,6 +1360,14 @@ export class OspActorSheetCharacter extends ActorSheet {
         }
       }
       
+      // Check maximum item size restriction
+      if (targetContainer.system.maxItemSize !== null && 
+          targetContainer.system.maxItemSize !== undefined &&
+          itemData.system.storedSize > targetContainer.system.maxItemSize) {
+        ui.notifications.error(`${item.name} (size ${itemData.system.storedSize}) is too large for ${targetContainer.name} (max size ${targetContainer.system.maxItemSize})`);
+        return false;
+      }
+      
       // Check if there's enough space in the target container
       if (!this._hasContainerSpace(targetContainer, itemData)) {
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
@@ -1275,7 +1377,25 @@ export class OspActorSheetCharacter extends ActorSheet {
       itemData.system.containerId = targetContainer.id;
     }
     // Weapons/armor can be dropped onto containers
-    else if (targetContainer && targetContainer.type === "container") {
+    else if (targetContainer && 
+             (targetContainer.type === "container" || 
+              (targetContainer.type === "clothing" && targetContainer.system.capacity))) {
+      // Check container type restrictions
+      if (!this._isItemAllowedInContainer(itemData, targetContainer)) {
+        const allowedTypes = targetContainer.system.allowedTypes || [];
+        const restriction = allowedTypes.length > 0 ? allowedTypes.join(', ') : 'any';
+        ui.notifications.error(`${targetContainer.name} can only hold: ${restriction}`);
+        return false;
+      }
+
+      // Check maximum item size restriction
+      if (targetContainer.system.maxItemSize !== null && 
+          targetContainer.system.maxItemSize !== undefined &&
+          itemData.system.storedSize > targetContainer.system.maxItemSize) {
+        ui.notifications.error(`${item.name} (size ${itemData.system.storedSize}) is too large for ${targetContainer.name} (max size ${targetContainer.system.maxItemSize})`);
+        return false;
+      }
+
       if (!this._hasContainerSpace(targetContainer, itemData)) {
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
@@ -1304,12 +1424,12 @@ export class OspActorSheetCharacter extends ActorSheet {
       const currentContainerId = item.system.containerId;
       const targetContainerId = targetContainer?.id || null;
       
-      if (movingQty > 1 && currentContainerId !== targetContainerId && (itemData.type === "item" || itemData.type === "container")) {
+      if (movingQty > 1 && currentContainerId !== targetContainerId && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition")) {
         return this._handleStackedItemDrop(item, itemData, targetContainer, currentContainerId);
       }
       
       // Check if we should stack this item with an existing one in the target container
-      if (targetContainer && (itemData.type === "item" || itemData.type === "container")) {
+      if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition")) {
         // Find matching item in the target container (excluding the item being moved)
         const matchingItem = this.actor.items.find(i => 
           i.id !== item.id && // Don't match with itself
@@ -1351,7 +1471,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Handle item from compendium or elsewhere - check for stacking
     
     // Check if we should stack this item with an existing one
-    if (targetContainer && (itemData.type === "item" || itemData.type === "container")) {
+    if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition")) {
       // Find matching item in the same container
       const matchingItem = this.actor.items.find(i => 
         i.name === itemData.name &&
@@ -1378,6 +1498,39 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // No matching item found, create new
     return this.actor.createEmbeddedDocuments("Item", [itemData]);
+  }
+
+  /**
+   * Check if an item is allowed in a container based on type restrictions
+   */
+  _isItemAllowedInContainer(itemData, container) {
+    const allowedTypes = container.system?.allowedTypes;
+    
+    // If no restrictions, allow any item
+    if (!allowedTypes || !Array.isArray(allowedTypes) || allowedTypes.length === 0) {
+      return true;
+    }
+    
+    // Check if item has any of the allowed tags
+    const itemTags = itemData.system?.tags || [];
+    
+    // Debug logging
+    console.log('Container restriction check:', {
+      container: container.name,
+      allowedTypes: allowedTypes,
+      itemName: itemData.name,
+      itemType: itemData.type,
+      itemTags: itemTags,
+      hasMatch: itemTags.some(tag => allowedTypes.includes(tag))
+    });
+    
+    // If container has restrictions but item has no tags, reject it
+    if (itemTags.length === 0) {
+      return false;
+    }
+    
+    // Check if any item tag matches allowed types
+    return itemTags.some(tag => allowedTypes.includes(tag));
   }
 
   /**
@@ -1725,6 +1878,130 @@ export class OspActorSheetCharacter extends ActorSheet {
         render: (html) => {
           // Focus and select the input field
           html.find('input[name="coinQuantity"]').focus().select();
+        }
+      }).render(true);
+    });
+  }
+
+  /**
+   * Handle dropping ammunition with quantity dialog
+   */
+  async _handleAmmunitionDrop(item, itemData, targetContainer, isReordering) {
+    const defaultQuantity = itemData.system.quantity || 1;
+    
+    return new Promise((resolve) => {
+      const content = `
+        <form>
+          <div class="form-group">
+            <label>Add how many ${itemData.name} to ${targetContainer.name}?</label>
+            <input type="number" name="ammoQuantity" value="${defaultQuantity}" min="1" style="width: 100%; margin-top: 5px;" autofocus />
+          </div>
+        </form>
+      `;
+
+      new Dialog({
+        title: `Add ${itemData.name}`,
+        content: content,
+        buttons: {
+          add: {
+            icon: '<i class="fas fa-plus"></i>',
+            label: "Add",
+            callback: async (html) => {
+              const quantity = parseInt(html.find('[name="ammoQuantity"]').val());
+              
+              if (!quantity || quantity <= 0) {
+                ui.notifications.warn("Quantity must be greater than 0");
+                resolve(false);
+                return;
+              }
+              
+              // Check if there's already ammunition of this type in the target container
+              const existingAmmo = this.actor.items.find(i => 
+                i.type === "ammunition" &&
+                i.name === itemData.name &&
+                i.system.containerId === targetContainer.id &&
+                (!item.actor || i.id !== item.id) // Don't match with the ammo being moved
+              );
+              
+              // Validate space
+              const storedSize = parseFloat(itemData.system.storedSize) || 0;
+              if (existingAmmo) {
+                // Stacking: check if adding MORE ammunition to existing stack will fit
+                const additionalSpace = storedSize * quantity;
+                const availableSpace = this._getAvailableSpace(targetContainer);
+                
+                if (additionalSpace > availableSpace) {
+                  ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${additionalSpace} slots, have ${availableSpace} available.`);
+                  resolve(false);
+                  return;
+                }
+              } else {
+                // New stack: validate all ammunition will fit
+                itemData.system.quantity = quantity;
+                
+                if (!this._hasContainerSpace(targetContainer, itemData)) {
+                  ui.notifications.error(`Not enough space in ${targetContainer.name} for ${quantity} ${itemData.name}.`);
+                  resolve(false);
+                  return;
+                }
+              }
+              
+              // Update the item data with the specified quantity
+              itemData.system.quantity = quantity;
+              
+              // Set the container ID
+              itemData.system.containerId = targetContainer.id;
+              
+              // Handle item from another actor
+              if (item.actor && item.actor.id !== this.actor.id) {
+                if (existingAmmo) {
+                  // Stack with existing ammunition
+                  const newQuantity = (existingAmmo.system.quantity || 0) + quantity;
+                  await existingAmmo.update({"system.quantity": newQuantity});
+                  await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
+                } else {
+                  await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+                  await this.actor.createEmbeddedDocuments("Item", [itemData]);
+                }
+              } 
+              // Handle reordering within same actor
+              else if (item.actor && item.actor.id === this.actor.id) {
+                if (existingAmmo) {
+                  // Stack with existing ammunition and delete the one being moved
+                  const newQuantity = (existingAmmo.system.quantity || 0) + quantity;
+                  await existingAmmo.update({"system.quantity": newQuantity});
+                  await item.delete();
+                  ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack`);
+                } else {
+                  await item.update(itemData);
+                }
+              }
+              // Handle new item from compendium/sidebar (no actor)
+              else {
+                if (existingAmmo) {
+                  // Stack with existing ammunition
+                  const newQuantity = (existingAmmo.system.quantity || 0) + quantity;
+                  await existingAmmo.update({"system.quantity": newQuantity});
+                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
+                } else {
+                  await this.actor.createEmbeddedDocuments("Item", [itemData]);
+                }
+              }
+              
+              resolve(true);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Cancel",
+            callback: () => resolve(false)
+          }
+        },
+        default: "add",
+        render: (html) => {
+          // Focus and select the input field
+          html.find('input[name="ammoQuantity"]').focus().select();
         }
       }).render(true);
     });

@@ -95,7 +95,7 @@
     }
   },
   {
-    "name": "Broad Sword",
+    "name": "Broadsword",
     "type": "weapon",
     "img": "systems/osp-houserules/assets/images/weapons/broadsword.webp",
     "system": {
@@ -383,40 +383,6 @@
     }
   },
   {
-    "name": "Holy Water",
-    "type": "weapon",
-    "img": "systems/osp-houserules/assets/images/weapons/holy-water.webp",
-    "system": {
-      "description": "This small glass vial is etched with a simple cross and sealed with a carved wooden stopper, its clear contents faintly shimmering with divine purity. When thrown, the consecrated water bursts outward in a radiant splash, scorching undead and unholy creatures with sacred force.",
-      "cost": 20,
-      "unitWeight": 1,
-      "storedSize": 2,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "lashed": false,
-      "containerId": null,
-      "damage": "1d6",
-      "damageL": "1d6",
-      "damageType": "B",
-      "size": "S",
-      "speedFactor": 2,
-      "rof": 1,
-      "bonus": 0,
-      "tags": [
-        "missile",
-        "splash-weapon"
-      ],
-      "melee": false,
-      "missile": true,
-      "range": {
-        "short": 10,
-        "medium": 30,
-        "long": 50
-      }
-    }
-  },
-  {
     "name": "Javelin",
     "type": "weapon",
     "img": "systems/osp-houserules/assets/images/weapons/javelin.webp",
@@ -623,40 +589,6 @@
       ],
       "melee": true,
       "missile": false
-    }
-  },
-  {
-    "name": "Oil Flask",
-    "type": "weapon",
-    "img": "systems/osp-houserules/assets/images/gear/oil-flask.webp",
-    "system": {
-      "description": "This oil flask is a rounded glass bottle filled with thick, flammable oil, its cork stoppered and topped with a burning rag fuse. Adventurers typically light and hurl it at foes or into crowded areas, where it shatters on impact and splashes burning oil across the ground.",
-      "cost": 10,
-      "unitWeight": 2,
-      "storedSize": 3,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "lashed": false,
-      "containerId": null,
-      "damage": "2d6",
-      "damageL": "2d6",
-      "damageType": "B",
-      "size": "S",
-      "speedFactor": 2,
-      "rof": 1,
-      "bonus": 0,
-      "tags": [
-        "missile",
-        "splash-weapon"
-      ],
-      "melee": false,
-      "missile": true,
-      "range": {
-        "short": 10,
-        "medium": 20,
-        "long": 30
-      }
     }
   },
   {
@@ -908,34 +840,6 @@
         "blunt",
         "melee",
         "two-handed"
-      ],
-      "melee": true,
-      "missile": false
-    }
-  },
-  {
-    "name": "Torch",
-    "type": "weapon",
-    "img": "systems/osp-houserules/assets/images/weapons/torch.webp",
-    "system": {
-      "description": "This torch is a rough wooden haft wrapped at the head with oil-soaked rags, its bright flame licking upward in warm yellows and oranges. It is typically used by adventurers to light their way through dark dungeons and wilderness paths, and can be pressed into service as an improvised burning weapon when needed.",
-      "cost": 1,
-      "unitWeight": 1,
-      "storedSize": 3,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "lashed": false,
-      "containerId": null,
-      "damage": "1d4",
-      "damageL": "1d3",
-      "damageType": "B",
-      "size": "S",
-      "speedFactor": 4,
-      "rof": 1,
-      "bonus": 0,
-      "tags": [
-        "melee"
       ],
       "melee": true,
       "missile": false

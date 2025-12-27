@@ -134,25 +134,53 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   &::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.6);
   }
+  
+  /* Push weapons and armor sections down by 20px */
+  .item-category:first-of-type {
+    margin-top: 20px;
+  }
+  
+  /* Armor section in Combat tab should be 20px below weapons section */
+  .item-category:nth-of-type(2) {
+    margin-top: 30px; // Creates 20px visual space (10px from weapons margin-bottom + 30px - 10px title negative margin)
+  }
 }
 
 .item-category {
   border: 1.5px solid #000;
+  border-left: none;
+  border-right: none;
   border-radius: 0 0 5px 5px; /* Only round bottom corners since title is separate */
   border-top: none; /* No top border - title provides visual separation */
-  margin-top: 0; /* Remove negative margin */
+  margin-top: 0px; /* Remove negative margin */
   margin-bottom: 10px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0;
+    bottom: 0;
+    border-left: 1.5px solid #000;
+    border-right: 1.5px solid #000;
+    pointer-events: none;
+  }
+  
   /* Remove top margin from first category to prevent sticky title from shifting */
   &:first-child {
-    margin-top: 0;
+    margin-top: 20px;
   }
 }
 
 .osp .item-category-title,
 .osp.sheet.actor .item-category-title {
   background: #000;
-  border-bottom: 1px solid #000;
-  padding: $item-padding-y $item-padding-x;
+  border: 1.5px solid #000;
+  border-bottom: none;
+  padding: 0 $item-padding-x;
+  margin-top: -10px;
   font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
   font-size: $font-category-title !important;
   color: #fff;
@@ -163,25 +191,26 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   align-items: center;
   text-align: center;
   gap: $grid-gap;
+  height: 28.5px;
+  box-sizing: border-box;
+  border-radius: 5px 5px 0 0;
   
   &.weapons-title {
-    grid-template-columns: $weapons-col-image $weapons-col-name $weapons-col-qty $weapons-col-damage $weapons-col-weight $col-controls;
+    grid-template-columns: $weapons-col-image $weapons-col-name $weapons-col-damage $weapons-col-weight $col-controls;
+    width: 698px;
   }
   
     &.armor-title {
-      grid-template-columns: $armor-col-image $armor-col-name $armor-col-qty $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
+      grid-template-columns: $armor-col-image $armor-col-name $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
+      width: 698px;
     }
 
     &.containers-title {
       grid-template-columns: $containers-header-image $containers-header-name $containers-header-qty $containers-header-capacity $containers-header-weight $col-controls;
-      padding: 6px $item-padding-x 4px;  // Back to standard padding
       min-height: 0;  // Override any min-height
       position: sticky;
       top: 0; /* Stick to top of scrollable area */
       z-index: 9; /* Below encumbrance bar but above content */
-      border: 1.5px solid #000;
-      border-bottom: none; /* Remove bottom border so it connects with item-category */
-      border-radius: 5px 5px 0 0; /* Round top corners only */
       margin: 0; /* Remove any margin since it's outside item-category now */
       
       .item-roll-icon {
@@ -189,6 +218,11 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
         height: 0;  // Remove height from placeholder
       }
     }
+  
+  // Override item-roll-icon height in all title headers to allow vertical centering
+  .item-roll-icon {
+    height: auto;
+  }
 }
 
 .osp .item-category-title .category-name,
@@ -341,10 +375,17 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
 .item-control.item-lash-toggle {
   opacity: 0.3;
+  border: none; // Remove any border
+  
+  img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    border: none; // Remove border from image
+  }
   
   &.item-lashed {
     opacity: 1;
-    color: #000; // Black color for lashed items
   }
   
   &:hover {
@@ -388,11 +429,15 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     
     // Weapon items with roll icon column
     &.weapon-header {
-      grid-template-columns: $weapons-col-image $weapons-col-name $weapons-col-qty $weapons-col-damage $weapons-col-weight $col-controls;
+      grid-template-columns: $weapons-col-image $weapons-col-name $weapons-col-damage $weapons-col-weight $col-controls;
+      height: 44px;
+      box-sizing: border-box;
     }
     
         &.armor-header {
-      grid-template-columns: $armor-col-image $armor-col-name $armor-col-qty $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
+      grid-template-columns: $armor-col-image $armor-col-name $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
+      height: 44px;
+      box-sizing: border-box;
     }
 
     &.container-header {

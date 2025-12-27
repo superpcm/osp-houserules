@@ -886,17 +886,31 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
    ============================ */
 .tab[data-tab="combat"] {
   position: relative;
-  background-image: 
-    url('/systems/osp-houserules/assets/character-sheet/hpac.webp'),
-    url('/systems/osp-houserules/assets/character-sheet/combat.webp') !important;
-  background-size: contain, contain;
-  background-position: 50% 30px, center top;
-  background-repeat: no-repeat, no-repeat;
-  background-attachment: scroll;
-  background-color: transparent !important;
-  padding: 80px;
-  height: 384px !important;
+  background-image: url('/systems/osp-houserules/assets/character-sheet/combat.webp');
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: local;
+  background-color: transparent;
+  padding: 0px;
+  height: 384px;
   margin: 0 0.5px 0 -0.5px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(30px);
+    width: 100%;
+    height: calc(100% - 50px);
+    background-image: url('/systems/osp-houserules/assets/character-sheet/hpac.webp');
+    background-size: contain;
+    background-position: center top;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 1;
+  }
 
   .combat-content {
     padding: 20px;
@@ -948,7 +962,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         width: 80px;
         height: 40px;
         text-align: center;
-        font-size: 36px;
+        font-size: 16px;
         border: none;
         border-radius: 0;
         display: flex;

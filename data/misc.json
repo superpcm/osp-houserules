@@ -19,7 +19,7 @@
   {
     "name": "Chest, Large",
     "type": "container",
-    "img": "systems/osp-houserules/icons/containers/chest/chest-reinforced-steel-brown.webp",
+    "img": "systems/osp-houserules/assets/images/misc/chest-large.webp",
     "system": {
       "description": "This large ('24\" × 16\" × 16\"') wooden chest, reinforced with iron bands and secured by a heavy lock, is built to store valuables, equipment, or important supplies. Adventurers and merchants alike rely on such chests to keep their belongings safe from theft, weather, and the dangers of travel.",
       "cost": 50,
@@ -37,7 +37,7 @@
   {
     "name": "Chest, Small",
     "type": "container",
-    "img": "systems/osp-houserules/icons/containers/chest/chest-worn-oak-tan.webp",
+    "img": "systems/osp-houserules/assets/images/misc/chest-small.webp",
     "system": {
       "description": "This small ('12\" × 8\" × 8\"') wooden chest is a sturdy, lockable container used to safeguard valuables, coins, documents, or precious keepsakes. Its compact size makes it ideal for travelers or adventurers who need secure storage without added bulk.",
       "cost": 15,
@@ -55,7 +55,7 @@
   {
     "name": "Cart",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/tack/cart.webp",
+    "img": "systems/osp-houserules/assets/images/misc/cart.webp",
     "system": {
       "description": "This sturdy two-wheeled wooden cart has iron-banded wheels, a slatted cargo bed, and long shafts ready to be hitched to a beast of burden. It is typically used by farmers, merchants, and traveling parties to haul goods, supplies, and sometimes passengers along rough roads and village lanes.",
       "cost": 115,
@@ -74,9 +74,30 @@
     }
   },
   {
+    "name": "Lantern, Mount",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/tack/lantern-saddle.webp",
+    "system": {
+      "description": "A specialized lantern designed to hang from a saddle or harness, illuminating the path ahead without requiring a hand to hold it. Features protective guards to keep it from swinging wildly or spooking the mount.",
+      "cost": 15,
+      "unitWeight": 3,
+      "storedSize": 8,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "tags": [
+        "tack",
+        "light source"
+      ],
+      "lightRadius": 30,
+      "burnTime": 4
+    }
+  },
+  {
     "name": "Tent, 1-person",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/tack/tent-one-person.webp",
+    "img": "systems/osp-houserules/assets/images/misc/tent-one-person.webp",
     "system": {
       "description": "This one-person tent is a compact canvas shelter supported by simple poles and stakes, designed to protect a lone traveler from wind and weather. It is typically used for overnight camps, providing basic cover and privacy while remaining light enough to carry on long journeys.",
       "cost": 5,
@@ -93,11 +114,11 @@
   {
     "name": "Tent, 2-person",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/tack/tent-two-person.webp",
+    "img": "systems/osp-houserules/assets/images/misc/tent-two-person.webp",
     "system": {
       "description": "This two-person tent is a sturdy canvas shelter supported by simple poles and stakes, offering enough space for two travelers to rest and store basic gear. It is typically used for shared camps, providing protection from the elements while remaining practical for overland travel.",
       "cost": 10,
-      "unitWeight": 15,
+      "unitWeight": 20,
       "storedSize": 20,
       "quantity": 1,
       "equipped": false,
@@ -110,11 +131,11 @@
   {
     "name": "Tent, 4-person",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/tack/tent-two-person.webp",
+    "img": "systems/osp-houserules/assets/images/misc/tent-two-person.webp",
     "system": {
       "description": "This four-person tent is a large canvas shelter supported by multiple poles and stakes, offering ample space for several travelers and their gear. It is typically used by small groups to establish a shared campsite, providing protection from the elements during extended journeys or expeditions.",
-      "cost": 50,
-      "unitWeight": 30,
+      "cost": 20,
+      "unitWeight": 40,
       "storedSize": 40,
       "quantity": 1,
       "equipped": false,
@@ -127,7 +148,7 @@
   {
     "name": "Wagon",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/tack/wagon-covered.webp",
+    "img": "systems/osp-houserules/assets/images/misc/wagon-covered.webp",
     "system": {
       "description": "A large four-wheeled covered wagon with a canvas top and reinforced axles, capable of transporting huge loads across country. Requires multiple draft animals to pull and is the primary means of moving goods, supplies, and even entire households overland.",
       "cost": 200,

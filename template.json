@@ -126,7 +126,9 @@
       "templates": ["base"],
       "system": {
         "capacity": 16,
-        "lashSlots": 0
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "maxItemSize": null
       }
     },
     "coin": {

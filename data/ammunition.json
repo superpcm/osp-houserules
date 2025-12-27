@@ -2,7 +2,7 @@
   {
     "name": "Arrow",
     "type": "ammunition",
-    "img": "systems/osp-houserules/assets/items/ammunition/arrow.webp",
+    "img": "systems/osp-houserules/assets/images/ammunition/arrow.webp",
     "system": {
       "description": "An arrow is a lightweight wooden shaft tipped with a metal point, used as ammunition for bows. Its feathered fletching ensures stable flight, allowing it to strike targets accurately at range.",
       "cost": 0.2,
@@ -20,7 +20,7 @@
   {
     "name": "Crossbow Bolt, Light",
     "type": "ammunition",
-    "img": "systems/osp-houserules/assets/items/ammunition/bolt-light.webp",
+    "img": "systems/osp-houserules/assets/images/ammunition/bolt-light.webp",
     "system": {
       "description": "A light crossbow bolt is a short, narrow projectile designed for use with light crossbows, optimized for speed and accuracy. Its compact weight allows for quick reloading and consistent performance in ranged combat.",
       "cost": 0.3,
@@ -38,7 +38,7 @@
   {
     "name": "Crossbow Bolt, Heavy",
     "type": "ammunition",
-    "img": "systems/osp-houserules/assets/items/ammunition/bolt-heavy.webp",
+    "img": "systems/osp-houserules/assets/images/ammunition/bolt-heavy.webp",
     "system": {
       "description": "A heavy crossbow bolt is a thicker, sturdier projectile built for high-powered crossbows, delivering deep penetration even against armored foes. Its reinforced shaft and weight make it slower to load but devastating on impact.",
       "cost": 0.5,
@@ -56,7 +56,7 @@
   {
     "name": "Silver-tipped Arrow",
     "type": "ammunition",
-    "img": "systems/osp-houserules/assets/items/ammunition/arrow-silver.webp",
+    "img": "systems/osp-houserules/assets/images/ammunition/arrow-silver.webp",
     "system": {
       "description": "A silver-tipped arrow is a standard arrow fitted with a finely crafted silver head instead of iron or steel. It is prized for its effectiveness against supernatural creatures vulnerable to silver, making it a valuable tool for hunters and adventurers.",
       "cost": 5,
@@ -75,7 +75,7 @@
   {
     "name": "Sling Stone",
     "type": "ammunition",
-    "img": "systems/osp-houserules/assets/items/ammunition/sling-stone.webp",
+    "img": "systems/osp-houserules/assets/images/ammunition/sling-stone.webp",
     "system": {
       "description": "A sling stone is a smooth, oval projectile shaped for optimal release from a sling's pouch. It is commonly used by hunters and skirmishers for its simplicity, low cost, and surprising lethality when launched at high speed.",
       "cost": 0,

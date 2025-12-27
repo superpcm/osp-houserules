@@ -15,7 +15,8 @@
         "container"
       ],
       "capacity": 16,
-      "lashSlots": 4
+      "lashSlots": 4,
+      "maxItemSize": null
     }
   },
   {
@@ -49,7 +50,8 @@
       "equipped": false,
       "lashable": false,
       "tags": [],
-      "capacity": 4
+      "capacity": 4,
+      "maxItemSize": 3
     }
   },
   {
@@ -65,13 +67,14 @@
       "equipped": false,
       "lashable": false,
       "tags": [],
-      "capacity": 2
+      "capacity": 2,
+      "maxItemSize": 2
     }
   },
   {
     "name": "Bolt Case",
     "type": "container",
-    "img": "systems/osp-houserules/icons/containers/ammunition/bolt-case.webp",
+    "img": "systems/osp-houserules/assets/images/gear/bolt-case.webp",
     "system": {
       "description": "This is a compact, square leather bolt case designed to attach securely to a belt. It is typically used by crossbowmen to carry and protect up to thirty bolts, keeping them accessible and organized during travel or battle.",
       "cost": 5,
@@ -83,7 +86,9 @@
       "capacity": 6,
       "tags": [
         "container"
-      ]
+      ],
+      "allowedTypes": ["bolts"],
+      "maxItemSize": 6
     }
   },
   {
@@ -177,7 +182,7 @@
   },
   {
     "name": "Holy Water",
-    "type": "item",
+    "type": "weapon",
     "img": "systems/osp-houserules/assets/images/gear/holy-water.webp",
     "system": {
       "description": "Water blessed by a holy person, stored in a special vial for use in rituals. Inflicts damage on undead when used as a weapon. A vial is easily held in one hand or stored in a pouch.",
@@ -189,8 +194,24 @@
       "lashable": false,
       "tags": [
         "consumable",
-        "religious"
-      ]
+        "religious",
+        "missile",
+        "splash-weapon"
+      ],
+      "damage": "1d6",
+      "damageL": "1d6",
+      "damageType": "B",
+      "size": "S",
+      "speedFactor": 2,
+      "rof": 1,
+      "bonus": 0,
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 10,
+        "medium": 30,
+        "long": 50
+      }
     }
   },
   {
@@ -201,7 +222,7 @@
       "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6-8 inches long, about \u00bd inch thick. Typically carried in a small leather pouch or tool roll.",
       "cost": 0.1,
       "unitWeight": 0.25,
-      "storedSize": 3,
+      "storedSize": 0.3,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -281,7 +302,7 @@
   },
   {
     "name": "Oil Flask",
-    "type": "item",
+    "type": "weapon",
     "img": "systems/osp-houserules/assets/images/gear/oil-flask.webp",
     "system": {
       "description": "Used to fuel lanterns or as a weapon when ignited. Burns for 4 hours in a lantern or 1 turn when used to create a pool of fire. Often carried in a padded or leather-lined pouch to prevent breakage.",
@@ -293,8 +314,24 @@
       "lashable": false,
       "tags": [
         "consumable",
-        "flammable"
-      ]
+        "flammable",
+        "missile",
+        "splash-weapon"
+      ],
+      "damage": "2d6",
+      "damageL": "2d6",
+      "damageType": "B",
+      "size": "S",
+      "speedFactor": 2,
+      "rof": 1,
+      "bonus": 0,
+      "melee": false,
+      "missile": true,
+      "range": {
+        "short": 10,
+        "medium": 20,
+        "long": 30
+      }
     }
   },
   {
@@ -348,7 +385,9 @@
       "lashable": false,
       "containerId": null,
       "capacity": 5,
-      "lashSlots": 0
+      "lashSlots": 0,
+      "allowedTypes": ["arrows"],
+      "maxItemSize": 6
     }
   },
   {
@@ -365,7 +404,9 @@
       "lashable": false,
       "containerId": null,
       "capacity": 3,
-      "lashSlots": 0
+      "lashSlots": 0,
+      "allowedTypes": ["arrows"],
+      "maxItemSize": 6
     }
   },
   {
@@ -456,7 +497,8 @@
       "lashable": true,
       "lashed": false,
       "tags": [],
-      "capacity": 24
+      "capacity": 24,
+      "maxItemSize": null
     }
   },
   {
@@ -472,13 +514,14 @@
       "equipped": false,
       "lashable": false,
       "tags": [],
-      "capacity": 8
+      "capacity": 8,
+      "maxItemSize": null
     }
   },
   {
     "name": "Scroll Case",
     "type": "item",
-    "img": "systems/osp-houserules/icons/containers/ammunition/scroll-case.webp",
+    "img": "systems/osp-houserules/assets/images/gear/scroll-case.webp",
     "system": {
       "description": "A protective tube designed to store and transport parchment scrolls, maps, or important documents. Crafted from sturdy materials like wood, leather, and metal, it shields its contents from weather and wear while allowing adventurers or scholars to carry their writings safely on the road.",
       "cost": 5,
@@ -530,7 +573,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/weapons/torch.webp",
     "system": {
-      "description": "A bundle of six torches, wooden shafts wrapped with oil-soaked rags. Each burns for 1 hour (6 turns) and casts light in a 30' radius.",
+      "description": "A bundle of six torches, wooden shafts wrapped with oil-soaked rags. Each burns for 1 hour (6 turns) and casts light in a 30' radius. An individual torch can also serve as an improvised melee weapon.",
       "cost": 1,
       "unitWeight": 0.5,
       "storedSize": 0.75,
@@ -538,8 +581,19 @@
       "equipped": false,
       "lashable": false,
       "tags": [
-        "light-source"
-      ]
+        "light-source",
+        "melee"
+      ],
+      "damage": "1d4",
+      "damageL": "1d3",
+      "damageType": "B",
+      "size": "S",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "melee": true,
+      "missile": false,
+      "range": {}
     }
   },
   {
@@ -564,7 +618,7 @@
       "description": "A waterskin is a durable leather container used to carry drinking water while traveling or adventuring. It is lightweight, easy to strap to a belt or pack, and essential for surviving long journeys where fresh water is scarce.",
       "cost": 1,
       "unitWeight": 3,
-      "storedSize": 2,
+      "storedSize": 4,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -581,7 +635,7 @@
       "description": "Stoppered glass bottle, clay jug, or wineskin containing two pints of table or fortified wine.",
       "cost": 1,
       "unitWeight": 2.5,
-      "storedSize": 2,
+      "storedSize": 4,
       "quantity": 1,
       "equipped": false,
       "lashable": false,

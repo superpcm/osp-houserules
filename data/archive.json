@@ -1,0 +1,36 @@
+[
+    {
+    "name": "Breeches",
+    "type": "clothing",
+    "img": "systems/osp-houserules/assets/images/clothing/breeches.webp",
+    "system": {
+      "description": "These breeches are made of sturdy, earth-toned cloth, gathered at the waist with a simple drawstring and fitted loosely through the legs for comfort and mobility. They are commonly worn by travelers, laborers, and adventurers who need durable everyday trousers that won't restrict movement in the field.",
+      "cost": 2,
+      "unitWeight": 0.2,
+      "storedSize": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "clothing"
+      ]
+    }
+  },
+    {
+    "name": "Tunic",
+    "type": "clothing",
+    "img": "systems/osp-houserules/assets/images/clothing/tunic.webp",
+    "system": {
+      "description": "This simple wool or linen tunic falls to mid-thigh, with short sleeves, a laced collar, and a rough cord belt gathering it at the waist. It serves as basic everyday clothing for commoners and adventurers alike, and as a comfortable base layer beneath armor.",
+      "cost": 8,
+      "unitWeight": 0.2,
+      "storedSize": 0.5,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "clothing"
+      ]
+    }
+  }
+]

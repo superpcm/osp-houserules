@@ -2,7 +2,7 @@
   {
     "name": "Belt",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/belt.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/belt.webp",
     "system": {
       "description": "This sturdy leather belt features a worn brass buckle and reinforced stitching, showing the marks of long travel and hard use. Adventurers typically use it to secure pouches, sheaths, and other gear, keeping essential items within easy reach on the road.",
       "cost": 1,
@@ -19,7 +19,7 @@
   {
     "name": "Boots",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/boots.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/boots.webp",
     "system": {
       "description": "These rugged leather boots are built for long travel, with thick soles and reinforced stitching to withstand miles of harsh terrain. Adventurers rely on them for protection and stability, whether crossing wilderness trails, dungeon floors, or city streets.",
       "cost": 3,
@@ -36,7 +36,7 @@
   {
     "name": "Cloak",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/cloak.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/cloak.webp",
     "system": {
       "description": "A loose, draping garment fastened at the neck or shoulder, providing warmth and protection from wind and rain. Adventurers favor it for its practicality, concealment, and the ease with which it can be thrown over armor or travel gear.",
       "cost": 8,
@@ -48,30 +48,14 @@
       "lashed": false,
       "containerId": null,
       "capacity": 2,
-      "lashSlots": 0
-    }
-  },
-  {
-    "name": "Tunic",
-    "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/tunic.webp",
-    "system": {
-      "description": "This simple wool or linen tunic falls to mid-thigh, with short sleeves, a laced collar, and a rough cord belt gathering it at the waist. It serves as basic everyday clothing for commoners and adventurers alike, and as a comfortable base layer beneath armor.",
-      "cost": 8,
-      "unitWeight": 0.2,
-      "storedSize": 0.5,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "clothing"
-      ]
+      "lashSlots": 0,
+      "maxItemSize": 0.5
     }
   },
   {
     "name": "Bracers",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/bracers.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/bracers.webp",
     "system": {
       "description": "These leather bracers are shaped to protect the forearms, with reinforced stitching and a simple lace-up closure that allows for a snug, secure fit. Adventurers wear them for light protection against scrapes, bowstring snap, and glancing blows without the weight of metal armor.",
       "cost": 3,
@@ -86,26 +70,9 @@
     }
   },
   {
-    "name": "Breeches",
-    "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/breeches.webp",
-    "system": {
-      "description": "These breeches are made of sturdy, earth-toned cloth, gathered at the waist with a simple drawstring and fitted loosely through the legs for comfort and mobility. They are commonly worn by travelers, laborers, and adventurers who need durable everyday trousers that won't restrict movement in the field.",
-      "cost": 2,
-      "unitWeight": 0.2,
-      "storedSize": 1,
-      "quantity": 1,
-      "equipped": false,
-      "lashable": false,
-      "tags": [
-        "clothing"
-      ]
-    }
-  },
-  {
     "name": "Gloves",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/gloves.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/gloves.webp",
     "system": {
       "description": "These rugged leather gloves are well-worn and creased, offering protection from rope burn, rough surfaces, and cold weather. Adventurers rely on them for climbing, handling gear, and general travel without sacrificing dexterity.",
       "cost": 2,
@@ -122,7 +89,7 @@
   {
     "name": "Robes",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/wizards-robes.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/wizards-robes.webp",
     "system": {
       "description": "Wizard's robes are long, flowing garments tailored for ease of movement and often inscribed subtly or boldly with symbols of arcane study. Though they offer little physical protection, they feature numerous hidden pockets for storing spell components and serve as a mark of training, tradition, and mystical authority.",
       "cost": 9,
@@ -134,13 +101,14 @@
       "lashed": false,
       "containerId": null,
       "capacity": 2,
-      "lashSlots": 0
+      "lashSlots": 0,
+      "maxItemSize": 0.5
     }
   },
   {
     "name": "Clothes, Commoner's",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/tunic.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/clothes-commoners.webp",
     "system": {
       "description": "This set of commoner’s clothes consists of simple, durable garments made from coarse linen and wool, designed for everyday labor and travel. Such clothing is typically worn by peasants and townsfolk, offering basic comfort and protection while remaining inexpensive and easy to replace.",
       "cost": 1,
@@ -149,15 +117,17 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
+      "capacity": 2,
       "tags": [
         "clothing"
-      ]
+      ],
+      "maxItemSize": 0.5
     }
   },
   {
-    "name": "Clothes, Mercant's",
+    "name": "Clothes, Merchant's",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/tunic.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/clothes-merchants.webp",
     "system": {
       "description": "This set of merchant’s clothes consists of well-made but practical garments designed to present a respectable appearance while enduring long days of travel and trade. Such clothing is typically worn by traders and shopkeepers, balancing comfort, durability, and subtle displays of prosperity when conducting business.",
       "cost": 5,
@@ -166,15 +136,17 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
+      "capacity": 2,
       "tags": [
         "clothing"
-      ]
+      ],
+      "maxItemSize": 0.5
     }
   },
   {
     "name": "Clothes, Adventurer's",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/tunic.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/clothes-adventurers.webp",
     "system": {
       "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field.",
       "cost": 7,
@@ -183,15 +155,17 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
+      "capacity": 3,
       "tags": [
         "clothing"
-      ]
+      ],
+      "maxItemSize": 0.5
     }
   },
   {
     "name": "Clothes, Nobleman's",
     "type": "clothing",
-    "img": "systems/osp-houserules/assets/images/gear/tunic.webp",
+    "img": "systems/osp-houserules/assets/images/clothing/clothes-noblemans.webp",
     "system": {
       "description": "This set of noble’s clothes is composed of finely tailored garments made from quality fabrics, accented with decorative trim and refined details. Such attire is typically worn at court, formal gatherings, or official functions to display status, wealth, and social standing.",
       "cost": 12,
@@ -200,9 +174,11 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
+      "capacity": 2,
       "tags": [
         "clothing"
-      ]
+      ],
+      "maxItemSize": 0.5
     }
   }
 ]

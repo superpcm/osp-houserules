@@ -894,7 +894,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   background-repeat: no-repeat, no-repeat;
   background-attachment: scroll;
   background-color: transparent !important;
-  padding: 80px;
   height: 384px !important;
   margin: 0 0.5px 0 -0.5px;
 
@@ -905,19 +904,28 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     color: #2c1810;
   }
   
-  /* Combat Stats in Combat Tab */
+  /* Combat Stats in Combat Tab - Independently Positioned */
+  /* These stay fixed while content scrolls */
+  /* Adjust --combat-stats-top and --combat-stats-left to reposition */
   .combat-stats {
+    position: sticky;
+    top: var(--combat-stats-top, 10px);
+    left: var(--combat-stats-left, 50%);
+    transform: translateX(-50%);
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
     justify-content: center;
-    margin: 0 0.5px 0 -0.5px;
+    z-index: 10;
+    pointer-events: none; /* Allow clicks through the container */
+    margin-bottom: -70px; /* Remove from document flow without affecting layout */
 
     .combat-stat {
       display: flex;
       flex-direction: column;
       align-items: center;
       min-width: 120px;
+      pointer-events: auto; /* Re-enable clicks on actual stats */
       
       .cs-field-label {
         font-size: 14px;

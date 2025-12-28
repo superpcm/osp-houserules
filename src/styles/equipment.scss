@@ -113,8 +113,12 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
 .combat-tab {
   overflow-y: auto; /* Allow scrolling for combat tab */
-  padding-top: 75px; /* Match equipment tab spacing */
-  position: relative;
+  padding-top: 30px; /* Space for initial content */
+  position: absolute; /* Absolute positioning to control placement */
+  top: 20px; /* Start 20px down - content scrolls under at this point */
+  left: 0;
+  right: 0;
+  bottom: 0; /* Stretch to bottom of parent */
   
   /* Match scrollbar styling from equipment tab */
   scrollbar-width: thin;
@@ -158,6 +162,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   margin-bottom: 25px;
   position: relative;
   z-index: 5; /* Above combat stats (z-index: 1) to obscure them when scrolling */
+  background-color: #b5ddb4; /* Solid background to obscure content underneath */
   
   &::before {
     content: '';
@@ -413,7 +418,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 .item-entry:nth-child(even) {
-  background: rgba(0, 0, 0, 0.0);
+  background: #b5ddb4; /* Solid background to obscure combat stats */
   border-radius: 3px;
   margin-right: 0px;
 }

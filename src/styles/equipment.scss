@@ -9,11 +9,12 @@
 $col-caret: 2px;        // Width of collapse/expand caret
 $col-controls: 108px;   // Width of item controls section
 $col-field-short: 96px;  // Generic short field width (fallback for .field-short class)
-$col-image: 74px;        // Generic image column width (used by .item-roll-icon)
+$col-image: 24px;        // Generic image column width (used by .item-roll-icon)
 
 /* Weapons Section Column Widths (Combat Tab) */
-$weapons-col-image: 30px;        // Width of weapon image/roll icon (matches containers)
-$weapons-col-name: 228px;        // Width of weapon name column (matches containers)
+$weapons-col-item-image: 32px;   // Width of weapon item image
+$weapons-col-roll-icon: 30px;    // Width of weapon roll icon
+$weapons-col-name: 166px;        // Width of weapon name column (adjusted for two images)
 $weapons-col-qty: 68px;          // Width of quantity column (matches containers)
 $weapons-col-damage: 88px;       // Width of damage column (matches containers capacity)
 $weapons-col-weight: 60px;       // Width of weight column (matches containers)
@@ -112,7 +113,23 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
 .combat-tab {
   overflow-y: auto; /* Allow scrolling for combat tab */
-  padding-top: 15px; /* Match equipment tab spacing */
+  padding-top: 75px; /* Match equipment tab spacing */
+  position: relative;
+  
+  /* Mask to hide scrolling content - positioned to not cover background or stats */
+  &::before {
+    content: '';
+    position: sticky;
+    display: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 75px; /* Height of padding-top - creates mask for scrolling content */
+    background-color: #b5ddb4; /* Match tab background */
+    z-index: 5; /* Above item categories (z-index 1) but below combat stats (z-index 10) */
+    margin-bottom: -75px; /* Remove from flow */
+    pointer-events: none;
+  }
   
   /* Match scrollbar styling from equipment tab */
   scrollbar-width: thin;
@@ -142,7 +159,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   
   /* Armor section in Combat tab should be 20px below weapons section */
   .item-category:nth-of-type(2) {
-    margin-top: 30px; // Creates 20px visual space (10px from weapons margin-bottom + 30px - 10px title negative margin)
+    margin-top: 130px; // Creates 20px visual space (10px from weapons margin-bottom + 30px - 10px title negative margin)
   }
 }
 
@@ -153,7 +170,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   border-radius: 0 0 5px 5px; /* Only round bottom corners since title is separate */
   border-top: none; /* No top border - title provides visual separation */
   margin-top: 0px; /* Remove negative margin */
-  margin-bottom: 10px;
+  margin-bottom: 25px;
   position: relative;
   
   &::before {
@@ -196,7 +213,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   border-radius: 5px 5px 0 0;
   
   &.weapons-title {
-    grid-template-columns: $weapons-col-image $weapons-col-name $weapons-col-damage $weapons-col-weight $col-controls;
+    grid-template-columns: $weapons-col-item-image $weapons-col-roll-icon $weapons-col-name $weapons-col-damage $weapons-col-weight $col-controls;
     width: 698px;
   }
   
@@ -427,9 +444,9 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     gap: $grid-gap;
     padding: $item-padding-y $item-padding-x;
     
-    // Weapon items with roll icon column
+    // Weapon items with item image and roll icon columns
     &.weapon-header {
-      grid-template-columns: $weapons-col-image $weapons-col-name $weapons-col-damage $weapons-col-weight $col-controls;
+      grid-template-columns: $weapons-col-item-image $weapons-col-roll-icon $weapons-col-name $weapons-col-damage $weapons-col-weight $col-controls;
       height: 44px;
       box-sizing: border-box;
     }
@@ -484,7 +501,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   max-width: $image-size !important;
   background-size: cover;
   background-position: center;
-  border: 1px solid #000;
+  border: none;
   border-radius: 3px;
   flex-shrink: 0;
 }

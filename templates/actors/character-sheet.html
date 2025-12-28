@@ -2236,6 +2236,7 @@
           {{!-- Weapons Section --}}
           <div class="item-category">
             <div class="item-category-title weapons-title flexrow">
+              <div class="item-image"></div>
               <div class="item-roll-icon"></div>
               <div class="category-name">Weapons</div>
               <div class="field-short">Damage</div>
@@ -2247,6 +2248,7 @@
               {{#each weapons as |item|}}
               <li class="item-entry item" data-item-id="{{item.id}}">
                 <div class="item-header weapon-header flexrow">
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <a class="item-roll-icon {{#if item.isWeapon}}item-rollable{{/if}}" title="Roll Attack">
                     <img src="systems/osp-houserules/assets/character-sheet/d20-ico.webp" alt="Roll" />
                   </a>
@@ -2287,6 +2289,7 @@
           {{!-- Armor Section --}}
           <div class="item-category">
             <div class="item-category-title armor-title flexrow">
+              <div class="item-image"></div>
               <div class="category-name">Armor</div>
               <div class="field-short">Type</div>
               <div class="field-short">AC</div>

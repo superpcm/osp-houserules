@@ -116,21 +116,6 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   padding-top: 75px; /* Match equipment tab spacing */
   position: relative;
   
-  /* Mask to hide scrolling content - positioned to not cover background or stats */
-  &::before {
-    content: '';
-    position: sticky;
-    display: block;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 75px; /* Height of padding-top - creates mask for scrolling content */
-    background-color: #b5ddb4; /* Match tab background */
-    z-index: 5; /* Above item categories (z-index 1) but below combat stats (z-index 10) */
-    margin-bottom: -75px; /* Remove from flow */
-    pointer-events: none;
-  }
-  
   /* Match scrollbar styling from equipment tab */
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
@@ -172,6 +157,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   margin-top: 0px; /* Remove negative margin */
   margin-bottom: 25px;
   position: relative;
+  z-index: 5; /* Above combat stats (z-index: 1) to obscure them when scrolling */
   
   &::before {
     content: '';
@@ -211,6 +197,8 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   height: 28.5px;
   box-sizing: border-box;
   border-radius: 5px 5px 0 0;
+  position: relative;
+  z-index: 6; /* Above item-category body to obscure combat stats when scrolling */
   
   &.weapons-title {
     grid-template-columns: $weapons-col-item-image $weapons-col-roll-icon $weapons-col-name $weapons-col-damage $weapons-col-weight $col-controls;

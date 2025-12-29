@@ -113,12 +113,13 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
 .combat-tab {
   overflow-y: auto; /* Allow scrolling for combat tab */
-  padding-top: 30px; /* Space for initial content */
-  position: absolute; /* Absolute positioning to control placement */
-  top: 20px; /* Start 20px down - content scrolls under at this point */
+  position: absolute !important; /* Absolute positioning to control placement - override general rule */
+  display: block !important; /* Override flex from general rule */
+  top: 15px; /* Start 15px down - content scrolls under at this point */
   left: 0;
   right: 0;
-  bottom: 0; /* Stretch to bottom of parent */
+  bottom: 2px; /* End 2px above bottom of parent */
+  height: auto !important; /* Override height: 100% from general rule */
   
   /* Match scrollbar styling from equipment tab */
   scrollbar-width: thin;

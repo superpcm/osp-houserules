@@ -887,15 +887,31 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .tab[data-tab="combat"] {
   position: relative;
   background-image: 
-    url('/systems/osp-houserules/assets/character-sheet/hpac.webp'),
-    url('/systems/osp-houserules/assets/character-sheet/combat.webp') !important;
-  background-size: contain, contain;
-  background-position: 50% 30px, center top;
-  background-repeat: no-repeat, no-repeat;
+    url('/systems/osp-houserules/assets/character-sheet/hpac.webp') !important;
+  background-size: contain;
+  background-position: 50% 25px;
+  background-repeat: no-repeat;
   background-attachment: scroll;
   background-color: transparent !important;
   height: 384px !important;
   margin: 0 0.5px 0 -0.5px;
+  overflow: hidden; /* Clip any content extending beyond tab boundaries */
+  
+  /* combat.webp as overlay above scrollable content */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/systems/osp-houserules/assets/character-sheet/combat.webp');
+    background-size: contain;
+    background-position: center top;
+    background-repeat: no-repeat;
+    z-index: 50; /* Above scrollable content (z-index 5-6) but below combat stats would be if higher */
+    pointer-events: none; /* Allow clicks through to content below */
+  }
 
   .combat-content {
     padding: 20px;

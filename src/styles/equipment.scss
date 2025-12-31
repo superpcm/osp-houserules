@@ -48,10 +48,10 @@ $treasure-col-weight: 96px;      // Width of weight column
 
 /* Nested Item Column Widths (for items inside containers) */
 $nested-col-image: 31px;        // Width of nested item image
-$nested-col-name: 190px;        // Width of nested item name column
-$nested-col-qty: 57px;          // Width of nested item quantity column
-$nested-col-storedsize: 95px;   // Width of nested item storedSize column
-$nested-col-weight: 58px;       // Width of nested item weight column
+$nested-col-name: 178px;        // Width of nested item name column (reduced from 190px)
+$nested-col-qty: 55px;          // Width of nested item quantity column (reduced from 57px)
+$nested-col-storedsize: 90px;   // Width of nested item storedSize column (reduced from 95px)
+$nested-col-weight: 55px;       // Width of nested item weight column (reduced from 58px)
 $nested-col-controls: 108px;    // Width of nested item controls section
 
 /* Spacing */
@@ -101,7 +101,6 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
 .equipment-tab,
 .combat-tab {
-  max-width: 708px;  // Reduced from 710px to compensate for 6px left margin
   margin: 0 auto; /* Center the content */
   margin-left: calc(50% - 352px); /* Offset 6px to the right (352px = 704/2) */
   position: relative; /* Establish positioning context for sticky children */
@@ -117,7 +116,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   display: block !important; /* Override flex from general rule */
   top: 15px; /* Start 15px down - content scrolls under at this point */
   left: 0;
-  right: 0;
+  right: 40px; /* Compensate for scrollbar width to prevent cutoff */
   bottom: 2px; /* End 2px above bottom of parent */
   height: auto !important; /* Override height: 100% from general rule */
   
@@ -154,7 +153,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 }
 
 .item-category {
-  border: 1.5px solid #000;
+  /*border: 1.5px solid #000;*/
   border-left: none;
   border-right: none;
   border-radius: 0 0 5px 5px; /* Only round bottom corners since title is separate */
@@ -172,8 +171,8 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     right: 0px;
     top: 0;
     bottom: 0;
-    border-left: 1.5px solid #000;
-    border-right: 1.5px solid #000;
+    /*border-left: 1.5px solid #000;*/
+    /*border-right: 1.5px solid #000;*/
     pointer-events: none;
   }
   
@@ -186,7 +185,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .osp .item-category-title,
 .osp.sheet.actor .item-category-title {
   background: #000;
-  border: 1.5px solid #000;
+  /*border: 1.5px solid #000;*/
   border-bottom: none;
   padding: 0 $item-padding-x;
   margin-top: -10px;
@@ -217,6 +216,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     }
 
     &.containers-title {
+      width: 698px;
       grid-template-columns: $containers-header-image $containers-header-name $containers-header-qty $containers-header-capacity $containers-header-weight $col-controls;
       min-height: 0;  // Override any min-height
       position: sticky;
@@ -415,13 +415,38 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .item-entry:nth-child(odd) {
   background: rgba(0, 0, 0, 0.03);
   border-radius: 3px;
-  margin-right: 2px;
+}
+
+// Constrain item entry width to match headers for both tabs
+.combat-tab .item-entry,
+.equipment-tab .item-entry {
+  width: 698px;
+  box-sizing: border-box;
+}
+
+// Nested items should be constrained to parent width, not 698px
+.equipment-tab .contained-item.item-entry,
+.equipment-tab .lashed-item.item-entry {
+  width: 100%;
+  max-width: none;
 }
 
 .item-entry:nth-child(even) {
   background: #b5ddb4; /* Solid background to obscure combat stats */
   border-radius: 3px;
-  margin-right: 0px;
+}
+
+// Hover effect for all item rows - highlight only the direct header child
+.item-entry:hover > .item-header {
+  background: rgba(44, 24, 16, 0.2) !important;
+  width: 698px;
+  box-sizing: border-box;
+}
+
+// Remove container highlight when hovering over nested items
+.item-entry:has(.contained-items-list:hover) > .item-header,
+.item-entry:has(.lashed-items-list:hover) > .item-header {
+  background: transparent !important;
 }
 
 // Drag-over highlight for containers
@@ -437,32 +462,41 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     align-items: center;
     gap: $grid-gap;
     padding: $item-padding-y $item-padding-x;
+    box-sizing: border-box;
     
     // Weapon items with item image and roll icon columns
     &.weapon-header {
       grid-template-columns: $weapons-col-item-image $weapons-col-roll-icon $weapons-col-name $weapons-col-damage $weapons-col-weight $col-controls;
       height: 44px;
       box-sizing: border-box;
+      width: 698px;
     }
     
         &.armor-header {
       grid-template-columns: $armor-col-image $armor-col-name $armor-col-type $armor-col-ac $armor-col-weight $col-controls;
       height: 44px;
       box-sizing: border-box;
+      width: 698px;
     }
 
     &.container-header {
+      width: 708px;
+      box-sizing: border-box;
       grid-template-columns: $col-caret $containers-col-image $containers-col-name $containers-col-qty $containers-col-capacity $containers-col-weight $col-controls;
       margin-left: $container-left-shift;
     }
     
     &.treasure-header {
+      width: 698px;
+      box-sizing: border-box;
       grid-template-columns: $col-image $treasure-col-name $treasure-col-value $treasure-col-weight $col-controls;
     }
   }
 
 .item-header:hover {
   background:  rgba(44, 24, 16, 0.2);
+  width: 698px;
+  box-sizing: border-box;
 }
 
 .item-header.container-header {
@@ -470,22 +504,28 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   
   &:hover {
     background: none;
+    width: 708px;
+    box-sizing: border-box;
     
     &::before {
       content: '';
       position: absolute;
-      left: calc(-1 * #{$container-left-shift});
+      left: 0;
       right: 0;
       top: 0;
       bottom: 0;
       background: rgba(44, 24, 16, 0.2);
       z-index: -1;
+      width: 708px;
+      box-sizing: border-box;
     }
   }
 }
 
 .item-header.item-rollable:hover {
   background: #e8f4e8;
+  width: 698px;
+  box-sizing: border-box;
 }
 
 .item-image {
@@ -576,7 +616,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 /* Encumbrance Section */
 // Encumbrance bar at top of Equipment tab - styled to match XP bar, sticky position
 .encumbrance-bar-wrapper {
-  width: calc(100% - 1px);
+  width: 698px;
   margin-bottom: 0px; /* Reset to 0 - was causing scrollbar cutoff */
   margin-top: 15px;
   position: sticky;
@@ -593,7 +633,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   overflow-y: auto;
   overflow-x: hidden;
   position: relative; /* Establish positioning context */
-  margin-right: -1px; /* Compensate for scrollbar width to prevent cutoff */
+  margin-right: 40px; /* Compensate for scrollbar width to prevent cutoff */
 
   /* Custom scrollbar styling - very thin */
   scrollbar-width: thin; /* Firefox - thin scrollbar */
@@ -1123,12 +1163,12 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   margin: 0;
   padding: 0;
   margin-left: $nested-indent;
+  width: calc(100% - #{$nested-indent}); /* Constrain width to account for left margin */
   position: relative;
 }
 
 .contained-item {
   padding-left: $nested-padding;
-  background: rgba(0, 0, 0, 0.02);
   position: relative;
   
   // Tree branch line (vertical connector from parent) - extends full height by default
@@ -1160,6 +1200,10 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   
   .item-header {
     padding-left: 0px;
+    width: 100%;
+    max-width: 638px; /* Parent width (698px) minus indent (60px) */
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.02);
     // Override grid template for nested items
     grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
   }
@@ -1184,6 +1228,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 .lashed-items-section {
   margin-top: 8px;
   margin-left: $nested-indent;
+  width: calc(100% - #{$nested-indent}); /* Constrain width to account for left margin */
   border-top: 1px solid #000;
   padding-top: 4px;
   margin-right: 1px;
@@ -1230,11 +1275,14 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
 
 .lashed-item {
   padding-left: $nested-padding;
-  background: rgba(139, 69, 19, 0.05);
   position: relative;
   
   .item-header {
     padding-left: 0px;
+    width: 100%;
+    max-width: 638px; /* Parent width (698px) minus indent (60px) */
+    box-sizing: border-box;
+    background: rgba(139, 69, 19, 0.05);
     grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
   }
   

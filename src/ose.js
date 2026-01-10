@@ -142,6 +142,18 @@ Handlebars.registerHelper('multiply', function(a, b) {
   return (parseFloat(a) || 0) * (parseFloat(b) || 0);
 });
 
+// Register a Handlebars helper for checking if a string includes a substring
+Handlebars.registerHelper('includes', function(str, substring) {
+  return String(str || '').includes(substring);
+});
+
+// Register a Handlebars helper to check if item is a regular shield (not body shield)
+Handlebars.registerHelper('isRegularShield', function(item) {
+  const type = String(item.system.type || '').toLowerCase();
+  const name = String(item.name || '');
+  return type === 'shield' && !name.includes('Body');
+});
+
 // Register a Handlebars helper for calculating ability modifiers (OSE rules)
 Handlebars.registerHelper('abilityMod', function(score) {
   const numScore = parseInt(score, 10);
@@ -440,4 +452,117 @@ Hooks.once("ready", () => {
   };
 
 
+});
+
+/**
+ * Create a macro when dropping a weapon roll icon on the hotbar
+ */
+Hooks.on("hotbarDrop", async (bar, data, slot) => {
+  // Check for our custom weapon attack macro type
+  if (data.type === "WeaponAttackMacro" || data.macroType === "weaponAttack") {
+    const actor = game.actors.get(data.actorId);
+    const item = actor?.items.get(data.itemId);
+    
+    if (!actor || !item) {
+      ui.notifications.warn("Could not find actor or weapon for macro");
+      return false;
+    }
+    
+    // Create the macro command - wrap in async IIFE
+    const macroCommand = `(async () => {
+  // Roll attack with ${item.name}
+  const actor = game.actors.get("${data.actorId}");
+  const item = actor?.items.get("${data.itemId}");
+
+  if (!actor || !item) {
+    ui.notifications.error("Actor or weapon not found");
+    return;
+  }
+
+  // Get character stats
+  const characterClass = actor.system.class || 'fighter';
+  const level = parseInt(actor.system.level) || 1;
+  const strScore = parseInt(actor.system.attributes?.str?.value) || 10;
+  const dexScore = parseInt(actor.system.attributes?.dex?.value) || 10;
+
+  // Attack bonus tables (inline for macro independence)
+  const attackBonusTables = {
+    'fighter': [0, 0, 0, 2, 2, 2, 5, 5, 5, 7, 7, 7, 9, 9],
+    'cleric': [0, 0, 0, 0, 2, 2, 2, 2, 5, 5, 5, 5, 7, 7],
+    'magic-user': [0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 5, 5, 5, 5],
+    'thief': [0, 0, 0, 0, 2, 2, 2, 2, 5, 5, 5, 5, 7, 7]
+  };
+  
+  const classMapping = {
+    'fighter': 'fighter', 'cleric': 'cleric', 'magic-user': 'magic-user', 'thief': 'thief',
+    'assassin': 'thief', 'barbarian': 'fighter', 'bard': 'thief', 'beast master': 'fighter',
+    'druid': 'cleric', 'knight': 'fighter', 'paladin': 'cleric', 'ranger': 'fighter',
+    'warden': 'fighter', 'illusionist': 'magic-user', 'mage': 'magic-user',
+    'dwarf': 'fighter', 'elf': 'fighter', 'gnome': 'cleric', 'half-elf': 'fighter',
+    'half-orc': 'fighter', 'hobbit': 'thief'
+  };
+  
+  const mappedClass = classMapping[characterClass.toLowerCase()] || 'fighter';
+  const bonusTable = attackBonusTables[mappedClass];
+  const levelIndex = Math.min(Math.max(level - 1, 0), 13);
+  const classAttackBonus = bonusTable[levelIndex] || 0;
+  
+  const weaponBonus = parseInt(item.system.bonus) || 0;
+
+  // Determine ability modifier
+  let abilityModifier = 0;
+  let abilityName = '';
+  const getModifier = (score) => Math.floor((score - 10) / 2);
+
+  if (item.system.melee) {
+    abilityModifier = getModifier(strScore);
+    abilityName = 'STR';
+  } else if (item.system.missile) {
+    abilityModifier = getModifier(dexScore);
+    abilityName = 'DEX';
+  } else {
+    abilityModifier = getModifier(strScore);
+    abilityName = 'STR';
+  }
+
+  const totalBonus = classAttackBonus + weaponBonus + abilityModifier;
+  const bonusStr = totalBonus >= 0 ? "+" + totalBonus : "" + totalBonus;
+
+  // Roll the attack
+  const roll = await new Roll("1d20" + bonusStr).evaluate({async: true});
+
+  // Create chat message
+  const chatData = {
+    user: game.user.id,
+    speaker: ChatMessage.getSpeaker({actor: actor}),
+    flavor: "<h3>" + item.name + " Attack</h3>",
+    content: "<div class=\\"dice-roll\\"><div class=\\"dice-result\\"><div class=\\"dice-formula\\">" + roll.formula + "</div><div class=\\"dice-total\\">" + roll.total + "</div></div></div><p><strong>Damage:</strong> " + item.system.damage + "</p><p><em>Attack Bonus: Class +" + classAttackBonus + ", " + abilityName + " " + (abilityModifier >= 0 ? "+" : "") + abilityModifier + ", Weapon +" + weaponBonus + "</em></p>",
+    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+    roll: roll,
+    sound: CONFIG.sounds.dice
+  };
+
+  ChatMessage.create(chatData);
+})();`;
+
+    // Create the macro
+    const macroData = {
+      name: `${item.name} Attack`,
+      type: "script",
+      img: item.img,
+      command: macroCommand,
+      flags: {
+        "osp-houserules": {
+          actorId: data.actorId,
+          itemId: data.itemId
+        }
+      }
+    };
+    
+    const macro = await Macro.create(macroData);
+    game.user.assignHotbarMacro(macro, slot);
+    return false; // Prevent default hotbar drop behavior
+  }
+  
+  return true; // Allow other drops to proceed
 });

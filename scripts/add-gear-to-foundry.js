@@ -1,5 +1,5 @@
 /**
- * Script to add equipment items from equipment.json to Foundry dynamically
+ * Script to add gear items from gear.json to Foundry dynamically
  * Run this in the Foundry console (F12) to add items to the world
  * 
  * Usage:
@@ -8,27 +8,27 @@
  * 3. Paste and press Enter
  * 4. Items will be created as world items that can be dragged to character sheets
  * 
- * To force update existing items, use: addEquipmentToFoundry(true)
+ * To force update existing items, use: addGearToFoundry(true)
  */
 
-async function addEquipmentToFoundry(forceUpdate = false) {
-  console.log("Starting equipment import...");
+async function addGearToFoundry(forceUpdate = false) {
+  console.log("Starting gear import...");
   console.log("Force update mode:", forceUpdate);
   
-  // Fetch the equipment.json file
-  let equipmentData;
+  // Fetch the gear.json file
+  let gearData;
   try {
     // Add cache-busting parameter to force fresh load
     const cacheBuster = `?v=${Date.now()}`;
-    const response = await fetch(`systems/osp-houserules/data/equipment.json${cacheBuster}`);
-    equipmentData = await response.json();
-    console.log(`Loaded ${equipmentData.length} items from equipment.json`);
+    const response = await fetch(`systems/osp-houserules/data/gear.json${cacheBuster}`);
+    gearData = await response.json();
+    console.log(`Loaded ${gearData.length} items from gear.json`);
     
     // Show the last few items for debugging
-    console.log("Last 3 items in file:", equipmentData.slice(-3).map(i => i.name));
+    console.log("Last 3 items in file:", gearData.slice(-3).map(i => i.name));
   } catch (error) {
-    console.error("Failed to load equipment.json:", error);
-    ui.notifications.error("Failed to load equipment.json file. Check console for details.");
+    console.error("Failed to load gear.json:", error);
+    ui.notifications.error("Failed to load gear.json file. Check console for details.");
     return;
   }
   
@@ -54,7 +54,7 @@ async function addEquipmentToFoundry(forceUpdate = false) {
   const skippedItems = [];
   const updatedItems = [];
   
-  for (const itemInfo of equipmentData) {
+  for (const itemInfo of gearData) {
     try {
       // Debug specific items
       if (itemInfo.name === "Robes" || itemInfo.name === "Cloak") {
@@ -128,7 +128,7 @@ async function addEquipmentToFoundry(forceUpdate = false) {
     console.log("\nSkipped items:", skippedItems);
   }
   
-  ui.notifications.info(`Equipment import complete! Created ${createdItems.length}, updated ${updatedItems.length}, skipped ${skippedItems.length}.`);
+  ui.notifications.info(`Gear import complete! Created ${createdItems.length}, updated ${updatedItems.length}, skipped ${skippedItems.length}.`);
   
   return {
     created: createdItems,
@@ -138,4 +138,4 @@ async function addEquipmentToFoundry(forceUpdate = false) {
 }
 
 // Run the function
-addEquipmentToFoundry();
+addGearToFoundry();

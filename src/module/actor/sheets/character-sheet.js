@@ -436,7 +436,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Override render to prevent rendering while closing
+   * Override render to prevent rendering while closing and preserve scroll position
    */
   async render(force = false, options = {}) {
     // If we're closing, don't render
@@ -445,6 +445,73 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
     
     return super.render(force, options);
+  }
+
+  /**
+   * Save scroll positions before rendering
+   */
+  async _render(force, options) {
+    // Save scroll position before render
+    if (this.element && this.element.length) {
+      this._scrollPositions = {};
+      
+      // Save gear scrollable content (weapons/armor area)
+      const gearScrollable = this.element.find('.gear-scrollable-content')[0];
+      if (gearScrollable) {
+        this._scrollPositions.gear = gearScrollable.scrollTop;
+      }
+      
+      // Save any other scrollable areas
+      const scrollableAreas = this.element.find('.scrollable');
+      scrollableAreas.each((i, el) => {
+        const id = el.id || `scrollable-${i}`;
+        this._scrollPositions[id] = el.scrollTop;
+      });
+    }
+    
+    return super._render(force, options);
+  }
+
+  /**
+   * Restore scroll positions after render completes
+   */
+  setPosition(pos = {}) {
+    const result = super.setPosition(pos);
+    
+    // Restore scroll positions
+    if (this._scrollPositions && typeof this._scrollPositions === 'object' && this.element) {
+      const html = this.element;
+      
+      // Use setTimeout to ensure DOM is fully updated
+      setTimeout(() => {
+        try {
+          // Restore gear scrollable content
+          if (this._scrollPositions.gear !== undefined) {
+            const gearScrollable = html.find('.gear-scrollable-content')[0];
+            if (gearScrollable) {
+              gearScrollable.scrollTop = this._scrollPositions.gear;
+            }
+          }
+          
+          // Restore other scrollable areas
+          for (const [id, scrollTop] of Object.entries(this._scrollPositions)) {
+            if (id === 'gear') continue;
+            
+            const element = id.startsWith('scrollable-') 
+              ? html.find('.scrollable')[parseInt(id.split('-')[1])]
+              : html.find(`#${id}`)[0];
+              
+            if (element) {
+              element.scrollTop = scrollTop;
+            }
+          }
+        } catch (error) {
+          console.error('Error restoring scroll positions:', error);
+        }
+      }, 0);
+    }
+    
+    return result;
   }
 
   activateListeners(html) {

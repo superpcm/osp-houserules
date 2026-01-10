@@ -20,7 +20,7 @@ const DATA_DIR = path.join(__dirname, '../data');
 const FILE_MAPPINGS = {
   'ammunition.json': 'ammunition.json',
   'armor.json': 'armor.json',
-  'equipment.json': 'equipment.json',
+  'gear.json': 'gear.json',
   'livestock.json': 'livestock.json',
   'tack.json': 'tack.json',
   'treasure.json': 'treasure.json',
@@ -207,8 +207,8 @@ async function main() {
   console.log('Starting data merge from reference project...\n');
   
   try {
-    // First, merge containers.json into equipment.json locally
-    console.log('Step 1: Merging containers.json into equipment.json...');
+    // First, merge containers.json into gear.json locally
+    console.log('Step 1: Merging containers.json into gear.json...');
     const containersPath = path.join(DATA_DIR, 'containers.json');
     if (fs.existsSync(containersPath)) {
       const containers = loadLocalData('containers.json');
@@ -221,15 +221,15 @@ async function main() {
         }
       });
       
-      equipment.sort((a, b) => a.name.localeCompare(b.name));
+      gear.sort((a, b) => a.name.localeCompare(b.name));
       
-      // Save merged equipment
+      // Save merged gear
       fs.writeFileSync(
-        path.join(DATA_DIR, 'equipment.json'),
-        JSON.stringify(equipment, null, 2)
+        path.join(DATA_DIR, 'gear.json'),
+        JSON.stringify(gear, null, 2)
       );
       
-      console.log(`  ✓ Merged ${containers.length} containers into equipment.json`);
+      console.log(`  ✓ Merged ${containers.length} containers into gear.json`);
       
       // Backup and remove containers.json
       fs.renameSync(containersPath, path.join(DATA_DIR, 'containers.json.backup'));

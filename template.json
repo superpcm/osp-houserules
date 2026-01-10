@@ -92,6 +92,10 @@
       "templates": ["base"],
       "system": {
         "damage": "",
+        "damageType": "",
+        "size": "",
+        "speedFactor": "",
+        "rof": 1,
         "bonus": 0,
         "tags": [],
         "melee": true,

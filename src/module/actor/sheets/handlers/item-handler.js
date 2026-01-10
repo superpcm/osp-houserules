@@ -24,6 +24,7 @@ export class ItemHandler {
     this.html.find('.item-lash-toggle').click(this.onItemLashToggle.bind(this));
     this.html.find('.item-show').click(this.onItemShow.bind(this));
     this.html.find('.item-rollable').click(this.onItemRoll.bind(this));
+    this.html.find('.item-roll-icon[draggable="true"]').on('dragstart', this.onRollIconDragStart.bind(this));
     this.html.find('.quantity input').change(this.onQuantityChange.bind(this));
     
     // Add click handler for item names to show card
@@ -546,6 +547,29 @@ export class ItemHandler {
         flavor: flavor
       });
     }
+  }
+
+  /**
+   * Handle dragging the roll icon to create a macro
+   */
+  onRollIconDragStart(event) {
+    const itemId = event.currentTarget.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    
+    if (!item || item.type !== "weapon") return;
+    
+    const dragData = {
+      type: "WeaponAttackMacro",
+      actorId: this.actor.id,
+      itemId: item.id,
+      itemName: item.name,
+      macroType: "weaponAttack"
+    };
+    
+    // Prevent default drag behavior and stop propagation
+    event.stopPropagation();
+    event.originalEvent.dataTransfer.effectAllowed = "copy";
+    event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify(dragData));
   }
 
   /**

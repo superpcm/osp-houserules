@@ -1,5 +1,5 @@
 /**
- * Script to add equipment and treasure items to Foundry dynamically
+ * Script to add gear and treasure items to Foundry dynamically
  * Run this in the Foundry console (F12) to add items to the world
  * 
  * Usage:
@@ -19,7 +19,7 @@ async function addItemsToFoundry(forceUpdate = false) {
     'systems/osp-houserules/data/ammunition.json',
     'systems/osp-houserules/data/armor.json',
     'systems/osp-houserules/data/clothing.json',
-    'systems/osp-houserules/data/equipment.json',
+    'systems/osp-houserules/data/gear.json',
     'systems/osp-houserules/data/livestock.json',
     'systems/osp-houserules/data/tack.json',
     'systems/osp-houserules/data/treasure.json',

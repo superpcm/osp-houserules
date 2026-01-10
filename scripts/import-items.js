@@ -7,7 +7,7 @@
  * 1. In Foundry, create compendium packs in the settings (Gear icon > Configure Settings > Compendium Packs)
  *    - Create "osp-houserules.weapons"
  *    - Create "osp-houserules.armor"
- *    - Create "osp-houserules.equipment"
+ *    - Create "osp-houserules.gear"
  * 
  * 2. Copy this script content and run it in the browser console (F12), OR
  *    Run it as a macro in Foundry VTT
@@ -20,7 +20,7 @@ async function importItemsFromJSON() {
   const datasets = {
     weapons: [], // Paste weapons.json content here
     armor: [],   // Paste armor.json content here
-    equipment: [] // Paste equipment.json content here
+    gear: [] // Paste gear.json content here
   };
 
   // Prompt for which pack to import to
@@ -33,7 +33,7 @@ async function importItemsFromJSON() {
           <select name="pack-select" id="pack-select">
             <option value="osp-houserules.weapons">Weapons</option>
             <option value="osp-houserules.armor">Armor</option>
-            <option value="osp-houserules.equipment">Equipment</option>
+            <option value="osp-houserules.gear">Gear</option>
           </select>
         </div>
         <div class="form-group">

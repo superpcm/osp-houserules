@@ -1828,7 +1828,7 @@
   <a class="item cs-tab-item" data-tab="attributes">Attributes</a>
   <a class="item cs-tab-item" data-tab="skills">Skills</a>
   <a class="item cs-tab-item" data-tab="combat">Combat</a>
-  <a class="item cs-tab-item" data-tab="equipment">Equipment</a>
+  <a class="item cs-tab-item" data-tab="gear">Gear</a>
   <a class="item cs-tab-item" data-tab="bio">Bio</a>
     </nav>
 
@@ -2209,6 +2209,17 @@
       <!-- Combat Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
         <section class="combat-tab">
+          <!-- Custom Text Labels Line -->
+          <div class="combat-labels-line">
+            <span class="combat-label label-1">Current HP</span>
+            <span class="combat-label label-2">Max HP</span>
+            <span class="combat-label label-3">AC</span>
+            <span class="combat-label label-4">UAC</span>
+            <span class="combat-label label-5">Tactical</span>
+            <span class="combat-label label-6">Running</span>
+            <span class="combat-label label-7">Overland</span>
+          </div>
+          
           <!-- Combat Stats Section -->
           <div class="combat-stats cs-combat-stats">
             <div class="combat-stat cs-combat-stat">
@@ -2238,9 +2249,14 @@
             <div class="item-category-title weapons-title flexrow">
               <div class="item-image"></div>
               <div class="item-roll-icon"></div>
-              <div class="category-name">Weapons</div>
-              <div class="field-short">Damage</div>
-              <div class="field-short">Weight</div>
+              <div class="category-name">Weapon</div>
+              <div class="field-short">DMG</div>
+              <div class="field-short">DT</div>
+              <div class="field-short">SZ</div>
+              <div class="field-short">SF</div>
+              <div class="field-short">RoF</div>
+              <div class="field-short">RNG</div>
+              <div class="field-short">WT</div>
               <div class="item-controls">
               </div>
             </div>
@@ -2249,11 +2265,16 @@
               <li class="item-entry item" data-item-id="{{item.id}}">
                 <div class="item-header weapon-header flexrow">
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
-                  <a class="item-roll-icon {{#if item.isWeapon}}item-rollable{{/if}}" title="Roll Attack">
+                  <a class="item-roll-icon {{#if item.isWeapon}}item-rollable{{/if}}" draggable="true" data-item-id="{{item.id}}" title="Roll Attack (Drag to create macro)">
                     <img src="systems/osp-houserules/assets/character-sheet/d20-ico.webp" alt="Roll" />
                   </a>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{item.system.damage}}</div>
+                  <div class="field-short">{{item.system.damageType}}</div>
+                  <div class="field-short">{{item.system.size}}</div>
+                  <div class="field-short">{{item.system.speedFactor}}</div>
+                  <div class="field-short">{{#if item.system.range.short}}{{item.system.rof}}{{/if}}</div>
+                  <div class="field-short">{{#if item.system.range.short}}{{item.system.range.short}}/{{item.system.range.medium}}/{{item.system.range.long}}{{/if}}</div>
                   <div class="field-short">{{item.system.unitWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
@@ -2295,9 +2316,6 @@
               <div class="field-short">AC</div>
               <div class="field-short">Weight</div>
               <div class="item-controls">
-                <a class="item-control item-create" data-type="armor" title="Add Armor">
-                  <i class="fa fa-plus"></i>
-                </a>
               </div>
             </div>
             <ol class="item-list">
@@ -2311,9 +2329,26 @@
                   <div class="field-short">{{item.system.unitWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
+                    {{#if (isRegularShield this)}}
+                    {{!-- For shields (but not body shields), toggle between equipped (in hand) and lashed (on back) --}}
+                    <a class="item-control item-toggle" title="{{#if item.system.equipped}}Equipped (In Hand - AC Bonus Active){{else}}Lashed (On Back - No AC Bonus){{/if}}">
+                      {{#if item.system.equipped}}
+                      <i class="fas fa-hand-paper"></i>
+                      {{else}}
+                      <img src="systems/osp-houserules/assets/images/icons/lash-icon.webp" alt="Lashed" style="opacity: 0.7;">
+                      {{/if}}
+                    </a>
+                    {{else}}
+                    {{!-- For other armor (including body shields), show normal lash icon (if lashable) and shirt icon --}}
+                    {{#if item.system.lashable}}
+                    <a class="item-control item-lash-toggle {{#if item.system.lashed}}item-lashed{{/if}}" title="Lash/Unlash" data-item-id="{{item.id}}">
+                      <img src="systems/osp-houserules/assets/images/icons/lash-icon.webp" alt="Lash">
+                    </a>
+                    {{/if}}
                     <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">
                       <i class="fas fa-tshirt"></i>
                     </a>
+                    {{/if}}
                     <a class="item-control item-edit" title="Edit Item">
                       <i class="fas fa-eye"></i>
                     </a>
@@ -2336,9 +2371,9 @@
         </section>
       </div>
       
-      <!-- Equipment Tab -->
-      <div class="tab" data-group="primary" data-tab="equipment">
-        <section class="equipment-tab">
+      <!-- Gear Tab -->
+      <div class="tab" data-group="primary" data-tab="gear">
+        <section class="gear-tab">
           {{!-- Encumbrance Bar --}}
           <div class="encumbrance-bar-wrapper">
             <div class="encumbrance-bar-container">
@@ -2352,7 +2387,7 @@
           </div>
 
           {{!-- Scrollable Content Area --}}
-          <div class="equipment-scrollable-content">
+          <div class="gear-scrollable-content">
           
           {{!-- Border Mask Layer - sits between title bar and scrolling content --}}
           <div class="title-border-mask"></div>
@@ -2609,7 +2644,7 @@
             </ol>
           </div>
 
-          </div>{{!-- End equipment-scrollable-content --}}
+          </div>{{!-- End gear-scrollable-content --}}
 
           </section>
         </div>

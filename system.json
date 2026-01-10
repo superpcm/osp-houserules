@@ -38,9 +38,9 @@
       "system": "osp-houserules"
     },
     {
-      "name": "equipment",
-      "label": "Equipment",
-      "path": "packs/equipment",
+      "name": "gear",
+      "label": "Gear",
+      "path": "packs/gear",
       "type": "Item",
       "system": "osp-houserules"
     }

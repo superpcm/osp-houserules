@@ -19,7 +19,7 @@ const DATA_DIR = path.join(__dirname, '../data');
 const FILE_MAPPINGS = {
   'ammunition.json': 'ammunition.json',
   'armor.json': 'armor.json',
-  'equipment.json': 'equipment.json',
+  'gear.json': 'gear.json',
   'livestock.json': 'livestock.json',
   'tack.json': 'tack.json',
   'treasure.json': 'treasure.json',

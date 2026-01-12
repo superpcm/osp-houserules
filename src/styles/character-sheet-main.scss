@@ -125,6 +125,112 @@ $cs-pos-listening-top: 65px !default;
 $cs-pos-listening-width: 70px !default;
 $cs-pos-listening-height: 70px !default;
 
+/* Combat stats position variables */
+$cs-pos-combat-ac-label-left: 917px !default;
+$cs-pos-combat-ac-label-top: 99px !default;
+$cs-pos-combat-ac-label-width: 120px !default;
+$cs-pos-combat-ac-label-height: 20px !default;
+
+$cs-pos-combat-ac-value-left: 917px !default;
+$cs-pos-combat-ac-value-top: 32px !default;
+$cs-pos-combat-ac-value-width: 80px !default;
+$cs-pos-combat-ac-value-height: 40px !default;
+
+$cs-pos-combat-ac-left: calc(50% + 80px) !default;
+$cs-pos-combat-ac-top: 15px !default;
+$cs-pos-combat-ac-width: 120px !default;
+$cs-pos-combat-ac-height: 60px !default;
+
+$cs-pos-combat-uac-label-left: 988px !default;
+$cs-pos-combat-uac-label-top: 22px !default;
+$cs-pos-combat-uac-label-width: 120px !default;
+$cs-pos-combat-uac-label-height: 20px !default;
+
+$cs-pos-combat-uac-value-left: 988px !default;
+$cs-pos-combat-uac-value-top: 61px !default;
+$cs-pos-combat-uac-value-width: 80px !default;
+$cs-pos-combat-uac-value-height: 40px !default;
+
+$cs-pos-combat-uac-left: 981px !default;
+$cs-pos-combat-uac-top: 22px !default;
+$cs-pos-combat-uac-width: 120px !default;
+$cs-pos-combat-uac-height: 60px !default;
+
+$cs-pos-combat-hp-label-left: 425px !default;
+$cs-pos-combat-hp-label-top: 95px !default;
+$cs-pos-combat-hp-label-width: 120px !default;
+$cs-pos-combat-hp-label-height: 20px !default;
+
+$cs-pos-combat-hp-value-left: 426px !default;
+$cs-pos-combat-hp-value-top: 36px !default;
+$cs-pos-combat-hp-value-width: 80px !default;
+$cs-pos-combat-hp-value-height: 40px !default;
+
+$cs-pos-combat-hp-left: calc(50% + 70px) !default;
+$cs-pos-combat-hp-top: 110px !default;
+$cs-pos-combat-hp-width: 120px !default;
+$cs-pos-combat-hp-height: 60px !default;
+
+$cs-pos-combat-mhp-label-left: 508px !default;
+$cs-pos-combat-mhp-label-top: 25px !default;
+$cs-pos-combat-mhp-label-width: 120px !default;
+$cs-pos-combat-mhp-label-height: 20px !default;
+
+$cs-pos-combat-mhp-value-left: 509px !default;
+$cs-pos-combat-mhp-value-top: 56px !default;
+$cs-pos-combat-mhp-value-width: 80px !default;
+$cs-pos-combat-mhp-value-height: 40px !default;
+
+$cs-pos-combat-mhp-left: 509px !default;
+$cs-pos-combat-mhp-top: 24px !default;
+$cs-pos-combat-mhp-width: 120px !default;
+$cs-pos-combat-mhp-height: 60px !default;
+
+$cs-pos-combat-tactical-label-left: 633px !default;
+$cs-pos-combat-tactical-label-top: 90px !default;
+$cs-pos-combat-tactical-label-width: 120px !default;
+$cs-pos-combat-tactical-label-height: 30px !default;
+
+$cs-pos-combat-tactical-value-left: 638px !default;
+$cs-pos-combat-tactical-value-top: 28px !default;
+$cs-pos-combat-tactical-value-width: 80px !default;
+$cs-pos-combat-tactical-value-height: 40px !default;
+
+$cs-pos-combat-tactical-left: 640px !default;
+$cs-pos-combat-tactical-top: 90px !default;
+$cs-pos-combat-tactical-width: 120px !default;
+$cs-pos-combat-tactical-height: 60px !default;
+
+$cs-pos-combat-overland-label-left: 780px !default;
+$cs-pos-combat-overland-label-top: 90px !default;
+$cs-pos-combat-overland-label-width: 120px !default;
+$cs-pos-combat-overland-label-height: 30px !default;
+
+$cs-pos-combat-overland-value-left: 780px !default;
+$cs-pos-combat-overland-value-top: 28px !default;
+$cs-pos-combat-overland-value-width: 80px !default;
+$cs-pos-combat-overland-value-height: 40px !default;
+
+$cs-pos-combat-overland-left: 775px !default;
+$cs-pos-combat-overland-top: 90px !default;
+$cs-pos-combat-overland-width: 120px !default;
+$cs-pos-combat-overland-height: 60px !default;
+
+$cs-pos-combat-dash-label-left: 707px !default;
+$cs-pos-combat-dash-label-top: 30px !default;
+$cs-pos-combat-dash-label-width: 120px !default;
+$cs-pos-combat-dash-label-height: 30px !default;
+
+$cs-pos-combat-dash-value-left: 710px !default;
+$cs-pos-combat-dash-value-top: 64px !default;
+$cs-pos-combat-dash-value-width: 80px !default;
+$cs-pos-combat-dash-value-height: 40px !default;
+
+$cs-pos-combat-dash-left: 706px !default;
+$cs-pos-combat-dash-top: 29px !default;
+$cs-pos-combat-dash-width: 120px !default;
+$cs-pos-combat-dash-height: 60px !default;
+
 $cs-pos-find-secret-door-left: 180px !default;
 $cs-pos-find-secret-door-top: 65px !default;
 $cs-pos-find-secret-door-width: 70px !default;
@@ -889,7 +995,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   background-image: 
     url('/systems/osp-houserules/assets/character-sheet/hpac.webp') !important;
   background-size: contain;
-  background-position: 50% 25px;
+  background-position: 50% 35px;
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-color: transparent !important;
@@ -943,13 +1049,298 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
       min-width: 120px;
       pointer-events: auto; /* Re-enable clicks on actual stats */
       
+      /* Combat stats use positioning tool variables with calc() fallbacks */
+      &.cs-pos-combat-ac-label {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-ac-label-left});
+        top: var(--top, #{$cs-pos-combat-ac-label-top});
+        width: var(--width, #{$cs-pos-combat-ac-label-width});
+        height: var(--height, #{$cs-pos-combat-ac-label-height});
+        transform: translateX(-50%);
+      }
+      
+      &.cs-pos-combat-ac-value {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-ac-value-left});
+        top: var(--top, #{$cs-pos-combat-ac-value-top});
+        width: var(--width, #{$cs-pos-combat-ac-value-width});
+        height: var(--height, #{$cs-pos-combat-ac-value-height});
+        transform: translateX(-50%);
+        
+        .cs-combat-input {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #2c1810;
+        }
+      }
+      
+      &.cs-pos-combat-ac {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-ac-left});
+        top: var(--top, #{$cs-pos-combat-ac-top});
+        width: var(--width, #{$cs-pos-combat-ac-width});
+        height: var(--height, #{$cs-pos-combat-ac-height});
+        transform: translateX(-50%);
+      }
+      
+      &.cs-pos-combat-uac-label {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-uac-label-left});
+        top: var(--top, #{$cs-pos-combat-uac-label-top});
+        width: var(--width, #{$cs-pos-combat-uac-label-width});
+        height: var(--height, #{$cs-pos-combat-uac-label-height});
+        transform: translateX(-50%);
+      }
+      
+      &.cs-pos-combat-uac-value {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-uac-value-left});
+        top: var(--top, #{$cs-pos-combat-uac-value-top});
+        width: var(--width, #{$cs-pos-combat-uac-value-width});
+        height: var(--height, #{$cs-pos-combat-uac-value-height});
+        transform: translateX(-50%);
+        
+        .cs-unarmored-box {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
+      &.cs-pos-combat-uac {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-uac-left});
+        top: var(--top, #{$cs-pos-combat-uac-top});
+        width: var(--width, #{$cs-pos-combat-uac-width});
+        height: var(--height, #{$cs-pos-combat-uac-height});
+        transform: translateX(-50%);
+      }
+      
+      &.cs-pos-combat-hp-label {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-hp-label-left});
+        top: var(--top, #{$cs-pos-combat-hp-label-top});
+        width: var(--width, #{$cs-pos-combat-hp-label-width});
+        height: var(--height, #{$cs-pos-combat-hp-label-height});
+        transform: translateX(-50%);
+      }
+      
+      &.cs-pos-combat-hp-value {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-hp-value-left});
+        top: var(--top, #{$cs-pos-combat-hp-value-top});
+        width: var(--width, #{$cs-pos-combat-hp-value-width});
+        height: var(--height, #{$cs-pos-combat-hp-value-height});
+        transform: translateX(-50%);
+        
+        .cs-combat-input {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
+      &.cs-pos-combat-hp {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-hp-left});
+        top: var(--top, #{$cs-pos-combat-hp-top});
+        width: var(--width, #{$cs-pos-combat-hp-width});
+        height: var(--height, #{$cs-pos-combat-hp-height});
+        transform: translateX(-50%);
+      }
+      
+      &.cs-pos-combat-mhp-label {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-mhp-label-left});
+        top: var(--top, #{$cs-pos-combat-mhp-label-top});
+        width: var(--width, #{$cs-pos-combat-mhp-label-width});
+        height: var(--height, #{$cs-pos-combat-mhp-label-height});
+        transform: translateX(-50%);
+      }
+      
+      &.cs-pos-combat-mhp-value {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-mhp-value-left});
+        top: var(--top, #{$cs-pos-combat-mhp-value-top});
+        width: var(--width, #{$cs-pos-combat-mhp-value-width});
+        height: var(--height, #{$cs-pos-combat-mhp-value-height});
+        transform: translateX(-50%);
+        
+        .cs-unarmored-box {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
+      &.cs-pos-combat-mhp {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-mhp-left});
+        top: var(--top, #{$cs-pos-combat-mhp-top});
+        width: var(--width, #{$cs-pos-combat-mhp-width});
+        height: var(--height, #{$cs-pos-combat-mhp-height});
+        transform: translateX(-50%);
+      }
+      
+      &.cs-pos-combat-tactical {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-tactical-left});
+        top: var(--top, #{$cs-pos-combat-tactical-top});
+        width: var(--width, #{$cs-pos-combat-tactical-width});
+        height: var(--height, #{$cs-pos-combat-tactical-height});
+        transform: translateX(-50%);
+        
+        .cs-unarmored-box {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
+      &.cs-pos-combat-tactical-label {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-tactical-label-left});
+        top: var(--top, #{$cs-pos-combat-tactical-label-top});
+        width: var(--width, #{$cs-pos-combat-tactical-label-width});
+        height: var(--height, #{$cs-pos-combat-tactical-label-height});
+        transform: translateX(-50%);
+        
+        .cs-field-label {
+          font-family: "Cooper Std", serif !important;
+          font-size: 14px;
+          font-weight: bold;
+          color: #2c1810;
+        }
+      }
+      
+      &.cs-pos-combat-tactical-value {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-tactical-value-left});
+        top: var(--top, #{$cs-pos-combat-tactical-value-top});
+        width: var(--width, #{$cs-pos-combat-tactical-value-width});
+        height: var(--height, #{$cs-pos-combat-tactical-value-height});
+        transform: translateX(-50%);
+        
+        .cs-unarmored-box {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
+      &.cs-pos-combat-overland-label {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-overland-label-left});
+        top: var(--top, #{$cs-pos-combat-overland-label-top});
+        width: var(--width, #{$cs-pos-combat-overland-label-width});
+        height: var(--height, #{$cs-pos-combat-overland-label-height});
+        transform: translateX(-50%);
+        
+        .cs-field-label {
+          font-family: "Cooper Std", serif !important;
+          font-size: 14px;
+          font-weight: bold;
+          color: #2c1810;
+        }
+      }
+      
+      &.cs-pos-combat-overland-value {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-overland-value-left});
+        top: var(--top, #{$cs-pos-combat-overland-value-top});
+        width: var(--width, #{$cs-pos-combat-overland-value-width});
+        height: var(--height, #{$cs-pos-combat-overland-value-height});
+        transform: translateX(-50%);
+        
+        .cs-unarmored-box {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
+      &.cs-pos-combat-overland {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-overland-left});
+        top: var(--top, #{$cs-pos-combat-overland-top});
+        width: var(--width, #{$cs-pos-combat-overland-width});
+        height: var(--height, #{$cs-pos-combat-overland-height});
+        transform: translateX(-50%);
+        
+        .cs-unarmored-box {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
+      &.cs-pos-combat-dash-label {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-dash-label-left});
+        top: var(--top, #{$cs-pos-combat-dash-label-top});
+        width: var(--width, #{$cs-pos-combat-dash-label-width});
+        height: var(--height, #{$cs-pos-combat-dash-label-height});
+        transform: translateX(-50%);
+        
+        .cs-field-label {
+          font-family: "Cooper Std", serif !important;
+          font-size: 14px;
+          font-weight: bold;
+          color: #2c1810;
+        }
+      }
+      
+      &.cs-pos-combat-dash-value {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-dash-value-left});
+        top: var(--top, #{$cs-pos-combat-dash-value-top});
+        width: var(--width, #{$cs-pos-combat-dash-value-width});
+        height: var(--height, #{$cs-pos-combat-dash-value-height});
+        transform: translateX(-50%);
+        
+        .cs-unarmored-box {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
+      &.cs-pos-combat-dash {
+        position: absolute;
+        left: var(--left, #{$cs-pos-combat-dash-left});
+        top: var(--top, #{$cs-pos-combat-dash-top});
+        width: var(--width, #{$cs-pos-combat-dash-width});
+        height: var(--height, #{$cs-pos-combat-dash-height});
+        transform: translateX(-50%);
+        
+        .cs-unarmored-box {
+          font-size: 70px;
+          font-weight: normal;
+          padding: 0;
+          color: #4B4B4B;
+        }
+      }
+      
       .cs-field-label {
         font-size: 14px;
         font-weight: bold;
+        font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
         margin-bottom: 5px;
         color: #2c1810;
         text-align: center;
       }
+    }
+      
+    .cs-combat-stat {
       
       .cs-combat-input {
         width: 80px;
@@ -959,7 +1350,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         border: none;
         border-radius: 0;
         background-color: transparent;
-        color: #2c1810;
+        color: #4B4B4B;
         
         &:focus {
           outline: none;
@@ -979,8 +1370,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         align-items: center;
         justify-content: center;
         background-color: transparent;
-        color: #2c1810;
-        font-weight: bold;
+        color: #4B4B4B;
+        font-weight: normal;
       }
     }
   }

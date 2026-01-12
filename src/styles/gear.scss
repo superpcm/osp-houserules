@@ -190,43 +190,13 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   }
 }
 
-/* Combat Tab - Custom Text Labels Line */
-.combat-labels-line {
-  position: fixed;
-  top: calc(var(--combat-stats-top, 10px) + 15px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 704px;
-  height: 0;
-  display: flex;
-  align-items: center;
-  z-index: 1;
-  pointer-events: none;
-  
-  .combat-label {
-    position: absolute;
-    font-size: 12px;
-    font-weight: bold;
-    color: #000;
-    white-space: nowrap;
-    
-    &.label-1 { left: $combat-label1-x-offset; }
-    &.label-2 { left: $combat-label2-x-offset; }
-    &.label-3 { left: $combat-label3-x-offset; }
-    &.label-4 { left: $combat-label4-x-offset; }
-    &.label-5 { left: $combat-label5-x-offset; }
-    &.label-6 { left: $combat-label6-x-offset; }
-    &.label-7 { left: $combat-label7-x-offset; }
-  }
-}
-
 .item-category {
   /*border: 1.5px solid #000;*/
   border-left: none;
   border-right: none;
   border-radius: 0 0 5px 5px; /* Only round bottom corners since title is separate */
   border-top: none; /* No top border - title provides visual separation */
-  margin-top: 0px; /* Remove negative margin */
+  margin-top: 10px; /* Remove negative margin */
   margin-bottom: 25px;
   position: relative;
   z-index: 5; /* Above combat stats (z-index: 1) to obscure them when scrolling */
@@ -242,11 +212,6 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
     /*border-left: 1.5px solid #000;*/
     /*border-right: 1.5px solid #000;*/
     pointer-events: none;
-  }
-  
-  /* Remove top margin from first category to prevent sticky title from shifting */
-  &:first-child {
-    margin-top: 20px;
   }
 }
 
@@ -271,7 +236,11 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   box-sizing: border-box;
   border-radius: 5px 5px 0 0;
   position: relative;
-  z-index: 6; /* Above item-category body to obscure combat stats when scrolling */
+  z-index: 11; /* Above encumbrance bar (z-index: 10) and item-category body */
+  
+  .gear-tab & {
+    z-index: 11; /* Ensure visibility above encumbrance bar in gear tab */
+  }
   
   &.weapons-title {
     grid-template-columns: $weapons-col-item-image $weapons-col-roll-icon $weapons-col-name $weapons-col-damage $weapons-col-dt $weapons-col-sz $weapons-col-sf $weapons-col-rof $weapons-col-rng $weapons-col-weight $col-controls;
@@ -311,6 +280,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
       top: 0; /* Stick to top of scrollable area */
       z-index: 9; /* Below encumbrance bar but above content */
       margin: 0; /* Remove any margin since it's outside item-category now */
+      margin-bottom: -10px; /* Pull the following section up to match spacing with other sections */
       
       .item-roll-icon {
         width: 0;  // Remove width from placeholder

@@ -372,6 +372,13 @@ export class OspActor extends Actor {
       encumbered: totalWeight > unencumberedThreshold
     };
 
+    // Calculate movement rates
+    this.system.movement = {
+      tactical: finalMovement,  // Walk speed (encounter movement)
+      overland: Math.floor(finalMovement / 3),  // Travel speed (overland movement, 1/3 of tactical)
+      dash: finalMovement * 3  // Run speed (3x tactical)
+    };
+
     // Calculate capacity usage for containers
     this._calculateCapacity();
   }

@@ -2209,40 +2209,82 @@
       <!-- Combat Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
         <section class="combat-tab">
-          <!-- Custom Text Labels Line -->
-          <div class="combat-labels-line">
-            <span class="combat-label label-1">Current HP</span>
-            <span class="combat-label label-2">Max HP</span>
-            <span class="combat-label label-3">AC</span>
-            <span class="combat-label label-4">UAC</span>
-            <span class="combat-label label-5">Tactical</span>
-            <span class="combat-label label-6">Running</span>
-            <span class="combat-label label-7">Overland</span>
-          </div>
-          
           <!-- Combat Stats Section -->
           <div class="combat-stats cs-combat-stats">
-            <div class="combat-stat cs-combat-stat">
-              <label for="char-ac" class="cs-field-label">Armor Class</label>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-ac-label">
+              <label for="char-ac" class="cs-field-label">AC</label>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-ac-value">
               <input class="char-ac cs-combat-input" id="char-ac" name="system.ac" type="number" value="{{system.ac}}" min="0" max="20" />
             </div>
-            <div class="combat-stat cs-combat-stat">
-              <label class="cs-field-label">Unarmored AC</label>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-uac-label">
+              <label class="cs-field-label">uAC</label>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-uac-value">
               <div class="cs-unarmored-box">
                 10
               </div>
             </div>
-            <div class="combat-stat cs-combat-stat">
-              <label for="char-hp" class="cs-field-label">Current HP</label>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-hp-label">
+              <label for="char-hp" class="cs-field-label">HP</label>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-hp-value">
               <input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" />
             </div>
-            <div class="combat-stat cs-combat-stat">
-              <label class="cs-field-label">Max HP</label>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-mhp-label">
+              <label class="cs-field-label">maxHP</label>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-mhp-value">
               <div class="cs-unarmored-box">
                 {{calculatedMaxHP}}
               </div>
             </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-tactical-label">
+              <label class="cs-field-label">Tactical</label>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-tactical-value">
+              <div class="cs-unarmored-box">
+                {{system.movement.tactical}}
+              </div>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-overland-label">
+              <label class="cs-field-label">Travel</label>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-overland-value">
+              <div class="cs-unarmored-box">
+                {{system.movement.overland}}
+              </div>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-dash-label">
+              <label class="cs-field-label">Explore</label>
+            </div>
+            <div class="combat-stat cs-combat-stat cs-pos-combat-dash-value">
+              <div class="cs-unarmored-box">
+                {{system.movement.dash}}
+              </div>
+            </div>
           </div>
+
+        </section>
+      </div>
+      
+      <!-- Gear Tab -->
+      <div class="tab" data-group="primary" data-tab="gear">
+        <section class="gear-tab">
+          {{!-- Encumbrance Bar --}}
+          <div class="encumbrance-bar-wrapper">
+            <div class="encumbrance-bar-container">
+              <div class="encumbrance-bar encumbrance-bar-light" data-encumbrance="{{encumbrancePercentage}}"></div>
+              <div class="encumbrance-bar encumbrance-bar-normal" data-encumbrance="{{encumbrancePercentage}}"></div>
+              <div class="encumbrance-bar encumbrance-bar-heavy" data-encumbrance="{{encumbrancePercentage}}"></div>
+              <div class="encumbrance-threshold-line" style="left: 33%;"></div>
+              <div class="encumbrance-threshold-line" style="left: 66%;"></div>
+              <span class="encumbrance-text">{{totalWeight}} / {{maxWeight}} lbs</span>
+            </div>
+          </div>
+
+          {{!-- Scrollable Content Area --}}
+          <div class="gear-scrollable-content">
 
           {{!-- Weapons Section --}}
           <div class="item-category">
@@ -2367,30 +2409,6 @@
               {{/each}}
             </ol>
           </div>
-
-        </section>
-      </div>
-      
-      <!-- Gear Tab -->
-      <div class="tab" data-group="primary" data-tab="gear">
-        <section class="gear-tab">
-          {{!-- Encumbrance Bar --}}
-          <div class="encumbrance-bar-wrapper">
-            <div class="encumbrance-bar-container">
-              <div class="encumbrance-bar encumbrance-bar-light" data-encumbrance="{{encumbrancePercentage}}"></div>
-              <div class="encumbrance-bar encumbrance-bar-normal" data-encumbrance="{{encumbrancePercentage}}"></div>
-              <div class="encumbrance-bar encumbrance-bar-heavy" data-encumbrance="{{encumbrancePercentage}}"></div>
-              <div class="encumbrance-threshold-line" style="left: 33%;"></div>
-              <div class="encumbrance-threshold-line" style="left: 66%;"></div>
-              <span class="encumbrance-text">{{totalWeight}} / {{maxWeight}} lbs</span>
-            </div>
-          </div>
-
-          {{!-- Scrollable Content Area --}}
-          <div class="gear-scrollable-content">
-          
-          {{!-- Border Mask Layer - sits between title bar and scrolling content --}}
-          <div class="title-border-mask"></div>
           
           {{!-- Gear & Treasure Title - Sticky Header --}}
           <div class="item-category-title containers-title flexrow">

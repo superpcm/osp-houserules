@@ -182,6 +182,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.weapons = [...regularWeapons, ...itemsWithWeaponProperties];
     context.armor = this.actor.system.armor || [];
     
+    // Filter equipped weapons and worn armor for Combat tab
+    context.equippedWeapons = context.weapons.filter(w => w.system.equipped);
+    context.wornArmor = context.armor.filter(a => a.system.equipped);
+    
     // Organize containers with nested items
     const allContainers = this.actor.system.containers || [];
     const allItems = this.actor.system.items || [];

@@ -1375,6 +1375,19 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
       }
     }
   }
+  
+  /* Combat equipped sections - weapons and armor */
+  .combat-equipped-section {
+    margin-top: 135px; /* Position under hpac.webp image */
+    
+    &:first-of-type {
+      margin-top: 135px;
+    }
+    
+    & + .combat-equipped-section {
+      margin-top: 20px; /* Space between weapon and armor sections */
+    }
+  }
 }
 
 /* Race-based variants (only applied if no qualifying class) */

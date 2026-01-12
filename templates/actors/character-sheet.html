@@ -2265,6 +2265,99 @@
             </div>
           </div>
 
+          {{!-- Equipped Weapons Section --}}
+          <div class="combat-equipped-section">
+            <div class="item-category-title weapons-title flexrow">
+              <div class="item-image"></div>
+              <div class="item-roll-icon"></div>
+              <div class="category-name">Weapon</div>
+              <div class="field-short">DMG</div>
+              <div class="field-short">DT</div>
+              <div class="field-short">SZ</div>
+              <div class="field-short">SF</div>
+              <div class="field-short">RoF</div>
+              <div class="field-short">RNG</div>
+              <div class="field-short">WT</div>
+            </div>
+            <ol class="item-list">
+              {{#if equippedWeapons.length}}
+                {{#each equippedWeapons as |item|}}
+                <li class="item-entry item" data-item-id="{{item.id}}">
+                  <div class="item-header weapon-header flexrow">
+                    <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                    <div class="item-roll-icon">
+                      <i class="fas fa-dice-d20"></i>
+                    </div>
+                    <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+                    <div class="field-short">{{item.system.damage}}</div>
+                    <div class="field-short">{{item.system.damageType}}</div>
+                    <div class="field-short">{{item.system.size}}</div>
+                    <div class="field-short">{{item.system.sf}}</div>
+                    <div class="field-short">{{item.system.rof}}</div>
+                    <div class="field-short">{{item.system.range}}</div>
+                    <div class="field-short">{{item.system.weight}}</div>
+                    <div class="item-controls"></div>
+                  </div>
+                </li>
+                {{/each}}
+              {{else}}
+                <li class="item-entry unarmed-placeholder">
+                  <div class="item-header weapon-header flexrow">
+                    <div class="item-image"></div>
+                    <div class="item-roll-icon"></div>
+                    <h4 class="item-name">Unarmed</h4>
+                    <div class="field-short">1d2</div>
+                    <div class="field-short">B</div>
+                    <div class="field-short">S</div>
+                    <div class="field-short">-</div>
+                    <div class="field-short">-</div>
+                    <div class="field-short">-</div>
+                    <div class="field-short">-</div>
+                    <div class="item-controls"></div>
+                  </div>
+                </li>
+              {{/if}}
+            </ol>
+          </div>
+
+          {{!-- Worn Armor Section --}}
+          <div class="combat-equipped-section">
+            <div class="item-category-title armor-title flexrow">
+              <div class="item-image"></div>
+              <div class="category-name">Armor</div>
+              <div class="field-short">Type</div>
+              <div class="field-short">AC</div>
+              <div class="field-short">Weight</div>
+            </div>
+            <ol class="item-list">
+              {{#if wornArmor.length}}
+                {{#each wornArmor as |item|}}
+                <li class="item-entry item" data-item-id="{{item.id}}">
+                  <div class="item-header armor-header flexrow">
+                    <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                    <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+                    <div class="field-short">{{item.system.armorType}}</div>
+                    <div class="field-short">{{item.system.ac}}</div>
+                    <div class="field-short">{{item.system.weight}}</div>
+                    <div class="item-controls"></div>
+                  </div>
+                </li>
+                {{/each}}
+              {{else}}
+                <li class="item-entry unarmored-placeholder">
+                  <div class="item-header armor-header flexrow">
+                    <div class="item-image"></div>
+                    <h4 class="item-name">Unarmored</h4>
+                    <div class="field-short">None</div>
+                    <div class="field-short">10</div>
+                    <div class="field-short">-</div>
+                    <div class="item-controls"></div>
+                  </div>
+                </li>
+              {{/if}}
+            </ol>
+          </div>
+
         </section>
       </div>
       

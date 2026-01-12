@@ -61,6 +61,11 @@
           },
           "level": "",
           "movement": 0
+        },
+        "movement": {
+          "tactical": 0,
+          "overland": 0,
+          "dash": 0
         }
       }
     },

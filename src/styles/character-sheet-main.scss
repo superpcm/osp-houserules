@@ -995,13 +995,13 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   background-image: 
     url('/systems/osp-houserules/assets/character-sheet/hpac.webp') !important;
   background-size: contain;
-  background-position: 50% 35px;
+  background-position: 50% 20px;
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-color: transparent !important;
   height: 384px !important;
   margin: 0 0.5px 0 -0.5px;
-  overflow: hidden; /* Clip any content extending beyond tab boundaries */
+  overflow: visible; /* Scrolling handled by inner content */
   
   /* combat.webp as overlay above scrollable content */
   &::after {
@@ -1376,12 +1376,32 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     }
   }
   
+  /* Scrollable content area for equipment sections */
+  .combat-scrollable-content {
+    position: absolute;
+    top: 150px; /* Start below the hpac.webp image and stats */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 20px;
+    
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  
   /* Combat equipped sections - weapons and armor */
   .combat-equipped-section {
-    margin-top: 135px; /* Position under hpac.webp image */
+    margin-top: 0; /* No margin needed, positioned by scrollable container */
     
     &:first-of-type {
-      margin-top: 135px;
+      margin-top: 0;
     }
     
     & + .combat-equipped-section {

@@ -289,6 +289,9 @@ export class OspActor extends Actor {
 
     // Calculate XP modifier
     this._calculateXPModifier();
+
+    // Calculate Armor Class
+    this._calculateArmorClass();
   }
 
   /**
@@ -431,5 +434,62 @@ export class OspActor extends Actor {
         ? Math.round((usedCapacitySlots / maxCapacitySlots) * 100)
         : 0;
     });
+  }
+
+  /**
+   * Calculate Armor Class
+   * @private
+   */
+  _calculateArmorClass() {
+    // Start with base AC (unarmored)
+    let calculatedAC = 10;
+
+    // Add DEX modifier (AC modifier from dexterity attribute)
+    const dexScore = parseInt(this.system.attributes?.dex?.value) || 10;
+    const dexMod = this._getAttributeModifier(dexScore);
+    calculatedAC += dexMod;
+
+    // Get equipped armor (non-shield armor pieces)
+    const equippedArmor = this.system.armor.filter(item => 
+      item.system.equipped && item.system.type !== "shield"
+    );
+    
+    // Use the highest armor AAC value as base (armor AAC replaces base 10, doesn't add to it)
+    if (equippedArmor.length > 0) {
+      const highestArmorAC = Math.max(...equippedArmor.map(armor => 
+        parseInt(armor.system.aac?.value) || 0
+      ));
+      // Replace base 10 with armor's AAC value
+      calculatedAC = calculatedAC - 10 + highestArmorAC;
+    }
+
+    // Add shield bonuses (shields add to AC, they don't replace it)
+    const equippedShields = this.system.armor.filter(item => 
+      item.system.equipped && item.system.type === "shield"
+    );
+    equippedShields.forEach(shield => {
+      const shieldBonus = parseInt(shield.system.aac?.value) || 0;
+      calculatedAC += shieldBonus;
+    });
+
+    // Store the calculated AC
+    this.system.ac = calculatedAC;
+  }
+
+  /**
+   * Get attribute modifier for a given attribute score
+   * @param {number} score - The attribute score
+   * @returns {number} The modifier
+   * @private
+   */
+  _getAttributeModifier(score) {
+    // Standard B/X D&D attribute modifier table
+    if (score <= 3) return -3;
+    if (score <= 5) return -2;
+    if (score <= 8) return -1;
+    if (score <= 12) return 0;
+    if (score <= 15) return 1;
+    if (score <= 17) return 2;
+    return 3; // 18+
   }
 }

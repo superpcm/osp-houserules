@@ -152,7 +152,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   overflow-y: auto; /* Allow scrolling for combat tab */
   position: absolute !important; /* Absolute positioning to control placement - override general rule */
   display: block !important; /* Override flex from general rule */
-  top: 15px; /* Start 15px down - content scrolls under at this point */
+  top: 0; /* Start 15px down - content scrolls under at this point */
   left: 0;
   right: 40px; /* Compensate for scrollbar width to prevent cutoff */
   bottom: 2px; /* End 2px above bottom of parent */
@@ -221,7 +221,7 @@ $color-parchment: #b5ddb4;  /* Main background color - matches character sheet *
   /*border: 1.5px solid #000;*/
   border-bottom: none;
   padding: 0 $item-padding-x;
-  margin-top: -10px;
+  margin-top: 0px;
   font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
   font-size: $font-category-title !important;
   color: #fff;

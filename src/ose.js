@@ -566,3 +566,200 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
   
   return true; // Allow other drops to proceed
 });
+
+/**
+ * Prevent default sheet opening for dropped item tokens and handle pickup
+ */
+Hooks.on("preUpdateToken", (tokenDoc, change, options, userId) => {
+  // This prevents any default behaviors we don't want
+  return true;
+});
+
+/**
+ * Handle double-click on dropped item tokens to pick them up
+ */
+Hooks.on("targetToken", async (user, token, targeted) => {
+  // Only proceed if targeting (not untargeting)
+  if (!targeted) return;
+  
+  // Check if this is a dropped item token
+  const isDroppedItem = token.document.flags?.['osp-houserules']?.droppedItem;
+  if (!isDroppedItem) return;
+  
+  const itemData = token.document.flags['osp-houserules'].itemData;
+  if (!itemData) return;
+  
+  // Untarget immediately to clean up
+  token.setTarget(false, {releaseOthers: false});
+  
+  // Find controlled actors (characters that can pick up the item)
+  const controlledTokens = canvas.tokens.controlled.filter(t => 
+    t.actor?.type === "character" && t.id !== token.id
+  );
+  
+  if (controlledTokens.length === 0) {
+    ui.notifications.warn("You must control a character token to pick up items.");
+    return;
+  }
+  
+  // Use the first controlled actor
+  const actorToken = controlledTokens[0];
+  const actor = actorToken.actor;
+  
+  const currentQuantity = itemData.system.quantity || 1;
+  
+  // If quantity > 1, show quantity picker
+  if (currentQuantity > 1) {
+    const content = `
+      <form>
+        <div class="form-group">
+          <label>Available Quantity: <strong>${currentQuantity}</strong></label>
+          <label style="margin-top: 10px;">Pick up how many?</label>
+          <input type="number" name="pickupQuantity" value="1" min="1" max="${currentQuantity}" style="width: 100%;" />
+        </div>
+      </form>
+    `;
+
+    new Dialog({
+      title: `Pick up ${itemData.name}`,
+      content: content,
+      buttons: {
+        pickAll: {
+          icon: '<i class="fas fa-hand-holding"></i>',
+          label: "Pick Up All",
+          callback: async () => {
+            try {
+              // Check if actor already has this item
+              const existingItem = actor.items.find(i => 
+                i.name === itemData.name && 
+                i.type === itemData.type &&
+                i.img === itemData.img
+              );
+              
+              if (existingItem) {
+                // Stack with existing item
+                const existingQty = parseInt(existingItem.system.quantity?.value ?? existingItem.system.quantity ?? 1);
+                const newQuantity = existingQty + currentQuantity;
+                await existingItem.update({ "system.quantity": newQuantity });
+                ui.notifications.info(`Added ${currentQuantity} ${itemData.name} to inventory (total: ${newQuantity}).`);
+              } else {
+                // Create new item
+                await actor.createEmbeddedDocuments("Item", [itemData]);
+                ui.notifications.info(`Picked up ${currentQuantity} ${itemData.name}.`);
+              }
+              
+              // Delete the token from scene
+              await token.document.delete();
+              
+            } catch (error) {
+              console.error("Error picking up item:", error);
+              ui.notifications.error(`Failed to pick up item: ${error.message}`);
+            }
+          }
+        },
+        pickSpecific: {
+          icon: '<i class="fas fa-hand-pointer"></i>',
+          label: "Pick Up Quantity",
+          callback: async (html) => {
+            const pickupQty = parseInt(html.find('[name="pickupQuantity"]').val());
+            const quantity = Math.min(Math.max(pickupQty, 1), currentQuantity);
+            
+            try {
+              // Check if actor already has this item
+              const existingItem = actor.items.find(i => 
+                i.name === itemData.name && 
+                i.type === itemData.type &&
+                i.img === itemData.img
+              );
+              
+              if (existingItem) {
+                // Stack with existing item
+                const existingQty = parseInt(existingItem.system.quantity?.value ?? existingItem.system.quantity ?? 1);
+                const newQuantity = existingQty + quantity;
+                await existingItem.update({ "system.quantity": newQuantity });
+                ui.notifications.info(`Added ${quantity} ${itemData.name} to inventory (total: ${newQuantity}).`);
+              } else {
+                // Create new item with picked up quantity
+                const newItemData = foundry.utils.duplicate(itemData);
+                newItemData.system.quantity = quantity;
+                await actor.createEmbeddedDocuments("Item", [newItemData]);
+                ui.notifications.info(`Picked up ${quantity} ${itemData.name}.`);
+              }
+              
+              // Update or delete the token
+              if (quantity >= currentQuantity) {
+                // Picked up all, delete the token
+                await token.document.delete();
+              } else {
+                // Reduce quantity on token
+                const remainingQuantity = currentQuantity - quantity;
+                const updatedItemData = foundry.utils.duplicate(itemData);
+                updatedItemData.system.quantity = remainingQuantity;
+                
+                await token.document.update({
+                  name: `${itemData.name} (${remainingQuantity})`,
+                  "flags.osp-houserules.itemData": updatedItemData
+                });
+              }
+              
+            } catch (error) {
+              console.error("Error picking up item:", error);
+              ui.notifications.error(`Failed to pick up item: ${error.message}`);
+            }
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "pickSpecific"
+    }).render(true);
+  } else {
+    // Single item, simple pickup dialog
+    new Dialog({
+      title: `Pick up ${itemData.name}?`,
+      content: `<p>Pick up <strong>${itemData.name}</strong>?</p>`,
+      buttons: {
+        yes: {
+          icon: '<i class="fas fa-hand-holding"></i>',
+          label: "Pick Up",
+          callback: async () => {
+            try {
+              // Check if actor already has this item
+              const existingItem = actor.items.find(i => 
+                i.name === itemData.name && 
+                i.type === itemData.type &&
+                i.img === itemData.img
+              );
+              
+              if (existingItem) {
+                // Stack with existing item
+                const existingQty = parseInt(existingItem.system.quantity?.value ?? existingItem.system.quantity ?? 1);
+                const newQuantity = existingQty + 1;
+                await existingItem.update({ "system.quantity": newQuantity });
+                ui.notifications.info(`Added ${itemData.name} to inventory (total: ${newQuantity}).`);
+              } else {
+                // Create new item
+                await actor.createEmbeddedDocuments("Item", [itemData]);
+                ui.notifications.info(`Picked up ${itemData.name}.`);
+              }
+              
+              // Delete the token from scene
+              await token.document.delete();
+              
+            } catch (error) {
+              console.error("Error picking up item:", error);
+              ui.notifications.error(`Failed to pick up item: ${error.message}`);
+            }
+          }
+        },
+        no: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "yes"
+    }).render(true);
+  }
+});

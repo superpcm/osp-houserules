@@ -33,8 +33,9 @@
             </a>
             <a class="item-control item-delete" title="Delete Item">
               <i class="fas fa-trash"></i>
-            </a>
-            {{/if}}
+            </a>            <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.id}}">
+              <img src="systems/osp-houserules/assets/images/icons/drop-icon.webp" alt="Drop" style="width: 16px; height: 16px;">
+            </a>            {{/if}}
           </div>
         </div>
         <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
@@ -90,10 +91,13 @@
             <a class="item-control item-delete" title="Delete Item">
               <i class="fas fa-trash"></i>
             </a>
+            <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.id}}">
+              <img src="systems/osp-houserules/assets/images/icons/drop-icon.webp" alt="Drop" style="width: 16px; height: 16px;">
+            </a>
             {{/if}}
           </div>
         </div>
-        <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
+        <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}>
           {{#if item.system.description}}
           <div class="item-description">{{item.system.description}}</div>
           {{/if}}
@@ -103,7 +107,7 @@
     </ol>
   </div>
 
-  {{!-- Containers Section --}}
+  {{!-- Containers Section --}>
   <div class="item-category">
     <div class="item-category-title flexrow">
       <div class="category-caret"><i class="fas fa-caret-down"></i></div>
@@ -142,6 +146,9 @@
             </a>
             <a class="item-control item-delete" title="Delete Item">
               <i class="fas fa-trash"></i>
+            </a>
+            <a class="item-control item-drop" title="Drop Item" data-item-id="{{container.id}}">
+              <img src="systems/osp-houserules/assets/images/icons/drop-icon.webp" alt="Drop" style="width: 16px; height: 16px;">
             </a>
             {{/if}}
           </div>
@@ -182,6 +189,9 @@
                 </a>
                 <a class="item-control item-delete" title="Delete Item">
                   <i class="fas fa-trash"></i>
+                </a>
+                <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.id}}">
+                  <img src="systems/osp-houserules/assets/images/icons/drop-icon.webp" alt="Drop" style="width: 16px; height: 16px;">
                 </a>
                 {{/if}}
               </div>
@@ -244,8 +254,9 @@
             </a>
             <a class="item-control item-delete" title="Delete Item">
               <i class="fas fa-trash"></i>
-            </a>
-            {{/if}}
+            </a>            <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.id}}">
+              <img src="systems/osp-houserules/assets/images/icons/drop-icon.webp" alt="Drop" style="width: 16px; height: 16px;">
+            </a>            {{/if}}
           </div>
         </div>
         <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
@@ -289,8 +300,9 @@
             </a>
             <a class="item-control item-delete" title="Delete Item">
               <i class="fas fa-trash"></i>
-            </a>
-            {{/if}}
+            </a>            <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.id}}">
+              <img src="systems/osp-houserules/assets/images/icons/drop-icon.webp" alt="Drop" style="width: 16px; height: 16px;">
+            </a>            {{/if}}
           </div>
         </div>
         <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">

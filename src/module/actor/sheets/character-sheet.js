@@ -175,12 +175,13 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Prepare items for template
     // Include regular weapons and items with weapon properties (like Holy Water, Oil Flask)
-    const regularWeapons = this.actor.system.weapons || [];
-    const itemsWithWeaponProperties = (this.actor.system.items || []).filter(item => 
+    const regularWeapons = this.actor.items.filter(i => i.type === "weapon");
+    const itemsWithWeaponProperties = this.actor.items.filter(item => 
+      item.type === "item" && 
       item.system.damage && item.system.range && (item.system.melee || item.system.missile)
     );
     context.weapons = [...regularWeapons, ...itemsWithWeaponProperties];
-    context.armor = this.actor.system.armor || [];
+    context.armor = this.actor.items.filter(i => i.type === "armor");
     
     // Filter equipped weapons and worn armor/shields for Combat tab
     context.equippedWeapons = context.weapons.filter(w => w.system.equipped);
@@ -188,10 +189,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.wornArmor = context.armor.filter(a => a.system.equipped);
     
     // Organize containers with nested items
-    const allContainers = this.actor.system.containers || [];
-    const allItems = this.actor.system.items || [];
-    const allWeapons = this.actor.system.weapons || [];
-    const allArmor = this.actor.system.armor || [];
+    const allContainers = this.actor.items.filter(i => i.type === "container");
+    const allItems = this.actor.items.filter(i => i.type === "item");
+    const allWeapons = this.actor.items.filter(i => i.type === "weapon");
+    const allArmor = this.actor.items.filter(i => i.type === "armor");
     
     // Filter top-level clothing items (equipped, not in containers)
     const topLevelClothing = allItems.filter(item => 
@@ -1370,8 +1371,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     }
 
-    // If the item is of type "item" (not weapon/armor/container), it MUST go into a container
-    if (itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition") {
+    // If the item is of type "item", "coin", "ammunition", or "clothing" (not weapon/armor/container), it MUST go into a container
+    if (itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition" || itemData.type === "clothing") {
       // Check if target is a valid container (container type OR clothing with capacity)
       const isValidContainer = targetContainer && 
         (targetContainer.type === "container" || 
@@ -1420,6 +1421,14 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Allow containers to be stored in other containers if they're empty
     // Only check for emptiness when reordering (new containers from compendium are always empty)
     else if (itemData.type === "container" && targetContainer && targetContainer.type === "container") {
+      // Check container type restrictions FIRST
+      if (!this._isItemAllowedInContainer(itemData, targetContainer)) {
+        const allowedTypes = targetContainer.system.allowedTypes || [];
+        const restriction = allowedTypes.length > 0 ? allowedTypes.join(', ') : 'any';
+        ui.notifications.error(`${targetContainer.name} can only hold: ${restriction}`);
+        return false;
+      }
+      
       // If reordering, check if the container being dropped has any items in it
       if (isReordering) {
         const droppedContainerId = item.id;
@@ -1583,26 +1592,25 @@ export class OspActorSheetCharacter extends ActorSheet {
       return true;
     }
     
-    // Check if item has any of the allowed tags
+    // Build a list of item characteristics to check against allowed types
+    const itemCharacteristics = [];
+    
+    // Add the item's type (e.g., "clothing", "item", "ammunition", "container")
+    if (itemData.type) {
+      itemCharacteristics.push(itemData.type);
+    }
+    
+    // Add any tags the item has (weapons have tags like "arrow", "sword", etc.)
     const itemTags = itemData.system?.tags || [];
+    itemCharacteristics.push(...itemTags);
     
-    // Debug logging
-    console.log('Container restriction check:', {
-      container: container.name,
-      allowedTypes: allowedTypes,
-      itemName: itemData.name,
-      itemType: itemData.type,
-      itemTags: itemTags,
-      hasMatch: itemTags.some(tag => allowedTypes.includes(tag))
-    });
-    
-    // If container has restrictions but item has no tags, reject it
-    if (itemTags.length === 0) {
+    // If container has restrictions but item has no characteristics, reject it
+    if (itemCharacteristics.length === 0) {
       return false;
     }
     
-    // Check if any item tag matches allowed types
-    return itemTags.some(tag => allowedTypes.includes(tag));
+    // Check if any item characteristic matches allowed types
+    return itemCharacteristics.some(char => allowedTypes.includes(char));
   }
 
   /**

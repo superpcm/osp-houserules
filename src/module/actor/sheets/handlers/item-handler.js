@@ -20,10 +20,12 @@ export class ItemHandler {
     this.html.find('.item-create').click(this.onItemCreate.bind(this));
     this.html.find('.item-edit').click(this.onItemEdit.bind(this));
     this.html.find('.item-delete').click(this.onItemDelete.bind(this));
+    this.html.find('.item-drop').click(this.onItemDrop.bind(this));
     this.html.find('.item-toggle').click(this.onItemToggle.bind(this));
     this.html.find('.item-lash-toggle').click(this.onItemLashToggle.bind(this));
     this.html.find('.item-show').click(this.onItemShow.bind(this));
     this.html.find('.item-rollable').click(this.onItemRoll.bind(this));
+    this.html.find('.item-unarmed-roll').click(this.onUnarmedRoll.bind(this));
     this.html.find('.item-roll-icon[draggable="true"]').on('dragstart', this.onRollIconDragStart.bind(this));
     this.html.find('.quantity input').change(this.onQuantityChange.bind(this));
     
@@ -131,6 +133,171 @@ export class ItemHandler {
       },
       default: "deleteSpecific"
     }).render(true);
+  }
+
+  /**
+   * Handle dropping an item onto the scene
+   */
+  async onItemDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const item = this.getItemFromEvent(event);
+    if (!item) return;
+
+    // Check if there's an active scene
+    const scene = game.scenes.active;
+    if (!scene) {
+      ui.notifications.error("No active scene to drop item on.");
+      return;
+    }
+
+    // Check if user has a controlled token, or find their owned token
+    let token = null;
+    const controlledTokens = canvas.tokens.controlled;
+    
+    if (controlledTokens.length > 0) {
+      // Use the first controlled token
+      token = controlledTokens[0];
+    } else {
+      // No controlled tokens, find tokens owned by the user
+      const ownedTokens = canvas.tokens.placeables.filter(t => 
+        t.actor && t.document.isOwner && t.actor.type === "character"
+      );
+      
+      if (ownedTokens.length === 0) {
+        ui.notifications.error("No character token found on the scene.");
+        return;
+      } else if (ownedTokens.length === 1) {
+        // Exactly one owned token, use it automatically
+        token = ownedTokens[0];
+      } else {
+        // Multiple owned tokens, need selection
+        ui.notifications.warn("You have multiple tokens on the scene. Please select the one you want to drop from.");
+        return;
+      }
+    }
+
+    const currentQuantity = item.system.quantity || 1;
+    let dropQuantity = 1;
+
+    // If quantity > 1, prompt for how many to drop
+    if (currentQuantity > 1) {
+      const content = `
+        <form>
+          <div class="form-group">
+            <label>Current Quantity: <strong>${currentQuantity}</strong></label>
+            <label style="margin-top: 10px;">Drop how many?</label>
+            <input type="number" name="dropQuantity" value="1" min="1" max="${currentQuantity}" style="width: 100%;" />
+          </div>
+        </form>
+      `;
+
+      const dropAll = await new Promise(resolve => {
+        new Dialog({
+          title: `Drop ${item.name}`,
+          content: content,
+          buttons: {
+            dropAll: {
+              icon: '<i class="fas fa-box-open"></i>',
+              label: "Drop All",
+              callback: () => resolve(currentQuantity)
+            },
+            dropSpecific: {
+              icon: '<i class="fas fa-hand-holding"></i>',
+              label: "Drop Quantity",
+              callback: (html) => {
+                const qty = parseInt(html.find('[name="dropQuantity"]').val());
+                resolve(Math.min(Math.max(qty, 1), currentQuantity));
+              }
+            },
+            cancel: {
+              icon: '<i class="fas fa-times"></i>',
+              label: "Cancel",
+              callback: () => resolve(null)
+            }
+          },
+          default: "dropSpecific"
+        }).render(true);
+      });
+
+      if (dropAll === null) return; // User cancelled
+      dropQuantity = dropAll;
+    }
+
+    // Calculate drop position (1 grid square in front of token based on facing)
+    const gridSize = scene.grid.size;
+    const tokenRotation = token.document.rotation || 0;
+    
+    // Convert rotation to radians and calculate offset
+    const radians = (tokenRotation * Math.PI) / 180;
+    const offsetX = Math.cos(radians) * gridSize;
+    const offsetY = Math.sin(radians) * gridSize;
+    
+    const dropX = token.x + offsetX;
+    const dropY = token.y + offsetY;
+
+    // Unequip if equipped
+    const wasEquipped = item.system.equipped;
+    if (wasEquipped) {
+      await item.update({ "system.equipped": false });
+    }
+
+    // Create item data to store in token
+    const itemData = item.toObject();
+    itemData.system.quantity = dropQuantity;
+
+    try {
+      // Create an unlinked token (no actor) to represent the dropped item
+      const tokenData = {
+        name: `${item.name} (${dropQuantity})`,
+        x: dropX,
+        y: dropY,
+        texture: {
+          src: item.img
+        },
+        width: 1,
+        height: 1,
+        lockRotation: true,
+        actorLink: false,
+        displayName: CONST.TOKEN_DISPLAY_MODES.ALWAYS,
+        displayBars: CONST.TOKEN_DISPLAY_MODES.NONE,
+        flags: {
+          'osp-houserules': {
+            droppedItem: true,
+            itemData: itemData,
+            originalActorId: this.actor.id
+          }
+        }
+      };
+
+      // Create the token WITHOUT an actor (unlinked)
+      await scene.createEmbeddedDocuments("Token", [tokenData]);
+
+      // Update or delete the item from actor's inventory
+      if (dropQuantity >= currentQuantity) {
+        // Dropped all, delete the item
+        await item.delete();
+        ui.notifications.info(`Dropped all ${item.name}.`);
+      } else {
+        // Reduce quantity
+        const newQuantity = currentQuantity - dropQuantity;
+        await item.update({ "system.quantity": newQuantity });
+        ui.notifications.info(`Dropped ${dropQuantity} ${item.name}. ${newQuantity} remaining.`);
+      }
+
+      // Re-render the sheet
+      this.actor.sheet.render(false);
+
+    } catch (error) {
+      console.error("Error dropping item:", error);
+      ui.notifications.error(`Failed to drop item: ${error.message}`);
+      
+      // Re-equip if it was equipped before
+      if (wasEquipped) {
+        await item.update({ "system.equipped": true });
+      }
+    }
   }
 
   /**
@@ -547,6 +714,43 @@ export class ItemHandler {
         flavor: flavor
       });
     }
+  }
+
+  /**
+   * Handle rolling an unarmed attack (Punch/Kick)
+   */
+  onUnarmedRoll(event) {
+    event.preventDefault();
+    
+    // Get character stats
+    const characterClass = this.actor.system.class || 'fighter';
+    const level = parseInt(this.actor.system.level) || 1;
+    const strScore = parseInt(this.actor.system.attributes?.str?.value) || 10;
+    
+    // Calculate attack bonus from class/level
+    const classAttackBonus = getAttackBonus(characterClass, level);
+    
+    // Unarmed attacks use STR
+    const abilityModifier = getAbilityModifier(strScore);
+    
+    // Calculate total bonus (no weapon bonus for unarmed)
+    const totalBonus = classAttackBonus + abilityModifier;
+    
+    // Build formula and flavor text
+    const formula = totalBonus >= 0 ? `1d20 + ${totalBonus}` : `1d20 - ${Math.abs(totalBonus)}`;
+    const bonusBreakdown = [
+      `Class: +${classAttackBonus}`,
+      `STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}`
+    ].join(', ');
+    
+    const flavor = `Unarmed Attack (Punch/Kick)<br><small>${bonusBreakdown}</small><br><small>Damage: 1d2</small>`;
+    
+    // Roll the attack
+    const roll = new Roll(formula);
+    roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: flavor
+    });
   }
 
   /**

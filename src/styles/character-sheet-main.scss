@@ -1373,6 +1373,11 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         color: #4B4B4B;
         font-weight: normal;
       }
+      
+      /* Increase AC value font size */
+      &.cs-pos-combat-ac-value .cs-unarmored-box {
+        font-size: 70px;
+      }
     }
   }
   
@@ -1387,12 +1392,25 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     overflow-x: hidden;
     padding-bottom: 20px;
     
-    /* Hide scrollbar */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    /* Match Gear tab scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
     
     &::-webkit-scrollbar {
-      display: none;
+      width: 3px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 2px;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.6);
     }
   }
   

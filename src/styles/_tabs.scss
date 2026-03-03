@@ -1,7 +1,9 @@
 // Tabs - migrated from template; SCSS partial so it is compiled into dist/ose.css
+// All rules scoped to .cs-tabs (the character sheet's custom tab class) so that
+// other Foundry dialogs using the shared .sheet-tabs class are not affected.
 
-/* Tab container */
-.sheet-tabs {
+/* Tab container — character sheet only */
+.cs-tabs {
   position: absolute;
   left: 800px;
   top: 352px;
@@ -19,41 +21,41 @@
   overflow: visible;
 }
 
-/* Remove Foundry's default tab borders */
+/* Remove Foundry's default tab borders from all sheet apps */
 body.game .sheet.app nav.sheet-tabs {
   border-top: none !important;
   border-bottom: none !important;
   background-color: transparent !important;
 }
 
-/* Individual tab items */
-.sheet-tabs a.item {
+/* Individual tab items — character sheet only */
+.cs-tabs a.item {
   position: relative;
   width: 24px;
   height: 75px;
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   /* Typography */
-  font-family: 'Cooper Std', 'Cooper Standard', serif;
+  font-family: $font-cooper;
   font-size: 10px;
   font-weight: bold;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   text-decoration: none;
-  
+
   /* Appearance */
   background: white;
   border: 1px solid #000;
   border-radius: 0 20px 0 0;
-  
+
   /* Behavior */
   cursor: pointer;
   user-select: none;
   padding: 2px 6px 2px 2px;
   margin: 0;
-  
+
   /* Reset unwanted styles */
   transform: none !important;
   transform-origin: center center;
@@ -68,29 +70,29 @@ body.game .sheet.app nav.sheet-tabs {
 }
 
 /* Tab hover state */
-.sheet-tabs a.item:hover {
+.cs-tabs a.item:hover {
   background: #f7f7f7;
   color: #3a2915;
 }
 
 /* Tab focus state */
-.sheet-tabs a.item:focus {
+.cs-tabs a.item:focus {
   outline: none !important;
   text-shadow: none !important;
   box-shadow: none;
 }
 
 /* Active tab */
-.sheet-tabs a.item.active {
+.cs-tabs a.item.active {
   background: #fff;
   color: #000;
   border: 1px solid #000;
   text-shadow: none !important;
   box-shadow: none;
-  z-index: 1000 !important;
+  z-index: var(--z-tab-active, 1000) !important;
 }
 
 /* Tab overlap - creates seamless appearance */
-.sheet-tabs a.item + .item {
+.cs-tabs a.item + .item {
   margin-top: -30px !important;
 }

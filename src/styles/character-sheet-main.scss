@@ -11,7 +11,6 @@
    ================================================================ */
 
 /* Brand colors used throughout the character sheet */
-$color-parchment: #b5ddb4 !default;  /* Main background color */
 $color-wood-dark: #704214 !default;  /* Placeholder text for input fields */
 $color-xp-progress: rgba(44, 24, 16, 0.2) !default;  /* XP progress bar overlay */
 
@@ -1211,7 +1210,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         transform: translateX(-50%);
         
         .cs-field-label {
-          font-family: "Cooper Std", serif !important;
+          font-family: $font-cooper !important;
           font-size: 14px;
           font-weight: bold;
           color: #2c1810;
@@ -1243,7 +1242,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         transform: translateX(-50%);
         
         .cs-field-label {
-          font-family: "Cooper Std", serif !important;
+          font-family: $font-cooper !important;
           font-size: 14px;
           font-weight: bold;
           color: #2c1810;
@@ -1291,7 +1290,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         transform: translateX(-50%);
         
         .cs-field-label {
-          font-family: "Cooper Std", serif !important;
+          font-family: $font-cooper !important;
           font-size: 14px;
           font-weight: bold;
           color: #2c1810;
@@ -1333,7 +1332,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
       .cs-field-label {
         font-size: 14px;
         font-weight: bold;
-        font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
+        font-family: $font-cooper !important;
         margin-bottom: 5px;
         color: #2c1810;
         text-align: center;
@@ -2139,7 +2138,7 @@ input[type="number"] {
   width: 706px;
   display: block;
   text-align: center;
-  font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
+  font-family: $font-cooper !important;
   font-size: 16px !important;
   color: black;;
   margin-bottom: 4px; /* 5px space between title and text field */

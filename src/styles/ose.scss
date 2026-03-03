@@ -1,3 +1,9 @@
+// ================================================================
+// Shared variables — defined before @imports so all partials can use them
+// ================================================================
+$color-parchment: #b5ddb4;  // Main background color
+$font-cooper: 'Cooper Std', 'Cooper Standard', Georgia, serif;  // Cooper Std with fallbacks
+
 // Import all component stylesheets
 @import 'gear';
 @import 'z-index';
@@ -7,22 +13,13 @@
 /* ================================================================
    OSP House Rules Font Configuration
    ================================================================
-   
+
    Primary Font: Handwritten
    - Stylish handwritten typeface for fantasy character sheets
-   - Adds personality and character to RPG sheets
-   - Aesthetic appropriate for fantasy gaming
-   
-   Tab Font: Cooper Standard
-   - Classic serif font for tab labels
-   - Professional and readable
-   
-   Fallback Chain:
-   1. 'Handwritten' - Primary choice for body text
-   2. cursive - Generic cursive fallback
-   3. 'Cooper Std' / 'Cooper Standard' - For tabs
-   4. serif - Generic serif fallback for tabs
-   
+
+   Tab Font: Cooper Standard ($font-cooper)
+   - Classic serif font for tab labels and headers
+
    ================================================================ */
 
 /* Cooper Standard Font - For Tabs */
@@ -72,25 +69,10 @@ form.osp button {
   font-family: handwritten !important;
 }
 
-/* Font loading and fallback management */
-@supports (font-family: handwritten) {
-  .osp {
-    font-family: handwritten !important;
-  }
-  
-  .osp div:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon),
-  .osp span:not(i),
-  .osp p,
-  .osp h1, .osp h2, .osp h3, .osp h4, .osp h5, .osp h6,
-  .osp label,
-  .osp a:not(.item-control) {
-    font-family: handwritten !important;
-  }
-}
-
 /* Override: Tabs use Cooper Standard instead of Handwritten */
-.sheet-tabs a.item {
-  font-family: 'Cooper Std', 'Cooper Standard', serif !important;
+/* Scoped to .cs-tabs so other dialogs (e.g. Prototype Token Config) are not affected */
+.cs-tabs a.item {
+  font-family: $font-cooper !important;
 }
 
 /* Override: Window header elements use Cooper Standard */
@@ -102,7 +84,7 @@ form.osp button {
 .application.window-app.sheet.actor.character.osp .window-header .window-minimize,
 .osp.sheet .window-header .window-close,
 .application.window-app.sheet.actor.character.osp .window-header .window-close {
-  font-family: 'Cooper Std', 'Cooper Standard', serif !important;
+  font-family: $font-cooper !important;
   font-size: 10px !important;
 }
 

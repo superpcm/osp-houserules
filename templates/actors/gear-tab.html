@@ -15,7 +15,7 @@
     <ol class="item-list">
       {{#each weapons as |item|}}
       <li class="item-entry item" data-item-id="{{item.id}}">
-        <div class="item-header flexrow {{#if item.isWeapon}}item-rollable{{/if}}">
+        <div class="item-header flexrow">
           <div class="item-image" style="background-image: url({{item.img}})"></div>
           <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
           <div class="field-short">{{item.system.damage}}</div>

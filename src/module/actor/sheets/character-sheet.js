@@ -150,6 +150,21 @@ export class OspActorSheetCharacter extends ActorSheet {
     });
   }
 
+  _getHeaderButtons() {
+    const buttons = super._getHeaderButtons();
+    // Guarantee the prototype token config button is present — it may not render
+    // in Foundry v13's AppV1 compatibility layer without an explicit override.
+    if (!buttons.find(b => b.class === 'configure-token')) {
+      buttons.unshift({
+        label: 'Token',
+        class: 'configure-token',
+        icon: 'fas fa-user-circle',
+        onclick: ev => this._onConfigureToken(ev)
+      });
+    }
+    return buttons;
+  }
+
   getData(options) {
     // If we're in the process of closing, don't render
     if (this._isClosing) {

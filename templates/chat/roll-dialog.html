@@ -1,0 +1,18 @@
+<form>
+  <div class="form-group">
+    <label>{{localize "OSE.Roll"}}</label>
+    <input type="text" name="formula" value="{{formula}}" disabled />
+  </div>
+  <div class="form-group">
+    <label>{{localize "OSE.Bonus"}}</label>
+    <input type="text" name="bonus" value="" placeholder="+0" />
+  </div>
+  <div class="form-group">
+    <label>{{localize "OSE.RollMode"}}</label>
+    <select name="rollMode">
+      {{#each rollModes as |label key|}}
+        <option value="{{key}}" {{#if (eq key ../rollMode)}}selected{{/if}}>{{localize label}}</option>
+      {{/each}}
+    </select>
+  </div>
+</form>

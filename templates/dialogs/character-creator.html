@@ -1,0 +1,30 @@
+<form class="osp character-creator">
+  <h2>{{localize "OSE.dialog.CharacterCreation"}}</h2>
+
+  <section class="ability-scores">
+    <h3>{{localize "OSE.AbilityScores"}}</h3>
+    {{#each scores}}
+      <div class="form-group score-row">
+        <label>{{label}}</label>
+        <input type="number" name="scores.{{key}}" value="{{value}}" min="3" max="18" />
+        <button type="button" class="score-roll" data-score="{{key}}" title="Roll 3d6">
+          <i class="fas fa-dice-d6"></i>
+        </button>
+      </div>
+    {{/each}}
+    <button type="button" class="roll-all">
+      <i class="fas fa-dice"></i> {{localize "OSE.dialog.RollAll"}}
+    </button>
+  </section>
+
+  <section class="starting-gold">
+    <h3>{{localize "OSE.dialog.StartingGold"}}</h3>
+    <div class="form-group">
+      <label>GP</label>
+      <input type="number" name="gold" value="0" min="0" />
+      <button type="button" class="roll-gold" title="Roll 3d6×10">
+        <i class="fas fa-dice-d6"></i>
+      </button>
+    </div>
+  </section>
+</form>

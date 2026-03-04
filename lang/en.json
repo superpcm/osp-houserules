@@ -16,17 +16,231 @@
     "Item": {
       "Type": {
         "weapon": "Weapon",
-        "armor": "Armor", 
+        "armor": "Armor",
         "item": "Item",
-        "container": "Container"
+        "container": "Container",
+        "coin": "Coin",
+        "clothing": "Clothing",
+        "ammunition": "Ammunition",
+        "livestock": "Livestock",
+        "ability": "Ability",
+        "spell": "Spell"
       },
       "Sheet": {
         "weapon": "Weapon Sheet",
         "armor": "Armor Sheet",
         "item": "Item Sheet",
-        "container": "Container Sheet"
+        "container": "Container Sheet",
+        "ability": "Ability Sheet",
+        "spell": "Spell Sheet"
       }
     },
     "ChooseType": "Choose Type"
+  },
+  "OSE": {
+    "Roll": "Roll",
+    "Cancel": "Cancel",
+    "Save": "Save",
+    "Bonus": "Bonus",
+    "RollMode": "Roll Mode",
+    "Attack": "Attack",
+    "Damage": "Damage",
+    "Total": "Total",
+    "Target": "Target",
+    "Name": "Name",
+    "Level": "Level",
+    "Score": "Score",
+    "Modifier": "Modifier",
+    "Attribute": "Attribute",
+    "HP": "HP",
+    "XP": "XP",
+    "AC": "AC",
+    "Class": "Class",
+    "Race": "Race",
+    "CurrentXP": "Current XP",
+    "NextLevel": "Next Level",
+    "Cost": "Cost",
+    "Quantity": "Qty",
+    "Character": "Character",
+    "Monster": "Monster",
+    "HitDice": "Hit Dice",
+    "THAC0": "THAC0",
+    "AbilityScores": "Ability Scores",
+    "Description": "Description",
+
+    "scores": {
+      "str": { "long": "Strength",     "short": "STR" },
+      "dex": { "long": "Dexterity",    "short": "DEX" },
+      "con": { "long": "Constitution", "short": "CON" },
+      "int": { "long": "Intelligence", "short": "INT" },
+      "wis": { "long": "Wisdom",       "short": "WIS" },
+      "cha": { "long": "Charisma",     "short": "CHA" }
+    },
+
+    "saves": {
+      "death":    { "short": "D", "long": "Death Ray / Poison" },
+      "wand":     { "short": "W", "long": "Magic Wands" },
+      "paralysis":{ "short": "P", "long": "Paralysis / Petrify" },
+      "breath":   { "short": "B", "long": "Dragon Breath" },
+      "spell":    { "short": "S", "long": "Rods, Staves, Spells" },
+      "magic":    { "short": "+Magic", "long": "Magic Save Bonus" }
+    },
+
+    "armor": {
+      "unarmored": "Unarmored",
+      "light":     "Light Armor",
+      "heavy":     "Heavy Armor",
+      "shield":    "Shield"
+    },
+
+    "colors": {
+      "green":  "Green",
+      "red":    "Red",
+      "yellow": "Yellow",
+      "purple": "Purple",
+      "blue":   "Blue",
+      "orange": "Orange",
+      "white":  "White"
+    },
+
+    "items": {
+      "Melee":     "Melee",
+      "Missile":   "Missile",
+      "Slow":      "Slow",
+      "TwoHanded": "Two-Handed",
+      "Blunt":     "Blunt",
+      "Brace":     "Brace",
+      "Splash":    "Splash",
+      "Reload":    "Reload",
+      "Charge":    "Charge"
+    },
+
+    "roll": {
+      "result": "Result",
+      "above":  "Above",
+      "below":  "Below"
+    },
+
+    "result": {
+      "Success": "Success!",
+      "Failure": "Failure!"
+    },
+
+    "alignment": {
+      "Lawful":  "Lawful",
+      "Neutral": "Neutral",
+      "Chaotic": "Chaotic"
+    },
+
+    "tab": {
+      "Description": "Description",
+      "Details":     "Details",
+      "Spells":      "Spells",
+      "Abilities":   "Abilities",
+      "Inventory":   "Inventory",
+      "Notes":       "Notes"
+    },
+
+    "item": {
+      "type": {
+        "Ability": "Ability",
+        "Spell":   "Spell"
+      },
+      "Requirements": "Requirements",
+      "Roll":         "Roll Formula",
+      "RollType":     "Roll Type",
+      "RollTarget":   "Target",
+      "Save":         "Save vs.",
+      "Blindroll":    "Blind Roll",
+      "SpellLevel":   "Spell Level",
+      "SpellClass":   "Class",
+      "Duration":     "Duration",
+      "Range":        "Range",
+      "Memorized":    "Memorized",
+      "Cast":         "Cast"
+    },
+
+    "messages": {
+      "ApplyDamage":             "Apply Damage",
+      "ApplyDamageDouble":       "Apply Double Damage",
+      "ApplyDamageHalf":         "Apply Half Damage",
+      "ApplyHealing":            "Apply Healing",
+      "NoDamageTarget":          "No tokens selected or targeted to apply damage to.",
+      "AttackSuccess":           "Hit (THAC0 {bonus}, needs {result} to miss)",
+      "AttackFailure":           "Miss (THAC0 {bonus})",
+      "AttackAscendingSuccess":  "Hit! (Roll: {result})",
+      "AttackAscendingFailure":  "Miss! (Need {bonus}+)"
+    },
+
+    "Setting": {
+      "Initiative":                       "Initiative Type",
+      "InitiativeHint":                   "Whether initiative is rolled per group or individually.",
+      "InitiativeIndividual":             "Individual",
+      "InitiativeGroup":                  "Group",
+      "RerollInitiative":                 "Initiative Re-Roll",
+      "RerollInitiativeHint":             "What happens to initiative at the start of each round.",
+      "RerollInitiativeKeep":             "Keep",
+      "RerollInitiativeReset":            "Reset",
+      "RerollInitiativeReroll":           "Re-Roll",
+      "AscendingAC":                      "Ascending AC",
+      "AscendingACHint":                  "Use Ascending AC (AAC) instead of descending AC.",
+      "Morale":                           "Morale",
+      "MoraleHint":                       "Enable morale checks for NPCs.",
+      "SignificantTreasure":              "Significant Treasure XP",
+      "SignificantTreasureHint":          "XP value above which treasure is considered significant.",
+      "ApplyDamageOption":                "Apply Damage To",
+      "ApplyDamageOptionHint":            "Which tokens receive damage when applying from chat.",
+      "ApplyDamageOptionSelected":        "Selected Tokens",
+      "ApplyDamageOptionTargeted":        "Targeted Tokens",
+      "ApplyDamageOptionOriginalTarget":  "Original Target",
+      "InvertedCtrlBehavior":             "Invert Ctrl Behavior",
+      "InvertedCtrlBehaviorHint":         "Invert whether Ctrl skips or shows roll dialogs.",
+      "IgnoreAttackBonusOnDamageRoll":    "Ignore Attack Bonus on Damage",
+      "IgnoreAttackBonusOnDamageRollHint":"Don't add attack bonus to damage rolls."
+    },
+
+    "combat": {
+      "SetGroups":     "Set Combat Groups",
+      "SetGroupsHint": "Assign combatants to initiative groups.",
+      "Group":         "Group"
+    },
+
+    "party": {
+      "title":    "Party Sheet",
+      "empty":    "Drag character actors here to add them to the party.",
+      "dropHint": "Drop actors here",
+      "remove":   "Remove from party",
+      "xp": {
+        "title":     "Distribute XP",
+        "deal":      "Deal XP",
+        "total":     "Total XP Earned",
+        "share":     "XP Share",
+        "perMember": "per member",
+        "dealt":     "Distributed {amount} XP to each party member."
+      }
+    },
+
+    "dialog": {
+      "CharacterCreation":   "Character Creation",
+      "RollAll":             "Roll All",
+      "StartingGold":        "Starting Gold",
+      "GpCost":              "Purchase Items",
+      "AvailableGP":         "Available GP",
+      "CartTotal":           "Cart Total",
+      "PurchaseAll":         "Purchase All",
+      "NotEnoughGP":         "Not enough gold to purchase all items.",
+      "NothingToPurchase":   "No unpurchased items found.",
+      "GpDeducted":          "Deducted {amount} GP.",
+      "Modifiers":           "Ability Modifiers",
+      "EntityTweaks":        "Entity Configuration"
+    },
+
+    "table": {
+      "treasure": {
+        "title": "Treasure Roll",
+        "roll":  "Roll Treasure",
+        "empty": "No treasure found."
+      }
+    }
   }
 }

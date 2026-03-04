@@ -1,0 +1,23 @@
+<div class="osp modifiers-dialog">
+  <h2>{{actor.name}} — {{localize "OSE.dialog.Modifiers"}}</h2>
+  <table class="modifiers-table">
+    <thead>
+      <tr>
+        <th>{{localize "OSE.Attribute"}}</th>
+        <th>{{localize "OSE.Score"}}</th>
+        <th>{{localize "OSE.Modifier"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each modifiers}}
+        <tr>
+          <td>{{label}}</td>
+          <td>{{score}}</td>
+          <td class="modifier {{#if (eq mod '+0')}}neutral{{else if (includes mod '+')}}positive{{else}}negative{{/if}}">
+            {{mod}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

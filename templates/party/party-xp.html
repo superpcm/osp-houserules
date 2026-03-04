@@ -1,0 +1,39 @@
+<form class="osp party-xp">
+  <div class="form-group">
+    <label>{{localize "OSE.party.xp.total"}}</label>
+    <input type="number" name="totalXP" value="{{totalXP}}" min="0" />
+  </div>
+
+  {{#if share}}
+    <p class="xp-share">{{localize "OSE.party.xp.share"}}: <strong>{{share}}</strong> XP {{localize "OSE.party.xp.perMember"}}</p>
+  {{/if}}
+
+  <table class="party-xp-table">
+    <thead>
+      <tr>
+        <th>{{localize "OSE.Name"}}</th>
+        <th>{{localize "OSE.Level"}}</th>
+        <th>{{localize "OSE.CurrentXP"}}</th>
+        <th>{{localize "OSE.party.xp.share"}}</th>
+        <th>{{localize "OSE.NextLevel"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each party}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{level}}</td>
+          <td>{{currentXP}}</td>
+          <td>+{{share}}</td>
+          <td>{{nextLevel}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <div class="form-footer">
+    <button type="button" class="deal-xp">
+      <i class="fas fa-star"></i> {{localize "OSE.party.xp.deal"}}
+    </button>
+  </div>
+</form>

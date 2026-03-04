@@ -1,6 +1,5 @@
 // ose.js - Main system entry point
 
-
 // Import system styles so the build produces dist/ose.css
 import "./styles/ose.scss";
 
@@ -11,7 +10,9 @@ window.DOMPurify = DOMPurify;
 // Import centralized configuration
 import { getNextLevelXP, calculateXPModifier } from "./config/classes.js";
 import { NumberFormatter } from "./module/ui/number-formatter.js";
+import { OSP } from "./module/config.js";
 
+// Core document classes
 import { OspActorSheetCharacter } from "./module/actor/sheets/character-sheet.js";
 import { OspActorSheetMonster } from "./module/actor/sheets/monster-sheet.js";
 import { PositionToolHandler } from "./module/actor/sheets/handlers/position-tool-handler.js";
@@ -19,36 +20,77 @@ import { OspActor } from "./module/actor/actor.js";
 import { OspItem } from "./module/item/item.js";
 import { OspItemSheet } from "./module/item/item-sheet.js";
 
+// Data models for new item types
+import OspDataModelAbility from "./module/item/data-model-ability.js";
+import OspDataModelSpell from "./module/item/data-model-spell.js";
+
+// Settings
+import { registerSettings } from "./module/settings.js";
+
+// Helper modules
+import { registerHelpers } from "./module/helpers-handlebars.js";
+import { preloadHandlebarsTemplates } from "./module/preloadTemplates.js";
+import { addChatMessageContextOptions, addChatMessageButtons } from "./module/helpers-chat.js";
+import { augmentTable } from "./module/helpers-treasure.js";
+import { createOspMacro, rollItemMacro, rollTableMacro } from "./module/helpers-macros.js";
+import { addControl as addPartyControl, update as updatePartySheet } from "./module/helpers-party.js";
+import OspDice from "./module/helpers-dice.js";
+
+// Combat system
+import OspCombat from "./module/combat/combat.js";
+import OspCombatant from "./module/combat/combatant.js";
+import OspCombatTracker from "./module/combat/combat-tracker.js";
+
+// Token ruler
+import { TokenRulerOSP } from "./module/actor/token-ruler.js";
+
 Hooks.once("init", () => {
-  console.log('🚨🚨🚨 OSP SYSTEM INIT - DIRECT POSITION TOOL FIX 🚨🚨🚨');
-  
-  // Make centralized config available globally for templates
-  window.OSP = {
-    getNextLevelXP,
-    calculateXPModifier,
-    NumberFormatter
-  };
-  
-  // Debug: Expose classes for testing
-  window.OSPDebug = {
-    OspActorSheetCharacter,
-    PositionToolHandler
+  // ── Config ────────────────────────────────────────────────────────────────
+  // Expose OSP config globally and alias as CONFIG.OSE so all OSE templates work
+  CONFIG.OSE = OSP;
+  window.OSP = OSP;
+
+  // Expose helper utilities globally for macros
+  game.osp = {
+    rollItemMacro,
+    rollTableMacro,
+    OspDice,
   };
 
-  console.log('🚨 Setting up DIRECT position tool auto-init... 🚨');
-  
-  // Configure Actor document classes
+  // Expose classes for debugging
+  window.OSPDebug = { OspActorSheetCharacter, PositionToolHandler };
+
+  // Make classic helpers available globally (for templates / macros)
+  window.OSPLegacy = { getNextLevelXP, calculateXPModifier, NumberFormatter };
+
+  // ── Settings ──────────────────────────────────────────────────────────────
+  registerSettings();
+
+  // ── Handlebars helpers ────────────────────────────────────────────────────
+  registerHelpers();
+
+  // ── Document Classes ──────────────────────────────────────────────────────
   CONFIG.Actor.documentClass = OspActor;
   CONFIG.Actor.label = game.i18n.localize("ose.Actor.documentLabel");
-
-  // Configure Item document classes
   CONFIG.Item.documentClass = OspItem;
 
-  // Unregister core sheets
+  // ── Combat ────────────────────────────────────────────────────────────────
+  CONFIG.Combat.documentClass = OspCombat;
+  CONFIG.Combatant.documentClass = OspCombatant;
+  CONFIG.ui.combat = OspCombatTracker;
+
+  // ── Token Ruler ───────────────────────────────────────────────────────────
+  CONFIG.Token.rulerClass = TokenRulerOSP;
+
+  // ── TypeDataModels for new item types ────────────────────────────────────
+  CONFIG.Item.dataModels = CONFIG.Item.dataModels ?? {};
+  CONFIG.Item.dataModels.ability = OspDataModelAbility;
+  CONFIG.Item.dataModels.spell = OspDataModelSpell;
+
+  // ── Sheets ────────────────────────────────────────────────────────────────
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
 
-  // Register Actor sheets
   foundry.documents.collections.Actors.registerSheet("ose", OspActorSheetCharacter, {
     types: ["character"],
     makeDefault: true,
@@ -60,37 +102,20 @@ Hooks.once("init", () => {
     label: game.i18n.localize("ose.Actor.Type.monster")
   });
 
-  // Register Item sheets
   foundry.documents.collections.Items.registerSheet("ose", OspItemSheet, {
-    types: ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock"],
+    types: ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock", "ability", "spell"],
     makeDefault: true,
     label: "OSP Item Sheet"
   });
-
-  console.log('🚨 OSP SYSTEM: About to set up position tool hooks 🚨');
   
-  // DISABLED: Hook-based position tool initialization (causes duplicates)
-  // Position tool is now properly initialized in character sheet activateListeners
-  /*
-  Hooks.on('renderApplication', (app, html, data) => {
-    // This hook has been disabled to prevent duplicate position tool handlers
-    // Position tool initialization is handled in character-sheet.js ensurePositionToolHandler()
-  });
-  */
-
-  // DISABLED: Timer-based position tool check (causes duplicates)
-  // Position tool is now properly initialized in character sheet activateListeners
-  /*
-  const positionToolTimer = setInterval(() => {
-    // This timer has been disabled to prevent duplicate position tool handlers
-    // Position tool initialization is handled in character-sheet.js ensurePositionToolHandler()
-  }, 3000);
-  */
-
+  // ── Type labels ───────────────────────────────────────────────────────────
   CONFIG.Actor.typeLabels = {
     character: game.i18n.localize("ose.Actor.Type.character"),
     monster: game.i18n.localize("ose.Actor.Type.monster")
   };
+
+  // ── Preload templates ────────────────────────────────────────────────────
+  preloadHandlebarsTemplates();
 
   Hooks.on("renderActorConfig", (app, html, data) => {
     const $html = $(html);
@@ -119,6 +144,23 @@ Hooks.once("init", () => {
   });
 
 
+});
+
+// ── Party system hooks ─────────────────────────────────────────────────────
+Hooks.on("renderActorDirectory", (app, html) => addPartyControl(app, html));
+Hooks.on("updateActor", (actor, data) => updatePartySheet(actor, data));
+
+// ── Chat hooks ────────────────────────────────────────────────────────────
+Hooks.on("getChatMessageContextOptions", addChatMessageContextOptions);
+Hooks.on("renderChatMessage", addChatMessageButtons);
+
+// ── Treasure table hooks ──────────────────────────────────────────────────
+Hooks.on("renderRollTableConfig", (app, html) => augmentTable(app, html[0] ?? html));
+
+// ── Macro drop hook ──────────────────────────────────────────────────────
+Hooks.on("hotbarDrop", async (bar, data, slot) => {
+  if (data.type === "Item") return createOspMacro(data, slot);
+  return true;
 });
 
 // Register a Handlebars helper for range

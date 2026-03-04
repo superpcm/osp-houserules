@@ -1,0 +1,40 @@
+<form class="osp gp-cost">
+  <div class="gp-summary">
+    <span>{{localize "OSE.dialog.AvailableGP"}}: <strong>{{totalGP}} GP</strong></span>
+    <span>{{localize "OSE.dialog.CartTotal"}}: <strong>{{cartTotal}} GP</strong></span>
+  </div>
+
+  {{#if purchasableItems.length}}
+    <table class="purchase-items">
+      <thead>
+        <tr>
+          <th>{{localize "OSE.Name"}}</th>
+          <th>{{localize "OSE.Cost"}}</th>
+          <th>{{localize "OSE.Quantity"}}</th>
+          <th>{{localize "OSE.Total"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each purchasableItems}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{cost}} GP</td>
+            <td>{{quantity}}</td>
+            <td>{{totalCost}} GP</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <div class="form-footer">
+      <button type="button" class="purchase-all" {{#unless canAfford}}disabled{{/unless}}>
+        <i class="fas fa-coins"></i> {{localize "OSE.dialog.PurchaseAll"}}
+      </button>
+      {{#unless canAfford}}
+        <p class="warning">{{localize "OSE.dialog.NotEnoughGP"}}</p>
+      {{/unless}}
+    </div>
+  {{else}}
+    <p>{{localize "OSE.dialog.NothingToPurchase"}}</p>
+  {{/if}}
+</form>

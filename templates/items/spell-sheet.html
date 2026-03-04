@@ -1,0 +1,69 @@
+<form class="osp sheet item spell-sheet" autocomplete="off">
+  <header class="sheet-header">
+    <img class="item-portrait" src="{{img}}" data-edit="img" title="{{name}}" />
+    <div class="header-fields">
+      <h1 class="item-name">
+        <input name="name" type="text" value="{{name}}" placeholder="{{localize 'OSE.Name'}}" />
+      </h1>
+      <div class="item-subtitle">
+        {{localize "OSE.item.type.Spell"}}
+        {{#if system.lvl}}— {{localize "OSE.Level"}} {{system.lvl}}{{/if}}
+        {{#if system.class}}({{system.class}}){{/if}}
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="description">{{localize "OSE.tab.Description"}}</a>
+    <a class="item" data-tab="details">{{localize "OSE.tab.Details"}}</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab active" data-group="primary" data-tab="description">
+      <div class="form-group editor">
+        <label>{{localize "OSE.Description"}}</label>
+        <div class="editor-content" data-edit="system.description">{{system.description}}</div>
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="details">
+      <div class="form-group">
+        <label>{{localize "OSE.item.SpellLevel"}}</label>
+        <input type="number" name="system.lvl" value="{{system.lvl}}" min="1" max="9" />
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.SpellClass"}}</label>
+        <input type="text" name="system.class" value="{{system.class}}" placeholder="Magic-User, Cleric…" />
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.Duration"}}</label>
+        <input type="text" name="system.duration" value="{{system.duration}}" />
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.Range"}}</label>
+        <input type="text" name="system.range" value="{{system.range}}" />
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.Save"}}</label>
+        <select name="system.save">
+          <option value="">—</option>
+          {{#each config.saves_long as |label key|}}
+            <option value="{{key}}" {{#if (eq key ../system.save)}}selected{{/if}}>{{localize label}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.Roll"}}</label>
+        <input type="text" name="system.roll" value="{{system.roll}}" placeholder="e.g. 1d6" />
+      </div>
+      <div class="form-group checkbox">
+        <label>{{localize "OSE.item.Memorized"}}</label>
+        <input type="checkbox" name="system.memorized" {{#if system.memorized}}checked{{/if}} />
+      </div>
+      <div class="form-group checkbox">
+        <label>{{localize "OSE.item.Cast"}}</label>
+        <input type="checkbox" name="system.cast" {{#if system.cast}}checked{{/if}} />
+      </div>
+    </div>
+  </section>
+</form>

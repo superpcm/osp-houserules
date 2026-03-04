@@ -1,0 +1,28 @@
+<div class="osp chat-card roll-treasure">
+  <h3><i class="fas fa-gem"></i> {{localize "OSE.table.treasure.title"}}</h3>
+
+  {{#if treasure}}
+    <ul class="treasure-results">
+      {{#each treasure}}
+        <li class="treasure-item">
+          {{#if this.img}}
+            <img src="{{this.img}}" class="treasure-img" width="24" height="24" />
+          {{/if}}
+          <span class="treasure-text">{{{this.text}}}</span>
+          {{#if this.treasure}}
+            <ul class="treasure-sub">
+              {{#each this.treasure}}
+                <li>
+                  {{#if this.img}}<img src="{{this.img}}" width="16" height="16" />{{/if}}
+                  {{{this.text}}}
+                </li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p>{{localize "OSE.table.treasure.empty"}}</p>
+  {{/if}}
+</div>

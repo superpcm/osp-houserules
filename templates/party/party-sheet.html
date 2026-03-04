@@ -1,0 +1,37 @@
+<form class="osp party-sheet">
+  <header class="sheet-header">
+    <h1>{{localize "OSE.party.title"}}</h1>
+    <div class="header-actions">
+      <button type="button" class="deal-xp" title="{{localize 'OSE.party.xp.deal'}}">
+        <i class="fas fa-star"></i> {{localize "OSE.party.xp.deal"}}
+      </button>
+    </div>
+  </header>
+
+  <div class="party-members" data-drop-target="true">
+    {{#if party.length}}
+      {{#each party}}
+        <div class="party-member" data-actor-id="{{id}}">
+          <img src="{{img}}" class="party-portrait" width="36" height="36" />
+          <div class="party-member-info">
+            <span class="party-member-name" data-actor-id="{{id}}">{{name}}</span>
+            <span class="party-member-class">{{class}} {{localize "OSE.Level"}} {{level}}</span>
+          </div>
+          <div class="party-member-stats">
+            <span title="{{localize 'OSE.HP'}}">{{hp}}/{{maxHp}}</span>
+            <span title="{{localize 'OSE.XP'}}">{{xp}} XP</span>
+          </div>
+          <button type="button" class="remove-from-party" data-actor-id="{{id}}" title="{{localize 'OSE.party.remove'}}">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      {{/each}}
+    {{else}}
+      <p class="party-empty">{{localize "OSE.party.empty"}}</p>
+    {{/if}}
+  </div>
+
+  <footer class="sheet-footer">
+    <p class="drop-hint">{{localize "OSE.party.dropHint"}}</p>
+  </footer>
+</form>

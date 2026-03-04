@@ -1,0 +1,25 @@
+<div class="osp chat-card roll-result">
+  {{#if title}}
+    <h3 class="roll-title">{{title}}</h3>
+  {{/if}}
+  {{#if flavor}}
+    <p class="roll-flavor">{{flavor}}</p>
+  {{/if}}
+
+  <div class="roll-display">
+    {{{rollOSE}}}
+  </div>
+
+  {{#if result}}
+    <div class="roll-outcome {{#if result.isSuccess}}success{{/if}}{{#if result.isFailure}}failure{{/if}}">
+      {{#if result.isSuccess}}
+        <i class="fas fa-check-circle"></i> {{localize "OSE.result.Success"}}
+      {{else if result.isFailure}}
+        <i class="fas fa-times-circle"></i> {{localize "OSE.result.Failure"}}
+      {{/if}}
+      {{#if result.details}}
+        <span class="result-details">{{result.details}}</span>
+      {{/if}}
+    </div>
+  {{/if}}
+</div>

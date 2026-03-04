@@ -1,0 +1,53 @@
+<form class="osp entity-tweaks">
+  <h2>{{localize "OSE.dialog.EntityTweaks"}}: {{actor.name}}</h2>
+
+  {{#if isCharacter}}
+    <section class="tweak-section">
+      <h3>{{localize "OSE.Character"}}</h3>
+
+      <div class="form-group">
+        <label>{{localize "OSE.Class"}}</label>
+        <input type="text" name="system.class" value="{{system.class}}" />
+      </div>
+
+      <div class="form-group">
+        <label>{{localize "OSE.Level"}}</label>
+        <input type="number" name="system.level" value="{{system.level}}" min="1" max="14" />
+      </div>
+
+      <div class="form-group">
+        <label>{{localize "OSE.Race"}}</label>
+        <input type="text" name="system.race" value="{{system.race}}" />
+      </div>
+
+      <div class="form-group">
+        <label>{{localize "OSE.Alignment"}}</label>
+        <select name="system.alignment">
+          <option value="lawful" {{#if (eq system.alignment 'lawful')}}selected{{/if}}>{{localize "OSE.alignment.Lawful"}}</option>
+          <option value="neutral" {{#if (eq system.alignment 'neutral')}}selected{{/if}}>{{localize "OSE.alignment.Neutral"}}</option>
+          <option value="chaotic" {{#if (eq system.alignment 'chaotic')}}selected{{/if}}>{{localize "OSE.alignment.Chaotic"}}</option>
+        </select>
+      </div>
+    </section>
+  {{/if}}
+
+  {{#if isMonster}}
+    <section class="tweak-section">
+      <h3>{{localize "OSE.Monster"}}</h3>
+
+      <div class="form-group">
+        <label>{{localize "OSE.HitDice"}}</label>
+        <input type="text" name="system.hitdice" value="{{system.hitdice}}" />
+      </div>
+
+      <div class="form-group">
+        <label>{{localize "OSE.THAC0"}}</label>
+        <input type="number" name="system.thaco" value="{{system.thaco}}" />
+      </div>
+    </section>
+  {{/if}}
+
+  <div class="form-footer">
+    <button type="submit"><i class="fas fa-save"></i> {{localize "OSE.Save"}}</button>
+  </div>
+</form>

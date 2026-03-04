@@ -1,0 +1,46 @@
+<div class="osp chat-card roll-attack">
+  {{#if title}}
+    <h3 class="roll-title">{{title}}</h3>
+  {{/if}}
+  {{#if flavor}}
+    <p class="roll-flavor">{{flavor}}</p>
+  {{/if}}
+
+  <div class="attack-roll">
+    <h4>{{localize "OSE.Attack"}}</h4>
+    <div class="roll-display">
+      {{{rollOSE}}}
+    </div>
+  </div>
+
+  {{#if result}}
+    <div class="roll-outcome {{#if result.isSuccess}}success{{/if}}{{#if result.isFailure}}failure{{/if}}">
+      {{#if result.isSuccess}}
+        <i class="fas fa-check-circle"></i> {{localize "OSE.result.Success"}}
+      {{else if result.isFailure}}
+        <i class="fas fa-times-circle"></i> {{localize "OSE.result.Failure"}}
+      {{/if}}
+      {{#if result.details}}
+        <span class="result-details">{{result.details}}</span>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  {{#if result.isSuccess}}
+    <div class="damage-roll">
+      <h4>{{localize "OSE.Damage"}}</h4>
+      <div class="roll-display">
+        {{{rollDamage}}}
+      </div>
+      {{#if result.dmg}}
+        <div class="damage-total"><strong>{{localize "OSE.Total"}}:</strong> {{result.dmg}}</div>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  {{#if result.victim}}
+    <div class="target-info">
+      <span class="target-name">{{localize "OSE.Target"}}: {{result.victim.name}}</span>
+    </div>
+  {{/if}}
+</div>

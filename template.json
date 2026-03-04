@@ -79,7 +79,7 @@
     }
   },
   "Item": {
-    "types": ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock"],
+    "types": ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock", "ability", "spell"],
     "templates": {
       "base": {
         "description": "",
@@ -161,6 +161,14 @@
       "system": {
         "animalType": ""
       }
+    },
+    "ability": {
+      "templates": [],
+      "system": {}
+    },
+    "spell": {
+      "templates": [],
+      "system": {}
     }
   }
 }

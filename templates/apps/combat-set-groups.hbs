@@ -1,0 +1,33 @@
+<div class="osp combat-set-groups">
+  <p class="instructions">{{localize "OSE.combat.SetGroupsHint"}}</p>
+
+  <table class="combatant-groups">
+    <thead>
+      <tr>
+        <th>{{localize "OSE.Name"}}</th>
+        <th>{{localize "OSE.combat.Group"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each combatants}}
+        <tr data-combatant-id="{{id}}">
+          <td class="combatant-name">
+            <img src="{{img}}" width="24" height="24" />
+            {{name}}
+          </td>
+          <td class="group-selector">
+            {{#each ../groups as |label color|}}
+              <button type="button"
+                class="group-btn group-{{color}} {{#if (eq color ../group)}}active{{/if}}"
+                data-action="setGroup"
+                data-group="{{color}}"
+                title="{{label}}">
+                {{label}}
+              </button>
+            {{/each}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

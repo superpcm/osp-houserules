@@ -1,0 +1,61 @@
+<form class="osp sheet item ability-sheet" autocomplete="off">
+  <header class="sheet-header">
+    <img class="item-portrait" src="{{img}}" data-edit="img" title="{{name}}" />
+    <div class="header-fields">
+      <h1 class="item-name">
+        <input name="name" type="text" value="{{name}}" placeholder="{{localize 'OSE.Name'}}" />
+      </h1>
+      <div class="item-subtitle">{{localize "OSE.item.type.Ability"}}</div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="description">{{localize "OSE.tab.Description"}}</a>
+    <a class="item" data-tab="details">{{localize "OSE.tab.Details"}}</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab active" data-group="primary" data-tab="description">
+      <div class="form-group editor">
+        <label>{{localize "OSE.Description"}}</label>
+        <div class="editor-content" data-edit="system.description">{{system.description}}</div>
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="details">
+      <div class="form-group">
+        <label>{{localize "OSE.item.Requirements"}}</label>
+        <input type="text" name="system.requirements" value="{{system.requirements}}" />
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.Roll"}}</label>
+        <input type="text" name="system.roll" value="{{system.roll}}" placeholder="e.g. 2d6" />
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.RollType"}}</label>
+        <select name="system.rollType">
+          <option value="result" {{#if (eq system.rollType 'result')}}selected{{/if}}>{{localize "OSE.roll.result"}}</option>
+          <option value="above" {{#if (eq system.rollType 'above')}}selected{{/if}}>{{localize "OSE.roll.above"}}</option>
+          <option value="below" {{#if (eq system.rollType 'below')}}selected{{/if}}>{{localize "OSE.roll.below"}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.RollTarget"}}</label>
+        <input type="number" name="system.rollTarget" value="{{system.rollTarget}}" />
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.Save"}}</label>
+        <select name="system.save">
+          <option value="">—</option>
+          {{#each config.saves_long as |label key|}}
+            <option value="{{key}}" {{#if (eq key ../system.save)}}selected{{/if}}>{{localize label}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{localize "OSE.item.Blindroll"}}</label>
+        <input type="checkbox" name="system.blindroll" {{#if system.blindroll}}checked{{/if}} />
+      </div>
+    </div>
+  </section>
+</form>

@@ -31,7 +31,7 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
       // Return this to satisfy the promise but don't actually render the sheet
       return this;
     }
-    
+
     // For other types (abilities, spells, etc.), use traditional sheet
     return super.render(force, options);
   }
@@ -45,24 +45,24 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
   /** @override */
   getData() {
     const context = super.getData();
-    
+
     // Add the item's system data for easy access
     context.system = this.item.system;
     context.flags = this.item.flags;
-    
+
     // Ensure img is available
     context.img = this.item.img;
     context.name = this.item.name;
-    
+
     // Add GM status for conditional editing
     context.isGM = game.user.isGM;
-    
-    // Add configuration data
-    context.config = {
+
+    // Add configuration data (merge OSE/OSP config so templates can access saves_long etc.)
+    context.config = foundry.utils.mergeObject(CONFIG.OSE ?? {}, {
       damageTypes: ["d4", "d6", "d8", "d10", "d12"],
       armorTypes: ["light", "medium", "heavy"],
       weaponTypes: ["melee", "missile", "both"]
-    };
+    });
 
     return context;
   }
@@ -96,10 +96,7 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     try {
       // Check if there are any positionable elements first
       const positionableElements = html.find('[class*="is-pos-"]');
-      if (positionableElements.length === 0) {
-        console.log('ItemSheet: No positionable elements found (no is-pos-* classes), skipping position tool');
-        return;
-      }
+      if (positionableElements.length === 0) return;
 
       if (this.handlers.has('positionTool')) {
         const existingHandler = this.handlers.get('positionTool');
@@ -108,12 +105,10 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
         }
         this.handlers.delete('positionTool');
       }
-      
+
       const handler = new ItemPositionToolHandler(html, this.item);
       handler.initialize();
       this.handlers.set('positionTool', handler);
-      
-      console.log('ItemSheet: Position tool handler initialized successfully');
     } catch (error) {
       console.error('ItemSheet: Failed to initialize position tool handler:', error);
     }
@@ -124,18 +119,10 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
    */
   _setupSizeTooltip(html) {
     const sizeElement = html.find('.is-pos-size');
-    if (!sizeElement || sizeElement.length === 0) {
-      console.log('ItemSheet: Size element not found');
-      return;
-    }
+    if (!sizeElement || sizeElement.length === 0) return;
 
     const storedSize = this.item.system.storedSize;
-    if (!storedSize) {
-      console.log('ItemSheet: No storedSize value found');
-      return;
-    }
-
-    console.log('ItemSheet: Setting up size tooltip with storedSize:', storedSize);
+    if (!storedSize) return;
 
     // Create tooltip element
     let tooltip = document.getElementById('item-size-tooltip');
@@ -158,29 +145,25 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
         white-space: nowrap;
       `;
       document.body.appendChild(tooltip);
-      console.log('ItemSheet: Created tooltip element');
     }
 
     let tooltipTimeout;
 
     // Attach events to the size select element
     sizeElement.on('mouseenter', (e) => {
-      console.log('ItemSheet: Size field mouseenter');
       clearTimeout(tooltipTimeout);
       tooltipTimeout = setTimeout(() => {
         tooltip.textContent = `Stored Size: ${storedSize}`;
-        
+
         const rect = e.currentTarget.getBoundingClientRect();
         tooltip.style.left = (rect.left + rect.width / 2) + 'px';
         tooltip.style.top = (rect.top - 30) + 'px';
         tooltip.style.transform = 'translateX(-50%)';
         tooltip.style.opacity = '1';
-        console.log('ItemSheet: Tooltip shown');
       }, 500);
     });
 
     sizeElement.on('mouseleave', () => {
-      console.log('ItemSheet: Size field mouseleave');
       clearTimeout(tooltipTimeout);
       tooltip.style.opacity = '0';
     });
@@ -191,12 +174,7 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
    */
   _setupEquippedTooltip(html) {
     const equippedWrapper = html.find('.is-pos-equipped-checkbox');
-    if (!equippedWrapper || equippedWrapper.length === 0) {
-      console.log('ItemSheet: Equipped checkbox not found');
-      return;
-    }
-
-    console.log('ItemSheet: Setting up equipped checkbox tooltip');
+    if (!equippedWrapper || equippedWrapper.length === 0) return;
 
     // Create tooltip element
     let tooltip = document.getElementById('item-equipped-tooltip');
@@ -219,28 +197,24 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
         white-space: nowrap;
       `;
       document.body.appendChild(tooltip);
-      console.log('ItemSheet: Created equipped tooltip element');
     }
 
     let tooltipTimeout;
 
     equippedWrapper.on('mouseenter', (e) => {
-      console.log('ItemSheet: Equipped checkbox mouseenter');
       clearTimeout(tooltipTimeout);
       tooltipTimeout = setTimeout(() => {
         tooltip.textContent = 'Equip/Unequip';
-        
+
         const rect = e.currentTarget.getBoundingClientRect();
         tooltip.style.left = (rect.left + rect.width / 2) + 'px';
         tooltip.style.top = (rect.top - 30) + 'px';
         tooltip.style.transform = 'translateX(-50%)';
         tooltip.style.opacity = '1';
-        console.log('ItemSheet: Equipped tooltip shown');
       }, 500);
     });
 
     equippedWrapper.on('mouseleave', () => {
-      console.log('ItemSheet: Equipped checkbox mouseleave');
       clearTimeout(tooltipTimeout);
       tooltip.style.opacity = '0';
     });
@@ -252,7 +226,7 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     if (!formData.name || formData.name.trim() === "") {
       formData.name = this.item.name || "Unnamed Item";
     }
-    
+
     return super._updateObject(event, formData);
   }
 
@@ -265,7 +239,7 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     event.preventDefault();
     const button = event.currentTarget;
     const action = button.dataset.action;
-    
+
     if (action === "add") {
       const input = button.previousElementSibling;
       const tag = input.value.trim();

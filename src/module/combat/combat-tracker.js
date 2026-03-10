@@ -1,7 +1,7 @@
 /**
  * @file OSP Combat Tracker - extends Foundry CombatTracker to show group headers
  */
-export default class OspCombatTracker extends CombatTracker {
+export default class OspCombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
   /** @override */
   async getData(options = {}) {
     const data = await super.getData(options);

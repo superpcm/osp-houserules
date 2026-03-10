@@ -152,7 +152,7 @@ Hooks.on("updateActor", (actor, data) => updatePartySheet(actor, data));
 
 // ── Chat hooks ────────────────────────────────────────────────────────────
 Hooks.on("getChatMessageContextOptions", addChatMessageContextOptions);
-Hooks.on("renderChatMessage", addChatMessageButtons);
+Hooks.on("renderChatMessageHTML", addChatMessageButtons);
 
 // ── Treasure table hooks ──────────────────────────────────────────────────
 Hooks.on("renderRollTableConfig", (app, html) => augmentTable(app, html[0] ?? html));

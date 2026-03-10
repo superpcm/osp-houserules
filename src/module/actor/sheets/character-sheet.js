@@ -208,6 +208,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const allItems = this.actor.items.filter(i => i.type === "item");
     const allWeapons = this.actor.items.filter(i => i.type === "weapon");
     const allArmor = this.actor.items.filter(i => i.type === "armor");
+    const allAmmunition = this.actor.items.filter(i => i.type === "ammunition");
     
     // Filter top-level clothing items (equipped, not in containers)
     const topLevelClothing = allItems.filter(item => 
@@ -227,13 +228,15 @@ export class OspActorSheetCharacter extends ActorSheet {
         const containedItems = allItems.filter(i => i.system.containerId === item.id);
         const containedWeapons = allWeapons.filter(w => w.system.containerId === item.id);
         const containedArmor = allArmor.filter(a => a.system.containerId === item.id);
+        const containedAmmunition = allAmmunition.filter(a => a.system.containerId === item.id);
         const containedContainers = allContainers.filter(c => c.system.containerId === item.id);
         const containedClothing = topLevelClothing.filter(c => c.system.containerId === item.id);
-        
+
         const allContainedItems = [
           ...containedItems,
           ...containedWeapons,
           ...containedArmor,
+          ...containedAmmunition,
           ...containedContainers,
           ...containedClothing
         ];
@@ -281,17 +284,19 @@ export class OspActorSheetCharacter extends ActorSheet {
         ...container
       };
       
-      // Find ALL items in this container - items, weapons, armor, AND nested containers
+      // Find ALL items in this container - items, weapons, armor, ammunition, AND nested containers
       const containedItems = allItems.filter(item => item.system.containerId === container.id);
       const containedWeapons = allWeapons.filter(weapon => weapon.system.containerId === container.id);
       const containedArmor = allArmor.filter(armor => armor.system.containerId === container.id);
+      const containedAmmunition = allAmmunition.filter(ammo => ammo.system.containerId === container.id);
       const containedContainers = allContainers.filter(c => c.system.containerId === container.id);
-      
+
       // Combine all contained items
       const allContainedItems = [
         ...containedItems,
         ...containedWeapons,
         ...containedArmor,
+        ...containedAmmunition,
         ...containedContainers
       ];
       
@@ -305,27 +310,13 @@ export class OspActorSheetCharacter extends ActorSheet {
         const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
         const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
         const storedSize = parseFloat(item.system.storedSize) || 0;
-        const maxQuantity = item;
-        
+
         // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
         item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
-        
-        // Calculate display capacity based on item type
-        let itemCapacity;
-        if (item.type === "coin") {
-          // Coins: each coin takes storedSize slots
-          itemCapacity = storedSize * currentQuantity;
-        } else if (maxQuantity > 0) {
-          // Stackable item with max > 0: calculate proportionally
-          itemCapacity = (storedSize / maxQuantity) * currentQuantity;
-        } else if (currentQuantity > 1) {
-          // Item with quantity > 1 but max = 0: multiply by quantity (unlimited stacking)
-          itemCapacity = storedSize * currentQuantity;
-        } else {
-          // Non-stackable item with quantity = 1: use storedSize as-is
-          itemCapacity = storedSize;
-        }
-        item.displayCapacity = Math.round(itemCapacity); // Round to whole number
+
+        // Capacity: storedSize is per-unit; coins use same logic
+        const itemCapacity = storedSize * currentQuantity;
+        item.displayCapacity = Math.round(itemCapacity * 10) / 10;
         
         // Separate lashed from stored items
         if (item.system.lashed) {
@@ -347,34 +338,14 @@ export class OspActorSheetCharacter extends ActorSheet {
       containerData.totalWeight = containerWeight + containedWeight;
       
       // Calculate used capacity: ONLY stored items count, not lashed items
-      // For coins: storedSize * quantity (each coin takes 0.04 slots)
-      // For stackable items (with max > 0): (storedSize / max) * currentQuantity
-      // For non-stackable items: storedSize as-is
+      // storedSize is per-unit; multiply by quantity for all item types
       const usedCapacity = storedItems.reduce((total, item) => {
         const storedSize = parseFloat(item.system.storedSize) || 0;
         const currentQuantity = item.system.quantity || 1;
-        const maxQuantity = item;
-        
-        let itemCapacity;
-        if (item.type === "coin") {
-          // Coins: each coin takes storedSize slots
-          itemCapacity = storedSize * currentQuantity;
-        } else if (maxQuantity > 0) {
-          // Stackable item with max > 0: calculate proportionally
-          itemCapacity = (storedSize / maxQuantity) * currentQuantity;
-        } else if (currentQuantity > 1) {
-          // Item with quantity > 1 but max = 0: multiply by quantity (unlimited stacking)
-          itemCapacity = storedSize * currentQuantity;
-        } else {
-          // Non-stackable item with quantity = 1: use storedSize as-is
-          itemCapacity = storedSize;
-        }
-        
-        return total + itemCapacity;
+        return total + storedSize * currentQuantity;
       }, 0);
-      
-      // Round capacity values to whole numbers
-      containerData.usedCapacity = Math.round(usedCapacity);
+
+      containerData.usedCapacity = Math.round(usedCapacity * 10) / 10;
       
       // Handle capacity as either a number or an object {type, value, max}
       let maxCapacity = 0;
@@ -407,18 +378,20 @@ export class OspActorSheetCharacter extends ActorSheet {
     });
     
     // Only show items that are NOT in containers AND are not containers or clothing themselves
-    const generalItems = allItems.filter(item => !item.system.containerId && item.type !== 'container' && item.type !== 'clothing');
-    
+    const freeItems = allItems.filter(item => !item.system.containerId && item.type !== 'container' && item.type !== 'clothing');
+    const freeAmmunition = allAmmunition.filter(ammo => !ammo.system.containerId);
+    const generalItems = [...freeItems, ...freeAmmunition];
+
     // Calculate displayWeight for general items
     generalItems.forEach(item => {
       // Handle both 'unitWeight' and 'weight' field names
       const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
       const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
-      
+
       // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
     });
-    
+
     context.items = generalItems;
     
     context.treasures = this.actor.system.treasures || [];
@@ -890,14 +863,16 @@ export class OspActorSheetCharacter extends ActorSheet {
    * @param {Object} formData - The form data being submitted
    */
   async _updateObject(event, formData) {
-    // Call the parent class update method
+    // Keep actor.img (sidebar icon) in sync with system.portrait
+    const newPortrait = formData["system.portrait"];
+    if (newPortrait && newPortrait !== this.actor.img) {
+      formData["img"] = newPortrait;
+    }
+
     const result = await super._updateObject(event, formData);
 
-    // Force the actor to recalculate derived data
     if (this.actor) {
       this.actor.prepareDerivedData();
-
-      // Re-render the sheet to show updated values
       this.render(false);
     }
 
@@ -1643,26 +1618,11 @@ export class OspActorSheetCharacter extends ActorSheet {
     const maxCapacity = capacity;
     const usedCapacity = this._getUsedCapacity(container);
     
-    // Calculate the space needed for the item being added
+    // Calculate the space needed for the item being added; storedSize is per-unit
     const storedSize = parseFloat(itemData.system.storedSize) || 0;
     const currentQuantity = itemData.system.quantity || 1;
-    const maxQuantity = itemData;
-    
-    let itemSize;
-    if (itemData.type === "coin") {
-      // Coins: each coin takes storedSize slots
-      itemSize = storedSize * currentQuantity;
-    } else if (maxQuantity > 0) {
-      // Stackable item with max > 0: calculate proportionally
-      itemSize = (storedSize / maxQuantity) * currentQuantity;
-    } else if (currentQuantity > 1) {
-      // Item with quantity > 1 but max = 0: multiply by quantity (unlimited stacking)
-      itemSize = storedSize * currentQuantity;
-    } else {
-      // Non-stackable item with quantity = 1: use storedSize as-is
-      itemSize = storedSize;
-    }
-    
+    const itemSize = storedSize * currentQuantity;
+
     return (usedCapacity + itemSize) <= maxCapacity;
   }
 
@@ -1679,37 +1639,14 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Calculate used capacity in a container
    */
   _getUsedCapacity(container) {
-    let total = 0;
-    
-    // Find all items in this container (ONLY stored items, not lashed items)
-    const itemsInContainer = this.actor.items.filter(item => 
-      item.system.containerId === container.id && !item.system.lashed
-    );
-    
-    itemsInContainer.forEach(item => {
-      const storedSize = parseFloat(item.system.storedSize) || 0;
-      const currentQuantity = item.system.quantity || 1;
-      const maxQuantity = item;
-      
-      let itemCapacity;
-      if (item.type === "coin") {
-        // Coins: each coin takes storedSize slots
-        itemCapacity = storedSize * currentQuantity;
-      } else if (maxQuantity > 0) {
-        // Stackable item with max > 0: calculate proportionally
-        itemCapacity = (storedSize / maxQuantity) * currentQuantity;
-      } else if (currentQuantity > 1) {
-        // Item with quantity > 1 but max = 0: multiply by quantity (unlimited stacking)
-        itemCapacity = storedSize * currentQuantity;
-      } else {
-        // Non-stackable item with quantity = 1: use storedSize as-is
-        itemCapacity = storedSize;
-      }
-      
-      total += itemCapacity;
-    });
-    
-    return total;
+    // Find all non-lashed items in this container; storedSize is per-unit
+    return this.actor.items
+      .filter(item => item.system.containerId === container.id && !item.system.lashed)
+      .reduce((total, item) => {
+        const storedSize = parseFloat(item.system.storedSize) || 0;
+        const currentQuantity = item.system.quantity || 1;
+        return total + storedSize * currentQuantity;
+      }, 0);
   }
 
   /**
@@ -1982,108 +1919,120 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Handle dropping ammunition with quantity dialog
    */
   async _handleAmmunitionDrop(item, itemData, targetContainer, isReordering) {
-    const defaultQuantity = itemData.system.quantity || 1;
-    
+    const totalQuantity = itemData.system.quantity || 1;
+    // Limit input to stack size only when moving within the same actor;
+    // compendium/sidebar drops can specify any quantity
+    const maxAttr = isReordering ? `max="${totalQuantity}"` : '';
+
     return new Promise((resolve) => {
       const content = `
         <form>
           <div class="form-group">
-            <label>Add how many ${itemData.name} to ${targetContainer.name}?</label>
-            <input type="number" name="ammoQuantity" value="${defaultQuantity}" min="1" style="width: 100%; margin-top: 5px;" autofocus />
+            <label>${isReordering ? 'Move' : 'Add'} how many ${itemData.name} to ${targetContainer.name}?</label>
+            <input type="number" name="ammoQuantity" value="${totalQuantity}" min="1" ${maxAttr} style="width: 100%; margin-top: 5px;" autofocus />
           </div>
         </form>
       `;
 
       new Dialog({
-        title: `Add ${itemData.name}`,
+        title: `${isReordering ? 'Move' : 'Add'} ${itemData.name}`,
         content: content,
         buttons: {
           add: {
             icon: '<i class="fas fa-plus"></i>',
-            label: "Add",
+            label: isReordering ? "Move" : "Add",
             callback: async (html) => {
               const quantity = parseInt(html.find('[name="ammoQuantity"]').val());
-              
-              if (!quantity || quantity <= 0) {
-                ui.notifications.warn("Quantity must be greater than 0");
+
+              if (!quantity || quantity <= 0 || (isReordering && quantity > totalQuantity)) {
+                ui.notifications.warn(isReordering
+                  ? `Quantity must be between 1 and ${totalQuantity}`
+                  : "Quantity must be greater than 0");
                 resolve(false);
                 return;
               }
-              
+
               // Check if there's already ammunition of this type in the target container
-              const existingAmmo = this.actor.items.find(i => 
+              const existingAmmo = this.actor.items.find(i =>
                 i.type === "ammunition" &&
                 i.name === itemData.name &&
                 i.system.containerId === targetContainer.id &&
-                (!item.actor || i.id !== item.id) // Don't match with the ammo being moved
+                i.id !== item.id
               );
-              
-              // Validate space
+
+              // Validate space for the quantity being moved
               const storedSize = parseFloat(itemData.system.storedSize) || 0;
-              if (existingAmmo) {
-                // Stacking: check if adding MORE ammunition to existing stack will fit
-                const additionalSpace = storedSize * quantity;
-                const availableSpace = this._getAvailableSpace(targetContainer);
-                
-                if (additionalSpace > availableSpace) {
-                  ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${additionalSpace} slots, have ${availableSpace} available.`);
-                  resolve(false);
-                  return;
+              const spaceNeeded = storedSize * quantity;
+              const availableSpace = this._getAvailableSpace(targetContainer);
+
+              if (spaceNeeded > availableSpace) {
+                ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${spaceNeeded} slots, have ${availableSpace} available.`);
+                resolve(false);
+                return;
+              }
+
+              const isPartialMove = quantity < totalQuantity;
+              const isSameActor = item.actor && item.actor.id === this.actor.id;
+              const isOtherActor = item.actor && item.actor.id !== this.actor.id;
+
+              if (isSameActor) {
+                if (existingAmmo) {
+                  // Add to existing stack in target
+                  await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
+                  if (isPartialMove) {
+                    await item.update({"system.quantity": totalQuantity - quantity});
+                  } else {
+                    await item.delete();
+                  }
+                  ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack.`);
+                } else if (isPartialMove) {
+                  // Split: create new stack in target, reduce source
+                  const newItemData = foundry.utils.duplicate(itemData);
+                  delete newItemData._id;
+                  newItemData.system.quantity = quantity;
+                  newItemData.system.containerId = targetContainer.id;
+                  await item.update({"system.quantity": totalQuantity - quantity});
+                  await this.actor.createEmbeddedDocuments("Item", [newItemData]);
+                  ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
+                } else {
+                  // Move entire stack
+                  await item.update({"system.containerId": targetContainer.id});
                 }
+              } else if (isOtherActor) {
+                if (existingAmmo) {
+                  await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
+                  if (isPartialMove) {
+                    await item.update({"system.quantity": totalQuantity - quantity});
+                  } else {
+                    await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+                  }
+                } else {
+                  const newItemData = foundry.utils.duplicate(itemData);
+                  delete newItemData._id;
+                  newItemData.system.quantity = quantity;
+                  newItemData.system.containerId = targetContainer.id;
+                  if (isPartialMove) {
+                    await item.update({"system.quantity": totalQuantity - quantity});
+                  } else {
+                    await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+                  }
+                  await this.actor.createEmbeddedDocuments("Item", [newItemData]);
+                }
+                ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
               } else {
-                // New stack: validate all ammunition will fit
-                itemData.system.quantity = quantity;
-                
-                if (!this._hasContainerSpace(targetContainer, itemData)) {
-                  ui.notifications.error(`Not enough space in ${targetContainer.name} for ${quantity} ${itemData.name}.`);
-                  resolve(false);
-                  return;
+                // New item from compendium/sidebar (no actor)
+                if (existingAmmo) {
+                  await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
+                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack.`);
+                } else {
+                  const newItemData = foundry.utils.duplicate(itemData);
+                  delete newItemData._id;
+                  newItemData.system.quantity = quantity;
+                  newItemData.system.containerId = targetContainer.id;
+                  await this.actor.createEmbeddedDocuments("Item", [newItemData]);
                 }
               }
-              
-              // Update the item data with the specified quantity
-              itemData.system.quantity = quantity;
-              
-              // Set the container ID
-              itemData.system.containerId = targetContainer.id;
-              
-              // Handle item from another actor
-              if (item.actor && item.actor.id !== this.actor.id) {
-                if (existingAmmo) {
-                  // Stack with existing ammunition
-                  const newQuantity = (existingAmmo.system.quantity || 0) + quantity;
-                  await existingAmmo.update({"system.quantity": newQuantity});
-                  await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
-                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
-                } else {
-                  await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
-                  await this.actor.createEmbeddedDocuments("Item", [itemData]);
-                }
-              } 
-              // Handle reordering within same actor
-              else if (item.actor && item.actor.id === this.actor.id) {
-                if (existingAmmo) {
-                  // Stack with existing ammunition and delete the one being moved
-                  const newQuantity = (existingAmmo.system.quantity || 0) + quantity;
-                  await existingAmmo.update({"system.quantity": newQuantity});
-                  await item.delete();
-                  ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack`);
-                } else {
-                  await item.update(itemData);
-                }
-              }
-              // Handle new item from compendium/sidebar (no actor)
-              else {
-                if (existingAmmo) {
-                  // Stack with existing ammunition
-                  const newQuantity = (existingAmmo.system.quantity || 0) + quantity;
-                  await existingAmmo.update({"system.quantity": newQuantity});
-                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
-                } else {
-                  await this.actor.createEmbeddedDocuments("Item", [itemData]);
-                }
-              }
-              
+
               resolve(true);
             }
           },
@@ -2095,7 +2044,6 @@ export class OspActorSheetCharacter extends ActorSheet {
         },
         default: "add",
         render: (html) => {
-          // Focus and select the input field
           html.find('input[name="ammoQuantity"]').focus().select();
         }
       }).render(true);

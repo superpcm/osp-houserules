@@ -49,4 +49,25 @@ export const registerHelpers = () => {
   Handlebars.registerHelper("asset", (assetPath) =>
     `${CONFIG.OSE.assetsPath}/${assetPath}`
   );
+
+  // Normalize weapon damage to a display string regardless of storage format
+  // Handles: plain string, {value}, {oneHanded, twoHanded}, {oneHanded}, {twoHanded}
+  Handlebars.registerHelper("weaponDamage", (damage) => {
+    if (!damage) return "";
+    if (typeof damage === "string") return damage;
+    if (damage.oneHanded || damage.twoHanded) {
+      const parts = [];
+      if (damage.oneHanded?.normal) parts.push(damage.oneHanded.normal);
+      if (damage.twoHanded?.normal) parts.push(damage.twoHanded.normal);
+      return parts.join("/") || "";
+    }
+    if (damage.value) return String(damage.value);
+    return "";
+  });
+
+  // Format an XP modifier number as a signed percentage string (e.g. 5 → "+5%", 0 → "+0%", -10 → "-10%")
+  Handlebars.registerHelper("formatXPMod", (mod) => {
+    const n = Number(mod) || 0;
+    return n >= 0 ? `+${n}%` : `${n}%`;
+  });
 };

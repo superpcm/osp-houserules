@@ -1,6 +1,10 @@
 /**
  * Portrait Positioning Tool
- * Handles interactive portrait adjustment functionality for character sheets
+ * Handles interactive portrait adjustment functionality for character sheets.
+ * Manages all 3 portrait interactions:
+ *   - Double-click: open FilePicker to change portrait
+ *   - Right-click (no modifier): position tool pass-through
+ *   - Shift+Right-click: show zoom/move/reset adjustment controls
  */
 
 export class PortraitTool {
@@ -16,102 +20,126 @@ export class PortraitTool {
    */
   initialize() {
     setTimeout(() => {
-      const portraitDisplay = document.getElementById('portrait-display');
-      
-      if (portraitDisplay) {
-        console.log('Initializing portrait positioning tool...');
-        
-        // Setup right-click handler for portrait controls
-        this.setupRightClickHandler(portraitDisplay);
-        
-        // Setup portrait adjustment functionality
-        this.setupPortraitAdjustment();
-        
-        console.log('Portrait setup completed successfully!');
-      } else {
-        console.log('Portrait element not found!');
-      }
+      const portraitDisplay = document.querySelector('.portrait-display');
+      if (!portraitDisplay) return;
+
+      this.setupTooltip(portraitDisplay);
+      this.setupDblClickHandler(portraitDisplay);
+      this.setupRightClickHandler(portraitDisplay);
+      this.setupPortraitAdjustment();
     }, 500);
   }
 
   /**
+   * Setup hover tooltip on the portrait
+   */
+  setupTooltip(portraitDisplay) {
+    let tooltip = document.getElementById('portrait-tooltip');
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.id = 'portrait-tooltip';
+      tooltip.className = 'cs-tooltip cs-tooltip--portrait';
+      document.body.appendChild(tooltip);
+    }
+
+    let timeout;
+    portraitDisplay.addEventListener('mouseenter', () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        tooltip.textContent = 'Double-click to select portrait • Right-click to adjust position';
+        tooltip.style.opacity = '1';
+        const rect = portraitDisplay.getBoundingClientRect();
+        const tipRect = tooltip.getBoundingClientRect();
+        tooltip.style.left = (rect.left + rect.width / 2 - tipRect.width / 2) + 'px';
+        tooltip.style.top = (rect.top - tipRect.height - 8) + 'px';
+      }, 500);
+    });
+
+    portraitDisplay.addEventListener('mouseleave', () => {
+      clearTimeout(timeout);
+      tooltip.style.opacity = '0';
+    });
+  }
+
+  /**
+   * Setup double-click handler to open FilePicker for portrait selection
+   */
+  setupDblClickHandler(portraitDisplay) {
+    portraitDisplay.addEventListener('dblclick', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        const fp = new FilePicker({
+          type: 'image',
+          current: document.querySelector('input[name="system.portrait"]')?.value || '',
+          callback: (path) => {
+            const img = portraitDisplay.querySelector('.portrait-img, .cs-portrait-img');
+            if (img) img.src = path;
+            const input = document.querySelector('input[name="system.portrait"]');
+            if (input) {
+              input.value = path;
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+        });
+        fp.render(true);
+      } catch (err) {
+        ui.notifications?.error('Failed to open file picker for portrait selection.');
+      }
+    });
+  }
+
+  /**
    * Setup right-click handler to show portrait adjustment controls
+   * Plain right-click passes through; Shift/Ctrl/Alt+right-click shows controls
    */
   setupRightClickHandler(portraitDisplay) {
     portraitDisplay.addEventListener('contextmenu', (event) => {
-      console.log('Portrait right-click event triggered!', 'Shift:', event.shiftKey, 'Ctrl:', event.ctrlKey, 'Alt:', event.altKey);
-      
-      // Allow positioning tool to work with plain right-click
-      // Only handle portrait controls when Shift is held (or other modifier)
-      if (!event.shiftKey && !event.ctrlKey && !event.altKey) {
-        // Let the positioning tool handle this event
-        console.log('Letting positioning tool handle this event');
-        return;
-      }
-      
-      console.log('Processing portrait controls...');
+      // Plain right-click: pass through (no action)
+      if (!event.shiftKey && !event.ctrlKey && !event.altKey) return;
+
       event.preventDefault();
       event.stopPropagation();
 
       const controls = document.getElementById('portrait-controls');
       const container = document.getElementById('portrait-container');
 
-      // Show controls and enter adjustment mode
       if (controls) {
         controls.style.display = 'block';
 
-        // Add a global observer to see if something else is hiding the controls
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.target === controls && mutation.attributeName === 'style') {
-              // Observer callback (can be extended if needed)
-            }
-          });
-        });
+        const observer = new MutationObserver(() => {});
         observer.observe(controls, { attributes: true, attributeFilter: ['style'] });
-
-        // Store observer for cleanup
         controls._observer = observer;
       }
-      
-      if (container) {
-        container.classList.add('adjusting');
-      }
+
+      if (container) container.classList.add('adjusting');
     });
   }
 
   /**
-   * Setup portrait adjustment functionality
+   * Setup portrait adjustment functionality (zoom/move/reset button panel)
    */
   setupPortraitAdjustment() {
     const controls = document.getElementById('portrait-controls');
     const container = document.getElementById('portrait-container');
 
-    if (!controls || !container) {
-      return;
-    }
+    if (!controls || !container) return;
 
-    // Get current values from CSS variables or defaults
+    // Read current values from CSS variables
     this.scale = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-scale')) || 1;
     this.x = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-x')) || 0;
     this.y = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-y')) || 0;
 
-    // Add individual event listeners to each button
     const buttons = controls.querySelectorAll('button');
-
     buttons.forEach((button) => {
-      // Block all possible events that could bubble
       ['mousedown', 'mouseup', 'click', 'pointerdown', 'pointerup'].forEach(eventType => {
         button.addEventListener(eventType, (event) => {
           event.preventDefault();
           event.stopPropagation();
           event.stopImmediatePropagation();
-
-          // Only execute action on 'click'
           if (eventType !== 'click') return;
-
           this.handleButtonAction(button.dataset.action, event, controls, container);
-        }, true); // Use capture phase
+        }, true);
       });
     });
   }
@@ -120,20 +148,16 @@ export class PortraitTool {
    * Handle button action clicks
    */
   handleButtonAction(action, event, controls, container) {
-    // Determine adjustment step size based on modifier keys
-    let scaleStep = 0.1;  // Normal scale step
-    let moveStep = 3;     // Normal move step (pixels)
-    
+    let scaleStep = 0.1;
+    let moveStep = 3;
+
     if (event.shiftKey && event.ctrlKey) {
-      // Very fine adjustments (Shift + Ctrl)
       scaleStep = 0.01;
       moveStep = 0.5;
     } else if (event.shiftKey) {
-      // Fine adjustments (Shift only)
       scaleStep = 0.02;
       moveStep = 1;
     } else if (event.ctrlKey) {
-      // Coarse adjustments (Ctrl only)
       scaleStep = 0.25;
       moveStep = 10;
     }
@@ -176,167 +200,79 @@ export class PortraitTool {
   }
 
   /**
-   * Update portrait transform
+   * Update portrait CSS variables and hidden form inputs
    */
   updatePortrait(container) {
-    // Update CSS variables
     container.style.setProperty('--user-portrait-scale', this.scale);
     container.style.setProperty('--user-portrait-x', this.x + 'px');
     container.style.setProperty('--user-portrait-y', this.y + 'px');
 
-    // Update hidden form inputs for persistence
     const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
     const xInput = document.querySelector('input[name="system.userPortrait.x"]');
     const yInput = document.querySelector('input[name="system.userPortrait.y"]');
-
     if (scaleInput) scaleInput.value = this.scale;
     if (xInput) xInput.value = this.x;
     if (yInput) yInput.value = this.y;
   }
 
   /**
-   * Handle the Done button click
+   * Handle the Done button — save and hide the control panel
    */
   handleDone(controls, container) {
-    // Pause XP monitoring and mark form as submitting
-    if (window.pauseXPMonitoring) {
-      window.pauseXPMonitoring();
-    }
+    if (window.pauseXPMonitoring) window.pauseXPMonitoring();
     window.isFormSubmitting = true;
 
     this.savePortraitData();
 
-    // Resume normal operation after a delay
     setTimeout(() => {
       window.isFormSubmitting = false;
-      if (window.resumeXPMonitoring) {
-        window.resumeXPMonitoring();
-      }
-      // Restore XP formatting
+      if (window.resumeXPMonitoring) window.resumeXPMonitoring();
       const xpField = document.getElementById('xp-display');
-      if (xpField && xpField.value && !xpField.value.includes(',')) {
-        const numericValue = parseInt(xpField.value) || 0;
-        if (numericValue >= 1000) {
-          const formattedValue = numericValue.toLocaleString();
-          xpField.value = formattedValue;
-        }
+      if (xpField?.value && !xpField.value.includes(',')) {
+        const n = parseInt(xpField.value) || 0;
+        if (n >= 1000) xpField.value = n.toLocaleString();
       }
     }, 2000);
 
-    if (controls._observer) {
-      controls._observer.disconnect();
-    }
+    if (controls._observer) controls._observer.disconnect();
     controls.style.display = 'none';
     container.classList.remove('adjusting');
   }
 
   /**
-   * Save portrait data to actor
+   * Save portrait position data to the actor
    */
   savePortraitData() {
-    // Clean XP field before save operations
+    // Clean XP field before save
     const xpField = document.getElementById('xp-display');
-    if (xpField && xpField.value) {
-      const cleanValue = xpField.value.replace(/,/g, '');
-      if (cleanValue !== xpField.value) {
-        xpField.value = cleanValue;
-      }
-    }
+    if (xpField?.value) xpField.value = xpField.value.replace(/,/g, '');
 
-    // Gather update payload
     const updateData = {
       'system.userPortrait.scale': this.scale,
       'system.userPortrait.x': this.x,
       'system.userPortrait.y': this.y
     };
 
-    // Helper: update hidden inputs to keep form in sync
     const syncHiddenInputs = () => {
-      const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
-      const xInput = document.querySelector('input[name="system.userPortrait.x"]');
-      const yInput = document.querySelector('input[name="system.userPortrait.y"]');
-      if (scaleInput) { scaleInput.value = this.scale; scaleInput.setAttribute('value', this.scale); }
-      if (xInput) { xInput.value = this.x; xInput.setAttribute('value', this.x); }
-      if (yInput) { yInput.value = this.y; yInput.setAttribute('value', this.y); }
+      const s = document.querySelector('input[name="system.userPortrait.scale"]');
+      const x = document.querySelector('input[name="system.userPortrait.x"]');
+      const y = document.querySelector('input[name="system.userPortrait.y"]');
+      if (s) { s.value = this.scale; s.setAttribute('value', this.scale); }
+      if (x) { x.value = this.x; x.setAttribute('value', this.x); }
+      if (y) { y.value = this.y; y.setAttribute('value', this.y); }
     };
 
-    // Attempt 1: Use the sheet instance stored on the window
-    try {
-      if (window.currentActorSheet && window.currentActorSheet.actor) {
-        const actor = window.currentActorSheet.actor;
-        return actor.update(updateData, {render: false})
-          .then(() => { syncHiddenInputs(); })
-          .catch(err => { /* ignored */ });
-      }
-    } catch (err) {
-      // Continue to next attempt
+    const actor = this.actorSheet?.actor;
+    if (actor) {
+      return actor.update(updateData, { render: false })
+        .then(() => syncHiddenInputs())
+        .catch(err => console.error('Portrait save failed:', err));
     }
 
-    // Attempt 2: Resolve via the containing window-app
-    try {
-      const container = document.getElementById('portrait-container');
-      if (container) {
-        const windowApp = container.closest('.window-app');
-        if (windowApp) {
-          const appId = windowApp.getAttribute('data-appid');
-          if (appId && ui && ui.windows && ui.windows[appId] && ui.windows[appId].actor) {
-            const actor = ui.windows[appId].actor;
-            return actor.update(updateData, {render: false})
-              .then(() => { syncHiddenInputs(); })
-              .catch(err => { /* ignored */ });
-          }
-        }
-      }
-    } catch (err) {
-      // Continue to next attempt
-    }
-
-    // Attempt 3: Look for a form-bound actor id
-    try {
-      const actorIdInput = document.querySelector('input[name="id"]');
-      if (actorIdInput && actorIdInput.value) {
-        const actor = game.actors.get(actorIdInput.value);
-        if (actor) {
-          return actor.update(updateData, {render: false})
-            .then(() => { syncHiddenInputs(); })
-            .catch(err => { /* ignored */ });
-        }
-      }
-    } catch (err) {
-      // Continue to next attempt
-    }
-
-    // Attempt 4: Try to find actor id from URL
-    try {
-      const urlMatch = window.location.href.match(/actors\/([a-zA-Z0-9]+)/);
-      if (urlMatch) {
-        const actor = game.actors.get(urlMatch[1]);
-        if (actor) {
-          return actor.update(updateData, {render: false})
-            .then(() => { syncHiddenInputs(); })
-            .catch(err => { /* ignored */ });
-        }
-      }
-    } catch (err) {
-      // Continue to fallback
-    }
-
-    // Final fallback: update hidden inputs and trigger form change
-    console.warn('All direct actor save methods failed; using form fallback');
-    try {
-      syncHiddenInputs();
-      const nearestForm = document.getElementById('portrait-container')?.closest('form') || 
-                         document.querySelector('form.flexcol') || 
-                         document.querySelector('form');
-      if (nearestForm) {
-        const changeEvent = new Event('change', { bubbles: true });
-        const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
-        if (scaleInput) scaleInput.dispatchEvent(changeEvent);
-        nearestForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-        return Promise.resolve();
-      }
-    } catch (err) {
-      console.error('Portrait save failed:', err);
-    }
+    // Fallback: sync inputs and fire form change
+    console.warn('Portrait save: no actor reference, using form fallback');
+    syncHiddenInputs();
+    const form = document.querySelector('form.flexcol') ?? document.querySelector('form');
+    form?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
   }
 }

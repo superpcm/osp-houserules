@@ -16,7 +16,11 @@
       "aac": {
         "value": 15
       },
-      "type": "medium"
+      "type": "medium",
+      "donTime": "5 minutes",
+      "doffTime": "1 minute",
+      "maxDex": 2,
+      "minStr": null
     }
   },
   {
@@ -36,7 +40,11 @@
       "aac": {
         "value": 2
       },
-      "type": "shield"
+      "type": "shield",
+      "donTime": "1 round",
+      "doffTime": "1 round",
+      "maxDex": null,
+      "minStr": null
     }
   },
   {
@@ -56,7 +64,11 @@
       "aac": {
         "value": 13
       },
-      "type": "medium"
+      "type": "medium",
+      "donTime": "5 minutes",
+      "doffTime": "1 minute",
+      "maxDex": 2,
+      "minStr": null
     }
   },
   {
@@ -76,7 +88,11 @@
       "aac": {
         "value": 17
       },
-      "type": "heavy"
+      "type": "heavy",
+      "donTime": "10 minutes",
+      "doffTime": "5 minutes",
+      "maxDex": 0,
+      "minStr": 13
     }
   },
   {
@@ -96,7 +112,11 @@
       "aac": {
         "value": 14
       },
-      "type": "medium"
+      "type": "medium",
+      "donTime": "5 minutes",
+      "doffTime": "1 minute",
+      "maxDex": 2,
+      "minStr": null
     }
   },
   {
@@ -116,7 +136,11 @@
       "aac": {
         "value": 17
       },
-      "type": "heavy"
+      "type": "heavy",
+      "donTime": "10 minutes",
+      "doffTime": "5 minutes",
+      "maxDex": 0,
+      "minStr": 15
     }
   },
   {
@@ -136,7 +160,11 @@
       "aac": {
         "value": 18
       },
-      "type": "heavy"
+      "type": "heavy",
+      "donTime": "10 minutes",
+      "doffTime": "5 minutes",
+      "maxDex": 0,
+      "minStr": 16
     }
   },
   {
@@ -156,7 +184,11 @@
       "aac": {
         "value": 0
       },
-      "type": "helmet"
+      "type": "helmet",
+      "donTime": "1 round",
+      "doffTime": "1 round",
+      "maxDex": null,
+      "minStr": null
     }
   },
   {
@@ -176,7 +208,11 @@
       "aac": {
         "value": 0
       },
-      "type": "helmet"
+      "type": "helmet",
+      "donTime": "1 round",
+      "doffTime": "1 round",
+      "maxDex": null,
+      "minStr": null
     }
   },
   {
@@ -196,7 +232,11 @@
       "aac": {
         "value": 13
       },
-      "type": "light"
+      "type": "light",
+      "donTime": "1 minute",
+      "doffTime": "1 minute",
+      "maxDex": 3,
+      "minStr": null
     }
   },
   {
@@ -216,7 +256,11 @@
       "aac": {
         "value": 12
       },
-      "type": "light"
+      "type": "light",
+      "donTime": "1 minute",
+      "doffTime": "1 minute",
+      "maxDex": 3,
+      "minStr": null
     }
   },
   {
@@ -236,7 +280,11 @@
       "aac": {
         "value": 11
       },
-      "type": "light"
+      "type": "light",
+      "donTime": "1 minute",
+      "doffTime": "1 minute",
+      "maxDex": 3,
+      "minStr": null
     }
   },
   {
@@ -256,7 +304,11 @@
       "aac": {
         "value": 13
       },
-      "type": "light"
+      "type": "light",
+      "donTime": "1 minute",
+      "doffTime": "1 minute",
+      "maxDex": 3,
+      "minStr": null
     }
   },
   {
@@ -276,7 +328,11 @@
       "aac": {
         "value": 1
       },
-      "type": "shield"
+      "type": "shield",
+      "donTime": "1 round",
+      "doffTime": "1 round",
+      "maxDex": null,
+      "minStr": null
     }
   },
   {
@@ -296,7 +352,11 @@
       "aac": {
         "value": 13
       },
-      "type": "light"
+      "type": "light",
+      "donTime": "1 minute",
+      "doffTime": "1 minute",
+      "maxDex": 3,
+      "minStr": null
     }
   }
 ]

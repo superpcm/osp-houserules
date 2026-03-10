@@ -579,48 +579,23 @@ export class ItemHandler {
    * Get used capacity in a container
    */
   _getUsedCapacity(container) {
-    let total = 0;
-    
-    // Find all items in this container (ONLY stored items, not lashed items)
-    const itemsInContainer = this.actor.items.filter(i => 
-      i.system.containerId === container.id && !i.system.lashed
-    );
-    
-    itemsInContainer.forEach(item => {
-      const storedSize = parseFloat(item.system.storedSize) || 0;
-      const currentQuantity = item.system.quantity || 1;
-      const maxQuantity = item;
-      
-      let itemCapacity;
-      if (maxQuantity > 0) {
-        // Stackable item: calculate proportionally
-        itemCapacity = (storedSize / maxQuantity) * currentQuantity;
-      } else {
-        // Non-stackable item: use storedSize as-is
-        itemCapacity = storedSize;
-      }
-      
-      total += itemCapacity;
-    });
-    
-    return total;
+    // storedSize is per-unit; multiply by quantity for all item types
+    return this.actor.items
+      .filter(i => i.system.containerId === container.id && !i.system.lashed)
+      .reduce((total, item) => {
+        const storedSize = parseFloat(item.system.storedSize) || 0;
+        const currentQuantity = item.system.quantity || 1;
+        return total + storedSize * currentQuantity;
+      }, 0);
   }
-  
+
   /**
    * Get item size in slots
    */
   _getItemSlotSize(item) {
     const storedSize = parseFloat(item.system.storedSize) || 0;
     const currentQuantity = item.system.quantity || 1;
-    const maxQuantity = item;
-    
-    if (maxQuantity > 0) {
-      // Stackable item: calculate proportionally
-      return (storedSize / maxQuantity) * currentQuantity;
-    } else {
-      // Non-stackable item: use storedSize as-is
-      return storedSize;
-    }
+    return storedSize * currentQuantity;
   }
 
   /**

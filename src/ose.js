@@ -16,6 +16,7 @@ import { OSP } from "./module/config.js";
 import { OspActorSheetCharacter } from "./module/actor/sheets/character-sheet.js";
 import { OspActorSheetMonster } from "./module/actor/sheets/monster-sheet.js";
 import { PositionToolHandler } from "./module/actor/sheets/handlers/position-tool-handler.js";
+import { registerPositionSettings, applyStoredPositionOverrides } from "./module/actor/sheets/handlers/position-file-writer.js";
 import { OspActor } from "./module/actor/actor.js";
 import { OspItem } from "./module/item/item.js";
 import { OspItemSheet } from "./module/item/item-sheet.js";
@@ -65,6 +66,7 @@ Hooks.once("init", () => {
 
   // ── Settings ──────────────────────────────────────────────────────────────
   registerSettings();
+  registerPositionSettings();
 
   // ── Handlebars helpers ────────────────────────────────────────────────────
   registerHelpers();
@@ -146,6 +148,11 @@ Hooks.once("init", () => {
 
 });
 
+// ── Position overrides ────────────────────────────────────────────────────
+Hooks.once("ready", () => {
+  applyStoredPositionOverrides().catch(err => console.warn('OSP | applyStoredPositionOverrides failed:', err));
+});
+
 // ── Party system hooks ─────────────────────────────────────────────────────
 Hooks.on("renderActorDirectory", (app, html) => addPartyControl(app, html));
 Hooks.on("updateActor", (actor, data) => updatePartySheet(actor, data));
@@ -177,6 +184,12 @@ Handlebars.registerHelper('range', function(start, end) {
 // Register a Handlebars helper for parseInt
 Handlebars.registerHelper('parseInt', function(value) {
   return parseInt(value, 10);
+});
+
+Handlebars.registerHelper('signedInt', function(value) {
+  const n = parseInt(value, 10);
+  if (isNaN(n)) return value;
+  return n >= 0 ? `+${n}` : `${n}`;
 });
 
 // Register a Handlebars helper for multiplication

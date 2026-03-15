@@ -833,7 +833,6 @@
 
 
       // Portrait handling managed by PortraitTool (portrait-tool.js)
-    }
 
       // Listening at Doors Management
       function updateListeningAtDoors() {
@@ -1113,308 +1112,14 @@
 
 
 
-  <!-- Character Level - Positioned behind everything -->
-  <div class="level-progress-bar-container cs-level-container cs-abs cs-pos-level" id="level-container">
-    <!-- Shadow overlay for Level field -->
-  <div class="cs-level-shadow"></div>
-  <!-- Hidden inputs for level position data -->
-  <input type="hidden" name="system.levelPosition.x" value="{{system.levelPosition.x}}" />
-  <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
-  <input type="hidden" name="system.levelPosition.zIndex" value="{{system.levelPosition.zIndex}}" />
-
-        <!-- Level display without progress bar -->
-        <div>
-          <!-- Level display in center -->
-          <div class="cs-level-display">{{system.level}}</div>
-        </div>
-      </div>
-
-  <!-- Character Portrait - Positioned behind everything -->
-  <div class="portrait-container cs-portrait-container cs-abs cs-pos-portrait" id="portrait-container" style="--portrait-size:138px; --portrait-height:183px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}};">
-    <!-- Hidden inputs for portrait data -->
-    <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
-    <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
-    <input type="hidden" name="system.userPortrait.x" value="{{system.userPortrait.x}}" />
-    <input type="hidden" name="system.userPortrait.y" value="{{system.userPortrait.y}}" />
-
-    <!-- Portrait display area -->
-    <div class="portrait-display cs-portrait-display" title="Double-click: Change portrait&#10;Right-click: Position tool&#10;Shift+Right-click: Portrait adjustment controls">
-      <img class="portrait-img cs-portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" draggable="false" />
-    </div>
-
-    <!-- Portrait adjustment controls -->
-    <div class="portrait-controls" id="portrait-controls">
-      <div class="btn-group">
-        <button type="button" data-action="zoom-out" title="Zoom Out&#10;Hold Shift for fine adjustment&#10;Hold Ctrl for coarse adjustment&#10;Hold Shift+Ctrl for very fine adjustment">−</button>
-        <button type="button" data-action="zoom-in" title="Zoom In&#10;Hold Shift for fine adjustment&#10;Hold Ctrl for coarse adjustment&#10;Hold Shift+Ctrl for very fine adjustment">+</button>
-      </div>
-      <div class="btn-group">
-        <button type="button" data-action="move-up" title="Move Up&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">↑</button>
-        <button type="button" data-action="move-down" title="Move Down&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">↓</button>
-        <button type="button" data-action="move-left" title="Move Left&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">←</button>
-        <button type="button" data-action="move-right" title="Move Right&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">→</button>
-      </div>
-      <div class="btn-group">
-        <button type="button" data-action="reset" title="Reset">↻</button>
-        <button type="button" data-action="done" title="Done">✓</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Static Header Section - Absolute Positioning Layout -->
-  <div class="static-header cs-static-header">
-
-      <!-- Character Name - Centered positioning -->
-  <div class="character-name-section cs-abs cs-pos-name" id="character-name-container">
-
-      </div>
-
-  <!-- Character Name - Absolute positioned -->
-  <div class="character-name-group cs-abs cs-pos-namegroup" id="character-name-container">
-    <input type="hidden" name="system.namePosition.x" value="{{system.namePosition.x}}" />
-    <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
-    <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
-    <div class="cs-char-field-group">
-      <input class="char-name cs-char-name" id="char-name" name="name" type="text" value="{{actor.name}}" />
-    </div>
-  </div>
-
-  <!-- Character Class & Alignment - Centered under name as one element -->
-  <!-- Character Class - Independent container for positioning -->
-  <div class="class-group cs-abs cs-pos-class" id="class-container">
-    <input type="hidden" name="system.classPosition.x" value="{{system.classPosition.x}}" />
-    <input type="hidden" name="system.classPosition.y" value="{{system.classPosition.y}}" />
-    <input type="hidden" name="system.classPosition.zIndex" value="{{system.classPosition.zIndex}}" />
-    <div class="cs-char-field-group">
-  <select class="char-class cs-class-select" id="char-class" name="system.class">
-        <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
-        <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
-        <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
-        <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
-        <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
-        <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
-        <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
-        <option value="Elf" {{#if (eq system.class "Elf")}}selected{{/if}}>Elf</option>
-        <option value="Fighter" {{#if (eq system.class "Fighter")}}selected{{/if}}>Fighter</option>
-        <option value="Gnome" {{#if (eq system.class "Gnome")}}selected{{/if}}>Gnome</option>
-        <option value="Half-Elf" {{#if (eq system.class "Half-Elf")}}selected{{/if}}>Half-Elf</option>
-        <option value="Half-Orc" {{#if (eq system.class "Half-Orc")}}selected{{/if}}>Half-Orc</option>
-        <option value="Hobbit" {{#if (eq system.class "Hobbit")}}selected{{/if}}>Hobbit</option>
-        <option value="Illusionist" {{#if (eq system.class "Illusionist")}}selected{{/if}}>Illusionist</option>
-        <option value="Knight" {{#if (eq system.class "Knight")}}selected{{/if}}>Knight</option>
-        <option value="Mage" {{#if (eq system.class "Mage")}}selected{{/if}}>Mage</option>
-        <option value="Magic-User" {{#if (eq system.class "Magic-User")}}selected{{/if}}>Magic-User</option>
-        <option value="Paladin" {{#if (eq system.class "Paladin")}}selected{{/if}}>Paladin</option>
-        <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
-        <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
-        <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Character Alignment - Independent container for positioning -->
-  <div class="alignment-group cs-abs cs-pos-alignment" id="alignment-container">
-    <input type="hidden" name="system.alignmentPosition.x" value="{{system.alignmentPosition.x}}" />
-    <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
-    <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
-    <div class="cs-char-field-group">
-  <select class="char-align cs-alignment-select" id="char-align" name="system.alignment">
-        <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
-        <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
-        <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Character Race - Positioned next to existing fields -->
-  <div class="race-group cs-abs cs-pos-race" id="race-container">
-    <div class="cs-char-field-group">
-      <select class="char-race cs-race-select" id="char-race" name="system.race">
-        <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
-        <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
-        <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
-        <option value="Half-Elf" {{#if (eq system.race "Half-Elf")}}selected{{/if}}>Half-Elf</option>
-        <option value="Half-Orc" {{#if (eq system.race "Half-Orc")}}selected{{/if}}>Half-Orc</option>
-        <option value="Hobbit" {{#if (eq system.race "Hobbit")}}selected{{/if}}>Hobbit</option>
-        <option value="Human" {{#if (eq system.race "Human")}}selected{{/if}}>Human</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Character Age and Sex - Small fields -->
-  <div class="age-group cs-abs cs-pos-age" id="age-container">
-    <div class="cs-char-field-group">
-      <input class="char-age cs-age-field" id="char-age" name="system.age" type="text" value="{{system.age}}" />
-    </div>
-  </div>
-
-  <div class="sex-group cs-abs cs-pos-sex" id="sex-container">
-    <div class="cs-char-field-group">
-      <select class="char-sex cs-sex-field" id="char-sex" name="system.sex">
-        <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
-        <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>F</option>
-        <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>O</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Height field -->
-  <div class="height-group cs-abs cs-pos-height" id="height-container">
-    <div class="cs-char-field-group">
-      <input class="char-height cs-height-field" id="char-height" name="system.height" type="text" value="{{system.height}}" />
-    </div>
-  </div>
-
-  <!-- Weight field -->
-  <div class="weight-group cs-abs cs-pos-weight" id="weight-container">
-    <div class="cs-char-field-group">
-      <input class="char-weight cs-weight-field" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" />
-    </div>
-  </div>
-
-  <!-- Background field -->
-  <div class="background-group cs-abs cs-pos-background" id="background-container">
-    <div class="char-field-group cs-char-field-group">
-      <select class="char-background cs-background-select" id="char-background" name="system.background">
- <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
-                  <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
-                  <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
-                  <option value="Artisan" {{#if (eq system.background "Artisan")}}selected{{/if}}>Artisan</option>
-                  <option value="Baker" {{#if (eq system.background "Baker")}}selected{{/if}}>Baker</option>
-                  <option value="Banker" {{#if (eq system.background "Banker")}}selected{{/if}}>Banker</option>
-                  <option value="Barber" {{#if (eq system.background "Barber")}}selected{{/if}}>Barber</option>
-                  <option value="Barkeep" {{#if (eq system.background "Barkeep")}}selected{{/if}}>Barkeep</option>
-                  <option value="Beggar" {{#if (eq system.background "Beggar")}}selected{{/if}}>Beggar</option>
-                  <option value="Blacksmith" {{#if (eq system.background "Blacksmith")}}selected{{/if}}>Blacksmith</option>
-                  <option value="Bookbinder" {{#if (eq system.background "Bookbinder")}}selected{{/if}}>Bookbinder</option>
-                  <option value="Bouncer" {{#if (eq system.background "Bouncer")}}selected{{/if}}>Bouncer</option>
-                  <option value="Bowyer" {{#if (eq system.background "Bowyer")}}selected{{/if}}>Bowyer</option>
-                  <option value="Brewer" {{#if (eq system.background "Brewer")}}selected{{/if}}>Brewer</option>
-                  <option value="Bricklayer" {{#if (eq system.background "Bricklayer")}}selected{{/if}}>Bricklayer</option>
-                  <option value="Butcher" {{#if (eq system.background "Butcher")}}selected{{/if}}>Butcher</option>
-                  <option value="Caretaker" {{#if (eq system.background "Caretaker")}}selected{{/if}}>Caretaker</option>
-                  <option value="Carpenter" {{#if (eq system.background "Carpenter")}}selected{{/if}}>Carpenter</option>
-                  <option value="Cartographer" {{#if (eq system.background "Cartographer")}}selected{{/if}}>Cartographer</option>
-                  <option value="Charcoal Maker" {{#if (eq system.background "Charcoal Maker")}}selected{{/if}}>Charcoal Maker</option>
-                  <option value="Clerk" {{#if (eq system.background "Clerk")}}selected{{/if}}>Clerk</option>
-                  <option value="Coachman" {{#if (eq system.background "Coachman")}}selected{{/if}}>Coachman</option>
-                  <option value="Cobbler" {{#if (eq system.background "Cobbler")}}selected{{/if}}>Cobbler</option>
-                  <option value="Cook" {{#if (eq system.background "Cook")}}selected{{/if}}>Cook</option>
-                  <option value="Cooper" {{#if (eq system.background "Cooper")}}selected{{/if}}>Cooper</option>
-                  <option value="Courier" {{#if (eq system.background "Courier")}}selected{{/if}}>Courier</option>
-                  <option value="Crier" {{#if (eq system.background "Crier")}}selected{{/if}}>Crier</option>
-                  <option value="Dairyboy" {{#if (eq system.background "Dairyboy")}}selected{{/if}}>Dairyboy</option>
-                  <option value="Distiller" {{#if (eq system.background "Distiller")}}selected{{/if}}>Distiller</option>
-                  <option value="Ditch Digger" {{#if (eq system.background "Ditch Digger")}}selected{{/if}}>Ditch Digger</option>
-                  <option value="Dyer" {{#if (eq system.background "Dyer")}}selected{{/if}}>Dyer</option>
-                  <option value="Engraver" {{#if (eq system.background "Engraver")}}selected{{/if}}>Engraver</option>
-                  <option value="Entertainer" {{#if (eq system.background "Entertainer")}}selected{{/if}}>Entertainer</option>
-                  <option value="Falconer" {{#if (eq system.background "Falconer")}}selected{{/if}}>Falconer</option>
-                  <option value="Farmer" {{#if (eq system.background "Farmer")}}selected{{/if}}>Farmer</option>
-                  <option value="Ferrier" {{#if (eq system.background "Ferrier")}}selected{{/if}}>Ferrier</option>
-                  <option value="Fishmonger" {{#if (eq system.background "Fishmonger")}}selected{{/if}}>Fishmonger</option>
-                  <option value="Fletcher" {{#if (eq system.background "Fletcher")}}selected{{/if}}>Fletcher</option>
-                  <option value="Fuller" {{#if (eq system.background "Fuller")}}selected{{/if}}>Fuller</option>
-                  <option value="Furrier" {{#if (eq system.background "Furrier")}}selected{{/if}}>Furrier</option>
-                  <option value="Gardener" {{#if (eq system.background "Gardener")}}selected{{/if}}>Gardener</option>
-                  <option value="Glassblower" {{#if (eq system.background "Glassblower")}}selected{{/if}}>Glassblower</option>
-                  <option value="Glazier" {{#if (eq system.background "Glazier")}}selected{{/if}}>Glazier</option>
-                  <option value="Glover" {{#if (eq system.background "Glover")}}selected{{/if}}>Glover</option>
-                  <option value="Gong Farmer" {{#if (eq system.background "Gong Farmer")}}selected{{/if}}>Gong Farmer</option>
-                  <option value="Gravedigger" {{#if (eq system.background "Gravedigger")}}selected{{/if}}>Gravedigger</option>
-                  <option value="Groom" {{#if (eq system.background "Groom")}}selected{{/if}}>Groom</option>
-                  <option value="Guard" {{#if (eq system.background "Guard")}}selected{{/if}}>Guard</option>
-                  <option value="Hatmaker" {{#if (eq system.background "Hatmaker")}}selected{{/if}}>Hatmaker</option>
-                  <option value="Herdsman" {{#if (eq system.background "Herdsman")}}selected{{/if}}>Herdsman</option>
-                  <option value="Houndsman" {{#if (eq system.background "Houndsman")}}selected{{/if}}>Houndsman</option>
-                  <option value="Innkeeper" {{#if (eq system.background "Innkeeper")}}selected{{/if}}>Innkeeper</option>
-                  <option value="Jailer" {{#if (eq system.background "Jailer")}}selected{{/if}}>Jailer</option>
-                  <option value="Jester" {{#if (eq system.background "Jester")}}selected{{/if}}>Jester</option>
-                  <option value="Joiner" {{#if (eq system.background "Joiner")}}selected{{/if}}>Joiner</option>
-                  <option value="Juggler" {{#if (eq system.background "Juggler")}}selected{{/if}}>Juggler</option>
-                  <option value="Laborer" {{#if (eq system.background "Laborer")}}selected{{/if}}>Laborer</option>
-                  <option value="Launderer" {{#if (eq system.background "Launderer")}}selected{{/if}}>Launderer</option>
-                  <option value="Lector" {{#if (eq system.background "Lector")}}selected{{/if}}>Lector</option>
-                  <option value="Librarian" {{#if (eq system.background "Librarian")}}selected{{/if}}>Librarian</option>
-                  <option value="Lumberjack" {{#if (eq system.background "Lumberjack")}}selected{{/if}}>Lumberjack</option>
-                  <option value="Maid/Butler" {{#if (eq system.background "Maid/Butler")}}selected{{/if}}>Maid/Butler</option>
-                  <option value="Mason" {{#if (eq system.background "Mason")}}selected{{/if}}>Mason</option>
-                  <option value="Merchant" {{#if (eq system.background "Merchant")}}selected{{/if}}>Merchant</option>
-                  <option value="Messenger" {{#if (eq system.background "Messenger")}}selected{{/if}}>Messenger</option>
-                  <option value="Miller" {{#if (eq system.background "Miller")}}selected{{/if}}>Miller</option>
-                  <option value="Millwright" {{#if (eq system.background "Millwright")}}selected{{/if}}>Millwright</option>
-                  <option value="Mortician" {{#if (eq system.background "Mortician")}}selected{{/if}}>Mortician</option>
-                  <option value="Musician" {{#if (eq system.background "Musician")}}selected{{/if}}>Musician</option>
-                  <option value="Ne'er-do-well" {{#if (eq system.background "Ne'er-do-well")}}selected{{/if}}>Ne'er-do-well</option>
-                  <option value="Page" {{#if (eq system.background "Page")}}selected{{/if}}>Page</option>
-                  <option value="Painter" {{#if (eq system.background "Painter")}}selected{{/if}}>Painter</option>
-                  <option value="Philosopher" {{#if (eq system.background "Philosopher")}}selected{{/if}}>Philosopher</option>
-                  <option value="Porter" {{#if (eq system.background "Porter")}}selected{{/if}}>Porter</option>
-                  <option value="Potter" {{#if (eq system.background "Potter")}}selected{{/if}}>Potter</option>
-                  <option value="Printer" {{#if (eq system.background "Printer")}}selected{{/if}}>Printer</option>
-                  <option value="Prostitute" {{#if (eq system.background "Prostitute")}}selected{{/if}}>Prostitute</option>
-                  <option value="Rag & Bone" {{#if (eq system.background "Rag & Bone")}}selected{{/if}}>Rag & Bone</option>
-                  <option value="Ratter" {{#if (eq system.background "Ratter")}}selected{{/if}}>Ratter</option>
-                  <option value="Runaway Slave" {{#if (eq system.background "Runaway Slave")}}selected{{/if}}>Runaway Slave</option>
-                  <option value="Scavenger" {{#if (eq system.background "Scavenger")}}selected{{/if}}>Scavenger</option>
-                  <option value="Scholar" {{#if (eq system.background "Scholar")}}selected{{/if}}>Scholar</option>
-                  <option value="Serf" {{#if (eq system.background "Serf")}}selected{{/if}}>Serf</option>
-                  <option value="Server" {{#if (eq system.background "Server")}}selected{{/if}}>Server</option>
-                  <option value="Sexton" {{#if (eq system.background "Sexton")}}selected{{/if}}>Sexton</option>
-                  <option value="Squire" {{#if (eq system.background "Squire")}}selected{{/if}}>Squire</option>
-                  <option value="Stablehand" {{#if (eq system.background "Stablehand")}}selected{{/if}}>Stablehand</option>
-                  <option value="Stonecutter" {{#if (eq system.background "Stonecutter")}}selected{{/if}}>Stonecutter</option>
-                  <option value="Street Sweeper" {{#if (eq system.background "Street Sweeper")}}selected{{/if}}>Street Sweeper</option>
-                  <option value="Tailor" {{#if (eq system.background "Tailor")}}selected{{/if}}>Tailor</option>
-                  <option value="Tallow Chandler" {{#if (eq system.background "Tallow Chandler")}}selected{{/if}}>Tallow Chandler</option>
-                  <option value="Tanner" {{#if (eq system.background "Tanner")}}selected{{/if}}>Tanner</option>
-                  <option value="Thatcher" {{#if (eq system.background "Thatcher")}}selected{{/if}}>Thatcher</option>
-                  <option value="Tobacconist" {{#if (eq system.background "Tobacconist")}}selected{{/if}}>Tobacconist</option>
-                  <option value="Trapper" {{#if (eq system.background "Trapper")}}selected{{/if}}>Trapper</option>
-                  <option value="Wainwright" {{#if (eq system.background "Wainwright")}}selected{{/if}}>Wainwright</option>
-                  <option value="Washer" {{#if (eq system.background "Washer")}}selected{{/if}}>Washer</option>
-                  <option value="Weaver" {{#if (eq system.background "Weaver")}}selected{{/if}}>Weaver</option>
-                  <option value="Wheelwright" {{#if (eq system.background "Wheelwright")}}selected{{/if}}>Wheelwright</option>
-                  <option value="Winemaker" {{#if (eq system.background "Winemaker")}}selected{{/if}}>Winemaker</option>
-                  <option value="Woodcutter" {{#if (eq system.background "Woodcutter")}}selected{{/if}}>Woodcutter</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Languages field -->
-  <div class="languages-group cs-abs cs-pos-languages" id="languages-container">
-  <div class="char-field-group cs-char-field-group">
-  <div class="cs-languages-field open-language-dialog">
-        <div class="languages-tags"></div>
-      </div>
-      <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
-    </div>
-  </div>
-
-  <!-- XP Mod % field -->
-  <div class="xp-mod-group cs-abs cs-pos-xpmod" id="xp-mod-container">
-  <input type="text" class="xp-mod-display cs-field cs-xp-mod-display" id="xp-mod-display" readonly value="{{formatXPMod system.xpModifier}}" />
-  </div>
-
-  <!-- XP field -->
-  <div class="xp-group cs-abs cs-pos-xp" id="xp-container">
-  <!-- XP Progress Bar -->
-  <div class="level-xp-progress"></div>
-  <input type="text" class="xp-display cs-field cs-xp-display" id="xp-display" name="system.xp" value="{{system.xp}}" />
-  </div>
-
-      <!-- Horizontal separator line at bottom of static header -->
-  <div class="cs-abs cs-pos-sep"></div>
-
-    </div>
 
     <!-- Right-side Tab Navigation -->
     <nav class="sheet-tabs tabs cs-tabs" data-group="primary">
+  <a class="item cs-tab-item" data-tab="bio">Bio</a>
   <a class="item cs-tab-item" data-tab="attributes">Attributes</a>
   <a class="item cs-tab-item" data-tab="skills">Skills</a>
   <a class="item cs-tab-item" data-tab="combat">Combat</a>
   <a class="item cs-tab-item" data-tab="gear">Gear</a>
-  <a class="item cs-tab-item" data-tab="bio">Bio</a>
     </nav>
 
     <!-- Sheet Body - Tab Content Area -->
@@ -1422,111 +1127,6 @@
       <!-- Attributes Tab -->
       <div class="tab" data-group="primary" data-tab="attributes">
         <div class="combat-section">
-
-          <!-- Ability Scores Section -->
-          <div class="ability-scores-section cs-combat-stats">
-
-            <!-- STR Ability Score -->
-            <div class="ability cs-ability cs-abs">
-              <select class="attr-str cs-ability-select" id="attr-str" name="system.attributes.str.value">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-            </div>
-
-            <!-- DEX Ability Score -->
-            <div class="ability cs-ability cs-abs">
-              <select class="attr-dex cs-ability-select" id="attr-dex" name="system.attributes.dex.value">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-            </div>
-
-            <!-- CON Ability Score -->
-            <div class="ability cs-ability cs-abs">
-              <select class="attr-con cs-ability-select" id="attr-con" name="system.attributes.con.value">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-            </div>
-
-            <!-- INT Ability Score -->
-            <div class="ability cs-ability cs-abs">
-              <select class="attr-int cs-ability-select" id="attr-int" name="system.attributes.int.value">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-            </div>
-
-            <!-- WIS Ability Score -->
-            <div class="ability cs-ability cs-abs">
-              <select class="attr-wis cs-ability-select" id="attr-wis" name="system.attributes.wis.value">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-            </div>
-
-            <!-- CHA Ability Score -->
-            <div class="ability cs-ability cs-abs">
-              <select class="attr-cha cs-ability-select" id="attr-cha" name="system.attributes.cha.value">
-                {{#each (range 3 18) as |val|}}
-                  <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
-                {{/each}}
-              </select>
-            </div>
-
-          </div>
-
-          <!-- Saving Throw Groups - Positioned relative to combat section -->
-          <!-- Death Ray/Poison Group -->
-          <div class="save-group-death cs-save-group">
-            <div class="save death-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.death.value}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Wands Group -->
-          <div class="save-group-wands cs-save-group">
-            <div class="save wands-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.wands.value}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Paralysis Group -->
-          <div class="save-group-paralysis cs-save-group">
-            <div class="save paralysis-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.paralysis.value}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Breath Attacks Group -->
-          <div class="save-group-breath cs-save-group">
-            <div class="save breath-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.breath.value}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Spells/Rods/Staves Group -->
-          <div class="save-group-spells cs-save-group">
-            <div class="save spells-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.spells.value}}</span>
-              </div>
-            </div>
-          </div>
 
           <!-- Barbarian Climb Surfaces Field -->
           <div class="listening-group cs-abs cs-pos-barbarian-climb">
@@ -1793,8 +1393,17 @@
       
       <!-- Combat Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
-        <section class="combat-tab">
-          <!-- Combat Stats Section -->
+        <div class="combat-saving-throws-image">
+          <div class="combat-saving-throws-title">Saving Throws</div>
+          <div class="combat-saving-throws-subtitle">Roll over or equal to score on 1d20 + modifiers</div>
+          <img src="/systems/osp-houserules/assets/character-sheet/saving-throws.webp" alt="" draggable="false" />
+        </div>
+        <div class="combat-hpac-title">Combat &amp; Movement</div>
+        <div class="combat-hpac-image">
+          <img src="/systems/osp-houserules/assets/character-sheet/hpac.webp" alt="" draggable="false" />
+        </div>
+        <div class="combat-stats-overlay">
+          <!-- Combat Stats Section — positioned over hpac background -->
           <div class="combat-stats cs-combat-stats">
             <div class="combat-stat cs-combat-stat cs-pos-combat-ac-label">
               <label for="char-ac" class="cs-field-label">AC</label>
@@ -1852,9 +1461,55 @@
             </div>
           </div>
 
-          {{!-- Scrollable Content Area --}}
-          <div class="combat-scrollable-content">
+          <!-- Saving Throw Groups - Positioned relative to combat section -->
+        </div><!-- /.combat-stats-overlay -->
+          <!-- Death Ray/Poison Group -->
+          <div class="save-group-death cs-save-group">
+            <div class="save death-save cs-save cs-abs">
+              <div class="cs-save-badge">
+                <span class="cs-save-value">{{saves.death.value}}</span>
+              </div>
+            </div>
+          </div>
 
+          <!-- Wands Group -->
+          <div class="save-group-wands cs-save-group">
+            <div class="save wands-save cs-save cs-abs">
+              <div class="cs-save-badge">
+                <span class="cs-save-value">{{saves.wands.value}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paralysis Group -->
+          <div class="save-group-paralysis cs-save-group">
+            <div class="save paralysis-save cs-save cs-abs">
+              <div class="cs-save-badge">
+                <span class="cs-save-value">{{saves.paralysis.value}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Breath Attacks Group -->
+          <div class="save-group-breath cs-save-group">
+            <div class="save breath-save cs-save cs-abs">
+              <div class="cs-save-badge">
+                <span class="cs-save-value">{{saves.breath.value}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spells/Rods/Staves Group -->
+          <div class="save-group-spells cs-save-group">
+            <div class="save spells-save cs-save cs-abs">
+              <div class="cs-save-badge">
+                <span class="cs-save-value">{{saves.spells.value}}</span>
+              </div>
+            </div>
+          </div>
+
+
+        <section class="combat-tab">
           {{!-- Equipped Weapons Section --}}
           <div class="combat-equipped-section">
             <div class="item-category-title weapons-title flexrow">
@@ -1870,12 +1525,31 @@
             </div>
             <ol class="item-list">
               {{#each equippedWeapons as |item|}}
-              <li class="item-entry item" data-item-id="{{item.id}}">
+              {{#if item._isUnarmedPlaceholder}}
+              <li class="item-entry item" draggable="true" data-item-id="__unarmed__">
                 <div class="item-header weapon-header flexrow">
-                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                  <a class="item-roll-icon item-rollable item-unarmed-roll" title="Roll Unarmed Attack">
+                    <img src="systems/osp-houserules/assets/character-sheet/d20-ico.webp" alt="Roll" style="width: 24px; height: 24px;" />
+                  </a>
+                  <div class="item-image" style="background-image: url('systems/osp-houserules/assets/images/weapons/fist.webp');"></div>
+                  <h4 class="item-name">Punch/Kick</h4>
+                  <div class="field-short">1d2</div>
+                  <div class="field-short">B</div>
+                  <div class="field-short">S</div>
+                  <div class="field-short">1</div>
+                  <div class="field-short">1</div>
+                  <div class="field-short"></div>
+                  <div class="field-short"></div>
+                  <div class="item-controls"></div>
+                </div>
+              </li>
+              {{else}}
+              <li class="item-entry item" draggable="true" data-item-id="{{item.id}}">
+                <div class="item-header weapon-header flexrow">
                   <a class="item-roll-icon {{#if item.isWeapon}}item-rollable{{/if}}" draggable="true" data-item-id="{{item.id}}" title="Roll Attack (Drag to create macro)">
                     <img src="systems/osp-houserules/assets/character-sheet/d20-ico.webp" alt="Roll" style="width: 24px; height: 24px;" />
                   </a>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{weaponDamage item.system.damage}}</div>
                   <div class="field-short">{{item.system.damageType}}</div>
@@ -1902,24 +1576,8 @@
                   </div>
                 </div>
               </li>
+              {{/if}}
               {{/each}}
-              <li class="item-entry unarmed-placeholder">
-                <div class="item-header weapon-header flexrow">
-                  <div class="item-image" style="background-image: url('systems/osp-houserules/assets/images/weapons/fist.webp');"></div>
-                  <a class="item-roll-icon item-rollable item-unarmed-roll" title="Roll Unarmed Attack">
-                    <img src="systems/osp-houserules/assets/character-sheet/d20-ico.webp" alt="Roll" style="width: 24px; height: 24px;" />
-                  </a>
-                  <h4 class="item-name">Punch/Kick</h4>
-                  <div class="field-short">1d2</div>
-                  <div class="field-short">B</div>
-                  <div class="field-short">S</div>
-                  <div class="field-short">1</div>
-                  <div class="field-short">1</div>
-                  <div class="field-short"></div>
-                  <div class="field-short"></div>
-                  <div class="item-controls"></div>
-                </div>
-              </li>
             </ol>
           </div>
 
@@ -1939,7 +1597,7 @@
             <ol class="item-list">
               {{#if wornArmor.length}}
                 {{#each wornArmor as |item|}}
-                <li class="item-entry item" data-item-id="{{item.id}}">
+                <li class="item-entry item" draggable="true" data-item-id="{{item.id}}">
                   <div class="item-header armor-header flexrow">
                     <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                     <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
@@ -1947,7 +1605,7 @@
                     <div class="field-short">{{item.system.aac.value}}</div>
                     <div class="field-short">{{item.system.donTime}}</div>
                     <div class="field-short">{{item.system.doffTime}}</div>
-                    <div class="field-short">{{item.system.maxDex}}</div>
+                    <div class="field-short">{{signedInt item.system.maxDex}}</div>
                     <div class="field-short">{{item.system.minStr}}</div>
                     <div class="field-short">{{item.system.unitWeight}}</div>
                     <div class="item-controls">
@@ -2005,7 +1663,6 @@
             </ol>
           </div>
 
-          </div>{{!-- Close combat-scrollable-content --}}
         </section>
       </div>
       
@@ -2024,7 +1681,7 @@
             </div>
           </div>
 
-          {{!-- Scrollable Content Area --}}
+
           <div class="gear-scrollable-content">
 
           {{!-- Weapons Section --}}
@@ -2428,26 +2085,390 @@
           </div>
 
           </div>{{!-- End gear-scrollable-content --}}
-
           </section>
         </div>
 
       <!-- Bio Tab -->
       <div class="tab" data-group="primary" data-tab="bio">
+  <!-- Character Level - Positioned behind everything -->
+  <div class="level-progress-bar-container cs-level-container cs-abs cs-pos-level" id="level-container">
+    <!-- Shadow overlay for Level field -->
+  <div class="cs-level-shadow"></div>
+  <!-- Hidden inputs for level position data -->
+  <input type="hidden" name="system.levelPosition.x" value="{{system.levelPosition.x}}" />
+  <input type="hidden" name="system.levelPosition.y" value="{{system.levelPosition.y}}" />
+  <input type="hidden" name="system.levelPosition.zIndex" value="{{system.levelPosition.zIndex}}" />
+
+        <!-- Level display without progress bar -->
+        <div>
+          <!-- Level display in center -->
+          <div class="cs-level-display">{{system.level}}</div>
+        </div>
+      </div>
+
+  <!-- Character Portrait - Positioned behind everything -->
+  <div class="portrait-container cs-portrait-container cs-abs cs-pos-portrait" id="portrait-container" style="--portrait-size:138px; --portrait-height:183px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}};">
+    <!-- Hidden inputs for portrait data -->
+    <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
+    <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
+    <input type="hidden" name="system.userPortrait.x" value="{{system.userPortrait.x}}" />
+    <input type="hidden" name="system.userPortrait.y" value="{{system.userPortrait.y}}" />
+
+    <!-- Portrait display area -->
+    <div class="portrait-display cs-portrait-display" title="Double-click: Change portrait&#10;Right-click: Position tool&#10;Shift+Right-click: Portrait adjustment controls">
+      <img class="portrait-img cs-portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}icons/svg/mystery-man-black.svg{{/if}}" alt="{{actor.name}}" draggable="false" />
+    </div>
+
+    <!-- Portrait adjustment controls -->
+    <div class="portrait-controls" id="portrait-controls">
+      <div class="btn-group">
+        <button type="button" data-action="zoom-out" title="Zoom Out&#10;Hold Shift for fine adjustment&#10;Hold Ctrl for coarse adjustment&#10;Hold Shift+Ctrl for very fine adjustment">−</button>
+        <button type="button" data-action="zoom-in" title="Zoom In&#10;Hold Shift for fine adjustment&#10;Hold Ctrl for coarse adjustment&#10;Hold Shift+Ctrl for very fine adjustment">+</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" data-action="move-up" title="Move Up&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">↑</button>
+        <button type="button" data-action="move-down" title="Move Down&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">↓</button>
+        <button type="button" data-action="move-left" title="Move Left&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">←</button>
+        <button type="button" data-action="move-right" title="Move Right&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">→</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" data-action="reset" title="Reset">↻</button>
+        <button type="button" data-action="done" title="Done">✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Static Header Section - Absolute Positioning Layout -->
+  <div class="static-header cs-static-header">
+
+      <!-- Character Name - Centered positioning -->
+  <div class="character-name-section cs-abs cs-pos-name" id="character-name-container">
+
+      </div>
+
+  <!-- Character Name - Absolute positioned -->
+  <div class="character-name-group cs-abs cs-pos-namegroup" id="character-name-container">
+    <input type="hidden" name="system.namePosition.x" value="{{system.namePosition.x}}" />
+    <input type="hidden" name="system.namePosition.y" value="{{system.namePosition.y}}" />
+    <input type="hidden" name="system.namePosition.zIndex" value="{{system.namePosition.zIndex}}" />
+    <div class="cs-char-field-group">
+      <input class="char-name cs-char-name" id="char-name" name="name" type="text" value="{{actor.name}}" />
+    </div>
+  </div>
+
+  <!-- Character Class & Alignment - Centered under name as one element -->
+  <!-- Character Class - Independent container for positioning -->
+  <div class="class-group cs-abs cs-pos-class" id="class-container">
+    <input type="hidden" name="system.classPosition.x" value="{{system.classPosition.x}}" />
+    <input type="hidden" name="system.classPosition.y" value="{{system.classPosition.y}}" />
+    <input type="hidden" name="system.classPosition.zIndex" value="{{system.classPosition.zIndex}}" />
+    <div class="cs-char-field-group">
+  <select class="char-class cs-class-select" id="char-class" name="system.class">
+        <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
+        <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
+        <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
+        <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
+        <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
+        <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
+        <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
+        <option value="Elf" {{#if (eq system.class "Elf")}}selected{{/if}}>Elf</option>
+        <option value="Fighter" {{#if (eq system.class "Fighter")}}selected{{/if}}>Fighter</option>
+        <option value="Gnome" {{#if (eq system.class "Gnome")}}selected{{/if}}>Gnome</option>
+        <option value="Half-Elf" {{#if (eq system.class "Half-Elf")}}selected{{/if}}>Half-Elf</option>
+        <option value="Half-Orc" {{#if (eq system.class "Half-Orc")}}selected{{/if}}>Half-Orc</option>
+        <option value="Hobbit" {{#if (eq system.class "Hobbit")}}selected{{/if}}>Hobbit</option>
+        <option value="Illusionist" {{#if (eq system.class "Illusionist")}}selected{{/if}}>Illusionist</option>
+        <option value="Knight" {{#if (eq system.class "Knight")}}selected{{/if}}>Knight</option>
+        <option value="Mage" {{#if (eq system.class "Mage")}}selected{{/if}}>Mage</option>
+        <option value="Magic-User" {{#if (eq system.class "Magic-User")}}selected{{/if}}>Magic-User</option>
+        <option value="Paladin" {{#if (eq system.class "Paladin")}}selected{{/if}}>Paladin</option>
+        <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
+        <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
+        <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Character Alignment - Independent container for positioning -->
+  <div class="alignment-group cs-abs cs-pos-alignment" id="alignment-container">
+    <input type="hidden" name="system.alignmentPosition.x" value="{{system.alignmentPosition.x}}" />
+    <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
+    <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
+    <div class="cs-char-field-group">
+  <select class="char-align cs-alignment-select" id="char-align" name="system.alignment">
+        <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
+        <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
+        <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Character Race - Positioned next to existing fields -->
+  <div class="race-group cs-abs cs-pos-race" id="race-container">
+    <div class="cs-char-field-group">
+      <select class="char-race cs-race-select" id="char-race" name="system.race">
+        <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
+        <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
+        <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
+        <option value="Half-Elf" {{#if (eq system.race "Half-Elf")}}selected{{/if}}>Half-Elf</option>
+        <option value="Half-Orc" {{#if (eq system.race "Half-Orc")}}selected{{/if}}>Half-Orc</option>
+        <option value="Hobbit" {{#if (eq system.race "Hobbit")}}selected{{/if}}>Hobbit</option>
+        <option value="Human" {{#if (eq system.race "Human")}}selected{{/if}}>Human</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Character Age and Sex - Small fields -->
+  <div class="age-group cs-abs cs-pos-age" id="age-container">
+    <div class="cs-char-field-group">
+      <input class="char-age cs-age-field" id="char-age" name="system.age" type="text" value="{{system.age}}" />
+    </div>
+  </div>
+
+  <div class="sex-group cs-abs cs-pos-sex" id="sex-container">
+    <div class="cs-char-field-group">
+      <select class="char-sex cs-sex-field" id="char-sex" name="system.sex">
+        <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
+        <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>F</option>
+        <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>O</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Height field -->
+  <div class="height-group cs-abs cs-pos-height" id="height-container">
+    <div class="cs-char-field-group">
+      <input class="char-height cs-height-field" id="char-height" name="system.height" type="text" value="{{system.height}}" />
+    </div>
+  </div>
+
+  <!-- Weight field -->
+  <div class="weight-group cs-abs cs-pos-weight" id="weight-container">
+    <div class="cs-char-field-group">
+      <input class="char-weight cs-weight-field" id="char-weight" name="system.weight" type="text" value="{{system.weight}}" />
+    </div>
+  </div>
+
+  <!-- Background field -->
+  <div class="background-group cs-abs cs-pos-background" id="background-container">
+    <div class="char-field-group cs-char-field-group">
+      <select class="char-background cs-background-select" id="char-background" name="system.background">
+ <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
+                  <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
+                  <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
+                  <option value="Artisan" {{#if (eq system.background "Artisan")}}selected{{/if}}>Artisan</option>
+                  <option value="Baker" {{#if (eq system.background "Baker")}}selected{{/if}}>Baker</option>
+                  <option value="Banker" {{#if (eq system.background "Banker")}}selected{{/if}}>Banker</option>
+                  <option value="Barber" {{#if (eq system.background "Barber")}}selected{{/if}}>Barber</option>
+                  <option value="Barkeep" {{#if (eq system.background "Barkeep")}}selected{{/if}}>Barkeep</option>
+                  <option value="Beggar" {{#if (eq system.background "Beggar")}}selected{{/if}}>Beggar</option>
+                  <option value="Blacksmith" {{#if (eq system.background "Blacksmith")}}selected{{/if}}>Blacksmith</option>
+                  <option value="Bookbinder" {{#if (eq system.background "Bookbinder")}}selected{{/if}}>Bookbinder</option>
+                  <option value="Bouncer" {{#if (eq system.background "Bouncer")}}selected{{/if}}>Bouncer</option>
+                  <option value="Bowyer" {{#if (eq system.background "Bowyer")}}selected{{/if}}>Bowyer</option>
+                  <option value="Brewer" {{#if (eq system.background "Brewer")}}selected{{/if}}>Brewer</option>
+                  <option value="Bricklayer" {{#if (eq system.background "Bricklayer")}}selected{{/if}}>Bricklayer</option>
+                  <option value="Butcher" {{#if (eq system.background "Butcher")}}selected{{/if}}>Butcher</option>
+                  <option value="Caretaker" {{#if (eq system.background "Caretaker")}}selected{{/if}}>Caretaker</option>
+                  <option value="Carpenter" {{#if (eq system.background "Carpenter")}}selected{{/if}}>Carpenter</option>
+                  <option value="Cartographer" {{#if (eq system.background "Cartographer")}}selected{{/if}}>Cartographer</option>
+                  <option value="Charcoal Maker" {{#if (eq system.background "Charcoal Maker")}}selected{{/if}}>Charcoal Maker</option>
+                  <option value="Clerk" {{#if (eq system.background "Clerk")}}selected{{/if}}>Clerk</option>
+                  <option value="Coachman" {{#if (eq system.background "Coachman")}}selected{{/if}}>Coachman</option>
+                  <option value="Cobbler" {{#if (eq system.background "Cobbler")}}selected{{/if}}>Cobbler</option>
+                  <option value="Cook" {{#if (eq system.background "Cook")}}selected{{/if}}>Cook</option>
+                  <option value="Cooper" {{#if (eq system.background "Cooper")}}selected{{/if}}>Cooper</option>
+                  <option value="Courier" {{#if (eq system.background "Courier")}}selected{{/if}}>Courier</option>
+                  <option value="Crier" {{#if (eq system.background "Crier")}}selected{{/if}}>Crier</option>
+                  <option value="Dairyboy" {{#if (eq system.background "Dairyboy")}}selected{{/if}}>Dairyboy</option>
+                  <option value="Distiller" {{#if (eq system.background "Distiller")}}selected{{/if}}>Distiller</option>
+                  <option value="Ditch Digger" {{#if (eq system.background "Ditch Digger")}}selected{{/if}}>Ditch Digger</option>
+                  <option value="Dyer" {{#if (eq system.background "Dyer")}}selected{{/if}}>Dyer</option>
+                  <option value="Engraver" {{#if (eq system.background "Engraver")}}selected{{/if}}>Engraver</option>
+                  <option value="Entertainer" {{#if (eq system.background "Entertainer")}}selected{{/if}}>Entertainer</option>
+                  <option value="Falconer" {{#if (eq system.background "Falconer")}}selected{{/if}}>Falconer</option>
+                  <option value="Farmer" {{#if (eq system.background "Farmer")}}selected{{/if}}>Farmer</option>
+                  <option value="Ferrier" {{#if (eq system.background "Ferrier")}}selected{{/if}}>Ferrier</option>
+                  <option value="Fishmonger" {{#if (eq system.background "Fishmonger")}}selected{{/if}}>Fishmonger</option>
+                  <option value="Fletcher" {{#if (eq system.background "Fletcher")}}selected{{/if}}>Fletcher</option>
+                  <option value="Fuller" {{#if (eq system.background "Fuller")}}selected{{/if}}>Fuller</option>
+                  <option value="Furrier" {{#if (eq system.background "Furrier")}}selected{{/if}}>Furrier</option>
+                  <option value="Gardener" {{#if (eq system.background "Gardener")}}selected{{/if}}>Gardener</option>
+                  <option value="Glassblower" {{#if (eq system.background "Glassblower")}}selected{{/if}}>Glassblower</option>
+                  <option value="Glazier" {{#if (eq system.background "Glazier")}}selected{{/if}}>Glazier</option>
+                  <option value="Glover" {{#if (eq system.background "Glover")}}selected{{/if}}>Glover</option>
+                  <option value="Gong Farmer" {{#if (eq system.background "Gong Farmer")}}selected{{/if}}>Gong Farmer</option>
+                  <option value="Gravedigger" {{#if (eq system.background "Gravedigger")}}selected{{/if}}>Gravedigger</option>
+                  <option value="Groom" {{#if (eq system.background "Groom")}}selected{{/if}}>Groom</option>
+                  <option value="Guard" {{#if (eq system.background "Guard")}}selected{{/if}}>Guard</option>
+                  <option value="Hatmaker" {{#if (eq system.background "Hatmaker")}}selected{{/if}}>Hatmaker</option>
+                  <option value="Herdsman" {{#if (eq system.background "Herdsman")}}selected{{/if}}>Herdsman</option>
+                  <option value="Houndsman" {{#if (eq system.background "Houndsman")}}selected{{/if}}>Houndsman</option>
+                  <option value="Innkeeper" {{#if (eq system.background "Innkeeper")}}selected{{/if}}>Innkeeper</option>
+                  <option value="Jailer" {{#if (eq system.background "Jailer")}}selected{{/if}}>Jailer</option>
+                  <option value="Jester" {{#if (eq system.background "Jester")}}selected{{/if}}>Jester</option>
+                  <option value="Joiner" {{#if (eq system.background "Joiner")}}selected{{/if}}>Joiner</option>
+                  <option value="Juggler" {{#if (eq system.background "Juggler")}}selected{{/if}}>Juggler</option>
+                  <option value="Laborer" {{#if (eq system.background "Laborer")}}selected{{/if}}>Laborer</option>
+                  <option value="Launderer" {{#if (eq system.background "Launderer")}}selected{{/if}}>Launderer</option>
+                  <option value="Lector" {{#if (eq system.background "Lector")}}selected{{/if}}>Lector</option>
+                  <option value="Librarian" {{#if (eq system.background "Librarian")}}selected{{/if}}>Librarian</option>
+                  <option value="Lumberjack" {{#if (eq system.background "Lumberjack")}}selected{{/if}}>Lumberjack</option>
+                  <option value="Maid/Butler" {{#if (eq system.background "Maid/Butler")}}selected{{/if}}>Maid/Butler</option>
+                  <option value="Mason" {{#if (eq system.background "Mason")}}selected{{/if}}>Mason</option>
+                  <option value="Merchant" {{#if (eq system.background "Merchant")}}selected{{/if}}>Merchant</option>
+                  <option value="Messenger" {{#if (eq system.background "Messenger")}}selected{{/if}}>Messenger</option>
+                  <option value="Miller" {{#if (eq system.background "Miller")}}selected{{/if}}>Miller</option>
+                  <option value="Millwright" {{#if (eq system.background "Millwright")}}selected{{/if}}>Millwright</option>
+                  <option value="Mortician" {{#if (eq system.background "Mortician")}}selected{{/if}}>Mortician</option>
+                  <option value="Musician" {{#if (eq system.background "Musician")}}selected{{/if}}>Musician</option>
+                  <option value="Ne'er-do-well" {{#if (eq system.background "Ne'er-do-well")}}selected{{/if}}>Ne'er-do-well</option>
+                  <option value="Page" {{#if (eq system.background "Page")}}selected{{/if}}>Page</option>
+                  <option value="Painter" {{#if (eq system.background "Painter")}}selected{{/if}}>Painter</option>
+                  <option value="Philosopher" {{#if (eq system.background "Philosopher")}}selected{{/if}}>Philosopher</option>
+                  <option value="Porter" {{#if (eq system.background "Porter")}}selected{{/if}}>Porter</option>
+                  <option value="Potter" {{#if (eq system.background "Potter")}}selected{{/if}}>Potter</option>
+                  <option value="Printer" {{#if (eq system.background "Printer")}}selected{{/if}}>Printer</option>
+                  <option value="Prostitute" {{#if (eq system.background "Prostitute")}}selected{{/if}}>Prostitute</option>
+                  <option value="Rag & Bone" {{#if (eq system.background "Rag & Bone")}}selected{{/if}}>Rag & Bone</option>
+                  <option value="Ratter" {{#if (eq system.background "Ratter")}}selected{{/if}}>Ratter</option>
+                  <option value="Runaway Slave" {{#if (eq system.background "Runaway Slave")}}selected{{/if}}>Runaway Slave</option>
+                  <option value="Scavenger" {{#if (eq system.background "Scavenger")}}selected{{/if}}>Scavenger</option>
+                  <option value="Scholar" {{#if (eq system.background "Scholar")}}selected{{/if}}>Scholar</option>
+                  <option value="Serf" {{#if (eq system.background "Serf")}}selected{{/if}}>Serf</option>
+                  <option value="Server" {{#if (eq system.background "Server")}}selected{{/if}}>Server</option>
+                  <option value="Sexton" {{#if (eq system.background "Sexton")}}selected{{/if}}>Sexton</option>
+                  <option value="Squire" {{#if (eq system.background "Squire")}}selected{{/if}}>Squire</option>
+                  <option value="Stablehand" {{#if (eq system.background "Stablehand")}}selected{{/if}}>Stablehand</option>
+                  <option value="Stonecutter" {{#if (eq system.background "Stonecutter")}}selected{{/if}}>Stonecutter</option>
+                  <option value="Street Sweeper" {{#if (eq system.background "Street Sweeper")}}selected{{/if}}>Street Sweeper</option>
+                  <option value="Tailor" {{#if (eq system.background "Tailor")}}selected{{/if}}>Tailor</option>
+                  <option value="Tallow Chandler" {{#if (eq system.background "Tallow Chandler")}}selected{{/if}}>Tallow Chandler</option>
+                  <option value="Tanner" {{#if (eq system.background "Tanner")}}selected{{/if}}>Tanner</option>
+                  <option value="Thatcher" {{#if (eq system.background "Thatcher")}}selected{{/if}}>Thatcher</option>
+                  <option value="Tobacconist" {{#if (eq system.background "Tobacconist")}}selected{{/if}}>Tobacconist</option>
+                  <option value="Trapper" {{#if (eq system.background "Trapper")}}selected{{/if}}>Trapper</option>
+                  <option value="Wainwright" {{#if (eq system.background "Wainwright")}}selected{{/if}}>Wainwright</option>
+                  <option value="Washer" {{#if (eq system.background "Washer")}}selected{{/if}}>Washer</option>
+                  <option value="Weaver" {{#if (eq system.background "Weaver")}}selected{{/if}}>Weaver</option>
+                  <option value="Wheelwright" {{#if (eq system.background "Wheelwright")}}selected{{/if}}>Wheelwright</option>
+                  <option value="Winemaker" {{#if (eq system.background "Winemaker")}}selected{{/if}}>Winemaker</option>
+                  <option value="Woodcutter" {{#if (eq system.background "Woodcutter")}}selected{{/if}}>Woodcutter</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Languages field -->
+  <div class="languages-group cs-abs cs-pos-languages" id="languages-container">
+  <div class="char-field-group cs-char-field-group">
+  <div class="cs-languages-field open-language-dialog">
+        <div class="languages-tags"></div>
+      </div>
+      <input type="hidden" name="system.languages" class="char-languages" value="{{system.languages}}" />
+    </div>
+  </div>
+
+  <!-- XP Mod % field -->
+  <div class="xp-mod-group cs-abs cs-pos-xpmod" id="xp-mod-container">
+  <input type="text" class="xp-mod-display cs-field cs-xp-mod-display" id="xp-mod-display" readonly value="{{formatXPMod system.xpModifier}}" />
+  </div>
+
+  <!-- XP field -->
+  <div class="xp-group cs-abs cs-pos-xp" id="xp-container">
+  <!-- XP Progress Bar -->
+  <div class="level-xp-progress"></div>
+  <input type="text" class="xp-display cs-field cs-xp-display" id="xp-display" name="system.xp" value="{{system.xp}}" />
+  </div>
+
+      <!-- Horizontal separator line at bottom of static header -->
+  <div class="cs-abs cs-pos-sep"></div>
+
+    </div>
+
+        <div class="bio-abilities-image">
+          <div class="bio-abilities-header">
+            <span class="bio-abilities-title">Abilities</span>
+            <span class="bio-abilities-subtitle">Roll under or equal to ability score on 1d20 + modifier</span>
+          </div>
+          <div class="bio-abilities-image-wrap">
+            <img src="/systems/osp-houserules/assets/character-sheet/abilities-scores.webp" alt="" draggable="false" />
+            <!-- Ability Scores Section - overlaid on image -->
+            <div class="ability-scores-section cs-combat-stats">
+
+              <!-- STR Ability Score -->
+              <div class="ability cs-ability cs-abs">
+                <select class="attr-str cs-ability-select" id="attr-str" name="system.attributes.str.value">
+                  {{#each (range 3 18) as |val|}}
+                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
+                  {{/each}}
+                </select>
+              </div>
+
+              <!-- DEX Ability Score -->
+              <div class="ability cs-ability cs-abs">
+                <select class="attr-dex cs-ability-select" id="attr-dex" name="system.attributes.dex.value">
+                  {{#each (range 3 18) as |val|}}
+                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
+                  {{/each}}
+                </select>
+              </div>
+
+              <!-- CON Ability Score -->
+              <div class="ability cs-ability cs-abs">
+                <select class="attr-con cs-ability-select" id="attr-con" name="system.attributes.con.value">
+                  {{#each (range 3 18) as |val|}}
+                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
+                  {{/each}}
+                </select>
+              </div>
+
+              <!-- INT Ability Score -->
+              <div class="ability cs-ability cs-abs">
+                <select class="attr-int cs-ability-select" id="attr-int" name="system.attributes.int.value">
+                  {{#each (range 3 18) as |val|}}
+                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
+                  {{/each}}
+                </select>
+              </div>
+
+              <!-- WIS Ability Score -->
+              <div class="ability cs-ability cs-abs">
+                <select class="attr-wis cs-ability-select" id="attr-wis" name="system.attributes.wis.value">
+                  {{#each (range 3 18) as |val|}}
+                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
+                  {{/each}}
+                </select>
+              </div>
+
+              <!-- CHA Ability Score -->
+              <div class="ability cs-ability cs-abs">
+                <select class="attr-cha cs-ability-select" id="attr-cha" name="system.attributes.cha.value">
+                  {{#each (range 3 18) as |val|}}
+                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
+                  {{/each}}
+                </select>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="bio-content-area">
         <label class="bio-field-label">Appearance</label>
         <textarea class="bio-text-field" name="system.details.appearance" data-dtype="String" placeholder="Enter character appearance...">{{system.details.appearance}}</textarea>
-        
+
         <label class="bio-field-label">Personality</label>
         <textarea class="bio-text-field bio-text-field-2" name="system.details.personality" data-dtype="String" placeholder="Enter character personality...">{{system.details.personality}}</textarea>
-        
+
         <label class="bio-field-label">Background & History</label>
         <textarea class="bio-text-field bio-text-field-3" name="system.details.background" data-dtype="String" placeholder="Enter character background & history...">{{system.details.background}}</textarea>
-        
+
         <label class="bio-field-label">Goals & Motivations</label>
         <textarea class="bio-text-field bio-text-field-4" name="system.details.goals" data-dtype="String" placeholder="Enter character goals & motivations...">{{system.details.goals}}</textarea>
-        
+
         <label class="bio-field-label">Additional Notes</label>
         <textarea class="bio-text-field bio-text-field-5" name="system.details.notes" data-dtype="String" placeholder="Enter additional notes...">{{system.details.notes}}</textarea>
+        </div>
       </div>
     </section>
 </form>

@@ -7,39 +7,40 @@
 
 /* Global Column Widths (shared) */
 $col-caret: 30px;        // Width of collapse/expand caret
-$col-controls: 116px;   // Width of item controls section
+$col-controls: 85px;   // Width of item controls section
 $col-field-short: 55px;  // Generic short field width (fallback for .field-short class)
 $col-image: 24px;        // Generic image column width (used by .item-roll-icon)
 
 /* Combat Tab – Weapons: Column Widths */
-$combat-weapons-col-item-image: 64px;   // Width of weapon item image
-$combat-weapons-col-roll-icon: 24px;    // Width of weapon roll icon
-$combat-weapons-col-damage: 90px;       // Width of damage column
-$combat-weapons-col-dt: 40px;           // Width of damage type column (DT)
-$combat-weapons-col-sz: 12px;           // Width of size column (SZ)
-$combat-weapons-col-sf: 22px;           // Width of speed factor column (SF)
-$combat-weapons-col-rof: 40px;          // Width of rate of fire column (RoF)
-$combat-weapons-col-rng: 60px;          // Width of range column (RNG)
-$combat-weapons-col-weight: 87px;       // Width of weight column
+$combat-weapons-col-item-image: 55px;   // Width of weapon item image
+$combat-weapons-col-roll-icon: 40px;    // Width of weapon roll icon
+$combat-weapons-col-name: 165px;         // Width of weapon name column (698px total - all other fixed cols)
+$combat-weapons-col-damage: 70px;       // Width of damage column
+$combat-weapons-col-dt: 35px;           // Width of damage type column (DT)
+$combat-weapons-col-sz: 35px;           // Width of size column (SZ)
+$combat-weapons-col-sf: 35px;           // Width of speed factor column (SF)
+$combat-weapons-col-rof: 35px;          // Width of rate of fire column (RoF)
+$combat-weapons-col-rng: 100px;          // Width of range column (RNG)
+$combat-weapons-col-weight: 35px;       // Width of weight column
 
 /* Combat Tab – Weapons: Header Label Positions
    Each value is the X coordinate (from left edge of title bar) where the label is centered.
    "Weapon" is left-aligned; all others are centered at their column midpoint.
    Formula: 8px padding + sum of preceding column widths + (this column width / 2)
-   Column layout: [8px pad][32 img][24 roll][159px 1fr name][90 dmg][40 dt][12 sz][22 sf][40 rof][60 rng][87 wt][116 ctrl]
+   Column layout: [50 img][30 roll][150 name][90 dmg][40 dt][40 sz][40 sf][40 rof][90 rng][30 wt][80 ctrl]
 */
-$combat-weapon-title-name-x:   96px;  // "Weapon"  — left edge of name column (8+64+24)
-$combat-weapon-title-dmg-x:   268px;  // "DMG"     — center of damage col   (8+32+24+159+45)
-$combat-weapon-title-dt-x:    333px;  // "DT"      — center of DT col        (+90+20)
-$combat-weapon-title-sz-x:    359px;  // "SZ"      — center of SZ col        (+40+6)
-$combat-weapon-title-sf-x:    376px;  // "SF"      — center of SF col        (+12+11)
-$combat-weapon-title-rof-x:   407px;  // "RoF"     — center of RoF col       (+22+20)
-$combat-weapon-title-rng-x:   457px;  // "RNG"     — center of RNG col       (+40+30)
-$combat-weapon-title-wt-x:    531px;  // "WT"      — center of WT col        (+60+44)
+$combat-weapon-title-name-x:  102px;  // "Weapon"  — left edge of name col  (50+30)
+$combat-weapon-title-dmg-x:   296px;  // "DMG"     — center of damage col    (230+45)
+$combat-weapon-title-dt-x:    350px;  // "DT"      — center of DT col        (320+20)
+$combat-weapon-title-sz-x:    386px;  // "SZ"      — center of SZ col        (360+20)
+$combat-weapon-title-sf-x:    421px;  // "SF"      — center of SF col        (400+20)
+$combat-weapon-title-rof-x:   457px;  // "RoF"     — center of RoF col       (440+20)
+$combat-weapon-title-rng-x:   520px;  // "RNG"     — center of RNG col       (480+45)
+$combat-weapon-title-wt-x:    590px;  // "WT"      — center of WT col        (570+15)
 
 
 /* Gear Tab – Weapons: Column Widths */
-$gear-weapons-col-item-image: 64px;   // Width of weapon item image
+$gear-weapons-col-item-image: 50px;   // Width of weapon item image
 $gear-weapons-col-damage: 60px;      // Width of damage column
 $gear-weapons-col-dt: 40px;           // Width of damage type column (DT)
 $gear-weapons-col-sz: 40px;           // Width of size column (SZ)
@@ -67,28 +68,28 @@ $gear-weapon-title-wt-x:    554px;  // "WT"     — center of WT col       (+100
 
 
 /* Combat Tab – Armor: Column Widths */
-$combat-armor-col-image:  64px;  // Width of armor image
+$combat-armor-col-image:  50px;  // Width of armor image
 $combat-armor-col-name:  130px;  // Width of armor name column (fixed, replaces 1fr)
-$combat-armor-col-type:  100px;  // Width of type column
-$combat-armor-col-ac:     30px;  // Width of AC column
-$combat-armor-col-don:    75px;  // Width of Don (donning time) column
-$combat-armor-col-doff:   75px;  // Width of Doff (doffing time) column
-$combat-armor-col-maxdex: 35px;  // Width of Max DEX column
-$combat-armor-col-minstr: 35px;  // Width of Min STR column
-$combat-armor-col-weight: 50px;  // Width of weight column (matches containers)
+$combat-armor-col-type:   50px;  // Width of type column
+$combat-armor-col-ac:     45px;  // Width of AC column
+$combat-armor-col-don:    90px;  // Width of Don (donning time) column
+$combat-armor-col-doff:   90px;  // Width of Doff (doffing time) column
+$combat-armor-col-maxdex: 55px;  // Width of Max DEX column
+$combat-armor-col-minstr: 55px;  // Width of Min STR column
+$combat-armor-col-weight: 40px;  // Width of weight column (matches containers)
 
 /* Combat Tab – Armor: Header Label Positions
    Column layout: [8pad][45 img][166 1fr name][50 type][50 ac][80 don][65 doff][30 maxdex][30 minstr][50 wt][116 ctrl]
    1fr = 682 - 45 - 50 - 50 - 80 - 65 - 30 - 30 - 50 - 116 = 166px
 */
-$combat-armor-title-armor-x:   72px;  // "Armor"   — left-aligned (8+64)
-$combat-armor-title-type-x:   244px;  // "Type"    — center (8+45+166+25)
-$combat-armor-title-ac-x:     294px;  // "AC"      — center (+50)
-$combat-armor-title-don-x:    359px;  // "Don"     — center (+80 col, 319+40)
-$combat-armor-title-doff-x:   432px;  // "Doff"    — center (+65 col, 399+32.5)
-$combat-armor-title-maxdex-x: 479px;  // "mDEX"    — center (+30 col, 464+15)
-$combat-armor-title-minstr-x: 509px;  // "mSTR"    — center (+30 col, 494+15)
-$combat-armor-title-wt-x:     549px;  // "WT"      — center (+50 col, 524+25)
+$combat-armor-title-armor-x:   60px;  // "Armor"   — left-aligned (8+64)
+$combat-armor-title-type-x:   210px;  // "Type"    — center (8+45+166+25)
+$combat-armor-title-ac-x:     258px;  // "AC"      — center (+50)
+$combat-armor-title-don-x:    325px;  // "Don"     — center (+80 col, 319+40)
+$combat-armor-title-doff-x:   413px;  // "Doff"    — center (+65 col, 399+32.5)
+$combat-armor-title-maxdex-x: 488px;  // "mDEX"    — center (+30 col, 464+15)
+$combat-armor-title-minstr-x: 543px;  // "mSTR"    — center (+30 col, 494+15)
+$combat-armor-title-wt-x:     590px;  // "WT"      — center (+50 col, 524+25)
 
 /* Gear Tab (character-sheet) – Armor: Header Label Positions
    Same column layout as combat armor */
@@ -181,8 +182,8 @@ $tree-line-thickness: 1px;  // Thickness of tree connector lines (try 1px for th
 $tree-line-color: #000000;     // Color of tree connector lines
 
 /* Item Images */
-$image-size: 64px;       // Size of item images (square)
-$item-row-height: 70px;  // Height of item rows with images (image-size + padding)
+$image-size: 50px;       // Size of item images (square)
+$item-row-height: 60px;  // Height of item rows with images (image-size + padding)
 
 
 /* ============================================
@@ -200,25 +201,14 @@ $item-row-height: 70px;  // Height of item rows with images (image-size + paddin
    ============================================ */
 
 .gear-tab,
-.combat-tab {
-  margin: 0 auto; /* Center the content */
-  margin-left: calc(50% - 352px); /* Offset 6px to the right (352px = 704/2) */
-  position: relative; /* Establish positioning context for sticky children */
-  height: 100%; /* Fill available height */
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* Prevent outer scroll, content will scroll internally */
-}
 
 .combat-tab {
-  overflow-y: auto; /* Allow scrolling for combat tab */
-  position: absolute !important; /* Absolute positioning to control placement - override general rule */
-  display: block !important; /* Override flex from general rule */
-  top: 0; /* Start 15px down - content scrolls under at this point */
-  left: 0;
-  right: 40px; /* Compensate for scrollbar width to prevent cutoff */
-  bottom: 2px; /* End 2px above bottom of parent */
-  height: auto !important; /* Override height: 100% from general rule */
+  position: relative !important;
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+  margin-top: 25px; /* gap below hpac image — hpac already in normal flow above this section */
+  margin-left: 51px; /* (800px tab - 698px content) / 2 = 51px to center */
   
   /* Match scrollbar styling from gear tab */
   scrollbar-width: thin;
@@ -327,12 +317,35 @@ $item-row-height: 70px;  // Height of item rows with images (image-size + paddin
   }
 }
 
+.combat-tab .item-roll-icon {
+  justify-self: center;
+}
+
+.combat-tab .item-entry.item[draggable="true"] {
+  cursor: grab;
+}
+.combat-tab .item-entry.item.dragging {
+  opacity: 0.4;
+}
+.combat-tab .item-entry.item.drag-over-above {
+  border-top: 2px solid #555;
+}
+.combat-tab .item-entry.item.drag-over-below {
+  border-bottom: 2px solid #555;
+}
+
+.combat-tab .item-name {
+  text-align: left;
+  justify-content: flex-start;
+  padding-left: 5px;
+}
+
 // Combat Tab – Weapons title
 // Each label is absolutely positioned using per-label x variables — fully independent, no padding.
 // "Weapon" is left-aligned at the name column edge; all others are centered at their column midpoint
 // via transform: translateX(-50%) so the variable points to the visual center.
 .osp.sheet.actor .combat-tab .item-category-title.weapons-title {
-  grid-template-columns: $combat-weapons-col-item-image $combat-weapons-col-roll-icon 1fr $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $col-controls;
+  grid-template-columns: $combat-weapons-col-roll-icon $combat-weapons-col-item-image $combat-weapons-col-name $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $col-controls;
   width: 698px;
 
   // All children: absolutely positioned, no padding, no grid dependency
@@ -514,7 +527,7 @@ $item-row-height: 70px;  // Height of item rows with images (image-size + paddin
   .field-short,
   .field-long,
   .item-controls {
-    /*width: 100%;*/
+    width: 100%;
     min-width: 0;
     box-sizing: border-box;
   }
@@ -784,7 +797,7 @@ $item-row-height: 70px;  // Height of item rows with images (image-size + paddin
 
 // Combat Tab – Weapon item rows
 .combat-tab .item-header.weapon-header {
-  grid-template-columns: $combat-weapons-col-item-image $combat-weapons-col-roll-icon 1fr $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $col-controls;
+  grid-template-columns: $combat-weapons-col-roll-icon $combat-weapons-col-item-image $combat-weapons-col-name $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $col-controls;
   gap: $combat-weapons-grid-gap;
   height: $item-row-height;
   box-sizing: border-box;

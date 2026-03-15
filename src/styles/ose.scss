@@ -48,13 +48,23 @@ form.osp,
 }
 
 /* Apply to common text elements, but NOT all elements with * */
-.osp div:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon),
+.osp div:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon):not(.combat-saving-throws-title):not(.combat-saving-throws-subtitle):not(.bio-abilities-title):not(.bio-abilities-subtitle):not(.combat-hpac-title),
 .osp span:not(i),
 .osp p,
 .osp h1, .osp h2, .osp h3, .osp h4, .osp h5, .osp h6,
 .osp label,
 .osp a:not(.item-control) {
   font-family: handwritten !important;
+}
+
+/* Cooper Std for weapons/armor title bar labels.
+   Specificity matches handwritten rule (0,9,2) and appears after it, so wins.
+   Targets only header bar children — item row .field-short stays handwritten. */
+form.osp.sheet.actor.character .combat-tab .item-category-title.weapons-title.flexrow > div.field-short,
+form.osp.sheet.actor.character .combat-tab .item-category-title.weapons-title.flexrow > div.category-name,
+form.osp.sheet.actor.character .combat-tab .item-category-title.armor-title.flexrow > div.field-short,
+form.osp.sheet.actor.character .combat-tab .item-category-title.armor-title.flexrow > div.category-name {
+  font-family: $font-cooper !important;
 }
 
 /* Ensure all form elements inherit handwritten font */
@@ -86,6 +96,15 @@ form.osp button {
 .application.window-app.sheet.actor.character.osp .window-header .window-close {
   font-family: $font-cooper !important;
   font-size: 10px !important;
+}
+
+/* Override: Combat and Bio section titles use Cooper Standard */
+.combat-saving-throws-title,
+.combat-saving-throws-subtitle,
+.combat-hpac-title,
+.bio-abilities-title,
+.bio-abilities-subtitle {
+  font-family: $font-cooper !important;
 }
 
 /* Grid overlay animation */

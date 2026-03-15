@@ -467,8 +467,24 @@ export class ItemHandler {
     } else {
       // Non-container items: check hand requirements before equipping
       if (newEquippedState) {
+        // Only one piece of body armor (light/medium/heavy) can be worn at a time
+        const armorBodyTypes = ["light", "medium", "heavy"];
+        if (item.type === "armor" && armorBodyTypes.includes(item.system.type)) {
+          const wornBodyArmor = this.actor.items.filter(i =>
+            i.type === "armor" &&
+            armorBodyTypes.includes(i.system.type) &&
+            i.system.equipped &&
+            i.id !== item.id
+          );
+          if (wornBodyArmor.length > 0) {
+            const current = wornBodyArmor[0];
+            await current.update({"system.equipped": false});
+            ui.notifications.info(`Removed ${current.name} to equip ${item.name}.`);
+          }
+        }
+
         // Check if this is a hand-held item (weapon or shield)
-        const isHandHeld = item.type === "weapon" || 
+        const isHandHeld = item.type === "weapon" ||
                           (item.type === "armor" && item.name.toLowerCase().includes('shield'));
         
         if (isHandHeld) {

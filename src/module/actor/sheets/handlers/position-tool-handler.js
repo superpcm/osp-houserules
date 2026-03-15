@@ -1,9 +1,11 @@
 /**
  * Position Tool Handler - Provides right-click positioning adjustment for character sheet elements
- * 
+ *
  * This handler replaces the removed draggable functionality with a right-click context menu
  * that allows users to adjust field x,y coordinates and width/height dimensions.
  */
+import { savePositionOverride, removePositionOverride } from './position-file-writer.js';
+
 export class PositionToolHandler {
   constructor(html, actor) {
     this.html = html;
@@ -226,6 +228,8 @@ export class PositionToolHandler {
     };
 
     this.updateElementPosition(positionData.element, newData);
+    savePositionOverride(newData.cssClass, newData.left, newData.top, newData.width, newData.height)
+      .catch(err => console.warn('OSP | savePositionOverride failed:', err));
     ui.notifications.info(`Position updated for ${positionData.name}`);
   }
 
@@ -233,12 +237,17 @@ export class PositionToolHandler {
    * Reset element to default position values
    */
   resetToDefault(positionData) {
-    // Remove custom CSS properties to revert to defaults
-    const root = document.documentElement;
-    root.style.removeProperty(`--cs-pos-${positionData.name}-left`);
-    root.style.removeProperty(`--cs-pos-${positionData.name}-top`);
-    root.style.removeProperty(`--cs-pos-${positionData.name}-width`);
-    root.style.removeProperty(`--cs-pos-${positionData.name}-height`);
+    // Remove inline CSS custom properties from the element
+    const el = positionData.element?.[0];
+    if (el) {
+      el.style.removeProperty('--left');
+      el.style.removeProperty('--top');
+      el.style.removeProperty('--width');
+      el.style.removeProperty('--height');
+    }
+    // Remove from stored overrides so the stylesheet default takes effect
+    removePositionOverride(positionData.cssClass)
+      .catch(err => console.warn('OSP | removePositionOverride failed:', err));
 
     ui.notifications.info(`Reset ${positionData.name} to default position`);
   }

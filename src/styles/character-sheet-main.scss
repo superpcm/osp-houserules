@@ -125,110 +125,75 @@ $cs-pos-listening-width: 70px !default;
 $cs-pos-listening-height: 70px !default;
 
 /* Combat stats position variables */
-$cs-pos-combat-ac-label-left: 917px !default;
-$cs-pos-combat-ac-label-top: 99px !default;
+$cs-pos-combat-ac-label-left: 1010px !default;
+$cs-pos-combat-ac-label-top: 100px !default;
 $cs-pos-combat-ac-label-width: 120px !default;
 $cs-pos-combat-ac-label-height: 20px !default;
 
-$cs-pos-combat-ac-value-left: 917px !default;
-$cs-pos-combat-ac-value-top: 32px !default;
+$cs-pos-combat-ac-value-left: 1011px !default;
+$cs-pos-combat-ac-value-top: 27px !default;
 $cs-pos-combat-ac-value-width: 80px !default;
 $cs-pos-combat-ac-value-height: 40px !default;
 
-$cs-pos-combat-ac-left: calc(50% + 80px) !default;
-$cs-pos-combat-ac-top: 15px !default;
-$cs-pos-combat-ac-width: 120px !default;
-$cs-pos-combat-ac-height: 60px !default;
-
-$cs-pos-combat-uac-label-left: 988px !default;
-$cs-pos-combat-uac-label-top: 22px !default;
+$cs-pos-combat-uac-label-left: 1080px !default;
+$cs-pos-combat-uac-label-top: 25px !default;
 $cs-pos-combat-uac-label-width: 120px !default;
 $cs-pos-combat-uac-label-height: 20px !default;
 
-$cs-pos-combat-uac-value-left: 988px !default;
-$cs-pos-combat-uac-value-top: 61px !default;
+$cs-pos-combat-uac-value-left: 1080px !default;
+$cs-pos-combat-uac-value-top: 73px !default;
 $cs-pos-combat-uac-value-width: 80px !default;
 $cs-pos-combat-uac-value-height: 40px !default;
 
-$cs-pos-combat-uac-left: 981px !default;
-$cs-pos-combat-uac-top: 22px !default;
-$cs-pos-combat-uac-width: 120px !default;
-$cs-pos-combat-uac-height: 60px !default;
-
-$cs-pos-combat-hp-label-left: 425px !default;
-$cs-pos-combat-hp-label-top: 95px !default;
+$cs-pos-combat-hp-label-left: 516px !default;
+$cs-pos-combat-hp-label-top: 94px !default;
 $cs-pos-combat-hp-label-width: 120px !default;
 $cs-pos-combat-hp-label-height: 20px !default;
 
-$cs-pos-combat-hp-value-left: 426px !default;
-$cs-pos-combat-hp-value-top: 36px !default;
+$cs-pos-combat-hp-value-left: 516px !default;
+$cs-pos-combat-hp-value-top: 38px !default;
 $cs-pos-combat-hp-value-width: 80px !default;
 $cs-pos-combat-hp-value-height: 40px !default;
 
-$cs-pos-combat-hp-left: calc(50% + 70px) !default;
-$cs-pos-combat-hp-top: 110px !default;
-$cs-pos-combat-hp-width: 120px !default;
-$cs-pos-combat-hp-height: 60px !default;
-
-$cs-pos-combat-mhp-label-left: 508px !default;
-$cs-pos-combat-mhp-label-top: 25px !default;
+$cs-pos-combat-mhp-label-left: 601px !default;
+$cs-pos-combat-mhp-label-top: 27px !default;
 $cs-pos-combat-mhp-label-width: 120px !default;
 $cs-pos-combat-mhp-label-height: 20px !default;
 
-$cs-pos-combat-mhp-value-left: 509px !default;
-$cs-pos-combat-mhp-value-top: 56px !default;
+$cs-pos-combat-mhp-value-left: 601px !default;
+$cs-pos-combat-mhp-value-top: 60px !default;
 $cs-pos-combat-mhp-value-width: 80px !default;
 $cs-pos-combat-mhp-value-height: 40px !default;
 
-$cs-pos-combat-mhp-left: 509px !default;
-$cs-pos-combat-mhp-top: 24px !default;
-$cs-pos-combat-mhp-width: 120px !default;
-$cs-pos-combat-mhp-height: 60px !default;
-
-$cs-pos-combat-tactical-label-left: 633px !default;
-$cs-pos-combat-tactical-label-top: 90px !default;
+$cs-pos-combat-tactical-label-left: 725px !default;
+$cs-pos-combat-tactical-label-top: 91px !default;
 $cs-pos-combat-tactical-label-width: 120px !default;
 $cs-pos-combat-tactical-label-height: 30px !default;
 
-$cs-pos-combat-tactical-value-left: 638px !default;
-$cs-pos-combat-tactical-value-top: 28px !default;
+$cs-pos-combat-tactical-value-left: 728px !default;
+$cs-pos-combat-tactical-value-top: 30px !default;
 $cs-pos-combat-tactical-value-width: 80px !default;
 $cs-pos-combat-tactical-value-height: 40px !default;
 
-$cs-pos-combat-tactical-left: 640px !default;
-$cs-pos-combat-tactical-top: 90px !default;
-$cs-pos-combat-tactical-width: 120px !default;
-$cs-pos-combat-tactical-height: 60px !default;
-
-$cs-pos-combat-overland-label-left: 780px !default;
-$cs-pos-combat-overland-label-top: 90px !default;
-$cs-pos-combat-overland-label-width: 120px !default;
-$cs-pos-combat-overland-label-height: 30px !default;
-
-$cs-pos-combat-overland-value-left: 780px !default;
-$cs-pos-combat-overland-value-top: 28px !default;
-$cs-pos-combat-overland-value-width: 80px !default;
-$cs-pos-combat-overland-value-height: 40px !default;
-
-$cs-pos-combat-overland-left: 775px !default;
-$cs-pos-combat-overland-top: 90px !default;
-$cs-pos-combat-overland-width: 120px !default;
-$cs-pos-combat-overland-height: 60px !default;
-
-$cs-pos-combat-dash-label-left: 707px !default;
-$cs-pos-combat-dash-label-top: 30px !default;
+$cs-pos-combat-dash-label-left: 800px !default;
+$cs-pos-combat-dash-label-top: 33px !default;
 $cs-pos-combat-dash-label-width: 120px !default;
 $cs-pos-combat-dash-label-height: 30px !default;
 
-$cs-pos-combat-dash-value-left: 710px !default;
-$cs-pos-combat-dash-value-top: 64px !default;
+$cs-pos-combat-dash-value-left: 802px !default;
+$cs-pos-combat-dash-value-top: 68px !default;
 $cs-pos-combat-dash-value-width: 80px !default;
 $cs-pos-combat-dash-value-height: 40px !default;
 
-$cs-pos-combat-dash-left: 706px !default;
-$cs-pos-combat-dash-top: 29px !default;
-$cs-pos-combat-dash-width: 120px !default;
-$cs-pos-combat-dash-height: 60px !default;
+$cs-pos-combat-overland-label-left: 872px !default;
+$cs-pos-combat-overland-label-top: 91px !default;
+$cs-pos-combat-overland-label-width: 120px !default;
+$cs-pos-combat-overland-label-height: 30px !default;
+
+$cs-pos-combat-overland-value-left: 873px !default;
+$cs-pos-combat-overland-value-top: 30px !default;
+$cs-pos-combat-overland-value-width: 80px !default;
+$cs-pos-combat-overland-value-height: 40px !default;
 
 $cs-pos-find-secret-door-left: 180px !default;
 $cs-pos-find-secret-door-top: 65px !default;
@@ -377,6 +342,10 @@ form.osp.sheet.actor.character {
   position: relative;
   color: #4B4B4B !important; /* Default text color for all sheet content */
   box-sizing: border-box; /* Include padding in dimensions */
+  background-image: url('/systems/osp-houserules/assets/character-sheet/border.webp');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: top left;
 }
 
 /* Global form element reset - remove redundant declarations */
@@ -441,7 +410,7 @@ form.osp.sheet.actor.character .static-header,
   background-color: transparent !important;
   /* Height matches the character sheet header background image exactly (286.5px) */
   /* The .5px ensures crisp alignment with the background image boundaries */
-  height: 250px !important;
+  height: 0px !important;
   z-index: var(--z-sheet, 10);
 }
 
@@ -848,10 +817,10 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 
 /* Group Defaults - Shared coordinates for field groups */
 :root {
-  --ability-group-top: 67px;
+  --ability-group-top: 1px;
   --ability-group-width: #{$cs-ability-width};
   --ability-group-height: #{$cs-ability-height};
-  --save-group-top: 250px;
+  --save-group-top: 62px;
   --save-group-width: #{$cs-save-width};
   --save-group-height: #{$cs-save-height};
 }
@@ -982,41 +951,96 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-color: transparent !important;
-  height: 384px !important;
-  margin: 0 0.5px 0 -0.5px;
+  height: 800px !important;
+  margin: 20px 0.5px 0 -0.5px;
 }
 
 /* ============================
    COMBAT TAB BACKGROUND
    ============================ */
+
+/* Saving throws image at top of combat tab */
+/* Total block height: 20px top + ~22px title + ~14px subtitle + 113px image + 20px bottom ≈ 189px */
+.combat-saving-throws-image {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  display: block;
+  width: 800px;
+  text-align: center;
+
+  .combat-saving-throws-title {
+    font-family: "Cooper Std", serif !important;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1a1a1a;
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+
+  .combat-saving-throws-subtitle {
+    font-family: "Cooper Std", serif !important;
+    font-size: 10px;
+    color: #1a1a1a;
+    line-height: 1.3;
+    margin-bottom: 5px;
+  }
+
+  img {
+    width: 800px;
+    height: auto;
+    display: block;
+    border: none;
+  }
+}
+
+
+
+/* "Combat & Movement" title above hpac image */
+.combat-hpac-title {
+  font-family: $font-cooper !important;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1a1a1a;
+  text-align: center;
+  line-height: 1.3;
+  width: 800px;
+  margin-bottom: 5px;
+}
+
+/* hpac image — same treatment as saving-throws.webp */
+.combat-hpac-image {
+  margin-top: 0px;
+  display: block;
+  width: 800px;
+
+  img {
+    width: 800px;
+    height: auto;
+    display: block;
+    border: none;
+  }
+}
+
+/* Overlay anchored to tab; top=218px keeps stats at same position on hpac
+   as when hpac was a background at 50% 20px (238px hpac start − 20px original bg offset) */
+.combat-stats-overlay {
+  position: absolute;
+  top: 218px;
+  left: 0;
+  right: 0;
+  height: 0;
+  overflow: visible;
+}
+
 .tab[data-tab="combat"] {
   position: relative;
-  background-image: 
-    url('/systems/osp-houserules/assets/character-sheet/hpac.webp') !important;
-  background-size: contain;
-  background-position: 50% 20px;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
   background-color: transparent !important;
-  height: 384px !important;
-  margin: 0 0.5px 0 -0.5px;
-  overflow: visible; /* Scrolling handled by inner content */
-  
-  /* combat.webp as overlay above scrollable content */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('/systems/osp-houserules/assets/character-sheet/combat.webp');
-    background-size: contain;
-    background-position: center top;
-    background-repeat: no-repeat;
-    z-index: 50; /* Above scrollable content (z-index 5-6) but below combat stats would be if higher */
-    pointer-events: none; /* Allow clicks through to content below */
-  }
+  height: 795px !important;
+  margin: 5px 0.5px 0 -0.5px;
+  overflow-y: overlay;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 
   .combat-content {
     padding: 20px;
@@ -1074,15 +1098,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         }
       }
       
-      &.cs-pos-combat-ac {
-        position: absolute;
-        left: var(--left, #{$cs-pos-combat-ac-left});
-        top: var(--top, #{$cs-pos-combat-ac-top});
-        width: var(--width, #{$cs-pos-combat-ac-width});
-        height: var(--height, #{$cs-pos-combat-ac-height});
-        transform: translateX(-50%);
-      }
-      
       &.cs-pos-combat-uac-label {
         position: absolute;
         left: var(--left, #{$cs-pos-combat-uac-label-left});
@@ -1106,15 +1121,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
           padding: 0;
           color: #4B4B4B;
         }
-      }
-      
-      &.cs-pos-combat-uac {
-        position: absolute;
-        left: var(--left, #{$cs-pos-combat-uac-left});
-        top: var(--top, #{$cs-pos-combat-uac-top});
-        width: var(--width, #{$cs-pos-combat-uac-width});
-        height: var(--height, #{$cs-pos-combat-uac-height});
-        transform: translateX(-50%);
       }
       
       &.cs-pos-combat-hp-label {
@@ -1142,15 +1148,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         }
       }
       
-      &.cs-pos-combat-hp {
-        position: absolute;
-        left: var(--left, #{$cs-pos-combat-hp-left});
-        top: var(--top, #{$cs-pos-combat-hp-top});
-        width: var(--width, #{$cs-pos-combat-hp-width});
-        height: var(--height, #{$cs-pos-combat-hp-height});
-        transform: translateX(-50%);
-      }
-      
       &.cs-pos-combat-mhp-label {
         position: absolute;
         left: var(--left, #{$cs-pos-combat-mhp-label-left});
@@ -1166,31 +1163,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         top: var(--top, #{$cs-pos-combat-mhp-value-top});
         width: var(--width, #{$cs-pos-combat-mhp-value-width});
         height: var(--height, #{$cs-pos-combat-mhp-value-height});
-        transform: translateX(-50%);
-        
-        .cs-unarmored-box {
-          font-size: 70px;
-          font-weight: normal;
-          padding: 0;
-          color: #4B4B4B;
-        }
-      }
-      
-      &.cs-pos-combat-mhp {
-        position: absolute;
-        left: var(--left, #{$cs-pos-combat-mhp-left});
-        top: var(--top, #{$cs-pos-combat-mhp-top});
-        width: var(--width, #{$cs-pos-combat-mhp-width});
-        height: var(--height, #{$cs-pos-combat-mhp-height});
-        transform: translateX(-50%);
-      }
-      
-      &.cs-pos-combat-tactical {
-        position: absolute;
-        left: var(--left, #{$cs-pos-combat-tactical-left});
-        top: var(--top, #{$cs-pos-combat-tactical-top});
-        width: var(--width, #{$cs-pos-combat-tactical-width});
-        height: var(--height, #{$cs-pos-combat-tactical-height});
         transform: translateX(-50%);
         
         .cs-unarmored-box {
@@ -1265,22 +1237,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         }
       }
       
-      &.cs-pos-combat-overland {
-        position: absolute;
-        left: var(--left, #{$cs-pos-combat-overland-left});
-        top: var(--top, #{$cs-pos-combat-overland-top});
-        width: var(--width, #{$cs-pos-combat-overland-width});
-        height: var(--height, #{$cs-pos-combat-overland-height});
-        transform: translateX(-50%);
-        
-        .cs-unarmored-box {
-          font-size: 70px;
-          font-weight: normal;
-          padding: 0;
-          color: #4B4B4B;
-        }
-      }
-      
       &.cs-pos-combat-dash-label {
         position: absolute;
         left: var(--left, #{$cs-pos-combat-dash-label-left});
@@ -1303,22 +1259,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
         top: var(--top, #{$cs-pos-combat-dash-value-top});
         width: var(--width, #{$cs-pos-combat-dash-value-width});
         height: var(--height, #{$cs-pos-combat-dash-value-height});
-        transform: translateX(-50%);
-        
-        .cs-unarmored-box {
-          font-size: 70px;
-          font-weight: normal;
-          padding: 0;
-          color: #4B4B4B;
-        }
-      }
-      
-      &.cs-pos-combat-dash {
-        position: absolute;
-        left: var(--left, #{$cs-pos-combat-dash-left});
-        top: var(--top, #{$cs-pos-combat-dash-top});
-        width: var(--width, #{$cs-pos-combat-dash-width});
-        height: var(--height, #{$cs-pos-combat-dash-height});
         transform: translateX(-50%);
         
         .cs-unarmored-box {
@@ -1380,47 +1320,14 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
     }
   }
   
-  /* Scrollable content area for equipment sections */
-  .combat-scrollable-content {
-    position: absolute;
-    top: 150px; /* Start below the hpac.webp image and stats */
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-bottom: 20px;
-    
-    /* Match Gear tab scrollbar styling */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
-    
-    &::-webkit-scrollbar {
-      width: 3px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 2px;
-    }
-    
-    &::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 0, 0, 0.6);
-    }
-  }
-  
   /* Combat equipped sections - weapons and armor */
   .combat-equipped-section {
-    margin-top: 0; /* No margin needed, positioned by scrollable container */
-    
+    margin-top: 0;
+
     &:first-of-type {
-      margin-top: 0;
+      margin-top: 0; /* section itself already has margin-top: 134px below hpac area */
     }
-    
+
     & + .combat-equipped-section {
       margin-top: 20px; /* Space between weapon and armor sections */
     }
@@ -1979,7 +1886,7 @@ input[type="number"] {
 /* Sheet body helper to centralize padding/scrolling */
 .cs-sheet-body {
   position: absolute !important;
-  top: var(--sheet-top, 268px);
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -2076,7 +1983,7 @@ input[type="number"] {
   background-repeat: no-repeat;
   background-attachment: local; /* Background stays fixed while content scrolls */
   background-color: transparent;
-  min-height: 384px;
+  min-height: 800px;
   overflow-y: scroll !important; /* Force scrollbar to always show */
   overflow-x: hidden; /* Prevent horizontal scrolling */
   
@@ -2106,27 +2013,72 @@ input[type="number"] {
    ============================ */
 .tab[data-tab="bio"] {
   position: relative;
-  background-image: 
-    url('/systems/osp-houserules/assets/character-sheet/bio.webp');
   background-size: 800px 383px;
   background-position: center top;
   background-repeat: no-repeat;
-  background-attachment: scroll; /* Background stays fixed to element, doesn't scroll with content */
+  background-attachment: scroll;
   background-color: transparent;
-  height: 383px; /* Fixed height to enable scrolling */
-  max-height: 383px; /* Prevent extending beyond tab boundaries */
-  overflow-y: auto; /* Enable vertical scrolling */
-  overflow-x: hidden; /* Hide horizontal overflow */
-  margin: 0 0 0 -1px;
-  padding-bottom: 20px; /* Add bottom padding for last field */
-  
-  /* Hide scrollbar while still allowing scrolling */
+  height: 780px;
+  overflow-x: hidden;
+  overflow-y: overlay;
+  margin: 20px 0 0 0;
   scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-  
+
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none; /* Chrome/Electron */
   }
+}
+
+/* Ability scores image between basics and text fields */
+.tab[data-tab="bio"] .bio-abilities-image {
+  margin-top: 288px; /* 268px static header + 20px gap */
+  display: block;
+  width: 800px;
+
+  .bio-abilities-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .bio-abilities-title {
+    font-family: $font-cooper !important;
+    font-size: 16px;
+    color: black;
+    display: block;
+  }
+
+  .bio-abilities-subtitle {
+    font-family: $font-cooper !important;
+    font-size: 10px;
+    color: black;
+    display: block;
+  }
+
+  .bio-abilities-image-wrap {
+    position: relative;
+
+    img {
+      width: 800px;
+      height: auto;
+      display: block;
+      border: none;
+    }
+
+    .ability-scores-section {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+/* Push bio text fields below the portrait/basics area */
+.tab[data-tab="bio"] .bio-content-area {
+  margin-top: 20px;
 }
 
 /* Bio field label styling */
@@ -2151,7 +2103,7 @@ input[type="number"] {
   left: 49px;
   width: 706px;
   min-height: 100px; /* Minimum height when empty */
-  max-height: none; /* Remove max-height to allow auto-growth */
+  max-height: none;
   border: 1.5px solid black;
   border-radius: 5px;
   padding: 5px;
@@ -2171,14 +2123,13 @@ input[type="number"] {
    ============================ */
 .tab[data-tab="gear"] {
   position: relative;
-  background-image: url('/systems/osp-houserules/assets/character-sheet/equipment.webp');
   background-size: 800px 383px;
   background-position: center top;
   background-repeat: no-repeat;
   background-attachment: scroll; /* Background stays fixed to element, doesn't scroll with content */
   background-color: transparent;
-  height: 400px; /* Fixed height to enable scrolling */
-  max-height: 400px; /* Prevent extending beyond tab boundaries */
+  height: 816px; /* Fixed height to enable scrolling */
+  max-height: 816px; /* Prevent extending beyond tab boundaries */
   overflow: visible; /* Changed from overflow-y: auto - scrolling handled by inner content */
   margin: 0 0 0 -1px;
   padding-bottom: 20px; /* Add bottom padding for last item */

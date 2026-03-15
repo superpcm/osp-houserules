@@ -143,8 +143,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
-      width: 800, // Increased by 30px (15px padding each side)
-      height: 687, // Increased by 30px (15px padding each side)
+      width: 800,
+      height: 835, // 800px content area + ~35px title bar
       resizable: false,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }],
     });
@@ -199,9 +199,16 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.armor = this.actor.items.filter(i => i.type === "armor");
     
     // Filter equipped weapons and worn armor/shields for Combat tab
-    context.equippedWeapons = context.weapons.filter(w => w.system.equipped);
+    // Unarmed placeholder is a synthetic entry whose sort position is stored in actor flags
+    const unarmedSort = this.actor.getFlag('osp-houserules', 'unarmedSort') ?? Number.MAX_SAFE_INTEGER;
+    context.equippedWeapons = [
+      ...context.weapons.filter(w => w.system.equipped),
+      { id: '__unarmed__', sort: unarmedSort, _isUnarmedPlaceholder: true }
+    ].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     // Only show armor/shields that are actively equipped (providing AC bonus)
-    context.wornArmor = context.armor.filter(a => a.system.equipped);
+    context.wornArmor = context.armor
+      .filter(a => a.system.equipped)
+      .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     
     // Organize containers with nested items
     const allContainers = this.actor.items.filter(i => i.type === "container");
@@ -585,6 +592,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Auto-resize bio textareas as user types
     this.initializeBioFieldAutoResize(html);
 
+    // Drag-to-reorder weapons and armor on the Combat tab
+    this._activateCombatItemSort(html);
+
     // Ensure the window close button always works for this sheet instance.
     // Some tools register capturing handlers that can prevent the normal close.
     try {
@@ -624,28 +634,107 @@ export class OspActorSheetCharacter extends ActorSheet {
   /**
    * Initialize auto-resize functionality for bio text fields
    */
+  _activateCombatItemSort(html) {
+    html[0].querySelectorAll('.tab[data-tab="combat"] .combat-equipped-section .item-list').forEach(list => {
+      // Remove draggable from roll icons so they don't compete with the row drag.
+      // Roll clicks still work; only macro-creation drag from the combat tab is disabled.
+      list.querySelectorAll('.item-roll-icon[draggable]').forEach(el => el.removeAttribute('draggable'));
+
+      let dragSrcId = null;
+
+      // Use capture: true so our handlers run BEFORE Foundry's bubble-phase DragDrop
+      // handlers on the <li> elements (which call stopPropagation and would block us).
+
+      list.addEventListener('dragstart', (e) => {
+        const li = e.target.closest('.item-entry.item[data-item-id]');
+        if (!li) return;
+        dragSrcId = li.dataset.itemId;
+        li.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      }, { capture: true });
+
+      list.addEventListener('dragend', () => {
+        dragSrcId = null;
+        list.querySelectorAll('.dragging, .drag-over').forEach(el => {
+          el.classList.remove('dragging', 'drag-over');
+        });
+      }, { capture: true });
+
+      // Returns true if the cursor is in the lower half of the row (insert after)
+      const isAfter = (li, clientY) => {
+        const rect = li.getBoundingClientRect();
+        return clientY > rect.top + rect.height / 2;
+      };
+
+      list.addEventListener('dragover', (e) => {
+        if (!dragSrcId) return;
+        const li = e.target.closest('.item-entry.item[data-item-id]');
+        if (!li) return;
+        e.preventDefault();
+        e.stopPropagation();
+        list.querySelectorAll('.drag-over-above, .drag-over-below').forEach(el => {
+          el.classList.remove('drag-over-above', 'drag-over-below');
+        });
+        li.classList.add(isAfter(li, e.clientY) ? 'drag-over-below' : 'drag-over-above');
+      }, { capture: true });
+
+      list.addEventListener('drop', async (e) => {
+        if (!dragSrcId) return;
+        const li = e.target.closest('.item-entry.item[data-item-id]');
+        if (!li) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const targetId = li.dataset.itemId;
+        const after = isAfter(li, e.clientY);
+        li.classList.remove('drag-over-above', 'drag-over-below');
+        if (targetId === dragSrcId) { dragSrcId = null; return; }
+
+        const orderedIds = [...list.querySelectorAll('.item-entry.item[data-item-id]')]
+          .map(el => el.dataset.itemId);
+        const srcIdx = orderedIds.indexOf(dragSrcId);
+        if (srcIdx === -1) { dragSrcId = null; return; }
+        orderedIds.splice(srcIdx, 1);
+        // Re-find target index after src removal, then insert before or after
+        const tgtIdx = orderedIds.indexOf(targetId);
+        orderedIds.splice(after ? tgtIdx + 1 : tgtIdx, 0, dragSrcId);
+
+        const BASE = 100000;
+        const itemUpdates = [];
+        let newUnarmedSort = null;
+        orderedIds.forEach((id, idx) => {
+          const newSort = (idx + 1) * BASE;
+          if (id === '__unarmed__') newUnarmedSort = newSort;
+          else itemUpdates.push({ _id: id, sort: newSort });
+        });
+
+        dragSrcId = null;
+        if (itemUpdates.length) await this.actor.updateEmbeddedDocuments('Item', itemUpdates);
+        if (newUnarmedSort !== null) await this.actor.setFlag('osp-houserules', 'unarmedSort', newUnarmedSort);
+      }, { capture: true });
+    });
+  }
+
   initializeBioFieldAutoResize(html) {
     const bioFields = html.find('.bio-text-field');
-    
-    // Function to auto-resize a textarea based on content
+
     const autoResize = (textarea) => {
-      // Reset height to minimum to get accurate scrollHeight
       textarea.style.height = 'auto';
-      // Set height to content height (scrollHeight includes padding)
       textarea.style.height = textarea.scrollHeight + 'px';
     };
 
-    bioFields.each((index, field) => {
-      // Auto-resize on input (as user types)
-      $(field).on('input', function() {
-        autoResize(this);
-      });
+    const resizeAll = () => bioFields.each((_, field) => autoResize(field));
 
-      // Initial resize to fit existing content - run after a brief delay
-      // to ensure DOM is fully ready
-      setTimeout(() => {
-        autoResize(field);
-      }, 50);
+    // Resize as user types
+    bioFields.on('input', function() { autoResize(this); });
+
+    // Initial resize: wait until the bio tab is visible so scrollHeight is non-zero.
+    // setupTabSystem runs after this method, so we defer until the next frame after
+    // tab activation has had a chance to run.
+    setTimeout(resizeAll, 150);
+
+    // Also resize whenever the bio tab is activated (tab click or default open)
+    html.find('.sheet-tabs a[data-tab="bio"]').on('click', () => {
+      requestAnimationFrame(resizeAll);
     });
   }
 
@@ -659,8 +748,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.sheet-tabs').addClass('cs-tabs');
     tabLinks.addClass('cs-tab-item');
 
-    // Restore previously active tab, or default to 'attributes'
-    const activeTab = this._activeTab || 'attributes';
+    // Restore previously active tab, or default to 'bio'
+    const activeTab = this._activeTab || 'bio';
     this.activateTab(html, activeTab);
 
     // Simple event delegation - single handler on the tab container

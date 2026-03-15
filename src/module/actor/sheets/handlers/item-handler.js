@@ -699,11 +699,7 @@ export class ItemHandler {
       const flavor = `${item.name} Attack Roll<br><small>${bonusBreakdown}</small>`;
       
       // Roll the attack
-      const roll = new Roll(formula);
-      roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: flavor
-      });
+      this._rollAttack(formula, flavor);
     }
   }
 
@@ -712,35 +708,42 @@ export class ItemHandler {
    */
   onUnarmedRoll(event) {
     event.preventDefault();
-    
+
     // Get character stats
     const characterClass = this.actor.system.class || 'fighter';
     const level = parseInt(this.actor.system.level) || 1;
     const strScore = parseInt(this.actor.system.attributes?.str?.value) || 10;
-    
+
     // Calculate attack bonus from class/level
     const classAttackBonus = getAttackBonus(characterClass, level);
-    
+
     // Unarmed attacks use STR
     const abilityModifier = getAbilityModifier(strScore);
-    
+
     // Calculate total bonus (no weapon bonus for unarmed)
     const totalBonus = classAttackBonus + abilityModifier;
-    
+
     // Build formula and flavor text
     const formula = totalBonus >= 0 ? `1d20 + ${totalBonus}` : `1d20 - ${Math.abs(totalBonus)}`;
     const bonusBreakdown = [
       `Class: +${classAttackBonus}`,
       `STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}`
     ].join(', ');
-    
+
     const flavor = `Unarmed Attack (Punch/Kick)<br><small>${bonusBreakdown}</small><br><small>Damage: 1d2</small>`;
-    
-    // Roll the attack
-    const roll = new Roll(formula);
-    roll.toMessage({
+
+    this._rollAttack(formula, flavor);
+  }
+
+  /**
+   * Evaluate a roll and post to chat. Dice So Nice intercepts automatically via createChatMessage hook.
+   */
+  async _rollAttack(formula, flavor) {
+    const roll = await new Roll(formula).evaluate();
+    await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: flavor
+      flavor,
+      rollMode: game.settings.get('core', 'rollMode')
     });
   }
 

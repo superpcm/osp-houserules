@@ -327,11 +327,8 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .combat-tab .item-entry.item.dragging {
   opacity: 0.4;
 }
-.combat-tab .item-entry.item.drag-over-above {
-  border-top: 2px solid #555;
-}
-.combat-tab .item-entry.item.drag-over-below {
-  border-bottom: 2px solid #555;
+.combat-tab .item-entry.item.drag-over {
+  background-color: rgba(180, 0, 0, 0.25);
 }
 
 .combat-tab .item-name {

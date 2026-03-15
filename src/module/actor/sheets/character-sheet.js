@@ -637,7 +637,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   _activateCombatItemSort(html) {
     html[0].querySelectorAll('.tab[data-tab="combat"] .combat-equipped-section .item-list').forEach(list => {
       // Remove draggable from roll icons so they don't compete with the row drag.
-      // Roll clicks still work; only macro-creation drag from the combat tab is disabled.
+      // Roll clicks still work. Drag the weapon row itself to the hotbar to create a macro.
       list.querySelectorAll('.item-roll-icon[draggable]').forEach(el => el.removeAttribute('draggable'));
 
       let dragSrcId = null;
@@ -660,22 +660,14 @@ export class OspActorSheetCharacter extends ActorSheet {
         });
       }, { capture: true });
 
-      // Returns true if the cursor is in the lower half of the row (insert after)
-      const isAfter = (li, clientY) => {
-        const rect = li.getBoundingClientRect();
-        return clientY > rect.top + rect.height / 2;
-      };
-
       list.addEventListener('dragover', (e) => {
         if (!dragSrcId) return;
         const li = e.target.closest('.item-entry.item[data-item-id]');
         if (!li) return;
         e.preventDefault();
         e.stopPropagation();
-        list.querySelectorAll('.drag-over-above, .drag-over-below').forEach(el => {
-          el.classList.remove('drag-over-above', 'drag-over-below');
-        });
-        li.classList.add(isAfter(li, e.clientY) ? 'drag-over-below' : 'drag-over-above');
+        list.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+        li.classList.add('drag-over');
       }, { capture: true });
 
       list.addEventListener('drop', async (e) => {
@@ -685,16 +677,17 @@ export class OspActorSheetCharacter extends ActorSheet {
         e.preventDefault();
         e.stopPropagation();
         const targetId = li.dataset.itemId;
-        const after = isAfter(li, e.clientY);
-        li.classList.remove('drag-over-above', 'drag-over-below');
+        li.classList.remove('drag-over');
         if (targetId === dragSrcId) { dragSrcId = null; return; }
 
         const orderedIds = [...list.querySelectorAll('.item-entry.item[data-item-id]')]
           .map(el => el.dataset.itemId);
         const srcIdx = orderedIds.indexOf(dragSrcId);
         if (srcIdx === -1) { dragSrcId = null; return; }
+        // Dragging down → insert after target; dragging up → insert before
+        const tgtIdxOrig = orderedIds.indexOf(targetId);
+        const after = srcIdx < tgtIdxOrig;
         orderedIds.splice(srcIdx, 1);
-        // Re-find target index after src removal, then insert before or after
         const tgtIdx = orderedIds.indexOf(targetId);
         orderedIds.splice(after ? tgtIdx + 1 : tgtIdx, 0, dragSrcId);
 

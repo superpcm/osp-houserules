@@ -1443,6 +1443,82 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     }
 
+    // Weapons and armor: auto-equip if slot free, else auto-store, else error
+    if (itemData.type === 'weapon' || itemData.type === 'armor') {
+      const isTargetContainer = targetContainer &&
+        (targetContainer.type === 'container' ||
+         (targetContainer.type === 'clothing' && targetContainer.system.capacity));
+
+      if (isTargetContainer) {
+        // Dropped onto a specific container — fall through to existing container handling below
+      } else if (isReordering) {
+        // Weapon/armor being dragged to open space: only allow if currently equipped
+        if (!item.system.equipped) {
+          ui.notifications.error(`${item.name} must be stored in a container. Drag it onto a container.`);
+          return false;
+        }
+        // Equipped item dropped on open space: no-op (stays on Combat tab)
+        return false;
+      } else {
+        // New item — auto-equip if slot is free, otherwise auto-store
+        const armorBodyTypes = ['light', 'medium', 'heavy'];
+        let slotFree;
+        if (itemData.type === 'weapon') {
+          slotFree = !this.actor.items.some(i => i.type === 'weapon' && i.system.equipped);
+        } else if (armorBodyTypes.includes(itemData.system?.type)) {
+          slotFree = !this.actor.items.some(i =>
+            i.type === 'armor' && armorBodyTypes.includes(i.system.type) && i.system.equipped);
+        } else {
+          // Shield or other non-body armor
+          slotFree = !this.actor.items.some(i =>
+            i.type === 'armor' && !armorBodyTypes.includes(i.system.type) && i.system.equipped);
+        }
+
+        if (slotFree) {
+          itemData.system.equipped = true;
+          itemData.system.containerId = null;
+        } else {
+          let stored = false;
+          // Try lash first if item supports it
+          if (itemData.system.lashable) {
+            const lashContainer = this._findContainerWithLashSlot();
+            if (lashContainer) {
+              itemData.system.containerId = lashContainer.id;
+              itemData.system.lashed = true;
+              itemData.system.equipped = false;
+              stored = true;
+            }
+          }
+          if (!stored) {
+            const storageContainer = this._findContainerWithSpace(itemData);
+            if (storageContainer) {
+              itemData.system.containerId = storageContainer.id;
+              itemData.system.equipped = false;
+              stored = true;
+            }
+          }
+          if (!stored) {
+            ui.notifications.error(`No available storage for ${itemData.name}. Free up container space first.`);
+            return false;
+          }
+        }
+
+        if (item.actor && item.actor.id !== this.actor.id) {
+          return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
+            this.actor.createEmbeddedDocuments('Item', [itemData])
+          );
+        }
+        if (item.actor && item.actor.id === this.actor.id) {
+          return item.update({
+            'system.equipped': itemData.system.equipped,
+            'system.containerId': itemData.system.containerId,
+            'system.lashed': itemData.system.lashed ?? false
+          });
+        }
+        return this.actor.createEmbeddedDocuments('Item', [itemData]);
+      }
+    }
+
     // If the item is of type "item", "coin", "ammunition", or "clothing" (not weapon/armor/container), it MUST go into a container
     if (itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition" || itemData.type === "clothing") {
       // Check if target is a valid container (container type OR clothing with capacity)
@@ -1481,9 +1557,13 @@ export class OspActorSheetCharacter extends ActorSheet {
         return this._handleAmmunitionDrop(item, itemData, targetContainer, isReordering);
       }
 
-      // Check if there's enough space in the container
-      if (!this._hasContainerSpace(targetContainer, itemData)) {
-        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
+      // Check if there's enough space in the container.
+      // Skip the check when reordering within the same container — _getUsedCapacity already
+      // counts this item, so adding its size again would double-count it.
+      const alreadyInContainer1 = isReordering && itemData.system.containerId === targetContainer.id;
+      if (!alreadyInContainer1 && !this._hasContainerSpace(targetContainer, itemData)) {
+        const totalRequired = (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
+        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
 
@@ -1522,11 +1602,13 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
       
       // Check if there's enough space in the target container
-      if (!this._hasContainerSpace(targetContainer, itemData)) {
-        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
+      const alreadyInContainer2 = isReordering && itemData.system.containerId === targetContainer.id;
+      if (!alreadyInContainer2 && !this._hasContainerSpace(targetContainer, itemData)) {
+        const totalRequired = (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
+        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
-      
+
       itemData.system.containerId = targetContainer.id;
     }
     // Weapons/armor can be dropped onto containers
@@ -1549,8 +1631,10 @@ export class OspActorSheetCharacter extends ActorSheet {
         return false;
       }
 
-      if (!this._hasContainerSpace(targetContainer, itemData)) {
-        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
+      const alreadyInContainer3 = isReordering && itemData.system.containerId === targetContainer.id;
+      if (!alreadyInContainer3 && !this._hasContainerSpace(targetContainer, itemData)) {
+        const totalRequired = (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
+        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
       itemData.system.containerId = targetContainer.id;
@@ -1715,6 +1799,29 @@ export class OspActorSheetCharacter extends ActorSheet {
     const maxCapacity = container.system?.capacity || 0;
     const usedCapacity = this._getUsedCapacity(container);
     return maxCapacity - usedCapacity;
+  }
+
+  /**
+   * Find the first top-level container with enough space for itemData
+   */
+  _findContainerWithSpace(itemData) {
+    return this.actor.items.find(c =>
+      c.type === 'container' &&
+      !c.system.containerId &&
+      this._hasContainerSpace(c, itemData)
+    ) ?? null;
+  }
+
+  /**
+   * Find the first container that has an available lash slot
+   */
+  _findContainerWithLashSlot() {
+    return this.actor.items.find(c => {
+      const lashSlots = c.system.lashSlots || 0;
+      if (lashSlots === 0) return false;
+      const used = this.actor.items.filter(i => i.system.containerId === c.id && i.system.lashed).length;
+      return used < lashSlots;
+    }) ?? null;
   }
 
   /**

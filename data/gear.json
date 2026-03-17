@@ -519,6 +519,46 @@
     }
   },
   {
+    "name": "Scabbard",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/images/gear/scabbard.webp",
+    "system": {
+      "description": "A leather sheath worn on the belt designed to carry a single one-handed sword or similarly sized blade. Keeps the weapon protected and ready to draw in combat. A scabbard occupies one hip slot on a belt.",
+      "cost": 5,
+      "unitWeight": 1,
+      "storedSize": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "weapon-storage"
+      ],
+      "capacity": 4,
+      "lashSlots": 0,
+      "maxItemSize": 4
+    }
+  },
+  {
+    "name": "Scabbard, Back",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/images/gear/scabbard-back.webp",
+    "system": {
+      "description": "A wide leather back-sheath worn across the shoulders, designed to carry a two-handed sword or large weapon with the hilt accessible over the shoulder. Frees the hands while keeping a large blade secure and ready.",
+      "cost": 10,
+      "unitWeight": 2,
+      "storedSize": 6,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "weapon-storage"
+      ],
+      "capacity": 8,
+      "lashSlots": 0,
+      "maxItemSize": 8
+    }
+  },
+  {
     "name": "Scroll Case",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/gear/scroll-case.webp",

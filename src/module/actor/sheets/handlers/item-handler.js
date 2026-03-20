@@ -31,6 +31,9 @@ export class ItemHandler {
     
     // Add click handler for item names to show card
     this.html.find('.item-name').click(this.onItemNameClick.bind(this));
+
+    // Double-click item image to open item sheet
+    this.html.find('.item-image').dblclick(this.onItemEdit.bind(this));
   }
 
   /**
@@ -827,6 +830,7 @@ export class ItemHandler {
   destroy() {
     this.html.find('.item-create').off('click');
     this.html.find('.item-edit').off('click');
+    this.html.find('.item-image').off('dblclick');
     this.html.find('.item-delete').off('click');
     this.html.find('.item-toggle').off('click');
     this.html.find('.item-show').off('click');

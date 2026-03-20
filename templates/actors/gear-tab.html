@@ -160,15 +160,15 @@
             <div class="item-header flexrow">
               <div class="item-image" style="background-image: url({{item.img}})"></div>
               <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-              <div class="field-short quantity">
-                <input 
-                  value="{{item.system.quantity}}" 
-                  type="number" 
-                  min="0" 
+              {{#unless container.system.equipped}}<div class="field-short quantity">
+                <input
+                  value="{{item.system.quantity}}"
+                  type="number"
+                  min="0"
                   data-field="system.quantity"
                   data-item-id="{{item.id}}"
                 />
-              </div>
+              </div>{{/unless}}
               <div class="field-short">{{item.displayWeight}}</div>
               <div class="item-controls">
                 {{#if @root.owner}}
@@ -211,7 +211,7 @@
     <div class="item-category-title flexrow items-title">
       <div class="category-caret"><i class="fas fa-caret-down"></i></div>
       <div class="category-name">Items</div>
-      <div class="field-short">Qty</div>
+      <div class="field-short"></div>
       <div class="field-short">Weight</div>
       <div class="item-controls">
         <a class="item-control item-create" data-type="item" title="Add Item">

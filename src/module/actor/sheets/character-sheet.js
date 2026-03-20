@@ -228,7 +228,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
       const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
-      
+      item.totalWeight = item.displayWeight; // default; overridden below if has capacity
+
       // If clothing has capacity, treat it like a container
       if (item.system.capacity) {
         // Find items stored in this clothing
@@ -259,7 +260,10 @@ export class OspActorSheetCharacter extends ActorSheet {
         });
         
         item.containedItems = allContainedItems;
-        
+
+        const containedWeight = allContainedItems.reduce((total, i) => total + (i.displayWeight || 0), 0);
+        item.totalWeight = Math.round((item.displayWeight + containedWeight) * 10) / 10;
+
         // Calculate capacity usage
         const capacity = parseFloat(item.system.capacity) || 0;
         let usedCapacity = 0;
@@ -342,7 +346,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       const containedWeight = allContainedItems.reduce((total, item) => {
         return total + (item.displayWeight || 0);
       }, 0);
-      containerData.totalWeight = containerWeight + containedWeight;
+      containerData.displayWeight = Math.round(containerWeight * 10) / 10;
+      containerData.totalWeight = Math.round((containerWeight + containedWeight) * 10) / 10;
       
       // Calculate used capacity: ONLY stored items count, not lashed items
       // storedSize is per-unit; multiply by quantity for all item types

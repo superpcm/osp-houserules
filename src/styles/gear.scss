@@ -7,7 +7,7 @@
 
 /* Global Column Widths (shared) */
 $col-caret: 18px;        // Width of collapse/expand caret
-$col-controls: 123px;   // Width of item controls section
+$col-controls: 129px;   // Width of item controls section
 $col-field-short: 55px;  // Generic short field width (fallback for .field-short class)
 $col-image: 24px;        // Generic image column width (used by .item-roll-icon)
 
@@ -109,9 +109,10 @@ $gear-armor-title-wt-x:      549px;
 */
 $gearsheet-containers-title-name-x:   65px;   // "Gear" — left-aligned
 $gearsheet-containers-title-qty-x:   279px;  // "Qty"      — center of qty col
-$gearsheet-containers-title-cap-x:   383px;  // "Capacity" — center of cap col
-$gearsheet-containers-title-ssize-x: 500px;  // "sSize"    — center of sSize col  (+55)
-$gearsheet-containers-title-wt-x:    568px;  // "WT"       — center of wt col     (+55)
+$gearsheet-containers-title-cap-x:   326px;  // "Capacity" — center of cap col
+$gearsheet-containers-title-ssize-x: 443px;  // "sSize"    — center of sSize col
+$gearsheet-containers-title-twt-x:   503px;  // "tWT"      — center of tWT col
+$gearsheet-containers-title-wt-x:    565px;  // "WT"       — center of wt col
 
 /* Gear-tab.html – Per-section Header Label Positions
    Each section has 5 children: [caret][name][col1][col2][controls]
@@ -157,6 +158,7 @@ $gear-containers-col-name: 180px;       // Width of name column
 $gear-containers-col-qty: 60px;         // Width of quantity column
 $gear-containers-col-capacity: 150px;   // Width of capacity column
 $gear-containers-col-storedsize: 55px;  // Width of storedSize column
+$gear-containers-col-twt: 55px;        // Width of total weight (tWT) column
 $gear-containers-col-weight: 60px;      // Width of weight column
 
 /* Gear Tab – Containers: Header Title Column Widths */
@@ -177,7 +179,7 @@ $nested-col-name: 155px;        // Width of nested item name column
 $nested-col-qty: 32px;          // Width of nested item quantity column
 $nested-col-storedsize: 254px;   // Width of nested item storedSize column
 $nested-col-weight: 40px;       // Width of nested item weight column
-$nested-col-controls: 105px;    // Width of nested item controls section
+$nested-col-controls: 106px;    // Width of nested item controls section
 
 /* Gear Tab – Container Row Column Offsets (nudge each column left/right from its grid position) */
 $gear-containers-row-caret-x:      0px;   // col1: expand/collapse caret
@@ -186,16 +188,17 @@ $gear-containers-row-name-x:      10px;   // col3: item name
 $gear-containers-row-qty-x:        2px;   // col4: quantity
 $gear-containers-row-capacity-x:   0px;   // col5: capacity
 $gear-containers-row-storedsize-x: 16px;   // col6: storedSize
-$gear-containers-row-weight-x:    27px;   // col7: weight
-$gear-containers-row-controls-x: 18px;   // col8: controls
+$gear-containers-row-twt-x:       22px;   // col7: total weight (tWT)
+$gear-containers-row-weight-x:    27px;   // col8: weight (own)
+$gear-containers-row-controls-x:  -1px;   // col9: controls
 
 /* Gear Tab – Nested Item Row Column Offsets */
 $gear-nested-row-image-x:    0px;   // col1: item image
-$gear-nested-row-name-x:     0px;   // col2: item name
+$gear-nested-row-name-x:     10px;   // col2: item name
 $gear-nested-row-qty-x:      0px;   // col3: quantity
 $gear-nested-row-size-x:     78px;   // col4: stored size
 $gear-nested-row-weight-x:   0px;   // col5: weight
-$gear-nested-row-controls-x: 19px;   // col6: controls
+$gear-nested-row-controls-x: -1px;   // col6: controls
 
 /* Gear Tab – Treasure Row Column Offsets */
 $gear-treasure-row-image-x:    0px;   // col1: item image
@@ -254,7 +257,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
    Weapons (Combat Tab):  image + roll-icon + $combat-weapons-col-name + damage + dt + sz + sf + rof + rng + weight + controls
    Weapons (Gear Tab):    image + $gear-weapons-col-name + damage + dt + sz + sf + rof + rng + weight + controls
    Armor (Combat Tab):    image + $combat-armor-col-name + type + ac + weight + controls
-   Containers (Gear Tab): image + $gear-containers-col-name + qty + capacity + storedsize + weight + controls
+   Containers (Gear Tab): caret + image + $gear-containers-col-name + capacity + storedsize + weight + controls
    Treasure (Gear Tab):   caret + $gear-treasure-col-name + value + weight + controls
    Nested Items:          image + $nested-col-name + qty + storedsize + weight + controls
    ============================================ */
@@ -605,11 +608,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
   // child 1: item-roll-icon (empty)
   > :nth-child(2) { left: $gearsheet-containers-title-name-x; transform: none; }  // "Gear"
-  > :nth-child(3) { left: $gearsheet-containers-title-qty-x; }    // "Qty"
+  > :nth-child(3) { left: $gearsheet-containers-title-qty-x; }    // "" (empty)
   > :nth-child(4) { left: $gearsheet-containers-title-cap-x; }    // "Capacity"
   > :nth-child(5) { left: $gearsheet-containers-title-ssize-x; }  // "sSize"
-  > :nth-child(6) { left: $gearsheet-containers-title-wt-x; }     // "WT"
-  // child 7 (item-controls): empty
+  > :nth-child(6) { left: $gearsheet-containers-title-twt-x; }    // "tWT"
+  > :nth-child(7) { left: $gearsheet-containers-title-wt-x; }     // "WT"
+  // child 8 (item-controls): empty
 }
 
 // Grid child overrides: let grid-template-columns be the single source of truth for sizing.
@@ -771,6 +775,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   color: #000;
 }
 
+// Right-justify controls on the Gear tab
+.gear-tab .item-controls,
+.gear-scrollable-content .item-controls {
+  justify-content: flex-end;
+}
+
 .item-control:hover {
   background: transparent;
   color: #000;
@@ -878,7 +888,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   &.container-header {
     width: 708px;
     box-sizing: border-box;
-    grid-template-columns: $col-caret $gear-containers-col-image $gear-containers-col-name $gear-containers-col-qty $gear-containers-col-capacity $gear-containers-col-storedsize $gear-containers-col-weight $col-controls;
+    grid-template-columns: $col-caret $gear-containers-col-image $gear-containers-col-name $gear-containers-col-capacity $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $col-controls;
     margin-left: $container-left-shift;
   }
 
@@ -915,12 +925,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
 .item-header.container-header {
   position: relative;
-  
+
   &:hover {
     background: none;
     width: 708px;
     box-sizing: border-box;
-    
+
     &::before {
       content: '';
       position: absolute;
@@ -941,9 +951,9 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   > :nth-child(1) { position: relative; left: $gear-containers-row-caret-x; }
   > :nth-child(2) { position: relative; left: $gear-containers-row-image-x; }
   > :nth-child(3) { position: relative; left: $gear-containers-row-name-x; }
-  > :nth-child(4) { position: relative; left: $gear-containers-row-qty-x; }
-  > :nth-child(5) { position: relative; left: $gear-containers-row-capacity-x; }
-  > :nth-child(6) { position: relative; left: $gear-containers-row-storedsize-x; }
+  > :nth-child(4) { position: relative; left: $gear-containers-row-capacity-x; }
+  > :nth-child(5) { position: relative; left: $gear-containers-row-storedsize-x; }
+  > :nth-child(6) { position: relative; left: $gear-containers-row-twt-x; }
   > :nth-child(7) { position: relative; left: $gear-containers-row-weight-x; }
   > :nth-child(8) { position: relative; left: $gear-containers-row-controls-x; }
 }
@@ -1602,6 +1612,44 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   position: relative;
 }
 
+.container-items-subheader {
+  margin-left: $nested-indent;
+  width: calc(100% - #{$nested-indent});
+  max-width: 638px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px 2px 0 0;
+  padding: 3px 0;
+
+  > :nth-child(1) { position: relative; left: $gear-nested-row-image-x; }
+  > :nth-child(2) { position: relative; left: $gear-nested-row-name-x; }
+  > :nth-child(3) { position: relative; left: $gear-nested-row-qty-x; }
+  > :nth-child(4) { position: relative; left: $gear-nested-row-size-x; }
+  > :nth-child(5) { position: relative; left: $gear-nested-row-weight-x; }
+  > :nth-child(6) { position: relative; left: $gear-nested-row-controls-x; }
+
+  .subheader-col {
+    font-size: $font-nested-item;
+    font-style: italic;
+    font-family: "Cooper Std", "Cooper Standard", Georgia, serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  .subheader-name {
+    justify-content: flex-start;
+  }
+}
+
+.osp.sheet.actor .container-items-subheader .subheader-col,
+.osp.sheet.actor .container-items-subheader .subheader-col * {
+  font-family: $font-cooper !important;
+}
+
 .contained-item {
   padding-left: $nested-padding;
   position: relative;
@@ -1665,6 +1713,18 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     justify-content: center;
     justify-self: center;  // Center the field within its grid column
   }
+}
+
+// Nested items in equipped containers - hide the Qty column
+.container-entry.item[data-equipped="true"] .contained-item .item-header {
+  grid-template-columns: $nested-col-image $nested-col-name $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
+
+  // Adjust nth-child offsets for no-qty layout
+  > :nth-child(1) { position: relative; left: $gear-nested-row-image-x; }
+  > :nth-child(2) { position: relative; left: $gear-nested-row-name-x; }
+  > :nth-child(3) { position: relative; left: $gear-nested-row-size-x; }
+  > :nth-child(4) { position: relative; left: $gear-nested-row-weight-x; }
+  > :nth-child(5) { position: relative; left: $gear-nested-row-controls-x; }
 }
 
 // Lashed items section

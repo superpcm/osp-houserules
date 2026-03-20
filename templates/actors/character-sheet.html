@@ -1116,7 +1116,7 @@
     <!-- Right-side Tab Navigation -->
     <nav class="sheet-tabs tabs cs-tabs" data-group="primary">
   <a class="item cs-tab-item" data-tab="bio">Bio</a>
-  <a class="item cs-tab-item" data-tab="attributes">Attributes</a>
+  <a class="item cs-tab-item" data-tab="attributes">Spells</a>
   <a class="item cs-tab-item" data-tab="skills">Skills</a>
   <a class="item cs-tab-item" data-tab="combat">Combat</a>
   <a class="item cs-tab-item" data-tab="gear">Gear</a>
@@ -1124,56 +1124,8 @@
 
     <!-- Sheet Body - Tab Content Area -->
   <section class="sheet-body cs-sheet-body">
-      <!-- Attributes Tab -->
+      <!-- Spells Tab -->
       <div class="tab" data-group="primary" data-tab="attributes">
-        <div class="combat-section">
-
-          <!-- Barbarian Climb Surfaces Field -->
-          <div class="listening-group cs-abs cs-pos-barbarian-climb">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Climb Surfaces (Barbarian)</label>
-              <select class="barbarian-climb cs-listening-select" id="barbarian-climb" name="system.barbarianClimb" data-dtype="String">
-                <option value="" {{#if (eq system.barbarianClimb "")}}selected{{/if}}></option>
-                <option value="1" {{#if (eq system.barbarianClimb "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.barbarianClimb "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.barbarianClimb "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.barbarianClimb "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.barbarianClimb "5")}}selected{{/if}}>5</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Barbarian Hide in Undergrowth Field -->
-          <div class="listening-group cs-abs cs-pos-barbarian-hide">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Hide in Undergrowth (Barbarian)</label>
-              <select class="barbarian-hide cs-listening-select" id="barbarian-hide" name="system.barbarianHide" data-dtype="String">
-                <option value="" {{#if (eq system.barbarianHide "")}}selected{{/if}}></option>
-                <option value="1" {{#if (eq system.barbarianHide "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.barbarianHide "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.barbarianHide "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.barbarianHide "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.barbarianHide "5")}}selected{{/if}}>5</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Barbarian Move Silently Field -->
-          <div class="listening-group cs-abs cs-pos-barbarian-move">
-            <div class="cs-char-field-group">
-              <label class="cs-field-label">Move Silently (Barbarian)</label>
-              <select class="barbarian-move cs-listening-select" id="barbarian-move" name="system.barbarianMove" data-dtype="String">
-                <option value="" {{#if (eq system.barbarianMove "")}}selected{{/if}}></option>
-                <option value="1" {{#if (eq system.barbarianMove "1")}}selected{{/if}}>1</option>
-                <option value="2" {{#if (eq system.barbarianMove "2")}}selected{{/if}}>2</option>
-                <option value="3" {{#if (eq system.barbarianMove "3")}}selected{{/if}}>3</option>
-                <option value="4" {{#if (eq system.barbarianMove "4")}}selected{{/if}}>4</option>
-                <option value="5" {{#if (eq system.barbarianMove "5")}}selected{{/if}}>5</option>
-              </select>
-            </div>
-          </div>
-
-        </div>
       </div>
       <!-- Skills Tab -->
   <div class="tab" data-group="primary" data-tab="skills">
@@ -1688,9 +1640,10 @@
           <div class="item-category-title containers-title flexrow">
             <div class="item-roll-icon"></div>
             <div class="category-name">Gear</div>
-            <div class="field-short">Qty</div>
+            <div class="field-short"></div>
             <div class="field-short">Capacity</div>
             <div class="field-short">sSize</div>
+            <div class="field-short">tWT</div>
             <div class="field-short">WT</div>
             <div class="item-controls">
             </div>
@@ -1714,7 +1667,6 @@
                   {{/if}}
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-                  <div class="field-short">{{item.system.quantity}}</div>
                   {{#if item.system.capacity}}
                   <div class="field-short capacity-bar-cell">
                     <div class="capacity-bar-background" style="--capacity-progress: {{item.capacityPercentage}}%;">
@@ -1726,6 +1678,7 @@
                   <div class="field-short">—</div>
                   {{/if}}
                   <div class="field-short">{{item.system.storedSize}}</div>
+                  <div class="field-short">{{item.totalWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
@@ -1749,6 +1702,16 @@
                 {{#if item.system.capacity}}
                 {{#unless item.collapsed}}
                 <div class="container-contents">
+                  {{#if item.containedItems.length}}
+                  <div class="container-items-subheader">
+                    <div class="subheader-col subheader-img"></div>
+                    <div class="subheader-col subheader-name">Item</div>
+                    <div class="subheader-col subheader-qty">Qty</div>
+                    <div class="subheader-col subheader-size">sSize</div>
+                    <div class="subheader-col subheader-wt">WT</div>
+                    <div class="subheader-col subheader-controls"></div>
+                  </div>
+                  {{/if}}
                   <ol class="contained-items-list">
                     {{#each item.containedItems as |nestedItem|}}
                     <li class="item-entry item contained-item" data-item-id="{{nestedItem.id}}">
@@ -1814,7 +1777,6 @@
                   </a>
                   <div class="item-image" style="background-image: url('{{container.img}}');"></div>
                   <h4 class="item-name" title="{{container.name}}">{{container.name}}</h4>
-                  <div class="field-short">{{container.system.quantity}}</div>
                   <div class="field-short capacity-bar-cell">
                     <div class="capacity-bar-background" style="--capacity-progress: {{container.capacityPercentage}}%;">
                       <div class="capacity-bar-fill"></div>
@@ -1823,6 +1785,7 @@
                   </div>
                   <div class="field-short">{{container.system.storedSize}}</div>
                   <div class="field-short">{{container.totalWeight}}</div>
+                  <div class="field-short">{{container.displayWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
                     <a class="item-control item-toggle {{#unless container.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">
@@ -1844,6 +1807,16 @@
                 {{!-- Nested items in this container --}}
                 {{#unless container.collapsed}}
                 <div class="container-contents">
+                  {{#if container.containedItems.length}}
+                  <div class="container-items-subheader">
+                    <div class="subheader-col subheader-img"></div>
+                    <div class="subheader-col subheader-name">Item</div>
+                    <div class="subheader-col subheader-qty">Qty</div>
+                    <div class="subheader-col subheader-size">sSize</div>
+                    <div class="subheader-col subheader-wt">WT</div>
+                    <div class="subheader-col subheader-controls"></div>
+                  </div>
+                  {{/if}}
                   <ol class="contained-items-list">
                     {{#each container.containedItems as |item|}}
                     <li class="item-entry item contained-item" data-item-id="{{item.id}}">

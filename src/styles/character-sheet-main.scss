@@ -946,13 +946,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
    ============================ */
 .tab[data-tab="attributes"] {
   position: relative;
-  background-image: url('/systems/osp-houserules/assets/character-sheet/abilities-saves.webp') !important;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
+  background-image: none !important;
   background-color: transparent !important;
-  height: 800px !important;
-  margin: 20px 0.5px 0 -0.5px;
 }
 
 /* ============================

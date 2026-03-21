@@ -11,11 +11,12 @@
   height: 385px;
   z-index: var(--z-tabs, 200);
   pointer-events: auto;
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
   align-items: flex-end;
-  gap: 0;
-  padding: 0;
+  gap: 0 !important;
+  padding: 0 !important;
   margin: 0;
   box-sizing: border-box;
   overflow: visible;
@@ -94,5 +95,5 @@ body.game .sheet.app nav.sheet-tabs {
 
 /* Tab overlap - creates seamless appearance */
 .cs-tabs a.item + .item {
-  margin-top: -30px !important;
+  margin-top: -10px !important;
 }

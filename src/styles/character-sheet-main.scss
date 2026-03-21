@@ -319,6 +319,26 @@ $cs-ability-height: 79px !default;
 
 /* COMPLEX RACE+CLASS COMBINATIONS REMOVED - REPLACED BY SIMPLIFIED RACIAL-SKILL-LAYOUT SYSTEM */
 
+/* Skills tab header text */
+.skill-tab-header {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+.skill-tab-title {
+  font-family: $font-cooper;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+.skill-tab-subtitle {
+  font-family: $font-cooper;
+  font-size: 10px;
+  color: #1a1a1a;
+}
+
 /* Generic fallback layout (default positioning when no other conditions are met) */
 .skill-layout-default {
   /* Uses default positioning - ensures consistent class-based approach */
@@ -2162,11 +2182,11 @@ input[type="number"] {
 /* Half-Orc race + Half-Orc class (race-as-class scenario) */
 .racial-skill-layout-default.skill-layout-half-orc {
   .tab[data-tab="skills"] {
-    background-image: 
-      url('/systems/osp-houserules/assets/character-sheet/class-halforc.webp');
+    background-image:
+      url('/systems/osp-houserules/assets/character-sheet/skill-targets-orc.webp');
       /*url('/systems/osp-houserules/assets/character-sheet/skill-targets-background.webp');*/
     background-size: 100%;
-    background-position: center top;
+    background-position: center 60px;
     background-repeat: no-repeat;
   }
 }

@@ -48,7 +48,7 @@ form.osp,
 }
 
 /* Apply to common text elements, but NOT all elements with * */
-.osp div:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon):not(.combat-saving-throws-title):not(.combat-saving-throws-subtitle):not(.bio-abilities-title):not(.bio-abilities-subtitle):not(.combat-hpac-title),
+.osp div:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon):not(.combat-saving-throws-title):not(.combat-saving-throws-subtitle):not(.bio-abilities-title):not(.bio-abilities-subtitle):not(.combat-hpac-title):not(.skill-tab-title):not(.skill-tab-subtitle),
 .osp span:not(i),
 .osp p,
 .osp h1, .osp h2, .osp h3, .osp h4, .osp h5, .osp h6,

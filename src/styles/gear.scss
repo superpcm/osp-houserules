@@ -856,10 +856,10 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 // Container headers must never change width on hover (nested hover bubbles up and
-// the generic hover rule would narrow 708px → 698px, shifting the Qty/capacity columns)
+// the generic hover rule would narrow to 698px, shifting the Qty/capacity columns)
 .item-header.container-header:hover,
 .item-entry:hover > .item-header.container-header {
-  width: 708px;
+  width: 697px;
 }
 
 // Drag-over highlight for containers
@@ -886,7 +886,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 
   &.container-header {
-    width: 708px;
+    width: 697px;
     box-sizing: border-box;
     grid-template-columns: $col-caret $gear-containers-col-image $gear-containers-col-name $gear-containers-col-capacity $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $col-controls;
     margin-left: $container-left-shift;
@@ -928,7 +928,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
   &:hover {
     background: none;
-    width: 708px;
+    width: 697px;
     box-sizing: border-box;
 
     &::before {
@@ -940,7 +940,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
       bottom: 0;
       background: rgba(44, 24, 16, 0.2);
       z-index: -1;
-      width: 708px;
+      width: 697px;
       box-sizing: border-box;
     }
   }

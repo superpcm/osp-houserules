@@ -438,7 +438,27 @@ export class OspActorSheetCharacter extends ActorSheet {
     const conScore = this.actor.system.attributes?.con?.value || 10;
     context.calculatedMaxHP = calculateMaxHP(characterClass, level, conScore);
 
+    context.showSpellsTab = this._shouldShowSpellsTab(context.system);
+
     return context;
+  }
+
+  _shouldShowSpellsTab(system) {
+    const cls = (system.class || '').toLowerCase().trim();
+    const level = system.level || 1;
+    const wis = system.attributes?.wis?.value || 10;
+
+    const firstSpellLevel = {
+      'magic-user': 1, 'illusionist': 1, 'mage': 1,
+      'druid': 1, 'elf': 1, 'gnome': 1, 'bard': 1,
+      'half-elf': 2,
+    };
+
+    if (firstSpellLevel[cls] !== undefined) return level >= firstSpellLevel[cls];
+    if (cls === 'cleric')  return level >= (wis >= 15 ? 1 : 2);
+    if (cls === 'paladin') return level >= Math.max(1, 9 - Math.max(0, wis - 15));
+    if (cls === 'ranger')  return level >= Math.max(1, 8 - Math.max(0, wis - 15));
+    return false;
   }
 
   /**

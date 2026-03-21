@@ -1116,19 +1116,25 @@
     <!-- Right-side Tab Navigation -->
     <nav class="sheet-tabs tabs cs-tabs" data-group="primary">
   <a class="item cs-tab-item" data-tab="bio">Bio</a>
-  <a class="item cs-tab-item" data-tab="attributes">Spells</a>
   <a class="item cs-tab-item" data-tab="skills">Skills</a>
   <a class="item cs-tab-item" data-tab="combat">Combat</a>
   <a class="item cs-tab-item" data-tab="gear">Gear</a>
+  {{#if showSpellsTab}}<a class="item cs-tab-item" data-tab="attributes">Spells</a>{{/if}}
     </nav>
 
     <!-- Sheet Body - Tab Content Area -->
   <section class="sheet-body cs-sheet-body">
+      {{#if showSpellsTab}}
       <!-- Spells Tab -->
       <div class="tab" data-group="primary" data-tab="attributes">
       </div>
+      {{/if}}
       <!-- Skills Tab -->
   <div class="tab" data-group="primary" data-tab="skills">
+        <div class="skill-tab-header">
+          <div class="skill-tab-title">Skill Targets</div>
+          <div class="skill-tab-subtitle">Roll over or equal to # on d6 + modifiers</div>
+        </div>
         <!-- Class Skill Fields -->
         
         <!-- Assassination Field -->

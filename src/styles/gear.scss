@@ -7,9 +7,10 @@
 
 /* Global Column Widths (shared) */
 $col-caret: 18px;        // Width of collapse/expand caret
-$col-controls: 129px;   // Width of item controls section
+$col-controls: 103px;   // Width of item controls section (fallback/generic only)
 $col-field-short: 55px;  // Generic short field width (fallback for .field-short class)
 $col-image: 24px;        // Generic image column width (used by .item-roll-icon)
+
 
 /* Combat Tab – Weapons: Column Widths */
 $combat-weapons-col-item-image: 55px;   // Width of weapon item image
@@ -22,6 +23,7 @@ $combat-weapons-col-sf: 35px;           // Width of speed factor column (SF)
 $combat-weapons-col-rof: 35px;          // Width of rate of fire column (RoF)
 $combat-weapons-col-rng: 100px;          // Width of range column (RNG)
 $combat-weapons-col-weight: 35px;       // Width of weight column
+$combat-weapons-col-controls: 103px;   // Width of controls column
 
 /* Combat Tab – Weapons: Header Label Positions
    Each value is the X coordinate (from left edge of title bar) where the label is centered.
@@ -49,6 +51,7 @@ $gear-weapons-col-sf: 40px;           // Width of speed factor column (SF)
 $gear-weapons-col-rof: 40px;          // Width of rate of fire column (RoF)
 $gear-weapons-col-rng: 100px;         // Width of range column (RNG)
 $gear-weapons-col-weight: 40px;       // Width of weight column
+$gear-weapons-col-controls:   103px;  // Width of controls column
 
 /* Gear Tab – Weapons: Header Label Positions
    Mirror of the combat-tab approach: each label absolutely positioned, independently adjustable.
@@ -77,7 +80,8 @@ $combat-armor-col-don:    90px;  // Width of Don (donning time) column
 $combat-armor-col-doff:   90px;  // Width of Doff (doffing time) column
 $combat-armor-col-maxdex: 55px;  // Width of Max DEX column
 $combat-armor-col-minstr: 55px;  // Width of Min STR column
-$combat-armor-col-weight: 40px;  // Width of weight column (matches containers)
+$combat-armor-col-weight: 40px;     // Width of weight column
+$combat-armor-col-controls: 103px;  // Width of controls column
 
 /* Combat Tab – Armor: Header Label Positions
    Column layout: [8pad][45 img][166 1fr name][50 type][50 ac][80 don][65 doff][30 maxdex][30 minstr][50 wt][116 ctrl]
@@ -160,6 +164,7 @@ $gear-containers-col-capacity: 150px;   // Width of capacity column
 $gear-containers-col-storedsize: 55px;  // Width of storedSize column
 $gear-containers-col-twt: 55px;        // Width of total weight (tWT) column
 $gear-containers-col-weight: 60px;      // Width of weight column
+$gear-containers-col-controls: 128px;   // Width of controls column
 
 /* Gear Tab – Containers: Header Title Column Widths */
 $gear-containers-header-image: 30px;     // Width of container header image column
@@ -172,6 +177,7 @@ $gear-containers-header-weight: 60px;    // Width of container header weight col
 $gear-treasure-col-name: 485px;       // Width of treasure name column
 $gear-treasure-col-value: 55px;       // Width of value column
 $gear-treasure-col-weight: 55px;      // Width of weight column
+$gear-treasure-col-controls:   103px; // Width of controls column
 
 /* Nested Item Column Widths (for items inside containers) */
 $nested-col-image: 50px;        // Width of nested item image
@@ -190,7 +196,7 @@ $gear-containers-row-capacity-x:   0px;   // col5: capacity
 $gear-containers-row-storedsize-x: 16px;   // col6: storedSize
 $gear-containers-row-twt-x:       22px;   // col7: total weight (tWT)
 $gear-containers-row-weight-x:    27px;   // col8: weight (own)
-$gear-containers-row-controls-x:  -1px;   // col9: controls
+$gear-containers-row-controls-x:  -3px;   // col9: controls
 
 /* Gear Tab – Nested Item Row Column Offsets */
 $gear-nested-row-image-x:    0px;   // col1: item image
@@ -341,7 +347,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   cursor: pointer;
   display: grid !important;  // Force grid layout regardless of .flexrow specificity
   grid-auto-flow: dense;
-  grid-template-columns: $col-caret $gear-treasure-col-name $gear-treasure-col-value $gear-treasure-col-weight $col-controls;  // Default (matches treasure)
+  grid-template-columns: $col-caret $gear-treasure-col-name $gear-treasure-col-value $gear-treasure-col-weight $gear-treasure-col-controls;  // Default (matches treasure)
   align-items: center;
   text-align: center;
   gap: $gear-treasure-grid-gap;
@@ -407,7 +413,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // "Weapon" is left-aligned at the name column edge; all others are centered at their column midpoint
 // via transform: translateX(-50%) so the variable points to the visual center.
 .osp.sheet.actor .combat-tab .item-category-title.weapons-title {
-  grid-template-columns: $combat-weapons-col-roll-icon $combat-weapons-col-item-image $combat-weapons-col-name $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $col-controls;
+  grid-template-columns: $combat-weapons-col-roll-icon $combat-weapons-col-item-image $combat-weapons-col-name $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $combat-weapons-col-controls;
   width: 698px;
 
   // All children: absolutely positioned, no padding, no grid dependency
@@ -871,14 +877,14 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Item header row (aligns with category title)
 .item-header {
   display: grid;
-  grid-template-columns: $col-caret $gear-treasure-col-name $gear-treasure-col-value $gear-treasure-col-weight $col-controls; // Default (matches treasure)
+  grid-template-columns: $col-caret $gear-treasure-col-name $gear-treasure-col-value $gear-treasure-col-weight $gear-treasure-col-controls; // Default (matches treasure)
   align-items: center;
   gap: $gear-treasure-grid-gap;
   padding: $item-padding-y $item-padding-x;
   box-sizing: border-box;
 
   &.armor-header {
-    grid-template-columns: $combat-armor-col-image $combat-armor-col-name $combat-armor-col-type $combat-armor-col-ac $combat-armor-col-don $combat-armor-col-doff $combat-armor-col-maxdex $combat-armor-col-minstr $combat-armor-col-weight $col-controls;
+    grid-template-columns: $combat-armor-col-image $combat-armor-col-name $combat-armor-col-type $combat-armor-col-ac $combat-armor-col-don $combat-armor-col-doff $combat-armor-col-maxdex $combat-armor-col-minstr $combat-armor-col-weight $combat-armor-col-controls;
     gap: $combat-armor-grid-gap;
     height: $item-row-height;
     box-sizing: border-box;
@@ -888,20 +894,20 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   &.container-header {
     width: 697px;
     box-sizing: border-box;
-    grid-template-columns: $col-caret $gear-containers-col-image $gear-containers-col-name $gear-containers-col-capacity $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $col-controls;
+    grid-template-columns: $col-caret $gear-containers-col-image $gear-containers-col-name $gear-containers-col-capacity $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $gear-containers-col-controls;
     margin-left: $container-left-shift;
   }
 
   &.treasure-header {
     width: 698px;
     box-sizing: border-box;
-    grid-template-columns: $col-image $gear-treasure-col-name $gear-treasure-col-value $gear-treasure-col-weight $col-controls;
+    grid-template-columns: $col-image $gear-treasure-col-name $gear-treasure-col-value $gear-treasure-col-weight $gear-treasure-col-controls;
   }
 }
 
 // Combat Tab – Weapon item rows
 .combat-tab .item-header.weapon-header {
-  grid-template-columns: $combat-weapons-col-roll-icon $combat-weapons-col-item-image $combat-weapons-col-name $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $col-controls;
+  grid-template-columns: $combat-weapons-col-roll-icon $combat-weapons-col-item-image $combat-weapons-col-name $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $combat-weapons-col-controls;
   gap: $combat-weapons-grid-gap;
   height: $item-row-height;
   box-sizing: border-box;
@@ -910,7 +916,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
 // Gear Tab – Weapon item rows (no roll icon column)
 .gear-tab .item-header.weapon-header {
-  grid-template-columns: $gear-weapons-col-item-image $gear-weapons-col-name $gear-weapons-col-damage $gear-weapons-col-dt $gear-weapons-col-sz $gear-weapons-col-sf $gear-weapons-col-rof $gear-weapons-col-rng $gear-weapons-col-weight $col-controls;
+  grid-template-columns: $gear-weapons-col-item-image $gear-weapons-col-name $gear-weapons-col-damage $gear-weapons-col-dt $gear-weapons-col-sz $gear-weapons-col-sf $gear-weapons-col-rof $gear-weapons-col-rng $gear-weapons-col-weight $gear-weapons-col-controls;
   gap: $gear-weapons-grid-gap;
   height: $item-row-height;
   box-sizing: border-box;

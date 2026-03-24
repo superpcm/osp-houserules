@@ -156,7 +156,7 @@
       "storedSize": 2,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
       "tags": [
         "tool"
       ]

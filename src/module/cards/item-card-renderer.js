@@ -452,22 +452,22 @@ export class ItemCardRenderer {
       if (costValue >= 1000) {
         costValue = costValue.toLocaleString();
       }
-      items.push({ icon: 'coin-icon.webp', text: `${costValue}sp` });
+      items.push({ icon: 'coin-icon_thumb.webp', text: `${costValue}sp` });
     }
     
     // Weight with weight icon (skip for livestock)
     if (item.type !== 'livestock' && item.system.unitWeight !== undefined && item.system.unitWeight !== '') {
-      items.push({ icon: 'weight-icon.webp', text: `${item.system.unitWeight}lbs` });
+      items.push({ icon: 'weight-icon_thumb.webp', text: `${item.system.unitWeight}lbs` });
     }
     
     // Stored size with capacity icon (skip for livestock)
     if (item.type !== 'livestock' && item.system.storedSize !== undefined && item.system.storedSize !== '') {
-      items.push({ icon: 'stored-icon.webp', text: `${item.system.storedSize}S` });
+      items.push({ icon: 'stored-icon_thumb.webp', text: `${item.system.storedSize}S` });
     }
     
     // Container capacity with capacity icon
     if (item.type === 'container' && item.system.capacity !== undefined && item.system.capacity !== '') {
-      items.push({ icon: 'capacity-icon.webp', text: `${item.system.capacity}C` });
+      items.push({ icon: 'capacity-icon_thumb.webp', text: `${item.system.capacity}C` });
     }
     
     if (items.length === 0 && item.system.lashable !== true) return;
@@ -498,7 +498,7 @@ export class ItemCardRenderer {
     // Draw each metadata item with icon
     for (const metaItem of items) {
       // Load and draw icon centered vertically at y
-      const icon = await this._loadIcon(`systems/osp-houserules/assets/images/icons/${metaItem.icon}`);
+      const icon = await this._loadIcon(`systems/osp-houserules/assets/thumbs/images/icons/${metaItem.icon}`);
       if (icon) {
         // Center icon vertically: y is middle, so top = y - (iconSize / 2)
         ctx.drawImage(icon, x, y - (iconSize / 2), iconSize, iconSize);
@@ -514,7 +514,7 @@ export class ItemCardRenderer {
     
     // Draw lashable icon at the end if applicable, centered at y
     if (item.system.lashable === true) {
-      const lashIcon = await this._loadIcon('systems/osp-houserules/assets/images/icons/lash-icon.webp');
+      const lashIcon = await this._loadIcon('systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp');
       if (lashIcon) {
         ctx.drawImage(lashIcon, x, y - (iconSize / 2), iconSize, iconSize);
       }

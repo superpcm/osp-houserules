@@ -11,149 +11,55 @@ $col-controls: 103px;   // Width of item controls section (fallback/generic only
 $col-field-short: 55px;  // Generic short field width (fallback for .field-short class)
 $col-image: 24px;        // Generic image column width (used by .item-roll-icon)
 
+// Total content area width — used for all title bars, item rows, and hover highlights
+$content-width: 698px;
 
 /* Combat Tab – Weapons: Column Widths */
 $combat-weapons-col-item-image: 55px;   // Width of weapon item image
 $combat-weapons-col-roll-icon: 40px;    // Width of weapon roll icon
-$combat-weapons-col-name: 165px;         // Width of weapon name column (698px total - all other fixed cols)
+$combat-weapons-col-name: 165px;        // Width of weapon name column
 $combat-weapons-col-damage: 70px;       // Width of damage column
 $combat-weapons-col-dt: 35px;           // Width of damage type column (DT)
 $combat-weapons-col-sz: 35px;           // Width of size column (SZ)
 $combat-weapons-col-sf: 35px;           // Width of speed factor column (SF)
 $combat-weapons-col-rof: 35px;          // Width of rate of fire column (RoF)
-$combat-weapons-col-rng: 100px;          // Width of range column (RNG)
+$combat-weapons-col-rng: 100px;         // Width of range column (RNG)
 $combat-weapons-col-weight: 35px;       // Width of weight column
-$combat-weapons-col-controls: 103px;   // Width of controls column
-
-/* Combat Tab – Weapons: Header Label Positions
-   Each value is the X coordinate (from left edge of title bar) where the label is centered.
-   "Weapon" is left-aligned; all others are centered at their column midpoint.
-   Formula: 8px padding + sum of preceding column widths + (this column width / 2)
-   Column layout: [50 img][30 roll][150 name][90 dmg][40 dt][40 sz][40 sf][40 rof][90 rng][30 wt][80 ctrl]
-*/
-$combat-weapon-title-name-x:  102px;  // "Weapon"  — left edge of name col  (50+30)
-$combat-weapon-title-dmg-x:   296px;  // "DMG"     — center of damage col    (230+45)
-$combat-weapon-title-dt-x:    350px;  // "DT"      — center of DT col        (320+20)
-$combat-weapon-title-sz-x:    386px;  // "SZ"      — center of SZ col        (360+20)
-$combat-weapon-title-sf-x:    421px;  // "SF"      — center of SF col        (400+20)
-$combat-weapon-title-rof-x:   457px;  // "RoF"     — center of RoF col       (440+20)
-$combat-weapon-title-rng-x:   520px;  // "RNG"     — center of RNG col       (480+45)
-$combat-weapon-title-wt-x:    590px;  // "WT"      — center of WT col        (570+15)
-
+$combat-weapons-col-controls: 103px;    // Width of controls column
 
 /* Gear Tab – Weapons: Column Widths */
-$gear-weapons-col-item-image: 50px;   // Width of weapon item image
-$gear-weapons-col-name: 203px;        // Width of weapon name column
-$gear-weapons-col-damage: 60px;      // Width of damage column
-$gear-weapons-col-dt: 40px;           // Width of damage type column (DT)
-$gear-weapons-col-sz: 40px;           // Width of size column (SZ)
-$gear-weapons-col-sf: 40px;           // Width of speed factor column (SF)
-$gear-weapons-col-rof: 40px;          // Width of rate of fire column (RoF)
-$gear-weapons-col-rng: 100px;         // Width of range column (RNG)
-$gear-weapons-col-weight: 40px;       // Width of weight column
-$gear-weapons-col-controls:   103px;  // Width of controls column
-
-/* Gear Tab – Weapons: Header Label Positions
-   Mirror of the combat-tab approach: each label absolutely positioned, independently adjustable.
-   "Weapon" is left-aligned; all others centered at their column midpoint via translateX(-50%).
-   Formula: 8px padding + sum of preceding column widths + (this column width / 2)
-   1fr = 682px content area − (45+dmg+dt+sz+sf+rof+rng+wt+116) fixed columns
-   With current values: 1fr = 682−651 = 31px
-   Column layout: [8pad][45 img][1fr name][dmg][dt][sz][sf][rof][rng][wt][116 ctrl]
-*/
-$gear-weapon-title-name-x:   72px;  // "Weapon" — left edge of name col (8+64)
-$gear-weapon-title-dmg-x:   242px;  // "DMG"    — center of damage col  (8+45+31+95)
-$gear-weapon-title-dt-x:    294px;  // "DT"     — center of DT col       (+190+20)
-$gear-weapon-title-sz-x:    334px;  // "SZ"     — center of SZ col       (+40+20)
-$gear-weapon-title-sf-x:    374px;  // "SF"     — center of SF col       (+40+20)
-$gear-weapon-title-rof-x:   414px;  // "RoF"    — center of RoF col      (+40+20)
-$gear-weapon-title-rng-x:   484px;  // "RNG"    — center of RNG col      (+40+50)
-$gear-weapon-title-wt-x:    554px;  // "WT"     — center of WT col       (+100+20)
-
+$gear-weapons-col-item-image: 50px;     // Width of weapon item image
+$gear-weapons-col-name: 203px;          // Width of weapon name column
+$gear-weapons-col-damage: 60px;         // Width of damage column
+$gear-weapons-col-dt: 40px;             // Width of damage type column (DT)
+$gear-weapons-col-sz: 40px;             // Width of size column (SZ)
+$gear-weapons-col-sf: 40px;             // Width of speed factor column (SF)
+$gear-weapons-col-rof: 40px;            // Width of rate of fire column (RoF)
+$gear-weapons-col-rng: 100px;           // Width of range column (RNG)
+$gear-weapons-col-weight: 40px;         // Width of weight column
+$gear-weapons-col-controls: 103px;      // Width of controls column
 
 /* Combat Tab – Armor: Column Widths */
-$combat-armor-col-image:  50px;  // Width of armor image
-$combat-armor-col-name:  130px;  // Width of armor name column (fixed, replaces 1fr)
-$combat-armor-col-type:   50px;  // Width of type column
-$combat-armor-col-ac:     45px;  // Width of AC column
-$combat-armor-col-don:    90px;  // Width of Don (donning time) column
-$combat-armor-col-doff:   90px;  // Width of Doff (doffing time) column
-$combat-armor-col-maxdex: 55px;  // Width of Max DEX column
-$combat-armor-col-minstr: 55px;  // Width of Min STR column
-$combat-armor-col-weight: 40px;     // Width of weight column
-$combat-armor-col-controls: 103px;  // Width of controls column
+$combat-armor-col-image:  50px;      // Width of armor image
+$combat-armor-col-name:  130px;      // Width of armor name column
+$combat-armor-col-type:   50px;      // Width of type column
+$combat-armor-col-ac:     45px;      // Width of AC column
+$combat-armor-col-don:    80px;      // Width of Don (donning time) column
+$combat-armor-col-doff:   80px;      // Width of Doff (doffing time) column
+$combat-armor-col-maxdex: 65px;      // Width of Max DEX column
+$combat-armor-col-minstr: 65px;      // Width of Min STR column
+$combat-armor-col-weight: 40px;      // Width of weight column
+$combat-armor-col-controls: 93px;   // Width of controls column
 
-/* Combat Tab – Armor: Header Label Positions
-   Column layout: [8pad][45 img][166 1fr name][50 type][50 ac][80 don][65 doff][30 maxdex][30 minstr][50 wt][116 ctrl]
-   1fr = 682 - 45 - 50 - 50 - 80 - 65 - 30 - 30 - 50 - 116 = 166px
+/* Gear-tab.html – Simple Section Header Label Positions
+   All 5 sections (Weapons/Armor/Containers/Items/Treasure) share col1/col2 positions.
+   Each title: [caret][name][col1][col2][controls]
+   Adjust $geartab-col1-x / $geartab-col2-x to shift both data columns across all sections at once.
 */
-$combat-armor-title-armor-x:   60px;  // "Armor"   — left-aligned (8+64)
-$combat-armor-title-type-x:   210px;  // "Type"    — center (8+45+166+25)
-$combat-armor-title-ac-x:     258px;  // "AC"      — center (+50)
-$combat-armor-title-don-x:    325px;  // "Don"     — center (+80 col, 319+40)
-$combat-armor-title-doff-x:   413px;  // "Doff"    — center (+65 col, 399+32.5)
-$combat-armor-title-maxdex-x: 488px;  // "mDEX"    — center (+30 col, 464+15)
-$combat-armor-title-minstr-x: 543px;  // "mSTR"    — center (+30 col, 494+15)
-$combat-armor-title-wt-x:     590px;  // "WT"      — center (+50 col, 524+25)
-
-/* Gear Tab (character-sheet) – Armor: Header Label Positions
-   Same column layout as combat armor */
-$gear-armor-title-armor-x:    72px;
-$gear-armor-title-type-x:    244px;
-$gear-armor-title-ac-x:      294px;
-$gear-armor-title-don-x:     359px;
-$gear-armor-title-doff-x:    432px;
-$gear-armor-title-maxdex-x:  479px;
-$gear-armor-title-minstr-x:  509px;
-$gear-armor-title-wt-x:      549px;
-
-/* Gear Tab (character-sheet) – Gear & Treasure sticky header: Label Positions
-   Column layout: [8pad][~60 toggle+img][~341 1fr name][55 qty][55 cap][55 wt][116 ctrl]
-   1fr = 682 - 60 - 55 - 55 - 55 - 116 = 341px
-*/
-$gearsheet-containers-title-name-x:   65px;   // "Gear" — left-aligned
-$gearsheet-containers-title-qty-x:   279px;  // "Qty"      — center of qty col
-$gearsheet-containers-title-cap-x:   326px;  // "Capacity" — center of cap col
-$gearsheet-containers-title-ssize-x: 443px;  // "sSize"    — center of sSize col
-$gearsheet-containers-title-twt-x:   503px;  // "tWT"      — center of tWT col
-$gearsheet-containers-title-wt-x:    565px;  // "WT"       — center of wt col
-
-/* Gear-tab.html – Per-section Header Label Positions
-   Each section has 5 children: [caret][name][col1][col2][controls]
-   Column layout: [8pad][30 caret][~426 1fr name][55 col1][55 col2][116 ctrl]
-   1fr = 682 - 30 - 55 - 55 - 116 = 426px
-   name-x: left edge of name text (left-aligned); col1/col2-x: visual center of data column
-*/
-
-/* Shared fallback (used by base .item-category-title rule) */
-$geartab-title-name-x:   38px;
-$geartab-title-col1-x:  492px;
-$geartab-title-col2-x:  547px;
-
-/* Weapons section: caret + "Weapons" + "Damage" + "Weight" + controls */
-$geartab-weapons-title-name-x:   38px;   // "Weapons" — left-aligned
-$geartab-weapons-title-dmg-x:   492px;  // "Damage"  — center
-$geartab-weapons-title-wt-x:    547px;  // "Weight"  — center
-
-/* Armor section: caret + "Armor" + "AC" + "Weight" + controls */
-$geartab-armor-title-name-x:    38px;   // "Armor"   — left-aligned
-$geartab-armor-title-col1-x:   492px;  // "AC"      — center
-$geartab-armor-title-col2-x:   547px;  // "Weight"  — center
-
-/* Containers section: caret + "Containers" + "Capacity" + "Weight" + controls */
-$geartab-containers-title-name-x:    85px;   // "Containers" — left-aligned
-$geartab-containers-title-col1-x:   492px;  // "Capacity"   — center
-$geartab-containers-title-col2-x:   547px;  // "Weight"     — center
-
-/* Items section: caret + "Items" + "Qty" + "Weight" + controls */
-$geartab-items-title-name-x:    38px;   // "Items"   — left-aligned
-$geartab-items-title-col1-x:   492px;  // "Qty"     — center
-$geartab-items-title-col2-x:   547px;  // "Weight"  — center
-
-/* Treasure section: caret + "Treasure" + "Value" + "Weight" + controls */
-$geartab-treasure-title-name-x:    38px;   // "Treasure" — left-aligned
-$geartab-treasure-title-col1-x:   492px;  // "Value"    — center
-$geartab-treasure-title-col2-x:   547px;  // "Weight"   — center
+$geartab-name-x: 38px;            // "Weapons", "Armor", "Items", "Treasure" — left-aligned
+$geartab-containers-name-x: 85px; // "Containers" — wider text, needs extra left margin
+$geartab-col1-x: 492px;           // center of first data col (Damage / AC / Capacity / Qty / Value)
+$geartab-col2-x: 547px;           // center of second data col (Weight)
 
 
 /* Gear Tab – Containers: Column Widths */
@@ -187,31 +93,6 @@ $nested-col-storedsize: 254px;   // Width of nested item storedSize column
 $nested-col-weight: 40px;       // Width of nested item weight column
 $nested-col-controls: 106px;    // Width of nested item controls section
 
-/* Gear Tab – Container Row Column Offsets (nudge each column left/right from its grid position) */
-$gear-containers-row-caret-x:      0px;   // col1: expand/collapse caret
-$gear-containers-row-image-x:      0px;   // col2: item image
-$gear-containers-row-name-x:      10px;   // col3: item name
-$gear-containers-row-qty-x:        2px;   // col4: quantity
-$gear-containers-row-capacity-x:   0px;   // col5: capacity
-$gear-containers-row-storedsize-x: 16px;   // col6: storedSize
-$gear-containers-row-twt-x:       22px;   // col7: total weight (tWT)
-$gear-containers-row-weight-x:    27px;   // col8: weight (own)
-$gear-containers-row-controls-x:  -3px;   // col9: controls
-
-/* Gear Tab – Nested Item Row Column Offsets */
-$gear-nested-row-image-x:    0px;   // col1: item image
-$gear-nested-row-name-x:     10px;   // col2: item name
-$gear-nested-row-qty-x:      0px;   // col3: quantity
-$gear-nested-row-size-x:     78px;   // col4: stored size
-$gear-nested-row-weight-x:   0px;   // col5: weight
-$gear-nested-row-controls-x: -1px;   // col6: controls
-
-/* Gear Tab – Treasure Row Column Offsets */
-$gear-treasure-row-image-x:    0px;   // col1: item image
-$gear-treasure-row-name-x:     0px;   // col2: item name
-$gear-treasure-row-value-x:    0px;   // col3: value
-$gear-treasure-row-weight-x:   0px;   // col4: weight
-$gear-treasure-row-controls-x: 0px;   // col5: controls
 
 
 /* Spacing */
@@ -240,6 +121,7 @@ $font-category-title: 14px;   // Category title font size
 $font-item-name: 24px;        // Item name font size
 $font-item-field: 24px;       // Item field font size
 $font-nested-item: 24px;      // Nested item font size
+$font-nested-header: 18px;   // Nested item header/subheader bar font size
 
 /* Nested Item Indentation */
 $nested-indent: 60px;    // Left margin for nested items
@@ -258,15 +140,48 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 /* ============================================
    QUICK REFERENCE - Grid Layout:
 
-   All name columns use pixel variables — adjust each independently.
-
-   Weapons (Combat Tab):  image + roll-icon + $combat-weapons-col-name + damage + dt + sz + sf + rof + rng + weight + controls
-   Weapons (Gear Tab):    image + $gear-weapons-col-name + damage + dt + sz + sf + rof + rng + weight + controls
-   Armor (Combat Tab):    image + $combat-armor-col-name + type + ac + weight + controls
-   Containers (Gear Tab): caret + image + $gear-containers-col-name + capacity + storedsize + weight + controls
-   Treasure (Gear Tab):   caret + $gear-treasure-col-name + value + weight + controls
-   Nested Items:          image + $nested-col-name + qty + storedsize + weight + controls
+   Weapons (Combat Tab):  roll-icon + image + name + damage + dt + sz + sf + rof + rng + weight + controls
+   Weapons (Gear Tab):    image + name + damage + dt + sz + sf + rof + rng + weight + controls
+   Armor (Combat/Gear):   image + name + type + ac + don + doff + maxdex + minstr + weight + controls
+   Containers (Gear Tab): caret + image + name + capacity + storedsize + twt + weight + controls
+   Treasure (Gear Tab):   image + name + value + weight + controls
+   Nested Items:          image + name + qty + storedsize + weight + controls
+   Gear-tab sections:     caret + name + col1 + col2 + controls  (shared $geartab-col1-x / $geartab-col2-x)
    ============================================ */
+
+/* ============================================
+   POSITIONING HELPERS
+   ============================================ */
+
+// col-start($a, $b, ...) → left edge of the column after all listed columns
+// Example: col-start($col-a, $col-b) = $col-a + $col-b  (start of the 3rd column)
+@function col-start($cols...) {
+  $sum: 0px;
+  @each $c in $cols { $sum: $sum + $c; }
+  @return $sum;
+}
+
+// col-center($width, $preceding...) → visual center x of target column
+// Example: col-center($col-c, $col-a, $col-b) = $col-a + $col-b + $col-c/2
+@function col-center($target, $cols...) {
+  @return col-start($cols...) + $target * 0.5;
+}
+
+// Shared boilerplate for absolutely-positioned labels in category header (title bar) rows.
+// Include once per title section instead of repeating the 9-line block everywhere.
+@mixin title-bar-children {
+  > * {
+    position: absolute !important;
+    top: 0;
+    height: 28.5px;
+    display: flex !important;
+    align-items: center;
+    padding: 0 !important;
+    width: auto !important;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+}
 
 .gear-tab,
 
@@ -276,7 +191,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   height: auto !important;
   overflow: visible !important;
   margin-top: 25px; /* gap below hpac image — hpac already in normal flow above this section */
-  margin-left: 51px; /* (800px tab - 698px content) / 2 = 51px to center */
+  margin-left: 51px; /* (800px tab - $content-width) / 2 = 51px to center */
   
   /* Match scrollbar styling from gear tab */
   scrollbar-width: thin;
@@ -376,10 +291,10 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
   // Default positions for simple 5-child caret-based titles (Items, Treasure in gear-tab.html)
   // Section-specific rules take priority due to higher selector specificity
-  > :nth-child(1) { left: 23px; }  // caret — centered in 30px caret area (8+15)
-  > :nth-child(2) { left: $geartab-title-name-x; transform: none; }  // Category name — left-aligned
-  > :nth-child(3) { left: $geartab-title-col1-x; }   // First data col (Value, Qty, etc.)
-  > :nth-child(4) { left: $geartab-title-col2-x; }   // Second data col (Weight)
+  > :nth-child(1) { left: col-center($col-caret); }  // caret — centered in caret column
+  > :nth-child(2) { left: $geartab-name-x; transform: none; }  // Category name — left-aligned
+  > :nth-child(3) { left: $geartab-col1-x; }   // First data col (Value, Qty, etc.)
+  > :nth-child(4) { left: $geartab-col2-x; }   // Second data col (Weight)
   // child 5 (item-controls): empty, no position needed
 
   // Override item-roll-icon height in all title headers to allow vertical centering
@@ -409,216 +324,140 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 // Combat Tab – Weapons title
-// Each label is absolutely positioned using per-label x variables — fully independent, no padding.
-// "Weapon" is left-aligned at the name column edge; all others are centered at their column midpoint
-// via transform: translateX(-50%) so the variable points to the visual center.
+// Label positions computed from column widths: changing any $combat-weapons-col-* variable
+// automatically updates the corresponding label position.
 .osp.sheet.actor .combat-tab .item-category-title.weapons-title {
   grid-template-columns: $combat-weapons-col-roll-icon $combat-weapons-col-item-image $combat-weapons-col-name $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $combat-weapons-col-controls;
-  width: 698px;
+  width: $content-width;
 
-  // All children: absolutely positioned, no padding, no grid dependency
-  > * {
-    position: absolute !important;
-    top: 0;
-    height: 28.5px;
-    display: flex !important;
-    align-items: center;
-    padding: 0 !important;
-    width: auto !important;
-    white-space: nowrap;
-    transform: translateX(-50%);  // Default: centered at left position
-  }
+  @include title-bar-children;
 
-  // Individual label positions — adjust variables above to tune alignment
-  > :nth-child(1) { left: $combat-weapon-title-name-x; transform: none; }  // "Weapon" — left-aligned
-  > :nth-child(2) { left: $combat-weapon-title-dmg-x; }   // DMG
-  > :nth-child(3) { left: $combat-weapon-title-dt-x; }    // DT
-  > :nth-child(4) { left: $combat-weapon-title-sz-x; }    // SZ
-  > :nth-child(5) { left: $combat-weapon-title-sf-x; }    // SF
-  > :nth-child(6) { left: $combat-weapon-title-rof-x; }   // RoF
-  > :nth-child(7) { left: $combat-weapon-title-rng-x; }   // RNG
-  > :nth-child(8) { left: $combat-weapon-title-wt-x; }    // WT
-  // item-controls (child 9): empty in title bar, no explicit position needed
+  // "Weapon" — left edge of name col (after roll-icon + item-image)
+  > :nth-child(1) { left: col-start($combat-weapons-col-roll-icon, $combat-weapons-col-item-image); transform: none; }
+  > :nth-child(2) { left: col-center($combat-weapons-col-damage, $combat-weapons-col-roll-icon, $combat-weapons-col-item-image, $combat-weapons-col-name); }  // DMG
+  > :nth-child(3) { left: col-center($combat-weapons-col-dt,  $combat-weapons-col-roll-icon, $combat-weapons-col-item-image, $combat-weapons-col-name, $combat-weapons-col-damage); }  // DT
+  > :nth-child(4) { left: col-center($combat-weapons-col-sz,  $combat-weapons-col-roll-icon, $combat-weapons-col-item-image, $combat-weapons-col-name, $combat-weapons-col-damage, $combat-weapons-col-dt); }  // SZ
+  > :nth-child(5) { left: col-center($combat-weapons-col-sf,  $combat-weapons-col-roll-icon, $combat-weapons-col-item-image, $combat-weapons-col-name, $combat-weapons-col-damage, $combat-weapons-col-dt, $combat-weapons-col-sz); }  // SF
+  > :nth-child(6) { left: col-center($combat-weapons-col-rof, $combat-weapons-col-roll-icon, $combat-weapons-col-item-image, $combat-weapons-col-name, $combat-weapons-col-damage, $combat-weapons-col-dt, $combat-weapons-col-sz, $combat-weapons-col-sf); }  // RoF
+  > :nth-child(7) { left: col-center($combat-weapons-col-rng, $combat-weapons-col-roll-icon, $combat-weapons-col-item-image, $combat-weapons-col-name, $combat-weapons-col-damage, $combat-weapons-col-dt, $combat-weapons-col-sz, $combat-weapons-col-sf, $combat-weapons-col-rof); }  // RNG
+  > :nth-child(8) { left: col-center($combat-weapons-col-weight, $combat-weapons-col-roll-icon, $combat-weapons-col-item-image, $combat-weapons-col-name, $combat-weapons-col-damage, $combat-weapons-col-dt, $combat-weapons-col-sz, $combat-weapons-col-sf, $combat-weapons-col-rof, $combat-weapons-col-rng); }  // WT
+  // item-controls (child 9): empty in title bar
 }
 
 // Gear Tab – Weapons title (5 children: caret + "Weapons" + "Damage" + "Weight" + controls)
-// Adjust $geartab-weapons-title-*-x variables above to tune alignment with data columns.
 .osp.sheet.actor .gear-tab .item-category-title.weapons-title {
-  width: 698px;
+  width: $content-width;
 
-  > * {
-    position: absolute !important;
-    top: 0;
-    height: 28.5px;
-    display: flex !important;
-    align-items: center;
-    padding: 0 !important;
-    width: auto !important;
-    white-space: nowrap;
-    transform: translateX(-50%);
-  }
-
-  > :nth-child(1) { left: 23px; }  // caret — centered in 30px caret area
-  > :nth-child(2) { left: $geartab-weapons-title-name-x; transform: none; }  // "Weapons" — left-aligned
-  > :nth-child(3) { left: $geartab-weapons-title-dmg-x; }   // "Damage"
-  > :nth-child(4) { left: $geartab-weapons-title-wt-x; }    // "Weight"
-  // item-controls (child 5): empty in title bar, no explicit position needed
+  @include title-bar-children;
+  > :nth-child(1) { left: col-center($col-caret); }  // caret
+  > :nth-child(2) { left: $geartab-name-x; transform: none; }  // "Weapons"
+  > :nth-child(3) { left: $geartab-col1-x; }  // "Damage"
+  > :nth-child(4) { left: $geartab-col2-x; }  // "Weight"
 }
 
-// Combat Tab – Armor title (absolute positioning; 5 children: image+Armor+Type+AC+Weight)
+// Combat Tab – Armor title
 .osp.sheet.actor .combat-tab .item-category-title.armor-title {
-  width: 698px;
+  width: $content-width;
 
-  > * {
-    position: absolute !important;
-    top: 0; height: 28.5px;
-    display: flex !important; align-items: center;
-    padding: 0 !important; width: auto !important;
-    white-space: nowrap; transform: translateX(-50%);
-  }
-
-  // child 1: item-image (empty) — at 0,0, no visual
-  > :nth-child(2) { left: $combat-armor-title-armor-x; transform: none; }  // "Armor"
-  > :nth-child(3) { left: $combat-armor-title-type-x; }    // "Type"
-  > :nth-child(4) { left: $combat-armor-title-ac-x; }      // "AC"
-  > :nth-child(5) { left: $combat-armor-title-don-x; }     // "Don"
-  > :nth-child(6) { left: $combat-armor-title-doff-x; }    // "Doff"
-  > :nth-child(7) { left: $combat-armor-title-maxdex-x; }  // "Max DEX"
-  > :nth-child(8) { left: $combat-armor-title-minstr-x; }  // "Min STR"
-  > :nth-child(9) { left: $combat-armor-title-wt-x; }      // "Weight"
+  @include title-bar-children;
+  // child 1: item-image placeholder (empty)
+  > :nth-child(2) { left: col-start($combat-armor-col-image); transform: none; }  // "Armor"
+  > :nth-child(3) { left: col-center($combat-armor-col-type,   $combat-armor-col-image, $combat-armor-col-name); }  // "Type"
+  > :nth-child(4) { left: col-center($combat-armor-col-ac,     $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type); }  // "AC"
+  > :nth-child(5) { left: col-center($combat-armor-col-don,    $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac); }  // "Don"
+  > :nth-child(6) { left: col-center($combat-armor-col-doff,   $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac, $combat-armor-col-don); }  // "Doff"
+  > :nth-child(7) { left: col-center($combat-armor-col-maxdex, $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac, $combat-armor-col-don, $combat-armor-col-doff); }  // "mDEX"
+  > :nth-child(8) { left: col-center($combat-armor-col-minstr, $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac, $combat-armor-col-don, $combat-armor-col-doff, $combat-armor-col-maxdex); }  // "mSTR"
+  > :nth-child(9) { left: col-center($combat-armor-col-weight, $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac, $combat-armor-col-don, $combat-armor-col-doff, $combat-armor-col-maxdex, $combat-armor-col-minstr); }  // "WT"
 }
 
-// Gear-tab.html – Armor title (absolute positioning; 5 children: caret+Armor+AC+Weight+controls)
+// Gear-tab.html – Armor title (5 children: caret+Armor+AC+Weight+controls)
 // Overridden by .gear-scrollable-content rule below for character-sheet gear tab
 .osp.sheet.actor .gear-tab .item-category-title.armor-title {
-  width: 698px;
+  width: $content-width;
 
-  > * {
-    position: absolute !important;
-    top: 0; height: 28.5px;
-    display: flex !important; align-items: center;
-    padding: 0 !important; width: auto !important;
-    white-space: nowrap; transform: translateX(-50%);
-  }
-
-  > :nth-child(1) { left: 23px; }  // caret — centered in 30px caret area
-  > :nth-child(2) { left: $geartab-armor-title-name-x; transform: none; }  // "Armor"
-  > :nth-child(3) { left: $geartab-armor-title-col1-x; }   // "AC"
-  > :nth-child(4) { left: $geartab-armor-title-col2-x; }   // "Weight"
-  // child 5 (item-controls): empty
+  @include title-bar-children;
+  > :nth-child(1) { left: col-center($col-caret); }  // caret
+  > :nth-child(2) { left: $geartab-name-x; transform: none; }  // "Armor"
+  > :nth-child(3) { left: $geartab-col1-x; }  // "AC"
+  > :nth-child(4) { left: $geartab-col2-x; }  // "Weight"
 }
 
-// Gear Tab (character-sheet) – Armor title (6 children: image+Armor+Type+AC+Weight+controls)
+// Gear Tab (character-sheet) – Armor title (same column widths as combat armor)
 // Placed after .gear-tab rule; same specificity so this overrides for character-sheet sections
 .osp.sheet.actor .gear-scrollable-content .item-category-title.armor-title {
-  width: 698px;
+  width: $content-width;
 
-  > * {
-    position: absolute !important;
-    top: 0; height: 28.5px;
-    display: flex !important; align-items: center;
-    padding: 0 !important; width: auto !important;
-    white-space: nowrap; transform: translateX(-50%);
-  }
-
-  // child 1: item-image (empty)
-  > :nth-child(2) { left: $gear-armor-title-armor-x; transform: none; }   // "Armor"
-  > :nth-child(3) { left: $gear-armor-title-type-x; }    // "Type"
-  > :nth-child(4) { left: $gear-armor-title-ac-x; }      // "AC"
-  > :nth-child(5) { left: $gear-armor-title-don-x; }     // "Don"
-  > :nth-child(6) { left: $gear-armor-title-doff-x; }    // "Doff"
-  > :nth-child(7) { left: $gear-armor-title-maxdex-x; }  // "Max DEX"
-  > :nth-child(8) { left: $gear-armor-title-minstr-x; }  // "Min STR"
-  > :nth-child(9) { left: $gear-armor-title-wt-x; }      // "Weight"
+  @include title-bar-children;
+  // child 1: item-image placeholder (empty)
+  > :nth-child(2) { left: col-start($combat-armor-col-image); transform: none; }  // "Armor"
+  > :nth-child(3) { left: col-center($combat-armor-col-type,   $combat-armor-col-image, $combat-armor-col-name); }  // "Type"
+  > :nth-child(4) { left: col-center($combat-armor-col-ac,     $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type); }  // "AC"
+  > :nth-child(5) { left: col-center($combat-armor-col-don,    $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac); }  // "Don"
+  > :nth-child(6) { left: col-center($combat-armor-col-doff,   $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac, $combat-armor-col-don); }  // "Doff"
+  > :nth-child(7) { left: col-center($combat-armor-col-maxdex, $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac, $combat-armor-col-don, $combat-armor-col-doff); }  // "mDEX"
+  > :nth-child(8) { left: col-center($combat-armor-col-minstr, $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac, $combat-armor-col-don, $combat-armor-col-doff, $combat-armor-col-maxdex); }  // "mSTR"
+  > :nth-child(9) { left: col-center($combat-armor-col-weight, $combat-armor-col-image, $combat-armor-col-name, $combat-armor-col-type, $combat-armor-col-ac, $combat-armor-col-don, $combat-armor-col-doff, $combat-armor-col-maxdex, $combat-armor-col-minstr); }  // "WT"
   // child 10 (item-controls): empty
 }
 
-// Gear-tab.html – Containers title (absolute positioning; 5 children: caret+Containers+Capacity+Weight+controls)
+// Gear-tab.html – Containers title (5 children: caret+Containers+Capacity+Weight+controls)
 // Overridden by .gear-scrollable-content rule below for character-sheet
 .osp.sheet.actor .gear-tab .item-category-title.containers-title {
-  width: 698px;
+  width: $content-width;
 
-  > * {
-    position: absolute !important;
-    top: 0; height: 28.5px;
-    display: flex !important; align-items: center;
-    padding: 0 !important; width: auto !important;
-    white-space: nowrap; transform: translateX(-50%);
-  }
-
-  > :nth-child(1) { left: 23px; }  // caret
-  > :nth-child(2) { left: $geartab-containers-title-name-x; transform: none; }  // "Containers"
-  > :nth-child(3) { left: $geartab-containers-title-col1-x; }   // "Capacity"
-  > :nth-child(4) { left: $geartab-containers-title-col2-x; }   // "Weight"
-  // child 5 (item-controls): empty
+  @include title-bar-children;
+  > :nth-child(1) { left: col-center($col-caret); }  // caret
+  > :nth-child(2) { left: $geartab-containers-name-x; transform: none; }  // "Containers"
+  > :nth-child(3) { left: $geartab-col1-x; }  // "Capacity"
+  > :nth-child(4) { left: $geartab-col2-x; }  // "Weight"
 }
 
-// Gear-tab.html – Items title (5 children: caret + "Items" + "Qty" + "Weight" + controls)
+// Gear-tab.html – Items title (5 children: caret + "Items" + "" + "Weight" + controls)
 .osp.sheet.actor .gear-tab .item-category-title.items-title {
-  width: 698px;
+  width: $content-width;
 
-  > * {
-    position: absolute !important;
-    top: 0; height: 28.5px;
-    display: flex !important; align-items: center;
-    padding: 0 !important; width: auto !important;
-    white-space: nowrap; transform: translateX(-50%);
-  }
-
-  > :nth-child(1) { left: 23px; }  // caret
-  > :nth-child(2) { left: $geartab-items-title-name-x; transform: none; }  // "Items"
-  > :nth-child(3) { left: $geartab-items-title-col1-x; }   // "Qty"
-  > :nth-child(4) { left: $geartab-items-title-col2-x; }   // "Weight"
-  // child 5 (item-controls): empty
+  @include title-bar-children;
+  > :nth-child(1) { left: col-center($col-caret); }  // caret
+  > :nth-child(2) { left: $geartab-name-x; transform: none; }  // "Items"
+  > :nth-child(3) { left: $geartab-col1-x; }  // "Qty" (empty in current template)
+  > :nth-child(4) { left: $geartab-col2-x; }  // "Weight"
 }
 
 // Gear-tab.html – Treasure title (5 children: caret + "Treasure" + "Value" + "Weight" + controls)
 .osp.sheet.actor .gear-tab .item-category-title.treasure-title {
-  width: 698px;
+  width: $content-width;
 
-  > * {
-    position: absolute !important;
-    top: 0; height: 28.5px;
-    display: flex !important; align-items: center;
-    padding: 0 !important; width: auto !important;
-    white-space: nowrap; transform: translateX(-50%);
-  }
-
-  > :nth-child(1) { left: 23px; }  // caret
-  > :nth-child(2) { left: $geartab-treasure-title-name-x; transform: none; }  // "Treasure"
-  > :nth-child(3) { left: $geartab-treasure-title-col1-x; }   // "Value"
-  > :nth-child(4) { left: $geartab-treasure-title-col2-x; }   // "Weight"
-  // child 5 (item-controls): empty
+  @include title-bar-children;
+  > :nth-child(1) { left: col-center($col-caret); }  // caret
+  > :nth-child(2) { left: $geartab-name-x; transform: none; }  // "Treasure"
+  > :nth-child(3) { left: $geartab-col1-x; }  // "Value"
+  > :nth-child(4) { left: $geartab-col2-x; }  // "Weight"
 }
 
 .osp.sheet.actor .gear-scrollable-content .item-category {
   margin-top: 0;
 }
 
-// Gear Tab (character-sheet) – Gear & Treasure sticky title (6 children: roll-icon+name+Qty+Capacity+Weight+controls)
+// Gear Tab (character-sheet) – Gear sticky title
+// 8 children: [roll-icon placeholder]["Gear"]["" empty]["Capacity"]["sSize"]["tWT"]["WT"][controls]
+// Positions computed from container row column widths so labels align with data cells.
 .osp.sheet.actor .gear-scrollable-content .item-category-title.containers-title {
-  width: 698px;
+  width: $content-width;
   height: 28.5px;
   position: sticky;
   top: 0;
   z-index: 9;
   margin: 0;
 
-  > * {
-    position: absolute !important;
-    top: 0; height: 28.5px;
-    display: flex !important; align-items: center;
-    padding: 0 !important; width: auto !important;
-    white-space: nowrap; transform: translateX(-50%);
-  }
-
-  // child 1: item-roll-icon (empty)
-  > :nth-child(2) { left: $gearsheet-containers-title-name-x; transform: none; }  // "Gear"
-  > :nth-child(3) { left: $gearsheet-containers-title-qty-x; }    // "" (empty)
-  > :nth-child(4) { left: $gearsheet-containers-title-cap-x; }    // "Capacity"
-  > :nth-child(5) { left: $gearsheet-containers-title-ssize-x; }  // "sSize"
-  > :nth-child(6) { left: $gearsheet-containers-title-twt-x; }    // "tWT"
-  > :nth-child(7) { left: $gearsheet-containers-title-wt-x; }     // "WT"
+  @include title-bar-children;
+  // child 1: roll-icon placeholder (occupies same width as $col-caret for alignment)
+  > :nth-child(2) { left: col-start($col-caret, $gear-containers-col-image); transform: none; }  // "Gear"
+  > :nth-child(3) { left: 0; }  // empty cell
+  > :nth-child(4) { left: col-center($gear-containers-col-capacity,   $col-caret, $gear-containers-col-image, $gear-containers-col-name); }  // "Capacity"
+  > :nth-child(5) { left: col-center($gear-containers-col-storedsize, $col-caret, $gear-containers-col-image, $gear-containers-col-name, $gear-containers-col-capacity); }  // "sSize"
+  > :nth-child(6) { left: col-center($gear-containers-col-twt,        $col-caret, $gear-containers-col-image, $gear-containers-col-name, $gear-containers-col-capacity, $gear-containers-col-storedsize); }  // "tWT"
+  > :nth-child(7) { left: col-center($gear-containers-col-weight,     $col-caret, $gear-containers-col-image, $gear-containers-col-name, $gear-containers-col-capacity, $gear-containers-col-storedsize, $gear-containers-col-twt); }  // "WT"
   // child 8 (item-controls): empty
 }
 
@@ -832,7 +671,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Constrain item entry width to match headers for both tabs
 .combat-tab .item-entry,
 .gear-tab .item-entry {
-  width: 698px;
+  width: $content-width;
   box-sizing: border-box;
 }
 
@@ -851,7 +690,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Hover effect for all item rows - highlight only the direct header child
 .item-entry:hover > .item-header {
   background: rgba(44, 24, 16, 0.2) !important;
-  width: 698px;
+  width: $content-width;
   box-sizing: border-box;
 }
 
@@ -888,7 +727,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     gap: $combat-armor-grid-gap;
     height: $item-row-height;
     box-sizing: border-box;
-    width: 698px;
+    width: $content-width;
   }
 
   &.container-header {
@@ -899,7 +738,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 
   &.treasure-header {
-    width: 698px;
+    width: $content-width;
     box-sizing: border-box;
     grid-template-columns: $col-image $gear-treasure-col-name $gear-treasure-col-value $gear-treasure-col-weight $gear-treasure-col-controls;
   }
@@ -911,7 +750,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   gap: $combat-weapons-grid-gap;
   height: $item-row-height;
   box-sizing: border-box;
-  width: 698px;
+  width: $content-width;
 }
 
 // Gear Tab – Weapon item rows (no roll icon column)
@@ -920,12 +759,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   gap: $gear-weapons-grid-gap;
   height: $item-row-height;
   box-sizing: border-box;
-  width: 698px;
+  width: $content-width;
 }
 
 .item-header:hover {
   background:  rgba(44, 24, 16, 0.2);
-  width: 698px;
+  width: $content-width;
   box-sizing: border-box;
 }
 
@@ -952,30 +791,10 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
-// Gear Tab – per-column position offsets for container rows
-.item-header.container-header {
-  > :nth-child(1) { position: relative; left: $gear-containers-row-caret-x; }
-  > :nth-child(2) { position: relative; left: $gear-containers-row-image-x; }
-  > :nth-child(3) { position: relative; left: $gear-containers-row-name-x; }
-  > :nth-child(4) { position: relative; left: $gear-containers-row-capacity-x; }
-  > :nth-child(5) { position: relative; left: $gear-containers-row-storedsize-x; }
-  > :nth-child(6) { position: relative; left: $gear-containers-row-twt-x; }
-  > :nth-child(7) { position: relative; left: $gear-containers-row-weight-x; }
-  > :nth-child(8) { position: relative; left: $gear-containers-row-controls-x; }
-}
-
-// Gear Tab – per-column position offsets for treasure rows
-.item-header.treasure-header {
-  > :nth-child(1) { position: relative; left: $gear-treasure-row-image-x; }
-  > :nth-child(2) { position: relative; left: $gear-treasure-row-name-x; }
-  > :nth-child(3) { position: relative; left: $gear-treasure-row-value-x; }
-  > :nth-child(4) { position: relative; left: $gear-treasure-row-weight-x; }
-  > :nth-child(5) { position: relative; left: $gear-treasure-row-controls-x; }
-}
 
 .item-header.item-rollable:hover {
   background: #e8f4e8;
-  width: 698px;
+  width: $content-width;
   box-sizing: border-box;
 }
 
@@ -1067,7 +886,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 /* Encumbrance Section */
 // Encumbrance bar at top of Gear tab - styled to match XP bar, sticky position
 .encumbrance-bar-wrapper {
-  width: 698px;
+  width: $content-width;
   margin-bottom: 0px; /* Reset to 0 - was causing scrollbar cutoff */
   margin-top: 15px;
   position: sticky;
@@ -1625,19 +1444,13 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   box-sizing: border-box;
   display: grid;
   grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls;
+  align-items: center;
   background: rgba(0, 0, 0, 0.1);
   border-radius: 2px 2px 0 0;
   padding: 3px 0;
 
-  > :nth-child(1) { position: relative; left: $gear-nested-row-image-x; }
-  > :nth-child(2) { position: relative; left: $gear-nested-row-name-x; }
-  > :nth-child(3) { position: relative; left: $gear-nested-row-qty-x; }
-  > :nth-child(4) { position: relative; left: $gear-nested-row-size-x; }
-  > :nth-child(5) { position: relative; left: $gear-nested-row-weight-x; }
-  > :nth-child(6) { position: relative; left: $gear-nested-row-controls-x; }
-
   .subheader-col {
-    font-size: $font-nested-item;
+    font-size: $font-nested-header;
     font-style: italic;
     font-family: "Cooper Std", "Cooper Standard", Georgia, serif;
     display: flex;
@@ -1696,13 +1509,6 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     // Override grid template for nested items
     grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
 
-    // Per-column position offsets
-    > :nth-child(1) { position: relative; left: $gear-nested-row-image-x; }
-    > :nth-child(2) { position: relative; left: $gear-nested-row-name-x; }
-    > :nth-child(3) { position: relative; left: $gear-nested-row-qty-x; }
-    > :nth-child(4) { position: relative; left: $gear-nested-row-size-x; }
-    > :nth-child(5) { position: relative; left: $gear-nested-row-weight-x; }
-    > :nth-child(6) { position: relative; left: $gear-nested-row-controls-x; }
   }
   
   .item-name {
@@ -1725,12 +1531,6 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .container-entry.item[data-equipped="true"] .contained-item .item-header {
   grid-template-columns: $nested-col-image $nested-col-name $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
 
-  // Adjust nth-child offsets for no-qty layout
-  > :nth-child(1) { position: relative; left: $gear-nested-row-image-x; }
-  > :nth-child(2) { position: relative; left: $gear-nested-row-name-x; }
-  > :nth-child(3) { position: relative; left: $gear-nested-row-size-x; }
-  > :nth-child(4) { position: relative; left: $gear-nested-row-weight-x; }
-  > :nth-child(5) { position: relative; left: $gear-nested-row-controls-x; }
 }
 
 // Lashed items section
@@ -1748,6 +1548,8 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   background: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -1772,7 +1574,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 .lashed-title {
-  font-size: $font-nested-item;
+  font-size: $font-nested-header;
   color: #4B4B4B;
 }
 

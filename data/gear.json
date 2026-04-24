@@ -2,7 +2,7 @@
   {
     "name": "Backpack",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/backpack.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/backpack_thumb.webp",
     "system": {
       "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing.",
       "cost": 5,
@@ -15,18 +15,18 @@
         "container"
       ],
       "capacity": 16,
-      "lashSlots": 4,
-      "maxItemSize": null
+      "containerSize": "medium",
+      "lashSlots": 4
     }
   },
   {
     "name": "Bedroll",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/bedroll.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/bedroll_thumb.webp",
     "system": {
       "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone.",
       "cost": 2,
-      "unitWeight": 2,
+      "unitWeight": 4,
       "storedSize": 6,
       "quantity": 1,
       "equipped": false,
@@ -40,65 +40,74 @@
   {
     "name": "Belt Pouch, Large",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/pouch-large.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-large_thumb.webp",
     "system": {
       "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin\u2014when a small pouch simply won\u2019t suffice. 1 pouch can be attached to a single belt.",
       "cost": 4,
       "unitWeight": 1,
       "storedSize": 2,
+      "slotCost": 2,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
-      "tags": [],
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "tags": ["bulky"],
       "capacity": 4,
-      "maxItemSize": 3
+      "containerSize": "small"
     }
   },
   {
     "name": "Belt Pouch, Small",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/pouch-small.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-small_thumb.webp",
     "system": {
       "description": "A small leather pouch that attaches to a belt. 2 pouches can be attached to a single belt.",
       "cost": 2,
       "unitWeight": 0.5,
       "storedSize": 1,
+      "slotCost": 1,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
       "tags": [],
       "capacity": 2,
-      "maxItemSize": 2
+      "containerSize": "small"
     }
   },
   {
     "name": "Bolt Case",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/bolt-case.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/bolt-case_thumb.webp",
     "system": {
       "description": "This is a compact, square leather bolt case designed to attach securely to a belt. It is typically used by crossbowmen to carry and protect up to thirty bolts, keeping them accessible and organized during travel or battle.",
       "cost": 5,
       "unitWeight": 1,
       "storedSize": 4,
+      "slotCost": 1,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
       "capacity": 6,
       "tags": [
         "container"
       ],
       "allowedTypes": ["bolts"],
-      "maxItemSize": 6
+      "containerSize": "small"
     }
   },
   {
     "name": "Crowbar",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/crowbar.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/crowbar_thumb.webp",
     "system": {
       "description": "An iron bar, 2' long. Used for prying open doors, chest lids, etc.",
       "cost": 10,
-      "unitWeight": 4,
+      "unitWeight": 3,
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
@@ -112,12 +121,12 @@
   {
     "name": "Garlic",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/garlic.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/garlic_thumb.webp",
     "system": {
       "description": "A bunch of garlic, sometimes used to repel undead creatures.",
       "cost": 5,
       "unitWeight": 0,
-      "storedSize": 1,
+      "storedSize": 0.25,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -129,11 +138,11 @@
   {
     "name": "Grappling Hook",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/grappling-hook.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/grappling-hook_thumb.webp",
     "system": {
       "description": "Made of iron, with 3-4 hooks and a ring to attach a rope. Designed to be thrown by hand and attached to 50 ft. of rope (~6 lbs if hemp rope). The combined 'grappling hook + rope' kit typically weighs about 9 lbs total.",
       "cost": 25,
-      "unitWeight": 3,
+      "unitWeight": 2,
       "storedSize": 2,
       "quantity": 1,
       "equipped": false,
@@ -148,7 +157,7 @@
   {
     "name": "Hammer, Small",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/hammer-small.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/hammer-small_thumb.webp",
     "system": {
       "description": "Comparable to a carpenter's or small blacksmith's hammer light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
       "cost": 2,
@@ -165,7 +174,7 @@
   {
     "name": "Holy Symbol",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/holy-symbol.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/holy-symbol_thumb.webp",
     "system": {
       "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed \u00bd lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
       "cost": 25,
@@ -183,7 +192,7 @@
   {
     "name": "Holy Water",
     "type": "weapon",
-    "img": "systems/osp-houserules/assets/images/gear/holy-water.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/holy-water_thumb.webp",
     "system": {
       "description": "Water blessed by a holy person, stored in a special vial for use in rituals. Inflicts damage on undead when used as a weapon. A vial is easily held in one hand or stored in a pouch.",
       "cost": 25,
@@ -217,7 +226,7 @@
   {
     "name": "Iron Spike",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/iron-spike.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/iron-spike_thumb.webp",
     "system": {
       "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6-8 inches long, about \u00bd inch thick. Typically carried in a small leather pouch or tool roll.",
       "cost": 0.1,
@@ -235,7 +244,7 @@
   {
     "name": "Lantern, Bullseye",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/lantern-bullseye.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/lantern-bullseye_thumb.webp",
     "system": {
       "description": "A bullseye lantern is a metal-cased lamp with a shuttered housing and a single, thick glass lens that focuses its light into a narrow, far-reaching beam. Adventurers typically use it when they need to see a long distance down corridors or roads while keeping surrounding areas in comparative shadow. It burns one flask of oil per 4 hours (24 turns) and casts light in a 60' cone.",
       "cost": 12,
@@ -252,7 +261,7 @@
   {
     "name": "Lantern, Hooded",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/lantern-hooded.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/lantern-hooded_thumb.webp",
     "system": {
       "description": "A hooded lantern is a metal-framed light source with a directional hood that shields the flame and focuses its beam forward. It is commonly used by travelers and adventurers who need controlled, wind-resistant illumination in dark or hazardous environments. Burns one flask of oil per 4 hours (24 turns). Casts light in a 30' radius.",
       "cost": 10,
@@ -269,7 +278,7 @@
   {
     "name": "Mallet, Wooden",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/mallet.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/mallet_thumb.webp",
     "system": {
       "description": "Durable and unbreakable compared to glass. Commonly used for signaling, checking around corners, or personal grooming. Often stored in a thin leather sleeve or wooden case.",
       "cost": 3,
@@ -286,7 +295,7 @@
   {
     "name": "Mirror, Handheld",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/mirror.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/mirror_thumb.webp",
     "system": {
       "description": "Durable and unbreakable compared to glass. Commonly used for signaling, checking around corners, or personal grooming. Often stored in a thin leather sleeve or wooden case.",
       "cost": 5,
@@ -303,7 +312,7 @@
   {
     "name": "Oil Flask",
     "type": "weapon",
-    "img": "systems/osp-houserules/assets/images/gear/oil-flask.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/oil-flask_thumb.webp",
     "system": {
       "description": "Used to fuel lanterns or as a weapon when ignited. Burns for 4 hours in a lantern or 1 turn when used to create a pool of fire. Often carried in a padded or leather-lined pouch to prevent breakage.",
       "cost": 2,
@@ -337,7 +346,7 @@
   {
     "name": "Piton",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/piton.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/piton_thumb.webp",
     "system": {
       "description": "This metal piton is a tapered spike with a forged eyelet for threading rope, its surface worn and scuffed from repeated climbing use. Adventurers hammer it into cracks or seams in stone to create secure anchor points for climbing, rappelling, and traversing dangerous terrain.",
       "cost": 0.1,
@@ -355,11 +364,11 @@
   {
     "name": "Pole, Ten Foot",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/ten-foot-pole.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/ten-foot-pole_thumb.webp",
     "system": {
       "description": "A 10-foot wooden pole used for prodding suspicious areas or measuring distances in a dungeon. Carried with difficulty indoors or underground; too long to strap to a pack, usually dragged or carried in hand. May be split into two 5-ft. sections for easier transport.",
       "cost": 1,
-      "unitWeight": 7,
+      "unitWeight": 5,
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
@@ -374,7 +383,7 @@
   {
     "name": "Quiver",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/quiver.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/quiver_thumb.webp",
     "system": {
       "description": "Worn on the back, an arrow quiver is a cylindrical leather container designed to carry and protect up to 20 arrows while keeping them easily accessible during travel or combat.",
       "cost": 5,
@@ -384,35 +393,38 @@
       "equipped": false,
       "lashable": false,
       "containerId": null,
+      "tags": ["sling"],
       "capacity": 5,
       "lashSlots": 0,
       "allowedTypes": ["arrows"],
-      "maxItemSize": 6
+      "containerSize": "small"
     }
   },
   {
     "name": "Quiver, Hip",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/quiver-hip.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/quiver-hip_thumb.webp",
     "system": {
       "description": "A compact quiver worn on the hip and meant to hang from the belt. It holds 12 or fewer arrows.",
       "cost": 5,
       "unitWeight": 0.5,
       "storedSize": 4,
+      "slotCost": 1,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
+      "lashed": false,
       "containerId": null,
       "capacity": 3,
       "lashSlots": 0,
       "allowedTypes": ["arrows"],
-      "maxItemSize": 6
+      "containerSize": "small"
     }
   },
   {
     "name": "Rations, Iron",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/rations-iron.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/rations-iron_thumb.webp",
     "system": {
       "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact but heavy and bland. Often divided into daily pouches for easy rationing.",
       "cost": 15,
@@ -430,7 +442,7 @@
   {
     "name": "Rations, Standard",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/rations-standard.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/rations-standard_thumb.webp",
     "system": {
       "description": "Fresh, unpreserved food suitable for shorter trips. Tastier but bulkier than iron rations. Cannot be carried indefinitely without spoilage unless kept cool or magically preserved. Common among caravan travelers or short expeditions.",
       "cost": 5,
@@ -448,11 +460,11 @@
   {
     "name": "Rope, Hempen (50')",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/rope-hempen.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/rope-hempen_thumb.webp",
     "system": {
       "description": "Hempen rope is a thick, coarse rope made from natural plant fibers, valued for its strength and reliability. A 50-foot length is commonly used for climbing, hauling gear, binding objects, or securing camps and equipment in the field.",
       "cost": 1,
-      "unitWeight": 10,
+      "unitWeight": 7,
       "storedSize": 6,
       "quantity": 1,
       "equipped": false,
@@ -467,11 +479,11 @@
   {
     "name": "Rope, Silken (50')",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/rope-silken.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/rope-silken_thumb.webp",
     "system": {
       "description": "Silken rope is a finely woven, lightweight yet strong cordage prized for its smooth texture and durability. Adventurers commonly use a 50-foot length for climbing, securing loads, setting traps, or safely descending into pits and ruins.",
       "cost": 1,
-      "unitWeight": 5,
+      "unitWeight": 3,
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
@@ -486,7 +498,7 @@
   {
     "name": "Sack, Large",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/sack-large.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/sack-large_thumb.webp",
     "system": {
       "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins).",
       "cost": 2,
@@ -498,13 +510,13 @@
       "lashed": false,
       "tags": [],
       "capacity": 24,
-      "maxItemSize": null
+      "containerSize": "medium"
     }
   },
   {
     "name": "Sack, Small",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/sack-small.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/sack-small_thumb.webp",
     "system": {
       "description": "This small sack is a soft burlap pouch cinched tight with a simple cord, its rough fibers worn from frequent handling. Adventurers typically use it to store rations, coins, or loose gear that needs to be kept separate inside a pack. Capacity: 8 slots (200 coins).",
       "cost": 1,
@@ -515,35 +527,44 @@
       "lashable": false,
       "tags": [],
       "capacity": 8,
-      "maxItemSize": null
+      "containerSize": "medium"
     }
   },
   {
-    "name": "Scabbard",
+    "name": "Scabbard, Small",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/scabbard.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/scabbard-small_thumb.webp",
     "system": {
-      "description": "A leather sheath worn on the belt designed to carry a single one-handed sword or similarly sized blade. Keeps the weapon protected and ready to draw in combat. A scabbard occupies one hip slot on a belt.",
-      "cost": 5,
-      "unitWeight": 1,
+      "description": "A compact leather sheath worn on the belt designed to carry a single dagger or narrow-bladed weapon. Keeps the weapon protected and ready to draw in combat.",
+      "cost": 3,
+      "unitWeight": 0.5,
       "storedSize": 2,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "slotCost": 1,
       "tags": [
-        "weapon-storage"
+        "weapon-storage",
+        "scabbard"
       ],
       "capacity": 4,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
       "lashSlots": 0,
-      "maxItemSize": 4
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": ["Dagger", "Misericorde"]
     }
   },
   {
-    "name": "Scabbard, Back",
+    "name": "Baldric",
     "type": "container",
-    "img": "systems/osp-houserules/assets/images/gear/scabbard-back.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/baldric_thumb.webp",
     "system": {
-      "description": "A wide leather back-sheath worn across the shoulders, designed to carry a two-handed sword or large weapon with the hilt accessible over the shoulder. Frees the hands while keeping a large blade secure and ready.",
+      "description": "A broad leather strap worn diagonally across the chest and shoulder, designed to carry a large two-handed sword across the back with the hilt accessible over the shoulder. Frees the hands while keeping the weapon secure and ready during travel. The only practical way to carry a Zweihander or Greatsword.",
       "cost": 10,
       "unitWeight": 2,
       "storedSize": 6,
@@ -551,17 +572,23 @@
       "equipped": false,
       "lashable": false,
       "tags": [
-        "weapon-storage"
+        "weapon-storage",
+        "sling"
       ],
       "capacity": 8,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
       "lashSlots": 0,
-      "maxItemSize": 8
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": ["Zweihander", "Greatsword"]
     }
   },
   {
     "name": "Scroll Case",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/scroll-case.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/scroll-case_thumb.webp",
     "system": {
       "description": "A protective tube designed to store and transport parchment scrolls, maps, or important documents. Crafted from sturdy materials like wood, leather, and metal, it shields its contents from weather and wear while allowing adventurers or scholars to carry their writings safely on the road.",
       "cost": 5,
@@ -575,7 +602,7 @@
   {
     "name": "Thieves' Tools",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/thieves-tools.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/thieves-tools_thumb.webp",
     "system": {
       "description": "Picks, tension wrench(s), small pliers, razor file, awl, miniature mirror on a stick, small oiler, spare springs/pins, leather roll or wooden/metal case. Used by thieves to open locks and disable traps.",
       "cost": 25,
@@ -593,7 +620,7 @@
   {
     "name": "Tinder Box",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/flint-steel.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/flint-steel_thumb.webp",
     "system": {
       "description": "This flint and tinder kit includes a sharp-edged flint stone, a curved steel striker, and a bundled nest of dry fibers for catching sparks. Adventurers use it to start campfires, ignite torches, and light oil in situations where magical fire is unavailable.",
       "cost": 3,
@@ -611,7 +638,7 @@
   {
     "name": "Torch",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/weapons/torch.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/weapons/torch_thumb.webp",
     "system": {
       "description": "A bundle of six torches, wooden shafts wrapped with oil-soaked rags. Each burns for 1 hour (6 turns) and casts light in a 30' radius. An individual torch can also serve as an improvised melee weapon.",
       "cost": 1,
@@ -639,7 +666,7 @@
   {
     "name": "Vial or Bottle",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/bottle.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/bottle_thumb.webp",
     "system": {
       "description": "This small glass vial is a sturdy, cork-sealed container used to hold potions, holy water, alchemical mixtures, or other valuable liquids. Adventurers and scholars alike rely on such vials to store and transport substances safely while keeping them readily accessible in the field.",
       "cost": 1,
@@ -653,11 +680,11 @@
   {
     "name": "Waterskin",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/waterskin.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/waterskin_thumb.webp",
     "system": {
       "description": "A waterskin is a durable leather container used to carry drinking water while traveling or adventuring. It is lightweight, easy to strap to a belt or pack, and essential for surviving long journeys where fresh water is scarce.",
       "cost": 1,
-      "unitWeight": 3,
+      "unitWeight": 5,
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
@@ -670,11 +697,11 @@
   {
     "name": "Wineskin",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/wineskin.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/wineskin_thumb.webp",
     "system": {
       "description": "Stoppered glass bottle, clay jug, or wineskin containing two pints of table or fortified wine.",
       "cost": 1,
-      "unitWeight": 2.5,
+      "unitWeight": 3,
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
@@ -688,7 +715,7 @@
   {
     "name": "Wolfsbane",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/wolfsbane.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/wolfsbane_thumb.webp",
     "system": {
       "description": "A flowering herb that is highly toxic if ingested or absorbed through open skin. Used in alchemy, rituals, or to repel lycanthropes. Loses potency after a few weeks unless kept dried and sealed. Must be struck in melee to be effective.",
       "cost": 10,
@@ -706,7 +733,7 @@
   {
     "name": "Wooden Stake",
     "type": "item",
-    "img": "systems/osp-houserules/assets/images/gear/stake-wooden.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/stake-wooden_thumb.webp",
     "system": {
       "description": "This wooden spike is a rough-hewn stake with one end whittled to a sharp point and the other left blunt for hammering. It's typically used to secure tents and ropes, mark trails, or improvise simple traps and defenses in the field.",
       "cost": 0.25,
@@ -718,6 +745,137 @@
       "tags": [
         "religious"
       ]
+    }
+  },
+  {
+    "name": "Axe Sling",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/axe-sling_thumb.webp",
+    "system": {
+      "description": "A broad leather sling worn across the back and chest, designed to carry a large axe with the head resting behind the shoulder and the haft accessible for a quick draw. Frees the hands while keeping a battle axe or two-handed axe secure during travel.",
+      "cost": 5,
+      "unitWeight": 1,
+      "storedSize": 6,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "weapon-storage",
+        "sling"
+      ],
+      "capacity": 8,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
+      "lashSlots": 0,
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": ["Battle Axe", "Battle Axe, 2-Handed"]
+    }
+  },
+  {
+    "name": "Belt Loop",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/belt-loop_thumb.webp",
+    "system": {
+      "description": "A sturdy leather loop and strap assembly designed to hang a tool, weapon, or waterskin from a belt. Accommodates a hand axe, light hammer, warhammer, or waterskin. Keeps bulky items accessible without requiring a bag or pack.",
+      "cost": 2,
+      "unitWeight": 0.25,
+      "storedSize": 2,
+      "slotCost": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "tags": ["bulky"],
+      "capacity": 4,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
+      "lashSlots": 0,
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": ["Hand Axe", "Light Hammer", "Warhammer", "Waterskin", "Mace", "Morning Star"]
+    }
+  },
+  {
+    "name": "Flask/Potion Holder",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/potion-loop_thumb.webp",
+    "system": {
+      "description": "A small leather holder or ring-mount designed to secure a single flask, bottle, or potion vial to a belt. Keeps liquids accessible and protects fragile containers from jostling during travel.",
+      "cost": 1,
+      "unitWeight": 0.1,
+      "storedSize": 1,
+      "slotCost": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "tags": [],
+      "capacity": 2,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
+      "lashSlots": 0,
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": ["Vial or Bottle", "Oil Flask", "Holy Water"]
+    }
+  },
+  {
+    "name": "Sword Frog",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/sword-frog_thumb.webp",
+    "system": {
+      "description": "A leather suspension mount that attaches to a belt and holds a scabbarded sword in place using rings and loops rather than a fixed sheath. Accommodates a wider variety of blade shapes than a rigid scabbard, including curved blades such as the khopesh.",
+      "cost": 4,
+      "unitWeight": 0.5,
+      "storedSize": 2,
+      "slotCost": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "tags": [
+        "weapon-storage",
+        "scabbard",
+        "bulky"
+      ],
+      "capacity": 4,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
+      "lashSlots": 0,
+      "allowedTypes": ["sword"],
+      "allowedSizes": ["S", "M"],
+      "allowedNames": []
+    }
+  },
+  {
+    "name": "Waterskin Sling",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/waterskin-sling_thumb.webp",
+    "system": {
+      "description": "A simple leather strap and cradle designed to carry a waterskin slung across the shoulder, keeping it accessible without occupying belt space. A common sight among travelers and soldiers on the march.",
+      "cost": 1,
+      "unitWeight": 0.25,
+      "storedSize": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": ["sling"],
+      "capacity": 4,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
+      "lashSlots": 0,
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": ["Waterskin", "Wineskin"]
     }
   }
 ]

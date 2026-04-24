@@ -209,6 +209,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.wornArmor = context.armor
       .filter(a => a.system.equipped)
       .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    // All shields (equipped + unequipped, excluding lashed) for combat tab toggle
+    context.allShields = context.armor
+      .filter(a => a.name.toLowerCase().includes('shield') && !a.system.lashed)
+      .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     
     // Organize containers with nested items
     const allContainers = this.actor.items.filter(i => i.type === "container");
@@ -216,14 +220,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     const allWeapons = this.actor.items.filter(i => i.type === "weapon");
     const allArmor = this.actor.items.filter(i => i.type === "armor");
     const allAmmunition = this.actor.items.filter(i => i.type === "ammunition");
+    const allCoins = this.actor.items.filter(i => i.type === "coin");
     
     // Filter top-level clothing items (equipped, not in containers)
-    const topLevelClothing = allItems.filter(item => 
-      item.type === "clothing" && 
-      !item.system.containerId
-    );
+    const allClothing = this.actor.items.filter(i => i.type === "clothing");
+    const topLevelClothing = allClothing.filter(item => !item.system.containerId);
     
-    context.clothing = topLevelClothing.map(item => {
+    context.clothing = topLevelClothing.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(item => {
       // Calculate display weight: unitWeight * quantity
       const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
       const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
@@ -238,7 +241,8 @@ export class OspActorSheetCharacter extends ActorSheet {
         const containedArmor = allArmor.filter(a => a.system.containerId === item.id);
         const containedAmmunition = allAmmunition.filter(a => a.system.containerId === item.id);
         const containedContainers = allContainers.filter(c => c.system.containerId === item.id);
-        const containedClothing = topLevelClothing.filter(c => c.system.containerId === item.id);
+        const containedClothing = allClothing.filter(c => c.system.containerId === item.id);
+        const containedCoins = allCoins.filter(c => c.system.containerId === item.id);
 
         const allContainedItems = [
           ...containedItems,
@@ -246,13 +250,15 @@ export class OspActorSheetCharacter extends ActorSheet {
           ...containedArmor,
           ...containedAmmunition,
           ...containedContainers,
-          ...containedClothing
+          ...containedClothing,
+          ...containedCoins
         ];
         
         // Calculate display values for nested items
         allContainedItems.forEach(nestedItem => {
           const nestedWeight = parseFloat(nestedItem.system.unitWeight || nestedItem.system.weight) || 0;
           const nestedQuantity = nestedItem.system.quantity !== undefined ? nestedItem.system.quantity : 1;
+          nestedItem.unitWeight = Math.round(nestedWeight * 10) / 10;
           nestedItem.displayWeight = Math.round(nestedWeight * nestedQuantity * 10) / 10;
           
           const storedSize = parseFloat(nestedItem.system.storedSize) || 0;
@@ -275,16 +281,98 @@ export class OspActorSheetCharacter extends ActorSheet {
         
         item.remainingCapacity = Math.round((capacity - usedCapacity) * 10) / 10;
         item.capacityPercentage = capacity > 0 ? Math.round((usedCapacity / capacity) * 100) : 0;
-        item.collapsed = this.actor.getFlag('osp-houserules', `container-${item.id}-collapsed`) || false;
+        item.collapsed = this.actor.getFlag('osp-houserules', `container-${item.id}-collapsed`) ?? true;
       }
-      
+
+      // If clothing has lash slots (e.g. Belt), expose belt attachment data for the template
+      if (item.system.lashSlots > 0) {
+        const lashedAttachments = allContainers.filter(c => c.system.containerId === item.id && c.system.lashed);
+        lashedAttachments.forEach(c => {
+          const wt = parseFloat(c.system.unitWeight || c.system.weight) || 0;
+          c.displayWeight = Math.round(wt * (c.system.quantity || 1) * 10) / 10;
+          c.slotCost = c.system.slotCost || 1;
+          // Always (re)assign storedWeapon/storedItem so stale values from prior renders are cleared
+          const storedWeapon = allWeapons.find(w => w.system.containerId === c.id) ?? null;
+          if (storedWeapon) {
+            const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
+            storedWeapon.unitWeight = Math.round(swt * 10) / 10;
+            storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
+          }
+          c.storedWeapon = storedWeapon;
+          const storedItems = !storedWeapon
+            ? this.actor.items.filter(i =>
+                (i.type === 'item' || i.type === 'ammunition') && i.system.containerId === c.id
+              ).map(i => {
+                const sit = parseFloat(i.system.unitWeight || i.system.weight) || 0;
+                i.unitWeight = Math.round(sit * 10) / 10;
+                i.displayWeight = Math.round(sit * (i.system.quantity || 1) * 10) / 10;
+                return i;
+              })
+            : [];
+          c.storedItems = storedItems;
+          c.storedItem = storedItems[0] || null;
+          c.hasContents = !!(c.storedWeapon || storedItems.length > 0);
+          const storedContentWeight = (c.storedWeapon?.displayWeight || 0)
+            + storedItems.reduce((sum, i) => sum + (i.displayWeight || 0), 0);
+          c.totalWeight = Math.round((c.displayWeight + storedContentWeight) * 10) / 10;
+          c.storageCollapsed = c.hasContents
+            ? (this.actor.getFlag('osp-houserules', `attachment-${c.id}-collapsed`) ?? true)
+            : false;
+          // Capacity bar for attachments that are containers
+          const cap = parseFloat(c.system.capacity) || 0;
+          if (cap > 0) {
+            const allStored = this.actor.items.filter(i => i.system.containerId === c.id && !i.system.lashed);
+            const usedCap = allStored.reduce((sum, i) => sum + (parseFloat(i.system.storedSize) || 0) * (i.system.quantity || 1), 0);
+            c.remainingCapacity = Math.round((cap - usedCap) * 10) / 10;
+            c.capacityPercentage = Math.round((usedCap / cap) * 100);
+          }
+        });
+        item.lashedItems = lashedAttachments;
+        item.lashSlots = item.system.lashSlots;
+        item.usedLashSlots = lashedAttachments.reduce((sum, c) => sum + (c.system.slotCost || 1), 0);
+        item.remainingLashSlots = Math.max(0, item.system.lashSlots - item.usedLashSlots);
+        item.lashSlotPercentage = item.lashSlots > 0 ? Math.round((item.usedLashSlots / item.lashSlots) * 100) : 0;
+        item.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${item.id}-collapsed`) ?? true;
+        const lashedWeight = lashedAttachments.reduce((t, c) => t + (c.displayWeight || 0), 0);
+        item.totalWeight = Math.round((item.totalWeight + lashedWeight) * 10) / 10;
+      }
+
       return item;
     });
     
-    // Only show TOP-LEVEL containers (not nested in other containers)
-    const topLevelContainers = allContainers.filter(container => !container.system?.containerId);
+    // Shoulder/back slings (Baldric, Axe Sling, Waterskin Sling)
+    const allSlings = allContainers.filter(c => (c.system.tags || []).includes('sling'));
+    context.slings = allSlings.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(sling => {
+      const wt = parseFloat(sling.system.unitWeight || sling.system.weight) || 0;
+      sling.displayWeight = Math.round(wt * (sling.system.quantity || 1) * 10) / 10;
+      // Always (re)assign so stale values from prior renders are cleared
+      const storedWeapon = allWeapons.find(w => w.system.containerId === sling.id) ?? null;
+      if (storedWeapon) {
+        const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
+        storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
+      }
+      sling.storedWeapon = storedWeapon;
+      const storedItem = (!storedWeapon && allItems.find(i => i.system.containerId === sling.id)) || null;
+      if (storedItem) {
+        const sit = parseFloat(storedItem.system.unitWeight || storedItem.system.weight) || 0;
+        storedItem.displayWeight = Math.round(sit * (storedItem.system.quantity || 1) * 10) / 10;
+      }
+      sling.storedItem = storedItem;
+      sling.hasStoredContent = !!(sling.storedWeapon || sling.storedItem);
+      sling.slingUsedCapacity = sling.hasStoredContent ? 1 : 0;
+      sling.slingCapacityPercentage = sling.hasStoredContent ? 100 : 0;
+      sling.storageCollapsed = this.actor.getFlag('osp-houserules', `sling-${sling.id}-collapsed`) ?? false;
+      return sling;
+    });
+
+    // Only show TOP-LEVEL containers (not nested in other containers, not slings, not belt attachments)
+    const topLevelContainers = allContainers.filter(container =>
+      !container.system?.containerId &&
+      !container.system?.lashed &&
+      !(container.system?.tags || []).includes('sling')
+    );
     
-    context.containers = topLevelContainers.map(container => {
+    context.containers = topLevelContainers.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(container => {
       // Explicitly preserve the id and other properties
       const containerData = {
         id: container.id,
@@ -295,12 +383,14 @@ export class OspActorSheetCharacter extends ActorSheet {
         ...container
       };
       
-      // Find ALL items in this container - items, weapons, armor, ammunition, AND nested containers
+      // Find ALL items in this container - items, weapons, armor, ammunition, coins, AND nested containers
       const containedItems = allItems.filter(item => item.system.containerId === container.id);
       const containedWeapons = allWeapons.filter(weapon => weapon.system.containerId === container.id);
       const containedArmor = allArmor.filter(armor => armor.system.containerId === container.id);
       const containedAmmunition = allAmmunition.filter(ammo => ammo.system.containerId === container.id);
       const containedContainers = allContainers.filter(c => c.system.containerId === container.id);
+      const containedClothing = allClothing.filter(c => c.system.containerId === container.id);
+      const containedCoins = allCoins.filter(c => c.system.containerId === container.id);
 
       // Combine all contained items
       const allContainedItems = [
@@ -308,7 +398,9 @@ export class OspActorSheetCharacter extends ActorSheet {
         ...containedWeapons,
         ...containedArmor,
         ...containedAmmunition,
-        ...containedContainers
+        ...containedContainers,
+        ...containedClothing,
+        ...containedCoins
       ];
       
       // Separate lashed items from stored items
@@ -323,6 +415,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         const storedSize = parseFloat(item.system.storedSize) || 0;
 
         // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
+        item.unitWeight = Math.round(itemWeight * 10) / 10;
         item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
 
         // Capacity: storedSize is per-unit; coins use same logic
@@ -381,32 +474,75 @@ export class OspActorSheetCharacter extends ActorSheet {
       containerData.remainingLashSlots = Math.max(0, lashSlots - usedLashSlots);
       
       // Check if container is collapsed (stored in flags)
-      containerData.collapsed = this.actor.getFlag('osp-houserules', `container-${container.id}-collapsed`) || false;
+      containerData.collapsed = this.actor.getFlag('osp-houserules', `container-${container.id}-collapsed`) ?? true;
       
       // Check if lashed items section is collapsed
-      containerData.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${container.id}-collapsed`) || false;
+      containerData.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${container.id}-collapsed`) ?? true;
       
       return containerData;
     });
     
-    // Only show items that are NOT in containers AND are not containers or clothing themselves
-    const freeItems = allItems.filter(item => !item.system.containerId && item.type !== 'container' && item.type !== 'clothing');
-    const freeAmmunition = allAmmunition.filter(ammo => !ammo.system.containerId);
-    const generalItems = [...freeItems, ...freeAmmunition];
+    // Build set of all valid container/clothing-with-capacity IDs so we can detect orphaned items
+    const validContainerIds = new Set([
+      ...allContainers.map(c => c.id),
+      ...this.actor.items.filter(i => i.type === "clothing" && i.system.capacity).map(i => i.id)
+    ]);
 
-    // Calculate displayWeight for general items
-    generalItems.forEach(item => {
-      // Handle both 'unitWeight' and 'weight' field names
+    // Only show items that are NOT in containers AND are not containers or clothing themselves.
+    // Also surface orphaned items (containerId set but pointing to a deleted container) so they
+    // are visible and manageable rather than silently inflating encumbrance.
+    const freeItems = allItems.filter(item =>
+      item.type !== 'container' && item.type !== 'clothing' &&
+      !item.system.lashed &&
+      (!item.system.containerId || !validContainerIds.has(item.system.containerId))
+    );
+    const freeAmmunition = allAmmunition.filter(ammo =>
+      !ammo.system.lashed &&
+      (!ammo.system.containerId || !validContainerIds.has(ammo.system.containerId))
+    );
+    // Unequipped weapons/armor not in any container are otherwise invisible — include them too
+    const unequippedWeapons = allWeapons.filter(w =>
+      !w.system.equipped && !w.system.lashed &&
+      (!w.system.containerId || !validContainerIds.has(w.system.containerId))
+    );
+    const unequippedArmor = allArmor.filter(a =>
+      !a.system.equipped && !a.system.lashed &&
+      !a.name.toLowerCase().includes('shield') &&
+      (!a.system.containerId || !validContainerIds.has(a.system.containerId))
+    );
+    const generalItems = [...freeItems, ...freeAmmunition, ...unequippedArmor];
+
+    // Calculate displayWeight for general items and loose weapons
+    [...generalItems, ...unequippedWeapons].forEach(item => {
       const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
       const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
-
-      // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
     });
 
-    context.items = generalItems;
+    context.items = generalItems.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    // Unequipped weapons rendered separately in gear tab with weapon-row layout
+    context.unequippedWeapons = unequippedWeapons.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    // All weapons for combat tab (equipped, sheathed, and lashed all appear; unequipped shown greyed out)
+    context.allWeapons = allWeapons;
     
     context.treasures = this.actor.system.treasures || [];
+
+    // Tag each top-level item with its section so the unified template loop can branch
+    const unequippedShields = context.allShields.filter(s => !s.system.equipped && !s.system.lashed);
+    context.clothing.forEach(i => { i._gearSection = 'clothing'; });
+    context.slings.forEach(i => { i._gearSection = 'sling'; });
+    context.unequippedWeapons.forEach(i => { i._gearSection = 'weapon'; });
+    unequippedShields.forEach(i => { i._gearSection = 'shield'; });
+    context.items.forEach(i => { i._gearSection = 'item'; });
+    context.containers.forEach(i => { i._gearSection = 'container'; });
+    context.topLevelGearItems = [
+      ...context.clothing,
+      ...context.slings,
+      ...context.unequippedWeapons,
+      ...unequippedShields,
+      ...context.items,
+      ...context.containers,
+    ].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
 
     // Encumbrance data
     context.totalWeight = this.actor.system.encumbrance?.totalWeight || 0;
@@ -551,6 +687,25 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // Lashed items collapse/expand toggle
     html.find('.lashed-toggle').click(this._onLashedToggle.bind(this));
+    html.find('.attachment-toggle').click(this._onAttachmentToggle.bind(this));
+    html.find('.belt-row-toggle').click(this._onBeltRowToggle.bind(this));
+    html.find('.sling-storage-toggle').click(this._onSlingStorageToggle.bind(this));
+
+    // Make belt-attachment containers (slotCost > 0) draggable so they can be dropped onto the belt
+    html.find('.container-entry[data-item-id]').each((i, el) => {
+      const itemId = el.dataset.itemId;
+      const item = this.actor.items.get(itemId);
+      if (!item) return;
+      const isBeltAttachment = item.system.lashable || (item.system.slotCost || 0) > 0;
+      if (!isBeltAttachment) return;
+      el.setAttribute('draggable', 'true');
+      el.addEventListener('dragstart', (e) => {
+        const dragData = item.toDragData();
+        e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+        e.dataTransfer.effectAllowed = 'move';
+        e.stopPropagation();
+      });
+    });
 
     // Add drag-over highlight for containers
     html.find('.container-entry').each((i, el) => {
@@ -619,6 +774,9 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Drag-to-reorder weapons and armor on the Combat tab
     this._activateCombatItemSort(html);
+
+    // Up/down arrows to reorder top-level items on the Gear tab
+    this._activateGearItemSort(html);
 
     // Ensure the window close button always works for this sheet instance.
     // Some tools register capturing handlers that can prevent the normal close.
@@ -730,6 +888,46 @@ export class OspActorSheetCharacter extends ActorSheet {
         if (newUnarmedSort !== null) await this.actor.setFlag('osp-houserules', 'unarmedSort', newUnarmedSort);
       }, { capture: true });
     });
+  }
+
+  _activateGearItemSort(html) {
+    const gearTab = html.find('.tab[data-tab="gear"]')[0];
+    if (!gearTab) return;
+
+    gearTab.addEventListener('click', async e => {
+      const btn = e.target.closest('.item-sort-up, .item-sort-down');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const row = btn.closest('li.item-entry[data-item-id]');
+      if (!row) return;
+
+      // All top-level gear rows in current DOM order (excludes nested items)
+      const allRows = [...gearTab.querySelectorAll('li.item-entry[data-item-id]')]
+        .filter(el => !el.closest('.lashed-items-list, .contained-items-list, .lashed-item'));
+
+      const rowIndex = allRows.indexOf(row);
+      if (rowIndex === -1) return;
+
+      const isUp = btn.classList.contains('item-sort-up');
+      const targetIndex = isUp ? rowIndex - 1 : rowIndex + 1;
+      if (targetIndex < 0 || targetIndex >= allRows.length) return;
+
+      // Swap the two rows and reassign clean sort values to all top-level items
+      const orderedIds = allRows.map(el => el.dataset.itemId);
+      [orderedIds[rowIndex], orderedIds[targetIndex]] = [orderedIds[targetIndex], orderedIds[rowIndex]];
+
+      const BASE = 100000;
+      const itemUpdates = orderedIds
+        .map((id, idx) => {
+          if (!this.actor.items.get(id)) return null;
+          return { _id: id, sort: (idx + 1) * BASE };
+        })
+        .filter(Boolean);
+
+      await this.actor.updateEmbeddedDocuments('Item', itemUpdates);
+    }, true);
   }
 
   initializeBioFieldAutoResize(html) {
@@ -1358,7 +1556,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     const containerEntry = $(event.currentTarget).closest('.item-entry');
     const containerId = containerEntry.data('item-id');
-    const currentState = this.actor.getFlag('osp-houserules', `container-${containerId}-collapsed`) || false;
+    const currentState = this.actor.getFlag('osp-houserules', `container-${containerId}-collapsed`) ?? true;
     
     await this.actor.setFlag('osp-houserules', `container-${containerId}-collapsed`, !currentState);
     this.render(false);
@@ -1370,9 +1568,36 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     const lashedSection = $(event.currentTarget).closest('.lashed-items-section');
     const containerId = lashedSection.data('container-id');
-    const currentState = this.actor.getFlag('osp-houserules', `lashed-${containerId}-collapsed`) || false;
+    const currentState = this.actor.getFlag('osp-houserules', `lashed-${containerId}-collapsed`) ?? true;
     
     await this.actor.setFlag('osp-houserules', `lashed-${containerId}-collapsed`, !currentState);
+    this.render(false);
+  }
+
+  async _onBeltRowToggle(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const itemId = $(event.currentTarget).data('item-id');
+    const currentState = this.actor.getFlag('osp-houserules', `lashed-${itemId}-collapsed`) ?? true;
+    await this.actor.setFlag('osp-houserules', `lashed-${itemId}-collapsed`, !currentState);
+    this.render(false);
+  }
+
+  async _onAttachmentToggle(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const itemId = $(event.currentTarget).data('item-id');
+    const currentState = this.actor.getFlag('osp-houserules', `attachment-${itemId}-collapsed`) ?? true;
+    await this.actor.setFlag('osp-houserules', `attachment-${itemId}-collapsed`, !currentState);
+    this.render(false);
+  }
+
+  async _onSlingStorageToggle(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const itemId = $(event.currentTarget).data('item-id');
+    const currentState = this.actor.getFlag('osp-houserules', `sling-${itemId}-collapsed`) ?? false;
+    await this.actor.setFlag('osp-houserules', `sling-${itemId}-collapsed`, !currentState);
     this.render(false);
   }
 
@@ -1397,6 +1622,8 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _onDropItem(event, data) {
     if (!this.actor.isOwner) return false;
 
+    const LASHABLE_CONTAINER_NAMES = new Set(['Bolt Case', 'Quiver, Hip']);
+
     const item = await Item.implementation.fromDropData(data);
     const itemData = item.toObject();
 
@@ -1411,14 +1638,18 @@ export class OspActorSheetCharacter extends ActorSheet {
       targetContainer = this.actor.items.get(parentContainerId);
     }
     
-    // If target container is itself stored inside another container (and not equipped/worn),
-    // traverse up to find the top-level equipped/worn container
-    if (targetContainer && (targetContainer.type === "container" || (targetContainer.type === "clothing" && targetContainer.system.capacity)) && targetContainer.system.containerId && !targetContainer.system.equipped) {
-      // Container is stored in another container and not equipped - find the top-level container
+    // If target container is itself stored inside another container (and not equipped/worn, and not belt-lashed),
+    // traverse up to find the top-level equipped/worn container.
+    // Skip traversal for belt-lashed containers — they are intentional drop targets (e.g. drop sword into scabbard on belt).
+    if (targetContainer &&
+        (targetContainer.type === "container" || (targetContainer.type === "clothing" && targetContainer.system.capacity)) &&
+        targetContainer.system.containerId &&
+        !targetContainer.system.equipped &&
+        !targetContainer.system.lashed) {
       let topContainer = targetContainer;
-      while (topContainer.system.containerId) {
+      while (topContainer.system.containerId && !topContainer.system.lashed) {
         const parentContainer = this.actor.items.get(topContainer.system.containerId);
-        if (!parentContainer) break; // Safety check
+        if (!parentContainer) break;
         topContainer = parentContainer;
       }
       targetContainer = topContainer;
@@ -1429,6 +1660,21 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // Check if this is a reordering operation or a new item
     const isReordering = item.actor && item.actor.id === this.actor.id;
+
+    // Swords must always be stored in a scabbard — never dropped loose
+    // (Daggers are excluded: they keep lash option and can go freely)
+    if (itemData.type === "weapon" && this._itemIsSword(itemData) && !this._itemIsDagger(itemData)) {
+      if (!targetContainer || targetContainer.type !== "container") {
+        const swordCarriers = ["Scabbard, Small", "Sword Frog", "Baldric"];
+        const hasScabbard = this.actor.items.some(i => i.type === "container" && swordCarriers.includes(i.name));
+        if (hasScabbard) {
+          ui.notifications.error(`${itemData.name} must be stored in a Scabbard. Drag it onto a Scabbard.`);
+        } else {
+          ui.notifications.error(`${itemData.name} requires a Scabbard. Add a Scabbard to your gear first.`);
+        }
+        return false;
+      }
+    }
 
     // Special validation for Backpacks - only one can be at top-level
     if (itemData.type === "container" && itemData.name.toLowerCase().includes('backpack')) {
@@ -1468,7 +1714,133 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     }
 
+    // Sling containers (Baldric, Axe Sling, Waterskin Sling) — auto-equip, never stored or lashed
+    if (itemData.type === 'container' && (itemData.system?.tags || []).includes('sling')) {
+      if (targetContainer && targetContainer.type === 'container') {
+        ui.notifications.error(`${itemData.name} cannot be stored in a container.`);
+        return false;
+      }
+
+      // Check if another sling of the same name already exists on this actor
+      const existingSling = this.actor.items.find(i =>
+        i.type === 'container' &&
+        i.name === itemData.name &&
+        (!isReordering || i.id !== itemData._id)
+      );
+
+      if (existingSling) {
+        // Already have one — can't wear a second. Show drop/delete/cancel.
+        const itemHandler = this.getHandler('item');
+        if (isReordering) {
+          await this._showSlingNoRoomDialog(this.actor.items.get(itemData._id), itemHandler);
+        } else {
+          const [created] = await this.actor.createEmbeddedDocuments('Item', [
+            { ...itemData, system: { ...itemData.system, containerId: null, equipped: false } }
+          ]);
+          await this._showSlingNoRoomDialog(created, itemHandler);
+        }
+        return;
+      }
+
+      // Auto-equip the sling
+      itemData.system.containerId = null;
+      itemData.system.equipped = true;
+      if (item.actor && item.actor.id !== this.actor.id) {
+        return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
+          this.actor.createEmbeddedDocuments('Item', [itemData])
+        );
+      }
+      if (item.actor && item.actor.id === this.actor.id) {
+        return item.update({ 'system.containerId': null, 'system.equipped': true });
+      }
+      return this.actor.createEmbeddedDocuments('Item', [itemData]);
+    }
+
     // Weapons and armor: auto-equip if slot free, else auto-store, else error
+    if (itemData.type === 'weapon' || itemData.type === 'armor') {
+      // Check if dropping a weapon onto a lash-mount clothing item (e.g. Belt)
+      const isBeltLash = itemData.type === 'weapon' &&
+        targetContainer &&
+        targetContainer.type === 'clothing' &&
+        (targetContainer.system.lashSlots || 0) > 0 &&
+        !targetContainer.system.capacity;
+
+      if (isBeltLash) {
+        if (!targetContainer.system.equipped) {
+          ui.notifications.error(`${targetContainer.name} must be worn to lash items to it.`);
+          return false;
+        }
+        const allowedSizes = targetContainer.system.lashAllowedSizes || [];
+        if (allowedSizes.length > 0 && !allowedSizes.includes(itemData.system.size)) {
+          ui.notifications.error(`${targetContainer.name} can only hold Small weapons. ${itemData.name} is size ${itemData.system.size || '?'}.`);
+          return false;
+        }
+        const usedSlots = this.actor.items.filter(i => i.system.containerId === targetContainer.id && i.system.lashed).length;
+        if (usedSlots >= targetContainer.system.lashSlots) {
+          ui.notifications.error(`${targetContainer.name} has no available lash slots (${usedSlots}/${targetContainer.system.lashSlots} used).`);
+          return false;
+        }
+        itemData.system.containerId = targetContainer.id;
+        itemData.system.lashed = true;
+        itemData.system.equipped = false;
+        if (item.actor && item.actor.id !== this.actor.id) {
+          return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
+            this.actor.createEmbeddedDocuments('Item', [itemData])
+          );
+        }
+        if (item.actor && item.actor.id === this.actor.id) {
+          return item.update({ 'system.containerId': itemData.system.containerId, 'system.lashed': true, 'system.equipped': false });
+        }
+        return this.actor.createEmbeddedDocuments('Item', [itemData]);
+      }
+    }
+
+    // Lashable container dropped onto a belt (clothing with lashSlots)
+    const isBeltAttachmentDrop = itemData.type === 'container' &&
+      (item.system?.lashable || itemData.system?.lashable || (item.system?.slotCost || 0) > 0 || (itemData.system?.slotCost || 0) > 0 || LASHABLE_CONTAINER_NAMES.has(itemData.name)) &&
+      targetContainer && targetContainer.type === 'clothing' &&
+      (targetContainer.system.lashSlots || 0) > 0;
+    if (isBeltAttachmentDrop) {
+      if (!targetContainer.system.equipped) {
+        ui.notifications.error(`${targetContainer.name} must be worn to attach items to it.`);
+        return false;
+      }
+
+      const belt = targetContainer;
+      const lashedAttachments = this.actor.items.filter(i =>
+        i.type === 'container' && i.system.containerId === belt.id && i.system.lashed && i.id !== itemData._id
+      );
+      const usedSlots = lashedAttachments.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+      const itemSlotCost = item.system?.slotCost || itemData.system?.slotCost || 1;
+      if (usedSlots + itemSlotCost > belt.system.lashSlots) {
+        ui.notifications.error(`${belt.name} has no room for ${itemData.name} (${usedSlots}/${belt.system.lashSlots} slots used, need ${itemSlotCost}).`);
+        return false;
+      }
+
+      const itemHandler = this.getHandler('item');
+      // Build a temporary item-like object for constraint check (uses name + system.tags)
+      const constraint = itemHandler._checkBeltConstraints(
+        { name: itemData.name, system: itemData.system },
+        lashedAttachments
+      );
+      if (!constraint.ok) {
+        ui.notifications.error(constraint.reason);
+        return false;
+      }
+
+      if (isReordering) {
+        return item.update({ 'system.lashed': true, 'system.containerId': belt.id });
+      }
+      itemData.system.lashed = true;
+      itemData.system.containerId = belt.id;
+      if (item.actor && item.actor.id !== this.actor.id) {
+        return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
+          this.actor.createEmbeddedDocuments('Item', [itemData])
+        );
+      }
+      return this.actor.createEmbeddedDocuments('Item', [itemData]);
+    }
+
     if (itemData.type === 'weapon' || itemData.type === 'armor') {
       const isTargetContainer = targetContainer &&
         (targetContainer.type === 'container' ||
@@ -1485,6 +1857,31 @@ export class OspActorSheetCharacter extends ActorSheet {
         // Equipped item dropped on open space: no-op (stays on Combat tab)
         return false;
       } else {
+        // Shields dropped onto gear tab always go to backpack lash slot
+        if (itemData.type === 'armor' && itemData.system?.type === 'shield') {
+          const itemHandler = this.getHandler('item');
+          const backpack = itemHandler._findBackpackWithLashSlot(itemData);
+          if (backpack) {
+            itemData.system.lashed = true;
+            itemData.system.containerId = backpack.id;
+            itemData.system.equipped = false;
+          } else {
+            // No slot — create item then show dialog
+            const [created] = await this.actor.createEmbeddedDocuments('Item', [itemData]);
+            await itemHandler._showArmorNoStorageDialog(created);
+            return;
+          }
+          if (item.actor && item.actor.id !== this.actor.id) {
+            return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
+              this.actor.createEmbeddedDocuments('Item', [itemData])
+            );
+          }
+          if (item.actor && item.actor.id === this.actor.id) {
+            return item.update({ 'system.equipped': false, 'system.containerId': itemData.system.containerId, 'system.lashed': true });
+          }
+          return this.actor.createEmbeddedDocuments('Item', [itemData]);
+        }
+
         // New item — auto-equip if slot is free, otherwise auto-store
         const armorBodyTypes = ['light', 'medium', 'heavy'];
         let slotFree;
@@ -1506,7 +1903,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           let stored = false;
           // Try lash first if item supports it
           if (itemData.system.lashable) {
-            const lashContainer = this._findContainerWithLashSlot();
+            const lashContainer = this._findContainerWithLashSlot(itemData);
             if (lashContainer) {
               itemData.system.containerId = lashContainer.id;
               itemData.system.lashed = true;
@@ -1544,8 +1941,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     }
 
-    // If the item is of type "item", "coin", "ammunition", or "clothing" (not weapon/armor/container), it MUST go into a container
-    if (itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition" || itemData.type === "clothing") {
+    // If the item is of type "item", "coin", or "ammunition" (not weapon/armor/container/clothing), it MUST go into a container
+    if (itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition") {
       // Check if target is a valid container (container type OR clothing with capacity)
       const isValidContainer = targetContainer && 
         (targetContainer.type === "container" || 
@@ -1557,112 +1954,131 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
 
       // Check container type restrictions BEFORE handling coins/ammunition
-      if (!this._isItemAllowedInContainer(itemData, targetContainer)) {
-        const allowedTypes = targetContainer.system.allowedTypes || [];
-        const restriction = allowedTypes.length > 0 ? allowedTypes.join(', ') : 'any';
-        ui.notifications.error(`${targetContainer.name} can only hold: ${restriction}`);
-        return false;
-      }
-
-      // Check maximum item size restriction
-      if (targetContainer.system.maxItemSize !== null && 
-          targetContainer.system.maxItemSize !== undefined &&
-          itemData.system.storedSize > targetContainer.system.maxItemSize) {
-        ui.notifications.error(`${item.name} (size ${itemData.system.storedSize}) is too large for ${targetContainer.name} (max size ${targetContainer.system.maxItemSize})`);
-        return false;
-      }
+      const check0 = this._isItemAllowedInContainer(itemData, targetContainer);
+      if (!check0.allowed) { ui.notifications.error(check0.reason); return false; }
 
       // For coins, show quantity dialog
       if (itemData.type === "coin") {
         return this._handleCoinDrop(item, itemData, targetContainer, isReordering);
       }
 
-      // For ammunition, show quantity dialog
-      if (itemData.type === "ammunition") {
+      // For ammunition and stackable items, show quantity dialog
+      if (itemData.type === "ammunition" || itemData.type === "item") {
         return this._handleAmmunitionDrop(item, itemData, targetContainer, isReordering);
       }
 
-      // Check if there's enough space in the container.
-      // Skip the check when reordering within the same container — _getUsedCapacity already
-      // counts this item, so adding its size again would double-count it.
+      // Check container restrictions (type, size, containerSizeRequired)
+      const check1 = this._isItemAllowedInContainer(itemData, targetContainer);
+      if (!check1.allowed) { ui.notifications.error(check1.reason); return false; }
+
+      // Check capacity (skip for hideCapacity containers like scabbards)
       const alreadyInContainer1 = isReordering && itemData.system.containerId === targetContainer.id;
-      if (!alreadyInContainer1 && !this._hasContainerSpace(targetContainer, itemData)) {
-        const totalRequired = (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
+      if (!alreadyInContainer1 && !this._skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
+        const totalRequired = this._getEffectiveDropSize(itemData);
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
 
       // Set the container ID
       itemData.system.containerId = targetContainer.id;
-    } 
+    }
     // Allow containers to be stored in other containers if they're empty
     // Only check for emptiness when reordering (new containers from compendium are always empty)
     else if (itemData.type === "container" && targetContainer && targetContainer.type === "container") {
-      // Check container type restrictions FIRST
-      if (!this._isItemAllowedInContainer(itemData, targetContainer)) {
-        const allowedTypes = targetContainer.system.allowedTypes || [];
-        const restriction = allowedTypes.length > 0 ? allowedTypes.join(', ') : 'any';
-        ui.notifications.error(`${targetContainer.name} can only hold: ${restriction}`);
-        return false;
-      }
-      
+      // Check container restrictions
+      const check2 = this._isItemAllowedInContainer(itemData, targetContainer);
+      if (!check2.allowed) { ui.notifications.error(check2.reason); return false; }
+
       // If reordering, check if the container being dropped has any items in it
       if (isReordering) {
         const droppedContainerId = item.id;
-        const itemsInDroppedContainer = droppedContainerId ? 
+        const itemsInDroppedContainer = droppedContainerId ?
           this.actor.items.filter(i => i.system.containerId === droppedContainerId) : [];
-        
+
         if (itemsInDroppedContainer.length > 0) {
           ui.notifications.error(`Cannot store ${item.name} - it contains ${itemsInDroppedContainer.length} item(s). Empty it first.`);
           return false;
         }
       }
-      
-      // Check maximum item size restriction
-      if (targetContainer.system.maxItemSize !== null && 
-          targetContainer.system.maxItemSize !== undefined &&
-          itemData.system.storedSize > targetContainer.system.maxItemSize) {
-        ui.notifications.error(`${item.name} (size ${itemData.system.storedSize}) is too large for ${targetContainer.name} (max size ${targetContainer.system.maxItemSize})`);
-        return false;
-      }
-      
+
       // Check if there's enough space in the target container
       const alreadyInContainer2 = isReordering && itemData.system.containerId === targetContainer.id;
-      if (!alreadyInContainer2 && !this._hasContainerSpace(targetContainer, itemData)) {
-        const totalRequired = (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
+      if (!alreadyInContainer2 && !this._skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
+        const totalRequired = this._getEffectiveDropSize(itemData);
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
 
       itemData.system.containerId = targetContainer.id;
     }
+    // Belt with items attached cannot be stored in a container
+    else if (itemData.type === "clothing" && targetContainer && targetContainer.type === "container") {
+      const attachedItems = isReordering
+        ? this.actor.items.filter(i => i.system.containerId === item.id && i.system.lashed)
+        : [];
+      if (attachedItems.length > 0) {
+        ui.notifications.error(`Cannot store ${itemData.name} in a container — it has ${attachedItems.length} item(s) attached. Remove attachments first.`);
+        return false;
+      }
+    }
     // Weapons/armor can be dropped onto containers
-    else if (targetContainer && 
-             (targetContainer.type === "container" || 
+    else if (targetContainer &&
+             (targetContainer.type === "container" ||
               (targetContainer.type === "clothing" && targetContainer.system.capacity))) {
-      // Check container type restrictions
-      if (!this._isItemAllowedInContainer(itemData, targetContainer)) {
-        const allowedTypes = targetContainer.system.allowedTypes || [];
-        const restriction = allowedTypes.length > 0 ? allowedTypes.join(', ') : 'any';
-        ui.notifications.error(`${targetContainer.name} can only hold: ${restriction}`);
-        return false;
-      }
-
-      // Check maximum item size restriction
-      if (targetContainer.system.maxItemSize !== null && 
-          targetContainer.system.maxItemSize !== undefined &&
-          itemData.system.storedSize > targetContainer.system.maxItemSize) {
-        ui.notifications.error(`${item.name} (size ${itemData.system.storedSize}) is too large for ${targetContainer.name} (max size ${targetContainer.system.maxItemSize})`);
-        return false;
-      }
+      // Check container restrictions
+      const check3 = this._isItemAllowedInContainer(itemData, targetContainer);
+      if (!check3.allowed) { ui.notifications.error(check3.reason); return false; }
 
       const alreadyInContainer3 = isReordering && itemData.system.containerId === targetContainer.id;
-      if (!alreadyInContainer3 && !this._hasContainerSpace(targetContainer, itemData)) {
-        const totalRequired = (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
+      if (!alreadyInContainer3 && !this._skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
+        const totalRequired = this._getEffectiveDropSize(itemData);
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
       itemData.system.containerId = targetContainer.id;
+    }
+    // Belt dropped onto open gear tab space: auto-equip if no belt worn, else auto-store
+    else if (itemData.type === "clothing" && itemData.name === "Belt" && !targetContainer) {
+      const equippedBelt = this.actor.items.find(i =>
+        i.type === "clothing" && i.name === "Belt" && i.system.equipped &&
+        (!isReordering || i.id !== item.id)
+      );
+      if (!equippedBelt) {
+        itemData.system.equipped = true;
+        itemData.system.containerId = null;
+      } else {
+        const container = this._findContainerWithSpace(itemData);
+        if (container) {
+          itemData.system.containerId = container.id;
+          itemData.system.equipped = false;
+        } else {
+          ui.notifications.error(`No storage space available for ${itemData.name}. Free up container space first.`);
+          return false;
+        }
+      }
+    }
+    // Lashable containers dropped on open space: auto-attach to equipped belt if room available
+    else if (itemData.type === 'container' && (itemData.system?.lashable || (itemData.system?.slotCost || 0) > 0 || LASHABLE_CONTAINER_NAMES.has(itemData.name)) && !targetContainer) {
+      const belt = this.actor.items.find(i => i.type === 'clothing' && (i.system.lashSlots || 0) > 0 && i.system.equipped);
+      if (belt) {
+        const itemHandler = this.getHandler('item');
+        const lashedAttachments = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed && (!isReordering || i.id !== item.id));
+        const constraint = itemHandler._checkBeltConstraints({ name: itemData.name, system: itemData.system }, lashedAttachments);
+        const usedSlots = lashedAttachments.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+        const itemSlotCost = itemData.system.slotCost || 1;
+        if (constraint.ok && usedSlots + itemSlotCost <= (belt.system.lashSlots || 0)) {
+          itemData.system.lashed = true;
+          itemData.system.containerId = belt.id;
+          itemData.system.equipped = false;
+        } else {
+          const reason = !constraint.ok ? constraint.reason : `No free belt slots for ${itemData.name}.`;
+          ui.notifications.error(`${reason} Drop it onto a container to store it instead.`);
+          return false;
+        }
+      } else {
+        ui.notifications.error(`${itemData.name} must be attached to a belt or stored in a container.`);
+        return false;
+      }
     }
     // If reordering and not dropped on a container, clear the containerId
     else if (isReordering) {
@@ -1766,32 +2182,68 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Check if an item is allowed in a container based on type restrictions
    */
   _isItemAllowedInContainer(itemData, container) {
+    // Sling containers (Baldric, Axe Sling, etc.) cannot be stored in any container
+    if (itemData.type === 'container' && (itemData.system?.tags || []).includes('sling')) {
+      return { allowed: false, reason: `${itemData.name} cannot be stored in a container.` };
+    }
+
+    // Check allowedNames (weapon name must be in list — takes priority for scabbards)
+    const allowedNames = container.system?.allowedNames;
+    if (allowedNames && Array.isArray(allowedNames) && allowedNames.length > 0) {
+      if (!allowedNames.includes(itemData.name)) {
+        return { allowed: false, reason: `${container.name} only accepts: ${allowedNames.join(', ')}.` };
+      }
+    }
+
+    // Check allowedTypes (tags or weaponType must match)
     const allowedTypes = container.system?.allowedTypes;
-    
-    // If no restrictions, allow any item
-    if (!allowedTypes || !Array.isArray(allowedTypes) || allowedTypes.length === 0) {
-      return true;
+    if (allowedTypes && Array.isArray(allowedTypes) && allowedTypes.length > 0) {
+      const itemTags = itemData.system?.tags || [];
+      const weaponType = itemData.system?.weaponType || '';
+      const matches = allowedTypes.some(t => itemTags.includes(t) || weaponType === t || itemData.type === t);
+      if (!matches) return { allowed: false, reason: `${container.name} only accepts: ${allowedTypes.join(', ')}.` };
     }
-    
-    // Build a list of item characteristics to check against allowed types
-    const itemCharacteristics = [];
-    
-    // Add the item's type (e.g., "clothing", "item", "ammunition", "container")
-    if (itemData.type) {
-      itemCharacteristics.push(itemData.type);
+
+    // Check allowedSizes
+    const allowedSizes = container.system?.allowedSizes || [];
+    if (allowedSizes.length > 0 && !allowedSizes.includes(itemData.system?.size || '')) {
+      return { allowed: false, reason: `${container.name} only accepts size: ${allowedSizes.join(', ')}.` };
     }
-    
-    // Add any tags the item has (weapons have tags like "arrow", "sword", etc.)
-    const itemTags = itemData.system?.tags || [];
-    itemCharacteristics.push(...itemTags);
-    
-    // If container has restrictions but item has no characteristics, reject it
-    if (itemCharacteristics.length === 0) {
-      return false;
+
+    // Check containerSizeRequired vs containerSize
+    const required = itemData.system?.containerSizeRequired || '';
+    if (required) {
+      const sizeRank = { small: 1, medium: 2, large: 3 };
+      const containerSize = container.system?.containerSize || 'medium';
+      if ((sizeRank[containerSize] || 2) < (sizeRank[required] || 1)) {
+        return { allowed: false, reason: `${itemData.name} is too large to fit inside ${container.name}.` };
+      }
     }
-    
-    // Check if any item characteristic matches allowed types
-    return itemCharacteristics.some(char => allowedTypes.includes(char));
+
+    // Check maxItems
+    const maxItems = container.system?.maxItems || 0;
+    if (maxItems > 0) {
+      const currentCount = this.actor.items.filter(i =>
+        i.system.containerId === container.id && !i.system.lashed
+      ).length;
+      if (currentCount >= maxItems) {
+        return { allowed: false, reason: `${container.name} is full (holds ${maxItems} item${maxItems > 1 ? 's' : ''} max).` };
+      }
+    }
+
+    return { allowed: true, reason: null };
+  }
+
+  _skipCapacityCheck(container) {
+    return container.system?.hideCapacity === true;
+  }
+
+  _itemIsSword(itemData) {
+    return (itemData.system?.tags || []).includes('sword');
+  }
+
+  _itemIsDagger(itemData) {
+    return (itemData.system?.tags || []).includes('dagger');
   }
 
   /**
@@ -1799,22 +2251,16 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   _hasContainerSpace(container, itemData) {
     const capacity = parseFloat(container.system?.capacity);
-    
+
     if (isNaN(capacity) || capacity <= 0) {
       console.error('ERROR: Container capacity must be a positive number', container.system?.capacity);
       ui.notifications.error(`Container "${container.name}" has invalid capacity. Delete and re-add the container.`);
       return false;
     }
-    
-    const maxCapacity = capacity;
-    const usedCapacity = this._getUsedCapacity(container);
-    
-    // Calculate the space needed for the item being added; storedSize is per-unit
-    const storedSize = parseFloat(itemData.system.storedSize) || 0;
-    const currentQuantity = itemData.system.quantity || 1;
-    const itemSize = storedSize * currentQuantity;
 
-    return (usedCapacity + itemSize) <= maxCapacity;
+    const usedCapacity = this._getUsedCapacity(container);
+    const itemSize = this._getEffectiveDropSize(itemData);
+    return (usedCapacity + itemSize) <= capacity;
   }
 
   /**
@@ -1840,10 +2286,17 @@ export class OspActorSheetCharacter extends ActorSheet {
   /**
    * Find the first container that has an available lash slot
    */
-  _findContainerWithLashSlot() {
+  _findContainerWithLashSlot(itemData) {
     return this.actor.items.find(c => {
       const lashSlots = c.system.lashSlots || 0;
       if (lashSlots === 0) return false;
+      // Clothing lash mounts (e.g. Belt) must be worn to accept lashed items
+      if (c.type === 'clothing' && !c.system.equipped) return false;
+      // Check size restriction if present
+      if (c.system.lashAllowedSizes?.length && itemData) {
+        const weaponSize = itemData.system?.size;
+        if (!weaponSize || !c.system.lashAllowedSizes.includes(weaponSize)) return false;
+      }
       const used = this.actor.items.filter(i => i.system.containerId === c.id && i.system.lashed).length;
       return used < lashSlots;
     }) ?? null;
@@ -1853,14 +2306,44 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Calculate used capacity in a container
    */
   _getUsedCapacity(container) {
-    // Find all non-lashed items in this container; storedSize is per-unit
     return this.actor.items
       .filter(item => item.system.containerId === container.id && !item.system.lashed)
-      .reduce((total, item) => {
-        const storedSize = parseFloat(item.system.storedSize) || 0;
-        const currentQuantity = item.system.quantity || 1;
-        return total + storedSize * currentQuantity;
-      }, 0);
+      .reduce((total, item) => total + this._getEffectiveStoredSize(item), 0);
+  }
+
+  // Returns the stored-size footprint of item, including anything stored inside it (e.g. cloak pockets).
+  _getEffectiveStoredSize(item) {
+    const own = (parseFloat(item.system.storedSize) || 0) * (item.system.quantity || 1);
+    if (!item.system.capacity) return own;
+    const nested = this.actor.items.filter(i => i.system.containerId === item.id && !i.system.lashed);
+    return own + nested.reduce((sum, i) => sum + this._getEffectiveStoredSize(i), 0);
+  }
+
+  // Returns the effective size for an item being dropped (may be a plain data object, not a live item).
+  _getEffectiveDropSize(itemData) {
+    const own = (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
+    const itemId = itemData._id ?? itemData.id;
+    if (!itemData.system.capacity || !itemId) return own;
+    const nested = this.actor.items.filter(i => i.system.containerId === itemId && !i.system.lashed);
+    return own + nested.reduce((sum, i) => sum + this._getEffectiveStoredSize(i), 0);
+  }
+
+  /**
+   * Drop/Delete/Cancel dialog shown when a sling (Baldric etc.) can't be worn.
+   */
+  async _showSlingNoRoomDialog(item, itemHandler) {
+    return new Promise(resolve => {
+      new Dialog({
+        title: `Cannot Wear ${item.name}`,
+        content: `<p>You are already wearing a <strong>${item.name}</strong>. It cannot be stored or lashed. What would you like to do?</p>`,
+        buttons: {
+          drop:   { label: 'Drop',   callback: async () => { await itemHandler._dropItem(item); resolve(true); } },
+          delete: { label: 'Delete', callback: async () => { await item.delete(); resolve(true); } },
+          cancel: { label: 'Cancel', callback: async () => { await item.delete(); resolve(false); } }
+        },
+        default: 'cancel'
+      }).render(true);
+    });
   }
 
   /**
@@ -2166,9 +2649,9 @@ export class OspActorSheetCharacter extends ActorSheet {
                 return;
               }
 
-              // Check if there's already ammunition of this type in the target container
+              // Check if there's already a matching stack of this item in the target container
               const existingAmmo = this.actor.items.find(i =>
-                i.type === "ammunition" &&
+                i.type === itemData.type &&
                 i.name === itemData.name &&
                 i.system.containerId === targetContainer.id &&
                 i.id !== item.id

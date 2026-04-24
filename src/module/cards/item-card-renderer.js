@@ -167,14 +167,12 @@ export class ItemCardRenderer {
         let width = img.width;
         let height = img.height;
         
-        // Scale to fit within available space while maintaining aspect ratio
-        if (width > maxWidth || height > maxHeight) {
-          const widthScale = maxWidth / width;
-          const heightScale = maxHeight / height;
-          const scale = Math.min(widthScale, heightScale);
-          width = Math.floor(width * scale);
-          height = Math.floor(height * scale);
-        }
+        // Scale to fill available space while maintaining aspect ratio
+        const widthScale = maxWidth / width;
+        const heightScale = maxHeight / height;
+        const scale = Math.min(widthScale, heightScale);
+        width = Math.floor(width * scale);
+        height = Math.floor(height * scale);
         
         // Center horizontally and vertically in available space
         const x = centerX - (width / 2);
@@ -192,10 +190,17 @@ export class ItemCardRenderer {
       
       // Use item image with aggressive cache busting, or placeholder
       let imgSrc = item.img || 'systems/osp-houserules/assets/character-sheet/item_placeholder.png';
-      
+
       // Ensure proper system path prefix for relative paths
       if (imgSrc && !imgSrc.startsWith('systems/') && !imgSrc.startsWith('http')) {
         imgSrc = `systems/osp-houserules/${imgSrc}`;
+      }
+
+      // If img points to a thumbnail, resolve to full-size for card display
+      const THUMB_BASE = 'systems/osp-houserules/assets/thumbs/images/';
+      if (imgSrc.includes(THUMB_BASE)) {
+        const relative = imgSrc.slice(imgSrc.indexOf(THUMB_BASE) + THUMB_BASE.length).replace(/\?.*$/, '');
+        imgSrc = 'systems/osp-houserules/assets/images/' + relative.replace('_thumb.webp', '.webp');
       }
       
       // Use both timestamp and random to defeat all caching
@@ -452,22 +457,22 @@ export class ItemCardRenderer {
       if (costValue >= 1000) {
         costValue = costValue.toLocaleString();
       }
-      items.push({ icon: 'coin-icon_thumb.webp', text: `${costValue}sp` });
+      items.push({ icon: 'coin-icon.webp', text: `${costValue}sp` });
     }
     
     // Weight with weight icon (skip for livestock)
     if (item.type !== 'livestock' && item.system.unitWeight !== undefined && item.system.unitWeight !== '') {
-      items.push({ icon: 'weight-icon_thumb.webp', text: `${item.system.unitWeight}lbs` });
+      items.push({ icon: 'weight-icon.webp', text: `${item.system.unitWeight}lbs` });
     }
     
     // Stored size with capacity icon (skip for livestock)
     if (item.type !== 'livestock' && item.system.storedSize !== undefined && item.system.storedSize !== '') {
-      items.push({ icon: 'stored-icon_thumb.webp', text: `${item.system.storedSize}S` });
+      items.push({ icon: 'stored-icon.webp', text: `${item.system.storedSize}S` });
     }
     
     // Container capacity with capacity icon
     if (item.type === 'container' && item.system.capacity !== undefined && item.system.capacity !== '') {
-      items.push({ icon: 'capacity-icon_thumb.webp', text: `${item.system.capacity}C` });
+      items.push({ icon: 'capacity-icon.webp', text: `${item.system.capacity}C` });
     }
     
     if (items.length === 0 && item.system.lashable !== true) return;
@@ -498,7 +503,7 @@ export class ItemCardRenderer {
     // Draw each metadata item with icon
     for (const metaItem of items) {
       // Load and draw icon centered vertically at y
-      const icon = await this._loadIcon(`systems/osp-houserules/assets/thumbs/images/icons/${metaItem.icon}`);
+      const icon = await this._loadIcon(`systems/osp-houserules/assets/images/icons/${metaItem.icon}`);
       if (icon) {
         // Center icon vertically: y is middle, so top = y - (iconSize / 2)
         ctx.drawImage(icon, x, y - (iconSize / 2), iconSize, iconSize);
@@ -514,7 +519,7 @@ export class ItemCardRenderer {
     
     // Draw lashable icon at the end if applicable, centered at y
     if (item.system.lashable === true) {
-      const lashIcon = await this._loadIcon('systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp');
+      const lashIcon = await this._loadIcon('systems/osp-houserules/assets/images/icons/lash-icon.webp');
       if (lashIcon) {
         ctx.drawImage(lashIcon, x, y - (iconSize / 2), iconSize, iconSize);
       }

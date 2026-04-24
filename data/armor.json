@@ -2,11 +2,11 @@
   {
     "name": "Banded mail",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/banded-mail.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/banded-mail_thumb.webp",
     "system": {
       "description": "Banded mail is made of broad horizontal metal bands fitted over a backing of leather or chain, creating a rigid yet reliable defensive shell. Though heavy and somewhat restrictive, it offers strong protection for frontline warriors who can bear its weight.",
       "cost": 200,
-      "unitWeight": 35,
+      "unitWeight": 30,
       "storedSize": 24,
       "quantity": 1,
       "equipped": false,
@@ -26,12 +26,13 @@
   {
     "name": "Body Shield",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/body-shield.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/body-shield_thumb.webp",
     "system": {
       "description": "This tall, kite-shaped body shield is built from stout wooden planks banded with dark iron and anchored by a heavy central boss, broad enough to cover a warrior from shoulder to knee. Designed for shield-wall fighting and holding ground, it trades agility for tremendous frontal protection.",
       "cost": 10,
-      "unitWeight": 15,
+      "unitWeight": 12,
       "storedSize": 60,
+      "containerSizeRequired": "large",
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -50,11 +51,11 @@
   {
     "name": "Brigandine",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/brigandine.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/brigandine_thumb.webp",
     "system": {
       "description": "Brigandine is a flexible armor made of small overlapping steel plates riveted between layers of sturdy fabric or leather, creating a protective yet maneuverable defense. Its distinctive grid of visible rivets gives it a rugged, utilitarian appearance favored by soldiers and mercenaries.",
       "cost": 120,
-      "unitWeight": 35,
+      "unitWeight": 20,
       "storedSize": 16,
       "quantity": 1,
       "equipped": false,
@@ -74,11 +75,11 @@
   {
     "name": "Bronze plate",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/bronze-plate.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/bronze-plate_thumb.webp",
     "system": {
       "description": "Bronze plate mail features solid, fitted plates of hammered bronze forged into a rigid cuirass and limb guards. Though heavier and less advanced than steel plate, it offers superior defense and a distinctive ancient-warrior aesthetic.",
       "cost": 400,
-      "unitWeight": 55,
+      "unitWeight": 50,
       "storedSize": 36,
       "quantity": 1,
       "equipped": false,
@@ -98,11 +99,11 @@
   {
     "name": "Chain mail",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/chain-mail.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/chain-mail_thumb.webp",
     "system": {
       "description": "Chain mail consists of thousands of interlinked metal rings forming a flexible mesh that protects against cuts and thrusts. It is one of the most reliable and widely used armors among seasoned soldiers and adventurers.",
       "cost": 75,
-      "unitWeight": 40,
+      "unitWeight": 25,
       "storedSize": 16,
       "quantity": 1,
       "equipped": false,
@@ -122,11 +123,11 @@
   {
     "name": "Field plate",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/field-plate.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/field-plate_thumb.webp",
     "system": {
       "description": "Field plate is a well-crafted suit of articulated steel plates that balances protection with mobility, making it ideal for mounted knights. It is less refined than full plate but still represents elite craftsmanship and reliability.",
       "cost": 2000,
-      "unitWeight": 60,
+      "unitWeight": 45,
       "storedSize": 36,
       "quantity": 1,
       "equipped": false,
@@ -146,11 +147,11 @@
   {
     "name": "Full plate",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/full-plate.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/full-plate_thumb.webp",
     "system": {
       "description": "Full plate is the pinnacle of personal armor, a custom-fitted suit of interlocking steel plates that maximizes both protection and freedom of movement. Reserved for nobility and elite champions, it is incredibly expensive but unmatched in defense.",
       "cost": 10000,
-      "unitWeight": 70,
+      "unitWeight": 50,
       "storedSize": 50,
       "quantity": 1,
       "equipped": false,
@@ -170,11 +171,11 @@
   {
     "name": "Great helm",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/helm-great.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/helm-great_thumb.webp",
     "system": {
       "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head—though at the cost of limited vision and airflow.",
       "cost": 30,
-      "unitWeight": 10,
+      "unitWeight": 5,
       "storedSize": 12,
       "quantity": 1,
       "equipped": false,
@@ -194,7 +195,7 @@
   {
     "name": "Helmet",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/helm.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/helm_thumb.webp",
     "system": {
       "description": "This standard helmet is a sturdy steel cap with a reinforced brow and a simple nasal guard, offering balanced protection without restricting vision. Common among soldiers and adventurers, it provides reliable head defense while remaining light enough for extended wear.",
       "cost": 6,
@@ -218,11 +219,11 @@
   {
     "name": "Hide",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/hide.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/hide_thumb.webp",
     "system": {
       "description": "Hide armor is made from thick animal pelts and furs, often crudely stitched together to create a rugged, heavy garment. While bulky, it provides solid protection for tribal warriors, druids, and creatures of the wild.",
       "cost": 15,
-      "unitWeight": 30,
+      "unitWeight": 25,
       "storedSize": 16,
       "quantity": 1,
       "equipped": false,
@@ -242,11 +243,11 @@
   {
     "name": "Leather",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/leather.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/leather_thumb.webp",
     "system": {
       "description": "Leather armor is crafted from hardened animal hide, molded and stitched into a flexible protective vest. It is lightweight, durable, and favored by characters who rely on stealth and mobility.",
       "cost": 20,
-      "unitWeight": 15,
+      "unitWeight": 10,
       "storedSize": 8,
       "quantity": 1,
       "equipped": false,
@@ -266,11 +267,11 @@
   {
     "name": "Padded",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/padded.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/padded_thumb.webp",
     "system": {
       "description": "Padded armor is a thick, quilted garment made from layered cloth and batting, offering basic protection against glancing blows. It is inexpensive, quiet to move in, and commonly worn by scouts, thieves, and novice adventurers.",
       "cost": 4,
-      "unitWeight": 10,
+      "unitWeight": 8,
       "storedSize": 8,
       "quantity": 1,
       "equipped": false,
@@ -290,11 +291,11 @@
   {
     "name": "Ring mail",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/ring-mail.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/ring-mail_thumb.webp",
     "system": {
       "description": "Ring mail consists of a leather or cloth garment reinforced with metal rings sewn directly onto its surface, providing basic protection without the full weight of true chain mail. It is typically worn by low-status soldiers or adventurers needing inexpensive armor that offers better defense than padded or leather options, though it remains less effective than more advanced mail types.",
       "cost": 75,
-      "unitWeight": 30,
+      "unitWeight": 22,
       "storedSize": 16,
       "quantity": 1,
       "equipped": false,
@@ -314,12 +315,13 @@
   {
     "name": "Shield",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/shield.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/shield_thumb.webp",
     "system": {
       "description": "This stout, wood-and-iron shield is built from vertical hardwood planks bound by a riveted steel rim and reinforced with a domed central boss. It offers solid, reliable protection for the front-line adventurer without being so large as to hinder mobility.",
       "cost": 7,
-      "unitWeight": 10,
+      "unitWeight": 7,
       "storedSize": 20,
+      "containerSizeRequired": "large",
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -338,11 +340,11 @@
   {
     "name": "Studded Leather",
     "type": "armor",
-    "img": "systems/osp-houserules/assets/images/armor/studded-leather.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/studded-leather_thumb.webp",
     "system": {
       "description": "Studded leather armor reinforces hardened leather with rows of metal rivets or studs, improving its ability to deflect or absorb strikes. It is a popular midpoint between flexibility and protection for rogues, rangers, and mercenaries.",
       "cost": 25,
-      "unitWeight": 25,
+      "unitWeight": 15,
       "storedSize": 10,
       "quantity": 1,
       "equipped": false,

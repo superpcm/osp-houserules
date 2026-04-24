@@ -2111,26 +2111,25 @@ input[type="number"] {
   margin-bottom: 4px; /* 5px space between title and text field */
 }
 
-/* Bio text field styling - Appearance */
+/* Bio text field styling */
 .bio-text-field {
   position: relative;
   top: 20px;
   left: 49px;
   width: 706px;
-  min-height: 100px; /* Minimum height when empty */
+  min-height: 100px;
   max-height: none;
   border: 1.5px solid black;
   border-radius: 5px;
   padding: 5px;
-  box-sizing: border-box; /* Include border and padding in dimensions */
+  box-sizing: border-box;
   font-family: inherit;
   font-size: 30px;
-  resize: none; /* Disable manual resize since auto-resize handles it */
+  resize: none;
   background-color: transparent;
-  overflow-y: hidden; /* Hide scrollbar since field grows */
+  overflow-y: hidden;
   overflow-x: hidden;
-  display: block; /* Ensure proper spacing */
-  margin-bottom: 20px; /* 20px spacing between fields */
+  display: block;
 }
 
 /* ============================
@@ -2141,21 +2140,12 @@ input[type="number"] {
   background-size: 800px 383px;
   background-position: center top;
   background-repeat: no-repeat;
-  background-attachment: scroll; /* Background stays fixed to element, doesn't scroll with content */
+  background-attachment: scroll;
   background-color: transparent;
-  height: 816px; /* Fixed height to enable scrolling */
-  max-height: 816px; /* Prevent extending beyond tab boundaries */
-  overflow: visible; /* Changed from overflow-y: auto - scrolling handled by inner content */
+  height: 816px !important;
+  max-height: 816px !important;
+  overflow: hidden;
   margin: 0 0 0 -1px;
-  padding-bottom: 20px; /* Add bottom padding for last item */
-  
-  /* Hide scrollbar while still allowing scrolling - no longer needed on parent */
-  /* scrollbar-width: none; */
-  /* -ms-overflow-style: none; */
-  
-  /* &::-webkit-scrollbar {
-    display: none;
-  } */
 }
 
 /* ============================

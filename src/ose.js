@@ -208,6 +208,11 @@ Handlebars.registerHelper('includes', function(str, substring) {
   return String(str || '').includes(substring);
 });
 
+// Register a Handlebars helper for checking if an array contains a value
+Handlebars.registerHelper('hasTag', function(arr, value) {
+  return Array.isArray(arr) && arr.includes(value);
+});
+
 // Register a Handlebars helper to check if item is a regular shield (not body shield)
 Handlebars.registerHelper('isRegularShield', function(item) {
   const type = String(item.system.type || '').toLowerCase();

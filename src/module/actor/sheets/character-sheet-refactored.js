@@ -262,6 +262,34 @@ export class OspActorSheetCharacter extends ActorSheet {
       itemName: itemData.name
     });
 
+    // Helper: returns true if capacity check should be skipped for this container
+    const _skipCapacityCheck = (container) => container.system?.hideCapacity === true;
+
+    // Helper: check containerSizeRequired vs containerSize
+    const _checkContainerSize = (container, iData) => {
+      const sizeRank = { small: 1, medium: 2, large: 3 };
+      const required = iData.system?.containerSizeRequired || '';
+      if (!required) return true;
+      const containerSize = container.system?.containerSize || 'medium';
+      return (sizeRank[containerSize] || 2) >= (sizeRank[required] || 1);
+    };
+
+    // Helper: check allowedTypes — item tags or ammo weaponType must match one entry
+    const _checkAllowedTypes = (container, iData) => {
+      const allowed = container.system?.allowedTypes || [];
+      if (allowed.length === 0) return true;
+      const itemTags = iData.system?.tags || [];
+      const weaponType = iData.system?.weaponType || '';
+      return allowed.some(t => itemTags.includes(t) || weaponType === t);
+    };
+
+    // Helper: check allowedSizes — item size must be in the list (empty = any size)
+    const _checkAllowedSizes = (container, iData) => {
+      const allowed = container.system?.allowedSizes || [];
+      if (allowed.length === 0) return true;
+      return allowed.includes(iData.system?.size || '');
+    };
+
     // If the item is of type "item" (not weapon/armor/container), it MUST go into a container
     if (itemData.type === "item") {
       if (!targetContainer || targetContainer.type !== "container") {
@@ -269,18 +297,52 @@ export class OspActorSheetCharacter extends ActorSheet {
         return false;
       }
 
+      if (!_checkContainerSize(targetContainer, itemData)) {
+        ui.notifications.error(`${itemData.name} is too large to fit inside ${targetContainer.name}.`);
+        return false;
+      }
+
+      if (!_checkAllowedTypes(targetContainer, itemData)) {
+        const allowed = (targetContainer.system?.allowedTypes || []).join(', ');
+        ui.notifications.error(`${targetContainer.name} only accepts: ${allowed}.`);
+        return false;
+      }
+
+      if (!_checkAllowedSizes(targetContainer, itemData)) {
+        const allowed = (targetContainer.system?.allowedSizes || []).join(', ');
+        ui.notifications.error(`${targetContainer.name} only accepts size: ${allowed}.`);
+        return false;
+      }
+
       // Check if there's enough space in the container
-      if (!this._hasContainerSpace(targetContainer, itemData)) {
+      if (!_skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
 
       // Set the container ID
       itemData.system.containerId = targetContainer.id;
-    } 
+    }
     // Containers and weapons can be dropped onto containers
     else if (targetContainer && targetContainer.type === "container") {
-      if (!this._hasContainerSpace(targetContainer, itemData)) {
+      if (!_checkContainerSize(targetContainer, itemData)) {
+        ui.notifications.error(`${itemData.name} is too large to fit inside ${targetContainer.name}.`);
+        return false;
+      }
+
+      if (!_checkAllowedTypes(targetContainer, itemData)) {
+        const allowed = (targetContainer.system?.allowedTypes || []).join(', ');
+        ui.notifications.error(`${targetContainer.name} only accepts: ${allowed}.`);
+        return false;
+      }
+
+      if (!_checkAllowedSizes(targetContainer, itemData)) {
+        const allowed = (targetContainer.system?.allowedSizes || []).join(', ');
+        ui.notifications.error(`${targetContainer.name} only accepts size: ${allowed}.`);
+        return false;
+      }
+
+      if (!_skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${itemData.system.storedSize}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }

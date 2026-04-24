@@ -86,11 +86,13 @@
         "cost": 0,
         "unitWeight": 0,
         "storedSize": 4,
+        "containerSizeRequired": "",
         "quantity": 1,
         "equipped": false,
         "lashable": false,
         "lashed": false,
-        "containerId": null
+        "containerId": null,
+        "slotCost": 0
       }
     },
     "weapon": {
@@ -135,9 +137,13 @@
       "templates": ["base"],
       "system": {
         "capacity": 16,
+        "containerSize": "medium",
+        "hideCapacity": false,
+        "maxItems": 0,
         "lashSlots": 0,
         "allowedTypes": [],
-        "maxItemSize": null
+        "allowedSizes": [],
+        "allowedNames": []
       }
     },
     "coin": {
@@ -147,7 +153,9 @@
     "clothing": {
       "templates": ["base"],
       "system": {
-        "equipped": false
+        "equipped": false,
+        "lashSlots": 0,
+        "lashAllowedSizes": []
       }
     },
     "ammunition": {

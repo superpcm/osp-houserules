@@ -67,10 +67,10 @@ $gear-containers-col-image: 50px;       // Width of container image
 $gear-containers-col-name: 180px;       // Width of name column
 $gear-containers-col-qty: 60px;         // Width of quantity column
 $gear-containers-col-capacity: 150px;   // Width of capacity column
-$gear-containers-col-storedsize: 55px;  // Width of storedSize column
-$gear-containers-col-twt: 55px;        // Width of total weight (tWT) column
-$gear-containers-col-weight: 60px;      // Width of weight column
-$gear-containers-col-controls: 128px;   // Width of controls column
+$gear-containers-col-storedsize: 80px;  // Width of storedSize column
+$gear-containers-col-twt: 51px;        // Width of total weight (tWT) column
+$gear-containers-col-weight: 78px;      // Width of weight column
+$gear-containers-col-controls: 85px;   // Width of controls column
 
 /* Gear Tab – Containers: Header Title Column Widths */
 $gear-containers-header-image: 30px;     // Width of container header image column
@@ -85,15 +85,59 @@ $gear-treasure-col-value: 55px;       // Width of value column
 $gear-treasure-col-weight: 55px;      // Width of weight column
 $gear-treasure-col-controls:   103px; // Width of controls column
 
-/* Nested Item Column Widths (for items inside containers) */
-$nested-col-image: 50px;        // Width of nested item image
-$nested-col-name: 155px;        // Width of nested item name column
-$nested-col-qty: 32px;          // Width of nested item quantity column
-$nested-col-storedsize: 254px;   // Width of nested item storedSize column
-$nested-col-weight: 40px;       // Width of nested item weight column
-$nested-col-controls: 106px;    // Width of nested item controls section
+/* Level 1 Column Widths — items inside containers/backpacks, belt attachments (638px available) */
+$nested-col-image: 50px;
+$nested-col-name: 138px;
+$nested-col-qty: 150px;
+$nested-col-storedsize: 80px;
+$nested-col-twt: 52px;
+$nested-col-weight: 80px;
+$nested-col-controls: 82px;
+// Total: 632px  (50+138+150+80+52+80+82)
 
+/* Subheader Label Positions — absolute left offsets from container edge
+   Derive from data-row grids so labels stay aligned; adjust freely.
+   Centered cols use translateX(-50%), name col is left-anchored (no transform). */
 
+// Default L1 subheader (inside backpacks / containers)
+// Data row grid: image(50) name(138) qty(150) storedsize(80) twt(52) weight(80) controls(82)
+$sh-img:   25px;   // center of image col      (50/2)
+$sh-name:  50px;   // left edge of name col     (50)
+$sh-qty:  263px;   // center of qty col         (50+138+150/2)
+$sh-ssize: 378px;  // center of storedsize col  (50+138+150+80/2)
+$sh-twt:  444px;   // center of tWT col         (50+138+150+80+52/2)
+$sh-wt:   510px;   // center of weight col      (50+138+150+80+52+80/2)
+
+// Belt L1 subheader (belt attachment list, 7 cols; merged toggle+img = 68px)
+// Data row grid: toggle(18) image(50) name(190) qty(80) storedsize(80) twt(52) weight(80) controls(82)
+$sh-belt-img:   34px;   // center of merged 68px col     (68/2)
+$sh-belt-name:  68px;   // left edge of name col         (68)
+$sh-belt-cap:  298px;   // center of capacity/qty col    (68+190+80/2)
+$sh-belt-ssize: 378px;  // center of storedsize col      (68+120+150+80/2)
+$sh-belt-twt:  444px;   // center of tWT col             (68+120+150+80+52/2)
+$sh-belt-wt:   510px;   // center of weight col          (68+120+150+80+52+80/2)
+
+// Belt L2 subheader (items inside belt attachment; subheader has 68px left padding)
+// Both subheader and data row share 68px content offset, so positions include that offset.
+// Data row grid: image(40) name(150) field(80) field(80) twt(80) weight(50) controls(86)
+$sh-l2-img:   88px;   // center of image col   (68 + 40/2)
+$sh-l2-name: 118px;   // left edge of name col (68 + 40)
+$sh-l2-qty:  298px;   // center of qty col     (68 + 40 + 150 + 80/2)
+$sh-l2-ssize: 378px;  // center of ssize col   (68 + 40 + 150 + 80 + 80/2)
+$sh-l2-twt:  444px;   // center of tWT col     (68 + 40 + 150 + 80 + 80 + 80/2)
+$sh-l2-wt:   510px;   // center of weight col — must stay < 476px to clear controls (570 − 86)
+
+/* Belt attachment background — used for attachment row shade and the tree-line gutter on stored items */
+$attachment-row-bg: rgba(139, 69, 19, 0.05);
+
+/* Level 2 Column Widths — items stored inside belt attachments (570px available: 638 − 68px indent) */
+$l2-col-image: 40px;
+$l2-col-name: 150px;    // reduced from 175 to fit tWT column
+$l2-col-field: 80px;   // Used for both qty and sSize columns
+$l2-col-twt: 80px;      // tWT column (L2 belt stored items)
+$l2-col-weight: 50px;
+$l2-col-controls: 86px;
+// Total: 40+150+80+80+80+50+86 = 566px
 
 /* Spacing */
 $combat-weapons-grid-gap: 0px;       // Gap between grid columns in Combat Tab Weapons section (set to 0 for manual offset control)
@@ -121,12 +165,12 @@ $font-category-title: 14px;   // Category title font size
 $font-item-name: 24px;        // Item name font size
 $font-item-field: 24px;       // Item field font size
 $font-nested-item: 24px;      // Nested item font size
-$font-nested-header: 18px;   // Nested item header/subheader bar font size
+$font-nested-header: 8px;   // Nested item header/subheader bar font size
 
 /* Nested Item Indentation */
 $nested-indent: 60px;    // Left margin for nested items
 $nested-padding: 0px;    // Additional padding for nested items
-$tree-line-position: -27px;  // Position of tree line from left edge (more negative = further left, less negative = closer to items, e.g., -5px, -10px, -15px)
+$tree-line-position: -17px;  // Position of tree line from left edge (more negative = further left, less negative = closer to items, e.g., -5px, -10px, -15px)
 
 /* Tree Line Styling */
 $tree-line-thickness: 1px;  // Thickness of tree connector lines (try 1px for thin, 2px for default, 3px for thick)
@@ -167,13 +211,32 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   @return col-start($cols...) + $target * 0.5;
 }
 
+// Absolutely-positioned children for container sub-header rows.
+// Works like title-bar-children but sized for the smaller 10px font.
+@mixin subheader-children {
+  > .subheader-col {
+    position: absolute;
+    top: 1px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: 0;
+    width: auto;
+    transform: translateX(-50%);  // centered; override per-child for left-anchored cols
+  }
+  > .subheader-name {
+    transform: none;  // left-anchored
+  }
+}
+
 // Shared boilerplate for absolutely-positioned labels in category header (title bar) rows.
 // Include once per title section instead of repeating the 9-line block everywhere.
 @mixin title-bar-children {
   > * {
     position: absolute !important;
     top: 0;
-    height: 28.5px;
+    height: 24px;
     display: flex !important;
     align-items: center;
     padding: 0 !important;
@@ -184,14 +247,13 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 .gear-tab,
-
 .combat-tab {
   position: relative !important;
   display: block !important;
   height: auto !important;
   overflow: visible !important;
-  margin-top: 25px; /* gap below hpac image — hpac already in normal flow above this section */
   margin-left: 51px; /* (800px tab - $content-width) / 2 = 51px to center */
+  margin-right: 51px; /* mirror left margin so right border art is not covered */
   
   /* Match scrollbar styling from gear tab */
   scrollbar-width: thin;
@@ -215,6 +277,9 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
   
 }
+
+.gear-tab { margin-top: 0px; }
+.combat-tab { margin-top: 15px; }
 
 .combat-tab {
   /* Push weapons section down below the encumbrance bar */
@@ -253,7 +318,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .osp.sheet.actor .item-category-title {
   background: #000;
   border-bottom: none;
-  padding: 0 $item-padding-x;
+  padding: 2px $item-padding-x 0 $item-padding-x;
   margin-top: 0px;
   font-family: $font-cooper !important;
   font-size: $font-category-title !important;
@@ -317,6 +382,51 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   background-color: rgba(180, 0, 0, 0.25);
 }
 
+// Gear tab up/down sort controls
+.gear-tab .item-entry {
+  position: relative;
+}
+
+.item-sort-controls {
+  position: absolute;
+  left: -20px;
+  top: calc(#{$item-row-height} / 2 - 11px);
+  width: 16px;
+  height: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 12;
+  pointer-events: auto;
+}
+
+.gear-tab .item-entry:hover > .item-sort-controls,
+.item-sort-controls:hover {
+  opacity: 0.6;
+}
+
+.item-sort-up,
+.item-sort-down {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 10px;
+  cursor: pointer;
+  color: #333;
+  font-size: 11px;
+  line-height: 1;
+
+  &:hover {
+    color: #000;
+    opacity: 1 !important;
+  }
+}
+
 .combat-tab .item-name {
   text-align: left;
   justify-content: flex-start;
@@ -329,6 +439,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .osp.sheet.actor .combat-tab .item-category-title.weapons-title {
   grid-template-columns: $combat-weapons-col-roll-icon $combat-weapons-col-item-image $combat-weapons-col-name $combat-weapons-col-damage $combat-weapons-col-dt $combat-weapons-col-sz $combat-weapons-col-sf $combat-weapons-col-rof $combat-weapons-col-rng $combat-weapons-col-weight $combat-weapons-col-controls;
   width: $content-width;
+  padding-top: 4px;
 
   @include title-bar-children;
 
@@ -358,6 +469,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Combat Tab – Armor title
 .osp.sheet.actor .combat-tab .item-category-title.armor-title {
   width: $content-width;
+  padding-top: 4px;
 
   @include title-bar-children;
   // child 1: item-image placeholder (empty)
@@ -444,7 +556,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Positions computed from container row column widths so labels align with data cells.
 .osp.sheet.actor .gear-scrollable-content .item-category-title.containers-title {
   width: $content-width;
-  height: 28.5px;
+  height: 24px;
   position: sticky;
   top: 0;
   z-index: 9;
@@ -533,6 +645,9 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .capacity-bar-cell {
   padding: 0 !important;  // Remove padding to use full cell width
   justify-self: center;  // Center the capacity bar within its grid column
+  width: $gear-containers-col-capacity;
+  min-width: $gear-containers-col-capacity;
+  max-width: $gear-containers-col-capacity;
 }
 
 .capacity-bar-background {
@@ -635,6 +750,11 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   opacity: 0.5;
 }
 
+// Unequipped weapon rows on the combat tab are dimmed
+.combat-tab .item-unequipped-row {
+  opacity: 0.55;
+}
+
 .item-control.item-lash-toggle {
   opacity: 0.3;
   border: none; // Remove any border
@@ -662,8 +782,8 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   padding: 0;
 }
 
-// Alternating row shading for items
-.item-entry:nth-child(odd) {
+// Alternating row shading for combat tab only
+.combat-tab .item-entry:nth-child(odd) {
   background: rgba(0, 0, 0, 0.03);
   border-radius: 3px;
 }
@@ -682,21 +802,23 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   max-width: none;
 }
 
-.item-entry:nth-child(even) {
+.combat-tab .item-entry:nth-child(even) {
   background: #b5ddb4; /* Solid background to obscure combat stats */
   border-radius: 3px;
 }
 
 // Hover effect for all item rows - highlight only the direct header child
-.item-entry:hover > .item-header {
+// Only highlight the primary row header, never the stored-item divs via parent hover
+.item-entry:hover > .item-header:not(.lashed-stored-item) {
   background: rgba(44, 24, 16, 0.2) !important;
   width: $content-width;
   box-sizing: border-box;
 }
 
 // Remove container highlight when hovering over nested items
-.item-entry:has(.contained-items-list:hover) > .item-header,
-.item-entry:has(.lashed-items-list:hover) > .item-header {
+.item-entry:has(.contained-items-list:hover) > .item-header:not(.lashed-stored-item),
+.item-entry:has(.lashed-items-list:hover) > .item-header:not(.lashed-stored-item),
+.item-entry:has(.lashed-stored-item:hover) > .item-header:not(.lashed-stored-item) {
   background: transparent !important;
 }
 
@@ -852,6 +974,11 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   background: none;
   text-align: center;
   font-size: 0.9em;
+
+  &[readonly] {
+    cursor: default;
+    pointer-events: none;
+  }
 }
 
 .item-summary {
@@ -884,49 +1011,25 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 /* Encumbrance Section */
-// Encumbrance bar at top of Gear tab - styled to match XP bar, sticky position
+// Encumbrance bar at top of Gear tab - sits above the scroll container, never scrolls
 .encumbrance-bar-wrapper {
   width: $content-width;
-  margin-bottom: 0px; /* Reset to 0 - was causing scrollbar cutoff */
   margin-top: 15px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: $color-parchment; /* Match tab background so it doesn't show content behind */
-  padding-bottom: 11px; /* 11px space before scrollable content */
-  flex-shrink: 0; /* Don't shrink when in flex container */
+  margin-left: 51px; /* Match gear-tab/combat-tab left margin */
+  margin-bottom: 0;
+  padding-bottom: 11px;
 }
 
-// Scrollable content area below encumbrance bar
+// Scrollable content area — this div is now the actual scroll container
 .gear-scrollable-content {
-  flex: 1;
+  position: relative;
+  height: 753px; /* 816px tab - 46px encumbrance bar - 25px gear-tab margin-top */
   overflow-y: auto;
-  overflow-x: hidden;
-  position: relative; /* Establish positioning context */
-  margin-right: 40px; /* Compensate for scrollbar width to prevent cutoff */
-
-  /* Custom scrollbar styling - very thin */
-  scrollbar-width: thin; /* Firefox - thin scrollbar */
-  scrollbar-color: rgba(0, 0, 0, 0.4) transparent; /* Firefox - thumb and track colors */
-  
-  /* Webkit browsers (Chrome, Safari, Edge) */
-  &::-webkit-scrollbar {
-    width: 3px; /* Very thin scrollbar width */
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: transparent; /* Transparent track */
-    margin-top: 0; /* Start scrollbar track at the top of container */
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.4); /* Semi-transparent dark thumb */
-    border-radius: 2px;
-  }
-  
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.6); /* Slightly darker on hover */
-  }
+  margin-left: -51px;   /* extend left into gear-tab margin so drag handles are not clipped */
+  padding-left: 51px;   /* push item content back to original position — no visual shift */
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+  padding-bottom: 20px;
 }
 
 /* Border mask layer - hides item-category borders as they scroll under title bar */
@@ -1414,7 +1517,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   position: relative;
 }
 
-.container-toggle {
+.belt-row-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1422,7 +1525,24 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   height: 20px;
   cursor: pointer;
   margin-right: 4px;
-  
+  i { transition: transform 0.2s ease; }
+}
+
+.belt-slot-count {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.container-toggle,
+.sling-storage-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-right: 4px;
+
   i {
     transition: transform 0.2s ease;
   }
@@ -1442,25 +1562,27 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   width: calc(100% - #{$nested-indent});
   max-width: 638px;
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.1);
+  position: relative;
+  height: 10px;       // explicit height so absolute children have a frame
+  padding: 3px 0 1px 0;
   border-radius: 2px 2px 0 0;
-  padding: 3px 0;
+  background: rgba(0, 0, 0, 0.07);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+  @include subheader-children;
+
+  // Default positions — L1 inside containers/backpacks
+  > :nth-child(1) { left: $sh-img; }
+  > :nth-child(2) { left: $sh-name; }
+  > :nth-child(3) { left: $sh-qty; }
+  > :nth-child(4) { left: $sh-ssize; }
+  > :nth-child(5) { left: $sh-twt; }
+  > :nth-child(6) { left: $sh-wt; }
 
   .subheader-col {
     font-size: $font-nested-header;
-    font-style: italic;
     font-family: "Cooper Std", "Cooper Standard", Georgia, serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: rgba(0, 0, 0, 0.55);
-  }
-
-  .subheader-name {
-    justify-content: flex-start;
   }
 }
 
@@ -1505,9 +1627,8 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     max-width: 638px; /* Parent width (698px) minus indent (60px) */
     box-sizing: border-box;
-    background: rgba(0, 0, 0, 0.02);
     // Override grid template for nested items
-    grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
+    grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
 
   }
   
@@ -1529,23 +1650,46 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
 // Nested items in equipped containers - hide the Qty column
 .container-entry.item[data-equipped="true"] .contained-item .item-header {
-  grid-template-columns: $nested-col-image $nested-col-name $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
+  grid-template-columns: $nested-col-image $nested-col-name $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
 
 }
 
 // Lashed items section
 .lashed-items-section {
-  margin-top: 8px;
+  margin-top: 4px;
   margin-left: $nested-indent;
   width: calc(100% - #{$nested-indent}); /* Constrain width to account for left margin */
-  border-top: 1px solid #000;
-  padding-top: 4px;
+  padding-top: 2px;
   margin-right: 1px;
+
+  // Belt direct subheader — 7 cols (merged 68px toggle+img, + tWT between sSize and WT)
+  > .container-items-subheader {
+    margin-left: 0;
+    width: 100%;
+    > :nth-child(1) { left: $sh-belt-img; }
+    > :nth-child(2) { left: $sh-belt-name; }
+    > :nth-child(3) { left: $sh-belt-cap; }
+    > :nth-child(4) { left: $sh-belt-ssize; }
+    > :nth-child(5) { left: $sh-belt-twt; }
+    > :nth-child(6) { left: $sh-belt-wt; }
+  }
+
+  // Belt L2 subheader — starts at 68px (image column left edge); child lefts are offset by -68px
+  .lashed-item .container-items-subheader {
+    margin-left: 68px;
+    width: calc(100% - 68px);
+    box-sizing: border-box;
+    > :nth-child(1) { left: $sh-l2-img - 68px; }
+    > :nth-child(2) { left: $sh-l2-name - 68px; }
+    > :nth-child(3) { left: $sh-l2-qty - 68px; }
+    > :nth-child(4) { left: $sh-l2-ssize - 68px; }
+    > :nth-child(5) { left: $sh-l2-twt - 68px; }
+    > :nth-child(6) { left: $sh-l2-wt - 68px; }
+  }
 }
 
 .lashed-header {
   padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
   margin-bottom: 4px;
   display: flex;
@@ -1574,7 +1718,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 .lashed-title {
-  font-size: $font-nested-header;
+  font-size: 16px;
   color: #4B4B4B;
 }
 
@@ -1584,28 +1728,95 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   padding: 0;
 }
 
+// Lashed items inside a container (e.g. backpack) get an extra indent level
+.container-contents .lashed-items-list {
+  padding-left: $nested-indent;
+
+  // Available width = 638px (L1) - 60px (extra indent) = 578px
+  // No toggle column — 6 cells: image / name / qty / sSize / weight / controls
+  .lashed-item .item-header {
+    max-width: calc(638px - #{$nested-indent});
+    grid-template-columns: $nested-col-image calc(#{$nested-col-name} - #{$nested-indent}) $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
+  }
+}
+
+.attachment-toggle,
+.attachment-toggle-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  min-width: 18px;
+  height: 20px;
+  cursor: pointer;
+
+  i { transition: transform 0.15s ease; }
+}
+
+.attachment-toggle-placeholder {
+  cursor: default;
+  visibility: hidden;
+}
+
 .lashed-item {
   padding-left: $nested-padding;
   position: relative;
-  
-  .item-header {
+
+  // Vertical trunk line
+  &::before {
+    content: '';
+    position: absolute;
+    left: $tree-line-position;
+    top: -1px;
+    bottom: -1px;
+    width: $tree-line-thickness;
+    background: $tree-line-color;
+  }
+
+  // Horizontal branch — fixed vertical offset so expanded rows (stored weapon below header)
+  // don't shift the branch away from the header caret.
+  &::after {
+    content: '';
+    position: absolute;
+    left: $tree-line-position;
+    top: calc(#{$item-row-height} / 2);
+    width: calc(-5px + #{abs($tree-line-position)});
+    height: $tree-line-thickness;
+    background: $tree-line-color;
+  }
+
+  // First attachment: extend trunk up through the subheader to close the gap to the parent Belt
+  &:first-child::before {
+    top: calc(-1px - #{$font-nested-header} - 6px);
+  }
+
+  // Sling context has a .lashed-header toggle above the list instead of a subheader bar;
+  // don't extend the trunk into that header text.
+  .lashed-items-section:has(.lashed-header) &:first-child::before {
+    top: -1px;
+  }
+
+  // Last attachment: trunk stops at the header row's vertical center
+  &:last-child::before {
+    bottom: calc(100% - #{$item-row-height} / 2);
+  }
+
+  .item-header:not(.lashed-stored-item) {
     padding-left: 0px;
     width: 100%;
     max-width: 638px; /* Parent width (698px) minus indent (60px) */
     box-sizing: border-box;
-    background: rgba(139, 69, 19, 0.05);
-    grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
-    
-    // item-controls width handled by grid-template-columns
+    // name +52px / qty -70px shifts Qty center from 263px to 298px to align with L2 Qty column
+    grid-template-columns: 18px $nested-col-image ($nested-col-name + 52px) ($nested-col-qty - 70px) $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
   }
-  
+
   .item-name {
     font-size: $font-nested-item;
     display: flex;
     align-items: center;
     justify-content: flex-start;
   }
-  
+
   .field-short {
     font-size: $font-nested-item;
     display: flex;
@@ -1613,6 +1824,101 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     justify-content: center;
     justify-self: center;
   }
+}
+
+// Lashed items of a container (Shield, etc.) — 6 content children, 7-column grid.
+// The lashed-items-section has margin-left: $nested-indent (60px), so the grid is 60px narrower
+// than contained items (572px vs 632px). Name is reduced by 60px so qty/controls align on screen.
+// Col 5 (tWT) is empty — WT and controls are explicitly placed in cols 6 and 7.
+.lashed-items-section:has(.lashed-header) .lashed-item .item-header:not(.lashed-stored-item) {
+  grid-template-columns: $nested-col-image ($nested-col-name - $nested-indent) $nested-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+  > :nth-child(5) { grid-column: 6; }  // WT → WT column (skips empty tWT col 5)
+  > :nth-child(6) { grid-column: 7; }  // controls → controls column
+}
+
+// Slot cost label inside belt attachment name (e.g. "Scabbard, Medium (2)")
+.slot-cost {
+  font-size: 11px;
+  font-weight: normal;
+  opacity: 0.45;
+  margin-left: 4px;
+}
+
+// Weapon/item row nested inside a belt attachment or sling
+// Indent = toggle(18) + image(50) = 68px to align the stored item's image under the attachment's name
+// Available width = 638px (L1) − 68px indent = 570px → uses $l2-col-* variables
+.lashed-stored-item {
+  position: relative;
+  padding-left: 68px;
+  width: 100%;
+  max-width: 570px;
+  box-sizing: border-box;
+  min-height: 38px;  // 30px image + 4px top + 4px bottom (border-box)
+
+  // Vertical tree branch line — L-shape, always terminates at midpoint
+  &::before {
+    content: '';
+    position: absolute;
+    left: 43px;  // center of attachment image column: toggle(18) + half-image(25)
+    top: 0;
+    bottom: 50%;
+    width: $tree-line-thickness;
+    background: $tree-line-color;
+    pointer-events: none;
+  }
+
+  // Horizontal connector from vertical line to stored item content
+  &::after {
+    content: '';
+    position: absolute;
+    left: 43px;
+    top: 50%;
+    width: 25px;  // 68px content start − 43px line position
+    height: $tree-line-thickness;
+    background: $tree-line-color;
+    pointer-events: none;
+  }
+
+  > * {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    width: auto;
+    min-width: 0;  // overrides global .field-short { width: 100% }
+  }
+
+  > :nth-child(1) { left: 68px; width: $l2-col-image; }
+  > :nth-child(2) { left: $sh-l2-name; width: $l2-col-name; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  > :nth-child(3) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
+  > :nth-child(4) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
+  > :nth-child(5) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
+  > :nth-child(6) { left: $sh-l2-wt;    transform: translateX(-50%); justify-content: center; }
+  > :nth-child(7) { right: -62px; left: auto; width: $l2-col-controls; justify-content: flex-end; }
+
+  .item-image {
+    height: 30px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .item-name.stored-weapon-name { font-size: $font-nested-item; }
+  .field-short { font-size: $font-nested-item; }
+
+  &.weapon-drawn {
+    .item-image { opacity: 0.5; }
+    .item-name.stored-weapon-name { font-style: italic; opacity: 0.6; }
+  }
+}
+
+// Sling section header row in the clothing/gear list
+.sling-section-header .item-header.section-subheader {
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  padding-top: 4px;
 }
 
 /* Responsive adjustments */

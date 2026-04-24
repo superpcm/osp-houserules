@@ -1806,8 +1806,9 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     max-width: 638px; /* Parent width (698px) minus indent (60px) */
     box-sizing: border-box;
-    // name +52px / qty -70px shifts Qty center from 263px to 298px to align with L2 Qty column
-    grid-template-columns: 18px $nested-col-image ($nested-col-name + 52px) ($nested-col-qty - 70px) $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+    // capacity col = $gear-containers-col-capacity (150px) to match top-level Belt bar width;
+    // name reduced by 70px (190→120px) to keep total = 632px
+    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px) $gear-containers-col-capacity $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
   }
 
   .item-name {
@@ -1911,6 +1912,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     .item-image { opacity: 0.5; }
     .item-name.stored-weapon-name { font-style: italic; opacity: 0.6; }
   }
+}
+
+// Sling lashed-stored-item: sits directly inside li.container-entry (no .lashed-items-section parent),
+// so it lacks the $nested-indent margin that belt-attachment rows inherit. Add it manually.
+li.container-entry > .lashed-stored-item {
+  margin-left: $nested-indent;
 }
 
 // Sling section header row in the clothing/gear list

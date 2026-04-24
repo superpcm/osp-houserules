@@ -349,12 +349,14 @@ export class OspActorSheetCharacter extends ActorSheet {
       const storedWeapon = allWeapons.find(w => w.system.containerId === sling.id) ?? null;
       if (storedWeapon) {
         const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
+        storedWeapon.unitWeight = Math.round(swt * 10) / 10;
         storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
       }
       sling.storedWeapon = storedWeapon;
       const storedItem = (!storedWeapon && allItems.find(i => i.system.containerId === sling.id)) || null;
       if (storedItem) {
         const sit = parseFloat(storedItem.system.unitWeight || storedItem.system.weight) || 0;
+        storedItem.unitWeight = Math.round(sit * 10) / 10;
         storedItem.displayWeight = Math.round(sit * (storedItem.system.quantity || 1) * 10) / 10;
       }
       sling.storedItem = storedItem;

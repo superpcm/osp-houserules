@@ -1977,6 +1977,7 @@
                   <div class="field-short">{{item.storedWeapon.system.quantity}}</div>
                   <div class="field-short">{{#if item.storedWeapon.system.storedSize}}{{item.storedWeapon.system.storedSize}}{{else}}—{{/if}}</div>
                   <div class="field-short">{{item.storedWeapon.displayWeight}}</div>
+                  <div class="field-short">{{item.storedWeapon.unitWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
                     <a class="item-control item-toggle {{#unless item.storedWeapon.system.equipped}}item-unequipped{{/unless}}" title="{{#if item.storedWeapon.system.equipped}}Sheathe{{else}}Draw{{/if}} weapon" data-item-id="{{item.storedWeapon.id}}">
@@ -1998,6 +1999,7 @@
                   <div class="field-short">{{item.storedItem.system.quantity}}</div>
                   <div class="field-short">{{#if item.storedItem.system.storedSize}}{{item.storedItem.system.storedSize}}{{else}}—{{/if}}</div>
                   <div class="field-short">{{item.storedItem.displayWeight}}</div>
+                  <div class="field-short">{{item.storedItem.unitWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
                     <a class="item-control item-edit" title="Edit Item" data-item-id="{{item.storedItem.id}}"><i class="fas fa-eye"></i></a>

@@ -10,6 +10,11 @@ import { calculateMaxHP } from '../../../config/classes.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
+const SLUNG_MAX = 3;
+const isSlungable = (tags) => tags.includes('slungable') || tags.includes('sling')
+  || (tags.includes('missile') && tags.includes('two-handed'));
+const slungSlots = (item) => item.system.slungSlots ?? 1;
+
 export class OspActorSheetCharacter extends ActorSheet {
   // Skill configuration: defines which skills are available for each class and race
   static SKILL_CONFIG = {
@@ -340,38 +345,52 @@ export class OspActorSheetCharacter extends ActorSheet {
       return item;
     });
     
-    // Shoulder/back slings (Baldric, Axe Sling, Waterskin Sling)
-    const allSlings = allContainers.filter(c => (c.system.tags || []).includes('sling'));
-    context.slings = allSlings.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(sling => {
-      const wt = parseFloat(sling.system.unitWeight || sling.system.weight) || 0;
-      sling.displayWeight = Math.round(wt * (sling.system.quantity || 1) * 10) / 10;
-      // Always (re)assign so stale values from prior renders are cleared
-      const storedWeapon = allWeapons.find(w => w.system.containerId === sling.id) ?? null;
-      if (storedWeapon) {
-        const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
-        storedWeapon.unitWeight = Math.round(swt * 10) / 10;
-        storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
+    // Slung Items — shoulder-carried items tagged 'slungable' that are equipped
+    const allSlungable = this.actor.items.filter(i =>
+      isSlungable(i.system.tags || []) && i.system.equipped
+    );
+    const slungItems = allSlungable.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(item => {
+      const wt = parseFloat(item.system.unitWeight || item.system.weight) || 0;
+      item.displayWeight = Math.round(wt * (item.system.quantity || 1) * 10) / 10;
+      item.unitWeight = Math.round(wt * 10) / 10;
+      if ((item.system.tags || []).includes('sling')) {
+        const storedWeapon = allWeapons.find(w => w.system.containerId === item.id) ?? null;
+        if (storedWeapon) {
+          const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
+          storedWeapon.unitWeight = Math.round(swt * 10) / 10;
+          storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
+        }
+        item.storedWeapon = storedWeapon;
+        const storedIt = (!storedWeapon && allItems.find(i2 => i2.system.containerId === item.id)) || null;
+        if (storedIt) {
+          const sit = parseFloat(storedIt.system.unitWeight || storedIt.system.weight) || 0;
+          storedIt.unitWeight = Math.round(sit * 10) / 10;
+          storedIt.displayWeight = Math.round(sit * (storedIt.system.quantity || 1) * 10) / 10;
+        }
+        item.storedItem = storedIt;
+        item.hasStoredContent = !!(item.storedWeapon || item.storedItem);
+        item.slingUsedCapacity = item.hasStoredContent ? 1 : 0;
+        item.slingCapacityPercentage = item.hasStoredContent ? 100 : 0;
+        item.storageCollapsed = this.actor.getFlag('osp-houserules', `sling-${item.id}-collapsed`) ?? false;
       }
-      sling.storedWeapon = storedWeapon;
-      const storedItem = (!storedWeapon && allItems.find(i => i.system.containerId === sling.id)) || null;
-      if (storedItem) {
-        const sit = parseFloat(storedItem.system.unitWeight || storedItem.system.weight) || 0;
-        storedItem.unitWeight = Math.round(sit * 10) / 10;
-        storedItem.displayWeight = Math.round(sit * (storedItem.system.quantity || 1) * 10) / 10;
-      }
-      sling.storedItem = storedItem;
-      sling.hasStoredContent = !!(sling.storedWeapon || sling.storedItem);
-      sling.slingUsedCapacity = sling.hasStoredContent ? 1 : 0;
-      sling.slingCapacityPercentage = sling.hasStoredContent ? 100 : 0;
-      sling.storageCollapsed = this.actor.getFlag('osp-houserules', `sling-${sling.id}-collapsed`) ?? false;
-      return sling;
+      return item;
     });
+    const slungItemIds = new Set(slungItems.map(i => i.id));
+    const slungSlotsUsed = slungItems.reduce((sum, i) => sum + slungSlots(i), 0);
+    context.slungItems = slungItems;
+    context.slungUsed = slungSlotsUsed;
+    context.slungMax = SLUNG_MAX;
+    context.slungCapacityPercentage = Math.round((slungSlotsUsed / SLUNG_MAX) * 100);
+    context.slungTotalWeight = Math.round(
+      slungItems.reduce((sum, i) => sum + (i.displayWeight || 0), 0) * 10
+    ) / 10;
+    context.slungCollapsed = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? false;
 
-    // Only show TOP-LEVEL containers (not nested in other containers, not slings, not belt attachments)
+    // Only show TOP-LEVEL containers (not nested, not lashed, not actively slung)
     const topLevelContainers = allContainers.filter(container =>
       !container.system?.containerId &&
       !container.system?.lashed &&
-      !(container.system?.tags || []).includes('sling')
+      !slungItemIds.has(container.id)
     );
     
     context.containers = topLevelContainers.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(container => {
@@ -532,14 +551,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Tag each top-level item with its section so the unified template loop can branch
     const unequippedShields = context.allShields.filter(s => !s.system.equipped && !s.system.lashed);
     context.clothing.forEach(i => { i._gearSection = 'clothing'; });
-    context.slings.forEach(i => { i._gearSection = 'sling'; });
     context.unequippedWeapons.forEach(i => { i._gearSection = 'weapon'; });
     unequippedShields.forEach(i => { i._gearSection = 'shield'; });
     context.items.forEach(i => { i._gearSection = 'item'; });
     context.containers.forEach(i => { i._gearSection = 'container'; });
     context.topLevelGearItems = [
       ...context.clothing,
-      ...context.slings,
       ...context.unequippedWeapons,
       ...unequippedShields,
       ...context.items,
@@ -692,6 +709,63 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.attachment-toggle').click(this._onAttachmentToggle.bind(this));
     html.find('.belt-row-toggle').click(this._onBeltRowToggle.bind(this));
     html.find('.sling-storage-toggle').click(this._onSlingStorageToggle.bind(this));
+    html.find('.slung-section-toggle').click(async () => {
+      const current = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? false;
+      await this.actor.setFlag('osp-houserules', 'slung-collapsed', !current);
+    });
+
+    // Slung Items section — enable as a drop target (dragover must preventDefault for drop to fire)
+    const slungEntry = html.find('.slung-section-entry')[0];
+    if (slungEntry) {
+      let dragCounter = 0;
+      slungEntry.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        dragCounter++;
+        slungEntry.classList.add('drag-over');
+      });
+      slungEntry.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dragCounter--;
+        if (dragCounter === 0) slungEntry.classList.remove('drag-over');
+      });
+      slungEntry.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      });
+      slungEntry.addEventListener('drop', (e) => {
+        dragCounter = 0;
+        slungEntry.classList.remove('drag-over');
+        // let the event bubble to the sheet's _onDrop handler
+      });
+    }
+
+    // Add drag-over highlight for individual slung items (containers like Baldric)
+    html.find('.slung-item[data-item-id]').each((i, el) => {
+      const itemId = el.dataset.itemId;
+      const item = this.actor.items.get(itemId);
+      if (!item || item.type !== 'container') return;
+      let dragCounter = 0;
+      el.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        dragCounter++;
+        el.classList.add('drag-over');
+      });
+      el.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dragCounter--;
+        if (dragCounter === 0) el.classList.remove('drag-over');
+      });
+      el.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        e.stopPropagation(); // prevent slung-section-entry dragover from also firing
+      });
+      el.addEventListener('drop', (e) => {
+        dragCounter = 0;
+        el.classList.remove('drag-over');
+        // bubble to sheet _onDrop
+      });
+    });
 
     // Make belt-attachment containers (slotCost > 0) draggable so they can be dropped onto the belt
     html.find('.container-entry[data-item-id]').each((i, el) => {
@@ -1630,7 +1704,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     const itemData = item.toObject();
 
     // Check if dropping onto a container or a contained item
-    let dropTarget = event.target.closest('.item-entry[data-item-id]');
+    // Also match .slung-item rows (containers in the Slung Items virtual section)
+    let dropTarget = event.target.closest('.item-entry[data-item-id]')
+                  || event.target.closest('.slung-item[data-item-id]');
     let targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
     
     // If we dropped on a contained item (not a container or clothing with capacity), find its parent container
@@ -1662,6 +1738,38 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // Check if this is a reordering operation or a new item
     const isReordering = item.actor && item.actor.id === this.actor.id;
+
+    // Drop onto the Slung Items section → equip the item (= sling it)
+    // But skip if dropping onto a specific slung container (e.g. Baldric) — let normal container logic handle it
+    const droppedOnSlungItem = event.target.closest('.slung-item');
+    if (event.target.closest('.slung-section-entry') && !droppedOnSlungItem) {
+      const tags = itemData.system?.tags || [];
+      if (!isSlungable(tags)) {
+        ui.notifications.warn(`${itemData.name} cannot be slung.`);
+        return false;
+      }
+      const currentSlung = this.actor.items.filter(i =>
+        isSlungable(i.system.tags || []) && i.system.equipped && i.id !== item.id
+      );
+      const slotsUsed = currentSlung.reduce((sum, i) => sum + slungSlots(i), 0);
+      const slotsNeeded = itemData.system?.slungSlots ?? 1;
+      if (slotsUsed + slotsNeeded > SLUNG_MAX) {
+        ui.notifications.warn(`Not enough slung capacity (need ${slotsNeeded}, have ${SLUNG_MAX - slotsUsed}).`);
+        return false;
+      }
+      if (isReordering) {
+        return item.update({ 'system.equipped': true, 'system.containerId': null, 'system.lashed': false });
+      }
+      itemData.system.equipped = true;
+      itemData.system.containerId = null;
+      itemData.system.lashed = false;
+      if (item.actor && item.actor.id !== this.actor.id) {
+        return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
+          this.actor.createEmbeddedDocuments('Item', [itemData])
+        );
+      }
+      return this.actor.createEmbeddedDocuments('Item', [itemData]);
+    }
 
     // Swords must always be stored in a scabbard — never dropped loose
     // (Daggers are excluded: they keep lash option and can go freely)
@@ -1716,7 +1824,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     }
 
-    // Sling containers (Baldric, Axe Sling, Waterskin Sling) — auto-equip, never stored or lashed
+    // Sling containers (Baldric, Axe Sling, Skin Sling) — auto-equip, never stored or lashed
     if (itemData.type === 'container' && (itemData.system?.tags || []).includes('sling')) {
       if (targetContainer && targetContainer.type === 'container') {
         ui.notifications.error(`${itemData.name} cannot be stored in a container.`);

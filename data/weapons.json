@@ -177,7 +177,8 @@
       "tags": [
         "missile",
         "reload",
-        "two-handed"
+        "two-handed",
+        "slungable"
       ],
       "melee": false,
       "missile": true,
@@ -185,7 +186,8 @@
         "short": 80,
         "medium": 160,
         "long": 240
-      }
+      },
+      "slungSlots": 2
     }
   },
   {
@@ -212,7 +214,8 @@
       "tags": [
         "missile",
         "reload",
-        "two-handed"
+        "two-handed",
+        "slungable"
       ],
       "melee": false,
       "missile": true,
@@ -564,7 +567,8 @@
       "bonus": 0,
       "tags": [
         "missile",
-        "two-handed"
+        "two-handed",
+        "slungable"
       ],
       "melee": false,
       "missile": true,
@@ -743,7 +747,8 @@
       "bonus": 0,
       "tags": [
         "missile",
-        "two-handed"
+        "two-handed",
+        "slungable"
       ],
       "melee": false,
       "missile": true,

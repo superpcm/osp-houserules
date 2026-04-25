@@ -393,7 +393,7 @@
       "equipped": false,
       "lashable": false,
       "containerId": null,
-      "tags": ["sling"],
+      "tags": ["sling", "slungable"],
       "capacity": 5,
       "lashSlots": 0,
       "allowedTypes": ["arrows"],
@@ -573,7 +573,8 @@
       "lashable": false,
       "tags": [
         "weapon-storage",
-        "sling"
+        "sling",
+        "slungable"
       ],
       "capacity": 8,
       "containerSize": "small",
@@ -761,7 +762,8 @@
       "lashable": false,
       "tags": [
         "weapon-storage",
-        "sling"
+        "sling",
+        "slungable"
       ],
       "capacity": 8,
       "containerSize": "small",
@@ -856,7 +858,7 @@
     }
   },
   {
-    "name": "Waterskin Sling",
+    "name": "Skin Sling",
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/waterskin-sling_thumb.webp",
     "system": {
@@ -867,7 +869,7 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "tags": ["sling"],
+      "tags": ["sling", "slungable"],
       "capacity": 4,
       "containerSize": "small",
       "hideCapacity": true,

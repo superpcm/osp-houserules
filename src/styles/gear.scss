@@ -830,7 +830,9 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 // Drag-over highlight for containers
-.container-entry.drag-over {
+.container-entry.drag-over,
+.slung-section-entry.drag-over,
+.slung-item.drag-over {
   border: 5px solid #00ff00 !important;
   border-radius: 5px;
 }
@@ -1914,10 +1916,58 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
-// Sling lashed-stored-item: sits directly inside li.container-entry (no .lashed-items-section parent),
-// so it lacks the $nested-indent margin that belt-attachment rows inherit. Add it manually.
-li.container-entry > .lashed-stored-item {
+// Slung Items — virtual section at character level
+.slung-section-entry {
+  list-style: none;
+}
+
+// Section header — same grid as top-level container rows
+.slung-section-header {
+  grid-template-columns: $col-caret $gear-containers-col-image $gear-containers-col-name $gear-containers-col-capacity $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $gear-containers-col-controls !important;
+  max-width: 638px;
+}
+
+// Placeholder image slot in section header (no actual image)
+.slung-header-image {
+  background: none !important;
+}
+
+// Indented list of slung items (same indent as .lashed-items-section)
+.slung-items-list {
   margin-left: $nested-indent;
+  width: calc(100% - #{$nested-indent});
+}
+
+// Each slung item row
+.slung-item {
+  position: relative;
+
+  > .item-header {
+    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px) $gear-containers-col-capacity $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+    max-width: 638px;
+    box-sizing: border-box;
+  }
+
+  .item-name { font-size: $font-nested-item; }
+  .field-short { font-size: $font-nested-item; display: flex; align-items: center; justify-content: center; justify-self: center; }
+
+  // lashed-stored-item: no extra margin — branch left:43px aligns with icon center (18px caret + 25px half-image)
+  > .lashed-stored-item {
+    margin-left: 0;
+  }
+}
+
+// Slung-items-list subheader — absolute column positions matching slung-item grid
+.slung-items-list .container-items-subheader {
+  margin-left: 68px;
+  width: calc(100% - 68px);
+  box-sizing: border-box;
+  > :nth-child(1) { left: $sh-l2-img - 68px; }
+  > :nth-child(2) { left: $sh-l2-name - 68px; }
+  > :nth-child(3) { left: $nested-col-image + $nested-col-name + $gear-containers-col-capacity / 2 - 68px; } // capacity bar center: 50+138+75-68=195px
+  > :nth-child(4) { left: $sh-l2-ssize - 68px; }
+  > :nth-child(5) { left: $sh-l2-twt - 68px; }
+  > :nth-child(6) { left: $sh-l2-wt - 68px; }
 }
 
 // Sling section header row in the clothing/gear list

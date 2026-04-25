@@ -1674,6 +1674,125 @@
           {{!-- Gear & Treasure Section --}}
           <div class="item-category">
             <ol class="item-list">
+
+              {{!-- SLUNG ITEMS — virtual section, character-level, capacity 3 --}}
+              <li class="item-entry slung-section-entry">
+                <div class="item-sort-controls"></div>
+                <div class="item-header container-header flexrow slung-section-header">
+                  <a class="slung-section-toggle" title="{{#if slungCollapsed}}Expand{{else}}Collapse{{/if}}">
+                    <i class="fas {{#if slungCollapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
+                  </a>
+                  <div class="item-image slung-header-image"></div>
+                  <h4 class="item-name">Slung Items</h4>
+                  <div class="field-short capacity-bar-cell">
+                    <div class="capacity-bar-background" style="--capacity-progress: {{slungCapacityPercentage}}%;">
+                      <div class="capacity-bar-fill"></div>
+                      <span class="capacity-value">{{slungUsed}}/{{slungMax}}</span>
+                    </div>
+                  </div>
+                  <div class="field-short">—</div>
+                  <div class="field-short">{{slungTotalWeight}}</div>
+                  <div class="field-short"></div>
+                  <div class="item-controls"></div>
+                </div>
+                {{#unless slungCollapsed}}
+                <div class="slung-items-list">
+                  <div class="container-items-subheader slung-subheader">
+                    <div class="subheader-col subheader-img"></div>
+                    <div class="subheader-col subheader-name">Item</div>
+                    <div class="subheader-col subheader-qty">Capacity</div>
+                    <div class="subheader-col subheader-size">sSize</div>
+                    <div class="subheader-col subheader-twt">tWT</div>
+                    <div class="subheader-col subheader-wt">WT</div>
+                    <div class="subheader-col subheader-controls"></div>
+                  </div>
+                  {{#each slungItems as |item|}}
+                  <div class="slung-item" data-item-id="{{item.id}}">
+                    <div class="item-header flexrow">
+                      {{#if item.hasStoredContent}}
+                      <a class="sling-storage-toggle" data-item-id="{{item.id}}" title="{{#if item.storageCollapsed}}Expand{{else}}Collapse{{/if}}">
+                        <i class="fas {{#if item.storageCollapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
+                      </a>
+                      {{else}}
+                      <span class="attachment-toggle-placeholder"></span>
+                      {{/if}}
+                      <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                      <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+                      {{#if item.hasStoredContent}}
+                      <div class="field-short capacity-bar-cell">
+                        <div class="capacity-bar-background" style="--capacity-progress: {{item.slingCapacityPercentage}}%;">
+                          <div class="capacity-bar-fill"></div>
+                          <span class="capacity-value">{{item.slingUsedCapacity}}/1</span>
+                        </div>
+                      </div>
+                      {{else}}
+                      <div class="field-short">{{item.system.quantity}}</div>
+                      {{/if}}
+                      <div class="field-short">{{#if item.system.storedSize}}{{item.system.storedSize}}{{else}}—{{/if}}</div>
+                      <div class="field-short">{{item.displayWeight}}</div>
+                      <div class="field-short">{{item.unitWeight}}</div>
+                      <div class="item-controls">
+                        {{#if @root.owner}}
+                        <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Unsling" data-item-id="{{item.id}}">
+                          <i class="fas fa-tshirt"></i>
+                        </a>
+                        <a class="item-control item-edit" title="Edit Item"><i class="fas fa-eye"></i></a>
+                        <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
+                        <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.id}}">
+                          <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
+                        </a>
+                        {{/if}}
+                      </div>
+                    </div>
+                    {{#unless item.storageCollapsed}}
+                    {{#if item.storedWeapon}}
+                    <div class="item-header flexrow lashed-stored-item {{#if item.storedWeapon.system.equipped}}weapon-drawn{{/if}}">
+                      <div class="item-image" style="background-image: url('{{item.storedWeapon.img}}');"></div>
+                      <h4 class="item-name stored-weapon-name" title="{{item.storedWeapon.name}}">{{item.storedWeapon.name}}</h4>
+                      <div class="field-short">{{item.storedWeapon.system.quantity}}</div>
+                      <div class="field-short">{{#if item.storedWeapon.system.storedSize}}{{item.storedWeapon.system.storedSize}}{{else}}—{{/if}}</div>
+                      <div class="field-short">{{item.storedWeapon.displayWeight}}</div>
+                      <div class="field-short">{{item.storedWeapon.unitWeight}}</div>
+                      <div class="item-controls">
+                        {{#if @root.owner}}
+                        <a class="item-control item-toggle {{#unless item.storedWeapon.system.equipped}}item-unequipped{{/unless}}" title="{{#if item.storedWeapon.system.equipped}}Sheathe{{else}}Draw{{/if}} weapon" data-item-id="{{item.storedWeapon.id}}">
+                          <i class="fas fa-hand"></i>
+                        </a>
+                        <a class="item-control item-edit" title="Edit Item" data-item-id="{{item.storedWeapon.id}}"><i class="fas fa-eye"></i></a>
+                        <a class="item-control item-delete" title="Delete Item" data-item-id="{{item.storedWeapon.id}}"><i class="fas fa-trash"></i></a>
+                        <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.storedWeapon.id}}">
+                          <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
+                        </a>
+                        {{/if}}
+                      </div>
+                    </div>
+                    {{/if}}
+                    {{#if item.storedItem}}
+                    <div class="item-header flexrow lashed-stored-item">
+                      <div class="item-image" style="background-image: url('{{item.storedItem.img}}'); opacity: 0.8;"></div>
+                      <h4 class="item-name stored-weapon-name" title="{{item.storedItem.name}}">{{item.storedItem.name}}</h4>
+                      <div class="field-short">{{item.storedItem.system.quantity}}</div>
+                      <div class="field-short">{{#if item.storedItem.system.storedSize}}{{item.storedItem.system.storedSize}}{{else}}—{{/if}}</div>
+                      <div class="field-short">{{item.storedItem.displayWeight}}</div>
+                      <div class="field-short">{{item.storedItem.unitWeight}}</div>
+                      <div class="item-controls">
+                        {{#if @root.owner}}
+                        <a class="item-control item-edit" title="Edit Item" data-item-id="{{item.storedItem.id}}"><i class="fas fa-eye"></i></a>
+                        <a class="item-control item-delete" title="Delete Item" data-item-id="{{item.storedItem.id}}"><i class="fas fa-trash"></i></a>
+                        <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.storedItem.id}}">
+                          <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
+                        </a>
+                        {{/if}}
+                      </div>
+                    </div>
+                    {{/if}}
+                    {{/unless}}
+                  </div>
+                  {{/each}}
+                </div>
+                {{/unless}}
+              </li>
+
               {{!-- Unified top-level gear items — sorted globally by sort field --}}
               {{#each topLevelGearItems as |item|}}
               {{!-- CLOTHING --}}
@@ -1934,85 +2053,6 @@
                 </div>
               </li>
               {{!-- SLING --}}
-              {{else if (eq item._gearSection 'sling')}}
-              <li class="item-entry item container-entry" data-item-id="{{item.id}}">
-                <div class="item-sort-controls">
-                  <a class="item-sort-up" title="Move Up"><i class="fas fa-caret-up"></i></a>
-                  <a class="item-sort-down" title="Move Down"><i class="fas fa-caret-down"></i></a>
-                </div>
-                <div class="item-header container-header flexrow">
-                  <a class="sling-storage-toggle" data-item-id="{{item.id}}" title="{{#if item.storageCollapsed}}Expand{{else}}Collapse{{/if}}">
-                    <i class="fas {{#if item.storageCollapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
-                  </a>
-                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
-                  <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-                  <div class="field-short capacity-bar-cell">
-                    <div class="capacity-bar-background" style="--capacity-progress: {{item.slingCapacityPercentage}}%;">
-                      <div class="capacity-bar-fill"></div>
-                      <span class="capacity-value">{{item.slingUsedCapacity}}/1</span>
-                    </div>
-                  </div>
-                  <div class="field-short">{{item.system.storedSize}}</div>
-                  <div class="field-short">{{item.displayWeight}}</div>
-                  <div class="field-short">{{item.displayWeight}}</div>
-                  <div class="item-controls">
-                    {{#if @root.owner}}
-                    <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip" data-item-id="{{item.id}}">
-                      <i class="fas fa-tshirt"></i>
-                    </a>
-                    <a class="item-control item-edit" title="Edit Item"><i class="fas fa-eye"></i></a>
-                    <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-                    <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.id}}">
-                      <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
-                    </a>
-                    {{/if}}
-                  </div>
-                </div>
-                {{!-- Weapon or item stored in sling --}}
-                {{#unless item.storageCollapsed}}
-                {{#if item.storedWeapon}}
-                <div class="item-header flexrow lashed-stored-item {{#if item.storedWeapon.system.equipped}}weapon-drawn{{/if}}">
-                  <div class="item-image" style="background-image: url('{{item.storedWeapon.img}}');"></div>
-                  <h4 class="item-name stored-weapon-name" title="{{item.storedWeapon.name}}">{{item.storedWeapon.name}}</h4>
-                  <div class="field-short">{{item.storedWeapon.system.quantity}}</div>
-                  <div class="field-short">{{#if item.storedWeapon.system.storedSize}}{{item.storedWeapon.system.storedSize}}{{else}}—{{/if}}</div>
-                  <div class="field-short">{{item.storedWeapon.displayWeight}}</div>
-                  <div class="field-short">{{item.storedWeapon.unitWeight}}</div>
-                  <div class="item-controls">
-                    {{#if @root.owner}}
-                    <a class="item-control item-toggle {{#unless item.storedWeapon.system.equipped}}item-unequipped{{/unless}}" title="{{#if item.storedWeapon.system.equipped}}Sheathe{{else}}Draw{{/if}} weapon" data-item-id="{{item.storedWeapon.id}}">
-                      <i class="fas fa-hand"></i>
-                    </a>
-                    <a class="item-control item-edit" title="Edit Item" data-item-id="{{item.storedWeapon.id}}"><i class="fas fa-eye"></i></a>
-                    <a class="item-control item-delete" title="Delete Item" data-item-id="{{item.storedWeapon.id}}"><i class="fas fa-trash"></i></a>
-                    <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.storedWeapon.id}}">
-                      <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
-                    </a>
-                    {{/if}}
-                  </div>
-                </div>
-                {{/if}}
-                {{#if item.storedItem}}
-                <div class="item-header flexrow lashed-stored-item">
-                  <div class="item-image" style="background-image: url('{{item.storedItem.img}}'); opacity: 0.8;"></div>
-                  <h4 class="item-name stored-weapon-name" title="{{item.storedItem.name}}">{{item.storedItem.name}}</h4>
-                  <div class="field-short">{{item.storedItem.system.quantity}}</div>
-                  <div class="field-short">{{#if item.storedItem.system.storedSize}}{{item.storedItem.system.storedSize}}{{else}}—{{/if}}</div>
-                  <div class="field-short">{{item.storedItem.displayWeight}}</div>
-                  <div class="field-short">{{item.storedItem.unitWeight}}</div>
-                  <div class="item-controls">
-                    {{#if @root.owner}}
-                    <a class="item-control item-edit" title="Edit Item" data-item-id="{{item.storedItem.id}}"><i class="fas fa-eye"></i></a>
-                    <a class="item-control item-delete" title="Delete Item" data-item-id="{{item.storedItem.id}}"><i class="fas fa-trash"></i></a>
-                    <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.storedItem.id}}">
-                      <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
-                    </a>
-                    {{/if}}
-                  </div>
-                </div>
-                {{/if}}
-                {{/unless}}
-              </li>
               {{!-- WEAPON --}}
               {{else if (eq item._gearSection 'weapon')}}
               <li class="item-entry item" data-item-id="{{item.id}}">

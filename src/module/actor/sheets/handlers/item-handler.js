@@ -29,8 +29,8 @@ export class ItemHandler {
     this.html.find('.item-roll-icon[draggable="true"]').on('dragstart', this.onRollIconDragStart.bind(this));
     this.html.find('.quantity input').change(this.onQuantityChange.bind(this));
     
-    // Add click handler for item names to show card
-    this.html.find('.item-name').click(this.onItemNameClick.bind(this));
+    // Delegated so items inside collapsed-then-expanded sections are covered
+    this.html.on('click', '.item-name', this.onItemNameClick.bind(this));
 
     // Double-click item image to open item sheet
     this.html.find('.item-image').dblclick(this.onItemEdit.bind(this));
@@ -380,39 +380,14 @@ export class ItemHandler {
           }
         }
 
-        // If it's a Large Sack, validate hand requirements
-        if (item.type === "container" && item.name.toLowerCase().includes('sack') && item.name.toLowerCase().includes('large')) {
-          // Count currently equipped large sacks (excluding this one)
-          const equippedLargeSacks = this.actor.items.filter(i => 
-            i.type === "container" &&
-            i.name.toLowerCase().includes('sack') &&
-            i.name.toLowerCase().includes('large') &&
-            !i.system.containerId &&
-            i.id !== item.id
-          );
-          
-          // Count equipped hand-held items (weapons and shields)
-          const equippedHandItems = this.actor.items.filter(i => 
-            i.system.equipped &&
-            (i.type === "weapon" || 
-             (i.type === "armor" && i.name.toLowerCase().includes('shield')))
-          );
-          
-          if (equippedLargeSacks.length === 0) {
-            // Equipping first large sack - requires 1 hand, so max 1 hand-held item
-            if (equippedHandItems.length > 1) {
-              ui.notifications.error("Large Sack requires one hand. You can only have one hand-held item equipped (unequip weapons/shields first).");
-              return;
-            }
-          } else if (equippedLargeSacks.length === 1) {
-            // Equipping second large sack - requires both hands, so no hand-held items
-            if (equippedHandItems.length > 0) {
-              ui.notifications.error("Two Large Sacks require both hands. Unequip all weapons and shields first.");
-              return;
-            }
-          } else {
-            // Already have 2 large sacks equipped
-            ui.notifications.error("You can only equip two Large Sacks at a time.");
+        // Sack hand-requirement validation
+        if (item.name === 'Sack, Large' || item.name === 'Sack, Small') {
+          const handsNeeded = item.name === 'Sack, Large' ? 2 : 1;
+          const handsUsed = this._countHandsUsed(item.id);
+          const handsFree = 2 - handsUsed;
+          if (handsFree < handsNeeded) {
+            const needed = handsNeeded === 2 ? 'both hands' : 'one free hand';
+            ui.notifications.error(`${item.name} requires ${needed}. Unequip weapons, shields, and hand-held items first.`);
             return;
           }
         }
@@ -585,12 +560,36 @@ export class ItemHandler {
             await item.update({ 'system.equipped': false });
             ui.notifications.info(`${item.name} stowed.`);
           } else {
-            const storage = this._findStorageForWeapon(item);
-            if (storage) {
-              await item.update({ 'system.equipped': false, 'system.lashed': storage.lashed, 'system.containerId': storage.container.id });
-              ui.notifications.info(`${item.name} stowed in ${storage.container.name}.`);
+            const _tags = item.system?.tags || [];
+            const _isSlungOnly = (item.name || '').toLowerCase().includes('crossbow') ||
+              (_tags.includes('missile') && _tags.includes('two-handed'));
+            if (_isSlungOnly) {
+              const SLUNG_MAX = 3;
+              const _isSlungable = (tags) => tags.includes('slungable') || tags.includes('sling')
+                || (tags.includes('missile') && tags.includes('two-handed'));
+              const slotsNeeded = item.system?.slungSlots ?? 1;
+              const slotsUsed = this.actor.items
+                .filter(i => {
+                  const tags = i.system.tags || [];
+                  if (!_isSlungable(tags) || i.id === item.id) return false;
+                  if (i.type === 'weapon') return !i.system.equipped && !i.system.containerId && !i.system.lashed;
+                  return i.system.equipped;
+                })
+                .reduce((sum, i) => sum + (i.system.slungSlots ?? 1), 0);
+              if (SLUNG_MAX - slotsUsed >= slotsNeeded) {
+                await item.update({ 'system.equipped': false, 'system.containerId': null, 'system.lashed': false });
+                ui.notifications.info(`${item.name} slung.`);
+              } else {
+                await this._showNoStorageDialog(item);
+              }
             } else {
-              await this._showNoStorageDialog(item);
+              const storage = this._findStorageForWeapon(item);
+              if (storage) {
+                await item.update({ 'system.equipped': false, 'system.lashed': storage.lashed, 'system.containerId': storage.container.id });
+                ui.notifications.info(`${item.name} stowed in ${storage.container.name}.`);
+              } else {
+                await this._showNoStorageDialog(item);
+              }
             }
           }
         }
@@ -687,6 +686,17 @@ export class ItemHandler {
     if (item.type === 'container' && (item.system?.tags || []).includes('sling')) {
       ui.notifications.warn(`${item.name} cannot be lashed. It must be worn or dropped.`);
       return;
+    }
+
+    // Bows and crossbows cannot be lashed — sling only
+    if (item.type === 'weapon') {
+      const _tags = item.system?.tags || [];
+      const _isSlungOnly = (item.name || '').toLowerCase().includes('crossbow') ||
+        (_tags.includes('missile') && _tags.includes('two-handed'));
+      if (_isSlungOnly) {
+        ui.notifications.warn(`${item.name} cannot be lashed — sling it instead.`);
+        return;
+      }
     }
 
     // Armor (helmet or shield) → lash to backpack only
@@ -1255,14 +1265,47 @@ export class ItemHandler {
    * Shows Drop / Delete / Cancel dialog when no storage is available for an unequipped weapon.
    */
   async _showNoStorageDialog(weapon) {
+    const SLUNG_MAX = 3;
+    const _isSlungable = (tags) => tags.includes('slungable') || tags.includes('sling')
+      || (tags.includes('missile') && tags.includes('two-handed'));
+    const _slungSlots = (i) => i.system.slungSlots ?? 1;
+
+    const weaponTags = weapon.system?.tags || [];
+    const slotsNeeded = weapon.system?.slungSlots ?? 1;
+    const slotsUsed = this.actor.items
+      .filter(i => {
+        const tags = i.system.tags || [];
+        if (!_isSlungable(tags) || i.id === weapon.id) return false;
+        if (i.type === 'weapon') return !i.system.equipped && !i.system.containerId && !i.system.lashed;
+        return i.system.equipped;
+      })
+      .reduce((sum, i) => sum + _slungSlots(i), 0);
+    const canSling = _isSlungable(weaponTags) && (SLUNG_MAX - slotsUsed) >= slotsNeeded;
+
     return new Promise(resolve => {
+      const buttons = {
+        drop: { label: 'Drop', callback: async () => { await this._dropItem(weapon); resolve(true); } }
+      };
+      if (canSling) {
+        buttons.sling = {
+          label: `Sling (${slotsNeeded} slot${slotsNeeded !== 1 ? 's' : ''})`,
+          callback: async () => {
+            await weapon.update({ 'system.equipped': false, 'system.containerId': null, 'system.lashed': false });
+            ui.notifications.info(`${weapon.name} slung.`);
+            resolve(true);
+          }
+        };
+      }
+      buttons.cancel = { label: 'Keep in Hand', callback: () => resolve(false) };
+
+      const content = canSling
+        ? `<p><strong>${weapon.name}</strong> has nowhere to go. Sling it, drop it, or keep it in hand.</p>`
+        : `<p><strong>${weapon.name}</strong> has nowhere to go. Drop it on the ground or keep it in hand.</p>`;
+
       new Dialog({
         title: `Unequip ${weapon.name}`,
-        content: `<p><strong>${weapon.name}</strong> has nowhere to go. Drop it on the ground or keep it in hand.</p>`,
-        buttons: {
-          drop: { label: 'Drop', callback: async () => { await this._dropItem(weapon); resolve(true); } },
-          cancel: { label: 'Keep in Hand', callback: () => resolve(false) }
-        },
+        content,
+        buttons,
         default: 'cancel'
       }).render(true);
     });
@@ -1318,8 +1361,16 @@ export class ItemHandler {
    */
   _findContainerWithSpace(item) {
     const itemSize = this._getItemSlotSize(item);
+    const _itemTags = item.system?.tags || [];
+    const _itemName = (item.name || '').toLowerCase();
+    const _isBowOrCrossbow = item.type === 'weapon' &&
+      (_itemName.includes('crossbow') || (_itemTags.includes('missile') && _itemTags.includes('two-handed')));
     const candidates = this.actor.items
-      .filter(c => c.type === 'container' && !c.system.containerId && !c.system.lashed && c.id !== item.id)
+      .filter(c => {
+        if (c.type !== 'container' || c.system.containerId || c.system.lashed || c.id === item.id) return false;
+        if (_isBowOrCrossbow && (c.name === 'Sack, Large' || c.name === 'Sack, Small')) return false;
+        return true;
+      })
       .map(c => ({ container: c, available: this._parseCapacity(c.system.capacity) - this._getUsedCapacity(c) }))
       .filter(c => c.available >= itemSize)
       .sort((a, b) => b.available - a.available);
@@ -1472,12 +1523,13 @@ export class ItemHandler {
     if ($(event.target).closest('.item-controls').length > 0) {
       return;
     }
-    
+
     event.preventDefault();
     event.stopPropagation();
+
     const item = this.getItemFromEvent(event);
     if (!item) return;
-    
+
     // Open item card dialog
     const dialog = new ItemCardDialog(item);
     dialog.render(true);
@@ -1623,16 +1675,34 @@ export class ItemHandler {
   }
 
   /**
+   * Count hands currently occupied by equipped weapons, shields, and hand-carried sacks.
+   * excludeItemId: skip that item (the one being toggled) so we don't double-count it.
+   */
+  _countHandsUsed(excludeItemId = null) {
+    return this.actor.items.reduce((total, i) => {
+      if (!i.system.equipped || i.id === excludeItemId) return total;
+      const tags = i.system.tags || [];
+      if (i.type === 'weapon') return total + (tags.includes('two-handed') ? 2 : 1);
+      if (i.type === 'armor' && i.system.type === 'shield') return total + 1;
+      if (i.name === 'Sack, Large') return total + 2;
+      if (i.name === 'Sack, Small') return total + 1;
+      return total;
+    }, 0);
+  }
+
+  /**
    * Get item from event target
    */
   getItemFromEvent(event) {
-    // Prefer data-item-id on the clicked control itself (used by stored-weapon rows
-    // that share a parent .item-entry with their container)
+    // Prefer data-item-id on the matched element itself
     const directId = $(event.currentTarget).data("item-id");
     if (directId) return this.actor.items.get(directId);
-    const li = $(event.currentTarget).parents(".item-entry");
-    const itemId = li.data("item-id");
-    return this.actor.items.get(itemId);
+    // Fall back to nearest ANCESTOR (not self) with a non-empty data-item-id.
+    // Using .parents() instead of .closest() ensures an empty data-item-id=""
+    // on the element itself doesn't shadow the wrapper div's correct id.
+    const ancestor = $(event.currentTarget).parents("[data-item-id]").first();
+    const itemId = ancestor.data("item-id");
+    return itemId ? this.actor.items.get(itemId) : null;
   }
 
   /**

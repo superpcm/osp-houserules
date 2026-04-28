@@ -506,7 +506,7 @@
       "storedSize": 2,
       "quantity": 1,
       "equipped": false,
-      "lashable": true,
+      "lashable": false,
       "lashed": false,
       "tags": [],
       "capacity": 24,

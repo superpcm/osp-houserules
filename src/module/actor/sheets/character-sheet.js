@@ -302,15 +302,17 @@ export class OspActorSheetCharacter extends ActorSheet {
             const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
             storedWeapon.unitWeight = Math.round(swt * 10) / 10;
             storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
+            storedWeapon.itemId = storedWeapon.id;
           }
           c.storedWeapon = storedWeapon;
           const storedItems = !storedWeapon
             ? this.actor.items.filter(i =>
-                (i.type === 'item' || i.type === 'ammunition') && i.system.containerId === c.id
+                (i.type === 'item' || i.type === 'ammunition' || i.type === 'coin') && i.system.containerId === c.id
               ).map(i => {
                 const sit = parseFloat(i.system.unitWeight || i.system.weight) || 0;
                 i.unitWeight = Math.round(sit * 10) / 10;
                 i.displayWeight = Math.round(sit * (i.system.quantity || 1) * 10) / 10;
+                i.itemId = i.id;
                 return i;
               })
             : [];
@@ -338,17 +340,20 @@ export class OspActorSheetCharacter extends ActorSheet {
         item.remainingLashSlots = Math.max(0, item.system.lashSlots - item.usedLashSlots);
         item.lashSlotPercentage = item.lashSlots > 0 ? Math.round((item.usedLashSlots / item.lashSlots) * 100) : 0;
         item.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${item.id}-collapsed`) ?? true;
-        const lashedWeight = lashedAttachments.reduce((t, c) => t + (c.displayWeight || 0), 0);
+        const lashedWeight = lashedAttachments.reduce((t, c) => t + (c.totalWeight || 0), 0);
         item.totalWeight = Math.round((item.totalWeight + lashedWeight) * 10) / 10;
       }
 
       return item;
     });
     
-    // Slung Items — shoulder-carried items tagged 'slungable' that are equipped
-    const allSlungable = this.actor.items.filter(i =>
-      isSlungable(i.system.tags || []) && i.system.equipped
-    );
+    // Slung Items — containers use equipped:true; weapons use equipped:false+no containerId (limbo state)
+    const allSlungable = this.actor.items.filter(i => {
+      const tags = i.system.tags || [];
+      if (!isSlungable(tags)) return false;
+      if (i.type === 'weapon') return !i.system.equipped && !i.system.containerId && !i.system.lashed;
+      return i.system.equipped;
+    });
     const slungItems = allSlungable.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(item => {
       const wt = parseFloat(item.system.unitWeight || item.system.weight) || 0;
       item.displayWeight = Math.round(wt * (item.system.quantity || 1) * 10) / 10;
@@ -359,6 +364,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
           storedWeapon.unitWeight = Math.round(swt * 10) / 10;
           storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
+          storedWeapon.itemId = storedWeapon.id;
         }
         item.storedWeapon = storedWeapon;
         const storedIt = (!storedWeapon && allItems.find(i2 => i2.system.containerId === item.id)) || null;
@@ -366,12 +372,13 @@ export class OspActorSheetCharacter extends ActorSheet {
           const sit = parseFloat(storedIt.system.unitWeight || storedIt.system.weight) || 0;
           storedIt.unitWeight = Math.round(sit * 10) / 10;
           storedIt.displayWeight = Math.round(sit * (storedIt.system.quantity || 1) * 10) / 10;
+          storedIt.itemId = storedIt.id;
         }
         item.storedItem = storedIt;
         item.hasStoredContent = !!(item.storedWeapon || item.storedItem);
         item.slingUsedCapacity = item.hasStoredContent ? 1 : 0;
         item.slingCapacityPercentage = item.hasStoredContent ? 100 : 0;
-        item.storageCollapsed = this.actor.getFlag('osp-houserules', `sling-${item.id}-collapsed`) ?? false;
+        item.storageCollapsed = this.actor.getFlag('osp-houserules', `sling-${item.id}-collapsed`) ?? true;
       }
       return item;
     });
@@ -382,9 +389,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.slungMax = SLUNG_MAX;
     context.slungCapacityPercentage = Math.round((slungSlotsUsed / SLUNG_MAX) * 100);
     context.slungTotalWeight = Math.round(
-      slungItems.reduce((sum, i) => sum + (i.displayWeight || 0), 0) * 10
+      slungItems.reduce((sum, i) => {
+        const storedWt = (i.storedWeapon?.displayWeight || 0) + (i.storedItem?.displayWeight || 0);
+        return sum + (i.displayWeight || 0) + storedWt;
+      }, 0) * 10
     ) / 10;
-    context.slungCollapsed = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? false;
+    context.slungCollapsed = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? true;
 
     // Only show TOP-LEVEL containers (not nested, not lashed, not actively slung)
     const topLevelContainers = allContainers.filter(container =>
@@ -499,7 +509,9 @@ export class OspActorSheetCharacter extends ActorSheet {
       
       // Check if lashed items section is collapsed
       containerData.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${container.id}-collapsed`) ?? true;
-      
+
+      containerData.isSack = container.name === 'Sack, Large' || container.name === 'Sack, Small';
+
       return containerData;
     });
     
@@ -523,7 +535,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     );
     // Unequipped weapons/armor not in any container are otherwise invisible — include them too
     const unequippedWeapons = allWeapons.filter(w =>
-      !w.system.equipped && !w.system.lashed &&
+      !w.system.equipped && !w.system.lashed && !slungItemIds.has(w.id) &&
       (!w.system.containerId || !validContainerIds.has(w.system.containerId))
     );
     const unequippedArmor = allArmor.filter(a =>
@@ -710,7 +722,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.belt-row-toggle').click(this._onBeltRowToggle.bind(this));
     html.find('.sling-storage-toggle').click(this._onSlingStorageToggle.bind(this));
     html.find('.slung-section-toggle').click(async () => {
-      const current = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? false;
+      const current = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? true;
       await this.actor.setFlag('osp-houserules', 'slung-collapsed', !current);
     });
 
@@ -1672,7 +1684,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     event.preventDefault();
     event.stopPropagation();
     const itemId = $(event.currentTarget).data('item-id');
-    const currentState = this.actor.getFlag('osp-houserules', `sling-${itemId}-collapsed`) ?? false;
+    const currentState = this.actor.getFlag('osp-houserules', `sling-${itemId}-collapsed`) ?? true;
     await this.actor.setFlag('osp-houserules', `sling-${itemId}-collapsed`, !currentState);
     this.render(false);
   }
@@ -1699,6 +1711,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (!this.actor.isOwner) return false;
 
     const LASHABLE_CONTAINER_NAMES = new Set(['Bolt Case', 'Quiver, Hip']);
+    const HAND_CARRY_CONTAINERS = new Set(['Sack, Large', 'Sack, Small']);
 
     const item = await Item.implementation.fromDropData(data);
     const itemData = item.toObject();
@@ -1757,10 +1770,11 @@ export class OspActorSheetCharacter extends ActorSheet {
         ui.notifications.warn(`Not enough slung capacity (need ${slotsNeeded}, have ${SLUNG_MAX - slotsUsed}).`);
         return false;
       }
+      const slungEquipped = itemData.type !== 'weapon';
       if (isReordering) {
-        return item.update({ 'system.equipped': true, 'system.containerId': null, 'system.lashed': false });
+        return item.update({ 'system.equipped': slungEquipped, 'system.containerId': null, 'system.lashed': false });
       }
-      itemData.system.equipped = true;
+      itemData.system.equipped = slungEquipped;
       itemData.system.containerId = null;
       itemData.system.lashed = false;
       if (item.actor && item.actor.id !== this.actor.id) {
@@ -1880,6 +1894,13 @@ export class OspActorSheetCharacter extends ActorSheet {
           ui.notifications.error(`${targetContainer.name} must be worn to lash items to it.`);
           return false;
         }
+        const _beltBlockTags = itemData.system?.tags || [];
+        const _isSlungOnly = (itemData.name || '').toLowerCase().includes('crossbow') ||
+          (_beltBlockTags.includes('missile') && _beltBlockTags.includes('two-handed'));
+        if (_isSlungOnly) {
+          ui.notifications.error(`${itemData.name} cannot be lashed — sling it instead.`);
+          return false;
+        }
         const allowedSizes = targetContainer.system.lashAllowedSizes || [];
         if (allowedSizes.length > 0 && !allowedSizes.includes(itemData.system.size)) {
           ui.notifications.error(`${targetContainer.name} can only hold Small weapons. ${itemData.name} is size ${itemData.system.size || '?'}.`);
@@ -1911,6 +1932,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       targetContainer && targetContainer.type === 'clothing' &&
       (targetContainer.system.lashSlots || 0) > 0;
     if (isBeltAttachmentDrop) {
+      if (HAND_CARRY_CONTAINERS.has(itemData.name)) {
+        ui.notifications.error(`${itemData.name} must be stored in a container or carried in hand — it cannot be lashed.`);
+        return false;
+      }
       if (!targetContainer.system.equipped) {
         ui.notifications.error(`${targetContainer.name} must be worn to attach items to it.`);
         return false;
@@ -2011,8 +2036,13 @@ export class OspActorSheetCharacter extends ActorSheet {
           itemData.system.containerId = null;
         } else {
           let stored = false;
-          // Try lash first if item supports it
-          if (itemData.system.lashable) {
+          const _weaponTags = itemData.system?.tags || [];
+          const _noBackpackLash = itemData.type === 'weapon' && (
+            (_weaponTags.includes('missile') && _weaponTags.includes('two-handed')) ||
+            (itemData.name || '').toLowerCase().includes('crossbow')
+          );
+          // Try lash first if item supports it (bows/crossbows/sacks must not be lashed to backpack)
+          if (itemData.system.lashable && !_noBackpackLash && !HAND_CARRY_CONTAINERS.has(itemData.name)) {
             const lashContainer = this._findContainerWithLashSlot(itemData);
             if (lashContainer) {
               itemData.system.containerId = lashContainer.id;
@@ -2130,6 +2160,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         ui.notifications.error(`Cannot store ${itemData.name} in a container — it has ${attachedItems.length} item(s) attached. Remove attachments first.`);
         return false;
       }
+      itemData.system.containerId = targetContainer.id;
     }
     // Weapons/armor can be dropped onto containers
     else if (targetContainer &&
@@ -2295,6 +2326,17 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Sling containers (Baldric, Axe Sling, etc.) cannot be stored in any container
     if (itemData.type === 'container' && (itemData.system?.tags || []).includes('sling')) {
       return { allowed: false, reason: `${itemData.name} cannot be stored in a container.` };
+    }
+
+    // Bows and crossbows cannot go into sacks
+    if (container.name === 'Sack, Large' || container.name === 'Sack, Small') {
+      const _tags = itemData.system?.tags || [];
+      const _name = (itemData.name || '').toLowerCase();
+      const _isBowOrCrossbow = itemData.type === 'weapon' &&
+        (_name.includes('crossbow') || (_tags.includes('missile') && _tags.includes('two-handed')));
+      if (_isBowOrCrossbow) {
+        return { allowed: false, reason: `${itemData.name} cannot be stored in a sack — sling it instead.` };
+      }
     }
 
     // Check allowedNames (weapon name must be in list — takes priority for scabbards)

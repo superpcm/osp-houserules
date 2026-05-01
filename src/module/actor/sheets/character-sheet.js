@@ -797,29 +797,26 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Add drag-over highlight for containers
     html.find('.container-entry').each((i, el) => {
-      let dragCounter = 0; // Track enter/leave events to handle nested elements
-      
+      let dragCounter = 0;
+
       el.addEventListener('dragenter', (e) => {
         e.preventDefault();
         dragCounter++;
         el.classList.add('drag-over');
       });
-      
+
       el.addEventListener('dragleave', (e) => {
         e.preventDefault();
         dragCounter--;
-        // Only remove highlight when we've left all nested elements
-        if (dragCounter === 0) {
-          el.classList.remove('drag-over');
-        }
+        if (dragCounter === 0) el.classList.remove('drag-over');
       });
-      
+
       el.addEventListener('dragover', (e) => {
         e.preventDefault();
       });
-      
+
       el.addEventListener('drop', (e) => {
-        dragCounter = 0; // Reset counter
+        dragCounter = 0;
         el.classList.remove('drag-over');
       });
     });

@@ -839,7 +839,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 // Suppress parent section highlight when a specific slung-item container is already highlighted
-.slung-section-entry.drag-over:has(.slung-item.drag-over) {
+.slung-section-entry:has(.slung-item.drag-over) {
   border: none !important;
   border-radius: 0 !important;
 }

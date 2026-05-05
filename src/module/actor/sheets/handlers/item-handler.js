@@ -1538,7 +1538,7 @@ export class ItemHandler {
   /**
    * Handle rolling for an item
    */
-  onItemRoll(event) {
+  async onItemRoll(event) {
     event.preventDefault();
     const item = this.getItemFromEvent(event);
     
@@ -1585,48 +1585,62 @@ export class ItemHandler {
       ].filter(b => b !== null).join(', ');
       
       const flavor = `${item.name} Attack Roll<br><small>${bonusBreakdown}</small>`;
-      
+
       // Roll the attack
-      this._rollAttack(formula, flavor);
+      await this._rollAttack(formula, flavor);
+
+      // Roll damage if the weapon has a damage formula
+      if (item.system.damage) {
+        const dmgFormula = weaponBonus > 0
+          ? `${item.system.damage} + ${weaponBonus}`
+          : item.system.damage;
+        const dmgFlavor = weaponBonus > 0
+          ? `${item.name} Damage<br><small>Weapon bonus: +${weaponBonus}</small>`
+          : `${item.name} Damage`;
+        await this._rollDamage(dmgFormula, dmgFlavor);
+      }
     }
   }
 
   /**
    * Handle rolling an unarmed attack (Punch/Kick)
    */
-  onUnarmedRoll(event) {
+  async onUnarmedRoll(event) {
     event.preventDefault();
 
-    // Get character stats
     const characterClass = this.actor.system.class || 'fighter';
     const level = parseInt(this.actor.system.level) || 1;
     const strScore = parseInt(this.actor.system.attributes?.str?.value) || 10;
 
-    // Calculate attack bonus from class/level
     const classAttackBonus = getAttackBonus(characterClass, level);
-
-    // Unarmed attacks use STR
     const abilityModifier = getAbilityModifier(strScore);
-
-    // Calculate total bonus (no weapon bonus for unarmed)
     const totalBonus = classAttackBonus + abilityModifier;
 
-    // Build formula and flavor text
     const formula = totalBonus >= 0 ? `1d20 + ${totalBonus}` : `1d20 - ${Math.abs(totalBonus)}`;
     const bonusBreakdown = [
       `Class: +${classAttackBonus}`,
       `STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}`
     ].join(', ');
 
-    const flavor = `Unarmed Attack (Punch/Kick)<br><small>${bonusBreakdown}</small><br><small>Damage: 1d2</small>`;
+    await this._rollAttack(formula, `Unarmed Attack (Punch/Kick)<br><small>${bonusBreakdown}</small>`);
 
-    this._rollAttack(formula, flavor);
+    const dmgFormula = abilityModifier >= 0
+      ? `1d2 + ${abilityModifier}`
+      : `1d2 - ${Math.abs(abilityModifier)}`;
+    const dmgFlavor = `Unarmed Damage<br><small>STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}</small>`;
+    await this._rollDamage(dmgFormula, dmgFlavor);
   }
 
-  /**
-   * Evaluate a roll and post to chat. Dice So Nice intercepts automatically via createChatMessage hook.
-   */
   async _rollAttack(formula, flavor) {
+    const roll = await new Roll(formula).evaluate();
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor,
+      rollMode: game.settings.get('core', 'rollMode')
+    });
+  }
+
+  async _rollDamage(formula, flavor) {
     const roll = await new Roll(formula).evaluate();
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),

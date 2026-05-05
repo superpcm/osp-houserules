@@ -33,6 +33,7 @@ export const preloadHandlebarsTemplates = async () => {
     `${path}/templates/dialogs/character-gp-cost.html`,
     `${path}/templates/dialogs/modifiers-dialog.html`,
     `${path}/templates/dialogs/entity-tweaks.html`,
+    `${path}/templates/dialogs/magic-item-creator.html`,
 
     // Party sheet
     `${path}/templates/party/party-sheet.html`,

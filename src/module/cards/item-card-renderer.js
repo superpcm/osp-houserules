@@ -191,8 +191,9 @@ export class ItemCardRenderer {
       // Use item image with aggressive cache busting, or placeholder
       let imgSrc = item.img || 'systems/osp-houserules/assets/character-sheet/item_placeholder.png';
 
-      // Ensure proper system path prefix for relative paths
-      if (imgSrc && !imgSrc.startsWith('systems/') && !imgSrc.startsWith('http')) {
+      // Add system prefix only for paths relative to the system directory (not user data uploads)
+      if (imgSrc && !imgSrc.startsWith('systems/') && !imgSrc.startsWith('http')
+          && !imgSrc.startsWith('icons/') && !imgSrc.startsWith('magic-item-thumbs/')) {
         imgSrc = `systems/osp-houserules/${imgSrc}`;
       }
 

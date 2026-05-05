@@ -8,7 +8,7 @@ export const registerHelpers = () => {
 
   // Math helpers
   Handlebars.registerHelper("mod", (a, b) => a % b);
-  Handlebars.registerHelper("add", (a, b) => Number(a) + Number(b));
+  Handlebars.registerHelper("add", (a, b) => (parseInt(a) || 0) + (parseInt(b) || 0));
   Handlebars.registerHelper("subtract", (a, b) => Number(a) - Number(b));
   Handlebars.registerHelper("divide", (a, b) => (b !== 0 ? Number(a) / Number(b) : 0));
   Handlebars.registerHelper("mult", (a, b) => Number(a) * Number(b));

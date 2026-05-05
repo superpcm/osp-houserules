@@ -1,0 +1,167 @@
+<form class="osp magic-item-creator" autocomplete="off">
+
+  {{!-- Header: glowing image preview + name --}}
+  <div class="mic-header">
+    <img class="magic-preview-img" src="{{img}}" alt="{{name}}" />
+    <div class="mic-header-fields">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{name}}" />
+      </div>
+    </div>
+  </div>
+
+  {{!-- Magic Bonus (prominent, gold-tinted) --}}
+  <div class="form-group magic-bonus-group">
+    <label>✦ Magic Bonus</label>
+    <input type="number" name="system.bonus" value="{{system.bonus}}" min="0" max="9" step="1" />
+  </div>
+
+  {{!-- Common fields --}}
+  <p class="section-header">General</p>
+
+  <div class="form-group">
+    <label>Cost (gp)</label>
+    <input type="number" name="system.cost" value="{{system.cost}}" min="0" step="1" />
+  </div>
+
+  <div class="form-group">
+    <label>Weight (lb)</label>
+    <input type="number" name="system.unitWeight" value="{{system.unitWeight}}" min="0" step="0.1" />
+  </div>
+
+  <div class="form-group">
+    <label>Stored Size</label>
+    <input type="number" name="system.storedSize" value="{{system.storedSize}}" min="0" step="0.25" />
+  </div>
+
+  <div class="form-group">
+    <label>Quantity</label>
+    <input type="number" name="system.quantity" value="{{system.quantity}}" min="1" step="1" />
+  </div>
+
+  {{!-- Weapon-specific fields --}}
+  {{#if isWeapon}}
+  <p class="section-header">Weapon</p>
+
+  <div class="form-group">
+    <label>Damage</label>
+    <input type="text" name="system.damage" value="{{system.damage}}" placeholder="1d6" />
+  </div>
+
+  <div class="form-group">
+    <label>Damage Type</label>
+    <input type="text" name="system.damageType" value="{{system.damageType}}" placeholder="slashing" />
+  </div>
+
+  <div class="form-group">
+    <label>Size</label>
+    <select name="system.size">
+      <option value=""  {{#unless system.size}}selected{{/unless}}>—</option>
+      <option value="S" {{#if (eq system.size "S")}}selected{{/if}}>S — Small</option>
+      <option value="M" {{#if (eq system.size "M")}}selected{{/if}}>M — Medium</option>
+      <option value="L" {{#if (eq system.size "L")}}selected{{/if}}>L — Large</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Speed Factor</label>
+    <input type="number" name="system.speedFactor" value="{{system.speedFactor}}" step="1" />
+  </div>
+
+  <div class="form-group">
+    <label>Rate of Fire</label>
+    <input type="number" name="system.rof" value="{{system.rof}}" min="1" step="1" />
+  </div>
+
+  <div class="form-group">
+    <label>Melee</label>
+    <input type="checkbox" name="system.melee" {{checked system.melee}} />
+  </div>
+
+  <div class="form-group">
+    <label>Missile</label>
+    <input type="checkbox" name="system.missile" {{checked system.missile}} />
+  </div>
+
+  {{#if system.missile}}
+  <div class="form-group">
+    <label>Range (S/M/L)</label>
+    <div class="mic-range">
+      <input type="number" name="system.range.short"  value="{{system.range.short}}"  min="0" placeholder="30" />
+      <span>/</span>
+      <input type="number" name="system.range.medium" value="{{system.range.medium}}" min="0" placeholder="60" />
+      <span>/</span>
+      <input type="number" name="system.range.long"   value="{{system.range.long}}"   min="0" placeholder="90" />
+    </div>
+  </div>
+  {{/if}}
+  {{/if}}
+
+  {{!-- Armor-specific fields --}}
+  {{#if isArmor}}
+  <p class="section-header">Armor</p>
+
+  <div class="form-group">
+    <label>AAC Value</label>
+    <input type="number" name="system.aac.value" value="{{system.aac.value}}" min="0" max="30" step="1" />
+  </div>
+
+  <div class="form-group">
+    <label>Type</label>
+    <select name="system.type">
+      <option value=""       {{#unless system.type}}selected{{/unless}}>—</option>
+      <option value="light"  {{#if (eq system.type "light")}}selected{{/if}}>Light</option>
+      <option value="medium" {{#if (eq system.type "medium")}}selected{{/if}}>Medium</option>
+      <option value="heavy"  {{#if (eq system.type "heavy")}}selected{{/if}}>Heavy</option>
+      <option value="shield" {{#if (eq system.type "shield")}}selected{{/if}}>Shield</option>
+    </select>
+  </div>
+
+  {{#if system.donTime}}
+  <div class="form-group">
+    <label>Don Time</label>
+    <input type="text" name="system.donTime" value="{{system.donTime}}" />
+  </div>
+  {{/if}}
+
+  {{#if system.doffTime}}
+  <div class="form-group">
+    <label>Doff Time</label>
+    <input type="text" name="system.doffTime" value="{{system.doffTime}}" />
+  </div>
+  {{/if}}
+
+  <div class="form-group">
+    <label>Max Dex Bonus</label>
+    <input type="number" name="system.maxDex" value="{{system.maxDex}}" step="1" />
+  </div>
+
+  <div class="form-group">
+    <label>Min Strength</label>
+    <input type="number" name="system.minStr" value="{{system.minStr}}" min="0" step="1" />
+  </div>
+  {{/if}}
+
+  {{!-- Ammunition-specific fields --}}
+  {{#if isAmmunition}}
+  <p class="section-header">Ammunition</p>
+
+  <div class="form-group">
+    <label>Weapon Type</label>
+    <input type="text" name="system.weaponType" value="{{system.weaponType}}" placeholder="arrow, bolt, stone…" />
+  </div>
+  {{/if}}
+
+  {{!-- Description --}}
+  <p class="section-header">Description</p>
+  <div class="form-group mic-description">
+    <textarea name="system.description" rows="4">{{system.description}}</textarea>
+  </div>
+
+  {{!-- Footer --}}
+  <div class="form-footer">
+    <button type="submit"><i class="fas fa-hat-wizard"></i> Save Magic Item</button>
+  </div>
+
+</form>

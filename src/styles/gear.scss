@@ -28,7 +28,7 @@ $combat-weapons-col-weight: 35px;       // Width of weight column
 $combat-weapons-col-controls: 103px;    // Width of controls column
 
 /* Gear Tab – Weapons: Column Widths */
-$gear-weapons-col-item-image: 50px;     // Width of weapon item image
+$gear-weapons-col-item-image: 48px;     // Width of weapon item image
 $gear-weapons-col-name: 203px;          // Width of weapon name column
 $gear-weapons-col-damage: 60px;         // Width of damage column
 $gear-weapons-col-dt: 40px;             // Width of damage type column (DT)
@@ -40,7 +40,7 @@ $gear-weapons-col-weight: 40px;         // Width of weight column
 $gear-weapons-col-controls: 103px;      // Width of controls column
 
 /* Combat Tab – Armor: Column Widths */
-$combat-armor-col-image:  50px;      // Width of armor image
+$combat-armor-col-image:  48px;      // Width of armor image
 $combat-armor-col-name:  130px;      // Width of armor name column
 $combat-armor-col-type:   50px;      // Width of type column
 $combat-armor-col-ac:     45px;      // Width of AC column
@@ -63,7 +63,7 @@ $geartab-col2-x: 547px;           // center of second data col (Weight)
 
 
 /* Gear Tab – Containers: Column Widths */
-$gear-containers-col-image: 50px;       // Width of container image
+$gear-containers-col-image: 48px;       // Width of container image
 $gear-containers-col-name: 180px;       // Width of name column
 $gear-containers-col-qty: 60px;         // Width of quantity column
 $gear-containers-col-capacity: 150px;   // Width of capacity column
@@ -86,36 +86,36 @@ $gear-treasure-col-weight: 55px;      // Width of weight column
 $gear-treasure-col-controls:   103px; // Width of controls column
 
 /* Level 1 Column Widths — items inside containers/backpacks, belt attachments (638px available) */
-$nested-col-image: 50px;
+$nested-col-image: 48px;
 $nested-col-name: 138px;
 $nested-col-qty: 150px;
 $nested-col-storedsize: 80px;
 $nested-col-twt: 52px;
 $nested-col-weight: 80px;
 $nested-col-controls: 82px;
-// Total: 632px  (50+138+150+80+52+80+82)
+// Total: 630px  (48+138+150+80+52+80+82)
 
 /* Subheader Label Positions — absolute left offsets from container edge
    Derive from data-row grids so labels stay aligned; adjust freely.
    Centered cols use translateX(-50%), name col is left-anchored (no transform). */
 
 // Default L1 subheader (inside backpacks / containers)
-// Data row grid: image(50) name(138) qty(150) storedsize(80) twt(52) weight(80) controls(82)
-$sh-img:   25px;   // center of image col      (50/2)
-$sh-name:  50px;   // left edge of name col     (50)
-$sh-qty:  263px;   // center of qty col         (50+138+150/2)
-$sh-ssize: 378px;  // center of storedsize col  (50+138+150+80/2)
-$sh-twt:  444px;   // center of tWT col         (50+138+150+80+52/2)
-$sh-wt:   510px;   // center of weight col      (50+138+150+80+52+80/2)
+// Data row grid: image(48) name(138) qty(150) storedsize(80) twt(52) weight(80) controls(82)
+$sh-img:   24px;   // center of image col      (48/2)
+$sh-name:  48px;   // left edge of name col     (48)
+$sh-qty:  261px;   // center of qty col         (48+138+150/2)
+$sh-ssize: 376px;  // center of storedsize col  (48+138+150+80/2)
+$sh-twt:  442px;   // center of tWT col         (48+138+150+80+52/2)
+$sh-wt:   508px;   // center of weight col      (48+138+150+80+52+80/2)
 
-// Belt L1 subheader (belt attachment list, 7 cols; merged toggle+img = 68px)
-// Data row grid: toggle(18) image(50) name(190) qty(80) storedsize(80) twt(52) weight(80) controls(82)
-$sh-belt-img:   34px;   // center of merged 68px col     (68/2)
-$sh-belt-name:  68px;   // left edge of name col         (68)
-$sh-belt-cap:  298px;   // center of capacity/qty col    (68+190+80/2)
-$sh-belt-ssize: 378px;  // center of storedsize col      (68+120+150+80/2)
-$sh-belt-twt:  444px;   // center of tWT col             (68+120+150+80+52/2)
-$sh-belt-wt:   510px;   // center of weight col          (68+120+150+80+52+80/2)
+// Belt L1 subheader (belt attachment list, 7 cols; merged toggle+img = 66px)
+// Data row grid: toggle(18) image(48) name(190) qty(80) storedsize(80) twt(52) weight(80) controls(82)
+$sh-belt-img:   33px;   // center of merged 66px col     (66/2)
+$sh-belt-name:  66px;   // left edge of name col         (66)
+$sh-belt-cap:  296px;   // center of capacity/qty col    (66+190+80/2)
+$sh-belt-ssize: 376px;  // center of storedsize col      (66+190+80+80/2)
+$sh-belt-twt:  442px;   // center of tWT col             (66+190+80+80+52/2)
+$sh-belt-wt:   508px;   // center of weight col          (66+190+80+80+52+80/2)
 
 // Belt L2 subheader (items inside belt attachment; subheader has 68px left padding)
 // Both subheader and data row share 68px content offset, so positions include that offset.
@@ -177,7 +177,7 @@ $tree-line-thickness: 1px;  // Thickness of tree connector lines (try 1px for th
 $tree-line-color: #000000;     // Color of tree connector lines
 
 /* Item Images */
-$image-size: 50px;       // Size of item images (square)
+$image-size: 48px;       // Size of item images (square)
 $item-row-height: 60px;  // Height of item rows with images (image-size + padding)
 
 
@@ -2036,3 +2036,112 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
+// ── Magic Item Creator dialog ─────────────────────────────────────────────────
+.magic-item-creator {
+  padding: 8px 12px;
+
+  .mic-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+
+  .magic-preview-img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px gold) drop-shadow(0 0 4px #ffaa00);
+    flex-shrink: 0;
+  }
+
+  .mic-header-fields {
+    flex: 1;
+
+    .form-group {
+      margin-bottom: 0;
+    }
+  }
+
+  .magic-bonus-group {
+    background: rgba(255, 215, 0, 0.08);
+    border: 1px solid rgba(255, 215, 0, 0.45);
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-bottom: 8px;
+
+    label { color: #8B6914; font-weight: bold; }
+    input { width: 60px; }
+  }
+
+  .section-header {
+    font-variant: small-caps;
+    border-bottom: 1px solid #ccc;
+    margin: 10px 0 5px;
+    color: #555;
+    font-size: 0.82em;
+    letter-spacing: 0.05em;
+  }
+
+  .form-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+
+    label {
+      flex: 0 0 118px;
+      font-weight: bold;
+      font-size: 0.88em;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    input[type="checkbox"] {
+      flex: 0 0 auto;
+    }
+  }
+
+  .mic-description {
+    align-items: flex-start;
+
+    textarea {
+      flex: 1;
+      min-height: 72px;
+      resize: vertical;
+    }
+  }
+
+  .mic-range {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+
+    input { flex: 1; min-width: 0; }
+    span  { flex-shrink: 0; }
+  }
+
+  .form-footer {
+    text-align: right;
+    margin-top: 12px;
+
+    button {
+      padding: 4px 14px;
+    }
+  }
+}
+
+
+// Magic item thumbnail glow — applied when item.system.bonus > 0
+// Magic item thumbnail — show full glow image (contain keeps the glow padding visible)
+.item-image.magic-item {
+  background-size: contain !important;
+  background-repeat: no-repeat;
+  background-position: center;
+}

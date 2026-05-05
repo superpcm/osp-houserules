@@ -1561,10 +1561,10 @@
                 {{#unless (includes item.name "Shield")}}
                 <li class="item-entry item" draggable="true" data-item-id="{{item.id}}">
                   <div class="item-header armor-header flexrow">
-                    <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                    <div class="item-image{{#if item.system.bonus}} magic-item{{/if}}" style="background-image: url('{{item.img}}');"></div>
                     <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                     <div class="field-short">{{item.system.type}}</div>
-                    <div class="field-short">{{item.system.aac.value}}</div>
+                    <div class="field-short">{{add item.system.aac.value item.system.bonus}}</div>
                     <div class="field-short">{{item.system.donTime}}</div>
                     <div class="field-short">{{item.system.doffTime}}</div>
                     <div class="field-short">{{signedInt item.system.maxDex}}</div>
@@ -1612,10 +1612,10 @@
               {{#each allShields as |item|}}
               <li class="item-entry item {{#unless item.system.equipped}}item-unequipped-row{{/unless}}" draggable="true" data-item-id="{{item.id}}">
                 <div class="item-header armor-header flexrow">
-                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                  <div class="item-image{{#if item.system.bonus}} magic-item{{/if}}" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{item.system.type}}</div>
-                  <div class="field-short">{{item.system.aac.value}}</div>
+                  <div class="field-short">{{add item.system.aac.value item.system.bonus}}</div>
                   <div class="field-short">{{item.system.donTime}}</div>
                   <div class="field-short">{{item.system.doffTime}}</div>
                   <div class="field-short">{{signedInt item.system.maxDex}}</div>
@@ -1974,7 +1974,7 @@
                         <span class="attachment-toggle-placeholder"></span>
                         {{/if}}
                         <div class="item-image" style="background-image: url('{{attachment.img}}');"></div>
-                        <h4 class="item-name" title="{{attachment.name}}" data-item-id="{{attachment.id}}">{{attachment.name}} <span class="slot-cost">({{attachment.slotCost}})</span></h4>
+                        <h4 class="item-name" title="{{attachment.name}}" data-item-id="{{attachment.id}}">{{attachment.name}}</h4>
                         {{#if attachment.system.capacity}}{{#unless attachment.system.hideCapacity}}
                         <div class="field-short capacity-bar-cell">
                           <div class="capacity-bar-background" style="--capacity-progress: {{attachment.capacityPercentage}}%;">

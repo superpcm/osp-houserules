@@ -110,6 +110,21 @@ const _rollWeaponMacro = async (actor, item) => {
     flavor: `${item.name} Attack Roll<br><small>${bonusBreakdown}</small>`,
     rollMode: game.settings.get('core', 'rollMode')
   });
+
+  if (item.system.damage) {
+    const dmgFormula = weaponBonus > 0
+      ? `${item.system.damage} + ${weaponBonus}`
+      : item.system.damage;
+    const dmgFlavor = weaponBonus > 0
+      ? `${item.name} Damage<br><small>Weapon bonus: +${weaponBonus}</small>`
+      : `${item.name} Damage`;
+    const dmgRoll = await new Roll(dmgFormula).evaluate();
+    await dmgRoll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: dmgFlavor,
+      rollMode: game.settings.get('core', 'rollMode')
+    });
+  }
 };
 
 /**

@@ -444,31 +444,43 @@ export class OspActor extends Actor {
     // Start with base AC (unarmored)
     let calculatedAC = 10;
 
-    // Add DEX modifier (AC modifier from dexterity attribute)
+    // Add DEX modifier (AC modifier from dexterity attribute), capped by equipped armor's maxDex
     const dexScore = parseInt(this.system.attributes?.dex?.value) || 10;
-    const dexMod = this._getAttributeModifier(dexScore);
-    calculatedAC += dexMod;
+    const rawDexMod = this._getAttributeModifier(dexScore);
 
     // Get equipped armor (non-shield armor pieces)
-    const equippedArmor = this.system.armor.filter(item => 
+    const equippedArmor = this.system.armor.filter(item =>
       item.system.equipped && item.system.type !== "shield"
     );
-    
+
+    // Determine effective DEX mod: lowest maxDex among equipped armor caps the bonus
+    let dexMod = rawDexMod;
+    if (equippedArmor.length > 0) {
+      const lowestMaxDex = Math.min(...equippedArmor.map(armor => {
+        const max = armor.system.maxDex;
+        return (max !== null && max !== undefined && max !== "") ? parseInt(max) : Infinity;
+      }));
+      if (isFinite(lowestMaxDex)) dexMod = Math.min(rawDexMod, lowestMaxDex);
+    }
+    calculatedAC += dexMod;
+
     // Use the highest armor AAC value as base (armor AAC replaces base 10, doesn't add to it)
     if (equippedArmor.length > 0) {
-      const highestArmorAC = Math.max(...equippedArmor.map(armor => 
-        parseInt(armor.system.aac?.value) || 0
+      const highestArmorAC = Math.max(...equippedArmor.map(armor =>
+        (parseInt(armor.system.aac?.value) || 0) + (parseInt(armor.system.bonus) || 0)
       ));
-      // Replace base 10 with armor's AAC value
-      calculatedAC = calculatedAC - 10 + highestArmorAC;
+      // Only apply if the armor actually provides AC; 0 means unset, not "AC 0"
+      if (highestArmorAC > 0) {
+        calculatedAC = calculatedAC - 10 + highestArmorAC;
+      }
     }
 
     // Add shield bonuses (shields add to AC, they don't replace it)
-    const equippedShields = this.system.armor.filter(item => 
+    const equippedShields = this.system.armor.filter(item =>
       item.system.equipped && item.system.type === "shield"
     );
     equippedShields.forEach(shield => {
-      const shieldBonus = parseInt(shield.system.aac?.value) || 0;
+      const shieldBonus = (parseInt(shield.system.aac?.value) || 0) + (parseInt(shield.system.bonus) || 0);
       calculatedAC += shieldBonus;
     });
 

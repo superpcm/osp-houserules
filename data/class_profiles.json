@@ -1,0 +1,3802 @@
+{
+  "source": {
+    "title": "Old-School Essentials Advanced Fantasy Player's Tome v1.3; Carcass Crawler Exclusive Inaugural Issue; Carcass Crawler Issues #1-#4; Carcass Crawler Issue #5; Carcass Crawler Issue #6",
+    "scope": "Clean classProfile data for OSE Advanced Fantasy classes and Carcass Crawler class/race-as-class material through Issue #4.; Carcass Crawler Issue #5 ratling and changeling demihuman classProfiles; Carcass Crawler Issue #6 dwarf brewmaster and dwarf runesmith demihuman classProfiles",
+    "note": "Clean rebuild updated through Carcass Crawler Issue #4. Includes class identity, requirements, XP progression, equipment permissions, languages, restrictions, active/passive abilities, skill systems, spellcasting hooks/progressions where class-defining, level-gated features, and domain features. THAC0 and saving throws remain omitted unless directly needed for class ability logic. Updated through Carcass Crawler Issue #5, adding the Ratling class and confirming the Issue #5 Changeling class details. Updated through Carcass Crawler Issue #6, adding Dwarf Brewmaster and Dwarf Runesmith, including their XP progressions, brewing/forge-craft systems, rune magic, and runes of power."
+  },
+  "classProfiles": [
+    {
+      "id": "assassin",
+      "name": "Assassin",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Silent Killer",
+      "roleSummary": "Covert killer specializing in infiltration, disguise, poison, stealth, and lethal ambush.",
+      "requirements": [],
+      "primeRequisites": [
+        "DEX"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d4",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 1500
+        },
+        {
+          "level": 3,
+          "xp": 3000
+        },
+        {
+          "level": 4,
+          "xp": 6000
+        },
+        {
+          "level": 5,
+          "xp": 12000
+        },
+        {
+          "level": 6,
+          "xp": 25000
+        },
+        {
+          "level": 7,
+          "xp": 50000
+        },
+        {
+          "level": 8,
+          "xp": 100000
+        },
+        {
+          "level": 9,
+          "xp": 200000
+        },
+        {
+          "level": 10,
+          "xp": 300000
+        },
+        {
+          "level": 11,
+          "xp": 425000
+        },
+        {
+          "level": 12,
+          "xp": 575000
+        },
+        {
+          "level": 13,
+          "xp": 750000
+        },
+        {
+          "level": 14,
+          "xp": 900000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [
+        "May not be Lawful."
+      ],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Assassination",
+          "trigger": "Attack unaware humanoid from behind",
+          "effect": "+4 to hit; target saves vs death with level penalty or dies.",
+          "limits": [
+            "Humans/demihumans any level; humanoids up to 4+1 HD; nonliving immune"
+          ],
+          "scaling": "Penalty improves from 0 to -6 by level."
+        },
+        {
+          "name": "Disguise",
+          "trigger": "Prepared disguise",
+          "effect": "Each observer has 2% chance to detect; repeated daily.",
+          "limits": [
+            "+2% per changed class/race/sex"
+          ],
+          "scaling": null
+        },
+        {
+          "name": "Poison Expertise",
+          "trigger": "Poisoning victim",
+          "effect": "Victim saves at -2.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [],
+      "skillSystems": [
+        {
+          "name": "Assassin Skills",
+          "rollType": "d%, d6 for Hear Noise",
+          "skills": [
+            {
+              "code": "AS",
+              "name": "Assassination",
+              "effect": "Death save penalty by level."
+            },
+            {
+              "code": "CS",
+              "name": "Climb Sheer Surfaces",
+              "effect": "Roll per 100' climbed."
+            },
+            {
+              "code": "HN",
+              "name": "Hear Noise",
+              "effect": "Listen at doors."
+            },
+            {
+              "code": "HS",
+              "name": "Hide in Shadows",
+              "effect": "Hide while motionless."
+            },
+            {
+              "code": "MS",
+              "name": "Move Silently",
+              "effect": "Sneak unnoticed."
+            }
+          ],
+          "playerKnowledgeRule": "Referee rolls HN/HS/MS.",
+          "progression": "See OSE Advanced Fantasy Assassin skill table."
+        }
+      ],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [
+        {
+          "level": 4,
+          "name": "Hire Assassins",
+          "effect": "May hire lower-level assassins."
+        },
+        {
+          "level": 8,
+          "name": "Hire Thieves",
+          "effect": "May hire thieves."
+        },
+        {
+          "level": 12,
+          "name": "Unrestricted Hiring",
+          "effect": "May hire any character type."
+        }
+      ],
+      "domainFeatures": [
+        {
+          "level": 12,
+          "name": "Guild Takeover",
+          "effect": "May take over assassin or thief guild by killing old guildmaster."
+        }
+      ],
+      "softwareTags": [
+        "stealth",
+        "poison",
+        "ambush"
+      ]
+    },
+    {
+      "id": "barbarian",
+      "name": "Barbarian",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Wild Survivor",
+      "roleSummary": "Fierce tribal warrior with wilderness survival, stealth, anti-magic instincts, and combat resilience.",
+      "requirements": [
+        "DEX 9+"
+      ],
+      "primeRequisites": [
+        "STR",
+        "CON"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d8",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2500
+        },
+        {
+          "level": 3,
+          "xp": 5000
+        },
+        {
+          "level": 4,
+          "xp": 10000
+        },
+        {
+          "level": 5,
+          "xp": 18500
+        },
+        {
+          "level": 6,
+          "xp": 37000
+        },
+        {
+          "level": 7,
+          "xp": 85000
+        },
+        {
+          "level": 8,
+          "xp": 140000
+        },
+        {
+          "level": 9,
+          "xp": 270000
+        },
+        {
+          "level": 10,
+          "xp": 400000
+        },
+        {
+          "level": 11,
+          "xp": 530000
+        },
+        {
+          "level": 12,
+          "xp": 660000
+        },
+        {
+          "level": 13,
+          "xp": 790000
+        },
+        {
+          "level": 14,
+          "xp": 920000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Chainmail",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [
+        "Cannot read/write at 1st level.",
+        "Refuses most magic except tribal divine magic."
+      ],
+      "activeAbilities": [
+        {
+          "name": "Cure Poison",
+          "trigger": "Wilderness, one turn per subject",
+          "effect": "Herbs grant second save vs natural poison.",
+          "limits": [
+            "Natural poison only"
+          ],
+          "scaling": null
+        },
+        {
+          "name": "Muster Horde",
+          "trigger": "Level 8+",
+          "effect": "Calls 250 1st-level fighters per level above 7 for a purpose.",
+          "limits": [
+            "Takes one week; limited duration"
+          ],
+          "scaling": "250 warriors/level above 7"
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Agile Fighting",
+          "effect": "AC bonus improves at levels 4,6,8,10.",
+          "conditions": [],
+          "scaling": "+1/+2/+3/+4"
+        },
+        {
+          "name": "Foraging and Hunting",
+          "effect": "Party forages 2-in-6, hunts 5-in-6.",
+          "conditions": [
+            "Wilderness"
+          ],
+          "scaling": null
+        },
+        {
+          "name": "Strike Invulnerable Monsters",
+          "effect": "Can hit creatures harmed only by magic.",
+          "conditions": [
+            "Level 4+"
+          ],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [
+        {
+          "name": "Barbarian Wilderness Skills",
+          "rollType": "d%",
+          "skills": [
+            {
+              "code": "CS",
+              "name": "Climb Natural Surfaces",
+              "effect": "Climb natural sheer surfaces."
+            },
+            {
+              "code": "HD",
+              "name": "Hide in Undergrowth",
+              "effect": "Hide motionless in wilderness."
+            },
+            {
+              "code": "MS",
+              "name": "Move Silently",
+              "effect": "Sneak in wilderness."
+            }
+          ],
+          "playerKnowledgeRule": "Referee rolls stealth.",
+          "progression": "See OSE Advanced Fantasy Barbarian table."
+        }
+      ],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 8,
+          "name": "Great Horde",
+          "effect": "May muster tribal horde."
+        }
+      ],
+      "softwareTags": [
+        "combat",
+        "wilderness",
+        "anti-magic"
+      ]
+    },
+    {
+      "id": "bard",
+      "name": "Bard",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Enchanting Lorekeeper",
+      "roleSummary": "Druidic minstrel with anti-charm, enchantment, lore, languages, and divine nature magic.",
+      "requirements": [
+        "DEX 9+",
+        "INT 9+"
+      ],
+      "primeRequisites": [
+        "CHA"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2000
+        },
+        {
+          "level": 3,
+          "xp": 4000
+        },
+        {
+          "level": 4,
+          "xp": 8000
+        },
+        {
+          "level": 5,
+          "xp": 16000
+        },
+        {
+          "level": 6,
+          "xp": 32000
+        },
+        {
+          "level": 7,
+          "xp": 64000
+        },
+        {
+          "level": 8,
+          "xp": 120000
+        },
+        {
+          "level": 9,
+          "xp": 240000
+        },
+        {
+          "level": 10,
+          "xp": 360000
+        },
+        {
+          "level": 11,
+          "xp": 480000
+        },
+        {
+          "level": 12,
+          "xp": 600000
+        },
+        {
+          "level": 13,
+          "xp": 720000
+        },
+        {
+          "level": 14,
+          "xp": 840000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Chainmail",
+        "No shields"
+      ],
+      "weaponPermissions": [
+        "Missile weapons",
+        "One-handed melee weapons"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Anti-Charm",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Enchantment",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Charm Fascinated Subjects",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Lore",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Language Learning",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "divine druid spells from level 2"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 11,
+          "name": "Domain Feature",
+          "effect": "Manor with 2d6 apprentice bards"
+        }
+      ],
+      "softwareTags": [
+        "support",
+        "charm",
+        "lore"
+      ]
+    },
+    {
+      "id": "cleric",
+      "name": "Cleric",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Armoured Divine Servant",
+      "roleSummary": "Divine spellcaster and undead-turner with armour, blunt weapons, and temple stronghold potential.",
+      "requirements": [],
+      "primeRequisites": [
+        "WIS"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 1500
+        },
+        {
+          "level": 3,
+          "xp": 3000
+        },
+        {
+          "level": 4,
+          "xp": 6000
+        },
+        {
+          "level": 5,
+          "xp": 12000
+        },
+        {
+          "level": 6,
+          "xp": 25000
+        },
+        {
+          "level": 7,
+          "xp": 50000
+        },
+        {
+          "level": 8,
+          "xp": 100000
+        },
+        {
+          "level": 9,
+          "xp": 200000
+        },
+        {
+          "level": 10,
+          "xp": 300000
+        },
+        {
+          "level": 11,
+          "xp": 400000
+        },
+        {
+          "level": 12,
+          "xp": 500000
+        },
+        {
+          "level": 13,
+          "xp": 600000
+        },
+        {
+          "level": 14,
+          "xp": 700000
+        }
+      ],
+      "armorPermissions": [
+        "Any",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Blunt weapons only"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Turn Undead",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Magical Research",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "divine cleric spells from level 2"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Domain Feature",
+          "effect": "Divinely aided stronghold with followers"
+        }
+      ],
+      "softwareTags": [
+        "divine",
+        "undead",
+        "healing"
+      ]
+    },
+    {
+      "id": "drow",
+      "name": "Drow",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "demihuman_class",
+      "persona": "The Subterranean Spell-Blade Priest",
+      "roleSummary": "Dark elf warrior-priest with cleric magic, spider affinity, infravision, and light sensitivity.",
+      "requirements": [
+        "INT 9+"
+      ],
+      "primeRequisites": [
+        "STR",
+        "WIS"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 10,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 4000
+        },
+        {
+          "level": 3,
+          "xp": 8000
+        },
+        {
+          "level": 4,
+          "xp": 16000
+        },
+        {
+          "level": 5,
+          "xp": 32000
+        },
+        {
+          "level": 6,
+          "xp": 64000
+        },
+        {
+          "level": 7,
+          "xp": 120000
+        },
+        {
+          "level": 8,
+          "xp": 250000
+        },
+        {
+          "level": 9,
+          "xp": 400000
+        },
+        {
+          "level": 10,
+          "xp": 600000
+        }
+      ],
+      "armorPermissions": [
+        "Any",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Deepcommon",
+        "Elvish",
+        "Gnomish",
+        "Spider language"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Detect Secret Doors",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Listen at Doors",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Magical Research",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Ghoul Paralysis Immunity",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Infravision 90'",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Light Sensitivity",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Spider Affinity",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "divine cleric spells; web from level 3"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Domain Feature",
+          "effect": "Subterranean stronghold or temple"
+        }
+      ],
+      "softwareTags": [
+        "drow",
+        "underground",
+        "divine"
+      ]
+    },
+    {
+      "id": "druid",
+      "name": "Druid",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Neutral Guardian of the Wild",
+      "roleSummary": "Neutral nature priest with druidic magic, identification, resistances, pass without trace, and shape change.",
+      "requirements": [],
+      "primeRequisites": [
+        "WIS"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2000
+        },
+        {
+          "level": 3,
+          "xp": 4000
+        },
+        {
+          "level": 4,
+          "xp": 7500
+        },
+        {
+          "level": 5,
+          "xp": 12500
+        },
+        {
+          "level": 6,
+          "xp": 20000
+        },
+        {
+          "level": 7,
+          "xp": 35000
+        },
+        {
+          "level": 8,
+          "xp": 60000
+        },
+        {
+          "level": 9,
+          "xp": 90000
+        },
+        {
+          "level": 10,
+          "xp": 125000
+        },
+        {
+          "level": 11,
+          "xp": 200000
+        },
+        {
+          "level": 12,
+          "xp": 300000
+        },
+        {
+          "level": 13,
+          "xp": 750000
+        },
+        {
+          "level": 14,
+          "xp": 1500000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Wooden shields",
+        "No metal"
+      ],
+      "weaponPermissions": [
+        "Club",
+        "Dagger",
+        "Sling",
+        "Spear",
+        "Staff"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Druidic"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Identify Nature",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Shape Change",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Magical Research",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Energy Resistance",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Sylvan Languages",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Pass Without Trace",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Path-Finding",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Charm Immunity",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "divine druid spells from level 1"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 12,
+          "name": "Domain Feature",
+          "effect": "Natural stronghold"
+        }
+      ],
+      "softwareTags": [
+        "nature",
+        "shapeshift",
+        "divine"
+      ]
+    },
+    {
+      "id": "dwarf",
+      "name": "Dwarf",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "demihuman_class",
+      "persona": "The Stout Delver",
+      "roleSummary": "Hardy underground warrior with stonework detection, trap sense, infravision, and clan stronghold.",
+      "requirements": [
+        "CON 9+"
+      ],
+      "primeRequisites": [
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d8",
+      "maximumLevel": 12,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2200
+        },
+        {
+          "level": 3,
+          "xp": 4400
+        },
+        {
+          "level": 4,
+          "xp": 8800
+        },
+        {
+          "level": 5,
+          "xp": 17000
+        },
+        {
+          "level": 6,
+          "xp": 35000
+        },
+        {
+          "level": 7,
+          "xp": 70000
+        },
+        {
+          "level": 8,
+          "xp": 140000
+        },
+        {
+          "level": 9,
+          "xp": 270000
+        },
+        {
+          "level": 10,
+          "xp": 400000
+        },
+        {
+          "level": 11,
+          "xp": 530000
+        },
+        {
+          "level": 12,
+          "xp": 660000
+        }
+      ],
+      "armorPermissions": [
+        "Any",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Small/normal weapons",
+        "No longbows",
+        "No two-handed swords"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Dwarvish",
+        "Gnomish",
+        "Goblin",
+        "Kobold"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Detect Construction Tricks",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Detect Room Traps",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Listen at Doors",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Infravision 60'",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Domain Feature",
+          "effect": "Underground clan stronghold"
+        }
+      ],
+      "softwareTags": [
+        "dwarf",
+        "durable",
+        "underground"
+      ]
+    },
+    {
+      "id": "elf",
+      "name": "Elf",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "demihuman_class",
+      "persona": "The Sword-and-Spell Wanderer",
+      "roleSummary": "Fighter-mage demihuman with arcane magic, secret door detection, infravision, and forest stronghold.",
+      "requirements": [
+        "INT 9+"
+      ],
+      "primeRequisites": [
+        "INT",
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 10,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 4000
+        },
+        {
+          "level": 3,
+          "xp": 8000
+        },
+        {
+          "level": 4,
+          "xp": 16000
+        },
+        {
+          "level": 5,
+          "xp": 32000
+        },
+        {
+          "level": 6,
+          "xp": 64000
+        },
+        {
+          "level": 7,
+          "xp": 120000
+        },
+        {
+          "level": 8,
+          "xp": 250000
+        },
+        {
+          "level": 9,
+          "xp": 400000
+        },
+        {
+          "level": 10,
+          "xp": 600000
+        }
+      ],
+      "armorPermissions": [
+        "Any",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Elvish",
+        "Gnoll",
+        "Hobgoblin",
+        "Orcish"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Detect Secret Doors",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Listen at Doors",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Magical Research",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Ghoul Paralysis Immunity",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Infravision 60'",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "arcane magic-user spells from level 1"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Domain Feature",
+          "effect": "Forest stronghold"
+        }
+      ],
+      "softwareTags": [
+        "elf",
+        "arcane",
+        "fighter-mage"
+      ]
+    },
+    {
+      "id": "fighter",
+      "name": "Fighter",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Weapon Master",
+      "roleSummary": "Dedicated martial class trained in all weapons and armour.",
+      "requirements": [],
+      "primeRequisites": [
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d8",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2000
+        },
+        {
+          "level": 3,
+          "xp": 4000
+        },
+        {
+          "level": 4,
+          "xp": 8000
+        },
+        {
+          "level": 5,
+          "xp": 16000
+        },
+        {
+          "level": 6,
+          "xp": 32000
+        },
+        {
+          "level": 7,
+          "xp": 64000
+        },
+        {
+          "level": 8,
+          "xp": 120000
+        },
+        {
+          "level": 9,
+          "xp": 240000
+        },
+        {
+          "level": 10,
+          "xp": 360000
+        },
+        {
+          "level": 11,
+          "xp": 480000
+        },
+        {
+          "level": 12,
+          "xp": 600000
+        },
+        {
+          "level": 13,
+          "xp": 720000
+        },
+        {
+          "level": 14,
+          "xp": 840000
+        }
+      ],
+      "armorPermissions": [
+        "Any",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [],
+      "passiveAbilities": [
+        {
+          "name": "Complete Martial Training",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Domain Feature",
+          "effect": "Stronghold and barony"
+        }
+      ],
+      "softwareTags": [
+        "combat",
+        "frontline"
+      ]
+    },
+    {
+      "id": "gnome",
+      "name": "Gnome",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "demihuman_class",
+      "persona": "The Small Illusionist-Tunneller",
+      "roleSummary": "Small illusion-casting demihuman with defensive bonuses, tunnelling senses, hiding, and burrowing mammal affinity.",
+      "requirements": [
+        "CON 9+"
+      ],
+      "primeRequisites": [
+        "DEX",
+        "INT"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d4",
+      "maximumLevel": 8,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 3000
+        },
+        {
+          "level": 3,
+          "xp": 6000
+        },
+        {
+          "level": 4,
+          "xp": 12000
+        },
+        {
+          "level": 5,
+          "xp": 30000
+        },
+        {
+          "level": 6,
+          "xp": 60000
+        },
+        {
+          "level": 7,
+          "xp": 120000
+        },
+        {
+          "level": 8,
+          "xp": 240000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Small-size weapons"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Gnomish",
+        "Dwarvish",
+        "Kobold",
+        "Burrowing mammal language"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Detect Construction Tricks",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Hiding",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Listen at Doors",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Magical Research",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Defensive Bonus",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Infravision 90'",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Burrowing Mammal Speech",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "arcane illusionist spells from level 1"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 8,
+          "name": "Domain Feature",
+          "effect": "Underground stronghold"
+        }
+      ],
+      "softwareTags": [
+        "gnome",
+        "illusion",
+        "small"
+      ]
+    },
+    {
+      "id": "half_elf",
+      "name": "Half-Elf",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "demihuman_class",
+      "persona": "The Human-Elven Hybrid Adventurer",
+      "roleSummary": "Flexible warrior with limited arcane spellcasting and elven senses.",
+      "requirements": [
+        "CHA 9+",
+        "CON 9+"
+      ],
+      "primeRequisites": [
+        "INT",
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 12,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2500
+        },
+        {
+          "level": 3,
+          "xp": 5000
+        },
+        {
+          "level": 4,
+          "xp": 10000
+        },
+        {
+          "level": 5,
+          "xp": 20000
+        },
+        {
+          "level": 6,
+          "xp": 40000
+        },
+        {
+          "level": 7,
+          "xp": 80000
+        },
+        {
+          "level": 8,
+          "xp": 150000
+        },
+        {
+          "level": 9,
+          "xp": 300000
+        },
+        {
+          "level": 10,
+          "xp": 450000
+        },
+        {
+          "level": 11,
+          "xp": 600000
+        },
+        {
+          "level": 12,
+          "xp": 750000
+        }
+      ],
+      "armorPermissions": [
+        "Any",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Elvish"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Detect Secret Doors",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Infravision 60'",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "arcane magic-user spells from level 2"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Domain Feature",
+          "effect": "Human or elven stronghold"
+        }
+      ],
+      "softwareTags": [
+        "hybrid",
+        "arcane"
+      ]
+    },
+    {
+      "id": "halfling",
+      "name": "Halfling",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "demihuman_class",
+      "persona": "The Small Marksman",
+      "roleSummary": "Small defensive skirmisher with missile accuracy, hiding, and Shire-building.",
+      "requirements": [
+        "CON 9+",
+        "DEX 9+"
+      ],
+      "primeRequisites": [
+        "DEX",
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 8,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2000
+        },
+        {
+          "level": 3,
+          "xp": 4000
+        },
+        {
+          "level": 4,
+          "xp": 8000
+        },
+        {
+          "level": 5,
+          "xp": 16000
+        },
+        {
+          "level": 6,
+          "xp": 32000
+        },
+        {
+          "level": 7,
+          "xp": 64000
+        },
+        {
+          "level": 8,
+          "xp": 120000
+        }
+      ],
+      "armorPermissions": [
+        "Size-appropriate armour",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Small-size weapons"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Halfling"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Hiding",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Listen at Doors",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Defensive Bonus",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Initiative Bonus",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Missile Attack Bonus",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": "Any",
+          "name": "Domain Feature",
+          "effect": "Shire stronghold"
+        }
+      ],
+      "softwareTags": [
+        "small",
+        "missile",
+        "stealth"
+      ]
+    },
+    {
+      "id": "half_orc",
+      "name": "Half-Orc",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "demihuman_class",
+      "persona": "The Outcast Bruiser-Thief",
+      "roleSummary": "Martial rogue with back-stab, infravision, stealth, pickpocketing, and bandit stronghold.",
+      "requirements": [],
+      "primeRequisites": [
+        "DEX",
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 8,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 1800
+        },
+        {
+          "level": 3,
+          "xp": 3600
+        },
+        {
+          "level": 4,
+          "xp": 7000
+        },
+        {
+          "level": 5,
+          "xp": 14000
+        },
+        {
+          "level": 6,
+          "xp": 28000
+        },
+        {
+          "level": 7,
+          "xp": 60000
+        },
+        {
+          "level": 8,
+          "xp": 120000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Chainmail",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Orcish"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Back-Stab",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Infravision 60'",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 8,
+          "name": "Domain Feature",
+          "effect": "Bandit stronghold"
+        }
+      ],
+      "softwareTags": [
+        "rogue",
+        "backstab"
+      ]
+    },
+    {
+      "id": "illusionist",
+      "name": "Illusionist",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Arcane Deceiver",
+      "roleSummary": "Specialist arcane spellcaster focused on illusion, deception, and indirect control.",
+      "requirements": [
+        "DEX 9+"
+      ],
+      "primeRequisites": [
+        "INT"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d4",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2500
+        },
+        {
+          "level": 3,
+          "xp": 5000
+        },
+        {
+          "level": 4,
+          "xp": 10000
+        },
+        {
+          "level": 5,
+          "xp": 20000
+        },
+        {
+          "level": 6,
+          "xp": 40000
+        },
+        {
+          "level": 7,
+          "xp": 80000
+        },
+        {
+          "level": 8,
+          "xp": 150000
+        },
+        {
+          "level": 9,
+          "xp": 300000
+        },
+        {
+          "level": 10,
+          "xp": 450000
+        },
+        {
+          "level": 11,
+          "xp": 600000
+        },
+        {
+          "level": 12,
+          "xp": 750000
+        },
+        {
+          "level": 13,
+          "xp": 900000
+        },
+        {
+          "level": 14,
+          "xp": 1050000
+        }
+      ],
+      "armorPermissions": [
+        "None"
+      ],
+      "weaponPermissions": [
+        "Dagger",
+        "Staff optional"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Magical Research",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "arcane illusionist spells from level 1"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 11,
+          "name": "Domain Feature",
+          "effect": "Tower with apprentices"
+        }
+      ],
+      "softwareTags": [
+        "illusion",
+        "arcane"
+      ]
+    },
+    {
+      "id": "knight",
+      "name": "Knight",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Chivalric Champion",
+      "roleSummary": "Mounted warrior bound to liege and code; excels at mounted combat and morale.",
+      "requirements": [
+        "CON 9+",
+        "DEX 9+"
+      ],
+      "primeRequisites": [
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d8",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2500
+        },
+        {
+          "level": 3,
+          "xp": 5000
+        },
+        {
+          "level": 4,
+          "xp": 10000
+        },
+        {
+          "level": 5,
+          "xp": 18500
+        },
+        {
+          "level": 6,
+          "xp": 37000
+        },
+        {
+          "level": 7,
+          "xp": 85000
+        },
+        {
+          "level": 8,
+          "xp": 140000
+        },
+        {
+          "level": 9,
+          "xp": 270000
+        },
+        {
+          "level": 10,
+          "xp": 400000
+        },
+        {
+          "level": 11,
+          "xp": 530000
+        },
+        {
+          "level": 12,
+          "xp": 660000
+        },
+        {
+          "level": 13,
+          "xp": 790000
+        },
+        {
+          "level": 14,
+          "xp": 920000
+        }
+      ],
+      "armorPermissions": [
+        "Chainmail",
+        "Plate",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Melee weapons only"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Assess Steeds",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Urge Great Speed",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Train Flying Mount",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Mounted Combat",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Hospitality",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Fear Immunity",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Fear Support",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Beguilement Resistance",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 3,
+          "name": "Domain Feature",
+          "effect": "Liege-approved stronghold; barony at 9th"
+        }
+      ],
+      "softwareTags": [
+        "mounted",
+        "honor"
+      ]
+    },
+    {
+      "id": "magic_user",
+      "name": "Magic-User",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Arcane Scholar",
+      "roleSummary": "Fragile spell-book caster using arcane magic, scrolls, research, and tower apprenticeship.",
+      "requirements": [],
+      "primeRequisites": [
+        "INT"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d4",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2500
+        },
+        {
+          "level": 3,
+          "xp": 5000
+        },
+        {
+          "level": 4,
+          "xp": 10000
+        },
+        {
+          "level": 5,
+          "xp": 20000
+        },
+        {
+          "level": 6,
+          "xp": 40000
+        },
+        {
+          "level": 7,
+          "xp": 80000
+        },
+        {
+          "level": 8,
+          "xp": 150000
+        },
+        {
+          "level": 9,
+          "xp": 300000
+        },
+        {
+          "level": 10,
+          "xp": 450000
+        },
+        {
+          "level": 11,
+          "xp": 600000
+        },
+        {
+          "level": 12,
+          "xp": 750000
+        },
+        {
+          "level": 13,
+          "xp": 900000
+        },
+        {
+          "level": 14,
+          "xp": 1050000
+        }
+      ],
+      "armorPermissions": [
+        "None"
+      ],
+      "weaponPermissions": [
+        "Dagger",
+        "Staff optional"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Magical Research",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "arcane magic-user spells from level 1"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 11,
+          "name": "Domain Feature",
+          "effect": "Tower with apprentices"
+        }
+      ],
+      "softwareTags": [
+        "arcane",
+        "spellbook"
+      ]
+    },
+    {
+      "id": "paladin",
+      "name": "Paladin",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Holy Champion",
+      "roleSummary": "Lawful sacred warrior with healing, disease immunity, undead turning, holy warhorse, vows, and late cleric magic.",
+      "requirements": [
+        "CHA 9+"
+      ],
+      "primeRequisites": [
+        "STR",
+        "WIS"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d8",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2750
+        },
+        {
+          "level": 3,
+          "xp": 5500
+        },
+        {
+          "level": 4,
+          "xp": 12000
+        },
+        {
+          "level": 5,
+          "xp": 24000
+        },
+        {
+          "level": 6,
+          "xp": 45000
+        },
+        {
+          "level": 7,
+          "xp": 95000
+        },
+        {
+          "level": 8,
+          "xp": 175000
+        },
+        {
+          "level": 9,
+          "xp": 350000
+        },
+        {
+          "level": 10,
+          "xp": 500000
+        },
+        {
+          "level": 11,
+          "xp": 650000
+        },
+        {
+          "level": 12,
+          "xp": 800000
+        },
+        {
+          "level": 13,
+          "xp": 950000
+        },
+        {
+          "level": 14,
+          "xp": 1100000
+        }
+      ],
+      "armorPermissions": [
+        "Any",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Lay on Hands",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Cure Disease",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Turn Undead",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Summon Holy Warhorse",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Disease Immunity",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "divine cleric spells from level 9"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Domain Feature",
+          "effect": "Holy order stronghold"
+        }
+      ],
+      "softwareTags": [
+        "holy",
+        "healing",
+        "undead"
+      ]
+    },
+    {
+      "id": "ranger",
+      "name": "Ranger",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Wilderness Protector",
+      "roleSummary": "Secretive protector with awareness, tracking, hunting, pursuit, wilderness stealth, and late druidic magic.",
+      "requirements": [
+        "CON 9+",
+        "WIS 9+"
+      ],
+      "primeRequisites": [
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d8",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2250
+        },
+        {
+          "level": 3,
+          "xp": 4500
+        },
+        {
+          "level": 4,
+          "xp": 10000
+        },
+        {
+          "level": 5,
+          "xp": 20000
+        },
+        {
+          "level": 6,
+          "xp": 40000
+        },
+        {
+          "level": 7,
+          "xp": 90000
+        },
+        {
+          "level": 8,
+          "xp": 150000
+        },
+        {
+          "level": 9,
+          "xp": 300000
+        },
+        {
+          "level": 10,
+          "xp": 425000
+        },
+        {
+          "level": 11,
+          "xp": 550000
+        },
+        {
+          "level": 12,
+          "xp": 675000
+        },
+        {
+          "level": 13,
+          "xp": 800000
+        },
+        {
+          "level": 14,
+          "xp": 925000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Chainmail",
+        "Shields",
+        "No plate"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Tracking",
+          "trigger": "See class rules",
+          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Awareness",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Foraging and Hunting",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Pursuit",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Wilderness Stealth",
+          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "class-specific",
+        "summary": "divine druid spells from level 8"
+      },
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 10,
+          "name": "Domain Feature",
+          "effect": "2d12 special followers"
+        }
+      ],
+      "softwareTags": [
+        "wilderness",
+        "tracking"
+      ]
+    },
+    {
+      "id": "thief",
+      "name": "Thief",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome",
+      "kind": "standard_class",
+      "persona": "The Cunning Specialist",
+      "roleSummary": "Stealthy specialist with back-stab, climbing, traps, locks, sneaking, pickpocketing, languages, scroll use, and guild potential.",
+      "requirements": [],
+      "primeRequisites": [
+        "DEX"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d4",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 1200
+        },
+        {
+          "level": 3,
+          "xp": 2400
+        },
+        {
+          "level": 4,
+          "xp": 4800
+        },
+        {
+          "level": 5,
+          "xp": 9600
+        },
+        {
+          "level": 6,
+          "xp": 20000
+        },
+        {
+          "level": 7,
+          "xp": 40000
+        },
+        {
+          "level": 8,
+          "xp": 80000
+        },
+        {
+          "level": 9,
+          "xp": 160000
+        },
+        {
+          "level": 10,
+          "xp": 280000
+        },
+        {
+          "level": 11,
+          "xp": 400000
+        },
+        {
+          "level": 12,
+          "xp": 520000
+        },
+        {
+          "level": 13,
+          "xp": 640000
+        },
+        {
+          "level": 14,
+          "xp": 760000
+        }
+      ],
+      "armorPermissions": [
+        "Leather only",
+        "No shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Back-Stab",
+          "trigger": "Attacking unaware opponent from behind",
+          "effect": "+4 to hit and double damage.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Read Languages",
+          "trigger": "From level 4",
+          "effect": "80% chance to read non-magical text in any language; retry after next level only.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Scroll Use",
+          "trigger": "From level 10",
+          "effect": "Cast arcane scrolls with 10% chance of error.",
+          "limits": [
+            "Arcane scrolls only"
+          ],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [],
+      "skillSystems": [
+        {
+          "name": "Thief Skills",
+          "rollType": "d%, d6 for Hear Noise",
+          "skills": [
+            {
+              "code": "CS",
+              "name": "Climb Sheer Surfaces",
+              "effect": "Roll per 100' climbed; failure falls at halfway point."
+            },
+            {
+              "code": "TR",
+              "name": "Find/Remove Treasure Traps",
+              "effect": "One roll to find and one to remove; one attempt per trap."
+            },
+            {
+              "code": "HN",
+              "name": "Hear Noise",
+              "effect": "Listen at doors or for approaching sounds."
+            },
+            {
+              "code": "HS",
+              "name": "Hide in Shadows",
+              "effect": "Hide while motionless."
+            },
+            {
+              "code": "MS",
+              "name": "Move Silently",
+              "effect": "Sneak unnoticed."
+            },
+            {
+              "code": "OL",
+              "name": "Open Locks",
+              "effect": "Requires thieves' tools; one try per lock until next level."
+            },
+            {
+              "code": "PP",
+              "name": "Pick Pockets",
+              "effect": "Penalty for victims above 5th; roll over twice chance is noticed."
+            }
+          ],
+          "playerKnowledgeRule": "Referee rolls Hear Noise, Hide in Shadows, and Move Silently.",
+          "progression": {
+            "1": {
+              "CS": 87,
+              "TR": 10,
+              "HN": "1-2",
+              "HS": 10,
+              "MS": 20,
+              "OL": 15,
+              "PP": 20
+            },
+            "2": {
+              "CS": 88,
+              "TR": 15,
+              "HN": "1-2",
+              "HS": 15,
+              "MS": 25,
+              "OL": 20,
+              "PP": 25
+            },
+            "3": {
+              "CS": 89,
+              "TR": 20,
+              "HN": "1-3",
+              "HS": 20,
+              "MS": 30,
+              "OL": 25,
+              "PP": 30
+            },
+            "4": {
+              "CS": 90,
+              "TR": 25,
+              "HN": "1-3",
+              "HS": 25,
+              "MS": 35,
+              "OL": 30,
+              "PP": 35
+            },
+            "5": {
+              "CS": 91,
+              "TR": 30,
+              "HN": "1-3",
+              "HS": 30,
+              "MS": 40,
+              "OL": 35,
+              "PP": 40
+            },
+            "6": {
+              "CS": 92,
+              "TR": 40,
+              "HN": "1-3",
+              "HS": 36,
+              "MS": 45,
+              "OL": 45,
+              "PP": 45
+            },
+            "7": {
+              "CS": 93,
+              "TR": 50,
+              "HN": "1-4",
+              "HS": 45,
+              "MS": 55,
+              "OL": 55,
+              "PP": 55
+            },
+            "8": {
+              "CS": 94,
+              "TR": 60,
+              "HN": "1-4",
+              "HS": 55,
+              "MS": 65,
+              "OL": 65,
+              "PP": 65
+            },
+            "9": {
+              "CS": 95,
+              "TR": 70,
+              "HN": "1-4",
+              "HS": 65,
+              "MS": 75,
+              "OL": 75,
+              "PP": 75
+            },
+            "10": {
+              "CS": 96,
+              "TR": 80,
+              "HN": "1-4",
+              "HS": 75,
+              "MS": 85,
+              "OL": 85,
+              "PP": 85
+            },
+            "11": {
+              "CS": 97,
+              "TR": 90,
+              "HN": "1-5",
+              "HS": 85,
+              "MS": 95,
+              "OL": 95,
+              "PP": 95
+            },
+            "12": {
+              "CS": 98,
+              "TR": 95,
+              "HN": "1-5",
+              "HS": 90,
+              "MS": 96,
+              "OL": 96,
+              "PP": 105
+            },
+            "13": {
+              "CS": 99,
+              "TR": 97,
+              "HN": "1-5",
+              "HS": 95,
+              "MS": 98,
+              "OL": 97,
+              "PP": 115
+            },
+            "14": {
+              "CS": 99,
+              "TR": 99,
+              "HN": "1-5",
+              "HS": 99,
+              "MS": 99,
+              "OL": 99,
+              "PP": 125
+            }
+          }
+        }
+      ],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Thief Den",
+          "effect": "Attracts 2d6 1st-level apprentice thieves; may form guild."
+        }
+      ],
+      "softwareTags": [
+        "stealth",
+        "locks",
+        "traps",
+        "guild"
+      ]
+    },
+    {
+      "id": "beast_master",
+      "name": "Beast Master",
+      "sourceBook": "Carcass Crawler Exclusive Inaugural Issue; Carcass Crawler Issue #3",
+      "kind": "standard_class",
+      "persona": "The Animal-Bonded Warrior",
+      "roleSummary": "Warrior with animal companions, animal communication, animal reaction bonus, track identification, and companion clairvoyance.",
+      "requirements": [],
+      "primeRequisites": [
+        "STR",
+        "WIS"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d6",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 1800
+        },
+        {
+          "level": 3,
+          "xp": 3600
+        },
+        {
+          "level": 4,
+          "xp": 7250
+        },
+        {
+          "level": 5,
+          "xp": 15000
+        },
+        {
+          "level": 6,
+          "xp": 30000
+        },
+        {
+          "level": 7,
+          "xp": 60000
+        },
+        {
+          "level": 8,
+          "xp": 120000
+        },
+        {
+          "level": 9,
+          "xp": 240000
+        },
+        {
+          "level": 10,
+          "xp": 360000
+        },
+        {
+          "level": 11,
+          "xp": 480000
+        },
+        {
+          "level": 12,
+          "xp": 600000
+        },
+        {
+          "level": 13,
+          "xp": 720000
+        },
+        {
+          "level": 14,
+          "xp": 840000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Chainmail",
+        "Shields"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Forge Animal Companion Bond",
+          "trigger": "See class rules",
+          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Identify Tracks",
+          "trigger": "See class rules",
+          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Clairvoyance",
+          "trigger": "See class rules",
+          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Animal Reaction Bonus",
+          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Speak with Animals",
+          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Domain Feature",
+          "effect": "Wilderness stronghold; animals within 5 miles become friends"
+        }
+      ],
+      "softwareTags": [
+        "animals",
+        "companions"
+      ]
+    },
+    {
+      "id": "warden",
+      "name": "Warden",
+      "sourceBook": "Carcass Crawler Exclusive Inaugural Issue",
+      "kind": "standard_class",
+      "persona": "The Non-Magical Wilderness Protector",
+      "roleSummary": "Non-magical ranger variant with awareness, foraging, hunting, pursuit, surprise attack, tracking, and followers.",
+      "requirements": [
+        "CON 9+",
+        "WIS 9+"
+      ],
+      "primeRequisites": [
+        "STR"
+      ],
+      "xpBonusRule": "Use class prime requisite XP bonus rule.",
+      "hitDie": "1d8",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2000
+        },
+        {
+          "level": 3,
+          "xp": 4000
+        },
+        {
+          "level": 4,
+          "xp": 8000
+        },
+        {
+          "level": 5,
+          "xp": 16000
+        },
+        {
+          "level": 6,
+          "xp": 32000
+        },
+        {
+          "level": 7,
+          "xp": 64000
+        },
+        {
+          "level": 8,
+          "xp": 120000
+        },
+        {
+          "level": 9,
+          "xp": 240000
+        },
+        {
+          "level": 10,
+          "xp": 360000
+        },
+        {
+          "level": 11,
+          "xp": 480000
+        },
+        {
+          "level": 12,
+          "xp": 600000
+        },
+        {
+          "level": 13,
+          "xp": 720000
+        },
+        {
+          "level": 14,
+          "xp": 840000
+        }
+      ],
+      "armorPermissions": [
+        "Leather",
+        "Chainmail",
+        "Shields",
+        "No plate"
+      ],
+      "weaponPermissions": [
+        "Any"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [],
+      "activeAbilities": [
+        {
+          "name": "Surprise Attack",
+          "trigger": "See class rules",
+          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Tracking",
+          "trigger": "See class rules",
+          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "limits": [],
+          "scaling": null
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Awareness",
+          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Foraging and Hunting",
+          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Pursuit",
+          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Limited Possessions",
+          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [
+        {
+          "name": "Warden Tracking",
+          "rollType": "d%",
+          "skills": [
+            {
+              "code": "TRACK",
+              "name": "Tracking",
+              "effect": "Track with modifiers for ground, group size, mingled tracks, age, rain, and concealment."
+            }
+          ],
+          "playerKnowledgeRule": null,
+          "progression": {
+            "1": 20,
+            "2": 30,
+            "3": 40,
+            "4": 50,
+            "5": 60,
+            "6": 70,
+            "7": 80,
+            "8": 90,
+            "9": 100,
+            "10+": 110
+          }
+        }
+      ],
+      "spellcasting": null,
+      "magicItemUse": [],
+      "levelGatedFeatures": [],
+      "domainFeatures": [
+        {
+          "level": 10,
+          "name": "Domain Feature",
+          "effect": "2d12 special followers"
+        }
+      ],
+      "softwareTags": [
+        "wilderness",
+        "tracking",
+        "non-magical-ranger"
+      ]
+    },
+    {
+      "id": "mage",
+      "name": "Mage",
+      "sourceBook": "Carcass Crawler Issue #1",
+      "kind": "standard_class",
+      "persona": "The Deep Magic Adept",
+      "roleSummary": "A non-Vancian arcane class using percentile magical skills, scroll casting, scroll scribing, healing, deep magic armour, and a staff that harms invulnerable monsters.",
+      "requirements": [],
+      "primeRequisites": [
+        "INT",
+        "WIS"
+      ],
+      "xpBonusRule": "INT 13+ and WIS 13+ grant +5% XP; INT 16+ and WIS 13+ grant +10% XP.",
+      "hitDie": "1d6",
+      "maximumLevel": 14,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 2800
+        },
+        {
+          "level": 3,
+          "xp": 5600
+        },
+        {
+          "level": 4,
+          "xp": 12000
+        },
+        {
+          "level": 5,
+          "xp": 24000
+        },
+        {
+          "level": 6,
+          "xp": 48000
+        },
+        {
+          "level": 7,
+          "xp": 100000
+        },
+        {
+          "level": 8,
+          "xp": 200000
+        },
+        {
+          "level": 9,
+          "xp": 400000
+        },
+        {
+          "level": 10,
+          "xp": 560000
+        },
+        {
+          "level": 11,
+          "xp": 720000
+        },
+        {
+          "level": 12,
+          "xp": 980000
+        },
+        {
+          "level": 13,
+          "xp": 1140000
+        },
+        {
+          "level": 14,
+          "xp": 1300000
+        }
+      ],
+      "armorPermissions": [
+        "No armour"
+      ],
+      "weaponPermissions": [
+        "Dagger",
+        "Short sword",
+        "Staff",
+        "Sword"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [
+        "Cannot wear armour.",
+        "Cannot memorize spells; magic is not bound by spell books or memorization."
+      ],
+      "activeAbilities": [
+        {
+          "name": "Healing",
+          "trigger": "Once per day, spending 1 turn",
+          "effect": "Heals an ally for 1 hp per mage level or allows another save against a negative effect such as a curse or poison.",
+          "limits": [
+            "Once per day",
+            "Requires 1 turn"
+          ],
+          "scaling": "1 hp per level."
+        },
+        {
+          "name": "Mage Staff Light",
+          "trigger": "Once per day",
+          "effect": "Staff radiates light in a 30-foot radius for 1 turn per mage level.",
+          "limits": [
+            "Requires staff",
+            "Once per day"
+          ],
+          "scaling": "1 turn per level."
+        },
+        {
+          "name": "Scribe Scrolls",
+          "trigger": "Magical research",
+          "effect": "Can create scrolls of arcane spells using the standard rules for duplicating spell effects.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Magical Research",
+          "trigger": "Downtime",
+          "effect": "May scribe arcane scrolls or research other magical effects. From 9th level may create other magic items.",
+          "limits": [],
+          "scaling": "Non-scroll magic items from level 9."
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Mage Armour",
+          "effect": "Deep magic grants +2 bonus to Armour Class.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Mage\u2019s Staff",
+          "effect": "A normal staff in the mage\u2019s hands can harm creatures immune to mundane attacks.",
+          "conditions": [
+            "Wielding a staff"
+          ],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [
+        {
+          "name": "Mage Skills",
+          "rollType": "d%",
+          "skills": [
+            {
+              "code": "DM",
+              "name": "Detect Magic",
+              "effect": "1 turn concentration on object within 30 feet; failed checks may be retried with more time."
+            },
+            {
+              "code": "OC",
+              "name": "Open/Close",
+              "effect": "Opens or pushes closed unlocked door, portal, lid, etc. within 30 feet and holds it open/closed for 1 round per level; one attempt per portal."
+            },
+            {
+              "code": "RF",
+              "name": "Rally/Fear",
+              "effect": "Rally counters magical fear; fear forces enemies to make morale check. Once per turn."
+            },
+            {
+              "code": "RM",
+              "name": "Read Magic",
+              "effect": "Deciphers magical scripts and runes. Failed attempts cannot be retried until gaining a level."
+            },
+            {
+              "code": "SU",
+              "name": "Suggestion",
+              "effect": "Words gain supernatural potency. Up to 1 HD of persons per mage level within 30 feet save vs spells or follow suggestion for 1 round per level. Dangerous suggestions auto-save; targets realize trick afterward. Once per turn."
+            }
+          ],
+          "playerKnowledgeRule": "Referee should roll Detect Magic because the mage does not always know whether the object being scanned is magical.",
+          "progression": {
+            "1": {
+              "DM": 75,
+              "OC": 30,
+              "RF": 20,
+              "RM": 50,
+              "SU": 20
+            },
+            "2": {
+              "DM": 80,
+              "OC": 35,
+              "RF": 23,
+              "RM": 55,
+              "SU": 23
+            },
+            "3": {
+              "DM": 83,
+              "OC": 40,
+              "RF": 25,
+              "RM": 60,
+              "SU": 25
+            },
+            "4": {
+              "DM": 85,
+              "OC": 45,
+              "RF": 26,
+              "RM": 65,
+              "SU": 26
+            },
+            "5": {
+              "DM": 87,
+              "OC": 50,
+              "RF": 35,
+              "RM": 70,
+              "SU": 35
+            },
+            "6": {
+              "DM": 90,
+              "OC": 55,
+              "RF": 45,
+              "RM": 75,
+              "SU": 45
+            },
+            "7": {
+              "DM": 92,
+              "OC": 60,
+              "RF": 55,
+              "RM": 80,
+              "SU": 55
+            },
+            "8": {
+              "DM": 93,
+              "OC": 65,
+              "RF": 65,
+              "RM": 83,
+              "SU": 65
+            },
+            "9": {
+              "DM": 94,
+              "OC": 70,
+              "RF": 70,
+              "RM": 86,
+              "SU": 70
+            },
+            "10": {
+              "DM": 95,
+              "OC": 75,
+              "RF": 75,
+              "RM": 90,
+              "SU": 75
+            },
+            "11": {
+              "DM": 96,
+              "OC": 80,
+              "RF": 80,
+              "RM": 92,
+              "SU": 80
+            },
+            "12": {
+              "DM": 97,
+              "OC": 85,
+              "RF": 85,
+              "RM": 95,
+              "SU": 85
+            },
+            "13": {
+              "DM": 98,
+              "OC": 90,
+              "RF": 90,
+              "RM": 98,
+              "SU": 90
+            },
+            "14": {
+              "DM": 99,
+              "OC": 95,
+              "RF": 95,
+              "RM": 99,
+              "SU": 95
+            }
+          }
+        }
+      ],
+      "spellcasting": {
+        "type": "arcane-special",
+        "startsAtLevel": 1,
+        "spellList": "No memorized spell list; casts arcane spells from scrolls and uses mage skills",
+        "preparationMethod": "Percentile magical skills plus scroll casting",
+        "maxSpellLevel": null,
+        "rules": [
+          "Cannot memorize spells.",
+          "Can cast arcane spells from scrolls.",
+          "Can use arcane caster magic items.",
+          "Can scribe arcane scrolls at any level."
+        ]
+      },
+      "magicItemUse": [
+        "Arcane scrolls",
+        "Items usable only by arcane spell casters, such as magic wands"
+      ],
+      "levelGatedFeatures": [
+        {
+          "level": 9,
+          "name": "Create Magic Items",
+          "effect": "May create magic items other than scrolls."
+        }
+      ],
+      "domainFeatures": [
+        {
+          "level": 11,
+          "name": "Mage Stronghold",
+          "effect": "May build a stronghold, often a great tower. 1d6 apprentices of levels 1\u20133 arrive to study under the mage."
+        }
+      ],
+      "softwareTags": [
+        "arcane-magic",
+        "skill-based-magic",
+        "healing",
+        "staff",
+        "scrolls",
+        "low-magic"
+      ]
+    },
+    {
+      "id": "wood_elf",
+      "name": "Wood Elf",
+      "sourceBook": "Carcass Crawler Issue #2",
+      "kind": "demihuman_class",
+      "persona": "The Sylvan Spell-Hunter",
+      "roleSummary": "A reclusive forest elf with druidic divine magic, stealth, missile expertise, foraging and hunting, heightened awareness, secret-door senses, infravision, ghoul paralysis immunity, and a treetop stronghold.",
+      "requirements": [
+        "DEX 9+",
+        "INT 9+"
+      ],
+      "primeRequisites": [
+        "DEX",
+        "WIS"
+      ],
+      "xpBonusRule": "DEX 13+ and WIS 13+ grant +5% XP; DEX 16+ and WIS 13+ grant +10% XP.",
+      "hitDie": "1d6",
+      "maximumLevel": 10,
+      "xpProgression": [
+        {
+          "level": 1,
+          "xp": 0
+        },
+        {
+          "level": 2,
+          "xp": 3000
+        },
+        {
+          "level": 3,
+          "xp": 6000
+        },
+        {
+          "level": 4,
+          "xp": 12000
+        },
+        {
+          "level": 5,
+          "xp": 24000
+        },
+        {
+          "level": 6,
+          "xp": 48000
+        },
+        {
+          "level": 7,
+          "xp": 100000
+        },
+        {
+          "level": 8,
+          "xp": 200000
+        },
+        {
+          "level": 9,
+          "xp": 350000
+        },
+        {
+          "level": 10,
+          "xp": 500000
+        }
+      ],
+      "armorPermissions": [
+        "Leather armour",
+        "Shields",
+        "No armour heavier than leather"
+      ],
+      "weaponPermissions": [
+        "Any weapon"
+      ],
+      "languages": [
+        "Alignment",
+        "Common",
+        "Elvish",
+        "Bugbear",
+        "Dryad",
+        "Gnoll"
+      ],
+      "alignmentRules": [],
+      "characterCreationRules": [],
+      "restrictions": [
+        "Cannot wear armour heavier than leather due to need for stealth and free movement.",
+        "Must remain faithful to alignment and religion or may suffer deity disfavour."
+      ],
+      "activeAbilities": [
+        {
+          "name": "Detect Secret Doors",
+          "trigger": "When actively searching",
+          "effect": "Detects hidden and secret doors with a 2-in-6 chance.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Hiding",
+          "trigger": "In woods or undergrowth",
+          "effect": "Can hide with 90% chance of success.",
+          "limits": [
+            "Requires woods or undergrowth"
+          ],
+          "scaling": null
+        },
+        {
+          "name": "Listen at Doors",
+          "trigger": "Listening at a door",
+          "effect": "Hears noises with a 2-in-6 chance.",
+          "limits": [],
+          "scaling": null
+        },
+        {
+          "name": "Magical Research",
+          "trigger": "Downtime",
+          "effect": "May create new spells or other magical effects associated with their deity; from 9th level may create magic items.",
+          "limits": [
+            "Subject to deity disfavour"
+          ],
+          "scaling": "Magic item creation from level 9."
+        }
+      ],
+      "passiveAbilities": [
+        {
+          "name": "Awareness",
+          "effect": "Only surprised on a roll of 1; may act in a surprise round while companions are surprised.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Foraging and Hunting",
+          "effect": "Party with a wood elf succeeds at foraging on 2-in-6 and finds prey while hunting on 5-in-6.",
+          "conditions": [
+            "Wilderness adventuring"
+          ],
+          "scaling": null
+        },
+        {
+          "name": "Immunity to Ghoul Paralysis",
+          "effect": "Unaffected by ghoul paralysis.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Infravision",
+          "effect": "Infravision 60 feet.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Missile Attack Bonus",
+          "effect": "+1 bonus to attack rolls with all missile weapons.",
+          "conditions": [
+            "Using missile weapons"
+          ],
+          "scaling": null
+        }
+      ],
+      "skillSystems": [],
+      "spellcasting": {
+        "type": "divine",
+        "startsAtLevel": 1,
+        "spellList": "Druid spell list; if Advanced Fantasy is not used, cleric spell list with cure light wounds unavailable until level 2",
+        "preparationMethod": "Prayer to nature",
+        "maxSpellLevel": 5,
+        "rules": [
+          "Must remain faithful to alignment and religion or risk deity disfavour.",
+          "May use magic scrolls of spells on the wood elf spell list.",
+          "May use items usable only by divine spellcasters, such as some staves.",
+          "From 9th level may create magic items."
+        ],
+        "spellProgression": {
+          "1": {
+            "1": 1
+          },
+          "2": {
+            "1": 2
+          },
+          "3": {
+            "1": 2,
+            "2": 1
+          },
+          "4": {
+            "1": 2,
+            "2": 2
+          },
+          "5": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "7": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "8": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "10": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          }
+        }
+      },
+      "magicItemUse": [
+        "Divine spell scrolls from wood elf spell list",
+        "Items usable only by divine spellcasters, such as some staves"
+      ],
+      "levelGatedFeatures": [
+        {
+          "level": 9,
+          "name": "Create Magic Items",
+          "effect": "May create magic items through magical research."
+        },
+        {
+          "level": 9,
+          "name": "Treetop Stronghold",
+          "effect": "May construct a treetop stronghold in the depths of the forest."
+        }
+      ],
+      "domainFeatures": [
+        {
+          "level": 9,
+          "name": "Treetop Forest Stronghold",
+          "effect": "May construct an exquisite wooden treetop stronghold in a site of great natural beauty; costs as much as similar stone construction. Forest animals within 5 miles become friends, may warn of intruders and carry messages/news, and must be protected. May only hire elven mercenaries; specialists and retainers may be any race."
+        }
+      ],
+      "softwareTags": [
+        "demihuman",
+        "elf",
+        "woodland",
+        "divine-magic",
+        "druidic",
+        "stealth",
+        "missile",
+        "forest"
+      ]
+    }
+  ],
+  "commonXpProgressions": {
+    "dragonborn_10": [
+      {
+        "level": 1,
+        "xp": 0
+      },
+      {
+        "level": 2,
+        "xp": 3000
+      },
+      {
+        "level": 3,
+        "xp": 6000
+      },
+      {
+        "level": 4,
+        "xp": 12000
+      },
+      {
+        "level": 5,
+        "xp": 24000
+      },
+      {
+        "level": 6,
+        "xp": 45000
+      },
+      {
+        "level": 7,
+        "xp": 95000
+      },
+      {
+        "level": 8,
+        "xp": 175000
+      },
+      {
+        "level": 9,
+        "xp": 350000
+      },
+      {
+        "level": 10,
+        "xp": 500000
+      }
+    ],
+    "tiefling_10": [
+      {
+        "level": 1,
+        "xp": 0
+      },
+      {
+        "level": 2,
+        "xp": 2500
+      },
+      {
+        "level": 3,
+        "xp": 5000
+      },
+      {
+        "level": 4,
+        "xp": 10000
+      },
+      {
+        "level": 5,
+        "xp": 20000
+      },
+      {
+        "level": 6,
+        "xp": 30000
+      },
+      {
+        "level": 7,
+        "xp": 60000
+      },
+      {
+        "level": 8,
+        "xp": 120000
+      },
+      {
+        "level": 9,
+        "xp": 240000
+      },
+      {
+        "level": 10,
+        "xp": 360000
+      }
+    ],
+    "ratling_8": [
+      {
+        "level": 1,
+        "xp": 0
+      },
+      {
+        "level": 2,
+        "xp": 2000
+      },
+      {
+        "level": 3,
+        "xp": 4000
+      },
+      {
+        "level": 4,
+        "xp": 8000
+      },
+      {
+        "level": 5,
+        "xp": 16000
+      },
+      {
+        "level": 6,
+        "xp": 32000
+      },
+      {
+        "level": 7,
+        "xp": 64000
+      },
+      {
+        "level": 8,
+        "xp": 128000
+      }
+    ]
+  }
+}

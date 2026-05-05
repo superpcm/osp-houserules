@@ -1,0 +1,618 @@
+{
+  "source": {
+    "title": "Old-School Essentials raceProfiles compiled from Advanced Fantasy Player's Tome and Carcass Crawler issues",
+    "includedSources": [
+      "OSE Advanced Fantasy Player's Tome v1.3",
+      "Carcass Crawler Issue #1",
+      "Carcass Crawler Issue #2",
+      "Carcass Crawler Issue #3",
+      "Carcass Crawler Issue #5"
+    ],
+    "note": "Carcass Crawler Issue #6 contains new dwarf classes but no separate raceProfiles. Issue #4 likewise adds halfling classes rather than separate raceProfiles. Duplicate race presentations were normalized, with the latest available version used where later issues update a race."
+  },
+  "schema": {
+    "id": "string",
+    "name": "string",
+    "sourceBook": "string",
+    "description": "string",
+    "requirements": [
+      "string"
+    ],
+    "abilityModifiers": {
+      "ABILITY": "number"
+    },
+    "languages": [
+      "string"
+    ],
+    "availableClasses": [
+      {
+        "class": "string",
+        "maxLevel": "number|string",
+        "npcOnlyAtRefereeOption": "boolean"
+      }
+    ],
+    "restrictions": [
+      "string"
+    ],
+    "racialAbilities": [
+      {
+        "name": "string",
+        "effect": "string"
+      }
+    ],
+    "notes": [
+      "string"
+    ],
+    "softwareTags": [
+      "string"
+    ]
+  },
+  "raceProfiles": [
+    {
+      "id": "dwarf",
+      "name": "Dwarf",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome v1.3",
+      "description": "Stout underground demihumans known for craft, stubbornness, and resilience.",
+      "requirements": [
+        "CON 9+"
+      ],
+      "abilityModifiers": {
+        "CHA": -1,
+        "CON": 1
+      },
+      "languages": [
+        "Alignment",
+        "Common",
+        "Dwarvish",
+        "Gnomish",
+        "Goblin",
+        "Kobold"
+      ],
+      "availableClasses": [
+        {
+          "class": "Assassin",
+          "maxLevel": 9,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Cleric",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": true
+        },
+        {
+          "class": "Fighter",
+          "maxLevel": 10,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Thief",
+          "maxLevel": 9,
+          "npcOnlyAtRefereeOption": false
+        }
+      ],
+      "restrictions": [
+        "Small stature weapon limits"
+      ],
+      "racialAbilities": [
+        {
+          "name": "Combat Restrictions",
+          "effect": "Can only use small or normal-sized weapons; cannot use longbows or two-handed swords."
+        },
+        {
+          "name": "Detect Construction Tricks",
+          "effect": "2-in-6 chance to detect new construction, sliding walls, or sloping passages when searching."
+        },
+        {
+          "name": "Detect Room Traps",
+          "effect": "2-in-6 chance to detect non-magical room traps when searching."
+        },
+        {
+          "name": "Infravision",
+          "effect": "Can see in darkness to 60'."
+        },
+        {
+          "name": "Listening at Doors",
+          "effect": "2-in-6 chance to hear noises."
+        },
+        {
+          "name": "Resilience",
+          "effect": "Bonus to saves versus poison, spells, and magic wands/rods/staves based on CON.",
+          "table": {
+            "6_or_lower": 0,
+            "7_10": 2,
+            "11_14": 3,
+            "15_17": 4,
+            "18": 5,
+            "appliesTo": [
+              "poison",
+              "spells",
+              "magic wands",
+              "magic rods",
+              "magic staves"
+            ]
+          }
+        }
+      ],
+      "notes": [],
+      "softwareTags": [
+        "dwarf",
+        "underground",
+        "resilience",
+        "stonework"
+      ]
+    },
+    {
+      "id": "elf",
+      "name": "Elf",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome v1.3",
+      "description": "Slender, fey demihumans with long lifespans, keen senses, and love of nature and magic.",
+      "requirements": [
+        "INT 9+"
+      ],
+      "abilityModifiers": {
+        "CON": -1,
+        "DEX": 1
+      },
+      "languages": [
+        "Alignment",
+        "Common",
+        "Elvish",
+        "Gnoll",
+        "Hobgoblin",
+        "Orcish"
+      ],
+      "availableClasses": [
+        {
+          "class": "Acrobat",
+          "maxLevel": 10,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Assassin",
+          "maxLevel": 10,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Cleric",
+          "maxLevel": 7,
+          "npcOnlyAtRefereeOption": true
+        },
+        {
+          "class": "Druid",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": true
+        },
+        {
+          "class": "Fighter",
+          "maxLevel": 7,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Knight",
+          "maxLevel": 11,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Magic-user",
+          "maxLevel": 11,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Ranger",
+          "maxLevel": 11,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Thief",
+          "maxLevel": 10,
+          "npcOnlyAtRefereeOption": false
+        }
+      ],
+      "restrictions": [],
+      "racialAbilities": [
+        {
+          "name": "Detect Secret Doors",
+          "effect": "When actively searching, detects hidden and secret doors on 2-in-6."
+        },
+        {
+          "name": "Immunity to Ghoul Paralysis",
+          "effect": "Unaffected by paralysis inflicted by ghouls."
+        },
+        {
+          "name": "Infravision",
+          "effect": "Can see in darkness to 60'."
+        },
+        {
+          "name": "Listening at Doors",
+          "effect": "2-in-6 chance to hear noises."
+        }
+      ],
+      "notes": [],
+      "softwareTags": [
+        "elf",
+        "fey",
+        "magic",
+        "perception"
+      ]
+    },
+    {
+      "id": "gnome",
+      "name": "Gnome",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome v1.3",
+      "description": "Small tunnellers and machine-makers, cousins of dwarves, with affinity for burrowing mammals.",
+      "requirements": [
+        "CON 9+",
+        "INT 9+"
+      ],
+      "abilityModifiers": {},
+      "languages": [
+        "Alignment",
+        "Common",
+        "Dwarvish",
+        "Gnomish",
+        "Kobold",
+        "Burrowing mammal language"
+      ],
+      "availableClasses": [
+        {
+          "class": "Assassin",
+          "maxLevel": 6,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Cleric",
+          "maxLevel": 7,
+          "npcOnlyAtRefereeOption": true
+        },
+        {
+          "class": "Fighter",
+          "maxLevel": 6,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Illusionist",
+          "maxLevel": 7,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Thief",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": false
+        }
+      ],
+      "restrictions": [
+        "Small stature gear limits"
+      ],
+      "racialAbilities": [
+        {
+          "name": "Combat Restrictions",
+          "effect": "Armour must be tailored to small size; weapons must be appropriate to stature; cannot use longbows or two-handed swords."
+        },
+        {
+          "name": "Defensive Bonus",
+          "effect": "+2 AC when attacked by opponents greater than human-sized."
+        },
+        {
+          "name": "Detect Construction Tricks",
+          "effect": "2-in-6 chance to detect new construction, sliding walls, or sloping passages when searching."
+        },
+        {
+          "name": "Infravision",
+          "effect": "Can see in darkness to 90'."
+        },
+        {
+          "name": "Listening at Doors",
+          "effect": "2-in-6 chance to hear noises."
+        },
+        {
+          "name": "Magic Resistance",
+          "effect": "Bonus to saves versus spells and magic wands/rods/staves based on CON.",
+          "table": {
+            "6_or_lower": 0,
+            "7_10": 2,
+            "11_14": 3,
+            "15_17": 4,
+            "18": 5
+          }
+        },
+        {
+          "name": "Speak with Burrowing Mammals",
+          "effect": "Knows the secret language of burrowing mammals such as badgers and moles."
+        }
+      ],
+      "notes": [],
+      "softwareTags": [
+        "gnome",
+        "small",
+        "underground",
+        "illusion",
+        "resistance"
+      ]
+    },
+    {
+      "id": "half_elf",
+      "name": "Half-Elf",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome v1.3",
+      "description": "Rare offspring of humans and elves, blending human robustness and elven features.",
+      "requirements": [
+        "CHA 9+",
+        "CON 9+"
+      ],
+      "abilityModifiers": {},
+      "languages": [
+        "Alignment",
+        "Common",
+        "Elvish"
+      ],
+      "availableClasses": [
+        {
+          "class": "Acrobat",
+          "maxLevel": 12,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Assassin",
+          "maxLevel": 11,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Bard",
+          "maxLevel": 12,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Cleric",
+          "maxLevel": 5,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Druid",
+          "maxLevel": 12,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Fighter",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Knight",
+          "maxLevel": 12,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Magic-user",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Paladin",
+          "maxLevel": 12,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Ranger",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Thief",
+          "maxLevel": 12,
+          "npcOnlyAtRefereeOption": false
+        }
+      ],
+      "restrictions": [],
+      "racialAbilities": [
+        {
+          "name": "Detect Secret Doors",
+          "effect": "When actively searching, detects hidden and secret doors on 2-in-6."
+        },
+        {
+          "name": "Infravision",
+          "effect": "Can see in darkness to 60'."
+        }
+      ],
+      "notes": [],
+      "softwareTags": [
+        "hybrid",
+        "elf",
+        "human",
+        "flexible"
+      ]
+    },
+    {
+      "id": "halfling",
+      "name": "Halfling",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome v1.3",
+      "description": "Small, friendly demihumans who love home comforts and are surprisingly nimble marksmen.",
+      "requirements": [
+        "CON 9+",
+        "DEX 9+"
+      ],
+      "abilityModifiers": {
+        "DEX": 1,
+        "STR": -1
+      },
+      "languages": [
+        "Alignment",
+        "Common",
+        "Halfling"
+      ],
+      "availableClasses": [
+        {
+          "class": "Druid",
+          "maxLevel": 6,
+          "npcOnlyAtRefereeOption": true
+        },
+        {
+          "class": "Fighter",
+          "maxLevel": 6,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Thief",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": false
+        }
+      ],
+      "restrictions": [
+        "Small stature gear limits"
+      ],
+      "racialAbilities": [
+        {
+          "name": "Combat Restrictions",
+          "effect": "Armour must be tailored to small size; weapons must be appropriate to stature; cannot use longbows or two-handed swords."
+        },
+        {
+          "name": "Defensive Bonus",
+          "effect": "+2 AC when attacked by opponents greater than human-sized."
+        },
+        {
+          "name": "Initiative Bonus",
+          "effect": "If individual initiative is used, gains +1 to initiative rolls."
+        },
+        {
+          "name": "Listening at Doors",
+          "effect": "2-in-6 chance to hear noises."
+        },
+        {
+          "name": "Missile Attack Bonus",
+          "effect": "+1 to attack rolls with all missile weapons."
+        },
+        {
+          "name": "Resilience",
+          "effect": "Bonus to saves versus poison, spells, and magic wands/rods/staves based on CON.",
+          "table": {
+            "6_or_lower": 0,
+            "7_10": 2,
+            "11_14": 3,
+            "15_17": 4,
+            "18": 5,
+            "appliesTo": [
+              "poison",
+              "spells",
+              "magic wands",
+              "magic rods",
+              "magic staves"
+            ]
+          }
+        }
+      ],
+      "notes": [],
+      "softwareTags": [
+        "halfling",
+        "small",
+        "missile",
+        "resilience"
+      ]
+    },
+    {
+      "id": "half_orc",
+      "name": "Half-Orc",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome v1.3",
+      "description": "Rare offspring of orcs and humans, often outcast from both cultures.",
+      "requirements": [],
+      "abilityModifiers": {
+        "CHA": -2,
+        "CON": 1,
+        "STR": 1
+      },
+      "languages": [
+        "Alignment",
+        "Common",
+        "Orcish"
+      ],
+      "availableClasses": [
+        {
+          "class": "Acrobat",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Assassin",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Cleric",
+          "maxLevel": 4,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Fighter",
+          "maxLevel": 10,
+          "npcOnlyAtRefereeOption": false
+        },
+        {
+          "class": "Thief",
+          "maxLevel": 8,
+          "npcOnlyAtRefereeOption": false
+        }
+      ],
+      "restrictions": [],
+      "racialAbilities": [
+        {
+          "name": "Infravision",
+          "effect": "Can see in darkness to 60'."
+        }
+      ],
+      "notes": [],
+      "softwareTags": [
+        "orc",
+        "human",
+        "outcast",
+        "infravision"
+      ]
+    },
+    {
+      "id": "human",
+      "name": "Human",
+      "sourceBook": "OSE Advanced Fantasy Player's Tome v1.3",
+      "description": "The most flexible and unrestricted race, defined by ambition, passion, and adaptability.",
+      "requirements": [],
+      "abilityModifiers": {},
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "availableClasses": [
+        {
+          "class": "All non-demihuman classes",
+          "maxLevel": "Unlimited",
+          "npcOnlyAtRefereeOption": false
+        }
+      ],
+      "restrictions": [],
+      "racialAbilities": [
+        {
+          "name": "Flexible Advancement",
+          "effect": "Can select any non-demihuman class and advance without level limits."
+        },
+        {
+          "name": "Optional Ability Modifiers",
+          "effect": "If class/level limits are lifted for demihumans, humans may receive +1 CHA and +1 CON."
+        },
+        {
+          "name": "Optional Blessed",
+          "effect": "If optional human abilities are used, roll hit points twice and take the best result."
+        },
+        {
+          "name": "Optional Decisiveness",
+          "effect": "If optional human abilities are used, humans act first on tied initiative; with individual initiative, gain +1."
+        },
+        {
+          "name": "Optional Leadership",
+          "effect": "If optional human abilities are used, retainers and mercenaries gain +1 loyalty and morale."
+        }
+      ],
+      "notes": [
+        "Optional racial abilities are recommended only if demihuman class/level restrictions are lifted."
+      ],
+      "softwareTags": [
+        "human",
+        "flexible",
+        "leadership"
+      ]
+    }
+  ]
+}

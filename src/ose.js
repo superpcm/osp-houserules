@@ -37,6 +37,9 @@ import { createOspMacro, rollItemMacro, rollTableMacro } from "./module/helpers-
 import { addControl as addPartyControl, update as updatePartySheet } from "./module/helpers-party.js";
 import OspDice from "./module/helpers-dice.js";
 
+// Magic item creator
+import { MagicItemCreator } from "./module/dialog/magic-item-creator.js";
+
 // Combat system
 import OspCombat from "./module/combat/combat.js";
 import OspCombatant from "./module/combat/combatant.js";
@@ -160,6 +163,25 @@ Hooks.on("updateActor", (actor, data) => updatePartySheet(actor, data));
 // ── Chat hooks ────────────────────────────────────────────────────────────
 Hooks.on("getChatMessageContextOptions", addChatMessageContextOptions);
 Hooks.on("renderChatMessageHTML", addChatMessageButtons);
+
+// ── Magic item creator — right-click weapon/armor/ammunition in Items sidebar ─
+// Foundry v13 AppV2 fires "getItemContextOptions"; li is a raw HTMLElement with data-entry-id
+Hooks.on("getItemContextOptions", (app, options) => {
+  const getItem = (li) => game.items.get(li.closest("[data-entry-id]")?.dataset.entryId);
+  options.push({
+    name: "Create Magic Version",
+    icon: '<i class="fas fa-hat-wizard"></i>',
+    condition: (li) => {
+      if (!game.user.isGM) return false;
+      const item = getItem(li);
+      return item && ["weapon", "armor", "ammunition"].includes(item.type);
+    },
+    callback: (li) => {
+      const item = getItem(li);
+      if (item) new MagicItemCreator(item).render(true);
+    }
+  });
+});
 
 // ── Treasure table hooks ──────────────────────────────────────────────────
 Hooks.on("renderRollTableConfig", (app, html) => augmentTable(app, html[0] ?? html));

@@ -1677,7 +1677,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     > :nth-child(1) { left: $sh-belt-img; }
     > :nth-child(2) { left: $sh-belt-name; }
-    > :nth-child(3) { left: $nested-indent + $nested-col-image + $nested-col-name + $gear-containers-col-capacity / 2; } // capacity bar center: 60+50+138+75=323px
+    > :nth-child(3) { left: calc(#{$nested-indent} + #{$nested-col-image} + #{$nested-col-name} + #{$gear-containers-col-capacity} / 2); } // capacity bar center: 60+50+138+75=323px
     > :nth-child(4) { left: $sh-belt-ssize; }
     > :nth-child(5) { left: $sh-belt-twt; }
     > :nth-child(6) { left: $sh-belt-wt; }
@@ -1986,7 +1986,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   box-sizing: border-box;
   > :nth-child(1) { left: $sh-l2-img - 68px; }
   > :nth-child(2) { left: $sh-l2-name - 68px; }
-  > :nth-child(3) { left: $nested-col-image + $nested-col-name + $gear-containers-col-capacity / 2 - 68px; } // capacity bar center: 50+138+75-68=195px
+  > :nth-child(3) { left: calc(#{$nested-col-image} + #{$nested-col-name} + #{$gear-containers-col-capacity} / 2 - 68px); } // capacity bar center: 50+138+75-68=195px
   > :nth-child(4) { left: $sh-l2-ssize - 68px; }
   > :nth-child(5) { left: $sh-l2-twt - 68px; }
   > :nth-child(6) { left: $sh-l2-wt - 68px; }

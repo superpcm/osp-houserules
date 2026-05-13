@@ -460,29 +460,29 @@
       "activeAbilities": [
         {
           "name": "Anti-Charm",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Bardic performance within 90'",
+          "effect": "Allies within 90' are immune to charm and sleep effects while the bard performs. Creatures already charmed or asleep may make a new saving throw.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Enchantment",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Play for at least one round",
+          "effect": "Fascinates up to 2d6 HD of creatures within 60' that can hear; creatures may save vs spells to resist. Fascinated creatures stand motionless. Any attack breaks the effect.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Charm Fascinated Subjects",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Subject already fascinated",
+          "effect": "Fascinated creatures that fail a second save vs spells are charmed as per a charm person/monster spell for as long as the bard continues to perform and for 1 turn thereafter.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Lore",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Ask referee",
+          "effect": "Chance to know lore about legends, monsters, magic items, and historical events. Base chance 1-in-6 at 1st level, improving by level.",
           "limits": [],
           "scaling": null
         }
@@ -490,7 +490,7 @@
       "passiveAbilities": [
         {
           "name": "Language Learning",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Learns one additional language per two levels gained.",
           "conditions": [],
           "scaling": null
         }
@@ -604,15 +604,15 @@
       "activeAbilities": [
         {
           "name": "Turn Undead",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Present holy symbol, within 30'",
+          "effect": "Turns or destroys undead. Roll 2d6 and consult the Turn Undead table; affected undead flee for 3d6 rounds or are destroyed. Chaotic clerics may instead control undead.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Magical Research",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 9+, downtime",
+          "effect": "May create new spells, research spell scrolls, brew potions, and enchant magic items. Costs time and gold; referee adjudicates.",
           "limits": [],
           "scaling": null
         }
@@ -718,22 +718,22 @@
       "activeAbilities": [
         {
           "name": "Detect Secret Doors",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Actively search",
+          "effect": "2-in-6 chance to detect hidden or secret doors when actively searching.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Listen at Doors",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Listen at door or wall",
+          "effect": "2-in-6 chance to hear noises through doors or walls.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Magical Research",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 9+, downtime",
+          "effect": "May create spells, brew potions, and enchant magic items aligned with shadow and spider magic. Costs time and gold; referee adjudicates.",
           "limits": [],
           "scaling": null
         }
@@ -741,25 +741,25 @@
       "passiveAbilities": [
         {
           "name": "Ghoul Paralysis Immunity",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Immune to the paralysing touch of ghouls.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Infravision 90'",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Can see in total darkness to a range of 90'.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Light Sensitivity",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "-1 to attack rolls and saves when in bright light (sunlight or equivalent).",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Spider Affinity",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Spiders and spider-like creatures ignore the drow unless magically commanded to attack or the drow attacks first.",
           "conditions": [],
           "scaling": null
         }
@@ -879,22 +879,22 @@
       "activeAbilities": [
         {
           "name": "Identify Nature",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Examine plant, animal, or terrain",
+          "effect": "Identifies plants, animals, pure water, and whether an area has been affected by curse or blight. Automatic for natural phenomena; referee may call for a roll for unusual cases.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Shape Change",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 7+, once per day",
+          "effect": "Assumes the form of one natural animal (normal or giant). Gains that creature's movement and special senses but retains own HD, saves, and mental abilities. Lasts until the druid chooses to revert.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Magical Research",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 9+, downtime",
+          "effect": "May create new spells, brew potions, and enchant items attuned to nature. Costs time and gold; referee adjudicates.",
           "limits": [],
           "scaling": null
         }
@@ -902,31 +902,31 @@
       "passiveAbilities": [
         {
           "name": "Energy Resistance",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "+2 bonus to saving throws against fire and lightning.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Sylvan Languages",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Speaks the secret language of woodland creatures; can converse with any normal woodland animal.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Pass Without Trace",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Leaves no trail in natural surroundings and cannot be tracked by non-magical means.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Path-Finding",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "1-in-6 chance of becoming lost in wilderness is reduced to nil. Party following the druid also benefits.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Charm Immunity",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Immune to charm effects cast by sylvan creatures such as dryads, nixies, and pixies.",
           "conditions": [],
           "scaling": null
         }
@@ -1040,22 +1040,22 @@
       "activeAbilities": [
         {
           "name": "Detect Construction Tricks",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Actively search underground",
+          "effect": "2-in-6 chance to detect new construction, unsafe walls, ceilings, or floors, sliding walls, and sloping passages when searching.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Detect Room Traps",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Actively search for traps",
+          "effect": "2-in-6 chance to detect large non-magical room traps (pit traps, falling blocks, etc.) when searching.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Listen at Doors",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Listen at door or wall",
+          "effect": "2-in-6 chance to hear noises through doors or walls.",
           "limits": [],
           "scaling": null
         }
@@ -1063,7 +1063,7 @@
       "passiveAbilities": [
         {
           "name": "Infravision 60'",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Can see in total darkness to a range of 60'.",
           "conditions": [],
           "scaling": null
         }
@@ -1165,22 +1165,22 @@
       "activeAbilities": [
         {
           "name": "Detect Secret Doors",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Actively search",
+          "effect": "2-in-6 chance to detect hidden or secret doors when actively searching. Passive 1-in-6 chance when simply passing by.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Listen at Doors",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Listen at door or wall",
+          "effect": "2-in-6 chance to hear noises through doors or walls.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Magical Research",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 9+, downtime",
+          "effect": "May create new spells, brew potions, and enchant magic items. Costs time and gold; referee adjudicates.",
           "limits": [],
           "scaling": null
         }
@@ -1188,13 +1188,13 @@
       "passiveAbilities": [
         {
           "name": "Ghoul Paralysis Immunity",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Immune to the paralysing touch of ghouls.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Infravision 60'",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Can see in total darkness to a range of 60'.",
           "conditions": [],
           "scaling": null
         }
@@ -1309,7 +1309,7 @@
       "passiveAbilities": [
         {
           "name": "Complete Martial Training",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "May use all armour, shields, and weapons. May use a shield and one-handed weapon simultaneously, or wield a two-handed weapon.",
           "conditions": [],
           "scaling": null
         }
@@ -1402,29 +1402,29 @@
       "activeAbilities": [
         {
           "name": "Detect Construction Tricks",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Actively search underground",
+          "effect": "2-in-6 chance to detect new construction, sliding walls, or sloping passages when searching.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Hiding",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Remain motionless in undergrowth, shadow, or rocky cover",
+          "effect": "Base 3-in-6 chance to hide; referee rolls in secret.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Listen at Doors",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Listen at door or wall",
+          "effect": "2-in-6 chance to hear noises through doors or walls.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Magical Research",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 9+, downtime",
+          "effect": "May create illusion-themed spells, brew potions, and enchant items. Costs time and gold; referee adjudicates.",
           "limits": [],
           "scaling": null
         }
@@ -1432,19 +1432,19 @@
       "passiveAbilities": [
         {
           "name": "Defensive Bonus",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "+2 bonus to AC when attacked by opponents larger than human-sized.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Infravision 90'",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Can see in total darkness to a range of 90'.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Burrowing Mammal Speech",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Speaks the secret language of burrowing mammals (badgers, moles, rabbits, etc.) and may request information or minor aid from them.",
           "conditions": [],
           "scaling": null
         }
@@ -1555,8 +1555,8 @@
       "activeAbilities": [
         {
           "name": "Detect Secret Doors",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Actively search",
+          "effect": "2-in-6 chance to detect hidden or secret doors when actively searching.",
           "limits": [],
           "scaling": null
         }
@@ -1564,7 +1564,7 @@
       "passiveAbilities": [
         {
           "name": "Infravision 60'",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Can see in total darkness to a range of 60'.",
           "conditions": [],
           "scaling": null
         }
@@ -1658,15 +1658,15 @@
       "activeAbilities": [
         {
           "name": "Hiding",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Remain motionless in cover",
+          "effect": "90% chance to hide in natural surroundings; 2-in-6 chance to hide in dungeons or urban environments when motionless. Referee rolls in secret.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Listen at Doors",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Listen at door or wall",
+          "effect": "2-in-6 chance to hear noises through doors or walls.",
           "limits": [],
           "scaling": null
         }
@@ -1674,19 +1674,19 @@
       "passiveAbilities": [
         {
           "name": "Defensive Bonus",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "+2 bonus to AC when attacked by opponents larger than human-sized.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Initiative Bonus",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "+1 bonus to individual initiative rolls.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Missile Attack Bonus",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "+1 bonus to all missile weapon attack rolls.",
           "conditions": [],
           "scaling": null
         }
@@ -1776,8 +1776,8 @@
       "activeAbilities": [
         {
           "name": "Back-Stab",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Attack unaware opponent from behind",
+          "effect": "+4 to hit; damage multiplied by ×2.",
           "limits": [],
           "scaling": null
         }
@@ -1785,7 +1785,7 @@
       "passiveAbilities": [
         {
           "name": "Infravision 60'",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Can see in total darkness to a range of 60'.",
           "conditions": [],
           "scaling": null
         }
@@ -1897,8 +1897,8 @@
       "activeAbilities": [
         {
           "name": "Magical Research",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 9+, downtime",
+          "effect": "May create new illusion spells, brew potions, and enchant magic items. Costs time and gold; referee adjudicates.",
           "limits": [],
           "scaling": null
         }
@@ -2016,22 +2016,22 @@
       "activeAbilities": [
         {
           "name": "Assess Steeds",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Examine a mount",
+          "effect": "Identifies the quality, health, temperament, and approximate value of any horse, warhorse, or similar mount. Takes one round.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Urge Great Speed",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Mounted, during travel or combat",
+          "effect": "Mount moves at double normal speed for one turn; mount must rest one full turn afterward.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Train Flying Mount",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 9+, downtime",
+          "effect": "May train a captured pegasus, hippogriff, or similar flying creature as a mount over the course of several weeks. Referee determines training time and difficulty.",
           "limits": [],
           "scaling": null
         }
@@ -2039,31 +2039,31 @@
       "passiveAbilities": [
         {
           "name": "Mounted Combat",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Does not suffer the normal -1 penalty to attack rolls when fighting from horseback. Gains +1 to attack rolls when charging with a lance.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Hospitality",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "When travelling, may always request food and lodging at any castle or noble household without payment, as befits a knight's status.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Fear Immunity",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Immune to magical fear effects.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Fear Support",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Allies within 30' are also immune to magical fear while the knight is present and able to act.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Beguilement Resistance",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "+2 bonus to saving throws against charm, suggestion, and other beguilement effects.",
           "conditions": [],
           "scaling": null
         }
@@ -2173,8 +2173,8 @@
       "activeAbilities": [
         {
           "name": "Magical Research",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 9+, downtime",
+          "effect": "May create new spells, brew potions, and enchant magic items. Costs time and gold; referee adjudicates.",
           "limits": [],
           "scaling": null
         }
@@ -2291,29 +2291,29 @@
       "activeAbilities": [
         {
           "name": "Lay on Hands",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Touch, once per day",
+          "effect": "Heals 2 hit points per paladin level by touch. May instead cure disease once per week at the cost of the day's healing.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Cure Disease",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Touch, once per week",
+          "effect": "Cures one disease in a touched creature. Using this ability expends the paladin's Lay on Hands for that day.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Turn Undead",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Present holy symbol, within 30'",
+          "effect": "Turns or destroys undead as a cleric of equal level. Roll 2d6 and consult the Turn Undead table; affected undead flee for 3d6 rounds or are destroyed.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Summon Holy Warhorse",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Level 4+, once per character lifetime",
+          "effect": "Summons a specially bred, divinely blessed warhorse (treat as a heavy warhorse with maximum hit points). The horse is loyal and fearless; if slain, it cannot be summoned again.",
           "limits": [],
           "scaling": null
         }
@@ -2321,7 +2321,7 @@
       "passiveAbilities": [
         {
           "name": "Disease Immunity",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Immune to all forms of disease, mundane and magical.",
           "conditions": [],
           "scaling": null
         }
@@ -2440,8 +2440,8 @@
       "activeAbilities": [
         {
           "name": "Tracking",
-          "trigger": "See class rules",
-          "effect": "Class ability; see source rules and detailed rule implementation notes.",
+          "trigger": "Examine tracks, wilderness or dungeon",
+          "effect": "1-in-6 base chance to track creatures over hard ground; 2-in-6 over soft ground; 3-in-6 over mud or snow. Chance improves with level.",
           "limits": [],
           "scaling": null
         }
@@ -2449,25 +2449,25 @@
       "passiveAbilities": [
         {
           "name": "Awareness",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Surprised only on a 1-in-6 (rather than the normal 2-in-6) when in the wilderness.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Foraging and Hunting",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "Party can forage for food on a 2-in-6 chance per day; can hunt for sufficient food for the party on a 5-in-6 chance per day in wilderness.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Pursuit",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "When tracking, may move at normal speed without penalty to tracking chance. Quarry moving at running speed imposes only a -1 penalty.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Wilderness Stealth",
-          "effect": "Class passive ability; see source rules and detailed rule implementation notes.",
+          "effect": "May hide in natural outdoor surroundings on a 3-in-6 chance while motionless. Referee rolls in secret.",
           "conditions": [],
           "scaling": null
         }
@@ -2883,22 +2883,22 @@
       "activeAbilities": [
         {
           "name": "Forge Animal Companion Bond",
-          "trigger": "See class rules",
-          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "trigger": "Spend one week with a willing or tamed animal",
+          "effect": "Forms a permanent empathic bond with one animal companion. The companion obeys simple commands, fights alongside the Beast Master, and shares an empathic link allowing transmission of strong emotions and general direction/distance. Only one bond may be active at a time.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Identify Tracks",
-          "trigger": "See class rules",
-          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "trigger": "Examine tracks or spoor",
+          "effect": "Identifies the creature type, number, direction of travel, and approximate age of tracks on a 2-in-6 base chance (improving by level). On a success, may also determine the creature's general health or burden.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Clairvoyance",
-          "trigger": "See class rules",
-          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "trigger": "Concentrate, animal companion in range",
+          "effect": "Perceives through the senses of the bonded animal companion. Lasts while concentrating; range is 1 mile per Beast Master level.",
           "limits": [],
           "scaling": null
         }
@@ -2906,13 +2906,13 @@
       "passiveAbilities": [
         {
           "name": "Animal Reaction Bonus",
-          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "effect": "Reaction rolls from normal (non-magical) animals are made at +2. Animals that would normally attack on a hostile reaction may instead hesitate.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Speak with Animals",
-          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "effect": "May communicate with any normal (non-magical) animal, exchanging simple concepts such as what the animal has seen, heard, or smelled nearby.",
           "conditions": [],
           "scaling": null
         }
@@ -3027,15 +3027,15 @@
       "activeAbilities": [
         {
           "name": "Surprise Attack",
-          "trigger": "See class rules",
-          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "trigger": "Attack undetected opponent in wilderness",
+          "effect": "+4 to hit on the first attack when striking an opponent who is unaware of the Warden's presence in a wilderness setting.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Tracking",
-          "trigger": "See class rules",
-          "effect": "Class ability from Carcass Crawler; implement according to detailed rule text.",
+          "trigger": "Examine tracks, wilderness",
+          "effect": "2-in-6 base chance to track creatures over hard ground; 3-in-6 over soft ground; 4-in-6 over mud or snow. Chance improves with level. May identify creature type, number, and direction from spoor.",
           "limits": [],
           "scaling": null
         }
@@ -3043,25 +3043,25 @@
       "passiveAbilities": [
         {
           "name": "Awareness",
-          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "effect": "Surprised only on a 1-in-6 (rather than the normal 2-in-6) when in wilderness or natural terrain.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Foraging and Hunting",
-          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "effect": "Party can forage for food on a 2-in-6 chance per day; can hunt for sufficient food for the party on a 5-in-6 chance per day in wilderness.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Pursuit",
-          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "effect": "When tracking, may move at normal speed without penalty to tracking chance. Quarry moving at running speed imposes only a -1 penalty to the tracking roll.",
           "conditions": [],
           "scaling": null
         },
         {
           "name": "Limited Possessions",
-          "effect": "Class passive ability from Carcass Crawler; implement according to detailed rule text.",
+          "effect": "May own no more than can be carried on the person or loaded on a single mount. Cannot own land, buildings, or hire permanent retainers. XP penalties apply if this restriction is violated.",
           "conditions": [],
           "scaling": null
         }

@@ -16,7 +16,7 @@ export class RaceClassHandler {
       'Elf': ['Assassin', 'Cleric', 'Druid', 'Elf', 'Fighter', 'Knight', 'Magic-User', 'Ranger', 'Thief'], // Added Elf class
       'Gnome': ['Assassin', 'Cleric', 'Fighter', 'Gnome', 'Illusionist', 'Thief'], // Added Gnome class
       'Hobbit': ['Druid', 'Fighter', 'Hobbit', 'Thief'], // Added Hobbit class
-      'Half-Orc': ['Assassin', 'Barbarian', 'Cleric', 'Fighter', 'Half-Orc', 'Thief'], // Added Half-Orc class
+      'Half-Orc': ['Assassin', 'Cleric', 'Fighter', 'Half-Orc', 'Thief'], // Added Half-Orc class
       'Half-Elf': ['Assassin', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Half-Elf', 'Knight', 'Magic-User', 'Paladin', 'Ranger', 'Thief'], // Added Half-Elf class
       'Human': [] // Human gets all classes except race-as-class options, handled by exclusion logic
       // Add other race restrictions here as needed

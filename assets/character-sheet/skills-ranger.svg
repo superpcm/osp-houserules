@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 130" width="800" height="130" data-skill-svg="true">
+
+  <!-- Row 1 -->
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-open-stuck-doors.svg"
+         x="55.00" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="open-stuck-doors" cx="120.00" cy="60.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-hear-noise.svg"
+         x="195.00" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="hear-noise" cx="260.00" cy="60.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-find-secret-doors.svg"
+         x="335.00" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="find-secret-doors" cx="400.00" cy="60.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-foraging-hunting.svg"
+         x="475.00" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="foraging-hunting" cx="540.00" cy="60.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-stealth.svg"
+         x="615.00" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="stealth" cx="680.00" cy="60.00" r="49" fill="none"/>
+</svg>

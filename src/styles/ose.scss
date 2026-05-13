@@ -50,7 +50,7 @@ form.osp,
 /* Apply to common text elements, but NOT all elements with * */
 /* :where() wraps the :not() chain so it contributes 0 specificity — keeps this rule at
    0,1,1 (.osp + div) so any scoped !important override can win without a specificity arms race. */
-.osp div:where(:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon):not(.combat-saving-throws-title):not(.combat-saving-throws-subtitle):not(.bio-abilities-title):not(.bio-abilities-subtitle):not(.combat-hpac-title):not(.skill-tab-title):not(.skill-tab-subtitle)),
+.osp div:where(:not(i):not(.category-caret):not(.item-control):not(.item-roll-icon):not(.combat-saving-throws-title):not(.combat-saving-throws-subtitle):not(.bio-abilities-title):not(.bio-abilities-subtitle):not(.combat-hpac-title):not(.skill-tab-title):not(.skill-tab-subtitle):not(.skill-abilities-header):not(.skill-abilities-subtitle):not(.skill-ability-tag)),
 .osp span:not(i),
 .osp p,
 .osp h1, .osp h2, .osp h3, .osp h4, .osp h5, .osp h6,

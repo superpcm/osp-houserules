@@ -180,7 +180,7 @@
         {
           "class": "Druid",
           "maxLevel": 8,
-          "npcOnlyAtRefereeOption": true
+          "npcOnlyAtRefereeOption": false
         },
         {
           "class": "Fighter",
@@ -442,7 +442,7 @@
         {
           "class": "Druid",
           "maxLevel": 6,
-          "npcOnlyAtRefereeOption": true
+          "npcOnlyAtRefereeOption": false
         },
         {
           "class": "Fighter",
@@ -589,20 +589,8 @@
           "effect": "Can select any non-demihuman class and advance without level limits."
         },
         {
-          "name": "Optional Ability Modifiers",
-          "effect": "If class/level limits are lifted for demihumans, humans may receive +1 CHA and +1 CON."
-        },
-        {
-          "name": "Optional Blessed",
-          "effect": "If optional human abilities are used, roll hit points twice and take the best result."
-        },
-        {
-          "name": "Optional Decisiveness",
-          "effect": "If optional human abilities are used, humans act first on tied initiative; with individual initiative, gain +1."
-        },
-        {
-          "name": "Optional Leadership",
-          "effect": "If optional human abilities are used, retainers and mercenaries gain +1 loyalty and morale."
+          "name": "Leadership",
+          "effect": "Retainers and mercenaries gain +1 loyalty and morale."
         }
       ],
       "notes": [

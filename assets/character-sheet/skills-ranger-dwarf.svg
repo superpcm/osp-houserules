@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 255" width="800" height="255" data-skill-svg="true">
+
+  <!-- Row 1 -->
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-open-stuck-doors.svg"
+         x="72.50" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="open-stuck-doors" cx="137.50" cy="60.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-hear-noise.svg"
+         x="247.50" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="hear-noise" cx="312.50" cy="60.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-find-secret-doors.svg"
+         x="422.50" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="find-secret-doors" cx="487.50" cy="60.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-foraging-hunting.svg"
+         x="597.50" y="0" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="foraging-hunting" cx="662.50" cy="60.00" r="49" fill="none"/>
+
+  <!-- Row 2 -->
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-stealth.svg"
+         x="101.67" y="125" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="stealth" cx="166.67" cy="185.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-detect-construction.svg"
+         x="335.00" y="125" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="detect-construction" cx="400.00" cy="185.00" r="49" fill="none"/>
+  <image href="/systems/osp-houserules/assets/character-sheet/skill-circles/skill-detect-room-traps.svg"
+         x="568.33" y="125" width="130" height="130" preserveAspectRatio="xMidYMin meet"/>
+  <circle id="detect-room-traps" cx="633.33" cy="185.00" r="49" fill="none"/>
+</svg>

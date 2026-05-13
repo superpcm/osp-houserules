@@ -24,18 +24,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Race-specific skills (only if no qualifying class)
     races: {
       dwarf: ['detect-construction', 'detect-room-traps'],
-      gnome: ['detect-construction'],
+      gnome: ['detect-construction', 'hiding'],
       'half-orc': [],
-      hobbit: []
+      hobbit: ['hiding']
     },
-    
+
     // Class-specific skills (take priority over race)
     classes: {
       // Core OSE classes
       fighter: [],
       cleric: [],
       'magic-user': [],
-      
+
       // Advanced Fantasy classes with special skills
       assassin: ['assassination', 'climb-sheer', 'hide-shadows', 'move-silently'],
       barbarian: ['climb-sheer', 'move-silently', 'hide-undergrowth'],
@@ -44,19 +44,19 @@ export class OspActorSheetCharacter extends ActorSheet {
       druid: [],
       knight: [],
       paladin: [],
-      ranger: [],
-      warden: [],
+      ranger: ['foraging-hunting', 'stealth'],
+      warden: ['foraging-hunting', 'wilderness-surprise-attack'],
       illusionist: [],
       mage: [],
       thief: ['climb-sheer', 'hide-shadows', 'move-silently', 'find-traps', 'open-locks', 'pick-pockets'],
-      
+
       // Race-as-class options
       dwarf: ['detect-construction', 'detect-room-traps'],
       elf: [],
-      gnome: ['detect-construction'],
+      gnome: ['detect-construction', 'hiding'],
       'half-elf': [],
       'half-orc': ['hide-shadows', 'move-silently', 'pick-pockets'],
-      hobbit: []
+      hobbit: ['hiding']
     }
   };
 
@@ -75,7 +75,11 @@ export class OspActorSheetCharacter extends ActorSheet {
     'open-locks': '.cs-pos-open-locks',
     'pick-pockets': '.cs-pos-pick-pockets',
     'hide-undergrowth': '.cs-pos-hide-undergrowth',
-    'hide-dungeons': '.cs-pos-hide-dungeons'
+    'hide-dungeons': '.cs-pos-hide-dungeons',
+    'foraging-hunting': '.cs-pos-foraging-hunting',
+    'stealth': '.cs-pos-stealth',
+    'wilderness-surprise-attack': '.cs-pos-wilderness-surprise-attack',
+    'hiding': '.cs-pos-hiding'
   };
 
   constructor(...args) {
@@ -1037,6 +1041,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.sheet-tabs a[data-tab="bio"]').on('click', () => {
       requestAnimationFrame(resizeAll);
     });
+
+    // Recompute skill-input positions when the Skills tab is opened; the tab
+    // may have been hidden (display: none) when the SVG first injected, in
+    // which case getBoundingClientRect returned zero and positions weren't set.
+    html.find('.sheet-tabs a[data-tab="skills"]').on('click', () => {
+      requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
+    });
   }
 
   /**
@@ -1595,21 +1606,284 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
+   * Resolve the composite skill-circle SVG for a given class/race combo.
+   * Lookup order: class+race combo → class → race → base.
+   */
+  getSkillSVGPath(characterClass, race) {
+    const base = '/systems/osp-houserules/assets/character-sheet';
+    const cls = (characterClass || '').toLowerCase().replace(/\s+/g, '-');
+    const rcRaw = (race || '').toLowerCase().replace(/\s+/g, '-');
+    const rc = rcRaw === 'half-orc' ? 'halforc' : rcRaw;
+
+    const classesWithSkills = new Set(['assassin', 'barbarian', 'ranger', 'thief', 'warden']);
+    const racesWithSkills = new Set(['dwarf', 'gnome', 'elf', 'hobbit', 'halforc']);
+    // Races with `skills-{class}-{race}.svg` files for skill-bearing classes.
+    const classComboRaces = new Set(['dwarf', 'gnome', 'hobbit']);
+    // Races with `skills-base-{race}.svg` files (race + non-skill class).
+    // Hobbit is intentionally absent: its non-skill-class layout comes from skills-hobbit.svg.
+    const baseComboRaces = new Set(['dwarf', 'gnome']);
+
+    if (classesWithSkills.has(cls)) {
+      if (classComboRaces.has(rc)) return `${base}/skills-${cls}-${rc}.svg`;
+      return `${base}/skills-${cls}.svg`;
+    }
+    if (baseComboRaces.has(rc)) return `${base}/skills-base-${rc}.svg`;
+    if (racesWithSkills.has(rc)) return `${base}/skills-${rc}.svg`;
+    return `${base}/skills-base.svg`;
+  }
+
+  /**
+   * Fetch the composite skill SVG and inject it into the Skills tab container.
+   * Caches fetched SVG text statically across sheet instances.
+   */
+  async fetchAndInjectSVG(html, svgPath) {
+    const container = this.getElement(html, '.cs-skill-svg-container');
+    if (!container) return;
+    const el = container[0] || container;
+
+    if (el.dataset.svgPath === svgPath && el.innerHTML) return;
+
+    if (!OspActorSheetCharacter._svgCache) OspActorSheetCharacter._svgCache = new Map();
+    const cache = OspActorSheetCharacter._svgCache;
+
+    let svgText = cache.get(svgPath);
+    if (!svgText) {
+      try {
+        const response = await fetch(svgPath);
+        if (!response.ok) return;
+        svgText = await response.text();
+        cache.set(svgPath, svgText);
+      } catch (err) {
+        console.warn(`[osp-houserules] Failed to load skill SVG: ${svgPath}`, err);
+        return;
+      }
+    }
+    el.innerHTML = svgText;
+    el.dataset.svgPath = svgPath;
+    // Defer to next frame so layout is computed before measuring.
+    requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
+  }
+
+  /**
+   * Map SVG circle IDs to the HTML cs-pos-* slugs where they differ.
+   * The SVGs use newer slugs that don't yet match every HTML class name.
+   */
+  static SKILL_SVG_ID_ALIASES = {
+    'hear-noise': 'listening',
+    'find-secret-doors': 'find-secret-door',
+  };
+
+  // Normalized names of class/race entries that are skills (rendered on the
+  // skill circles) or otherwise suppressed from the Abilities list.
+  static SKILL_OR_SUPPRESSED_ABILITIES = new Set([
+    'listening', 'listeningatdoors', 'hearnoise',
+    'findsecretdoor', 'findsecretdoors',
+    'openstuckdoors',
+    'detectconstruction', 'detectconstructiontricks',
+    'detectroomtraps',
+    'assassination',
+    'climbsheer', 'climbsheersurfaces',
+    'hideshadows', 'hideinshadows',
+    'movesilently',
+    'findtraps', 'findremovetreasuretraps',
+    'openlocks',
+    'pickpockets',
+    'hideundergrowth', 'hideinundergrowth',
+    'hidedungeons', 'hideindungeons',
+    'hiding',
+    'foraginghunting', 'foragehunt', 'foragingandhunting',
+    'stealth',
+    'wildernesssurpriseattack', 'surpriseattack',
+    'infravision'  // house rule: suppressed
+  ]);
+
+  static _classProfiles = null;
+  static _raceProfiles = null;
+
+  /**
+   * Lazily fetch and cache class_profiles.json and race_profiles.json.
+   */
+  async loadProfileData() {
+    const cls = OspActorSheetCharacter;
+    if (!cls._classProfiles) {
+      try {
+        const r = await fetch('/systems/osp-houserules/data/class_profiles.json');
+        const d = await r.json();
+        cls._classProfiles = d.classProfiles || [];
+      } catch (err) {
+        console.warn('[osp-houserules] Failed to load class_profiles.json', err);
+        cls._classProfiles = [];
+      }
+    }
+    if (!cls._raceProfiles) {
+      try {
+        const r = await fetch('/systems/osp-houserules/data/race_profiles.json');
+        const d = await r.json();
+        cls._raceProfiles = d.raceProfiles || [];
+      } catch (err) {
+        console.warn('[osp-houserules] Failed to load race_profiles.json', err);
+        cls._raceProfiles = [];
+      }
+    }
+    return { classes: cls._classProfiles, races: cls._raceProfiles };
+  }
+
+  /**
+   * Render the Abilities section on the Skills tab from class/race profile data.
+   * Filters out entries that are represented as skill circles (or suppressed by house rules).
+   */
+  async renderAbilities(html, characterClass, race) {
+    const target = this.getElement(html, '.skill-abilities-content');
+    if (!target) return;
+    const el = target[0] || target;
+
+    const { classes, races } = await this.loadProfileData();
+
+    const classKey = (characterClass || '').toLowerCase();
+    // race ids in data: dwarf, elf, gnome, half_elf, halfling, half_orc, human
+    const raceKey = (race || '').toLowerCase()
+      .replace(/^hobbit$/, 'halfling')
+      .replace(/-/g, '_');
+
+    const classData = classes.find(c => (c.id || '').toLowerCase() === classKey);
+    const raceData = races.find(r => (r.id || '').toLowerCase() === raceKey);
+
+    const norm = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const skip = OspActorSheetCharacter.SKILL_OR_SUPPRESSED_ABILITIES;
+    const isSkill = (name) => skip.has(norm(name));
+
+    const entries = [];
+    if (classData) {
+      for (const a of (classData.activeAbilities || [])) {
+        if (!isSkill(a.name)) entries.push({ ...a, source: 'class' });
+      }
+      for (const a of (classData.passiveAbilities || [])) {
+        if (!isSkill(a.name)) entries.push({ ...a, source: 'class' });
+      }
+    }
+    if (raceData) {
+      for (const a of (raceData.racialAbilities || [])) {
+        if (!isSkill(a.name)) entries.push({ ...a, source: 'race' });
+      }
+    }
+
+    const escape = (s) => String(s || '').replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+
+    if (entries.length === 0) {
+      el.innerHTML = '';
+      return;
+    }
+
+    entries.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+    el.innerHTML = entries.map(e => {
+      const tag = e.source === 'race'
+        ? ' <span class="skill-ability-tag skill-ability-tag--race">Race</span>'
+        : e.source === 'class'
+        ? ' <span class="skill-ability-tag skill-ability-tag--class">Class</span>'
+        : '';
+      const trigger = e.trigger
+        ? `<span class="skill-ability-trigger">${escape(e.trigger)}.</span> `
+        : '';
+      return `<div class="skill-ability-entry">` +
+        `<div class="skill-ability-name">${escape(e.name)}${tag}</div>` +
+        `<div class="skill-ability-effect">${trigger}${escape(e.effect || '')}</div>` +
+        `</div>`;
+    }).join('');
+  }
+
+  /**
+   * Read circle anchors from the injected SVG and position each matching
+   * skill input field so it's centered on its circle. Inline --left/--top
+   * override the SCSS-driven defaults.
+   */
+  applySkillPositionsFromSVG(html) {
+    const container = this.getElement(html, '.cs-skill-svg-container');
+    if (!container) return;
+    const containerEl = container[0] || container;
+    const svg = containerEl.querySelector('svg');
+    if (!svg) return;
+
+    const tab = containerEl.closest('.tab[data-tab="skills"]');
+    if (!tab) return;
+
+    const viewBox = svg.viewBox && svg.viewBox.baseVal;
+    if (!viewBox || !viewBox.width) return;
+
+    const svgRect = svg.getBoundingClientRect();
+    const tabRect = tab.getBoundingClientRect();
+    // Tab hidden / not laid out yet — bail; we'll retry on tab activation.
+    if (!svgRect.width || !tabRect.width) return;
+
+    const scale = svgRect.width / viewBox.width;
+    const svgOffsetX = svgRect.left - tabRect.left;
+    const svgOffsetY = svgRect.top - tabRect.top;
+
+    const aliases = OspActorSheetCharacter.SKILL_SVG_ID_ALIASES;
+    const positionedSlugs = new Set();
+
+    svg.querySelectorAll('circle[id]').forEach(circle => {
+      const id = circle.id;
+      const slug = aliases[id] || id;
+      const targetEl = tab.querySelector(`.cs-pos-${slug}`);
+      if (!targetEl) return;
+
+      const cx = parseFloat(circle.getAttribute('cx'));
+      const cy = parseFloat(circle.getAttribute('cy'));
+      if (Number.isNaN(cx) || Number.isNaN(cy)) return;
+
+      const w = targetEl.offsetWidth;
+      const h = targetEl.offsetHeight;
+
+      const left = svgOffsetX + cx * scale - w / 2;
+      const top = svgOffsetY + cy * scale - h / 2 - 3;
+
+      targetEl.style.setProperty('--left', `${left}px`);
+      targetEl.style.setProperty('--top', `${top}px`);
+      positionedSlugs.add(slug);
+    });
+
+    // Hide any skill input that applySkillVisibility marked as visible but
+    // has no circle in the loaded SVG (i.e., the class/race combo SVG file
+    // doesn't include this skill). Prevents the input from rendering at
+    // its SCSS default (0,0) as an orphan.
+    const selectors = OspActorSheetCharacter.SKILL_SELECTORS;
+    Object.keys(selectors).forEach(skill => {
+      const cssSlug = selectors[skill].replace('.cs-pos-', '');
+      if (positionedSlugs.has(cssSlug)) return;
+      tab.querySelectorAll(selectors[skill]).forEach(el => {
+        if (el.style.display !== 'none') {
+          el.style.display = 'none';
+          el.dataset.svgOrphan = '1';
+        }
+      });
+    });
+  }
+
+  /**
    * Update skill layout based on character class and race
    * This function dynamically shows/hides skills and applies appropriate positioning
    */
   updateSkillLayout(html) {
     if (!html) html = this.element;
-    
+
     const actorData = this.actor.system;
     const characterClass = actorData.class?.toLowerCase() || '';
     const race = actorData.race?.toLowerCase() || '';
-    
+
     // Get required skills and layout classes
     const { skills, layoutClass, skillsTabClass } = this.getRequiredSkills(characterClass, race);
-    
+
     // Apply skill visibility
     this.applySkillVisibility(html, skills);
+
+    // Inject the composite skill-circle SVG for this class/race
+    this.fetchAndInjectSVG(html, this.getSkillSVGPath(characterClass, race));
+
+    // Render class/race ability text below the skill circles
+    this.renderAbilities(html, characterClass, race);
     
     // Apply layout CSS classes
     const formElement = this.element.find('form');

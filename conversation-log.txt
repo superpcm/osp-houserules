@@ -1,0 +1,116 @@
+================================================================================
+CONVERSATION LOG — OSP Houserules Session
+Date: 2026-05-12
+================================================================================
+
+NOTE: This session was continued from a prior conversation that ran out of context.
+A summary of that earlier session is included below, followed by the current session.
+
+--------------------------------------------------------------------------------
+PRIOR SESSION SUMMARY
+--------------------------------------------------------------------------------
+
+Topics covered in the prior session:
+
+1. Half-Orc Dimvision — Added Dimvision racial ability to Half-Orc, then Dwarf and Gnome.
+
+2. Remove Infravision — Struck all Infravision references from class_profiles.json and
+   race_profiles.json. Elf and Half-Elf get neither Dimvision nor Infravision.
+   Fixed a bug where Dimvision was accidentally given isSkill:true (which would have
+   hidden it from the Abilities section).
+
+3. Spells Tab Auto-Show/Hide — When a class or race with spellcasting is selected,
+   the Spells tab appears automatically; it disappears when switched to a non-caster.
+   Implemented data-driven via spellcasting.startsAtLevel in class_profiles.json.
+   Used cs-tab-hidden CSS class (toggled by JS) instead of Handlebars {{#if}} to
+   allow dynamic DOM manipulation without a full re-render.
+
+4. mv Accident Recovery — User accidentally ran `mv * images-backup/ /home/superpcm`
+   from the assets directory, moving images-backup/ to /home/superpcm/.
+   Fixed with: mv /home/superpcm/images-backup assets/
+
+5. Skill Value Misalignment (ongoing) — User reported "A couple of the Skill values
+   are not aligning." Example given: Human Thief's Hear Noise and Find Secret Doors.
+   Prior session ended with user saying: "The inputs are fine, it's the value
+   coordinates that are incorrect." — meaning the --left/--top CSS coordinate values
+   assigned to those elements are wrong. This was the open issue carried into the
+   current session.
+
+--------------------------------------------------------------------------------
+CURRENT SESSION
+--------------------------------------------------------------------------------
+
+ASSISTANT:
+[Resumed investigation of skill value coordinate misalignment]
+
+Read character-sheet-main.scss, character-sheet.html, character-sheet.js, and
+multiple SVG files to understand the skill layout system.
+
+Key findings:
+- Skills tab uses absolute CSS positioning via --left/--top custom properties
+- Class layouts (skill-layout-thief etc.) override racial layouts
+- SVG design files (skills-thief.svg, skills-base.svg, etc.) define the canonical
+  left-to-right order: open-stuck-doors → hear-noise → find-secret-doors
+- The CSS had these SWAPPED: find-secret-door was in slot 2 (180px) and
+  listening/hear-noise was in slot 3 (302–304px) — the reverse of the SVG design
+- No skill-targets-background.webp exists on disk (only skill-targets-orc.webp)
+
+Fix applied (later reverted — see below):
+Swapped --left values for .cs-pos-listening and .cs-pos-find-secret-door across
+all class and racial layouts:
+  - skill-layout-default: listening 304→180, find-secret-door 180→304
+  - skill-layout-thief:   listening 302→180, find-secret-door 180→302
+  - skill-layout-assassin: same swap
+  - skill-layout-barbarian: same swap
+  - skill-layout-half-orc: listening 304→180, find-secret-door 180→304
+  - racial-skill-layout-dwarf: listening 363→222, find-secret-door 222→363
+  - racial-skill-layout-gnome: listening 434→294, find-secret-door 294→434
+  - Global SCSS variables: $cs-pos-listening-left 304→180,
+                           $cs-pos-find-secret-door-left 180→304
+
+Build confirmed clean after the change.
+
+--------------------------------------------------------------------------------
+
+USER: What options do I have to rewind in this context?
+
+ASSISTANT:
+Here's what you have available:
+
+Uncommitted changes (current session)
+Only src/styles/character-sheet-main.scss has uncommitted changes. You can:
+  - Discard all:              git restore src/styles/character-sheet-main.scss
+  - Interactive hunk select:  git checkout -p src/styles/character-sheet-main.scss
+  - See what changed:         git diff src/styles/character-sheet-main.scss
+
+Commit history
+Your "Prior to…" pattern has you covered for bigger rollbacks:
+  81d53a5  Resize item images to 256x256 and reduce skill SVG embedded rasters
+  a4a66f4  Prior to classProfile and raceProfile updates.
+  c28736a  Prior to implementation of magic bonus system to inventory.
+  ...
+
+  - Reset, keep changes staged:  git reset <hash>
+  - Reset, discard everything:   git reset --hard <hash>  (destructive)
+  - Restore one file from past:  git checkout <hash> -- path/to/file
+
+--------------------------------------------------------------------------------
+
+USER: git restore src/styles/character-sheet-main.scss
+
+ASSISTANT:
+[Ran: git restore src/styles/character-sheet-main.scss]
+Done. character-sheet-main.scss is back to its last committed state.
+No uncommitted changes remaining.
+
+--------------------------------------------------------------------------------
+
+USER: Output the entire conversation we've had into a text file and save it to the
+root of osp-houserules.
+
+ASSISTANT:
+[This file — saved to /home/superpcm/foundry/narlington-data/Data/systems/osp-houserules/conversation-log.txt]
+
+================================================================================
+END OF LOG
+================================================================================

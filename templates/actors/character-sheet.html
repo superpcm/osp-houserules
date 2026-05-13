@@ -1133,6 +1133,12 @@
           <div class="skill-tab-title">Skill Targets</div>
           <div class="skill-tab-subtitle">Roll over or equal to # on d6 + modifiers</div>
         </div>
+        <div class="cs-skill-svg-container" aria-hidden="true"></div>
+        <div class="skill-abilities-section">
+          <div class="skill-abilities-header">Abilities</div>
+          <div class="skill-abilities-subtitle">Additional abilities granted by Race and Class</div>
+          <div class="skill-abilities-content"></div>
+        </div>
         <!-- Class Skill Fields -->
         
         <!-- Assassination Field -->
@@ -1255,6 +1261,51 @@
           </div>
         </div>
 
+        <!-- Foraging / Hunting Field (Ranger, Warden) -->
+        <div class="listening-group cs-abs cs-pos-foraging-hunting">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Forage &amp; Hunt</label>
+            <select class="foraging-hunting cs-listening-select" id="foraging-hunting" name="system.foragingHunting" data-dtype="String">
+              <option value="" {{#if (eq system.foragingHunting "")}}selected{{/if}}></option>
+              <option value="1" {{#if (eq system.foragingHunting "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.foragingHunting "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.foragingHunting "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.foragingHunting "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.foragingHunting "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Stealth Field (Ranger) -->
+        <div class="listening-group cs-abs cs-pos-stealth">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Stealth</label>
+            <select class="stealth cs-listening-select" id="stealth" name="system.stealth" data-dtype="String">
+              <option value="" {{#if (eq system.stealth "")}}selected{{/if}}></option>
+              <option value="1" {{#if (eq system.stealth "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.stealth "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.stealth "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.stealth "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.stealth "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Surprise Attack Field (Warden) -->
+        <div class="listening-group cs-abs cs-pos-wilderness-surprise-attack">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Surprise Attack</label>
+            <select class="wilderness-surprise-attack cs-listening-select" id="wilderness-surprise-attack" name="system.wildernessSurpriseAttack" data-dtype="String">
+              <option value="" {{#if (eq system.wildernessSurpriseAttack "")}}selected{{/if}}></option>
+              <option value="1" {{#if (eq system.wildernessSurpriseAttack "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.wildernessSurpriseAttack "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.wildernessSurpriseAttack "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.wildernessSurpriseAttack "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.wildernessSurpriseAttack "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
         <!-- Racial Skill Fields -->
         
         <!-- Listening at Doors Field -->
@@ -1341,6 +1392,21 @@
               <option value="3" {{#if (eq system.hideDungeons "3")}}selected{{/if}}>3</option>
               <option value="4" {{#if (eq system.hideDungeons "4")}}selected{{/if}}>4</option>
               <option value="5" {{#if (eq system.hideDungeons "5")}}selected{{/if}}>5</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Hiding Field (Gnome, Hobbit) -->
+        <div class="listening-group cs-abs cs-pos-hiding">
+          <div class="cs-char-field-group">
+            <label class="cs-field-label">Hiding</label>
+            <select class="hiding cs-listening-select" id="hiding" name="system.hiding" data-dtype="String">
+              <option value="" {{#if (eq system.hiding "")}}selected{{/if}}></option>
+              <option value="1" {{#if (eq system.hiding "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.hiding "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.hiding "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.hiding "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.hiding "5")}}selected{{/if}}>5</option>
             </select>
           </div>
         </div>

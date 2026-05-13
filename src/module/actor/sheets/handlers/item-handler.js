@@ -5,9 +5,73 @@ import { getAttackBonus, getAbilityModifier } from "../../../../config/classes.j
 import { ItemCardDialog } from "../../../cards/item-card-dialog.js";
 
 export class ItemHandler {
-  constructor(html, actor) {
+  constructor(html, actor, sheet) {
     this.html = html;
     this.actor = actor;
+    this.sheet = sheet;
+  }
+
+  /**
+   * Load armorPermissions for the actor's current class from class_profiles.json.
+   * Falls back to ['Any'] if the class cannot be resolved.
+   */
+  async _getClassArmorPermissions() {
+    if (!this.sheet?.loadProfileData) return ['Any'];
+    const classKey = (this.actor.system.class || '').toLowerCase();
+    try {
+      const { classes } = await this.sheet.loadProfileData();
+      const profile = classes.find(c => (c.id || c.name || '').toLowerCase() === classKey);
+      return profile?.armorPermissions ?? ['Any'];
+    } catch {
+      return ['Any'];
+    }
+  }
+
+  /**
+   * Check whether an armor item may be equipped given the class's armorPermissions.
+   * Returns { allowed: boolean, reason?: string }.
+   */
+  _checkArmorPermission(item, permissions) {
+    const type = item.system?.type;       // light | medium | heavy | shield | helmet
+    const name = item.name;
+    const material = item.system?.material; // wood | metal (shields only)
+    const cls = this.actor.system.class || 'This class';
+
+    if (type === 'helmet') return { allowed: true };
+
+    if (permissions.some(p => p === 'Any' || p === 'Any (size-appropriate)')) return { allowed: true };
+
+    if (permissions.some(p => p === 'None' || p === 'No armour')) {
+      return { allowed: false, reason: `${cls} cannot wear armour.` };
+    }
+
+    if (type === 'shield') {
+      if (permissions.includes('No shields'))
+        return { allowed: false, reason: `${cls} cannot use shields.` };
+      if (permissions.includes('Wooden shields only'))
+        return material === 'wood'
+          ? { allowed: true }
+          : { allowed: false, reason: `${cls} can only use wooden shields.` };
+      if (permissions.includes('Shields')) return { allowed: true };
+      return { allowed: false, reason: `${cls} cannot use shields.` };
+    }
+
+    // Named-item permissions (e.g. Druid: Padded / Leather / Hide)
+    const keywords = new Set(['Any', 'Any (size-appropriate)', 'None', 'No armour',
+      'Light armor', 'Medium armor', 'Heavy armor', 'Shields', 'Wooden shields only', 'No shields']);
+    const namedItems = permissions.filter(p => !keywords.has(p));
+    if (namedItems.length > 0) {
+      return namedItems.includes(name)
+        ? { allowed: true }
+        : { allowed: false, reason: `${cls} may only wear: ${namedItems.join(', ')}.` };
+    }
+
+    if (type === 'light' && permissions.includes('Light armor')) return { allowed: true };
+    if (type === 'medium' && permissions.includes('Medium armor')) return { allowed: true };
+    if (type === 'heavy' && permissions.includes('Heavy armor')) return { allowed: true };
+
+    const label = { light: 'light', medium: 'medium', heavy: 'heavy' }[type] ?? type;
+    return { allowed: false, reason: `${cls} cannot wear ${label} armour.` };
   }
 
   /**
@@ -597,6 +661,16 @@ export class ItemHandler {
     } else {
       // ── NON-WEAPON, NON-CONTAINER ITEMS (armor, shields, etc.) ───────────
       if (newEquippedState) {
+        // Armor permission check
+        if (item.type === 'armor') {
+          const permissions = await this._getClassArmorPermissions();
+          const { allowed, reason } = this._checkArmorPermission(item, permissions);
+          if (!allowed) {
+            ui.notifications.warn(reason);
+            return;
+          }
+        }
+
         // Only one piece of body armor at a time
         const armorBodyTypes = ["light", "medium", "heavy"];
         if (item.type === "armor" && armorBodyTypes.includes(item.system.type)) {
@@ -655,6 +729,12 @@ export class ItemHandler {
           await this._showEquipWeaponDialog(item);
         }
       } else if (this._isShield(item)) {
+        const permissions = await this._getClassArmorPermissions();
+        const { allowed, reason: permReason } = this._checkArmorPermission(item, permissions);
+        if (!allowed) {
+          ui.notifications.warn(permReason);
+          return;
+        }
         const { canEquip, reason } = this._canEquipShield();
         if (canEquip) {
           await item.update({ 'system.lashed': false, 'system.containerId': null, 'system.equipped': true });

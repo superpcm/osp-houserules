@@ -45,7 +45,8 @@
       "donTime": "1 round",
       "doffTime": "1 round",
       "maxDex": null,
-      "minStr": null
+      "minStr": null,
+      "material": "metal"
     }
   },
   {
@@ -173,7 +174,7 @@
     "type": "armor",
     "img": "systems/osp-houserules/assets/thumbs/images/armor/helm-great_thumb.webp",
     "system": {
-      "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head—though at the cost of limited vision and airflow.",
+      "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head\u2014though at the cost of limited vision and airflow.",
       "cost": 30,
       "unitWeight": 5,
       "storedSize": 12,
@@ -334,7 +335,8 @@
       "donTime": "1 round",
       "doffTime": "1 round",
       "maxDex": null,
-      "minStr": null
+      "minStr": null,
+      "material": "wood"
     }
   },
   {

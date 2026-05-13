@@ -441,11 +441,11 @@ Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, l
     base = row[COL[st]];
   }
 
-  // Racial magic resistance for dwarves & halflings/hobbits: +4 vs D/W/P/S (not Breath)
+  // Racial magic resistance for dwarves & hobbits: +4 vs D/W/P/S (not Breath)
   const isMagicSave = st !== 'breath';
-  const raceIsDwarfOrHalfling =
-    raceLower === 'dwarf' || raceLower === 'halfling' || raceLower === 'hobbit';
-  if (raceIsDwarfOrHalfling && isMagicSave) base = Math.max(2, base - 4);
+  const raceIsDwarfOrHobbit =
+    raceLower === 'dwarf' || raceLower === 'hobbit';
+  if (raceIsDwarfOrHobbit && isMagicSave) base = Math.max(2, base - 4);
 
   return base;
 });

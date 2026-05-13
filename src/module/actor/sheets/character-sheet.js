@@ -1740,9 +1740,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     const { classes, races } = await this.loadProfileData();
 
     const classKey = (characterClass || '').toLowerCase();
-    // race ids in data: dwarf, elf, gnome, half_elf, halfling, half_orc, human
+    // race ids in data: dwarf, elf, gnome, half_elf, hobbit, half_orc, human
     const raceKey = (race || '').toLowerCase()
-      .replace(/^hobbit$/, 'halfling')
       .replace(/-/g, '_');
 
     const classData = classes.find(c => (c.id || '').toLowerCase() === classKey);

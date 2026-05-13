@@ -746,7 +746,7 @@
               else if (conScore >= 18) bonus = 5;
               description = '+' + bonus + ' vs Magic';
             }
-          } else if (race === 'hobbit' || race === 'halfling') {
+          } else if (race === 'hobbit') {
             if (saveType === 'death') { // Death Ray/Poison - only poison part
               if (conScore <= 6) bonus = 0;
               else if (conScore >= 7 && conScore <= 10) bonus = 2;
@@ -867,7 +867,6 @@
               break;
             case 'dwarf':
             case 'elf':
-            case 'halfling':
             case 'hobbit':
             case 'gnome':
               listeningField.value = '2';

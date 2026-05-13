@@ -78,7 +78,7 @@
         }
       ],
       "armorPermissions": [
-        "Leather",
+        "Light armor",
         "Shields"
       ],
       "weaponPermissions": [
@@ -264,8 +264,8 @@
         }
       ],
       "armorPermissions": [
-        "Leather",
-        "Chainmail",
+        "Light armor",
+        "Medium armor",
         "Shields"
       ],
       "weaponPermissions": [
@@ -279,7 +279,8 @@
       "characterCreationRules": [],
       "restrictions": [
         "Cannot read/write at 1st level.",
-        "Refuses most magic except tribal divine magic."
+        "Refuses most magic except tribal divine magic.",
+        "May only wear light or medium armour."
       ],
       "activeAbilities": [
         {
@@ -304,7 +305,7 @@
       "passiveAbilities": [
         {
           "name": "Agile Fighting",
-          "effect": "AC bonus improves at levels 4,6,8,10.",
+          "effect": "AC bonus from agility: +1 at level 4, +2 at level 6, +3 at level 8, +4 at level 10.",
           "conditions": [],
           "scaling": "+1/+2/+3/+4"
         },
@@ -442,8 +443,8 @@
         }
       ],
       "armorPermissions": [
-        "Leather",
-        "Chainmail",
+        "Light armor",
+        "Medium armor",
         "No shields"
       ],
       "weaponPermissions": [
@@ -782,7 +783,8 @@
         "drow",
         "underground",
         "divine"
-      ]
+      ],
+      "npcOnly": true
     },
     {
       "id": "druid",
@@ -857,9 +859,10 @@
         }
       ],
       "armorPermissions": [
+        "Padded",
         "Leather",
-        "Wooden shields",
-        "No metal"
+        "Hide",
+        "Wooden shields only"
       ],
       "weaponPermissions": [
         "Club",
@@ -1382,7 +1385,7 @@
         }
       ],
       "armorPermissions": [
-        "Leather",
+        "Light armor",
         "Shields"
       ],
       "weaponPermissions": [
@@ -1589,8 +1592,8 @@
       ]
     },
     {
-      "id": "halfling",
-      "name": "Halfling",
+      "id": "hobbit",
+      "name": "Hobbit",
       "sourceBook": "OSE Advanced Fantasy Player's Tome",
       "kind": "demihuman_class",
       "persona": "The Small Marksman",
@@ -1641,7 +1644,7 @@
         }
       ],
       "armorPermissions": [
-        "Size-appropriate armour",
+        "Any (size-appropriate)",
         "Shields"
       ],
       "weaponPermissions": [
@@ -1650,7 +1653,7 @@
       "languages": [
         "Alignment",
         "Common",
-        "Halfling"
+        "Hobbit"
       ],
       "alignmentRules": [],
       "characterCreationRules": [],
@@ -1758,8 +1761,8 @@
         }
       ],
       "armorPermissions": [
-        "Leather",
-        "Chainmail",
+        "Light armor",
+        "Medium armor",
         "Shields"
       ],
       "weaponPermissions": [
@@ -1777,7 +1780,7 @@
         {
           "name": "Back-Stab",
           "trigger": "Attack unaware opponent from behind",
-          "effect": "+4 to hit; damage multiplied by ×2.",
+          "effect": "+4 to hit; damage multiplied by \u00d72.",
           "limits": [],
           "scaling": null
         }
@@ -1999,8 +2002,8 @@
         }
       ],
       "armorPermissions": [
-        "Chainmail",
-        "Plate",
+        "Medium armor",
+        "Heavy armor",
         "Shields"
       ],
       "weaponPermissions": [
@@ -2422,10 +2425,9 @@
         }
       ],
       "armorPermissions": [
-        "Leather",
-        "Chainmail",
-        "Shields",
-        "No plate"
+        "Light armor",
+        "Medium armor",
+        "Shields"
       ],
       "weaponPermissions": [
         "Any"
@@ -2564,7 +2566,7 @@
         }
       ],
       "armorPermissions": [
-        "Leather only",
+        "Light armor",
         "No shields"
       ],
       "weaponPermissions": [
@@ -2586,19 +2588,10 @@
           "scaling": null
         },
         {
-          "name": "Read Languages",
+          "name": "Decipher",
           "trigger": "From level 4",
-          "effect": "80% chance to read non-magical text in any language; retry after next level only.",
+          "effect": "80% chance to crack codes or understand puzzles; retry at next level only.",
           "limits": [],
-          "scaling": null
-        },
-        {
-          "name": "Scroll Use",
-          "trigger": "From level 10",
-          "effect": "Cast arcane scrolls with 10% chance of error.",
-          "limits": [
-            "Arcane scrolls only"
-          ],
           "scaling": null
         }
       ],
@@ -2866,8 +2859,8 @@
         }
       ],
       "armorPermissions": [
-        "Leather",
-        "Chainmail",
+        "Light armor",
+        "Medium armor",
         "Shields"
       ],
       "weaponPermissions": [
@@ -3009,10 +3002,9 @@
         }
       ],
       "armorPermissions": [
-        "Leather",
-        "Chainmail",
-        "Shields",
-        "No plate"
+        "Light armor",
+        "Medium armor",
+        "Shields"
       ],
       "weaponPermissions": [
         "Any"
@@ -3487,9 +3479,8 @@
         }
       ],
       "armorPermissions": [
-        "Leather armour",
-        "Shields",
-        "No armour heavier than leather"
+        "Light armor",
+        "Shields"
       ],
       "weaponPermissions": [
         "Any weapon"
@@ -3676,7 +3667,8 @@
         "stealth",
         "missile",
         "forest"
-      ]
+      ],
+      "npcOnly": true
     }
   ],
   "commonXpProgressions": {

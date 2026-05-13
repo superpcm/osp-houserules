@@ -421,8 +421,8 @@
       ]
     },
     {
-      "id": "halfling",
-      "name": "Halfling",
+      "id": "hobbit",
+      "name": "Hobbit",
       "sourceBook": "OSE Advanced Fantasy Player's Tome v1.3",
       "description": "Small, friendly demihumans who love home comforts and are surprisingly nimble marksmen.",
       "requirements": [
@@ -436,7 +436,7 @@
       "languages": [
         "Alignment",
         "Common",
-        "Halfling"
+        "Hobbit"
       ],
       "availableClasses": [
         {
@@ -500,7 +500,7 @@
       ],
       "notes": [],
       "softwareTags": [
-        "halfling",
+        "hobbit",
         "small",
         "missile",
         "resilience"

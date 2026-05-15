@@ -186,7 +186,8 @@
         "stealth",
         "poison",
         "ambush"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "barbarian",
@@ -365,7 +366,8 @@
         "combat",
         "wilderness",
         "anti-magic"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "bard",
@@ -499,7 +501,83 @@
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "divine druid spells from level 2"
+        "summary": "divine druid spells from level 2",
+        "startsAtLevel": 2,
+        "spellProgression": {
+          "1": {},
+          "2": {
+            "1": 1
+          },
+          "3": {
+            "1": 2
+          },
+          "4": {
+            "1": 2,
+            "2": 1
+          },
+          "5": {
+            "1": 2,
+            "2": 2
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "7": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "8": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "10": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "11": {
+            "1": 4,
+            "2": 4,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          },
+          "12": {
+            "1": 5,
+            "2": 4,
+            "3": 4,
+            "4": 3,
+            "5": 2
+          },
+          "13": {
+            "1": 5,
+            "2": 5,
+            "3": 4,
+            "4": 4,
+            "5": 3
+          },
+          "14": {
+            "1": 6,
+            "2": 5,
+            "3": 4,
+            "4": 4,
+            "5": 4
+          }
+        },
+        "spellList": "druid"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -514,7 +592,8 @@
         "support",
         "charm",
         "lore"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "cleric",
@@ -609,20 +688,89 @@
           "effect": "Turns or destroys undead. Roll 2d6 and consult the Turn Undead table; affected undead flee for 3d6 rounds or are destroyed. Chaotic clerics may instead control undead.",
           "limits": [],
           "scaling": null
-        },
-        {
-          "name": "Magical Research",
-          "trigger": "Level 9+, downtime",
-          "effect": "May create new spells, research spell scrolls, brew potions, and enchant magic items. Costs time and gold; referee adjudicates.",
-          "limits": [],
-          "scaling": null
         }
       ],
       "passiveAbilities": [],
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "divine cleric spells from level 2"
+        "summary": "divine cleric spells from level 2",
+        "startsAtLevel": 2,
+        "spellProgression": {
+          "1": {},
+          "2": {
+            "1": 1
+          },
+          "3": {
+            "1": 2
+          },
+          "4": {
+            "1": 2,
+            "2": 1
+          },
+          "5": {
+            "1": 2,
+            "2": 2
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "7": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "8": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "10": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "11": {
+            "1": 4,
+            "2": 4,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          },
+          "12": {
+            "1": 5,
+            "2": 4,
+            "3": 4,
+            "4": 3,
+            "5": 2
+          },
+          "13": {
+            "1": 5,
+            "2": 5,
+            "3": 4,
+            "4": 4,
+            "5": 3
+          },
+          "14": {
+            "1": 6,
+            "2": 5,
+            "3": 4,
+            "4": 4,
+            "5": 4
+          }
+        },
+        "spellList": "cleric"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -637,7 +785,8 @@
         "divine",
         "undead",
         "healing"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "drow",
@@ -730,25 +879,12 @@
           "effect": "2-in-6 chance to hear noises through doors or walls.",
           "limits": [],
           "scaling": null
-        },
-        {
-          "name": "Magical Research",
-          "trigger": "Level 9+, downtime",
-          "effect": "May create spells, brew potions, and enchant magic items aligned with shadow and spider magic. Costs time and gold; referee adjudicates.",
-          "limits": [],
-          "scaling": null
         }
       ],
       "passiveAbilities": [
         {
           "name": "Ghoul Paralysis Immunity",
           "effect": "Immune to the paralysing touch of ghouls.",
-          "conditions": [],
-          "scaling": null
-        },
-        {
-          "name": "Infravision 90'",
-          "effect": "Can see in total darkness to a range of 90'.",
           "conditions": [],
           "scaling": null
         },
@@ -768,7 +904,75 @@
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "divine cleric spells; web from level 3"
+        "summary": "divine cleric spells; web from level 3",
+        "startsAtLevel": 3,
+        "spellProgression": {
+          "3": {
+            "1": 1
+          },
+          "4": {
+            "1": 2
+          },
+          "5": {
+            "1": 2,
+            "2": 1
+          },
+          "6": {
+            "1": 2,
+            "2": 2
+          },
+          "7": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "8": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "9": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "10": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "11": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "12": {
+            "1": 4,
+            "2": 4,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          },
+          "13": {
+            "1": 5,
+            "2": 4,
+            "3": 4,
+            "4": 3,
+            "5": 2
+          },
+          "14": {
+            "1": 5,
+            "2": 5,
+            "3": 4,
+            "4": 4,
+            "5": 3
+          }
+        },
+        "spellList": "cleric"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -784,7 +988,8 @@
         "underground",
         "divine"
       ],
-      "npcOnly": true
+      "npcOnly": true,
+      "classAbilities": []
     },
     {
       "id": "druid",
@@ -893,13 +1098,6 @@
           "effect": "Assumes the form of one natural animal (normal or giant). Gains that creature's movement and special senses but retains own HD, saves, and mental abilities. Lasts until the druid chooses to revert.",
           "limits": [],
           "scaling": null
-        },
-        {
-          "name": "Magical Research",
-          "trigger": "Level 9+, downtime",
-          "effect": "May create new spells, brew potions, and enchant items attuned to nature. Costs time and gold; referee adjudicates.",
-          "limits": [],
-          "scaling": null
         }
       ],
       "passiveAbilities": [
@@ -937,7 +1135,89 @@
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "divine druid spells from level 1"
+        "summary": "divine druid spells from level 1",
+        "startsAtLevel": 1,
+        "spellProgression": {
+          "1": {
+            "1": 1
+          },
+          "2": {
+            "1": 2
+          },
+          "3": {
+            "1": 2,
+            "2": 1
+          },
+          "4": {
+            "1": 2,
+            "2": 2
+          },
+          "5": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "7": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "8": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "10": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          },
+          "11": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          },
+          "12": {
+            "1": 4,
+            "2": 4,
+            "3": 4,
+            "4": 3,
+            "5": 3
+          },
+          "13": {
+            "1": 4,
+            "2": 4,
+            "3": 4,
+            "4": 4,
+            "5": 3
+          },
+          "14": {
+            "1": 5,
+            "2": 4,
+            "3": 4,
+            "4": 4,
+            "5": 4
+          }
+        },
+        "spellList": "druid"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -952,7 +1232,8 @@
         "nature",
         "shapeshift",
         "divine"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "dwarf",
@@ -1065,10 +1346,8 @@
       ],
       "passiveAbilities": [
         {
-          "name": "Infravision 60'",
-          "effect": "Can see in total darkness to a range of 60'.",
-          "conditions": [],
-          "scaling": null
+          "name": "Dimvision",
+          "effect": "Can see in dim light as if bright light."
         }
       ],
       "skillSystems": [],
@@ -1086,7 +1365,8 @@
         "dwarf",
         "durable",
         "underground"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "elf",
@@ -1179,13 +1459,6 @@
           "effect": "2-in-6 chance to hear noises through doors or walls.",
           "limits": [],
           "scaling": null
-        },
-        {
-          "name": "Magical Research",
-          "trigger": "Level 9+, downtime",
-          "effect": "May create new spells, brew potions, and enchant magic items. Costs time and gold; referee adjudicates.",
-          "limits": [],
-          "scaling": null
         }
       ],
       "passiveAbilities": [
@@ -1194,18 +1467,66 @@
           "effect": "Immune to the paralysing touch of ghouls.",
           "conditions": [],
           "scaling": null
-        },
-        {
-          "name": "Infravision 60'",
-          "effect": "Can see in total darkness to a range of 60'.",
-          "conditions": [],
-          "scaling": null
         }
       ],
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "arcane magic-user spells from level 1"
+        "summary": "arcane magic-user spells from level 1",
+        "startsAtLevel": 1,
+        "spellProgression": {
+          "1": {
+            "1": 1
+          },
+          "2": {
+            "1": 2
+          },
+          "3": {
+            "1": 2,
+            "2": 1
+          },
+          "4": {
+            "1": 2,
+            "2": 2
+          },
+          "5": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "7": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "8": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "10": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          }
+        },
+        "spellList": "magic-user"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -1220,7 +1541,8 @@
         "elf",
         "arcane",
         "fighter-mage"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "fighter",
@@ -1308,7 +1630,68 @@
       "alignmentRules": [],
       "characterCreationRules": [],
       "restrictions": [],
-      "activeAbilities": [],
+      "activeAbilities": [
+        {
+          "name": "Combat Talent",
+          "trigger": "Level 1",
+          "effect": "Choose one: Weapon Specialization or Two-Weapon Fighting.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Additional Combat Talent",
+          "trigger": "Levels 3 and 7",
+          "effect": "Choose one each time from: Cleave, Defender, Leader, or Slayer.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Cleave",
+          "trigger": "Additional Combat Talent",
+          "effect": "When in melee with multiple foes, if the fighter strikes a killing blow, they may immediately make another attack against a second foe at a \u22122 penalty.",
+          "conditions": [
+            "Melee only"
+          ],
+          "scaling": null
+        },
+        {
+          "name": "Defender",
+          "trigger": "Additional Combat Talent",
+          "effect": "When the fighter is in melee with a foe, any attacks the foe makes at characters other than the fighter are penalised at \u22122.",
+          "conditions": [
+            "Melee only"
+          ],
+          "scaling": null
+        },
+        {
+          "name": "Leader",
+          "trigger": "Additional Combat Talent",
+          "effect": "Mercenaries or retainers under the fighter\u2019s command and within 60\u2019 gain +1 to morale/loyalty. All allies within 60\u2019 gain +1 to saves against fear effects.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Slayer",
+          "trigger": "Additional Combat Talent",
+          "effect": "+1 to attack and damage rolls against a specific enemy type chosen when this talent is selected.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Two-Weapon Fighting",
+          "trigger": "Combat Talent",
+          "effect": "Reduced penalties when fighting with two weapons. Offhand must be a dagger, hand axe, hammer, club, or short sword. Two short swords may be used. Penalties by level \u2014 Level 1: primary \u22121/offhand \u22123. Level 3: primary \u22121/offhand \u22122. Level 6: primary 0/offhand \u22121. Level 9: primary 0/offhand 0.",
+          "conditions": [],
+          "scaling": null
+        },
+        {
+          "name": "Weapon Specialization",
+          "trigger": "Combat Talent",
+          "effect": "Choose a melee or ranged weapon to specialize in. Attack bonus +1 at all levels. Damage bonus by level \u2014 Level 1: +1. Level 4: +2. Level 10: +3. Level 13: +5.",
+          "conditions": [],
+          "scaling": null
+        }
+      ],
       "passiveAbilities": [
         {
           "name": "Complete Martial Training",
@@ -1331,7 +1714,8 @@
       "softwareTags": [
         "combat",
         "frontline"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "gnome",
@@ -1423,13 +1807,6 @@
           "effect": "2-in-6 chance to hear noises through doors or walls.",
           "limits": [],
           "scaling": null
-        },
-        {
-          "name": "Magical Research",
-          "trigger": "Level 9+, downtime",
-          "effect": "May create illusion-themed spells, brew potions, and enchant items. Costs time and gold; referee adjudicates.",
-          "limits": [],
-          "scaling": null
         }
       ],
       "passiveAbilities": [
@@ -1440,10 +1817,8 @@
           "scaling": null
         },
         {
-          "name": "Infravision 90'",
-          "effect": "Can see in total darkness to a range of 90'.",
-          "conditions": [],
-          "scaling": null
+          "name": "Dimvision",
+          "effect": "Can see in dim light as if bright light."
         },
         {
           "name": "Burrowing Mammal Speech",
@@ -1455,7 +1830,61 @@
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "arcane illusionist spells from level 1"
+        "summary": "arcane illusionist spells from level 1",
+        "startsAtLevel": 1,
+        "spellProgression": {
+          "1": {
+            "1": 1
+          },
+          "2": {
+            "1": 2
+          },
+          "3": {
+            "1": 2,
+            "2": 1
+          },
+          "4": {
+            "1": 2,
+            "2": 2
+          },
+          "5": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "7": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "8": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "10": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          }
+        },
+        "spellList": "illusionist"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -1470,7 +1899,8 @@
         "gnome",
         "illusion",
         "small"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "half_elf",
@@ -1564,18 +1994,72 @@
           "scaling": null
         }
       ],
-      "passiveAbilities": [
-        {
-          "name": "Infravision 60'",
-          "effect": "Can see in total darkness to a range of 60'.",
-          "conditions": [],
-          "scaling": null
-        }
-      ],
+      "passiveAbilities": [],
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "arcane magic-user spells from level 2"
+        "summary": "arcane magic-user spells from level 2",
+        "startsAtLevel": 2,
+        "spellProgression": {
+          "2": {
+            "1": 1
+          },
+          "3": {
+            "1": 2
+          },
+          "4": {
+            "1": 2,
+            "2": 1
+          },
+          "5": {
+            "1": 2,
+            "2": 2
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "7": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "8": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "10": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "11": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          },
+          "12": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          }
+        },
+        "spellList": "magic-user"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -1589,7 +2073,8 @@
       "softwareTags": [
         "hybrid",
         "arcane"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "hobbit",
@@ -1709,7 +2194,8 @@
         "small",
         "missile",
         "stealth"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "half_orc",
@@ -1787,10 +2273,8 @@
       ],
       "passiveAbilities": [
         {
-          "name": "Infravision 60'",
-          "effect": "Can see in total darkness to a range of 60'.",
-          "conditions": [],
-          "scaling": null
+          "name": "Dimvision",
+          "effect": "Can see in dim light as if bright light."
         }
       ],
       "skillSystems": [],
@@ -1807,7 +2291,8 @@
       "softwareTags": [
         "rogue",
         "backstab"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "illusionist",
@@ -1897,20 +2382,98 @@
       "alignmentRules": [],
       "characterCreationRules": [],
       "restrictions": [],
-      "activeAbilities": [
-        {
-          "name": "Magical Research",
-          "trigger": "Level 9+, downtime",
-          "effect": "May create new illusion spells, brew potions, and enchant magic items. Costs time and gold; referee adjudicates.",
-          "limits": [],
-          "scaling": null
-        }
-      ],
+      "activeAbilities": [],
       "passiveAbilities": [],
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "arcane illusionist spells from level 1"
+        "summary": "arcane illusionist spells from level 1",
+        "startsAtLevel": 1,
+        "spellProgression": {
+          "1": {
+            "1": 1
+          },
+          "2": {
+            "1": 2
+          },
+          "3": {
+            "1": 2,
+            "2": 1
+          },
+          "4": {
+            "1": 2,
+            "2": 2
+          },
+          "5": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "7": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "8": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "10": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          },
+          "11": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1
+          },
+          "12": {
+            "1": 4,
+            "2": 4,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 2
+          },
+          "13": {
+            "1": 4,
+            "2": 4,
+            "3": 4,
+            "4": 3,
+            "5": 3,
+            "6": 2
+          },
+          "14": {
+            "1": 4,
+            "2": 4,
+            "3": 4,
+            "4": 4,
+            "5": 3,
+            "6": 3
+          }
+        },
+        "spellList": "illusionist"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -1924,7 +2487,8 @@
       "softwareTags": [
         "illusion",
         "arcane"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "knight",
@@ -2085,7 +2649,8 @@
       "softwareTags": [
         "mounted",
         "honor"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "magic_user",
@@ -2173,20 +2738,98 @@
       "alignmentRules": [],
       "characterCreationRules": [],
       "restrictions": [],
-      "activeAbilities": [
-        {
-          "name": "Magical Research",
-          "trigger": "Level 9+, downtime",
-          "effect": "May create new spells, brew potions, and enchant magic items. Costs time and gold; referee adjudicates.",
-          "limits": [],
-          "scaling": null
-        }
-      ],
+      "activeAbilities": [],
       "passiveAbilities": [],
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "arcane magic-user spells from level 1"
+        "summary": "arcane magic-user spells from level 1",
+        "startsAtLevel": 1,
+        "spellProgression": {
+          "1": {
+            "1": 1
+          },
+          "2": {
+            "1": 2
+          },
+          "3": {
+            "1": 2,
+            "2": 1
+          },
+          "4": {
+            "1": 2,
+            "2": 2
+          },
+          "5": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "6": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "7": {
+            "1": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "8": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 2
+          },
+          "9": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 2,
+            "5": 1
+          },
+          "10": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2
+          },
+          "11": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1
+          },
+          "12": {
+            "1": 4,
+            "2": 4,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 2
+          },
+          "13": {
+            "1": 4,
+            "2": 4,
+            "3": 4,
+            "4": 3,
+            "5": 3,
+            "6": 2
+          },
+          "14": {
+            "1": 4,
+            "2": 4,
+            "3": 4,
+            "4": 4,
+            "5": 3,
+            "6": 3
+          }
+        },
+        "spellList": "magic-user"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -2200,7 +2843,8 @@
       "softwareTags": [
         "arcane",
         "spellbook"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "paladin",
@@ -2332,7 +2976,35 @@
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "divine cleric spells from level 9"
+        "summary": "divine cleric spells from level 9",
+        "startsAtLevel": 9,
+        "spellProgression": {
+          "9": {
+            "1": 1
+          },
+          "10": {
+            "1": 2
+          },
+          "11": {
+            "1": 2,
+            "2": 1
+          },
+          "12": {
+            "1": 2,
+            "2": 2
+          },
+          "13": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "14": {
+            "1": 2,
+            "2": 2,
+            "3": 2
+          }
+        },
+        "spellList": "cleric"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -2347,7 +3019,8 @@
         "holy",
         "healing",
         "undead"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "ranger",
@@ -2477,7 +3150,40 @@
       "skillSystems": [],
       "spellcasting": {
         "type": "class-specific",
-        "summary": "divine druid spells from level 8"
+        "summary": "divine druid spells from level 8",
+        "startsAtLevel": 8,
+        "spellProgression": {
+          "8": {
+            "1": 1
+          },
+          "9": {
+            "1": 2
+          },
+          "10": {
+            "1": 2,
+            "2": 1
+          },
+          "11": {
+            "1": 2,
+            "2": 2
+          },
+          "12": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          },
+          "13": {
+            "1": 3,
+            "2": 2,
+            "3": 1
+          },
+          "14": {
+            "1": 3,
+            "2": 3,
+            "3": 2
+          }
+        },
+        "spellList": "druid"
       },
       "magicItemUse": [],
       "levelGatedFeatures": [],
@@ -2491,7 +3197,8 @@
       "softwareTags": [
         "wilderness",
         "tracking"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "thief",
@@ -2783,7 +3490,8 @@
         "locks",
         "traps",
         "guild"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "beast_master",
@@ -2924,7 +3632,8 @@
       "softwareTags": [
         "animals",
         "companions"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "warden",
@@ -3098,7 +3807,8 @@
         "wilderness",
         "tracking",
         "non-magical-ranger"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "mage",
@@ -3219,13 +3929,6 @@
           "effect": "Can create scrolls of arcane spells using the standard rules for duplicating spell effects.",
           "limits": [],
           "scaling": null
-        },
-        {
-          "name": "Magical Research",
-          "trigger": "Downtime",
-          "effect": "May scribe arcane scrolls or research other magical effects. From 9th level may create other magic items.",
-          "limits": [],
-          "scaling": "Non-scroll magic items from level 9."
         }
       ],
       "passiveAbilities": [
@@ -3416,7 +4119,8 @@
         "staff",
         "scrolls",
         "low-magic"
-      ]
+      ],
+      "classAbilities": []
     },
     {
       "id": "wood_elf",
@@ -3522,15 +4226,6 @@
           "effect": "Hears noises with a 2-in-6 chance.",
           "limits": [],
           "scaling": null
-        },
-        {
-          "name": "Magical Research",
-          "trigger": "Downtime",
-          "effect": "May create new spells or other magical effects associated with their deity; from 9th level may create magic items.",
-          "limits": [
-            "Subject to deity disfavour"
-          ],
-          "scaling": "Magic item creation from level 9."
         }
       ],
       "passiveAbilities": [
@@ -3555,12 +4250,6 @@
           "scaling": null
         },
         {
-          "name": "Infravision",
-          "effect": "Infravision 60 feet.",
-          "conditions": [],
-          "scaling": null
-        },
-        {
           "name": "Missile Attack Bonus",
           "effect": "+1 bonus to attack rolls with all missile weapons.",
           "conditions": [
@@ -3573,7 +4262,7 @@
       "spellcasting": {
         "type": "divine",
         "startsAtLevel": 1,
-        "spellList": "Druid spell list; if Advanced Fantasy is not used, cleric spell list with cure light wounds unavailable until level 2",
+        "spellList": "druid",
         "preparationMethod": "Prayer to nature",
         "maxSpellLevel": 5,
         "rules": [
@@ -3668,7 +4357,8 @@
         "missile",
         "forest"
       ],
-      "npcOnly": true
+      "npcOnly": true,
+      "classAbilities": []
     }
   ],
   "commonXpProgressions": {

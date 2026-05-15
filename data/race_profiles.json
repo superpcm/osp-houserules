@@ -107,8 +107,8 @@
           "effect": "2-in-6 chance to detect non-magical room traps when searching."
         },
         {
-          "name": "Infravision",
-          "effect": "Can see in darkness to 60'."
+          "name": "Dimvision",
+          "effect": "Can see in dim light as if bright light."
         },
         {
           "name": "Listening at Doors",
@@ -219,10 +219,6 @@
           "effect": "Unaffected by paralysis inflicted by ghouls."
         },
         {
-          "name": "Infravision",
-          "effect": "Can see in darkness to 60'."
-        },
-        {
           "name": "Listening at Doors",
           "effect": "2-in-6 chance to hear noises."
         }
@@ -297,8 +293,8 @@
           "effect": "2-in-6 chance to detect new construction, sliding walls, or sloping passages when searching."
         },
         {
-          "name": "Infravision",
-          "effect": "Can see in darkness to 90'."
+          "name": "Dimvision",
+          "effect": "Can see in dim light as if bright light."
         },
         {
           "name": "Listening at Doors",
@@ -406,10 +402,6 @@
         {
           "name": "Detect Secret Doors",
           "effect": "When actively searching, detects hidden and secret doors on 2-in-6."
-        },
-        {
-          "name": "Infravision",
-          "effect": "Can see in darkness to 60'."
         }
       ],
       "notes": [],
@@ -552,16 +544,15 @@
       "restrictions": [],
       "racialAbilities": [
         {
-          "name": "Infravision",
-          "effect": "Can see in darkness to 60'."
+          "name": "Dimvision",
+          "effect": "Can see in dim light as if bright light."
         }
       ],
       "notes": [],
       "softwareTags": [
         "orc",
         "human",
-        "outcast",
-        "infravision"
+        "outcast"
       ]
     },
     {

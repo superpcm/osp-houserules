@@ -174,13 +174,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     return buttons;
   }
 
-  getData(options) {
+  async getData(options) {
     // If we're in the process of closing, don't render
     if (this._isClosing) {
       return {};
     }
     
-    const context = super.getData(options);
+    const context = await super.getData(options);
     context.system = this.actor.system;
 
     // Initialize position and portrait data if missing
@@ -609,27 +609,32 @@ export class OspActorSheetCharacter extends ActorSheet {
     const conScore = this.actor.system.attributes?.con?.value || 10;
     context.calculatedMaxHP = calculateMaxHP(characterClass, level, conScore);
 
-    context.showSpellsTab = this._shouldShowSpellsTab(context.system);
+    const { classes } = await this.loadProfileData();
+    context.showSpellsTab = this._shouldShowSpellsTab(context.system, classes);
 
     return context;
   }
 
-  _shouldShowSpellsTab(system) {
+  _shouldShowSpellsTab(system, classProfiles = []) {
     const cls = (system.class || '').toLowerCase().trim();
-    const level = system.level || 1;
-    const wis = system.attributes?.wis?.value || 10;
+    const level = parseInt(system.level) || 1;
+    const wis = parseInt(system.attributes?.wis?.value) || 10;
 
-    const firstSpellLevel = {
-      'magic-user': 1, 'illusionist': 1, 'mage': 1,
-      'druid': 1, 'elf': 1, 'gnome': 1, 'bard': 1,
-      'half-elf': 2,
-    };
+    // Look up spellcasting data from profile
+    const profile = classProfiles.find(c =>
+      (c.id || '').toLowerCase() === cls || (c.name || '').toLowerCase() === cls
+    );
+    const sc = profile?.spellcasting;
+    if (!sc) return false;
 
-    if (firstSpellLevel[cls] !== undefined) return level >= firstSpellLevel[cls];
-    if (cls === 'cleric')  return level >= (wis >= 15 ? 1 : 2);
-    if (cls === 'paladin') return level >= Math.max(1, 9 - Math.max(0, wis - 15));
-    if (cls === 'ranger')  return level >= Math.max(1, 8 - Math.max(0, wis - 15));
-    return false;
+    const base = sc.startsAtLevel ?? 1;
+
+    // WIS-adjusted gates for divine casters
+    if (cls === 'cleric')  return level >= (wis >= 15 ? Math.max(1, base - 1) : base);
+    if (cls === 'paladin') return level >= Math.max(1, base - Math.max(0, wis - 15));
+    if (cls === 'ranger')  return level >= Math.max(1, base - Math.max(0, wis - 15));
+
+    return level >= base;
   }
 
   /**
@@ -1047,6 +1052,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     // which case getBoundingClientRect returned zero and positions weren't set.
     html.find('.sheet-tabs a[data-tab="skills"]').on('click', () => {
       requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
+    });
+
+    // Render spell tab on initial load and whenever it is activated
+    this.renderSpellTab(html);
+    html.find('.sheet-tabs a[data-tab="attributes"]').on('click', () => {
+      requestAnimationFrame(() => this.renderSpellTab(html));
     });
   }
 
@@ -1676,8 +1687,8 @@ export class OspActorSheetCharacter extends ActorSheet {
   // Normalized names of class/race entries that are skills (rendered on the
   // skill circles) or otherwise suppressed from the Abilities list.
   static SKILL_OR_SUPPRESSED_ABILITIES = new Set([
-    'listening', 'listeningatdoors', 'hearnoise',
-    'findsecretdoor', 'findsecretdoors',
+    'listening', 'listeningatdoors', 'listenatdoors', 'hearnoise',
+    'findsecretdoor', 'findsecretdoors', 'detectsecretdoors', 'detectsecretdoor',
     'openstuckdoors',
     'detectconstruction', 'detectconstructiontricks',
     'detectroomtraps',
@@ -1692,13 +1703,242 @@ export class OspActorSheetCharacter extends ActorSheet {
     'hidedungeons', 'hideindungeons',
     'hiding',
     'foraginghunting', 'foragehunt', 'foragingandhunting',
-    'stealth',
-    'wildernesssurpriseattack', 'surpriseattack',
-    'infravision'  // house rule: suppressed
+    'stealth', 'wildernessstealth',
+    'wildernesssurpriseattack', 'surpriseattack'
   ]);
 
   static _classProfiles = null;
   static _raceProfiles = null;
+  static _spellsData = null;
+
+  /**
+   * Lazily fetch and cache spells.json.
+   */
+  async loadSpellsData() {
+    const cls = OspActorSheetCharacter;
+    if (!cls._spellsData) {
+      try {
+        const r = await fetch('/systems/osp-houserules/data/spells.json');
+        const d = await r.json();
+        cls._spellsData = d.spellLists || {};
+      } catch (err) {
+        console.warn('[osp-houserules] Failed to load spells.json', err);
+        cls._spellsData = {};
+      }
+    }
+    return cls._spellsData;
+  }
+
+  /**
+   * Compute max spell slots per level for the current character.
+   * Returns { [spellLevel]: maxSlots } or empty object if no spellcasting.
+   */
+  _computeMaxSpellSlots(system, classProfile) {
+    const sc = classProfile?.spellcasting;
+    if (!sc?.spellProgression) return {};
+    const level = String(parseInt(system.level) || 1);
+    return sc.spellProgression[level] || {};
+  }
+
+  /**
+   * Render the Spells tab: slot tracker + full class spell list with expandable entries.
+   */
+  async renderSpellTab(html) {
+    const slotsSection = this.getElement(html, '.spell-slots-section');
+    const listContent = this.getElement(html, '.spell-list-content');
+    if (!slotsSection || !listContent) return;
+
+    const slotEl = slotsSection[0] || slotsSection;
+    const listEl = listContent[0] || listContent;
+
+    const system = this.actor.system;
+    const classId = (system.class || '').toLowerCase().replace(/-/g, '_').replace(/\s/g, '_');
+
+    const { classes } = await this.loadProfileData();
+    const spellsData = await this.loadSpellsData();
+
+    const profile = classes.find(c => (c.id || '').toLowerCase() === classId);
+    const sc = profile?.spellcasting;
+
+    if (!sc || !sc.spellProgression) {
+      slotEl.innerHTML = '<div class="spell-no-slots">No spell slots available at this level.</div>';
+      listEl.innerHTML = '';
+      return;
+    }
+
+    // Arcane casters must select/copy spells into a spellbook
+    const isArcane = (sc.summary || '').toLowerCase().includes('arcane');
+    const knownSpells = isArcane
+      ? (this.actor.getFlag('osp-houserules', 'knownSpells') || {})
+      : null;
+    const showKnownOnly = isArcane ? (this._spellKnownFilter ?? false) : false;
+
+    const maxSlots = this._computeMaxSpellSlots(system, profile);
+    const usedSlots = system.spellSlots || {};
+    const spellListKey = sc.spellList || '';
+    const spells = spellsData[spellListKey] || [];
+
+    // Group spells by level
+    const byLevel = {};
+    for (const sp of spells) {
+      const lv = String(sp.level || 1);
+      if (!byLevel[lv]) byLevel[lv] = [];
+      byLevel[lv].push(sp);
+    }
+
+    // --- Slot Tracker ---
+    const spellLevels = Object.keys(maxSlots).sort((a, b) => +a - +b).filter(lv => maxSlots[lv] > 0);
+
+    if (spellLevels.length === 0) {
+      slotEl.innerHTML = '<div class="spell-no-slots">No spell slots available at this level.</div>';
+    } else {
+      const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
+      let slotHTML = '<div class="spell-slots-grid">';
+      for (const lv of spellLevels) {
+        const max = maxSlots[lv] || 0;
+        const used = Math.min(parseInt((usedSlots[lv] || {}).used) || 0, max);
+        const label = levelLabels[+lv - 1] || `L${lv}`;
+        slotHTML += `<div class="spell-slot-group" data-spell-level="${lv}">`;
+        slotHTML += `<div class="spell-slot-label">${label}</div>`;
+        slotHTML += `<div class="spell-slot-pips">`;
+        for (let i = 0; i < max; i++) {
+          const filled = i < used;
+          slotHTML += `<button type="button" class="spell-slot-pip${filled ? ' used' : ''}" data-level="${lv}" data-pip="${i}" title="${filled ? 'Click to restore' : 'Click to mark used'}"></button>`;
+        }
+        slotHTML += `</div></div>`;
+      }
+      slotHTML += '</div>';
+      slotHTML += '<div class="spell-slots-actions">';
+      slotHTML += '<button type="button" class="spell-rest-btn" title="Restore all spell slots after a full rest">Rest</button>';
+      if (isArcane) {
+        slotHTML += `<button type="button" class="spell-known-filter-btn${showKnownOnly ? ' active' : ''}" title="${showKnownOnly ? 'Showing spellbook only — click to show all' : 'Click to show only spells in your spellbook'}">Spellbook Only</button>`;
+      }
+      slotHTML += '</div>';
+      slotEl.innerHTML = slotHTML;
+
+      // Slot pip click
+      slotEl.querySelectorAll('.spell-slot-pip').forEach(pip => {
+        pip.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const lv = pip.dataset.level;
+          const pipIdx = parseInt(pip.dataset.pip);
+          const max = maxSlots[lv] || 0;
+          const newUsed = pip.classList.contains('used') ? pipIdx : pipIdx + 1;
+          await this.actor.update({ [`system.spellSlots.${lv}.used`]: Math.max(0, Math.min(newUsed, max)) });
+        });
+      });
+
+      // Rest button
+      const restBtn = slotEl.querySelector('.spell-rest-btn');
+      if (restBtn) {
+        restBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const updates = {};
+          for (const lv of spellLevels) updates[`system.spellSlots.${lv}.used`] = 0;
+          await this.actor.update(updates);
+        });
+      }
+
+      // Spellbook-only filter toggle (re-renders without actor update)
+      const filterBtn = slotEl.querySelector('.spell-known-filter-btn');
+      if (filterBtn) {
+        filterBtn.addEventListener('click', () => {
+          this._spellKnownFilter = !this._spellKnownFilter;
+          this.renderSpellTab(this.element);
+        });
+      }
+    }
+
+    // --- Spell List ---
+    if (spells.length === 0) {
+      listEl.innerHTML = '<div class="spell-no-spells">No spells found for this class.</div>';
+      return;
+    }
+
+    const maxLevel = sc.maxSpellLevel || 6;
+    const availableLevels = Object.keys(byLevel).sort((a, b) => +a - +b).filter(lv => +lv <= maxLevel);
+
+    if (!this._collapsedSpellLevels) this._collapsedSpellLevels = new Set();
+
+    const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    let listHTML = '';
+    for (const lv of availableLevels) {
+      const lvSpells = byLevel[lv].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      const max = maxSlots[lv] || 0;
+      const isCollapsed = this._collapsedSpellLevels.has(lv);
+      listHTML += `<div class="spell-level-group${isCollapsed ? ' collapsed' : ''}" data-level="${lv}">`;
+      listHTML += `<div class="spell-level-heading" style="display:flex;align-items:center;gap:8px;padding:3px 4px 4px;cursor:pointer;user-select:none;">`;
+      listHTML += `<span class="spell-level-caret" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;">${isCollapsed ? '&#9654;' : '&#9660;'}</span>`;
+      listHTML += `Level ${lv}${max ? ` <span class="spell-level-slots">(${max} slot${max !== 1 ? 's' : ''})</span>` : ''}`;
+      listHTML += `</div>`;
+      for (const sp of lvSpells) {
+        const hasReversed = !!sp.reversed;
+        const isKnown = isArcane ? (knownSpells[sp.id] === true) : true;
+        const hide = showKnownOnly && !isKnown;
+        if (hide) continue;
+        listHTML += `<div class="spell-entry${isArcane && !isKnown ? ' unknown' : ''}" data-spell-id="${esc(sp.id)}">`;
+        listHTML += `<div class="spell-entry-header" style="display:flex;flex-direction:row;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:3px;user-select:none;width:100%;box-sizing:border-box;">`;
+        if (isArcane) {
+          const knownColor = isKnown ? '#b8860b' : '#bbb';
+          listHTML += `<span role="button" tabindex="0" class="spell-known-btn${isKnown ? ' known' : ''}" data-spell-id="${esc(sp.id)}" title="${isKnown ? 'In spellbook — click to remove' : 'Not in spellbook — click to add'}" style="flex:0 0 auto;display:inline-block;background:transparent;border:none;padding:0 2px;cursor:pointer;font-size:22px;line-height:1;color:${knownColor};">`;
+          listHTML += isKnown ? '&#9733;' : '&#9734;';
+          listHTML += `</span>`;
+        }
+        listHTML += `<span class="spell-entry-chevron" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;">&#9654;</span>`;
+        listHTML += `<span class="spell-entry-name" style="flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:24px;font-weight:bold;color:#1a1a1a;">${esc(sp.name)}${hasReversed ? ' <span class="spell-reversible-tag">R</span>' : ''}</span>`;
+        listHTML += `<span class="spell-entry-meta" style="flex:0 0 auto;font-size:20px;color:#666;white-space:nowrap;">${esc(sp.duration || '')}${sp.duration && sp.range ? ' &bull; ' : ''}${esc(sp.range || '')}</span>`;
+        listHTML += `</div>`;
+        listHTML += `<div class="spell-entry-body">`;
+        listHTML += `<p class="spell-description">${esc(sp.description || '')}</p>`;
+        if (hasReversed) {
+          listHTML += `<div class="spell-reversed-block">`;
+          listHTML += `<div class="spell-reversed-name">Reversed: ${esc(sp.reversed.name || '')}</div>`;
+          listHTML += `<p class="spell-description">${esc(sp.reversed.description || '')}</p>`;
+          listHTML += `</div>`;
+        }
+        listHTML += `</div></div>`;
+      }
+      listHTML += `</div>`;
+    }
+    listEl.innerHTML = listHTML;
+
+    // Level heading: collapse / expand
+    listEl.querySelectorAll('.spell-level-heading').forEach(heading => {
+      heading.addEventListener('click', () => {
+        const group = heading.closest('.spell-level-group');
+        const lv = group.dataset.level;
+        const isNowCollapsed = group.classList.toggle('collapsed');
+        if (isNowCollapsed) this._collapsedSpellLevels.add(lv);
+        else this._collapsedSpellLevels.delete(lv);
+        const caret = heading.querySelector('.spell-level-caret');
+        if (caret) caret.innerHTML = isNowCollapsed ? '&#9654;' : '&#9660;';
+      });
+    });
+
+    // Spell entry: expand / collapse description
+    listEl.querySelectorAll('.spell-entry-header').forEach(header => {
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.spell-known-btn')) return;
+        const entry = header.closest('.spell-entry');
+        const isOpen = entry.classList.toggle('open');
+        const chevron = header.querySelector('.spell-entry-chevron');
+        if (chevron) chevron.innerHTML = isOpen ? '&#9660;' : '&#9654;';
+      });
+    });
+
+    // Known spell toggle
+    if (isArcane) {
+      listEl.querySelectorAll('.spell-known-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const spellId = btn.dataset.spellId;
+          const known = this.actor.getFlag('osp-houserules', 'knownSpells') || {};
+          await this.actor.setFlag('osp-houserules', 'knownSpells', { ...known, [spellId]: !(known[spellId] === true) });
+        });
+      });
+    }
+  }
 
   /**
    * Lazily fetch and cache class_profiles.json and race_profiles.json.
@@ -1752,6 +1992,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     const isSkill = (name) => skip.has(norm(name));
 
     const entries = [];
+    // Race first so racial abilities win deduplication tag priority
+    if (raceData) {
+      for (const a of (raceData.racialAbilities || [])) {
+        if (!isSkill(a.name)) entries.push({ ...a, source: 'race' });
+      }
+    }
     if (classData) {
       for (const a of (classData.activeAbilities || [])) {
         if (!isSkill(a.name)) entries.push({ ...a, source: 'class' });
@@ -1760,24 +2006,28 @@ export class OspActorSheetCharacter extends ActorSheet {
         if (!isSkill(a.name)) entries.push({ ...a, source: 'class' });
       }
     }
-    if (raceData) {
-      for (const a of (raceData.racialAbilities || [])) {
-        if (!isSkill(a.name)) entries.push({ ...a, source: 'race' });
-      }
-    }
 
     const escape = (s) => String(s || '').replace(/[&<>"']/g, c => (
       { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
     ));
 
-    if (entries.length === 0) {
+    // Deduplicate by name — class entries take precedence (pushed first)
+    const seen = new Set();
+    const unique = entries.filter(e => {
+      const key = (e.name || '').toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    if (unique.length === 0) {
       el.innerHTML = '';
       return;
     }
 
-    entries.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    unique.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
-    el.innerHTML = entries.map(e => {
+    el.innerHTML = unique.map(e => {
       const tag = e.source === 'race'
         ? ' <span class="skill-ability-tag skill-ability-tag--race">Race</span>'
         : e.source === 'class'

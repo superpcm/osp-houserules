@@ -1090,6 +1090,275 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 
 /* ============================
+   SPELLS TAB
+   ============================ */
+.sheet-body .tab.active[data-tab="attributes"] {
+  display: flex;
+  flex-direction: column;
+  height: 810px !important;
+  margin: 20px 0 0 0;
+  overflow: hidden;
+}
+
+.spell-tab-header {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+.spell-tab-title {
+  font-family: $font-cooper;
+  font-size: 32px;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+.spell-tab-subtitle {
+  font-family: $font-cooper;
+  font-size: 20px;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+/* Slot tracker */
+.spell-slots-section {
+  flex-shrink: 0;
+  padding: 10px 30px 8px;
+}
+.spell-slots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.spell-slot-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.spell-slot-label {
+  font-family: $font-cooper;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1a1a1a;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.spell-slot-pips {
+  display: flex;
+  gap: 6px;
+}
+.spell-slot-pip {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #444;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.1s;
+
+  &.used {
+    background: #2c1810;
+    border-color: #2c1810;
+  }
+  &:hover {
+    border-color: #704214;
+    background: rgba(112, 66, 20, 0.2);
+  }
+  &.used:hover {
+    background: rgba(44, 24, 16, 0.6);
+  }
+}
+.spell-slots-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+.spell-rest-btn,
+.spell-known-filter-btn {
+  font-family: $font-cooper;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1a1a1a;
+  background: transparent;
+  border: 1px solid #888;
+  border-radius: 4px;
+  padding: 3px 16px;
+  cursor: pointer;
+  &:hover { background: #f0ebe4; border-color: #444; }
+}
+.spell-known-filter-btn.active {
+  background: #2c1810;
+  color: #fff;
+  border-color: #2c1810;
+  &:hover { background: #3d2218; }
+}
+.spell-no-slots {
+  font-family: $font-cooper;
+  font-size: 22px;
+  color: #888;
+  text-align: center;
+  padding: 10px;
+}
+
+/* Spell list */
+.spell-list-scrollable {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 30px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) transparent;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 3px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+}
+.spell-level-group {
+  margin-bottom: 10px;
+}
+.spell-level-heading {
+  font-family: $font-cooper;
+  font-size: 26px;
+  font-weight: bold;
+  color: #2c1810;
+  border-bottom: 1px solid rgba(44,24,16,0.3);
+  padding: 3px 4px 4px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover { background: rgba(44,24,16,0.04); border-radius: 3px; }
+
+  .spell-level-slots {
+    font-weight: normal;
+    font-size: 22px;
+    color: #666;
+  }
+}
+.spell-level-caret {
+  font-size: 14px;
+  color: #704214;
+  flex-shrink: 0;
+  line-height: 1;
+}
+/* Collapse spell entries when group is collapsed */
+.spell-level-group.collapsed .spell-entry {
+  display: none;
+}
+.spell-entry {
+  border-radius: 3px;
+  margin-bottom: 2px;
+  width: 100%;
+  box-sizing: border-box;
+  &:hover > .spell-entry-header { background: rgba(112,66,20,0.07); }
+}
+.spell-entry-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  border-radius: 3px;
+  user-select: none;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+.spell-entry-chevron {
+  font-size: 14px;
+  color: #704214 !important;
+  flex: 0 0 auto !important;
+  line-height: 1;
+}
+.spell-entry-name {
+  font-family: $font-cooper;
+  font-size: 24px;
+  font-weight: bold;
+  color: #1a1a1a !important;
+  flex: 1 1 auto !important;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.spell-reversible-tag {
+  font-size: 18px;
+  font-weight: bold;
+  color: #704214 !important;
+  background: rgba(112,66,20,0.12);
+  border-radius: 2px;
+  padding: 0 4px;
+  vertical-align: middle;
+}
+.spell-entry-meta {
+  font-family: $font-cooper;
+  font-size: 20px;
+  color: #666 !important;
+  white-space: nowrap;
+  flex: 0 0 auto !important;
+}
+/* Known-spell star (span, not button, to avoid Foundry button CSS) */
+.spell-known-btn {
+  display: inline-block !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 2px;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  color: #bbb !important;
+  flex: 0 0 auto !important;
+
+  &.known { color: #b8860b !important; }
+  &:hover { color: #704214 !important; }
+}
+.spell-entry-body {
+  display: none;
+  padding: 4px 14px 8px 32px;
+}
+.spell-entry.open > .spell-entry-body {
+  display: block;
+}
+.spell-description {
+  font-family: $font-cooper;
+  font-size: 22px;
+  color: #333 !important;
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+.spell-reversed-block {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(112,66,20,0.25);
+}
+.spell-reversed-name {
+  font-family: $font-cooper;
+  font-size: 22px;
+  font-weight: bold;
+  color: #704214 !important;
+  margin-bottom: 2px;
+}
+.spell-no-spells {
+  font-family: $font-cooper;
+  font-size: 22px;
+  color: #888 !important;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ============================
    COMBAT TAB BACKGROUND
    ============================ */
 

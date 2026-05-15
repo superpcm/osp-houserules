@@ -1,0 +1,3144 @@
+{
+  "metadata": {
+    "title": "Old-School Essentials House Rules",
+    "version": "1.5",
+    "source_file": "house_rules_v1.5.pdf",
+    "notes": [
+      "Structured for code-project reference.",
+      "Coin Weight (CW) is used for detailed encumbrance.",
+      "Silver Sovereign is the campaign standard currency.",
+      "Typos from source are normalized in keys but original terms are preserved where useful."
+    ]
+  },
+  "general_rules": {
+    "ability_score_generation": {
+      "method": "For each ability score roll 4d6 in order, dropping the lowest die.",
+      "abilities": [
+        "STR",
+        "INT",
+        "WIS",
+        "DEX",
+        "CON",
+        "CHA"
+      ]
+    },
+    "alignment": {
+      "alignment_languages_used": false
+    },
+    "vision": {
+      "dimvision": "Character can see in dim light as if bright light.",
+      "infravision": "Infravision is replaced by Dimvision for playable races."
+    },
+    "first_level_hp": {
+      "rule": "All characters begin first level at maximum hit points plus CON bonus, if any."
+    },
+    "racial_ability_score_bonuses": {
+      "used": true
+    },
+    "currency_standard": {
+      "standard_coin": "Silver Sovereign",
+      "excluded_coins": [
+        "Platinum",
+        "Electrum"
+      ],
+      "coin_values_using_sovereign_as_standard": [
+        {
+          "coin": "Copper",
+          "slang": "Penny",
+          "value": 5
+        },
+        {
+          "coin": "Silver",
+          "slang": "Sovereign",
+          "value": 1
+        },
+        {
+          "coin": "Gold",
+          "slang": "Crown",
+          "value": 0.1
+        }
+      ]
+    },
+    "unrestricted_weapon_use": {
+      "enabled": true,
+      "rule": "Any class may use any weapon, but using a weapon outside a class's proficiency suffers a -2 penalty to hit and the maximum damage of the weapon is equal to the class's HD.",
+      "cleric_restriction": "Clerics employing non-blunted weapons risk angering their deity."
+    }
+  },
+  "character_races": {
+    "playable_races": [
+      "Dwarf",
+      "Elf",
+      "Gnome",
+      "Half-Elf",
+      "Hobbit",
+      "Half-Orc",
+      "Human"
+    ],
+    "adjustments": {
+      "Dwarf": {
+        "size": "S",
+        "includes": [
+          "Hill Dwarf",
+          "Mountain Dwarf"
+        ],
+        "vision": "Dimvision replaces Infravision"
+      },
+      "Elf": {
+        "size": "M",
+        "includes": [
+          "Grey Elf",
+          "Wood Elf",
+          "High Elf"
+        ],
+        "vision": "No Infravision"
+      },
+      "Gnome": {
+        "size": "S",
+        "vision": "Dimvision replaces Infravision"
+      },
+      "Half-Elf": {
+        "size": "M",
+        "vision": "No Infravision"
+      },
+      "Half-Orc": {
+        "size": "M",
+        "vision": "Dimvision replaces Infravision"
+      },
+      "Hobbit": {
+        "size": "S",
+        "includes": [
+          "Lightfoot",
+          "Tallfellow",
+          "Stout"
+        ]
+      },
+      "Human": {
+        "size": "M",
+        "ability_score_bonuses": {
+          "CHA": 1,
+          "CON": 1
+        },
+        "removed_abilities": [
+          "Blessed",
+          "Decisiveness"
+        ],
+        "gained_abilities": [
+          "Leadership"
+        ],
+        "includes": [
+          "Baklunish",
+          "Flannae (Flan)",
+          "Oeridian",
+          "Olman",
+          "Rhennee",
+          "Suloise (Suel)",
+          "Touv"
+        ]
+      }
+    }
+  },
+  "class_options": {
+    "banned_classes": [
+      "Acrobat"
+    ],
+    "allowed_optional_classes": [
+      "Beast Master",
+      "Mage",
+      "Warden"
+    ],
+    "race_based_class_and_level_limits_enforced": true,
+    "race_as_class_allowed": true,
+    "multiclassing_allowed": false,
+    "class_adjustments": {
+      "Assassin": [
+        "Uses d6 Thief Skills for associated skills.",
+        "Must have a Disguise Kit to use the Disguise ability."
+      ],
+      "Barbarian": [
+        "Uses d6 Thief Skills for associated skills."
+      ],
+      "Bard": [
+        "Gains Inspiring Words at 1st level and Viscious Mockery at 4th level."
+      ],
+      "Cleric": [
+        "Gains bonus spells based on WIS.",
+        "Ignores Proof of Faith requirement if WIS >= 15, receiving spells starting at 1st level instead of 2nd."
+      ],
+      "Druid": [
+        "Gains bonus spells based on WIS."
+      ],
+      "Fighter": [
+        "Uses Combat Talents.",
+        "Gains an extra attack at 4th and 9th level."
+      ],
+      "Knight": [
+        "Not subject to armor STR requirement.",
+        "Gains Weapon Specialization at 1st level.",
+        "Gains dedicated Squire at 3rd level.",
+        "Gains an extra attack at 5th level."
+      ],
+      "Mage": [
+        "Adds INT to DM, OC, RF, RM, and SU."
+      ],
+      "Magic-User/Illusionist": [
+        "Automatically gains Read Magic spell.",
+        "Gains bonus spells based on INT."
+      ],
+      "Paladin": [
+        "Gains spells one level sooner per point of WIS > 15.",
+        "Gains Weapon Specialization at 1st level.",
+        "Gains an extra attack at 5th level."
+      ],
+      "Ranger": [
+        "Adds WIS score to Tracking chance.",
+        "Gains spells one level sooner per point of WIS > 15.",
+        "May choose Weapon Specialization or Two-Weapon Fighting at 1st level.",
+        "Gains an extra attack at 5th level."
+      ],
+      "Thief": [
+        "No Read Languages/Scroll Use ability.",
+        "Uses d6 Thief Skills."
+      ],
+      "Warden": [
+        "Adds WIS score to Tracking chance.",
+        "May choose Weapon Specialization or Two-Weapon Fighting at 1st level.",
+        "Gains an extra attack at 5th level."
+      ]
+    }
+  },
+  "custom_classes": {
+    "Beast Master": {
+      "requirements": "None",
+      "prime_requisites": [
+        "STR",
+        "WIS"
+      ],
+      "hit_dice": "1d6",
+      "maximum_level": 14,
+      "armor": [
+        "Leather",
+        "Chainmail",
+        "Shields"
+      ],
+      "weapons": "Any",
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "description": "Adventurers with a special connection to animals, often accompanied by one or more loyal beasts.",
+      "xp_bonus": "At least 13 in one prime requisite grants +5% XP. STR and WIS 16+ grants +10% XP.",
+      "animal_companions": {
+        "allowed_animals": "Wild and domestic animals; giant or magical animals at referee discretion.",
+        "maximum_companions": "Up to one animal companion per experience level; total companion HD may not exceed character level.",
+        "death_or_dismissal": "May attempt to forge a connection with a new animal.",
+        "establishing_connection": "Approach peacefully; referee makes reaction roll. Result 8+ makes animal a companion.",
+        "behavior": "Companion follows everywhere, obeys basic commands, fights to defend beast master, never checks morale."
+      },
+      "abilities": {
+        "clairvoyance": "After reaching 5th level, can see through eyes of animal companions with deep concentration.",
+        "speak_with_animals": {
+          "base": "Animals understand basic meaning behind beast master's words.",
+          "level_2": "Can understand speech of animals.",
+          "level_4": "Can communicate empathically with animals without words.",
+          "limit": "Communication is commensurate to animal intelligence."
+        },
+        "identify_tracks": "Can identify tracks and spoor of animals in the wild.",
+        "reaction_modifier": "+1 bonus to reaction rolls with animals in addition to CHA modifier.",
+        "combat": "Can use all weapons, leather armor, chainmail, and shields.",
+        "after_reaching_9th_level": "May construct wilderness stronghold. Animals within 5 miles become friends, may warn of intruders, carry messages/news, etc.; beast master must protect them."
+      },
+      "progression": [
+        [
+          1,
+          0,
+          "1d6",
+          "19[0]",
+          11,
+          12,
+          12,
+          15,
+          16
+        ],
+        [
+          2,
+          1800,
+          "2d6",
+          "19[0]",
+          11,
+          12,
+          12,
+          15,
+          16
+        ],
+        [
+          3,
+          3600,
+          "3d6",
+          "19[0]",
+          11,
+          12,
+          12,
+          15,
+          16
+        ],
+        [
+          4,
+          7250,
+          "4d6",
+          "19[0]",
+          11,
+          12,
+          12,
+          15,
+          16
+        ],
+        [
+          5,
+          15000,
+          "5d6",
+          "17[+2]",
+          9,
+          10,
+          10,
+          13,
+          14
+        ],
+        [
+          6,
+          30000,
+          "6d6",
+          "17[+2]",
+          9,
+          10,
+          10,
+          13,
+          14
+        ],
+        [
+          7,
+          60000,
+          "7d6",
+          "17[+2]",
+          9,
+          10,
+          10,
+          13,
+          14
+        ],
+        [
+          8,
+          120000,
+          "8d6",
+          "17[+2]",
+          9,
+          10,
+          10,
+          13,
+          14
+        ],
+        [
+          9,
+          240000,
+          "9d6",
+          "14[+5]",
+          7,
+          8,
+          8,
+          11,
+          12
+        ],
+        [
+          10,
+          360000,
+          "9d6+2*",
+          "14[+5]",
+          7,
+          8,
+          8,
+          11,
+          12
+        ],
+        [
+          11,
+          480000,
+          "9d6+4*",
+          "14[+5]",
+          7,
+          8,
+          8,
+          11,
+          12
+        ],
+        [
+          12,
+          600000,
+          "9d6+6*",
+          "14[+5]",
+          7,
+          8,
+          8,
+          11,
+          12
+        ],
+        [
+          13,
+          720000,
+          "9d6+8*",
+          "12[+7]",
+          5,
+          6,
+          6,
+          9,
+          10
+        ],
+        [
+          14,
+          840000,
+          "9d6+10*",
+          "12[+7]",
+          5,
+          6,
+          6,
+          9,
+          10
+        ]
+      ],
+      "progression_fields": [
+        "level",
+        "xp",
+        "hd",
+        "thac0",
+        "save_death_poison",
+        "save_wands",
+        "save_paralysis_petrify",
+        "save_breath",
+        "save_spells_rods_staves"
+      ],
+      "notes": [
+        "* Modifiers from CON no longer apply after named HD cap."
+      ]
+    },
+    "Mage": {
+      "requirements": "None",
+      "prime_requisites": [
+        "INT",
+        "WIS"
+      ],
+      "hit_dice": "1d6",
+      "maximum_level": 14,
+      "armor": "None",
+      "weapons": [
+        "Dagger",
+        "Shortsword",
+        "Staff",
+        "Longsword"
+      ],
+      "languages": [
+        "Common"
+      ],
+      "description": "Adventurers who study the secrets of deep magic.",
+      "xp_bonus": "INT and WIS at least 13 grants +5% XP. INT at least 16 and WIS at least 13 grants +10% XP.",
+      "mage_skills": {
+        "range": "30'",
+        "roll": "d%; success on result <= listed chance.",
+        "detect_magic": "Requires 1 turn concentration on object; failed checks may always be re-attempted; referee should roll privately.",
+        "open_close": "Magically opens or pushes closed unlocked portal/lid/etc. and holds it open/closed for 1 round per level; one attempt per portal.",
+        "rally": "Counters magical fear effects; usable once per turn.",
+        "read_magic": "Deciphers magical scripts and runes; failed attempts cannot be retried until mage gains a level.",
+        "suggestion": "Words gain supernatural potency. Up to 1 HD of persons per level save vs spells or follow suggestion for 1 round/level. Dangerous suggestion grants automatic save. Subjects later realize they were tricked. Usable once per turn.",
+        "chance_of_success": [
+          [
+            1,
+            75,
+            30,
+            20,
+            50,
+            20
+          ],
+          [
+            2,
+            80,
+            35,
+            23,
+            55,
+            23
+          ],
+          [
+            3,
+            83,
+            40,
+            25,
+            60,
+            25
+          ],
+          [
+            4,
+            85,
+            45,
+            26,
+            65,
+            26
+          ],
+          [
+            5,
+            87,
+            50,
+            35,
+            70,
+            35
+          ],
+          [
+            6,
+            90,
+            55,
+            45,
+            75,
+            45
+          ],
+          [
+            7,
+            92,
+            60,
+            55,
+            80,
+            55
+          ],
+          [
+            8,
+            93,
+            65,
+            65,
+            83,
+            65
+          ],
+          [
+            9,
+            94,
+            70,
+            70,
+            86,
+            70
+          ],
+          [
+            10,
+            95,
+            75,
+            75,
+            90,
+            75
+          ],
+          [
+            11,
+            96,
+            80,
+            80,
+            92,
+            80
+          ],
+          [
+            12,
+            97,
+            85,
+            85,
+            95,
+            85
+          ],
+          [
+            13,
+            98,
+            90,
+            90,
+            98,
+            90
+          ],
+          [
+            14,
+            99,
+            95,
+            95,
+            99,
+            95
+          ]
+        ],
+        "chance_fields": [
+          "level",
+          "DM",
+          "OC",
+          "RY",
+          "RM",
+          "SU"
+        ]
+      },
+      "abilities": {
+        "arcane_magic": "See Magic in Old-School Essentials. Any level may conduct magical research to scribe scrolls or research magical effects. From 9th level may create other magic items. Can cast from arcane scrolls and use arcane-only items.",
+        "mage_staff": {
+          "invulnerable_monsters": "Staff can harm creatures immune to mundane attacks.",
+          "light": "Once per day, staff radiates light in 30' radius for 1 turn per level."
+        },
+        "combat": "Can use staves and one-handed blades, but cannot use armor.",
+        "healing": "Once per day, spend 1 turn to heal ally: cures 1 hp per level or allows another save against a negative effect.",
+        "mage_armor": "+2 bonus to Armor Class.",
+        "scribing_spells": "Any level can create arcane spell scrolls per standard magical research rules.",
+        "after_reaching_11th_level": "May build stronghold, often a great tower; 1d6 apprentices of levels 1-3 arrive."
+      },
+      "progression": [
+        [
+          1,
+          0,
+          "1d6",
+          "19[0]",
+          12,
+          13,
+          12,
+          15,
+          14
+        ],
+        [
+          2,
+          2800,
+          "2d6",
+          "19[0]",
+          12,
+          13,
+          12,
+          15,
+          14
+        ],
+        [
+          3,
+          5600,
+          "3d6",
+          "19[0]",
+          12,
+          13,
+          12,
+          15,
+          14
+        ],
+        [
+          4,
+          12000,
+          "4d6",
+          "19[0]",
+          12,
+          13,
+          12,
+          15,
+          14
+        ],
+        [
+          5,
+          24000,
+          "5d6",
+          "19[0]",
+          12,
+          13,
+          12,
+          15,
+          14
+        ],
+        [
+          6,
+          48000,
+          "6d6",
+          "17[+2]",
+          10,
+          11,
+          10,
+          13,
+          11
+        ],
+        [
+          7,
+          100000,
+          "7d6",
+          "17[+2]",
+          10,
+          11,
+          10,
+          13,
+          11
+        ],
+        [
+          8,
+          200000,
+          "8d6",
+          "17[+2]",
+          10,
+          11,
+          10,
+          13,
+          11
+        ],
+        [
+          9,
+          400000,
+          "9d6",
+          "17[+2]",
+          10,
+          11,
+          10,
+          13,
+          11
+        ],
+        [
+          10,
+          460000,
+          "9d6+1*",
+          "17[+2]",
+          10,
+          11,
+          10,
+          13,
+          11
+        ],
+        [
+          11,
+          620000,
+          "9d6+2*",
+          "14[+5]",
+          7,
+          8,
+          7,
+          10,
+          7
+        ],
+        [
+          12,
+          880000,
+          "9d6+3*",
+          "14[+5]",
+          7,
+          8,
+          7,
+          10,
+          7
+        ],
+        [
+          13,
+          1040000,
+          "9d6+4*",
+          "14[+5]",
+          7,
+          8,
+          7,
+          10,
+          7
+        ],
+        [
+          14,
+          1200000,
+          "9d6+5*",
+          "14[+5]",
+          7,
+          8,
+          7,
+          10,
+          7
+        ]
+      ],
+      "progression_fields": [
+        "level",
+        "xp",
+        "hd",
+        "thac0",
+        "save_death_poison",
+        "save_wands",
+        "save_paralysis_petrify",
+        "save_breath",
+        "save_spells_rods_staves"
+      ]
+    },
+    "Warden": {
+      "requirements": {
+        "CON": 9,
+        "WIS": 9
+      },
+      "prime_requisite": "STR",
+      "hit_dice": "1d8",
+      "maximum_level": 14,
+      "armor": [
+        "Leather",
+        "Chain mail",
+        "Shields"
+      ],
+      "weapons": "Any",
+      "languages": [
+        "Common"
+      ],
+      "description": "Members of a secret society protecting native lands from invasion and evil; skilled warriors adapted to the wilds.",
+      "alignment": "Good or neutral only. If alignment changes to evil, loses special class abilities and becomes fighter of same level; may regain status through special quest.",
+      "abilities": {
+        "awareness": "Only surprised on a roll of 1; may act in surprise round while companions are surprised.",
+        "surprise_attack": "In wilderness, 3-in-6 chance of going unnoticed when sneaking up on target; unnoticed target may be surprised.",
+        "combat": "Can use all weapons, leather armor, chain mail, and shields; cannot use plate mail due to stealth needs.",
+        "limited_possessions": "May only keep wealth and possessions that can be kept on person or mount. Excess donated to worthy causes, not other PCs.",
+        "foraging_and_hunting": "Party with warden succeeds at foraging on 2-in-6 and finds prey when hunting on 5-in-6.",
+        "pursuit": "When party pursues an opposing group in wilderness, chance of evasion is reduced by 10%.",
+        "tracking": {
+          "description": "Can identify and follow tracks.",
+          "modifiers": [
+            "Soft/hard ground: +20% to -50%.",
+            "Size of group: +2% per creature beyond first.",
+            "Other tracks mingle: -50%.",
+            "Age of tracks: -5% per 12 hours.",
+            "Rainfall: -25% per hour.",
+            "Efforts to hide tracks: -25%."
+          ]
+        },
+        "after_reaching_10th_level": "2d12 beings join as followers. Nature is up to referee. Dead followers are not replaced."
+      },
+      "tracking_chance": [
+        {
+          "level": "1",
+          "chance": "20%"
+        },
+        {
+          "level": "2",
+          "chance": "30%"
+        },
+        {
+          "level": "3",
+          "chance": "40%"
+        },
+        {
+          "level": "4",
+          "chance": "50%"
+        },
+        {
+          "level": "5",
+          "chance": "60%"
+        },
+        {
+          "level": "6",
+          "chance": "70%"
+        },
+        {
+          "level": "7",
+          "chance": "80%"
+        },
+        {
+          "level": "8",
+          "chance": "90%"
+        },
+        {
+          "level": "9",
+          "chance": "100%"
+        },
+        {
+          "level": "10+",
+          "chance": "110%"
+        }
+      ],
+      "progression": [
+        [
+          1,
+          0,
+          "1d8",
+          "19[0]",
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        [
+          2,
+          2000,
+          "2d8",
+          "19[0]",
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        [
+          3,
+          4000,
+          "3d8",
+          "19[0]",
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        [
+          4,
+          8000,
+          "4d8",
+          "17[+2]",
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        [
+          5,
+          16000,
+          "5d8",
+          "17[+2]",
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        [
+          6,
+          32000,
+          "6d8",
+          "17[+2]",
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        [
+          7,
+          64000,
+          "7d8",
+          "14[+5]",
+          8,
+          9,
+          10,
+          10,
+          12
+        ],
+        [
+          8,
+          120000,
+          "8d8",
+          "14[+5]",
+          8,
+          9,
+          10,
+          10,
+          12
+        ],
+        [
+          9,
+          240000,
+          "9d8",
+          "14[+5]",
+          8,
+          9,
+          10,
+          10,
+          12
+        ],
+        [
+          10,
+          360000,
+          "9d8+2*",
+          "12[+7]",
+          6,
+          7,
+          8,
+          8,
+          10
+        ],
+        [
+          11,
+          480000,
+          "9d8+4*",
+          "12[+7]",
+          6,
+          7,
+          8,
+          8,
+          10
+        ],
+        [
+          12,
+          600000,
+          "9d8+6*",
+          "12[+7]",
+          6,
+          7,
+          8,
+          8,
+          10
+        ],
+        [
+          13,
+          720000,
+          "9d8+8*",
+          "10[+9]",
+          4,
+          5,
+          6,
+          5,
+          8
+        ],
+        [
+          14,
+          840000,
+          "9d8+10*",
+          "10[+9]",
+          4,
+          5,
+          6,
+          5,
+          8
+        ]
+      ],
+      "progression_fields": [
+        "level",
+        "xp",
+        "hd",
+        "thac0",
+        "save_death_poison",
+        "save_wands",
+        "save_paralysis_petrify",
+        "save_breath",
+        "save_spells_rods_staves"
+      ]
+    }
+  },
+  "class_abilities": {
+    "bard_abilities": {
+      "inspiring_words": {
+        "description": "A Bard may use inspiring words to assist allies in accomplishing a specific, situational action.",
+        "effect": "+1 bonus to an attack, save, ability check, etc.",
+        "uses": "Once per day per 3 levels starting at 1st."
+      },
+      "viscious_mockery": {
+        "description": "A Bard may call upon command of language and cutting wit to unleash insults which unnerve and distract an opponent.",
+        "requirements": [
+          "Target must be able to hear the Bard.",
+          "Target must understand the Bard."
+        ],
+        "save": "Target must Save vs. Spells.",
+        "failed_save_effect": "-1 on attack rolls and saving throws.",
+        "ends_if": [
+          "The Bard is hit by or makes an attack, unless the target of the attack is the same as the target being mocked.",
+          "The Bard intentionally ceases the mocking action.",
+          "The Bard uses Inspiring Words."
+        ],
+        "uses": "Once per day starting at 3rd level, gaining one additional use each 3 levels beyond that until 9th level."
+      }
+    },
+    "combat_talents": {
+      "available_to": [
+        "Fighter"
+      ],
+      "choice_levels": {
+        "initial": 1,
+        "additional": [
+          3,
+          7
+        ]
+      },
+      "weapon_specialization": {
+        "description": "Choose a melee or ranged weapon to specialize in.",
+        "progression": [
+          {
+            "level": 1,
+            "attack_bonus": 1,
+            "damage_bonus": 1
+          },
+          {
+            "level": 4,
+            "attack_bonus": 1,
+            "damage_bonus": 2
+          },
+          {
+            "level": 10,
+            "attack_bonus": 1,
+            "damage_bonus": 3
+          },
+          {
+            "level": 13,
+            "attack_bonus": 1,
+            "damage_bonus": 5
+          }
+        ]
+      },
+      "two_weapon_fighting": {
+        "description": "Reduced penalties for fighting with two weapons.",
+        "restrictions": [
+          "Secondary/offhand weapon must be a dagger, hand axe, hammer, or club.",
+          "Two short swords may be used."
+        ],
+        "progression": [
+          {
+            "level": 1,
+            "primary_penalty": -1,
+            "offhand_penalty": -3
+          },
+          {
+            "level": 3,
+            "primary_penalty": -1,
+            "offhand_penalty": -2
+          },
+          {
+            "level": 6,
+            "primary_penalty": 0,
+            "offhand_penalty": -1
+          },
+          {
+            "level": 9,
+            "primary_penalty": 0,
+            "offhand_penalty": 0
+          }
+        ]
+      },
+      "cleave": "When in melee with multiple foes, if the fighter strikes a killing blow, they may immediately make another attack against a second foe at a -2 penalty.",
+      "defender": "When the fighter is in melee with a foe, any attacks the foe makes at characters other than the fighter are penalized at -2.",
+      "leader": "Mercenaries or retainers under the fighter's command and within 60' gain +1 morale/loyalty. All fighter's allies within 60' gain +1 to saves against fear effects.",
+      "slayer": "Gain +1 to attack and damage rolls against foes of a specific type chosen when this talent is selected."
+    }
+  },
+  "healing_and_death": {
+    "natural_healing": {
+      "rate": "1d4 hit points per day",
+      "constitution_modifier_applies": true,
+      "minimum_healing_per_day": 1
+    },
+    "death_and_dying": {
+      "below_zero_hp": "Character dies.",
+      "exactly_zero_hp": "Save vs. Death or die instantly.",
+      "successful_zero_hp_save": "Character is Incapacitated.",
+      "bleed_out": "Incapacitated character dies in 1d3 (1d4-1) turns unless healed through magic or stabilized with a Healer's Kit.",
+      "surviving_incapacitation": "May result in permanent reminder such as scarring, missing eye, limp, etc. at DM discretion."
+    }
+  },
+  "armor": {
+    "categories": "Armor consists of Light, Medium, and Heavy. Category affects maximum Dexterity modifier.",
+    "armor_adjustments": [
+      {
+        "armor": "Padded",
+        "ac": 11,
+        "max_dex_modifier": 3,
+        "type": "Light"
+      },
+      {
+        "armor": "Leather",
+        "ac": 11,
+        "max_dex_modifier": 3,
+        "type": "Light"
+      },
+      {
+        "armor": "Studded Leather",
+        "ac": 12,
+        "max_dex_modifier": 3,
+        "type": "Light"
+      },
+      {
+        "armor": "Furs/Hides",
+        "ac": 13,
+        "max_dex_modifier": 2,
+        "type": "Medium"
+      },
+      {
+        "armor": "Scale Mail",
+        "ac": 14,
+        "max_dex_modifier": 2,
+        "type": "Medium"
+      },
+      {
+        "armor": "Brigandine",
+        "ac": 14,
+        "max_dex_modifier": 2,
+        "type": "Medium"
+      },
+      {
+        "armor": "Half Plate",
+        "ac": 15,
+        "max_dex_modifier": 2,
+        "type": "Medium"
+      },
+      {
+        "armor": "Chain Mail",
+        "ac": 16,
+        "max_dex_modifier": 0,
+        "type": "Heavy"
+      },
+      {
+        "armor": "Splint/Banded",
+        "ac": 17,
+        "max_dex_modifier": 0,
+        "type": "Heavy"
+      },
+      {
+        "armor": "Full Plate",
+        "ac": 18,
+        "max_dex_modifier": 0,
+        "type": "Heavy"
+      }
+    ],
+    "usage": [
+      "Classes that can use leather can also use padded, studded leather, and furs/hides.",
+      "Classes that can use chain mail can also use studded leather, scale mail, and brigandine.",
+      "Characters that can use full plate can also use half plate, banded, and splint."
+    ],
+    "d6_thief_skill_effects": "Any class using d6 Thief Skills wearing armor besides leather, padded, or furs/hides has Climb sheer surfaces (CS) and Move silently (MS) reduced by 1-in-6."
+  },
+  "combat": {
+    "sequence_per_round": [
+      "Determine Surprise if appropriate.",
+      "Declare intention to cast a spell or flee/retreat/surrender.",
+      "Roll individual Initiative.",
+      "Roll Morale checks for Monsters & NPCs.",
+      "Combat Movement.",
+      "Missiles/Melee/Spells and other actions.",
+      "Remaining Movement at end of round."
+    ],
+    "initiative": {
+      "type": "Random individual initiative",
+      "dex_modifiers_apply": true,
+      "randomized_each_round": true
+    },
+    "attacking": {
+      "aiming": "A combatant using a ranged weapon forgoes attacking and movement to gain +2 to attack next round.",
+      "two_weapon_fighting": "Optional Attacking with Two Weapons rules will be used.",
+      "blind_fighting": [
+        "A blinded combatant cannot attack.",
+        "Attacks against a blinded combatant gain +4 to hit.",
+        "A blinded combatant can only move at half Encounter Speed.",
+        "A blinded combatant fails all saving throws unless the DM rules otherwise.",
+        "Any spell that requires the caster to see is not possible."
+      ],
+      "bombing": "Chance to hit suffers -1 for each 50' beyond the first 50'.",
+      "charging_into_melee": {
+        "optional_rules_used": true,
+        "requirements": "Must be able to move 20' in a straight line, unhindered.",
+        "charger_attack_bonus": 2,
+        "attacks_against_charger_bonus": 1,
+        "may_charge_repeatedly": true,
+        "movement": "Regardless of total Encounter Speed, all movement is used up by the charge."
+      },
+      "delayed_attack": {
+        "allowed": true,
+        "applies_to": [
+          "weapons",
+          "spells"
+        ],
+        "requirement": "Reason for delay must be specific and defined."
+      },
+      "fighting_withdrawal": [
+        "Movement is at half the withdrawer's Encounter Speed.",
+        "Withdrawer may still attack.",
+        "If pursuer's movement brings them back within melee range, withdrawer may attack first if they have an available attack."
+      ],
+      "mounted_attacks": "Attacks made while mounted against any opponent on foot are at +2; smaller weapons such as dagger or club do not gain this bonus; bonus does not apply to ranged attacks.",
+      "splash_weapons": "Optional Splash Weapons rules are used. When a splash attack misses, it lands in an adjacent area; on a square grid roll 1d8 for direction.",
+      "targets_behind_cover": [
+        {
+          "cover": "1/4",
+          "ac_bonus": 1
+        },
+        {
+          "cover": "1/2",
+          "ac_bonus": 2
+        },
+        {
+          "cover": "3/4",
+          "ac_bonus": 4
+        },
+        {
+          "cover": "full",
+          "effect": "Cannot be hit by direct attacks."
+        }
+      ],
+      "natural_20": "Always hits within reason; consult Critical Hit chart for additional effects.",
+      "natural_1": "Always misses; consult Critical Miss chart for additional consequences.",
+      "opportunity_attacks": "During movement, a combatant that passes into and then out of melee range triggers an immediate Opportunity Attack out of turn order. Opponent must have an available attack; it does not provide a free or additional attack.",
+      "parry_dodge": "Forgo attacking and moving to focus on parrying/dodging; all attacks against the combatant are at -2.",
+      "ranged_attacks": "Ranged attacks cannot be made if an opponent is within melee range of the attacker.",
+      "second_rank_attacks": [
+        "Weapons with Reach may attack through allied squares.",
+        "Attacker one size larger than ally suffers no penalty.",
+        "If attacker and ally are same size, or attacker is smaller than ally, attack is at -2."
+      ]
+    },
+    "movement": {
+      "five_foot_squares": [
+        "Only one combatant may occupy a 5' square.",
+        "Combatants may pass through an ally occupied square at twice movement cost.",
+        "Combatants may not pass through an opponent's square.",
+        "Combatants may pass through the square of any deceased ally/opponent at twice movement cost.",
+        "Combatants may occupy the square of any deceased ally or opponent."
+      ],
+      "movement_speed": {
+        "encounter_speed": "Distance a combatant may move and still engage in combat. Base Encounter Speed is 30' for all races.",
+        "running_speed": "Maximum distance if forgoing attacking; equals twice Encounter Speed."
+      },
+      "melee_range": "Within 5' of an opponent, or within 10' of an opponent using a Reach weapon."
+    },
+    "miscellaneous": {
+      "helpless_opponents": "Bound, frozen, unconscious, etc. opponents are hit automatically for maximum melee damage.",
+      "morale": "Optional Morale rules will be used.",
+      "oil_and_fire": [
+        "Unless prepared ahead of time, oil flasks cannot be lit and thrown in the same round.",
+        "First round: grab flask, remove stopper, prepare wick.",
+        "Second round: light wick and throw flask.",
+        "On hit, target takes 1d4 damage.",
+        "Next round target takes additional 1d4 damage."
+      ],
+      "ranged_attacks_into_melee": "If firing into melee and missing the target, reverse the roll (2 becomes 18, 5 becomes 15, etc.) and apply it against other combatants, friend or foe. If reversed roll equals or exceeds AC of another combatant, that combatant is hit. Randomly determine if multiple combatants have same AC.",
+      "slow_weapons_used": false,
+      "variable_weapon_damage_used": true,
+      "ascending_armor_class_used": true,
+      "changing_weapons_and_attacking": "A combatant engaged in melee may only switch weapons and attack if the current weapon is dropped."
+    }
+  },
+  "spells": {
+    "bonus_spells": {
+      "description": "Spellcasters receive bonus spells based on Prime Requisite.",
+      "does_not_apply_to": [
+        "Bard",
+        "Paladin",
+        "Ranger"
+      ],
+      "table": [
+        {
+          "prime_requisite": "13-14",
+          "spell_level_1": 1,
+          "spell_level_2": 0,
+          "spell_level_3": 0
+        },
+        {
+          "prime_requisite": "15-16",
+          "spell_level_1": 1,
+          "spell_level_2": 1,
+          "spell_level_3": 0
+        },
+        {
+          "prime_requisite": "17-18",
+          "spell_level_1": 1,
+          "spell_level_2": 1,
+          "spell_level_3": 1
+        }
+      ]
+    },
+    "wild_magic": {
+      "description": "When casting any Arcane or Divine spell, make a to-hit roll.",
+      "natural_20": "Spell results in a Boon: additional, powerful, or helpful result.",
+      "natural_1": "Spell results in a Bane: wild, unpredictable, or possibly harmful result.",
+      "scope": "Affects all forms of magic across all character classes."
+    },
+    "spellcasting_focus": "Spellcasters require an object that helps create and focus mystical energies, such as staff, wand, crystal, instrument, or holy symbol. Without it, they cannot guide energies to create the spell.",
+    "spellbooks": "All arcane spells must be stored in a spellbook. Each spell requires one page per level. If a spellbook is lost or destroyed, the caster can no longer memorize spells."
+  },
+  "conditions": {
+    "prone": [
+      "Must spend half Encounter Speed standing up.",
+      "Attacked at +2 advantage until standing.",
+      "-2 penalty to all attacks until standing."
+    ],
+    "unconscious": [
+      "Cannot move or speak.",
+      "Unaware of surroundings.",
+      "Falls prone.",
+      "Drops whatever they are holding.",
+      "Is Helpless."
+    ],
+    "incapacitated": [
+      "Cannot attack or cast spells.",
+      "Falls prone and can only drag body at 5' per round.",
+      "-4 penalty on all saving throws.",
+      "Always attacked at +4 advantage.",
+      "May drink a potion."
+    ]
+  },
+  "equipment": {
+    "property_legend": {
+      "2GH": "Gnomes and Hobbits must wield with two hands.",
+      "T": "Thrown. Weapon can be thrown in combat.",
+      "2": "Two-Handed. Weapon must be used with 2 hands.",
+      "R1": "Reload and movement cannot be done in the same round.",
+      "!GH": "Cannot be used by Gnomes and Hobbits.",
+      "R2": "Reload takes one full round and no movement is possible.",
+      "R": "Reach. Weapon can attack opponents 10' away.",
+      "STR#": "Minimum Strength required to use effectively."
+    },
+    "armor": [
+      {
+        "name": "Padded",
+        "category": "Light Armor",
+        "cost": "5sp",
+        "cw": 80,
+        "ac": 11,
+        "dex_modifier": 3,
+        "properties": []
+      },
+      {
+        "name": "Leather",
+        "category": "Light Armor",
+        "cost": "10sp",
+        "cw": 100,
+        "ac": 11,
+        "dex_modifier": 3,
+        "properties": []
+      },
+      {
+        "name": "Studded Leather",
+        "category": "Light Armor",
+        "cost": "45sp",
+        "cw": 130,
+        "ac": 12,
+        "dex_modifier": 3,
+        "properties": []
+      },
+      {
+        "name": "Furs/Hide",
+        "category": "Medium Armor",
+        "cost": "10sp",
+        "cw": 120,
+        "ac": 13,
+        "dex_modifier": 2,
+        "properties": []
+      },
+      {
+        "name": "Scale",
+        "category": "Medium Armor",
+        "cost": "50sp",
+        "cw": 450,
+        "ac": 14,
+        "dex_modifier": 2,
+        "properties": []
+      },
+      {
+        "name": "Brigandine",
+        "category": "Medium Armor",
+        "cost": "100sp",
+        "cw": 300,
+        "ac": 14,
+        "dex_modifier": 2,
+        "properties": []
+      },
+      {
+        "name": "Half Plate",
+        "category": "Medium Armor",
+        "cost": "250sp",
+        "cw": 400,
+        "ac": 15,
+        "dex_modifier": 2,
+        "properties": []
+      },
+      {
+        "name": "Chain Mail",
+        "category": "Heavy Armor",
+        "cost": "75sp",
+        "cw": 400,
+        "ac": 16,
+        "dex_modifier": 0,
+        "properties": [
+          "STR13"
+        ]
+      },
+      {
+        "name": "Splint/Banded",
+        "category": "Heavy Armor",
+        "cost": "200sp",
+        "cw": 600,
+        "ac": 17,
+        "dex_modifier": 0,
+        "properties": [
+          "STR15"
+        ]
+      },
+      {
+        "name": "Full Plate",
+        "category": "Heavy Armor",
+        "cost": "500sp",
+        "cw": 650,
+        "ac": 18,
+        "dex_modifier": 0,
+        "properties": [
+          "STR15"
+        ]
+      },
+      {
+        "name": "Small Shield",
+        "category": "Shield",
+        "cost": "10sp",
+        "cw": 60,
+        "ac_bonus": 1,
+        "dex_modifier": 3,
+        "properties": []
+      },
+      {
+        "name": "Large Shield",
+        "category": "Shield",
+        "cost": "30sp",
+        "cw": 80,
+        "ac_bonus": 2,
+        "dex_modifier": 1,
+        "properties": [
+          "!GH"
+        ]
+      }
+    ],
+    "weapons": [
+      {
+        "name": "Bastard Sword",
+        "category": "Melee",
+        "cost": "8sp",
+        "cw": 30,
+        "damage": "1d6*",
+        "range": null,
+        "properties": [
+          "2GH"
+        ]
+      },
+      {
+        "name": "Battleaxe",
+        "category": "Melee",
+        "cost": "10sp",
+        "cw": 40,
+        "damage": "1d8",
+        "range": null,
+        "properties": [
+          "2GH"
+        ]
+      },
+      {
+        "name": "Brass Knuckles",
+        "category": "Melee",
+        "cost": "5cp",
+        "cw": 5,
+        "damage": "1d4",
+        "range": null,
+        "properties": []
+      },
+      {
+        "name": "Club",
+        "category": "Melee",
+        "cost": "5cp",
+        "cw": 20,
+        "damage": "1d4",
+        "range": null,
+        "properties": []
+      },
+      {
+        "name": "Dagger",
+        "category": "Melee",
+        "cost": "3sp",
+        "cw": 10,
+        "damage": "1d4",
+        "range": "10/20/30",
+        "properties": [
+          "T"
+        ]
+      },
+      {
+        "name": "Flail",
+        "category": "Melee",
+        "cost": "10sp",
+        "cw": 20,
+        "damage": "1d8",
+        "range": null,
+        "properties": [
+          "2GH"
+        ]
+      },
+      {
+        "name": "Glaive",
+        "category": "Melee",
+        "cost": "10sp",
+        "cw": 60,
+        "damage": "1d8",
+        "range": null,
+        "properties": [
+          "!GH",
+          "R",
+          "2"
+        ]
+      },
+      {
+        "name": "Greataxe",
+        "category": "Melee",
+        "cost": "30sp",
+        "cw": 70,
+        "damage": "1d10",
+        "range": null,
+        "properties": [
+          "!GH",
+          "2",
+          "STR13"
+        ]
+      },
+      {
+        "name": "Greatclub",
+        "category": "Melee",
+        "cost": "1sp",
+        "cw": 100,
+        "damage": "1d10",
+        "range": null,
+        "properties": [
+          "!GH",
+          "2",
+          "STR15"
+        ]
+      },
+      {
+        "name": "Greatsword",
+        "category": "Melee",
+        "cost": "50sp",
+        "cw": 75,
+        "damage": "2d6",
+        "range": null,
+        "properties": [
+          "!GH",
+          "2",
+          "STR13"
+        ]
+      },
+      {
+        "name": "Halberd",
+        "category": "Melee",
+        "cost": "20sp",
+        "cw": 60,
+        "damage": "1d8*",
+        "range": null,
+        "properties": [
+          "!GH",
+          "R",
+          "2"
+        ]
+      },
+      {
+        "name": "Hand Axe",
+        "category": "Melee",
+        "cost": "4sp",
+        "cw": 20,
+        "damage": "1d4",
+        "range": "10/20/30",
+        "properties": [
+          "T"
+        ]
+      },
+      {
+        "name": "Hammer",
+        "category": "Melee",
+        "cost": "2sp",
+        "cw": 20,
+        "damage": "1d4",
+        "range": "10/20/30",
+        "properties": [
+          "T"
+        ]
+      },
+      {
+        "name": "Javelin",
+        "category": "Melee",
+        "cost": "7sp",
+        "cw": 20,
+        "damage": "1d6",
+        "range": "30/60/90",
+        "properties": [
+          "T"
+        ]
+      },
+      {
+        "name": "Lance",
+        "category": "Melee",
+        "cost": "20sp",
+        "cw": 80,
+        "damage": "1d10",
+        "range": null,
+        "properties": [
+          "!GH",
+          "R",
+          "STR13"
+        ]
+      },
+      {
+        "name": "Longsword",
+        "category": "Melee",
+        "cost": "15sp",
+        "cw": 40,
+        "damage": "1d8",
+        "range": null,
+        "properties": [
+          "2GH"
+        ]
+      },
+      {
+        "name": "Mace",
+        "category": "Melee",
+        "cost": "5sp",
+        "cw": 40,
+        "damage": "1d6",
+        "range": null,
+        "properties": []
+      },
+      {
+        "name": "Maul",
+        "category": "Melee",
+        "cost": "10sp",
+        "cw": 100,
+        "damage": "2d6",
+        "range": null,
+        "properties": [
+          "!GH",
+          "2",
+          "STR15"
+        ]
+      },
+      {
+        "name": "Morningstar",
+        "category": "Melee",
+        "cost": "15sp",
+        "cw": 40,
+        "damage": "1d8",
+        "range": null,
+        "properties": [
+          "2GH"
+        ]
+      },
+      {
+        "name": "Pike",
+        "category": "Melee",
+        "cost": "7sp",
+        "cw": 100,
+        "damage": "1d12",
+        "range": null,
+        "properties": [
+          "!GH",
+          "R",
+          "2",
+          "STR15"
+        ]
+      },
+      {
+        "name": "Quarterstaff",
+        "category": "Melee",
+        "cost": "1sp",
+        "cw": 40,
+        "damage": "1d4",
+        "range": null,
+        "properties": [
+          "2"
+        ]
+      },
+      {
+        "name": "Rapier",
+        "category": "Melee",
+        "cost": "25sp",
+        "cw": 20,
+        "damage": "1d6",
+        "range": null,
+        "properties": []
+      },
+      {
+        "name": "Scimitar",
+        "category": "Melee",
+        "cost": "25sp",
+        "cw": 30,
+        "damage": "1d6",
+        "range": null,
+        "properties": []
+      },
+      {
+        "name": "Scythe",
+        "category": "Melee",
+        "cost": "2sp",
+        "cw": 40,
+        "damage": "2d4",
+        "range": null,
+        "properties": [
+          "!GH",
+          "2"
+        ]
+      },
+      {
+        "name": "Shortsword",
+        "category": "Melee",
+        "cost": "10sp",
+        "cw": 20,
+        "damage": "1d6",
+        "range": null,
+        "properties": []
+      },
+      {
+        "name": "Spear",
+        "category": "Melee",
+        "cost": "2sp",
+        "cw": 30,
+        "damage": "1d6",
+        "range": "20/40/60",
+        "properties": [
+          "T"
+        ]
+      },
+      {
+        "name": "Trident",
+        "category": "Melee",
+        "cost": "5sp",
+        "cw": 40,
+        "damage": "1d6",
+        "range": "20/40/60",
+        "properties": [
+          "T"
+        ]
+      },
+      {
+        "name": "Warhammer",
+        "category": "Melee",
+        "cost": "15sp",
+        "cw": 20,
+        "damage": "1d8",
+        "range": null,
+        "properties": [
+          "2GH"
+        ]
+      },
+      {
+        "name": "Whip",
+        "category": "Melee",
+        "cost": "10sp",
+        "cw": 30,
+        "damage": "1d4",
+        "range": null,
+        "properties": [
+          "R"
+        ]
+      },
+      {
+        "name": "Blowgun",
+        "category": "Ranged",
+        "cost": "3sp",
+        "cw": 5,
+        "damage": "0",
+        "range": "25/50",
+        "properties": []
+      },
+      {
+        "name": "Crossbow, Hand",
+        "category": "Ranged",
+        "cost": "75sp",
+        "cw": 30,
+        "damage": "1d4",
+        "range": "30/60/120",
+        "properties": []
+      },
+      {
+        "name": "Crossbow, Heavy",
+        "category": "Ranged",
+        "cost": "50sp",
+        "cw": 180,
+        "damage": "1d10",
+        "range": "100/250/400",
+        "properties": [
+          "!GH",
+          "2",
+          "R2"
+        ]
+      },
+      {
+        "name": "Crossbow, Light",
+        "category": "Ranged",
+        "cost": "25sp",
+        "cw": 50,
+        "damage": "1d6",
+        "range": "80/160/240",
+        "properties": [
+          "2",
+          "R1"
+        ]
+      },
+      {
+        "name": "Dart",
+        "category": "Ranged",
+        "cost": "3sp",
+        "cw": 5,
+        "damage": "1d4",
+        "range": "10/20/60",
+        "properties": [
+          "T"
+        ]
+      },
+      {
+        "name": "Shortbow",
+        "category": "Ranged",
+        "cost": "25sp",
+        "cw": 15,
+        "damage": "1d6",
+        "range": "50/100/150",
+        "properties": [
+          "2"
+        ]
+      },
+      {
+        "name": "Sling",
+        "category": "Ranged",
+        "cost": "5sp",
+        "cw": 1,
+        "damage": "1d4",
+        "range": "40/80/160",
+        "properties": []
+      },
+      {
+        "name": "Longbow",
+        "category": "Ranged",
+        "cost": "50sp",
+        "cw": 20,
+        "damage": "1d8",
+        "range": "70/140/210",
+        "properties": [
+          "!GH",
+          "2"
+        ]
+      }
+    ],
+    "ammunition": [
+      {
+        "name": "Arrows (20)",
+        "cost": "5sp",
+        "cw": 10
+      },
+      {
+        "name": "Needles (50)",
+        "cost": "1sp",
+        "cw": 10
+      },
+      {
+        "name": "Bolts, Hand (30)",
+        "cost": "7sp",
+        "cw": 10
+      },
+      {
+        "name": "Bolts, Light (30)",
+        "cost": "10sp",
+        "cw": 15
+      },
+      {
+        "name": "Bolts, Heavy (30)",
+        "cost": "15sp",
+        "cw": 20
+      },
+      {
+        "name": "Sling Bullets (20)",
+        "cost": "1sp",
+        "cw": 15
+      }
+    ],
+    "gear": [
+      {
+        "name": "Acid",
+        "cost": "25sp",
+        "cw": 10,
+        "details": "Glass vial. 2d6 damage when thrown."
+      },
+      {
+        "name": "Backpack",
+        "cost": "2sp",
+        "cw": 50,
+        "details": null
+      },
+      {
+        "name": "Ball Bearings",
+        "cost": "1sp",
+        "cw": 20,
+        "details": "Bag of 1,000."
+      },
+      {
+        "name": "Bedroll",
+        "cost": "1sp",
+        "cw": 70,
+        "details": null
+      },
+      {
+        "name": "Bell",
+        "cost": "5cp",
+        "cw": 1,
+        "details": null
+      },
+      {
+        "name": "Block & Tackle",
+        "cost": "11sp",
+        "cw": 50,
+        "details": "2 pulleys and 50' rope."
+      },
+      {
+        "name": "Book, Spell",
+        "cost": "50sp",
+        "cw": 30,
+        "details": "100 pages."
+      },
+      {
+        "name": "Bucket",
+        "cost": "5cp",
+        "cw": 20,
+        "details": "Holds 2 gallons of liquid."
+      },
+      {
+        "name": "Caltrops",
+        "cost": "1sp",
+        "cw": 20,
+        "details": "Quantity of 20."
+      },
+      {
+        "name": "Candles",
+        "cost": "1cp",
+        "cw": 1,
+        "details": "Bundle of 3."
+      },
+      {
+        "name": "Case, Crossbow Bolt",
+        "cost": "1sp",
+        "cw": 10,
+        "details": "Holds 30 bolts."
+      },
+      {
+        "name": "Chain",
+        "cost": "5sp",
+        "cw": 100,
+        "details": "10' length."
+      },
+      {
+        "name": "Chalk",
+        "cost": "3cp",
+        "cw": 1,
+        "details": "3 pieces."
+      },
+      {
+        "name": "Climber's Kit",
+        "cost": "25sp",
+        "cw": 120,
+        "details": "Boot tips, hammer, 10 pitons, harness."
+      },
+      {
+        "name": "Clothes, Cloak",
+        "cost": "2sp",
+        "cw": 30,
+        "details": null
+      },
+      {
+        "name": "Clothes, Lined Cloak",
+        "cost": "4sp",
+        "cw": 50,
+        "details": null
+      },
+      {
+        "name": "Clothes, Common",
+        "cost": "5cp",
+        "cw": 20,
+        "details": null
+      },
+      {
+        "name": "Clothes, Fine",
+        "cost": "15sp",
+        "cw": 25,
+        "details": null
+      },
+      {
+        "name": "Clothes, Traveler's",
+        "cost": "2sp",
+        "cw": 30,
+        "details": null
+      },
+      {
+        "name": "Clothes, Robes",
+        "cost": "1sp",
+        "cw": 30,
+        "details": null
+      },
+      {
+        "name": "Clothes, Fine Robes",
+        "cost": "25sp",
+        "cw": 35,
+        "details": null
+      },
+      {
+        "name": "Crowbar",
+        "cost": "2sp",
+        "cw": 50,
+        "details": null
+      },
+      {
+        "name": "Disguise Kit",
+        "cost": "25sp",
+        "cw": 30,
+        "details": "Wig, beard, mustache, spirit gum, etc."
+      },
+      {
+        "name": "Fishing Tackle",
+        "cost": "1sp",
+        "cw": 40,
+        "details": "Pole, line, hooks."
+      },
+      {
+        "name": "Flask or Tankard",
+        "cost": "2cp",
+        "cw": 10,
+        "details": null
+      },
+      {
+        "name": "Grappling Hook",
+        "cost": "2sp",
+        "cw": 40,
+        "details": "3 prongs."
+      },
+      {
+        "name": "Healer's Kit",
+        "cost": "5sp",
+        "cw": 30,
+        "details": "Enough healing supplies for 2 uses."
+      },
+      {
+        "name": "Holy Symbol",
+        "cost": "10sp",
+        "cw": 10,
+        "details": null
+      },
+      {
+        "name": "Holy Water",
+        "cost": "5sp",
+        "cw": 10,
+        "details": "Glass flask."
+      },
+      {
+        "name": "Hourglass",
+        "cost": "25sp",
+        "cw": 10,
+        "details": "Sand counts down 1 hour."
+      },
+      {
+        "name": "Incense",
+        "cost": "1cp",
+        "cw": 1,
+        "details": "Per 1 inch cube."
+      },
+      {
+        "name": "Ink",
+        "cost": "10sp",
+        "cw": 1,
+        "details": "Per ounce."
+      },
+      {
+        "name": "Ink Pen",
+        "cost": "3sp",
+        "cw": 1,
+        "details": null
+      },
+      {
+        "name": "Journal",
+        "cost": "7sp",
+        "cw": 50,
+        "details": "Contains 25 sheets."
+      },
+      {
+        "name": "Lantern, Bullseye",
+        "cost": "10sp",
+        "cw": 20,
+        "details": "Can be closed to block light."
+      },
+      {
+        "name": "Lantern, Hooded",
+        "cost": "7sp",
+        "cw": 20,
+        "details": "Can be closed to block light."
+      },
+      {
+        "name": "Lock",
+        "cost": "10sp",
+        "cw": 10,
+        "details": null
+      },
+      {
+        "name": "Manacles",
+        "cost": "2sp",
+        "cw": 60,
+        "details": null
+      },
+      {
+        "name": "Mess Kit",
+        "cost": "2cp",
+        "cw": 10,
+        "details": "Tin box with cup and cutlery."
+      },
+      {
+        "name": "Mirror, Steel",
+        "cost": "5sp",
+        "cw": 5,
+        "details": null
+      },
+      {
+        "name": "Oil",
+        "cost": "1cp",
+        "cw": 10,
+        "details": "Glass flask."
+      },
+      {
+        "name": "Paper",
+        "cost": "2cp",
+        "cw": 0,
+        "details": "Per sheet."
+      },
+      {
+        "name": "Parchment",
+        "cost": "1cp",
+        "cw": 0,
+        "details": "Per sheet."
+      },
+      {
+        "name": "Pick, Miner's",
+        "cost": "2sp",
+        "cw": 10,
+        "details": null
+      },
+      {
+        "name": "Piton",
+        "cost": "5cp",
+        "cw": 2,
+        "details": "Quantity 20."
+      },
+      {
+        "name": "Perfume",
+        "cost": "5sp",
+        "cw": 1,
+        "details": "Glass vial."
+      },
+      {
+        "name": "Poison, Basic",
+        "cost": "100sp",
+        "cw": 1,
+        "details": "Glass vial."
+      },
+      {
+        "name": "Pole",
+        "cost": "5cp",
+        "cw": 70,
+        "details": "10'"
+      },
+      {
+        "name": "Pouch",
+        "cost": "5cp",
+        "cw": 1,
+        "details": null
+      },
+      {
+        "name": "Pot, Iron",
+        "cost": "2sp",
+        "cw": 100,
+        "details": null
+      },
+      {
+        "name": "Quiver",
+        "cost": "1sp",
+        "cw": 10,
+        "details": "Holds 20 arrows."
+      },
+      {
+        "name": "Rations, Iron",
+        "cost": "1sp",
+        "cw": 10,
+        "details": "7 day supply of dry, preserved foods."
+      },
+      {
+        "name": "Rations, Standard",
+        "cost": "3sp",
+        "cw": 20,
+        "details": "7 day supply of fresh foods."
+      },
+      {
+        "name": "Rope, Hempen",
+        "cost": "1sp",
+        "cw": 100,
+        "details": "50' length."
+      },
+      {
+        "name": "Rope, Silk",
+        "cost": "10sp",
+        "cw": 50,
+        "details": "50' length."
+      },
+      {
+        "name": "Sack, Large",
+        "cost": "2cp",
+        "cw": 5,
+        "details": null
+      },
+      {
+        "name": "Sack, Small",
+        "cost": "1cp",
+        "cw": 2,
+        "details": null
+      },
+      {
+        "name": "Shovel",
+        "cost": "1sp",
+        "cw": 50,
+        "details": null
+      },
+      {
+        "name": "Sidesack",
+        "cost": "1sp",
+        "cw": 30,
+        "details": null
+      },
+      {
+        "name": "Spikes, Iron",
+        "cost": "1sp",
+        "cw": 50,
+        "details": "Quantity 10."
+      },
+      {
+        "name": "Spyglass",
+        "cost": "1,000sp",
+        "cw": 10,
+        "details": null
+      },
+      {
+        "name": "Tent 1-person",
+        "cost": "1sp",
+        "cw": 200,
+        "details": null
+      },
+      {
+        "name": "Thieve's Tools",
+        "cost": "25sp",
+        "cw": 10,
+        "details": null
+      },
+      {
+        "name": "Tinderbox",
+        "cost": "1cp",
+        "cw": 10,
+        "details": null
+      },
+      {
+        "name": "Torch",
+        "cost": "1cp",
+        "cw": 10,
+        "details": "Quantity 3. Burns for 1 hour (6 turns)."
+      },
+      {
+        "name": "Waterskin",
+        "cost": "2cp",
+        "cw": 50,
+        "details": "Holds 4 pints (half gallon)."
+      }
+    ],
+    "instruments": [
+      {
+        "name": "Drum",
+        "cost": "6sp",
+        "cw": 30
+      },
+      {
+        "name": "Dulcimer",
+        "cost": "25sp",
+        "cw": 100,
+        "details": "A trapezoidal, string instrument."
+      },
+      {
+        "name": "Flute",
+        "cost": "2sp",
+        "cw": 10
+      },
+      {
+        "name": "Horn",
+        "cost": "3sp",
+        "cw": 20
+      },
+      {
+        "name": "Lute",
+        "cost": "35sp",
+        "cw": 20,
+        "details": "A plucked, string instrument."
+      },
+      {
+        "name": "Lyre",
+        "cost": "30sp",
+        "cw": 20,
+        "details": "A small, harp-like string instrument."
+      },
+      {
+        "name": "Pan Flute",
+        "cost": "12sp",
+        "cw": 20
+      },
+      {
+        "name": "Shawm",
+        "cost": "3sp",
+        "cw": 10,
+        "details": "A double-reed wind instrument."
+      }
+    ],
+    "mounts_and_animals": [
+      {
+        "name": "Donkey/Mule",
+        "cost": "8sp",
+        "details": "40' Tactical speed. 420 lb. capacity."
+      },
+      {
+        "name": "Horse, Draft",
+        "cost": "50sp",
+        "details": "40' Tactical speed. 540 lb. capacity."
+      },
+      {
+        "name": "Horse, Riding",
+        "cost": "75sp",
+        "details": "60' Tactical speed. 480 lb. capacity."
+      },
+      {
+        "name": "Horse, War",
+        "cost": "400sp",
+        "details": "60' Tactical speed. 540 lb. capacity."
+      },
+      {
+        "name": "Pony",
+        "cost": "30sp",
+        "details": "40' Tactical speed. 225 lb. capacity."
+      }
+    ],
+    "tack_and_drawn_vehicles": [
+      {
+        "name": "Barding",
+        "cost": "4x",
+        "details": "Cost is 4x humanoid armor cost."
+      },
+      {
+        "name": "Bit & Bridle",
+        "cost": "2sp"
+      },
+      {
+        "name": "Carriage",
+        "cost": "100sp"
+      },
+      {
+        "name": "Cart",
+        "cost": "15sp"
+      },
+      {
+        "name": "Chariot",
+        "cost": "250sp"
+      },
+      {
+        "name": "Feed",
+        "cost": "5cp",
+        "details": "Enough to feed one animal per day."
+      },
+      {
+        "name": "Saddle",
+        "cost": "10sp",
+        "cw": 250
+      },
+      {
+        "name": "Saddlebags",
+        "cost": "4sp",
+        "cw": 80
+      },
+      {
+        "name": "Sled",
+        "cost": "20sp"
+      },
+      {
+        "name": "Wagon",
+        "cost": "35sp"
+      }
+    ],
+    "waterborne_vehicles": [
+      {
+        "name": "Canoe",
+        "cost": "20sp"
+      },
+      {
+        "name": "Galley",
+        "cost": "30,000sp"
+      },
+      {
+        "name": "Keelboat",
+        "cost": "3,000sp"
+      },
+      {
+        "name": "Longship",
+        "cost": "10,000sp"
+      },
+      {
+        "name": "Rowboat",
+        "cost": "50sp"
+      },
+      {
+        "name": "Sailing Ship",
+        "cost": "10,000sp"
+      },
+      {
+        "name": "Warship",
+        "cost": "25,000sp"
+      }
+    ]
+  },
+  "encumbrance": {
+    "system": "Detailed Encumbrance based on Coin Weights (CW).",
+    "coin_weight_note": "10 coins of any material weigh approximately 1 lb.",
+    "tracked": [
+      "Treasure",
+      "Equipment",
+      "Movement rate based on all significant items carried"
+    ],
+    "base_movement_rates": [
+      {
+        "encumbrance_cw": "<=400",
+        "exploration_speed": 120,
+        "encounter_speed": 40
+      },
+      {
+        "encumbrance_cw": "<=800",
+        "exploration_speed": 90,
+        "encounter_speed": 30
+      },
+      {
+        "encumbrance_cw": "<=1200",
+        "exploration_speed": 60,
+        "encounter_speed": 20
+      },
+      {
+        "encumbrance_cw": ">1600",
+        "exploration_speed": 0,
+        "encounter_speed": 0
+      }
+    ],
+    "strength_adjustments": [
+      {
+        "str": "18",
+        "cw_modifier": 500
+      },
+      {
+        "str": "16-17",
+        "cw_modifier": 300
+      },
+      {
+        "str": "13-15",
+        "cw_modifier": 150
+      },
+      {
+        "str": "6-8",
+        "cw_modifier": -150
+      },
+      {
+        "str": "4-5",
+        "cw_modifier": -300
+      },
+      {
+        "str": "3",
+        "cw_modifier": -500
+      }
+    ],
+    "lifting_and_dragging": [
+      "Lift maximum encumbrance overhead.",
+      "Lift twice maximum encumbrance off the ground and move it short distances.",
+      "Drag or push three times maximum encumbrance."
+    ]
+  },
+  "critical_hits": {
+    "table": [
+      {
+        "range": "01-30",
+        "effect": "Roll damage dice twice and then add any damage modifiers."
+      },
+      {
+        "range": "31-40",
+        "effect": "Roll damage dice twice and then add modifiers. Attack breaks a strap or binding from equipment causing it to fall; potential AC or other advantage at DM discretion."
+      },
+      {
+        "range": "41-50",
+        "effect": "Roll damage dice twice and add modifiers. Opponent knocked back 5' in direction chosen by attacker."
+      },
+      {
+        "range": "51-60",
+        "effect": "Roll damage dice twice and add modifiers. If attacker has initiative over opponent next round, attacker has +2 to hit."
+      },
+      {
+        "range": "61-70",
+        "effect": "Roll damage dice twice and add modifiers. Opponent makes Moderate (0) DEX check or weapon is knocked into adjacent square; use Splash Weapons direction."
+      },
+      {
+        "range": "71-80",
+        "effect": "Roll damage dice twice and add modifiers. Opponent knocked Prone."
+      },
+      {
+        "range": "81-82",
+        "effect": "Roll damage dice twice and add modifiers. Opponent fumbles weapon 10' away; use Splash Weapons direction."
+      },
+      {
+        "range": "83-84",
+        "effect": "Roll damage dice twice and add modifiers. Opponent must succeed on Morale check or flee attacker."
+      },
+      {
+        "range": "85-86",
+        "effect": "Roll damage dice twice and add modifiers. Opponent Incapacitated for current round and next."
+      },
+      {
+        "range": "87-89",
+        "effect": "Roll damage dice twice, re-roll any 1s, then add modifiers."
+      },
+      {
+        "range": "90-94",
+        "effect": "Roll damage dice twice and add modifiers. Roll on Minor Injury chart."
+      },
+      {
+        "range": "95-98",
+        "effect": "Roll damage dice twice and add modifiers. Roll on Major Injury chart."
+      },
+      {
+        "range": "99-100",
+        "effect": "Roll damage dice twice and add modifiers. Roll on Major Injury chart and add Melee bonus to result."
+      }
+    ],
+    "minor_injury": [
+      {
+        "range": "01-19",
+        "injury": "Hand Injury",
+        "effect": "Random hand. Item in hand dropped. Actions requiring injured hand at -2 until tended after combat or healed magically."
+      },
+      {
+        "range": "20-39",
+        "injury": "Groin Injury",
+        "effect": "Incapacitated for current round and next. After recovery all rolls at -2 until tended after combat or healed magically."
+      },
+      {
+        "range": "40-59",
+        "injury": "Leg Injury",
+        "effect": "Random leg. Cannot jump. Actions requiring leg at -2 and Encounter/Running speed halved until tended after combat or healed magically."
+      },
+      {
+        "range": "60-89",
+        "injury": "Arm Injury",
+        "effect": "Random arm. Item carried/supported by arm dropped. Actions requiring arm at -2 until tended after combat or healed magically."
+      },
+      {
+        "range": "90-95",
+        "injury": "Torso Injury",
+        "effect": "Incapacitated for current round and next. After recovery all rolls at -2 until tended after combat or healed magically."
+      },
+      {
+        "range": "96-100",
+        "injury": "Head Injury",
+        "effect": "Incapacitated for current round and next. After recovery subject to Blind Fighting rules for 1d4 rounds."
+      }
+    ],
+    "major_injury": [
+      {
+        "range": "01-19",
+        "injury": "Catastrophic hand injury",
+        "effect": "Random hand. Item in hand falls. Bleed-out 1d4 hp/round until stabilized. Cannot be restored by non-magical means."
+      },
+      {
+        "range": "20-39",
+        "injury": "Catastrophic groin injury",
+        "effect": "Incapacitated until healed. Bleed-out 1d4 hp/round until stabilized. Cannot be restored by non-magical means."
+      },
+      {
+        "range": "40-59",
+        "injury": "Catastrophic arm injury",
+        "effect": "Random arm. Item being carried falls. Bleed-out 1d6 hp/round until stabilized. Cannot be restored by non-magical means."
+      },
+      {
+        "range": "60-89",
+        "injury": "Catastrophic leg injury",
+        "effect": "Random leg. Incapacitated until healed. Bleed-out 1d8 hp/round until stabilized. Cannot be restored by non-magical means."
+      },
+      {
+        "range": "90-95",
+        "injury": "Catastrophic torso injury",
+        "effect": "Incapacitated and must make Challenging (+2) CON save or die instantly. Bleed-out 1d8 hp/round. Stabilization only through magical means."
+      },
+      {
+        "range": "96-100",
+        "injury": "Catastrophic head injury",
+        "effect": "Killed instantly via traumatic head wound."
+      }
+    ],
+    "injury_note": "All injuries and effects are at DM discretion due to fantastical creatures and non-humanoid anatomy."
+  },
+  "critical_misses": [
+    {
+      "range": "01-20",
+      "effect": "Clumsy footwork injures knee/ankle or mobility appendage. Encounter and Running speeds halved until next day unless healed magically."
+    },
+    {
+      "range": "21-30",
+      "effect": "Attacker makes Moderate DEX check or fumbles weapon into adjacent square; use Splash Weapons direction."
+    },
+    {
+      "range": "31-40",
+      "effect": "Overextends; attacks from any opponent are +2 for remainder of current round."
+    },
+    {
+      "range": "41-50",
+      "effect": "Off balance. Moderate DEX check or fall Prone. Standing with remaining movement provokes Opportunity Attack from opponents within 5'."
+    },
+    {
+      "range": "51-60",
+      "effect": "Overexertion causes loss of bowel control. Roll d100; 75 or less is only pee. Combatant's square is difficult terrain."
+    },
+    {
+      "range": "61-70",
+      "effect": "Erratic maneuvering dislodges item; combatant's square is difficult terrain."
+    },
+    {
+      "range": "71-75",
+      "effect": "Opponent traps attacker's weapon. Next turn attacker may free it with Moderate STR check. Opponent has +2 on attacks until freed. Ranged weapon becomes entangled in personal gear."
+    },
+    {
+      "range": "76-80",
+      "effect": "Slips and falls. Moderate CON check or Unconscious for current round and next. On success, Incapacitated for current round."
+    },
+    {
+      "range": "81-85",
+      "effect": "Something gets in attacker's eyes; subject to Blind Fighting rules for current round and next."
+    },
+    {
+      "range": "86-90",
+      "effect": "Weapon breaks. Magical/enchanted weapon breaks only on d20 roll of 1; broken enchanted weapon releases energy causing 1d4 damage to all within 10'."
+    },
+    {
+      "range": "91-95",
+      "effect": "Errant attack. If friendly combatant within 5' of target, roll to hit them normally. Otherwise attacker rolls to hit itself."
+    },
+    {
+      "range": "96-99",
+      "effect": "Reckless attack. If friendly combatant within 5' of target, roll to hit them; successful attack rolls on Critical Hits chart. Otherwise attacker rolls to hit itself and successful attack is critical."
+    },
+    {
+      "range": "100",
+      "effect": "Wild attack critically strikes friendly combatant within 5' of target; roll on Critical Hits chart. If no friendly within 5', attacker critically hits itself."
+    }
+  ],
+  "occupations": [
+    {
+      "roll": 1,
+      "occupation": "Entertainer"
+    },
+    {
+      "roll": 2,
+      "occupation": "Cobbler"
+    },
+    {
+      "roll": 3,
+      "occupation": "Serf"
+    },
+    {
+      "roll": 4,
+      "occupation": "Musician"
+    },
+    {
+      "roll": 5,
+      "occupation": "Brewer"
+    },
+    {
+      "roll": 6,
+      "occupation": "Innkeeper"
+    },
+    {
+      "roll": 7,
+      "occupation": "Bouncer"
+    },
+    {
+      "roll": 8,
+      "occupation": "Librarian"
+    },
+    {
+      "roll": 9,
+      "occupation": "Artisan"
+    },
+    {
+      "roll": 10,
+      "occupation": "Cook"
+    },
+    {
+      "roll": 11,
+      "occupation": "Weaver"
+    },
+    {
+      "roll": 12,
+      "occupation": "Furrier"
+    },
+    {
+      "roll": 13,
+      "occupation": "Runaway Slave"
+    },
+    {
+      "roll": 14,
+      "occupation": "Armorer"
+    },
+    {
+      "roll": 15,
+      "occupation": "Dairyboy"
+    },
+    {
+      "roll": 16,
+      "occupation": "Wheelwright"
+    },
+    {
+      "roll": 17,
+      "occupation": "Ditch Digger"
+    },
+    {
+      "roll": 18,
+      "occupation": "Woodcutter"
+    },
+    {
+      "roll": 19,
+      "occupation": "Maid/Butler"
+    },
+    {
+      "roll": 20,
+      "occupation": "Bookbinder"
+    },
+    {
+      "roll": 21,
+      "occupation": "Mason"
+    },
+    {
+      "roll": 22,
+      "occupation": "Actor"
+    },
+    {
+      "roll": 23,
+      "occupation": "Street Sweeper"
+    },
+    {
+      "roll": 24,
+      "occupation": "Bowyer"
+    },
+    {
+      "roll": 25,
+      "occupation": "Cooper"
+    },
+    {
+      "roll": 26,
+      "occupation": "Herdsman"
+    },
+    {
+      "roll": 27,
+      "occupation": "Glassblower"
+    },
+    {
+      "roll": 28,
+      "occupation": "Tobacconist"
+    },
+    {
+      "roll": 29,
+      "occupation": "Winemaker"
+    },
+    {
+      "roll": 30,
+      "occupation": "Merchant"
+    },
+    {
+      "roll": 31,
+      "occupation": "Farmer"
+    },
+    {
+      "roll": 32,
+      "occupation": "Tailor"
+    },
+    {
+      "roll": 33,
+      "occupation": "Philosopher"
+    },
+    {
+      "roll": 34,
+      "occupation": "Millwright"
+    },
+    {
+      "roll": 35,
+      "occupation": "Wainwright"
+    },
+    {
+      "roll": 36,
+      "occupation": "Thatcher"
+    },
+    {
+      "roll": 37,
+      "occupation": "Tanner"
+    },
+    {
+      "roll": 38,
+      "occupation": "Printer"
+    },
+    {
+      "roll": 39,
+      "occupation": "Launderer"
+    },
+    {
+      "roll": 40,
+      "occupation": "Barber"
+    },
+    {
+      "roll": 41,
+      "occupation": "Fuller"
+    },
+    {
+      "roll": 42,
+      "occupation": "Houndsman"
+    },
+    {
+      "roll": 43,
+      "occupation": "Beggar"
+    },
+    {
+      "roll": 44,
+      "occupation": "Baker"
+    },
+    {
+      "roll": 45,
+      "occupation": "Barkeep"
+    },
+    {
+      "roll": 46,
+      "occupation": "Charcoal Maker"
+    },
+    {
+      "roll": 47,
+      "occupation": "Hatmaker"
+    },
+    {
+      "roll": 48,
+      "occupation": "Ferrier"
+    },
+    {
+      "roll": 49,
+      "occupation": "Lumberjack"
+    },
+    {
+      "roll": 50,
+      "occupation": "Scavenger"
+    },
+    {
+      "roll": 51,
+      "occupation": "Engraver"
+    },
+    {
+      "roll": 52,
+      "occupation": "Cartographer"
+    },
+    {
+      "roll": 53,
+      "occupation": "Laborer"
+    },
+    {
+      "roll": 54,
+      "occupation": "Courier"
+    },
+    {
+      "roll": 55,
+      "occupation": "Squire"
+    },
+    {
+      "roll": 56,
+      "occupation": "Rag & Bone"
+    },
+    {
+      "roll": 57,
+      "occupation": "Stonecutter"
+    },
+    {
+      "roll": 58,
+      "occupation": "Guard"
+    },
+    {
+      "roll": 59,
+      "occupation": "Carpenter"
+    },
+    {
+      "roll": 60,
+      "occupation": "Joiner"
+    },
+    {
+      "roll": 61,
+      "occupation": "Dyer"
+    },
+    {
+      "roll": 62,
+      "occupation": "Washer"
+    },
+    {
+      "roll": 63,
+      "occupation": "Distiller"
+    },
+    {
+      "roll": 64,
+      "occupation": "Potter"
+    },
+    {
+      "roll": 65,
+      "occupation": "Falconer"
+    },
+    {
+      "roll": 66,
+      "occupation": "Coachman"
+    },
+    {
+      "roll": 67,
+      "occupation": "Tallow Chandler"
+    },
+    {
+      "roll": 68,
+      "occupation": "Blacksmith"
+    },
+    {
+      "roll": 69,
+      "occupation": "Prostitute"
+    },
+    {
+      "roll": 70,
+      "occupation": "Sexton"
+    },
+    {
+      "roll": 71,
+      "occupation": "Banker"
+    },
+    {
+      "roll": 72,
+      "occupation": "Lector"
+    },
+    {
+      "roll": 73,
+      "occupation": "Messenger"
+    },
+    {
+      "roll": 74,
+      "occupation": "Crier"
+    },
+    {
+      "roll": 75,
+      "occupation": "Groom"
+    },
+    {
+      "roll": 76,
+      "occupation": "Clerk"
+    },
+    {
+      "roll": 77,
+      "occupation": "Bricklayer"
+    },
+    {
+      "roll": 78,
+      "occupation": "Glover"
+    },
+    {
+      "roll": 79,
+      "occupation": "Trapper"
+    },
+    {
+      "roll": 80,
+      "occupation": "Porter"
+    },
+    {
+      "roll": 81,
+      "occupation": "Mortician"
+    },
+    {
+      "roll": 82,
+      "occupation": "Ne'er-do-well"
+    },
+    {
+      "roll": 83,
+      "occupation": "Gong Farmer"
+    },
+    {
+      "roll": 84,
+      "occupation": "Juggler"
+    },
+    {
+      "roll": 85,
+      "occupation": "Painter"
+    },
+    {
+      "roll": 86,
+      "occupation": "Ratter"
+    },
+    {
+      "roll": 87,
+      "occupation": "Page"
+    },
+    {
+      "roll": 88,
+      "occupation": "Fishmonger"
+    },
+    {
+      "roll": 89,
+      "occupation": "Jailer"
+    },
+    {
+      "roll": 90,
+      "occupation": "Stablehand"
+    },
+    {
+      "roll": 91,
+      "occupation": "Caretaker"
+    },
+    {
+      "roll": 92,
+      "occupation": "Miller"
+    },
+    {
+      "roll": 93,
+      "occupation": "Jester"
+    },
+    {
+      "roll": 94,
+      "occupation": "Butcher"
+    },
+    {
+      "roll": 95,
+      "occupation": "Fletcher"
+    },
+    {
+      "roll": 96,
+      "occupation": "Scholar"
+    },
+    {
+      "roll": 97,
+      "occupation": "Glazier"
+    },
+    {
+      "roll": 98,
+      "occupation": "Gravedigger"
+    },
+    {
+      "roll": 99,
+      "occupation": "Server"
+    },
+    {
+      "roll": 100,
+      "occupation": "Gardener"
+    }
+  ],
+  "miscellaneous": {
+    "trade_tongue": "The common language of the realm is a hybrid language consisting of Old Oeridian and Ancient Baklunish. It is known as the Trade Tongue of the Flanaess.",
+    "turning_undead": {
+      "frequency_and_duration_rules_used": true,
+      "mixed_groups_rules_used": true,
+      "sequential_attempts_required": true,
+      "interruption_rule": "If interrupted by successful attack or external event, or character performs a different action the following round, the effect ends and can't be attempted again that encounter."
+    },
+    "d6_thief_skills": {
+      "description": "All thief skill checks are rolled on a d6 rather than percentile dice. All thief skills, including those shared with Assassin and Barbarian, function as in the Players Tome except Pick Pockets.",
+      "base_chance": "1-in-6",
+      "expertise_points": "Each point allocated to a skill improves chance by 1-in-6. Multiple points may be allocated.",
+      "maximum_chance": "5-in-6",
+      "pick_pockets": "Success reduced by 1-in-6 per three levels of victim. A roll of 6 means the attempted theft is noticed. DM determines reaction.",
+      "class_points": [
+        {
+          "class": "Assassin",
+          "points_at_1st": 3,
+          "points_per_level": 1.5
+        },
+        {
+          "class": "Barbarian",
+          "points_at_1st": 2,
+          "points_per_level": 0.5
+        },
+        {
+          "class": "Thief",
+          "points_at_1st": 4,
+          "points_per_level": 2
+        }
+      ]
+    }
+  }
+}

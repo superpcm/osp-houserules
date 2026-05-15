@@ -66,6 +66,14 @@
           "tactical": 0,
           "overland": 0,
           "dash": 0
+        },
+        "spellSlots": {
+          "1": { "used": 0 },
+          "2": { "used": 0 },
+          "3": { "used": 0 },
+          "4": { "used": 0 },
+          "5": { "used": 0 },
+          "6": { "used": 0 }
         }
       }
     },

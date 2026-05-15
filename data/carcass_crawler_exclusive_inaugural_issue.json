@@ -1,0 +1,2829 @@
+{
+  "metadata": {
+    "title": "Carcass Crawler",
+    "subtitle": "Exclusive Inaugural Issue",
+    "series": "The official Old-School Essentials zine",
+    "game": "Old-School Essentials",
+    "issue_type": "Exclusive inaugural issue for Kickstarter backers only",
+    "isbn": "978-3-96657-043-5",
+    "writing": "Gavin Norman",
+    "editing_layout": "Gavin Norman",
+    "cover_art": "Thomas Denmark",
+    "copyright": {
+      "text_and_design": "Gavin Norman 2020",
+      "cover_illustration": "Thomas Denmark 2020"
+    },
+    "compatibility": [
+      "Old-School Essentials Classic Fantasy",
+      "Old-School Essentials Advanced Fantasy",
+      "Classic Basic/Expert game",
+      "Other games based on Basic/Expert rules"
+    ],
+    "contents": [
+      {
+        "section": "Introduction",
+        "page": 3
+      },
+      {
+        "section": "Fantasy Classes",
+        "page": 4
+      },
+      {
+        "section": "Arcane Bard",
+        "page": 6
+      },
+      {
+        "section": "Beast Master",
+        "page": 8
+      },
+      {
+        "section": "Changeling",
+        "page": 10
+      },
+      {
+        "section": "Chaos Knight",
+        "page": 12
+      },
+      {
+        "section": "Mage",
+        "page": 14
+      },
+      {
+        "section": "Mutoid",
+        "page": 16
+      },
+      {
+        "section": "Mycelian",
+        "page": 18
+      },
+      {
+        "section": "Warden",
+        "page": 20
+      },
+      {
+        "section": "Fantasy Races",
+        "page": 22
+      },
+      {
+        "section": "Changeling Race",
+        "page": 23
+      },
+      {
+        "section": "Mutoid Race",
+        "page": 24
+      },
+      {
+        "section": "Mycelian Race",
+        "page": 25
+      },
+      {
+        "section": "Expanded Equipment",
+        "page": 26
+      },
+      {
+        "section": "Open Game License",
+        "page": 30
+      }
+    ]
+  },
+  "introduction": {
+    "welcome": "Carcass Crawler is a zine devoted to Old-School Essentials, containing new character classes and races, new spells and magic items, new monsters, optional and expanded rules, news, previews, short adventures, and more.",
+    "in_this_issue": [
+      "Fantasy Classes: Eight new character classes: arcane bard, beast master, changeling, chaos knight, mage, mutoid, mycelian, and warden.",
+      "Fantasy Races: Three new character races for Advanced Fantasy games: changeling, mutoid, and mycelian.",
+      "Expanded Equipment: More gear for expeditions into dungeons and the wilderness."
+    ],
+    "too_many_classes_advice": "The new classes are optional. Referees may select a limited campaign-specific set of classes, e.g. 7-10 classes, to reinforce campaign flavour and keep player choice manageable."
+  },
+  "fantasy_classes_overview": {
+    "arcane_bard": "Alternative bard inspired by 1989 Advanced 2nd edition rules; an arcane jack-of-all-trades with fighter, magic-user, and thief-like abilities.",
+    "beast_master": "Warrior with a special connection to animals, inspired by the 1982 film The Beastmaster.",
+    "changeling": "Demihuman shape-stealer based partly on folklore and the doppelgänger monster.",
+    "chaos_knight": "Chaotic counterpart and nemesis of the lawful paladin, bound to a chaotic patron.",
+    "mage": "Wizardly class based on percentile thief-skill mechanics instead of spell memorization; suited to low-magic campaigns.",
+    "mutoid": "Demihuman with mismatched body parts of many creatures; each individual has a unique appearance.",
+    "mycelian": "Fungal humanoid demihuman dwelling in the depths of the Underworld.",
+    "warden": "Non-magical ranger-like class adapted to wilderness life."
+  },
+  "classes": {
+    "arcane_bard": {
+      "name": "Arcane Bard",
+      "type": "class",
+      "requirements": "Minimum INT 9",
+      "prime_requisites": [
+        "CHA",
+        "DEX"
+      ],
+      "hit_dice": "1d6",
+      "maximum_level": 14,
+      "armor": "Leather, chainmail, no shields",
+      "weapons": "Any",
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "description": "Bards are musicians and poets drawn to wandering and adventure; jacks-of-all-trades.",
+      "xp_bonus": "At least 13 CHA and DEX gives +5% XP; one prime requisite 16+ and the other 13+ gives +10% XP.",
+      "abilities": {
+        "anti_charm": "While the bard plays music and sings, allies within 30’ are immune to song-based magical effects and beguiling powers of sylvan creatures or fairies. Allies already affected gain another saving throw with +4 bonus.",
+        "arcane_magic": {
+          "spellcasting": "From 2nd level, bards cast arcane spells from a spell book. Progression shows spells in the bard's spell book and spells memorized by level. Spells are selected by the referee, possibly by the player. Uses magic-user spell selection.",
+          "magic_items": "Can use magic scrolls of spells on their spell list and items usable only by arcane spellcasters."
+        },
+        "bard_skills": {
+          "CS": "Climb sheer surfaces; one roll per 100’. On failure falls at halfway point. Cannot use in chainmail.",
+          "HN": "Hear noise in quiet environments.",
+          "PP": "Pick pockets; victim above 5th level penalizes by 5% per level above 5; at least 1% failure chance; roll over twice needed success means noticed.",
+          "RL": "Read non-magical texts in unknown languages, dead languages, and basic codes; failure prevents retry until next level."
+        },
+        "combat": "Can use leather armour or chainmail but not plate mail or shields; can use all weapons.",
+        "lore": "From 2nd level, 2-in-6 chance of knowing lore pertaining to monsters, magic items, or heroes of folktale or legend; may identify nature and powers of magic items.",
+        "after_reaching_11th_level": "Can establish a manor; 2d6 apprentice bards of 1st level arrive.",
+        "rolling_skill_checks": "All skills except hear noise roll d%; hear noise is referee-rolled on 1d6."
+      },
+      "progression": [
+        {
+          "level": 1,
+          "xp": 0,
+          "hd": "1d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 13,
+            "W": 14,
+            "P": 13,
+            "B": 16,
+            "S": 15
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          }
+        },
+        {
+          "level": 2,
+          "xp": 2000,
+          "hd": "2d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 13,
+            "W": 14,
+            "P": 13,
+            "B": 16,
+            "S": 15
+          },
+          "spells": {
+            "1": 1,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          }
+        },
+        {
+          "level": 3,
+          "xp": 4000,
+          "hd": "3d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 13,
+            "W": 14,
+            "P": 13,
+            "B": 16,
+            "S": 15
+          },
+          "spells": {
+            "1": 2,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          }
+        },
+        {
+          "level": 4,
+          "xp": 8000,
+          "hd": "4d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 13,
+            "W": 14,
+            "P": 13,
+            "B": 16,
+            "S": 15
+          },
+          "spells": {
+            "1": 3,
+            "2": 0,
+            "3": 0,
+            "4": 0
+          }
+        },
+        {
+          "level": 5,
+          "xp": 16000,
+          "hd": "5d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 11,
+            "B": 14,
+            "S": 13
+          },
+          "spells": {
+            "1": 3,
+            "2": 1,
+            "3": 0,
+            "4": 0
+          }
+        },
+        {
+          "level": 6,
+          "xp": 32000,
+          "hd": "6d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 11,
+            "B": 14,
+            "S": 13
+          },
+          "spells": {
+            "1": 3,
+            "2": 2,
+            "3": 0,
+            "4": 0
+          }
+        },
+        {
+          "level": 7,
+          "xp": 64000,
+          "hd": "7d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 11,
+            "B": 14,
+            "S": 13
+          },
+          "spells": {
+            "1": 3,
+            "2": 3,
+            "3": 0,
+            "4": 0
+          }
+        },
+        {
+          "level": 8,
+          "xp": 120000,
+          "hd": "8d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 11,
+            "B": 14,
+            "S": 13
+          },
+          "spells": {
+            "1": 3,
+            "2": 3,
+            "3": 1,
+            "4": 0
+          }
+        },
+        {
+          "level": 9,
+          "xp": 240000,
+          "hd": "9d6",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 9,
+            "B": 12,
+            "S": 10
+          },
+          "spells": {
+            "1": 3,
+            "2": 3,
+            "3": 2,
+            "4": 0
+          }
+        },
+        {
+          "level": 10,
+          "xp": 360000,
+          "hd": "9d6+2*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 9,
+            "B": 12,
+            "S": 10
+          },
+          "spells": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 0
+          }
+        },
+        {
+          "level": 11,
+          "xp": 480000,
+          "hd": "9d6+4*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 9,
+            "B": 12,
+            "S": 10
+          },
+          "spells": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 1
+          }
+        },
+        {
+          "level": 12,
+          "xp": 600000,
+          "hd": "9d6+6*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 9,
+            "B": 12,
+            "S": 10
+          },
+          "spells": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 2
+          }
+        },
+        {
+          "level": 13,
+          "xp": 720000,
+          "hd": "9d6+8*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 7,
+            "B": 10,
+            "S": 8
+          },
+          "spells": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3
+          }
+        },
+        {
+          "level": 14,
+          "xp": 840000,
+          "hd": "9d6+10*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 7,
+            "B": 10,
+            "S": 8
+          },
+          "spells": {
+            "1": 4,
+            "2": 4,
+            "3": 3,
+            "4": 3
+          }
+        }
+      ],
+      "skills": [
+        {
+          "level": 1,
+          "CS": 77,
+          "HN": "1-2",
+          "PP": 20,
+          "RL": 40
+        },
+        {
+          "level": 2,
+          "CS": 78,
+          "HN": "1-2",
+          "PP": 25,
+          "RL": 50
+        },
+        {
+          "level": 3,
+          "CS": 79,
+          "HN": "1-3",
+          "PP": 30,
+          "RL": 60
+        },
+        {
+          "level": 4,
+          "CS": 80,
+          "HN": "1-3",
+          "PP": 35,
+          "RL": 70
+        },
+        {
+          "level": 5,
+          "CS": 81,
+          "HN": "1-3",
+          "PP": 40,
+          "RL": 80
+        },
+        {
+          "level": 6,
+          "CS": 82,
+          "HN": "1-3",
+          "PP": 45,
+          "RL": 82
+        },
+        {
+          "level": 7,
+          "CS": 83,
+          "HN": "1-4",
+          "PP": 55,
+          "RL": 84
+        },
+        {
+          "level": 8,
+          "CS": 84,
+          "HN": "1-4",
+          "PP": 65,
+          "RL": 86
+        },
+        {
+          "level": 9,
+          "CS": 85,
+          "HN": "1-4",
+          "PP": 75,
+          "RL": 88
+        },
+        {
+          "level": 10,
+          "CS": 86,
+          "HN": "1-4",
+          "PP": 85,
+          "RL": 90
+        },
+        {
+          "level": 11,
+          "CS": 87,
+          "HN": "1-5",
+          "PP": 95,
+          "RL": 90
+        },
+        {
+          "level": 12,
+          "CS": 88,
+          "HN": "1-5",
+          "PP": 105,
+          "RL": 90
+        },
+        {
+          "level": 13,
+          "CS": 90,
+          "HN": "1-5",
+          "PP": 115,
+          "RL": 90
+        },
+        {
+          "level": 14,
+          "CS": 91,
+          "HN": "1-5",
+          "PP": 125,
+          "RL": 90
+        }
+      ]
+    },
+    "beast_master": {
+      "name": "Beast Master",
+      "requirements": "None",
+      "prime_requisites": [
+        "STR",
+        "WIS"
+      ],
+      "hit_dice": "1d6",
+      "maximum_level": 14,
+      "armor": "Leather, chainmail, shields",
+      "weapons": "Any",
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "xp_bonus": "At least 13 in one prime requisite gives +5% XP. STR and WIS both 16+ gives +10% XP.",
+      "description": "Adventurers with a special connection to animals, often accompanied by loyal beasts.",
+      "abilities": {
+        "animal_companions": "May attempt to bond with encountered animals. Peaceful approach; referee reaction roll 8+ makes the animal a companion.",
+        "companion_requirements": {
+          "types": "Wild and domestic animals; giant or magical animals at referee discretion.",
+          "maximum": "Up to one companion per experience level; total companion HD may not exceed character level.",
+          "death_or_dismissal": "May attempt to forge a connection with a new animal."
+        },
+        "companion_behavior": "Follows everywhere, obeys basic commands, fights to defend the beast master, never checks morale.",
+        "clairvoyance": "After reaching 5th level, can see through the eyes of animal companions with deep concentration.",
+        "combat": "Can use all weapons, leather armour, chainmail, and shields.",
+        "identify_tracks": "Can identify tracks and spoor of animals in the wild.",
+        "reaction_modifier": "+1 bonus to reaction rolls with animals, in addition to CHA modifier.",
+        "speak_with_animals": {
+          "base": "Animals understand the basic meaning behind the beast master's words.",
+          "level_2": "Can understand speech of animals.",
+          "level_4": "Can communicate empathically with animals without words.",
+          "limit": "Communication is commensurate to animal intelligence."
+        },
+        "after_reaching_9th_level": "May construct wilderness stronghold. Animals within 5 miles become friends, may warn of intruders and carry messages/news; beast master must protect them."
+      },
+      "progression": [
+        {
+          "level": 1,
+          "xp": 0,
+          "hd": "1d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 11,
+            "W": 12,
+            "P": 12,
+            "B": 15,
+            "S": 16
+          }
+        },
+        {
+          "level": 2,
+          "xp": 1800,
+          "hd": "2d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 11,
+            "W": 12,
+            "P": 12,
+            "B": 15,
+            "S": 16
+          }
+        },
+        {
+          "level": 3,
+          "xp": 3600,
+          "hd": "3d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 11,
+            "W": 12,
+            "P": 12,
+            "B": 15,
+            "S": 16
+          }
+        },
+        {
+          "level": 4,
+          "xp": 7250,
+          "hd": "4d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 11,
+            "W": 12,
+            "P": 12,
+            "B": 15,
+            "S": 16
+          }
+        },
+        {
+          "level": 5,
+          "xp": 15000,
+          "hd": "5d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 9,
+            "W": 10,
+            "P": 10,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 6,
+          "xp": 30000,
+          "hd": "6d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 9,
+            "W": 10,
+            "P": 10,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 7,
+          "xp": 60000,
+          "hd": "7d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 9,
+            "W": 10,
+            "P": 10,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 8,
+          "xp": 120000,
+          "hd": "8d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 9,
+            "W": 10,
+            "P": 10,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 9,
+          "xp": 240000,
+          "hd": "9d6",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 8,
+            "B": 11,
+            "S": 12
+          }
+        },
+        {
+          "level": 10,
+          "xp": 360000,
+          "hd": "9d6+2*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 8,
+            "B": 11,
+            "S": 12
+          }
+        },
+        {
+          "level": 11,
+          "xp": 480000,
+          "hd": "9d6+4*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 8,
+            "B": 11,
+            "S": 12
+          }
+        },
+        {
+          "level": 12,
+          "xp": 600000,
+          "hd": "9d6+6*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 8,
+            "B": 11,
+            "S": 12
+          }
+        },
+        {
+          "level": 13,
+          "xp": 720000,
+          "hd": "9d6+8*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 5,
+            "W": 6,
+            "P": 6,
+            "B": 9,
+            "S": 10
+          }
+        },
+        {
+          "level": 14,
+          "xp": 840000,
+          "hd": "9d6+10*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 5,
+            "W": 6,
+            "P": 6,
+            "B": 9,
+            "S": 10
+          }
+        }
+      ]
+    },
+    "changeling": {
+      "name": "Changeling",
+      "requirements": "INT 9",
+      "prime_requisites": [
+        "CHA",
+        "DEX"
+      ],
+      "hit_dice": "1d6",
+      "maximum_level": 10,
+      "armor": "Leather, shields",
+      "weapons": "Any",
+      "languages": [
+        "Alignment",
+        "Common",
+        "Doppelgänger"
+      ],
+      "xp_bonus": "At least 13 in one prime requisite gives +5% XP. CHA and DEX both 16+ gives +10% XP.",
+      "description": "Magical demihumans with powers of deception and shape-stealing; natural form appears human.",
+      "abilities": {
+        "back_stab": "+4 to hit and double damage when attacking unaware opponent from behind.",
+        "skills": {
+          "BE": "Beguile; person of HD no greater than changeling level saves vs spells or believes words for 1 round per level; once per person per day.",
+          "HN": "Hear noise.",
+          "HS": "Hide in shadows; must be motionless.",
+          "MS": "Move silently."
+        },
+        "combat": "Can use all weapons, leather armour, and shields.",
+        "shape_stealing": "Can mimic another person with 1 round physical contact. Can steal form of killed victim within last turn or sleeping/unconscious victim; from 5th level, conscious victim via successful melee attack and failed save vs spells.",
+        "successful_shape_stealing": {
+          "duration": "Up to one turn per level.",
+          "stats": "Retains own intelligence, hit points, saves, and attacks.",
+          "capabilities": "Acquires physical capabilities, not non-physical special abilities.",
+          "gear": "Visible clothing/gear copied; copies are nonmagical and vanish if dropped."
+        },
+        "after_reaching_9th_level": "Can establish secret base and attract 2d6 1st-level apprentices (changelings, thieves, or similar). Lost apprentices are not replaced."
+      },
+      "progression": [
+        {
+          "level": 1,
+          "xp": 0,
+          "hd": "1d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 11,
+            "W": 12,
+            "P": 12,
+            "B": 15,
+            "S": 12
+          }
+        },
+        {
+          "level": 2,
+          "xp": 2500,
+          "hd": "2d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 11,
+            "W": 12,
+            "P": 12,
+            "B": 15,
+            "S": 12
+          }
+        },
+        {
+          "level": 3,
+          "xp": 5000,
+          "hd": "3d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 11,
+            "W": 12,
+            "P": 12,
+            "B": 15,
+            "S": 12
+          }
+        },
+        {
+          "level": 4,
+          "xp": 10000,
+          "hd": "4d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 11,
+            "W": 12,
+            "P": 12,
+            "B": 15,
+            "S": 12
+          }
+        },
+        {
+          "level": 5,
+          "xp": 20000,
+          "hd": "5d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 9,
+            "W": 10,
+            "P": 10,
+            "B": 13,
+            "S": 10
+          }
+        },
+        {
+          "level": 6,
+          "xp": 30000,
+          "hd": "6d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 9,
+            "W": 10,
+            "P": 10,
+            "B": 13,
+            "S": 10
+          }
+        },
+        {
+          "level": 7,
+          "xp": 60000,
+          "hd": "7d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 9,
+            "W": 10,
+            "P": 10,
+            "B": 13,
+            "S": 10
+          }
+        },
+        {
+          "level": 8,
+          "xp": 120000,
+          "hd": "8d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 9,
+            "W": 10,
+            "P": 10,
+            "B": 13,
+            "S": 10
+          }
+        },
+        {
+          "level": 9,
+          "xp": 240000,
+          "hd": "9d6",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 8,
+            "B": 11,
+            "S": 8
+          }
+        },
+        {
+          "level": 10,
+          "xp": 360000,
+          "hd": "9d6+2*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 8,
+            "B": 11,
+            "S": 8
+          }
+        }
+      ],
+      "skills": [
+        {
+          "level": 1,
+          "BE": 20,
+          "HN": "1-2",
+          "HS": 10,
+          "MS": 20
+        },
+        {
+          "level": 2,
+          "BE": 25,
+          "HN": "1-2",
+          "HS": 15,
+          "MS": 25
+        },
+        {
+          "level": 3,
+          "BE": 30,
+          "HN": "1-3",
+          "HS": 20,
+          "MS": 30
+        },
+        {
+          "level": 4,
+          "BE": 35,
+          "HN": "1-3",
+          "HS": 25,
+          "MS": 35
+        },
+        {
+          "level": 5,
+          "BE": 40,
+          "HN": "1-3",
+          "HS": 30,
+          "MS": 40
+        },
+        {
+          "level": 6,
+          "BE": 43,
+          "HN": "1-3",
+          "HS": 36,
+          "MS": 45
+        },
+        {
+          "level": 7,
+          "BE": 46,
+          "HN": "1-4",
+          "HS": 45,
+          "MS": 55
+        },
+        {
+          "level": 8,
+          "BE": 50,
+          "HN": "1-4",
+          "HS": 55,
+          "MS": 65
+        },
+        {
+          "level": 9,
+          "BE": 55,
+          "HN": "1-4",
+          "HS": 65,
+          "MS": 75
+        },
+        {
+          "level": 10,
+          "BE": 60,
+          "HN": "1-4",
+          "HS": 75,
+          "MS": 85
+        }
+      ]
+    },
+    "chaos_knight": {
+      "name": "Chaos Knight",
+      "requirements": "Minimum CHA 9",
+      "prime_requisites": [
+        "STR",
+        "WIS"
+      ],
+      "hit_dice": "1d8",
+      "maximum_level": 14,
+      "armor": "Any, including shields",
+      "weapons": "Any",
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignment": "Must be chaotic. If alignment changes, loses class abilities and becomes fighter of same level; referee may allow mighty sacrifice to regain status.",
+      "xp_bonus": "At least 13 in one prime requisite gives +5% XP. STR and WIS both 16+ gives +10% XP.",
+      "description": "Warriors bound to an infernal patron: chaotic deity, demon, or devil.",
+      "abilities": {
+        "combat": "Can use all weapons and armour.",
+        "command_undead": "From 3rd level, roll 2d6 to command undead; if successful roll 2d6 HD affected; commanded undead obey for 1 round per level. Lowest HD affected first in mixed groups.",
+        "divine_magic": "From 9th level may pray to receive spells from cleric list, typically reversed versions. Must carry holy symbol and remain faithful to patron.",
+        "infernal_steed": "From 4th level may summon horse AC 5 [14], 5+5 HD, MV 180’ (60’). If it dies, another cannot be summoned for 10 years.",
+        "life_drain": "Once per day, melee attack drains 2 hp per chaos knight level in addition to normal damage; chaos knight heals equal to hp drained.",
+        "unholy_resistance": "Immune to all disease.",
+        "vow_of_bondage": "May keep only one suit magical armour, one magical shield, one magical melee weapon; must spend 10% income on sacrifices.",
+        "after_reaching_9th_level": "With patron permission can build stronghold, control lands, and gain title such as Baron/Baroness."
+      },
+      "commanding_undead_table": {
+        "columns": [
+          "level",
+          "1 HD",
+          "2 HD",
+          "2* HD",
+          "3 HD",
+          "4 HD",
+          "5 HD",
+          "6 HD",
+          "7-9 HD"
+        ],
+        "rows": [
+          [
+            3,
+            "7",
+            "9",
+            "11",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          [
+            4,
+            "C",
+            "7",
+            "9",
+            "11",
+            "-",
+            "-",
+            "-",
+            "-"
+          ],
+          [
+            5,
+            "C",
+            "C",
+            "7",
+            "9",
+            "11",
+            "-",
+            "-",
+            "-"
+          ],
+          [
+            6,
+            "C",
+            "C",
+            "C",
+            "7",
+            "9",
+            "11",
+            "-",
+            "-"
+          ],
+          [
+            7,
+            "C",
+            "C",
+            "C",
+            "C",
+            "7",
+            "9",
+            "11",
+            "-"
+          ],
+          [
+            8,
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "7",
+            "9",
+            "11"
+          ],
+          [
+            9,
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "7",
+            "9"
+          ],
+          [
+            10,
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "7"
+          ],
+          [
+            "11+",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C",
+            "C"
+          ]
+        ],
+        "legend": {
+          "-": "Commanding fails",
+          "number": "2d6 roll must be higher or equal",
+          "C": "Commanding succeeds",
+          "2*": "2 HD monster with special ability"
+        }
+      },
+      "progression": [
+        {
+          "level": 1,
+          "xp": 0,
+          "hd": "1d8",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 2,
+          "xp": 2750,
+          "hd": "2d8",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 3,
+          "xp": 5500,
+          "hd": "3d8",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 4,
+          "xp": 12000,
+          "hd": "4d8",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 11,
+            "S": 12
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 5,
+          "xp": 24000,
+          "hd": "5d8",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 11,
+            "S": 12
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 6,
+          "xp": 45000,
+          "hd": "6d8",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 11,
+            "S": 12
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 7,
+          "xp": 95000,
+          "hd": "7d8",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 6,
+            "W": 7,
+            "P": 8,
+            "B": 8,
+            "S": 10
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 8,
+          "xp": 175000,
+          "hd": "8d8",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 6,
+            "W": 7,
+            "P": 8,
+            "B": 8,
+            "S": 10
+          },
+          "spells": {
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 9,
+          "xp": 350000,
+          "hd": "9d8",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 6,
+            "W": 7,
+            "P": 8,
+            "B": 8,
+            "S": 10
+          },
+          "spells": {
+            "1": 1,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 10,
+          "xp": 500000,
+          "hd": "9d8+2*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 4,
+            "W": 5,
+            "P": 6,
+            "B": 6,
+            "S": 8
+          },
+          "spells": {
+            "1": 2,
+            "2": 0,
+            "3": 0
+          }
+        },
+        {
+          "level": 11,
+          "xp": 650000,
+          "hd": "9d8+4*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 4,
+            "W": 5,
+            "P": 6,
+            "B": 6,
+            "S": 8
+          },
+          "spells": {
+            "1": 2,
+            "2": 1,
+            "3": 0
+          }
+        },
+        {
+          "level": 12,
+          "xp": 800000,
+          "hd": "9d8+6*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 4,
+            "W": 5,
+            "P": 6,
+            "B": 6,
+            "S": 8
+          },
+          "spells": {
+            "1": 2,
+            "2": 2,
+            "3": 0
+          }
+        },
+        {
+          "level": 13,
+          "xp": 950000,
+          "hd": "9d8+8*",
+          "thac0": "10 [+9]",
+          "saves": {
+            "D": 2,
+            "W": 3,
+            "P": 4,
+            "B": 3,
+            "S": 6
+          },
+          "spells": {
+            "1": 2,
+            "2": 2,
+            "3": 1
+          }
+        },
+        {
+          "level": 14,
+          "xp": 1100000,
+          "hd": "9d8+10*",
+          "thac0": "10 [+9]",
+          "saves": {
+            "D": 2,
+            "W": 3,
+            "P": 4,
+            "B": 3,
+            "S": 6
+          },
+          "spells": {
+            "1": 3,
+            "2": 2,
+            "3": 1
+          }
+        }
+      ]
+    },
+    "mage": {
+      "name": "Mage",
+      "requirements": "None",
+      "prime_requisites": [
+        "INT",
+        "WIS"
+      ],
+      "hit_dice": "1d6",
+      "maximum_level": 14,
+      "armor": "None",
+      "weapons": [
+        "Dagger",
+        "short sword",
+        "staff",
+        "sword"
+      ],
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "xp_bonus": "At least 13 INT and WIS gives +5% XP. INT 16+ and WIS 13+ gives +10% XP.",
+      "description": "Adventurers who study deep magic, using percentile skills rather than standard memorized spells.",
+      "abilities": {
+        "arcane_magic": "May perform magical research at any level, scribe scrolls, research magical effects, and from 9th create other magic items. Can cast from arcane scrolls and use arcane spellcaster items.",
+        "combat": "Can use staves and one-handed blades, but no armour.",
+        "healing": "Once per day spend 1 turn to heal ally: cure 1 hp per level or allow another save against a negative effect.",
+        "mage_armour": "+2 bonus to Armour Class.",
+        "mage_staff": "Normal staff can harm creatures immune to mundane attacks. Once per day staff radiates light in 30’ radius for 1 turn per level.",
+        "skills": {
+          "DM": "Detect magic; 1 turn concentration on object; may retry failed checks with more time.",
+          "OC": "Open/close unlocked door, portal, lid, etc.; holds open/closed for 1 round per level; once per portal.",
+          "RF": "Rally/fear; rally counters magical fear, fear forces morale check; once per turn.",
+          "RM": "Read magic; failed attempt cannot retry until next level.",
+          "SU": "Suggestion; up to one HD of persons per level save vs spells or follow suggestion 1 round per level; self-endangering suggestion auto-saves; once per turn."
+        },
+        "scribing_scrolls": "Any level can create arcane scrolls per magical research rules.",
+        "after_reaching_11th_level": "May build stronghold/tower; 1d6 apprentices of levels 1-3 arrive.",
+        "rolling_skill_checks": "All skills rolled on d%; detect magic should be referee-rolled."
+      },
+      "progression": [
+        {
+          "level": 1,
+          "xp": 0,
+          "hd": "1d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 12,
+            "B": 15,
+            "S": 14
+          }
+        },
+        {
+          "level": 2,
+          "xp": 2800,
+          "hd": "2d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 12,
+            "B": 15,
+            "S": 14
+          }
+        },
+        {
+          "level": 3,
+          "xp": 5600,
+          "hd": "3d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 12,
+            "B": 15,
+            "S": 14
+          }
+        },
+        {
+          "level": 4,
+          "xp": 12000,
+          "hd": "4d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 12,
+            "B": 15,
+            "S": 14
+          }
+        },
+        {
+          "level": 5,
+          "xp": 24000,
+          "hd": "5d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 12,
+            "B": 15,
+            "S": 14
+          }
+        },
+        {
+          "level": 6,
+          "xp": 48000,
+          "hd": "6d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 10,
+            "B": 13,
+            "S": 11
+          }
+        },
+        {
+          "level": 7,
+          "xp": 100000,
+          "hd": "7d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 10,
+            "B": 13,
+            "S": 11
+          }
+        },
+        {
+          "level": 8,
+          "xp": 200000,
+          "hd": "8d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 10,
+            "B": 13,
+            "S": 11
+          }
+        },
+        {
+          "level": 9,
+          "xp": 400000,
+          "hd": "9d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 10,
+            "B": 13,
+            "S": 11
+          }
+        },
+        {
+          "level": 10,
+          "xp": 460000,
+          "hd": "9d6+1*",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 10,
+            "B": 13,
+            "S": 11
+          }
+        },
+        {
+          "level": 11,
+          "xp": 620000,
+          "hd": "9d6+2*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 7,
+            "B": 10,
+            "S": 7
+          }
+        },
+        {
+          "level": 12,
+          "xp": 880000,
+          "hd": "9d6+3*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 7,
+            "B": 10,
+            "S": 7
+          }
+        },
+        {
+          "level": 13,
+          "xp": 1040000,
+          "hd": "9d6+4*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 7,
+            "B": 10,
+            "S": 7
+          }
+        },
+        {
+          "level": 14,
+          "xp": 1200000,
+          "hd": "9d6+5*",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 7,
+            "W": 8,
+            "P": 7,
+            "B": 10,
+            "S": 7
+          }
+        }
+      ],
+      "skills": [
+        {
+          "level": 1,
+          "DM": 75,
+          "OC": 30,
+          "RF": 20,
+          "RM": 50,
+          "SU": 20
+        },
+        {
+          "level": 2,
+          "DM": 80,
+          "OC": 35,
+          "RF": 23,
+          "RM": 55,
+          "SU": 23
+        },
+        {
+          "level": 3,
+          "DM": 83,
+          "OC": 40,
+          "RF": 25,
+          "RM": 60,
+          "SU": 25
+        },
+        {
+          "level": 4,
+          "DM": 85,
+          "OC": 45,
+          "RF": 26,
+          "RM": 65,
+          "SU": 26
+        },
+        {
+          "level": 5,
+          "DM": 87,
+          "OC": 50,
+          "RF": 35,
+          "RM": 70,
+          "SU": 35
+        },
+        {
+          "level": 6,
+          "DM": 90,
+          "OC": 55,
+          "RF": 45,
+          "RM": 75,
+          "SU": 45
+        },
+        {
+          "level": 7,
+          "DM": 92,
+          "OC": 60,
+          "RF": 55,
+          "RM": 80,
+          "SU": 55
+        },
+        {
+          "level": 8,
+          "DM": 93,
+          "OC": 65,
+          "RF": 65,
+          "RM": 83,
+          "SU": 65
+        },
+        {
+          "level": 9,
+          "DM": 94,
+          "OC": 70,
+          "RF": 70,
+          "RM": 86,
+          "SU": 70
+        },
+        {
+          "level": 10,
+          "DM": 95,
+          "OC": 75,
+          "RF": 75,
+          "RM": 90,
+          "SU": 75
+        },
+        {
+          "level": 11,
+          "DM": 96,
+          "OC": 80,
+          "RF": 80,
+          "RM": 92,
+          "SU": 80
+        },
+        {
+          "level": 12,
+          "DM": 97,
+          "OC": 85,
+          "RF": 85,
+          "RM": 95,
+          "SU": 85
+        },
+        {
+          "level": 13,
+          "DM": 98,
+          "OC": 90,
+          "RF": 90,
+          "RM": 98,
+          "SU": 90
+        },
+        {
+          "level": 14,
+          "DM": 99,
+          "OC": 95,
+          "RF": 95,
+          "RM": 99,
+          "SU": 95
+        }
+      ]
+    },
+    "mutoid": {
+      "name": "Mutoid",
+      "requirements": "None",
+      "prime_requisites": [
+        "DEX"
+      ],
+      "hit_dice": "1d6",
+      "maximum_level": 8,
+      "armor": "Leather, shields",
+      "weapons": "One-handed melee weapons and all missile weapons",
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "description": "Demihumans with mismatched body parts of many creatures; often shunned and living in ruins or hidden lairs.",
+      "abilities": {
+        "back_stab": "+4 to hit and double damage vs unaware opponent from behind.",
+        "combat": "Can use shields, leather armour, one-handed melee weapons, and all missile weapons.",
+        "mutations": "Two random mutations. Duplicate mutations may be rerolled. Two attack mutations may both be used each round.",
+        "skills": {
+          "HS": "Hide in shadows.",
+          "MI": "Mimicry; mimic sounds of monsters/animals. Specific individual voice has -20% penalty.",
+          "MS": "Move silently.",
+          "PP": "Pick pockets; victim above 5th level imposes -5% per level over 5; roll over twice required notices theft."
+        },
+        "after_reaching_8th_level": "Can establish secret lair and attract 2d6 1st-level mutoid apprentices; lost apprentices are not replaced."
+      },
+      "mutations": [
+        {
+          "d8": 1,
+          "mutation": "Beast ears",
+          "effect": "3-in-6 chance to hear noises."
+        },
+        {
+          "d8": 2,
+          "mutation": "Beast eyes",
+          "effect": "Infravision to 60'."
+        },
+        {
+          "d8": 3,
+          "mutation": "Clawed hand",
+          "effect": "Unarmed attack for 1d6 damage."
+        },
+        {
+          "d8": 4,
+          "mutation": "Gills",
+          "effect": "Breathe underwater."
+        },
+        {
+          "d8": 5,
+          "mutation": "Pincer",
+          "effect": "Unarmed attack for 1d3 damage. Pincer locks on, causing 1d3 damage per round; save vs paralysis to escape."
+        },
+        {
+          "d8": 6,
+          "mutation": "Scales",
+          "effect": "+2 bonus to Armour Class."
+        },
+        {
+          "d8": 7,
+          "mutation": "Spring legs",
+          "effect": "Jump up to 30’ forward and gain +1 to attack. With impaling weapon, counts as a charge and inflicts double damage on a hit."
+        },
+        {
+          "d8": 8,
+          "mutation": "Sticky tongue",
+          "effect": "Grab an object up to 15’ away and pull it to mouth. Can be melee attack: bite inflicts 1d3 damage."
+        }
+      ],
+      "progression": [
+        {
+          "level": 1,
+          "xp": 0,
+          "hd": "1d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 2,
+          "xp": 1750,
+          "hd": "2d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 3,
+          "xp": 3500,
+          "hd": "3d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 4,
+          "xp": 7000,
+          "hd": "4d6",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 5,
+          "xp": 14000,
+          "hd": "5d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 11,
+            "S": 12
+          }
+        },
+        {
+          "level": 6,
+          "xp": 30000,
+          "hd": "6d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 11,
+            "S": 12
+          }
+        },
+        {
+          "level": 7,
+          "xp": 60000,
+          "hd": "7d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 11,
+            "S": 12
+          }
+        },
+        {
+          "level": 8,
+          "xp": 120000,
+          "hd": "8d6",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 11,
+            "S": 12
+          }
+        }
+      ],
+      "skills": [
+        {
+          "level": 1,
+          "HS": 10,
+          "MI": 35,
+          "MS": 20,
+          "PP": 20
+        },
+        {
+          "level": 2,
+          "HS": 15,
+          "MI": 40,
+          "MS": 25,
+          "PP": 25
+        },
+        {
+          "level": 3,
+          "HS": 20,
+          "MI": 50,
+          "MS": 30,
+          "PP": 30
+        },
+        {
+          "level": 4,
+          "HS": 25,
+          "MI": 60,
+          "MS": 35,
+          "PP": 35
+        },
+        {
+          "level": 5,
+          "HS": 30,
+          "MI": 70,
+          "MS": 40,
+          "PP": 40
+        },
+        {
+          "level": 6,
+          "HS": 36,
+          "MI": 80,
+          "MS": 45,
+          "PP": 45
+        },
+        {
+          "level": 7,
+          "HS": 45,
+          "MI": 90,
+          "MS": 55,
+          "PP": 55
+        },
+        {
+          "level": 8,
+          "HS": 55,
+          "MI": 95,
+          "MS": 65,
+          "PP": 65
+        }
+      ]
+    },
+    "mycelian": {
+      "name": "Mycelian",
+      "requirements": "Minimum CON 9",
+      "prime_requisites": [
+        "STR"
+      ],
+      "hit_dice": "1d8",
+      "maximum_level": 6,
+      "armor": "Shields only",
+      "weapons": "Any",
+      "languages": [
+        "Alignment",
+        "Common",
+        "Deepcommon"
+      ],
+      "description": "Humanoid mushrooms with tall stems, wide flat caps, beady eyes amid gills, no mouths, telepathic communication, and subterranean origins.",
+      "abilities": {
+        "combat": "Naturally tough skin, no armour, may use shields and any weapons.",
+        "fungal_spores": {
+          "uses": "Once per day per level at one target within 20’.",
+          "pacifying": "Target saves vs poison or becomes passive for 1 round per level, unable to act or move.",
+          "hallucinogenic": "From 4th level, target saves vs poison or suffers terrifying visions for 1 turn per level; d6: 1-2 flee, 3-4 cower and babble, 5-6 attempt to kill nearest creature."
+        },
+        "growth": "Starts 4’ tall at 1st level; height increases by 1’ per level to max 9’ at 6th.",
+        "unarmed_attacks": "Club-like fists inflict 1d4 per level.",
+        "natural_armour": "Natural AC improves by level.",
+        "infravision": "60’.",
+        "light_sensitivity": "In bright light suffer -2 attack and -1 AC.",
+        "rest_and_sustenance": "Requires 8 hours/day in contact with moist earth. Missing period causes loss of 1 hp/day until completed.",
+        "telepathic_communication": "Communicates telepathically with sentient creatures within 120’, in any known language.",
+        "after_reaching_6th_level": "May found subterranean stronghold and rule mycelians as king.",
+        "fungal_reanimation": "Mycelian king can implant spores into humanoid corpse to create fungal zombie in one week, with careful tending."
+      },
+      "fungal_zombie": {
+        "AC": "8 [11]",
+        "HD": "2 (9hp)",
+        "attacks": "1 × weapon (1d8 or by weapon)",
+        "THAC0": "18 [+1]",
+        "MV": "60’ (20’)",
+        "saves": {
+          "D": 12,
+          "W": 13,
+          "P": 14,
+          "B": 15,
+          "S": 16
+        },
+        "level": 1,
+        "morale": 12,
+        "alignment": "Neutral",
+        "XP": 20,
+        "initiative": "Always loses, no roll"
+      },
+      "progression": [
+        {
+          "level": 1,
+          "xp": 0,
+          "hd": "1d8",
+          "thac0": "19 [0]",
+          "natural_ac": "6 [13]",
+          "melee_damage": "1d4",
+          "saves": {
+            "D": 9,
+            "W": 11,
+            "P": 9,
+            "B": 13,
+            "S": 12
+          }
+        },
+        {
+          "level": 2,
+          "xp": 3000,
+          "hd": "2d8",
+          "thac0": "19 [0]",
+          "natural_ac": "5 [14]",
+          "melee_damage": "2d4",
+          "saves": {
+            "D": 9,
+            "W": 11,
+            "P": 9,
+            "B": 13,
+            "S": 12
+          }
+        },
+        {
+          "level": 3,
+          "xp": 6000,
+          "hd": "3d8",
+          "thac0": "19 [0]",
+          "natural_ac": "4 [15]",
+          "melee_damage": "3d4",
+          "saves": {
+            "D": 9,
+            "W": 11,
+            "P": 9,
+            "B": 13,
+            "S": 12
+          }
+        },
+        {
+          "level": 4,
+          "xp": 12000,
+          "hd": "4d8",
+          "thac0": "17 [+2]",
+          "natural_ac": "3 [16]",
+          "melee_damage": "4d4",
+          "saves": {
+            "D": 7,
+            "W": 9,
+            "P": 7,
+            "B": 11,
+            "S": 10
+          }
+        },
+        {
+          "level": 5,
+          "xp": 24000,
+          "hd": "5d8",
+          "thac0": "17 [+2]",
+          "natural_ac": "3 [16]",
+          "melee_damage": "5d4",
+          "saves": {
+            "D": 7,
+            "W": 9,
+            "P": 7,
+            "B": 11,
+            "S": 10
+          }
+        },
+        {
+          "level": 6,
+          "xp": 45000,
+          "hd": "6d8",
+          "thac0": "17 [+2]",
+          "natural_ac": "3 [16]",
+          "melee_damage": "6d4",
+          "saves": {
+            "D": 7,
+            "W": 9,
+            "P": 7,
+            "B": 11,
+            "S": 10
+          }
+        }
+      ]
+    },
+    "warden": {
+      "name": "Warden",
+      "requirements": "Minimum CON 9, minimum WIS 9",
+      "prime_requisites": [
+        "STR"
+      ],
+      "hit_dice": "1d8",
+      "maximum_level": 14,
+      "armor": "Leather, chainmail, shields",
+      "weapons": "Any",
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "alignment": "Lawful or neutral only; if becomes chaotic loses special abilities and becomes fighter of same level; special quest may restore status.",
+      "description": "Members of a secret society protecting native lands from invasion and Chaos; skilled wilderness warriors.",
+      "abilities": {
+        "awareness": "Only surprised on a roll of 1.",
+        "combat": "All weapons, leather, chainmail, shields; cannot use plate mail.",
+        "foraging_and_hunting": "Party with warden forages 2-in-6 and finds prey when hunting 5-in-6.",
+        "limited_possessions": "May only keep wealth/possessions on person or mount; excess donated to worthy causes, not other PCs.",
+        "pursuit": "When pursuing in wilderness, opposing group’s evasion chance reduced by 10%.",
+        "surprise_attack": "In wilderness, 3-in-6 chance of going unnoticed when sneaking up; target may be surprised.",
+        "tracking_modifiers": [
+          "Soft/hard ground +20% to -50%",
+          "Group size +2% per creature beyond first",
+          "Other tracks mingled -50%",
+          "Age -5% per 12 hours",
+          "Rainfall -25% per hour",
+          "Efforts to hide tracks -25%"
+        ],
+        "after_reaching_10th_level": "2d12 followers join; may include adventurers, animals, mounts, sylvan creatures, or special monsters; not replaced if killed."
+      },
+      "progression": [
+        {
+          "level": 1,
+          "xp": 0,
+          "hd": "1d8",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 14,
+            "B": 15,
+            "S": 16
+          }
+        },
+        {
+          "level": 2,
+          "xp": 2000,
+          "hd": "2d8",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 14,
+            "B": 15,
+            "S": 16
+          }
+        },
+        {
+          "level": 3,
+          "xp": 4000,
+          "hd": "3d8",
+          "thac0": "19 [0]",
+          "saves": {
+            "D": 12,
+            "W": 13,
+            "P": 14,
+            "B": 15,
+            "S": 16
+          }
+        },
+        {
+          "level": 4,
+          "xp": 8000,
+          "hd": "4d8",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 5,
+          "xp": 16000,
+          "hd": "5d8",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 6,
+          "xp": 32000,
+          "hd": "6d8",
+          "thac0": "17 [+2]",
+          "saves": {
+            "D": 10,
+            "W": 11,
+            "P": 12,
+            "B": 13,
+            "S": 14
+          }
+        },
+        {
+          "level": 7,
+          "xp": 64000,
+          "hd": "7d8",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 10,
+            "S": 12
+          }
+        },
+        {
+          "level": 8,
+          "xp": 120000,
+          "hd": "8d8",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 10,
+            "S": 12
+          }
+        },
+        {
+          "level": 9,
+          "xp": 240000,
+          "hd": "9d8",
+          "thac0": "14 [+5]",
+          "saves": {
+            "D": 8,
+            "W": 9,
+            "P": 10,
+            "B": 10,
+            "S": 12
+          }
+        },
+        {
+          "level": 10,
+          "xp": 360000,
+          "hd": "9d8+2*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 6,
+            "W": 7,
+            "P": 8,
+            "B": 8,
+            "S": 10
+          }
+        },
+        {
+          "level": 11,
+          "xp": 480000,
+          "hd": "9d8+4*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 6,
+            "W": 7,
+            "P": 8,
+            "B": 8,
+            "S": 10
+          }
+        },
+        {
+          "level": 12,
+          "xp": 600000,
+          "hd": "9d8+6*",
+          "thac0": "12 [+7]",
+          "saves": {
+            "D": 6,
+            "W": 7,
+            "P": 8,
+            "B": 8,
+            "S": 10
+          }
+        },
+        {
+          "level": 13,
+          "xp": 720000,
+          "hd": "9d8+8*",
+          "thac0": "10 [+9]",
+          "saves": {
+            "D": 4,
+            "W": 5,
+            "P": 6,
+            "B": 5,
+            "S": 8
+          }
+        },
+        {
+          "level": 14,
+          "xp": 840000,
+          "hd": "9d8+10*",
+          "thac0": "10 [+9]",
+          "saves": {
+            "D": 4,
+            "W": 5,
+            "P": 6,
+            "B": 5,
+            "S": 8
+          }
+        }
+      ],
+      "tracking": [
+        {
+          "level": 1,
+          "chance": "20%"
+        },
+        {
+          "level": 2,
+          "chance": "30%"
+        },
+        {
+          "level": 3,
+          "chance": "40%"
+        },
+        {
+          "level": 4,
+          "chance": "50%"
+        },
+        {
+          "level": 5,
+          "chance": "60%"
+        },
+        {
+          "level": 6,
+          "chance": "70%"
+        },
+        {
+          "level": 7,
+          "chance": "80%"
+        },
+        {
+          "level": 8,
+          "chance": "90%"
+        },
+        {
+          "level": 9,
+          "chance": "100%"
+        },
+        {
+          "level": "10+",
+          "chance": "110%"
+        }
+      ]
+    }
+  },
+  "races": {
+    "changeling": {
+      "requirements": "Minimum INT 9",
+      "ability_modifiers": {
+        "CON": -1,
+        "CHA": 1
+      },
+      "languages": [
+        "Alignment",
+        "Common",
+        "Doppelgänger"
+      ],
+      "available_classes_max_level": {
+        "Assassin": "10th*",
+        "Fighter": "6th",
+        "Illusionist": "9th*",
+        "Magic-user": "7th",
+        "Thief": "9th"
+      },
+      "description": "Magical demihumans with deception and shape-stealing; natural form looks human.",
+      "shape_stealing": {
+        "contact": "1 round physical contact",
+        "slain_victims": "Killed within last turn",
+        "unconscious_victims": "Sleeping or unconscious",
+        "duration": "1d6 rounds",
+        "stats": "Retains own intelligence, hp, saves, and attack probabilities",
+        "capabilities": "Acquires physical capabilities only",
+        "gear": "Visible worn/carried items copied, nonmagical, vanish if dropped"
+      }
+    },
+    "mutoid": {
+      "requirements": "None",
+      "ability_modifiers": {},
+      "languages": [
+        "Alignment",
+        "Common"
+      ],
+      "available_classes_max_level": {
+        "Assassin": "5th*",
+        "Cleric": "6th",
+        "Fighter": "7th",
+        "Illusionist": "6th*",
+        "Thief": "9th"
+      },
+      "description": "Demihumans with mismatched body parts; often shunned and live in ruins or hidden lairs.",
+      "mutations": [
+        {
+          "d8": 1,
+          "mutation": "Beast ears",
+          "effect": "3-in-6 chance to hear noises."
+        },
+        {
+          "d8": 2,
+          "mutation": "Beast eyes",
+          "effect": "Infravision to 60'."
+        },
+        {
+          "d8": 3,
+          "mutation": "Clawed hand",
+          "effect": "Unarmed attack for 1d6 damage."
+        },
+        {
+          "d8": 4,
+          "mutation": "Gills",
+          "effect": "Breathe underwater."
+        },
+        {
+          "d8": 5,
+          "mutation": "Pincer",
+          "effect": "Unarmed attack for 1d3 damage. Pincer locks on, causing 1d3 damage per round; save vs paralysis to escape."
+        },
+        {
+          "d8": 6,
+          "mutation": "Scales",
+          "effect": "+2 bonus to Armour Class."
+        },
+        {
+          "d8": 7,
+          "mutation": "Spring legs",
+          "effect": "Jump up to 30’ forward and gain +1 to attack. With impaling weapon, counts as a charge and inflicts double damage on a hit."
+        },
+        {
+          "d8": 8,
+          "mutation": "Sticky tongue",
+          "effect": "Grab an object up to 15’ away and pull it to mouth. Can be melee attack: bite inflicts 1d3 damage."
+        }
+      ]
+    },
+    "mycelian": {
+      "requirements": "Minimum CON 9",
+      "ability_modifiers": {
+        "DEX": -1,
+        "WIS": 1
+      },
+      "languages": [
+        "Alignment",
+        "Common",
+        "Deepcommon"
+      ],
+      "available_classes_max_level": {
+        "Assassin": "4th*",
+        "Cleric": "5th",
+        "Druid": "5th*",
+        "Fighter": "6th",
+        "Illusionist": "4th*",
+        "Thief": "4th"
+      },
+      "description": "Humanoid mushrooms with telepathic communication and subterranean origin.",
+      "abilities": {
+        "fungal_spores": "From 3rd level, once per day, target within 20’ saves vs poison or becomes passive for 1 round per level.",
+        "infravision": "60’",
+        "light_sensitivity": "Bright light: -2 attacks, -1 AC.",
+        "rest_and_sustenance": "8 hours/day contact with moist earth or lose 1 hp/day.",
+        "telepathic_communication": "Sentient creatures within 120’, any known language."
+      }
+    },
+    "separate_race_class_procedure": {
+      "procedure": [
+        "Choose race, considering ability requirements.",
+        "Apply ability modifiers, ignoring bonuses above 18 and penalties below 3.",
+        "Choose a class allowed by the race and any class ability requirements."
+      ],
+      "native_languages": "When selecting race and class separately, native languages are determined by race; class languages are ignored.",
+      "asterisk_note": "Asterisked classes are detailed in Old-School Essentials Advanced Fantasy; ignore them in Classic Fantasy."
+    }
+  },
+  "expanded_equipment": {
+    "currency": "gp",
+    "adventuring_gear": [
+      {
+        "item": "Backpack",
+        "cost_gp": 5,
+        "description": "Has two straps; worn on back; holds up to 400 coins."
+      },
+      {
+        "item": "Barrel",
+        "cost_gp": 1,
+        "description": "Wooden barrel; holds 40 gallons / 320 pints."
+      },
+      {
+        "item": "Bedroll",
+        "cost_gp": 2,
+        "description": "Heavy woolen blanket with small pillow."
+      },
+      {
+        "item": "Bell (miniature)",
+        "cost_gp": 1,
+        "description": "1 inch brass bell."
+      },
+      {
+        "item": "Belt pouch",
+        "cost_gp": 1,
+        "description": "Leather pouch; holds up to 50 coins."
+      },
+      {
+        "item": "Block and tackle",
+        "cost_gp": 5,
+        "description": "Hauling/lifting; reduces effective weight by 1/4; requires 4x rope."
+      },
+      {
+        "item": "Box (iron, large)",
+        "cost_gp": 30,
+        "description": "Solid iron casket; holds up to 800 coins."
+      },
+      {
+        "item": "Box (iron, small)",
+        "cost_gp": 10,
+        "description": "Solid iron casket; holds up to 250 coins."
+      },
+      {
+        "item": "Caltrops (bag of 20)",
+        "cost_gp": 1,
+        "description": "Covers 5’ square; 2-in-6 chance to tread on spike; movement halved until healed."
+      },
+      {
+        "item": "Candles (10)",
+        "cost_gp": 1,
+        "description": "Candle casts dim light in 5’ radius and burns 1 hour."
+      },
+      {
+        "item": "Chain (10’)",
+        "cost_gp": 30,
+        "description": "10’ length of heavy iron chain."
+      },
+      {
+        "item": "Chalk (10 sticks)",
+        "cost_gp": 1,
+        "description": "Useful for markings on stone."
+      },
+      {
+        "item": "Chest (wooden, large)",
+        "cost_gp": 5,
+        "description": "Holds up to 1,000 coins."
+      },
+      {
+        "item": "Chest (wooden, small)",
+        "cost_gp": 1,
+        "description": "Holds up to 300 coins."
+      },
+      {
+        "item": "Chisel",
+        "cost_gp": 2,
+        "description": "Used with hammer for chipping stone."
+      },
+      {
+        "item": "Cooking pots",
+        "cost_gp": 3,
+        "description": "Pots and pans for campfire cooking."
+      },
+      {
+        "item": "Crowbar",
+        "cost_gp": 10,
+        "description": "2–3’ solid iron; used for forcing doors/objects open."
+      },
+      {
+        "item": "Firewood (bundle)",
+        "cost_gp": 1,
+        "description": "Dry wood; burns for 8 hours."
+      },
+      {
+        "item": "Fishing rod and tackle",
+        "cost_gp": 4,
+        "description": "Rod, line, hook, and bait box."
+      },
+      {
+        "item": "Garlic",
+        "cost_gp": 5,
+        "description": ""
+      },
+      {
+        "item": "Grappling hook",
+        "cost_gp": 25,
+        "description": "Solid iron with 3 or 4 prongs; anchors ropes."
+      },
+      {
+        "item": "Hammer (small)",
+        "cost_gp": 2,
+        "description": "Construction or mallet with spikes."
+      },
+      {
+        "item": "Holy symbol (gold)",
+        "cost_gp": 100,
+        "description": "May give +1 to 2d6 affected HD roll when turning undead."
+      },
+      {
+        "item": "Holy symbol (silver)",
+        "cost_gp": 25,
+        "description": "Holy symbol for divine casters."
+      },
+      {
+        "item": "Holy symbol (wooden)",
+        "cost_gp": 1,
+        "description": "May impose -1 to 2d6 success roll when turning undead."
+      },
+      {
+        "item": "Holy water (vial)",
+        "cost_gp": 25,
+        "description": "Damages undead; only retains power in blessed vial."
+      },
+      {
+        "item": "Ink (vial)",
+        "cost_gp": 1,
+        "description": "Black ink; colored ink costs double; enough for about 50 pages."
+      },
+      {
+        "item": "Iron spikes (12)",
+        "cost_gp": 1,
+        "description": "Wedging doors, rope anchor, etc."
+      },
+      {
+        "item": "Ladder (wooden, 10’)",
+        "cost_gp": 5,
+        "description": "Simple wooden construction; very encumbering."
+      },
+      {
+        "item": "Lantern",
+        "cost_gp": 10,
+        "description": "Can be closed; burns one oil flask per 4 hours/24 turns; 30’ light radius."
+      },
+      {
+        "item": "Lantern, bullseye",
+        "cost_gp": 20,
+        "description": "Can be closed; burns one oil flask per 4 hours/24 turns; beam 100’ long and 20’ wide at end."
+      },
+      {
+        "item": "Lock",
+        "cost_gp": 20,
+        "description": "Basic iron lock with key."
+      },
+      {
+        "item": "Magnifying glass",
+        "cost_gp": 3,
+        "description": "Used for studying fine details."
+      },
+      {
+        "item": "Manacles",
+        "cost_gp": 15,
+        "description": "Iron manacles with chain; binds hands or feet."
+      },
+      {
+        "item": "Marbles (bag of 20)",
+        "cost_gp": 1,
+        "description": "Colourful glass beads."
+      },
+      {
+        "item": "Mining pick",
+        "cost_gp": 3,
+        "description": "For breaking rock."
+      },
+      {
+        "item": "Mirror (hand-sized, steel)",
+        "cost_gp": 5,
+        "description": "Looking around corners or reflecting gaze attacks."
+      },
+      {
+        "item": "Musical instrument (string)",
+        "cost_gp": 20,
+        "description": "Stringed instrument such as lute or mandolin; higher quality up to 10x cost."
+      },
+      {
+        "item": "Musical instrument (wind)",
+        "cost_gp": 5,
+        "description": "Wind instrument such as flute or pipe; higher quality up to 10x cost."
+      },
+      {
+        "item": "Oil (1 flask)",
+        "cost_gp": 2,
+        "description": "Fuels lantern for 4 hours; can be thrown burning, poured into burning pool 3’ diameter for 1 turn; no effect on natural flame attackers."
+      },
+      {
+        "item": "Paper/parchment (2 sheets)",
+        "cost_gp": 1,
+        "description": "Approximately 1’ square sheets."
+      },
+      {
+        "item": "Pole (10’ long, wooden)",
+        "cost_gp": 1,
+        "description": "2 inch thick pole for poking/prodding."
+      },
+      {
+        "item": "Quill",
+        "cost_gp": 1,
+        "description": "Large feather sharpened into writing point."
+      },
+      {
+        "item": "Rations (iron, 7 days)",
+        "cost_gp": 15,
+        "description": "Dried and preserved food for long voyages."
+      },
+      {
+        "item": "Rations (standard, 7 days)",
+        "cost_gp": 5,
+        "description": "Fresh, unpreserved food."
+      },
+      {
+        "item": "Rope (50’)",
+        "cost_gp": 1,
+        "description": "Can hold about three human-sized beings."
+      },
+      {
+        "item": "Sack (large)",
+        "cost_gp": 2,
+        "description": "Holds up to 600 coins."
+      },
+      {
+        "item": "Sack (small)",
+        "cost_gp": 1,
+        "description": "Holds up to 200 coins."
+      },
+      {
+        "item": "Saw",
+        "cost_gp": 1,
+        "description": "Hand saw for cutting wood."
+      },
+      {
+        "item": "Scroll case",
+        "cost_gp": 1,
+        "description": "Oiled leather tube with cap; not completely watertight."
+      },
+      {
+        "item": "Sledgehammer",
+        "cost_gp": 5,
+        "description": "Heavy hammer for breaking rock."
+      },
+      {
+        "item": "Spade or shovel",
+        "cost_gp": 2,
+        "description": "For excavating earth."
+      },
+      {
+        "item": "Stakes (3) and mallet",
+        "cost_gp": 3,
+        "description": "Wooden mallet and three 18 inch stakes; useful against vampires."
+      },
+      {
+        "item": "Tent",
+        "cost_gp": 20,
+        "description": "Large enough for 2 adult humans."
+      },
+      {
+        "item": "Thieves’ tools",
+        "cost_gp": 25,
+        "description": "Tools needed to pick locks."
+      },
+      {
+        "item": "Tinder box (flint & steel)",
+        "cost_gp": 3,
+        "description": "Lights fires/torches; one round; 2-in-6 chance per round."
+      },
+      {
+        "item": "Torches (6)",
+        "cost_gp": 1,
+        "description": "Each burns 1 hour/6 turns, illuminating 30’ radius; can be used in combat."
+      },
+      {
+        "item": "Twine (100’ ball)",
+        "cost_gp": 1,
+        "description": "Thin cord/string; supports up to 30 lb."
+      },
+      {
+        "item": "Vial (glass)",
+        "cost_gp": 1,
+        "description": "Holds up to half a pint."
+      },
+      {
+        "item": "Waterskin",
+        "cost_gp": 1,
+        "description": "Hide container; holds 2 pints/1 quart."
+      },
+      {
+        "item": "Whistle",
+        "cost_gp": 1,
+        "description": "Signalling or faking bird calls."
+      },
+      {
+        "item": "Wine (2 pints)",
+        "cost_gp": 1,
+        "description": ""
+      },
+      {
+        "item": "Wolfsbane (1 bunch)",
+        "cost_gp": 10,
+        "description": "Repels lycanthropes; creature must be hit with herb in melee."
+      }
+    ]
+  },
+  "license": {
+    "product_identity": "All artwork, logos, and presentation are product identity. The names Necrotic Gnome and Old-School Essentials are product identity. All content not declared as Open Game Content is Product Identity.",
+    "open_game_content": "All text and tables in the Extended Equipment section are Open Game Content.",
+    "license_name": "Open Game License Version 1.0a",
+    "copyright_notice_includes": [
+      "Open Game License v 1.0 © 2000, Wizards of the Coast, Inc.",
+      "System Reference Document © 2000, Wizards of the Coast, Inc.",
+      "System Reference Document © 2000-2003, Wizards of the Coast, Inc.",
+      "Modern System Reference Document © 2002-2004, Wizards of the Coast, Inc.",
+      "Labyrinth Lord™ © 2007-2009, Daniel Proctor.",
+      "B/X Essentials titles © 2017-2018 Gavin Norman.",
+      "Old-School Essentials titles © 2018-2019 Gavin Norman.",
+      "Carcass Crawler Exclusive Inaugural Issue © 2020 Gavin Norman."
+    ]
+  },
+  "rules_reference": {
+    "saving_throw_legend": {
+      "D": "Death / poison",
+      "W": "Wands",
+      "P": "Paralysis / petrify",
+      "B": "Breath attacks",
+      "S": "Spells / rods / staves"
+    },
+    "thac0_note": "THAC0 is attack matrix row to use; ascending AC attack bonus shown in brackets.",
+    "asterisk_hd_note": "Modifiers from CON no longer apply to starred HD entries."
+  }
+}

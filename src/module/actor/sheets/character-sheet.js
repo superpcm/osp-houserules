@@ -1710,6 +1710,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   static _classProfiles = null;
   static _raceProfiles = null;
   static _spellsData = null;
+  static _bonusSpellsConfig = null;
 
   /**
    * Lazily fetch and cache spells.json.
@@ -1721,9 +1722,11 @@ export class OspActorSheetCharacter extends ActorSheet {
         const r = await fetch('/systems/osp-houserules/data/spells.json');
         const d = await r.json();
         cls._spellsData = d.spellLists || {};
+        cls._bonusSpellsConfig = d.houseRules?.bonusSpells || null;
       } catch (err) {
         console.warn('[osp-houserules] Failed to load spells.json', err);
         cls._spellsData = {};
+        cls._bonusSpellsConfig = null;
       }
     }
     return cls._spellsData;
@@ -1737,7 +1740,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const sc = classProfile?.spellcasting;
     if (!sc?.spellProgression) return {};
     const level = String(parseInt(system.level) || 1);
-    return sc.spellProgression[level] || {};
+    return { ...(sc.spellProgression[level] || {}) };
   }
 
   /**
@@ -1750,6 +1753,13 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     const slotEl = slotsSection[0] || slotsSection;
     const listEl = listContent[0] || listContent;
+
+    // Force Cooper Std on static template elements — CSS !important is overridden by Foundry's layer system
+    const cooperFont = `'Cooper Std', 'Cooper Standard', Georgia, serif`;
+    const $root = html.find ? html : $(html);
+    $root.find('.spell-tab-title, .spell-tab-subtitle').each((_, el) => {
+      el.style.setProperty('font-family', cooperFont, 'important');
+    });
 
     const system = this.actor.system;
     const classId = (system.class || '').toLowerCase().replace(/-/g, '_').replace(/\s/g, '_');
@@ -1774,6 +1784,34 @@ export class OspActorSheetCharacter extends ActorSheet {
     const showKnownOnly = isArcane ? (this._spellKnownFilter ?? false) : false;
 
     const maxSlots = this._computeMaxSpellSlots(system, profile);
+
+    // Apply bonus spell slots from house rules (based on prime requisite score)
+    const bonusCfg = OspActorSheetCharacter._bonusSpellsConfig;
+    const baseSlots = { ...maxSlots };   // snapshot before bonus
+    const bonusApplied = {};             // { '1': n, '2': n, '3': n }
+    let formulaMeta = null;              // { stat, statValue, bracket, isExcluded }
+
+    if (bonusCfg) {
+      const excluded = (bonusCfg.doesNotApplyTo || []).map(n => n.toLowerCase());
+      const classNameNorm = (system.class || '').toLowerCase().replace(/[^a-z]/g, '');
+      const isExcluded = excluded.some(n => classNameNorm.includes(n.replace(/[^a-z]/g, '')));
+      const bonusStat = isArcane ? 'int' : 'wis';
+      const statValue = system.attributes?.[bonusStat]?.value ?? 0;
+      let bonusRow = null;
+      if (!isExcluded) {
+        for (const row of bonusCfg.table) {
+          const parts = row.primeRequisite.split('-').map(Number);
+          if (statValue >= parts[0] && statValue <= parts[1]) { bonusRow = row; break; }
+        }
+        if (bonusRow) {
+          if (bonusRow.level1 && (maxSlots['1'] || 0) > 0) { maxSlots['1'] = (maxSlots['1'] || 0) + bonusRow.level1; bonusApplied['1'] = bonusRow.level1; }
+          if (bonusRow.level2 && (maxSlots['2'] || 0) > 0) { maxSlots['2'] = (maxSlots['2'] || 0) + bonusRow.level2; bonusApplied['2'] = bonusRow.level2; }
+          if (bonusRow.level3 && (maxSlots['3'] || 0) > 0) { maxSlots['3'] = (maxSlots['3'] || 0) + bonusRow.level3; bonusApplied['3'] = bonusRow.level3; }
+        }
+      }
+      formulaMeta = { stat: bonusStat.toUpperCase(), statValue, bracket: bonusRow?.primeRequisite || null, isExcluded };
+    }
+
     const usedSlots = system.spellSlots || {};
     const spellListKey = sc.spellList || '';
     const spells = spellsData[spellListKey] || [];
@@ -1799,7 +1837,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         const used = Math.min(parseInt((usedSlots[lv] || {}).used) || 0, max);
         const label = levelLabels[+lv - 1] || `L${lv}`;
         slotHTML += `<div class="spell-slot-group" data-spell-level="${lv}">`;
-        slotHTML += `<div class="spell-slot-label">${label}</div>`;
+        slotHTML += `<div class="spell-slot-label" style="font-family:${cooperFont};">${label}</div>`;
         slotHTML += `<div class="spell-slot-pips">`;
         for (let i = 0; i < max; i++) {
           const filled = i < used;
@@ -1808,13 +1846,48 @@ export class OspActorSheetCharacter extends ActorSheet {
         slotHTML += `</div></div>`;
       }
       slotHTML += '</div>';
+
+      // Formula breakdown
+      const charClass = system.class || '?';
+      const charLevel = parseInt(system.level) || 1;
+      const levelLabelsOrd = ['1st','2nd','3rd','4th','5th','6th'];
+      let formulaLines = [];
+      for (const lv of spellLevels) {
+        const base = baseSlots[lv] || 0;
+        const bonus = bonusApplied[lv] || 0;
+        const total = maxSlots[lv] || 0;
+        const label = levelLabelsOrd[+lv - 1] || `L${lv}`;
+        const bonusPart = bonus > 0 ? ` + ${bonus} bonus` : '';
+        formulaLines.push(`${label}: ${base}${bonusPart} = <b>${total}</b>`);
+      }
+      let formulaStatLine = '';
+      if (formulaMeta) {
+        const { stat, statValue, bracket, isExcluded } = formulaMeta;
+        if (isExcluded) {
+          formulaStatLine = `${stat} ${statValue} — no bonus (class excluded)`;
+        } else if (bracket) {
+          formulaStatLine = `${stat} ${statValue} → bracket ${bracket} applies`;
+        } else {
+          formulaStatLine = `${stat} ${statValue} — no bonus bracket matched`;
+        }
+      }
+      slotHTML += `<div class="spell-formula">`;
+      slotHTML += `<div class="spell-formula-header">Lv ${charLevel} ${charClass} &nbsp;·&nbsp; ${formulaStatLine}</div>`;
+      slotHTML += `<div class="spell-formula-slots">${formulaLines.join(' &nbsp;|&nbsp; ')}</div>`;
+      slotHTML += `</div>`;
+
       slotHTML += '<div class="spell-slots-actions">';
-      slotHTML += '<button type="button" class="spell-rest-btn" title="Restore all spell slots after a full rest">Rest</button>';
+      slotHTML += `<button type="button" class="spell-rest-btn" style="font-family:${cooperFont};" title="Restore all spell slots after a full rest">Rest</button>`;
       if (isArcane) {
-        slotHTML += `<button type="button" class="spell-known-filter-btn${showKnownOnly ? ' active' : ''}" title="${showKnownOnly ? 'Showing spellbook only — click to show all' : 'Click to show only spells in your spellbook'}">Spellbook Only</button>`;
+        slotHTML += `<button type="button" class="spell-known-filter-btn${showKnownOnly ? ' active' : ''}" style="font-family:${cooperFont};" title="${showKnownOnly ? 'Showing spellbook only — click to show all' : 'Click to show only spells in your spellbook'}">Spellbook Only</button>`;
       }
       slotHTML += '</div>';
       slotEl.innerHTML = slotHTML;
+
+      // Force Cooper Std on slot labels, action buttons, and formula panel — inline style= loses to Foundry's button layer rules
+      slotEl.querySelectorAll('.spell-slot-label, .spell-rest-btn, .spell-known-filter-btn, .spell-formula, .spell-formula-header, .spell-formula-slots').forEach(el => {
+        el.style.setProperty('font-family', cooperFont, 'important');
+      });
 
       // Slot pip click
       slotEl.querySelectorAll('.spell-slot-pip').forEach(pip => {
@@ -1874,16 +1947,23 @@ export class OspActorSheetCharacter extends ActorSheet {
       listHTML += `</div>`;
       for (const sp of lvSpells) {
         const hasReversed = !!sp.reversed;
-        const isKnown = isArcane ? (knownSpells[sp.id] === true) : true;
+        const isAlwaysKnown = !!sp.alwaysKnown;
+        const isKnown = isArcane ? (isAlwaysKnown || knownSpells[sp.id] === true) : true;
         const hide = showKnownOnly && !isKnown;
         if (hide) continue;
         listHTML += `<div class="spell-entry${isArcane && !isKnown ? ' unknown' : ''}" data-spell-id="${esc(sp.id)}">`;
         listHTML += `<div class="spell-entry-header" style="display:flex;flex-direction:row;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:3px;user-select:none;width:100%;box-sizing:border-box;">`;
         if (isArcane) {
-          const knownColor = isKnown ? '#b8860b' : '#bbb';
-          listHTML += `<span role="button" tabindex="0" class="spell-known-btn${isKnown ? ' known' : ''}" data-spell-id="${esc(sp.id)}" title="${isKnown ? 'In spellbook — click to remove' : 'Not in spellbook — click to add'}" style="flex:0 0 auto;display:inline-block;background:transparent;border:none;padding:0 2px;cursor:pointer;font-size:22px;line-height:1;color:${knownColor};">`;
-          listHTML += isKnown ? '&#9733;' : '&#9734;';
-          listHTML += `</span>`;
+          const imgMem = '/systems/osp-houserules/assets/images/icons/spell-memorized.webp';
+          const imgNo  = '/systems/osp-houserules/assets/images/icons/spell_no_memory.webp';
+          if (isAlwaysKnown) {
+            // Always-known spells (e.g. Read Magic): locked icon, not togglable
+            listHTML += `<span class="spell-known-btn known" title="Always known — does not count against spell slots" style="flex:0 0 auto;display:inline-block;padding:0 2px;cursor:default;line-height:0;"><img src="${imgMem}" style="width:24px;height:24px;display:block;" alt="Always known"></span>`;
+          } else {
+            const img = isKnown ? imgMem : imgNo;
+            const title = isKnown ? 'In spellbook — click to remove' : 'Not in spellbook — click to add';
+            listHTML += `<span role="button" tabindex="0" class="spell-known-btn${isKnown ? ' known' : ''}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${title}" style="flex:0 0 auto;display:inline-block;padding:0 2px;cursor:pointer;line-height:0;"><img src="${img}" style="width:24px;height:24px;display:block;" alt="${isKnown ? 'Known' : 'Unknown'}"></span>`;
+          }
         }
         listHTML += `<span class="spell-entry-chevron" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;">&#9654;</span>`;
         listHTML += `<span class="spell-entry-name" style="flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:24px;font-weight:bold;color:#1a1a1a;">${esc(sp.name)}${hasReversed ? ' <span class="spell-reversible-tag">R</span>' : ''}</span>`;
@@ -1927,14 +2007,29 @@ export class OspActorSheetCharacter extends ActorSheet {
       });
     });
 
-    // Known spell toggle
+    // Known spell toggle — only for spells that have a data-spell-id (alwaysKnown spells do not)
     if (isArcane) {
-      listEl.querySelectorAll('.spell-known-btn').forEach(btn => {
+      const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
+      listEl.querySelectorAll('.spell-known-btn[data-spell-id]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
           e.stopPropagation();
           const spellId = btn.dataset.spellId;
+          const spellLevel = btn.dataset.spellLevel;
           const known = this.actor.getFlag('osp-houserules', 'knownSpells') || {};
-          await this.actor.setFlag('osp-houserules', 'knownSpells', { ...known, [spellId]: !(known[spellId] === true) });
+          const wasKnown = known[spellId] === true;
+
+          if (!wasKnown) {
+            // Enforce slot cap: count non-alwaysKnown spells already memorized at this level
+            const cap = maxSlots[spellLevel] || 0;
+            const memorized = (byLevel[spellLevel] || []).filter(sp => !sp.alwaysKnown && known[sp.id] === true).length;
+            if (memorized >= cap) {
+              const label = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
+              ui.notifications?.warn(`All ${label} spell slots are filled. Remove a memorized spell first.`);
+              return;
+            }
+          }
+
+          await this.actor.setFlag('osp-houserules', 'knownSpells', { ...known, [spellId]: !wasKnown });
         });
       });
     }

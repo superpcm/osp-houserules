@@ -1095,7 +1095,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 .sheet-body .tab.active[data-tab="attributes"] {
   display: flex;
   flex-direction: column;
-  height: 810px !important;
+  height: 780px !important;
   margin: 20px 0 0 0;
   overflow: hidden;
 }
@@ -1107,14 +1107,14 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   flex-shrink: 0;
 }
 .spell-tab-title {
-  font-family: $font-cooper;
-  font-size: 32px;
+  font-family: $font-cooper !important;
+  font-size: 16px;
   font-weight: bold;
   color: #1a1a1a;
 }
 .spell-tab-subtitle {
-  font-family: $font-cooper;
-  font-size: 20px;
+  font-family: $font-cooper !important;
+  font-size: 10px;
   color: #1a1a1a;
   margin-bottom: 6px;
 }
@@ -1139,8 +1139,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   gap: 5px;
 }
 .spell-slot-label {
-  font-family: $font-cooper;
-  font-size: 20px;
+  font-family: $font-cooper !important;
+  font-size: 12px;
   font-weight: bold;
   color: #1a1a1a;
   text-align: center;
@@ -1182,8 +1182,8 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
 }
 .spell-rest-btn,
 .spell-known-filter-btn {
-  font-family: $font-cooper;
-  font-size: 20px;
+  font-family: $font-cooper !important;
+  font-size: 12px;
   font-weight: bold;
   color: #1a1a1a;
   background: transparent;
@@ -1198,6 +1198,26 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   color: #fff;
   border-color: #2c1810;
   &:hover { background: #3d2218; }
+}
+.spell-formula {
+  font-family: $font-cooper !important;
+  margin: 6px 0 2px;
+  padding: 5px 12px;
+  background: rgba(44,24,16,0.05);
+  border-radius: 4px;
+  text-align: center;
+}
+.spell-formula-header {
+  font-family: $font-cooper !important;
+  font-size: 10px;
+  color: #6b4a2a;
+  margin-bottom: 2px;
+}
+.spell-formula-slots {
+  font-family: $font-cooper !important;
+  font-size: 10px;
+  color: #444;
+  b { color: #2c1810; }
 }
 .spell-no-slots {
   font-family: $font-cooper;
@@ -1214,12 +1234,9 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 30px 20px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,0.2) transparent;
+  scrollbar-width: none;
 
-  &::-webkit-scrollbar { width: 6px; }
-  &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 3px; }
-  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar { display: none; }
 }
 .spell-level-group {
   margin-bottom: 10px;
@@ -1309,20 +1326,16 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   white-space: nowrap;
   flex: 0 0 auto !important;
 }
-/* Known-spell star (span, not button, to avoid Foundry button CSS) */
+/* Known-spell icon (span, not button, to avoid Foundry button CSS) */
 .spell-known-btn {
   display: inline-block !important;
-  background: transparent !important;
-  border: none !important;
-  padding: 0 2px;
-  cursor: pointer;
-  font-size: 22px;
-  line-height: 1;
-  color: #bbb !important;
   flex: 0 0 auto !important;
+  padding: 0 2px;
+  line-height: 0;
+  cursor: pointer;
 
-  &.known { color: #b8860b !important; }
-  &:hover { color: #704214 !important; }
+  img { display: block; width: 24px; height: 24px; border: none !important; outline: none !important; box-shadow: none !important; border-radius: 0 !important; }
+  &:hover img { opacity: 0.75; }
 }
 .spell-entry-body {
   display: none;
@@ -1336,7 +1349,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   font-size: 22px;
   color: #333 !important;
   margin: 0 0 4px;
-  line-height: 1.4;
+  line-height: 1;
 }
 .spell-reversed-block {
   margin-top: 8px;
@@ -2633,6 +2646,25 @@ input[type="number"] {
   .cs-pos-climb-sheer { --left: 110px; --top: 80px; }
   .cs-pos-move-silently { --left: 210px; --top: 80px; }
   .cs-pos-hide-undergrowth { --left: 310px; --top: 80px; }
+}
+
+/* TEMP DIAGNOSTIC — center + left/right margin lines; remove when layout is done */
+.sheet-body .tab.active {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to bottom, red, red),
+      linear-gradient(to bottom, red, red),
+      linear-gradient(to bottom, red, red);
+    background-size: 2px 100%, 2px 100%, 2px 100%;
+    background-position: 40px 0, 50% 0, calc(100% - 40px) 0;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 9999;
+  }
 }
 
 /* Class skill fields are now physically located in the Skills tab with class-specific positioning */

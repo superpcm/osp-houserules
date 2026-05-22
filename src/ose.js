@@ -45,6 +45,9 @@ import OspCombat from "./module/combat/combat.js";
 import OspCombatant from "./module/combat/combatant.js";
 import OspCombatTracker from "./module/combat/combat-tracker.js";
 
+// DM Toolkit sidebar tab
+import DmToolkitTab from "./module/sidebar/dm-toolkit.js";
+
 // Token ruler
 import { TokenRulerOSP } from "./module/actor/token-ruler.js";
 
@@ -83,6 +86,14 @@ Hooks.once("init", () => {
   CONFIG.Combat.documentClass = OspCombat;
   CONFIG.Combatant.documentClass = OspCombatant;
   CONFIG.ui.combat = OspCombatTracker;
+
+  // ── DM Toolkit (GM only) ─────────────────────────────────────────────────
+  foundry.applications.sidebar.Sidebar.TABS.dmtoolkit = {
+    tooltip: "DM's Toolkit",
+    icon: "osp-dm-toolkit-icon",
+    gmOnly: true
+  };
+  CONFIG.ui.dmtoolkit = DmToolkitTab;
 
   // ── Token Ruler ───────────────────────────────────────────────────────────
   CONFIG.Token.rulerClass = TokenRulerOSP;

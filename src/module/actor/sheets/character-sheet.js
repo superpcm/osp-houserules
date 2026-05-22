@@ -1156,7 +1156,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
     
     // Call parent to handle the actual data update
-    await super._onSubmit(event, { ...options, preventRender: (isRaceChange || isClassChange) });
+    // Race changes suppress render so the XP handler ignore-flag has time to clear.
+    // Class changes must allow a full render so {{#if showSpellsTab}} re-evaluates.
+    await super._onSubmit(event, { ...options, preventRender: isRaceChange });
     
     // Clear the flag
     if (isRaceChange) {
@@ -1753,6 +1755,10 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     const slotEl = slotsSection[0] || slotsSection;
     const listEl = listContent[0] || listContent;
+    const root = html[0] || html;
+    const subtabNavEl  = root.querySelector('.spell-subtab-nav');
+    const spellbookEl  = root.querySelector('.spell-subtab-panel[data-subtab="spellbook"]');
+    const allSpellsEl  = root.querySelector('.spell-subtab-panel[data-subtab="all"]');
 
     // Force Cooper Std on static template elements — CSS !important is overridden by Foundry's layer system
     const cooperFont = `'Cooper Std', 'Cooper Standard', Georgia, serif`;
@@ -1778,10 +1784,13 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Arcane casters must select/copy spells into a spellbook
     const isArcane = (sc.summary || '').toLowerCase().includes('arcane');
+    const isDivine = !isArcane && (sc.summary || '').toLowerCase().includes('divine');
     const knownSpells = isArcane
       ? (this.actor.getFlag('osp-houserules', 'knownSpells') || {})
       : null;
-    const showKnownOnly = isArcane ? (this._spellKnownFilter ?? false) : false;
+    const memorizedSpells = (isArcane || isDivine)
+      ? (this.actor.getFlag('osp-houserules', 'memorizedSpells') || {})
+      : null;
 
     const maxSlots = this._computeMaxSpellSlots(system, profile);
 
@@ -1827,6 +1836,14 @@ export class OspActorSheetCharacter extends ActorSheet {
     // --- Slot Tracker ---
     const spellLevels = Object.keys(maxSlots).sort((a, b) => +a - +b).filter(lv => maxSlots[lv] > 0);
 
+    // Count memorized/prayed spells per level so pips can show green when a slot is filled
+    const memorizedCountByLevel = {};
+    if (memorizedSpells) {
+      for (const lv of spellLevels) {
+        memorizedCountByLevel[lv] = (byLevel[lv] || []).reduce((sum, sp) => sum + (Number(memorizedSpells[sp.id]) || 0), 0);
+      }
+    }
+
     if (spellLevels.length === 0) {
       slotEl.innerHTML = '<div class="spell-no-slots">No spell slots available at this level.</div>';
     } else {
@@ -1835,13 +1852,17 @@ export class OspActorSheetCharacter extends ActorSheet {
       for (const lv of spellLevels) {
         const max = maxSlots[lv] || 0;
         const used = Math.min(parseInt((usedSlots[lv] || {}).used) || 0, max);
+        const memCount = memorizedCountByLevel[lv] || 0;
         const label = levelLabels[+lv - 1] || `L${lv}`;
         slotHTML += `<div class="spell-slot-group" data-spell-level="${lv}">`;
         slotHTML += `<div class="spell-slot-label" style="font-family:${cooperFont};">${label}</div>`;
         slotHTML += `<div class="spell-slot-pips">`;
         for (let i = 0; i < max; i++) {
-          const filled = i < used;
-          slotHTML += `<button type="button" class="spell-slot-pip${filled ? ' used' : ''}" data-level="${lv}" data-pip="${i}" title="${filled ? 'Click to restore' : 'Click to mark used'}"></button>`;
+          const isUsed = i < used;
+          const isMem  = !isUsed && i < used + memCount;
+          const cls    = isUsed ? ' used' : (isMem ? ' memorized' : '');
+          const title  = isUsed ? 'Click to restore' : (isMem ? 'Memorized — click to mark used' : 'Click to mark used');
+          slotHTML += `<span role="button" tabindex="0" class="spell-slot-pip${cls}" data-level="${lv}" data-pip="${i}" title="${title}"></span>`;
         }
         slotHTML += `</div></div>`;
       }
@@ -1878,21 +1899,18 @@ export class OspActorSheetCharacter extends ActorSheet {
 
       slotHTML += '<div class="spell-slots-actions">';
       slotHTML += `<button type="button" class="spell-rest-btn" style="font-family:${cooperFont};" title="Restore all spell slots after a full rest">Rest</button>`;
-      if (isArcane) {
-        slotHTML += `<button type="button" class="spell-known-filter-btn${showKnownOnly ? ' active' : ''}" style="font-family:${cooperFont};" title="${showKnownOnly ? 'Showing spellbook only — click to show all' : 'Click to show only spells in your spellbook'}">Spellbook Only</button>`;
-      }
       slotHTML += '</div>';
       slotEl.innerHTML = slotHTML;
 
       // Force Cooper Std on slot labels, action buttons, and formula panel — inline style= loses to Foundry's button layer rules
-      slotEl.querySelectorAll('.spell-slot-label, .spell-rest-btn, .spell-known-filter-btn, .spell-formula, .spell-formula-header, .spell-formula-slots').forEach(el => {
+      slotEl.querySelectorAll('.spell-slot-label, .spell-rest-btn, .spell-formula, .spell-formula-header, .spell-formula-slots').forEach(el => {
         el.style.setProperty('font-family', cooperFont, 'important');
       });
 
       // Slot pip click
       slotEl.querySelectorAll('.spell-slot-pip').forEach(pip => {
         pip.addEventListener('click', async (e) => {
-          e.preventDefault();
+          e.stopPropagation();
           const lv = pip.dataset.level;
           const pipIdx = parseInt(pip.dataset.pip);
           const max = maxSlots[lv] || 0;
@@ -1912,14 +1930,28 @@ export class OspActorSheetCharacter extends ActorSheet {
         });
       }
 
-      // Spellbook-only filter toggle (re-renders without actor update)
-      const filterBtn = slotEl.querySelector('.spell-known-filter-btn');
-      if (filterBtn) {
-        filterBtn.addEventListener('click', () => {
-          this._spellKnownFilter = !this._spellKnownFilter;
-          this.renderSpellTab(this.element);
+    }
+
+    // --- Sub-tab nav (arcane only) ---
+    if (isArcane) {
+      if (!this._activeSpellSubtab) this._activeSpellSubtab = 'spellbook';
+      if (subtabNavEl) {
+        subtabNavEl.innerHTML =
+          `<span class="spell-subtab-btn${this._activeSpellSubtab === 'spellbook' ? ' active' : ''}" data-subtab="spellbook">Spellbook</span>` +
+          `<span class="spell-subtab-btn${this._activeSpellSubtab === 'all'       ? ' active' : ''}" data-subtab="all">All Spells</span>`;
+        subtabNavEl.querySelectorAll('.spell-subtab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            this._activeSpellSubtab = btn.dataset.subtab;
+            this.renderSpellTab(this.element);
+          });
         });
       }
+      if (spellbookEl) spellbookEl.classList.toggle('active', this._activeSpellSubtab === 'spellbook');
+      if (allSpellsEl) allSpellsEl.classList.toggle('active', this._activeSpellSubtab === 'all');
+    } else {
+      if (subtabNavEl) { subtabNavEl.innerHTML = ''; subtabNavEl.style.display = 'none'; }
+      if (spellbookEl) spellbookEl.classList.remove('active');
+      if (allSpellsEl) allSpellsEl.classList.add('active');
     }
 
     // --- Spell List ---
@@ -1932,107 +1964,302 @@ export class OspActorSheetCharacter extends ActorSheet {
     const availableLevels = Object.keys(byLevel).sort((a, b) => +a - +b).filter(lv => +lv <= maxLevel);
 
     if (!this._collapsedSpellLevels) this._collapsedSpellLevels = new Set();
+    if (!this._collapsedSpellbookLevels) this._collapsedSpellbookLevels = new Set();
 
     const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const imgMem            = '/systems/osp-houserules/assets/images/icons/spell-memorized.webp';
+    const imgNo             = '/systems/osp-houserules/assets/images/icons/spell_no_memory.webp';
+    const imgLearn          = '/systems/osp-houserules/assets/images/icons/learn-spell.webp';
+    const imgCast           = '/systems/osp-houserules/assets/images/icons/cast.webp';
+    const classLower = (system.class || '').toLowerCase();
+    const isDruidOrRanger = classLower === 'druid' || classLower === 'ranger' || classLower === 'bard';
+    const imgPray           = isDruidOrRanger
+      ? '/systems/osp-houserules/assets/images/icons/leaf.webp'
+      : '/systems/osp-houserules/assets/images/icons/pray.webp';
+    const imgPrayerAnswered = isDruidOrRanger
+      ? '/systems/osp-houserules/assets/images/icons/green-leaf.webp'
+      : '/systems/osp-houserules/assets/images/icons/prayer-answered.webp';
+    const iconStyle = 'flex:0 0 auto;display:inline-block;padding:0 2px;line-height:0;';
 
+    // Build a single spell entry row — context: 'all' | 'spellbook'
+    const buildEntry = (sp, lv, context) => {
+      const hasReversed = !!sp.reversed;
+      const isAlwaysKnown = !!sp.alwaysKnown;
+      const isKnown = isArcane ? (isAlwaysKnown || knownSpells[sp.id] === true) : true;
+      const memCount    = (isArcane || isDivine) ? (Number(memorizedSpells[sp.id]) || 0) : 0;
+      const isMemorized = memCount > 0;
+      let h = `<div class="spell-entry${isArcane && !isKnown ? ' unknown' : ''}" data-spell-id="${esc(sp.id)}">`;
+      h += `<div class="spell-entry-header" style="display:flex;flex-direction:row;align-items:center;gap:4px;padding:4px 6px;cursor:pointer;border-radius:3px;user-select:none;width:100%;box-sizing:border-box;">`;
+      if (isDivine) {
+        const prayImg = isMemorized ? imgPrayerAnswered : imgPray;
+        h += `<span role="button" tabindex="0" class="spell-pray-indicator${isMemorized ? ' prayed' : ''}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${isMemorized ? 'Change prayers' : 'Pray for spell'}" style="${iconStyle}cursor:pointer;"><img src="${prayImg}" style="width:24px;height:24px;display:block;" alt="${isMemorized ? 'Prayed' : 'Not prayed'}"></span>`;
+        const pipCap = Math.max(0, (maxSlots[lv] || 0) - Math.min(parseInt((usedSlots[lv] || {}).used) || 0, maxSlots[lv] || 0));
+        let pipsHTML = `<span class="spell-pip-mini-group">`;
+        for (let i = 0; i < pipCap; i++) pipsHTML += `<span class="spell-pip-mini${i < memCount ? ' filled' : ''}"></span>`;
+        h += pipsHTML + '</span>';
+        const castDim   = isMemorized ? '' : 'opacity:0.3;pointer-events:none;';
+        const castTitle = isMemorized ? 'Cast this spell' : 'Pray first to cast';
+        h += `<span role="button" tabindex="0" class="spell-cast-btn${isMemorized ? '' : ' disabled'}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${castTitle}" style="${iconStyle}cursor:${isMemorized ? 'pointer' : 'default'};"><img src="${imgCast}" style="width:24px;height:24px;display:block;${castDim}" alt="Cast"></span>`;
+      } else if (isArcane) {
+        if (context === 'all') {
+          // All Spells panel: learn icon only
+          if (isAlwaysKnown) {
+            // Always-known: greyed, non-interactive
+            h += `<span class="spell-learn-btn known" title="Always known" style="${iconStyle}cursor:default;"><img src="${imgLearn}" style="width:24px;height:24px;display:block;opacity:0.35;" alt="Always known"></span>`;
+          } else if (!isKnown) {
+            // Unknown: black learn icon → click to learn
+            h += `<span role="button" tabindex="0" class="spell-learn-btn" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" data-spell-name="${esc(sp.name)}" title="Learn — add to spellbook" style="${iconStyle}cursor:pointer;"><img src="${imgLearn}" style="width:24px;height:24px;display:block;" alt="Learn"></span>`;
+          } else {
+            // Known: greyed learn icon → click to open forget dialog
+            h += `<span role="button" tabindex="0" class="spell-learn-btn known" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" data-spell-name="${esc(sp.name)}" title="In spellbook — click to forget" style="${iconStyle}cursor:pointer;"><img src="${imgLearn}" style="width:24px;height:24px;display:block;opacity:0.35;" alt="Learned"></span>`;
+          }
+        } else {
+          // Spellbook panel: memory indicator + mini-pips + cast
+          const memImg = isMemorized ? imgMem : imgNo;
+          h += `<span role="button" tabindex="0" class="spell-memorize-indicator${isMemorized ? ' memorized' : ''}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${isMemorized ? 'Change memorizations' : 'Memorize spell'}" style="${iconStyle}cursor:pointer;"><img src="${memImg}" style="width:24px;height:24px;display:block;" alt="${isMemorized ? 'Memorized' : 'Not memorized'}"></span>`;
+          const pipCap = Math.max(0, (maxSlots[lv] || 0) - Math.min(parseInt((usedSlots[lv] || {}).used) || 0, maxSlots[lv] || 0));
+          let pipsHTML = `<span class="spell-pip-mini-group">`;
+          for (let i = 0; i < pipCap; i++) pipsHTML += `<span class="spell-pip-mini${i < memCount ? ' filled' : ''}"></span>`;
+          h += pipsHTML + '</span>';
+          const castDim   = isMemorized ? '' : 'opacity:0.3;pointer-events:none;';
+          const castTitle = isMemorized ? 'Cast this spell' : 'Memorize first to cast';
+          h += `<span role="button" tabindex="0" class="spell-cast-btn${isMemorized ? '' : ' disabled'}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${castTitle}" style="${iconStyle}cursor:${isMemorized ? 'pointer' : 'default'};"><img src="${imgCast}" style="width:24px;height:24px;display:block;${castDim}" alt="Cast"></span>`;
+        }
+      }
+      h += `<span class="spell-entry-chevron" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;margin-left:4px;">&#9654;</span>`;
+      h += `<span class="spell-entry-name" style="flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:24px;font-weight:bold;color:#1a1a1a;">${esc(sp.name)}${hasReversed ? ' <span class="spell-reversible-tag">R</span>' : ''}</span>`;
+      h += `<span class="spell-entry-meta" style="flex:0 0 auto;font-size:20px;color:#666;white-space:nowrap;">${esc(sp.duration || '')}${sp.duration && sp.range ? ' &bull; ' : ''}${esc(sp.range || '')}</span>`;
+      h += `</div><div class="spell-entry-body"><p class="spell-description">${esc(sp.description || '')}</p>`;
+      if (hasReversed) h += `<div class="spell-reversed-block"><div class="spell-reversed-name">Reversed: ${esc(sp.reversed.name || '')}</div><p class="spell-description">${esc(sp.reversed.description || '')}</p></div>`;
+      h += `</div></div>`;
+      return h;
+    };
+
+    // Build a level group block — context passed through to buildEntry
+    const buildLevelGroup = (lv, lvSpells, collapsedSet, knownOnly, context) => {
+      const filtered = knownOnly ? lvSpells.filter(sp => !!sp.alwaysKnown || knownSpells[sp.id] === true) : lvSpells;
+      if (filtered.length === 0) return '';
+      const max = maxSlots[lv] || 0;
+      const isCollapsed = collapsedSet.has(lv);
+      let h = `<div class="spell-level-group${isCollapsed ? ' collapsed' : ''}" data-level="${lv}">`;
+      h += `<div class="spell-level-heading" style="display:flex;align-items:center;gap:8px;padding:3px 4px 4px;cursor:pointer;user-select:none;">`;
+      h += `<span class="spell-level-caret" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;">${isCollapsed ? '&#9654;' : '&#9660;'}</span>`;
+      h += `Level ${lv}${max ? ` <span class="spell-level-slots">(${max} slot${max !== 1 ? 's' : ''})</span>` : ''}`;
+      h += `</div>`;
+      for (const sp of filtered) h += buildEntry(sp, lv, context);
+      h += `</div>`;
+      return h;
+    };
+
+    // Post a spell-cast card to chat
+    const postSpellToChat = (sp, spellLevel) => {
+      if (!sp) return;
+      const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
+      const levelLabel  = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
+      const castType    = isDivine ? 'Divine Prayer' : 'Arcane Spell';
+      const meta = [levelLabel];
+      if (sp.duration) meta.push(`Duration: ${sp.duration}`);
+      if (sp.range)    meta.push(`Range: ${sp.range}`);
+      const actorName = this.actor.name || 'Unknown';
+      const content = `<div class="osp-spell-cast-card">
+        <div class="spell-card-header">
+          <div class="spell-card-name">${actorName} casts ${sp.name}</div>
+          <div class="spell-card-type">${castType}</div>
+        </div>
+        <div class="spell-card-meta">${meta.join(' &bull; ')}</div>
+        ${sp.description ? `<div class="spell-card-desc">${sp.description}</div>` : ''}
+      </div>`;
+      ChatMessage.create({
+        content,
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        rollMode: game.settings.get('core', 'rollMode'),
+      });
+    };
+
+    // Attach all listeners — context: 'all' | 'spellbook'
+    const attachListeners = (containerEl, collapsedSet, context) => {
+      containerEl.querySelectorAll('.spell-level-heading').forEach(heading => {
+        heading.addEventListener('click', () => {
+          const group = heading.closest('.spell-level-group');
+          const lv = group.dataset.level;
+          const isNowCollapsed = group.classList.toggle('collapsed');
+          if (isNowCollapsed) collapsedSet.add(lv);
+          else collapsedSet.delete(lv);
+          const caret = heading.querySelector('.spell-level-caret');
+          if (caret) caret.innerHTML = isNowCollapsed ? '&#9654;' : '&#9660;';
+        });
+      });
+      containerEl.querySelectorAll('.spell-entry-header').forEach(header => {
+        header.addEventListener('click', (e) => {
+          if (e.target.closest('.spell-learn-btn,.spell-known-btn,.spell-cast-btn,.spell-pray-btn')) return;
+          const entry = header.closest('.spell-entry');
+          const isOpen = entry.classList.toggle('open');
+          const chevron = header.querySelector('.spell-entry-chevron');
+          if (chevron) chevron.innerHTML = isOpen ? '&#9660;' : '&#9654;';
+        });
+      });
+      if (isDivine) {
+        const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
+        containerEl.querySelectorAll('.spell-pray-indicator').forEach(indicator => {
+          indicator.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const spellId    = indicator.dataset.spellId;
+            const spellLevel = indicator.dataset.spellLevel;
+            const mem        = this.actor.getFlag('osp-houserules', 'memorizedSpells') || {};
+            const thisCount  = Number(mem[spellId]) || 0;
+            const used       = parseInt((system.spellSlots?.[spellLevel] || {}).used) || 0;
+            const cap        = Math.max(0, (maxSlots[spellLevel] || 0) - used);
+            const totalCount = (byLevel[spellLevel] || []).reduce((sum, sp) => sum + (Number(mem[sp.id]) || 0), 0);
+            let newCount;
+            if (totalCount < cap) {
+              newCount = thisCount + 1;
+            } else if (thisCount > 0) {
+              newCount = 0;
+            } else {
+              const label = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
+              ui.notifications?.warn(`${label}: not enough slots remaining.`);
+              return;
+            }
+            await this.actor.setFlag('osp-houserules', 'memorizedSpells', { ...mem, [spellId]: newCount });
+          });
+        });
+        containerEl.querySelectorAll('.spell-cast-btn:not(.disabled)').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const spellId    = btn.dataset.spellId;
+            const spellLevel = btn.dataset.spellLevel;
+            const max        = maxSlots[spellLevel] || 0;
+            const currentUsed = parseInt((system.spellSlots?.[spellLevel] || {}).used) || 0;
+            if (currentUsed >= max) {
+              ui.notifications?.warn('No spell slots remaining at this level.');
+              return;
+            }
+            const sp       = (byLevel[spellLevel] || []).find(s => s.id === spellId);
+            const mem      = this.actor.getFlag('osp-houserules', 'memorizedSpells') || {};
+            const newCount = Math.max(0, (Number(mem[spellId]) || 0) - 1);
+            postSpellToChat(sp, spellLevel);
+            await Promise.all([
+              this.actor.update({ [`system.spellSlots.${spellLevel}.used`]: currentUsed + 1 }),
+              this.actor.setFlag('osp-houserules', 'memorizedSpells', { ...mem, [spellId]: newCount }),
+            ]);
+          });
+        });
+        return;
+      }
+      if (!isArcane) return;
+
+      if (context === 'all') {
+        // Unknown spell learn icon → add to spellbook
+        containerEl.querySelectorAll('.spell-learn-btn:not(.known)').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const spellId = btn.dataset.spellId;
+            const known = this.actor.getFlag('osp-houserules', 'knownSpells') || {};
+            await this.actor.setFlag('osp-houserules', 'knownSpells', { ...known, [spellId]: true });
+          });
+        });
+
+        // Known spell learn icon (greyed) → forget dialog
+        containerEl.querySelectorAll('.spell-learn-btn.known[data-spell-id]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const spellId   = btn.dataset.spellId;
+            const spellName = btn.dataset.spellName || spellId;
+            new Dialog({
+              title: 'Forget Spell',
+              content: `<p>Remove <strong>${spellName}</strong> from your spellbook?</p>`,
+              buttons: {
+                forget: {
+                  label: 'Forget',
+                  callback: async () => {
+                    const known = this.actor.getFlag('osp-houserules', 'knownSpells') || {};
+                    await this.actor.setFlag('osp-houserules', 'knownSpells', { ...known, [spellId]: false });
+                  }
+                },
+                cancel: { label: 'Cancel' }
+              },
+              default: 'cancel'
+            }).render(true);
+          });
+        });
+
+      } else {
+        // Spellbook panel: memorize toggle + cast
+        const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
+
+        containerEl.querySelectorAll('.spell-memorize-indicator').forEach(indicator => {
+          indicator.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const spellId    = indicator.dataset.spellId;
+            const spellLevel = indicator.dataset.spellLevel;
+            const mem        = this.actor.getFlag('osp-houserules', 'memorizedSpells') || {};
+            const thisCount  = Number(mem[spellId]) || 0;
+            const used       = parseInt((system.spellSlots?.[spellLevel] || {}).used) || 0;
+            const cap        = Math.max(0, (maxSlots[spellLevel] || 0) - used);
+            const totalCount = (byLevel[spellLevel] || []).reduce((sum, sp) => sum + (Number(mem[sp.id]) || 0), 0);
+            let newCount;
+            if (totalCount < cap) {
+              newCount = thisCount + 1;
+            } else if (thisCount > 0) {
+              newCount = 0;
+            } else {
+              const label = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
+              ui.notifications?.warn(`${label}: not enough slots remaining.`);
+              return;
+            }
+            await this.actor.setFlag('osp-houserules', 'memorizedSpells', { ...mem, [spellId]: newCount });
+          });
+        });
+
+        containerEl.querySelectorAll('.spell-cast-btn:not(.disabled)').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const spellId    = btn.dataset.spellId;
+            const spellLevel = btn.dataset.spellLevel;
+            const max        = maxSlots[spellLevel] || 0;
+            const currentUsed = parseInt((system.spellSlots?.[spellLevel] || {}).used) || 0;
+            if (currentUsed >= max) {
+              ui.notifications?.warn('No spell slots remaining at this level.');
+              return;
+            }
+            const sp       = (byLevel[spellLevel] || []).find(s => s.id === spellId);
+            const mem      = this.actor.getFlag('osp-houserules', 'memorizedSpells') || {};
+            const newCount = Math.max(0, (Number(mem[spellId]) || 0) - 1);
+            postSpellToChat(sp, spellLevel);
+            await Promise.all([
+              this.actor.update({ [`system.spellSlots.${spellLevel}.used`]: currentUsed + 1 }),
+              this.actor.setFlag('osp-houserules', 'memorizedSpells', { ...mem, [spellId]: newCount }),
+            ]);
+          });
+        });
+      }
+    };
+
+    // --- Spellbook panel (arcane only: known + alwaysKnown spells) ---
+    if (isArcane && spellbookEl) {
+      let sbHTML = '';
+      let hasAny = false;
+      for (const lv of availableLevels) {
+        const lvSpells = byLevel[lv].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        const chunk = buildLevelGroup(lv, lvSpells, this._collapsedSpellbookLevels, true, 'spellbook');
+        if (chunk) hasAny = true;
+        sbHTML += chunk;
+      }
+      if (!hasAny) sbHTML += '<div class="spell-no-spells">No spells in spellbook yet.</div>';
+      spellbookEl.innerHTML = sbHTML;
+      attachListeners(spellbookEl, this._collapsedSpellbookLevels, 'spellbook');
+    } else if (spellbookEl) {
+      spellbookEl.innerHTML = '';
+    }
+
+    // --- Full spell list ---
     let listHTML = '';
     for (const lv of availableLevels) {
       const lvSpells = byLevel[lv].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-      const max = maxSlots[lv] || 0;
-      const isCollapsed = this._collapsedSpellLevels.has(lv);
-      listHTML += `<div class="spell-level-group${isCollapsed ? ' collapsed' : ''}" data-level="${lv}">`;
-      listHTML += `<div class="spell-level-heading" style="display:flex;align-items:center;gap:8px;padding:3px 4px 4px;cursor:pointer;user-select:none;">`;
-      listHTML += `<span class="spell-level-caret" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;">${isCollapsed ? '&#9654;' : '&#9660;'}</span>`;
-      listHTML += `Level ${lv}${max ? ` <span class="spell-level-slots">(${max} slot${max !== 1 ? 's' : ''})</span>` : ''}`;
-      listHTML += `</div>`;
-      for (const sp of lvSpells) {
-        const hasReversed = !!sp.reversed;
-        const isAlwaysKnown = !!sp.alwaysKnown;
-        const isKnown = isArcane ? (isAlwaysKnown || knownSpells[sp.id] === true) : true;
-        const hide = showKnownOnly && !isKnown;
-        if (hide) continue;
-        listHTML += `<div class="spell-entry${isArcane && !isKnown ? ' unknown' : ''}" data-spell-id="${esc(sp.id)}">`;
-        listHTML += `<div class="spell-entry-header" style="display:flex;flex-direction:row;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;border-radius:3px;user-select:none;width:100%;box-sizing:border-box;">`;
-        if (isArcane) {
-          const imgMem = '/systems/osp-houserules/assets/images/icons/spell-memorized.webp';
-          const imgNo  = '/systems/osp-houserules/assets/images/icons/spell_no_memory.webp';
-          if (isAlwaysKnown) {
-            // Always-known spells (e.g. Read Magic): locked icon, not togglable
-            listHTML += `<span class="spell-known-btn known" title="Always known — does not count against spell slots" style="flex:0 0 auto;display:inline-block;padding:0 2px;cursor:default;line-height:0;"><img src="${imgMem}" style="width:24px;height:24px;display:block;" alt="Always known"></span>`;
-          } else {
-            const img = isKnown ? imgMem : imgNo;
-            const title = isKnown ? 'In spellbook — click to remove' : 'Not in spellbook — click to add';
-            listHTML += `<span role="button" tabindex="0" class="spell-known-btn${isKnown ? ' known' : ''}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${title}" style="flex:0 0 auto;display:inline-block;padding:0 2px;cursor:pointer;line-height:0;"><img src="${img}" style="width:24px;height:24px;display:block;" alt="${isKnown ? 'Known' : 'Unknown'}"></span>`;
-          }
-        }
-        listHTML += `<span class="spell-entry-chevron" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;">&#9654;</span>`;
-        listHTML += `<span class="spell-entry-name" style="flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:24px;font-weight:bold;color:#1a1a1a;">${esc(sp.name)}${hasReversed ? ' <span class="spell-reversible-tag">R</span>' : ''}</span>`;
-        listHTML += `<span class="spell-entry-meta" style="flex:0 0 auto;font-size:20px;color:#666;white-space:nowrap;">${esc(sp.duration || '')}${sp.duration && sp.range ? ' &bull; ' : ''}${esc(sp.range || '')}</span>`;
-        listHTML += `</div>`;
-        listHTML += `<div class="spell-entry-body">`;
-        listHTML += `<p class="spell-description">${esc(sp.description || '')}</p>`;
-        if (hasReversed) {
-          listHTML += `<div class="spell-reversed-block">`;
-          listHTML += `<div class="spell-reversed-name">Reversed: ${esc(sp.reversed.name || '')}</div>`;
-          listHTML += `<p class="spell-description">${esc(sp.reversed.description || '')}</p>`;
-          listHTML += `</div>`;
-        }
-        listHTML += `</div></div>`;
-      }
-      listHTML += `</div>`;
+      listHTML += buildLevelGroup(lv, lvSpells, this._collapsedSpellLevels, false, 'all');
     }
     listEl.innerHTML = listHTML;
-
-    // Level heading: collapse / expand
-    listEl.querySelectorAll('.spell-level-heading').forEach(heading => {
-      heading.addEventListener('click', () => {
-        const group = heading.closest('.spell-level-group');
-        const lv = group.dataset.level;
-        const isNowCollapsed = group.classList.toggle('collapsed');
-        if (isNowCollapsed) this._collapsedSpellLevels.add(lv);
-        else this._collapsedSpellLevels.delete(lv);
-        const caret = heading.querySelector('.spell-level-caret');
-        if (caret) caret.innerHTML = isNowCollapsed ? '&#9654;' : '&#9660;';
-      });
-    });
-
-    // Spell entry: expand / collapse description
-    listEl.querySelectorAll('.spell-entry-header').forEach(header => {
-      header.addEventListener('click', (e) => {
-        if (e.target.closest('.spell-known-btn')) return;
-        const entry = header.closest('.spell-entry');
-        const isOpen = entry.classList.toggle('open');
-        const chevron = header.querySelector('.spell-entry-chevron');
-        if (chevron) chevron.innerHTML = isOpen ? '&#9660;' : '&#9654;';
-      });
-    });
-
-    // Known spell toggle — only for spells that have a data-spell-id (alwaysKnown spells do not)
-    if (isArcane) {
-      const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
-      listEl.querySelectorAll('.spell-known-btn[data-spell-id]').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          const spellId = btn.dataset.spellId;
-          const spellLevel = btn.dataset.spellLevel;
-          const known = this.actor.getFlag('osp-houserules', 'knownSpells') || {};
-          const wasKnown = known[spellId] === true;
-
-          if (!wasKnown) {
-            // Enforce slot cap: count non-alwaysKnown spells already memorized at this level
-            const cap = maxSlots[spellLevel] || 0;
-            const memorized = (byLevel[spellLevel] || []).filter(sp => !sp.alwaysKnown && known[sp.id] === true).length;
-            if (memorized >= cap) {
-              const label = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
-              ui.notifications?.warn(`All ${label} spell slots are filled. Remove a memorized spell first.`);
-              return;
-            }
-          }
-
-          await this.actor.setFlag('osp-houserules', 'knownSpells', { ...known, [spellId]: !wasKnown });
-        });
-      });
-    }
+    attachListeners(listEl, this._collapsedSpellLevels, 'all');
   }
 
   /**

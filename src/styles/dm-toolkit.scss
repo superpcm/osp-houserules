@@ -1,0 +1,114 @@
+// ================================================================
+// DM's Toolkit — sidebar tab icon & panel styles
+// ================================================================
+
+// Sidebar tab button: use dm.webp as a color mask so it matches FA icon color
+// (including hover/active state changes via --control-icon-color)
+#sidebar button.osp-dm-toolkit-icon {
+  &::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    mask-image: url('/systems/osp-houserules/assets/images/icons/dm.webp');
+    -webkit-mask-image: url('/systems/osp-houserules/assets/images/icons/dm.webp');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: var(--control-icon-color);
+  }
+}
+
+// Mini preparation pips shown per spell row (Option 3)
+.spell-pip-mini-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  padding: 0 2px;
+}
+
+.spell-pip-mini {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid #666;
+  background: transparent;
+  cursor: default;
+  flex-shrink: 0;
+
+  &.filled {
+    background: #2a6e2a;
+    border-color: #1a4e1a;
+  }
+}
+
+// Panel container
+.osp-dm-toolkit {
+  padding: 8px;
+  gap: 8px;
+
+  .dm-toolkit-header {
+    font-size: 1rem;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 4px;
+    margin: 0 0 8px;
+  }
+
+  .dm-tool-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .dm-tool-item {
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+    padding: 6px 8px;
+  }
+
+  .dm-tool-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .dm-tool-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+
+  .dm-tool-desc {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .osp-dm-rest-btn {
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.4);
+    flex-shrink: 0;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    i {
+      font-size: 0.9rem;
+    }
+  }
+}

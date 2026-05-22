@@ -1152,6 +1152,7 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   gap: 6px;
 }
 .spell-slot-pip {
+  display: inline-block;
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -1161,6 +1162,14 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   padding: 0;
   transition: background 0.1s;
 
+  &.memorized {
+    background: #31e71d;
+    border-color: #31e71d;
+  }
+  &.memorized:hover {
+    background: rgba(49, 231, 29, 0.75);
+    border-color: #31e71d;
+  }
   &.used {
     background: #2c1810;
     border-color: #2c1810;
@@ -1227,16 +1236,54 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   padding: 10px;
 }
 
-/* Spell list */
-.spell-list-scrollable {
+/* Sub-tab container */
+.spell-subtabs {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Sub-tab nav bar */
+.spell-subtab-nav {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0;
+  padding: 4px 30px 0;
+  border-bottom: 2px solid rgba(44,24,16,0.3);
+}
+.spell-subtab-btn {
+  font-family: $font-cooper !important;
+  font-size: 16px;
+  font-weight: bold;
+  color: #888;
+  padding: 5px 22px 6px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  user-select: none;
+  transition: color 0.1s;
+
+  &:hover { color: #2c1810; }
+  &.active {
+    color: #2c1810;
+    border-bottom-color: #704214;
+  }
+}
+
+/* Sub-tab panels — hidden by default, shown when .active */
+.spell-subtab-panel {
+  display: none;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0 30px 20px;
+  padding: 8px 30px 20px;
   scrollbar-width: none;
-
   &::-webkit-scrollbar { display: none; }
+
+  &.active { display: block; }
 }
 .spell-level-group {
   margin-bottom: 10px;
@@ -1326,13 +1373,20 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   white-space: nowrap;
   flex: 0 0 auto !important;
 }
-/* Known-spell icon (span, not button, to avoid Foundry button CSS) */
-.spell-known-btn {
+/* Spell action icons (span, not button, to avoid Foundry button CSS) */
+.spell-known-btn,
+.spell-learn-btn,
+.spell-cast-btn,
+.spell-pray-btn {
   display: inline-block !important;
   flex: 0 0 auto !important;
   padding: 0 2px;
   line-height: 0;
   cursor: pointer;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: none !important;
 
   img { display: block; width: 24px; height: 24px; border: none !important; outline: none !important; box-shadow: none !important; border-radius: 0 !important; }
   &:hover img { opacity: 0.75; }
@@ -2648,23 +2702,12 @@ input[type="number"] {
   .cs-pos-hide-undergrowth { --left: 310px; --top: 80px; }
 }
 
-/* TEMP DIAGNOSTIC — center + left/right margin lines; remove when layout is done */
-.sheet-body .tab.active {
-  position: relative;
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(to bottom, red, red),
-      linear-gradient(to bottom, red, red),
-      linear-gradient(to bottom, red, red);
-    background-size: 2px 100%, 2px 100%, 2px 100%;
-    background-position: 40px 0, 50% 0, calc(100% - 40px) 0;
-    background-repeat: no-repeat;
-    pointer-events: none;
-    z-index: 9999;
-  }
-}
 
 /* Class skill fields are now physically located in the Skills tab with class-specific positioning */
+
+// Strip any Foundry-applied border/shadow from spell preparation icons
+.spell-pray-indicator img,
+.spell-memorize-indicator img {
+  border: none;
+  box-shadow: none;
+}

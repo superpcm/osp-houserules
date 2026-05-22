@@ -41,6 +41,9 @@ export const preloadHandlebarsTemplates = async () => {
 
     // Combat apps
     `${path}/templates/apps/combat-set-groups.hbs`,
+
+    // DM Toolkit
+    `${path}/templates/sidebar/dm-toolkit.html`,
   ];
 
   return foundry.applications.handlebars.loadTemplates(templatePaths);

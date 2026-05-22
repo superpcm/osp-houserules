@@ -182,6 +182,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     const context = await super.getData(options);
     context.system = this.actor.system;
+    context.isGM = game.user.isGM;
 
     // Initialize position and portrait data if missing
     if (!context.system.levelPosition) {

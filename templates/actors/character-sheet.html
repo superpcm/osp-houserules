@@ -2527,29 +2527,34 @@
     <input type="hidden" name="system.classPosition.y" value="{{system.classPosition.y}}" />
     <input type="hidden" name="system.classPosition.zIndex" value="{{system.classPosition.zIndex}}" />
     <div class="cs-char-field-group">
-  <select class="char-class cs-class-select" id="char-class" name="system.class">
-        <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
-        <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
-        <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
-        <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
-        <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
-        <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
-        <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
-        <option value="Elf" {{#if (eq system.class "Elf")}}selected{{/if}}>Elf</option>
-        <option value="Fighter" {{#if (eq system.class "Fighter")}}selected{{/if}}>Fighter</option>
-        <option value="Gnome" {{#if (eq system.class "Gnome")}}selected{{/if}}>Gnome</option>
-        <option value="Half-Elf" {{#if (eq system.class "Half-Elf")}}selected{{/if}}>Half-Elf</option>
-        <option value="Half-Orc" {{#if (eq system.class "Half-Orc")}}selected{{/if}}>Half-Orc</option>
-        <option value="Hobbit" {{#if (eq system.class "Hobbit")}}selected{{/if}}>Hobbit</option>
-        <option value="Illusionist" {{#if (eq system.class "Illusionist")}}selected{{/if}}>Illusionist</option>
-        <option value="Knight" {{#if (eq system.class "Knight")}}selected{{/if}}>Knight</option>
-        <option value="Mage" {{#if (eq system.class "Mage")}}selected{{/if}}>Mage</option>
-        <option value="Magic-User" {{#if (eq system.class "Magic-User")}}selected{{/if}}>Magic-User</option>
-        <option value="Paladin" {{#if (eq system.class "Paladin")}}selected{{/if}}>Paladin</option>
-        <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
-        <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
-        <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
-      </select>
+      {{#if isGM}}
+        <select class="char-class cs-class-select" id="char-class" name="system.class">
+          <option value="" {{#unless system.class}}selected{{/unless}}></option>
+          <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
+          <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
+          <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
+          <option value="Beast Master" {{#if (eq system.class "Beast Master")}}selected{{/if}}>Beast Master</option>
+          <option value="Cleric" {{#if (eq system.class "Cleric")}}selected{{/if}}>Cleric</option>
+          <option value="Druid" {{#if (eq system.class "Druid")}}selected{{/if}}>Druid</option>
+          <option value="Dwarf" {{#if (eq system.class "Dwarf")}}selected{{/if}}>Dwarf</option>
+          <option value="Elf" {{#if (eq system.class "Elf")}}selected{{/if}}>Elf</option>
+          <option value="Fighter" {{#if (eq system.class "Fighter")}}selected{{/if}}>Fighter</option>
+          <option value="Gnome" {{#if (eq system.class "Gnome")}}selected{{/if}}>Gnome</option>
+          <option value="Half-Elf" {{#if (eq system.class "Half-Elf")}}selected{{/if}}>Half-Elf</option>
+          <option value="Half-Orc" {{#if (eq system.class "Half-Orc")}}selected{{/if}}>Half-Orc</option>
+          <option value="Hobbit" {{#if (eq system.class "Hobbit")}}selected{{/if}}>Hobbit</option>
+          <option value="Illusionist" {{#if (eq system.class "Illusionist")}}selected{{/if}}>Illusionist</option>
+          <option value="Knight" {{#if (eq system.class "Knight")}}selected{{/if}}>Knight</option>
+          <option value="Mage" {{#if (eq system.class "Mage")}}selected{{/if}}>Mage</option>
+          <option value="Magic-User" {{#if (eq system.class "Magic-User")}}selected{{/if}}>Magic-User</option>
+          <option value="Paladin" {{#if (eq system.class "Paladin")}}selected{{/if}}>Paladin</option>
+          <option value="Ranger" {{#if (eq system.class "Ranger")}}selected{{/if}}>Ranger</option>
+          <option value="Thief" {{#if (eq system.class "Thief")}}selected{{/if}}>Thief</option>
+          <option value="Warden" {{#if (eq system.class "Warden")}}selected{{/if}}>Warden</option>
+        </select>
+      {{else}}
+        <span class="cs-class-select cs-field-static">{{system.class}}</span>
+      {{/if}}
     </div>
   </div>
 
@@ -2559,26 +2564,36 @@
     <input type="hidden" name="system.alignmentPosition.y" value="{{system.alignmentPosition.y}}" />
     <input type="hidden" name="system.alignmentPosition.zIndex" value="{{system.alignmentPosition.zIndex}}" />
     <div class="cs-char-field-group">
-  <select class="char-align cs-alignment-select" id="char-align" name="system.alignment">
-        <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
-        <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
-        <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
-      </select>
+      {{#if isGM}}
+        <select class="char-align cs-alignment-select" id="char-align" name="system.alignment">
+          <option value="" {{#unless system.alignment}}selected{{/unless}}></option>
+          <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
+          <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
+          <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
+        </select>
+      {{else}}
+        <span class="cs-alignment-select cs-field-static">{{system.alignment}}</span>
+      {{/if}}
     </div>
   </div>
 
   <!-- Character Race - Positioned next to existing fields -->
   <div class="race-group cs-abs cs-pos-race" id="race-container">
     <div class="cs-char-field-group">
-      <select class="char-race cs-race-select" id="char-race" name="system.race">
-        <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
-        <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
-        <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
-        <option value="Half-Elf" {{#if (eq system.race "Half-Elf")}}selected{{/if}}>Half-Elf</option>
-        <option value="Half-Orc" {{#if (eq system.race "Half-Orc")}}selected{{/if}}>Half-Orc</option>
-        <option value="Hobbit" {{#if (eq system.race "Hobbit")}}selected{{/if}}>Hobbit</option>
-        <option value="Human" {{#if (eq system.race "Human")}}selected{{/if}}>Human</option>
-      </select>
+      {{#if isGM}}
+        <select class="char-race cs-race-select" id="char-race" name="system.race">
+          <option value="" {{#unless system.race}}selected{{/unless}}></option>
+          <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
+          <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
+          <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
+          <option value="Half-Elf" {{#if (eq system.race "Half-Elf")}}selected{{/if}}>Half-Elf</option>
+          <option value="Half-Orc" {{#if (eq system.race "Half-Orc")}}selected{{/if}}>Half-Orc</option>
+          <option value="Hobbit" {{#if (eq system.race "Hobbit")}}selected{{/if}}>Hobbit</option>
+          <option value="Human" {{#if (eq system.race "Human")}}selected{{/if}}>Human</option>
+        </select>
+      {{else}}
+        <span class="cs-race-select cs-field-static">{{system.race}}</span>
+      {{/if}}
     </div>
   </div>
 
@@ -2592,6 +2607,7 @@
   <div class="sex-group cs-abs cs-pos-sex" id="sex-container">
     <div class="cs-char-field-group">
       <select class="char-sex cs-sex-field" id="char-sex" name="system.sex">
+        <option value="" {{#unless system.sex}}selected{{/unless}}></option>
         <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
         <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>F</option>
         <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>O</option>
@@ -2616,6 +2632,7 @@
   <!-- Background field -->
   <div class="background-group cs-abs cs-pos-background" id="background-container">
     <div class="char-field-group cs-char-field-group">
+      {{#if isGM}}
       <select class="char-background cs-background-select" id="char-background" name="system.background">
  <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
                   <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
@@ -2719,6 +2736,9 @@
                   <option value="Winemaker" {{#if (eq system.background "Winemaker")}}selected{{/if}}>Winemaker</option>
                   <option value="Woodcutter" {{#if (eq system.background "Woodcutter")}}selected{{/if}}>Woodcutter</option>
       </select>
+      {{else}}
+        <span class="cs-background-select cs-field-static">{{system.background}}</span>
+      {{/if}}
     </div>
   </div>
 
@@ -2761,56 +2781,80 @@
 
               <!-- STR Ability Score -->
               <div class="ability cs-ability cs-abs">
-                <select class="attr-str cs-ability-select" id="attr-str" name="system.attributes.str.value">
-                  {{#each (range 3 18) as |val|}}
-                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
-                  {{/each}}
-                </select>
+                {{#if isGM}}
+                  <select class="attr-str cs-ability-select" id="attr-str" name="system.attributes.str.value">
+                    {{#each (range 3 18) as |val|}}
+                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
+                    {{/each}}
+                  </select>
+                {{else}}
+                  <span class="cs-ability-static">{{system.attributes.str.value}}</span>
+                {{/if}}
               </div>
 
               <!-- DEX Ability Score -->
               <div class="ability cs-ability cs-abs">
-                <select class="attr-dex cs-ability-select" id="attr-dex" name="system.attributes.dex.value">
-                  {{#each (range 3 18) as |val|}}
-                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
-                  {{/each}}
-                </select>
+                {{#if isGM}}
+                  <select class="attr-dex cs-ability-select" id="attr-dex" name="system.attributes.dex.value">
+                    {{#each (range 3 18) as |val|}}
+                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
+                    {{/each}}
+                  </select>
+                {{else}}
+                  <span class="cs-ability-static">{{system.attributes.dex.value}}</span>
+                {{/if}}
               </div>
 
               <!-- CON Ability Score -->
               <div class="ability cs-ability cs-abs">
-                <select class="attr-con cs-ability-select" id="attr-con" name="system.attributes.con.value">
-                  {{#each (range 3 18) as |val|}}
-                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
-                  {{/each}}
-                </select>
+                {{#if isGM}}
+                  <select class="attr-con cs-ability-select" id="attr-con" name="system.attributes.con.value">
+                    {{#each (range 3 18) as |val|}}
+                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
+                    {{/each}}
+                  </select>
+                {{else}}
+                  <span class="cs-ability-static">{{system.attributes.con.value}}</span>
+                {{/if}}
               </div>
 
               <!-- INT Ability Score -->
               <div class="ability cs-ability cs-abs">
-                <select class="attr-int cs-ability-select" id="attr-int" name="system.attributes.int.value">
-                  {{#each (range 3 18) as |val|}}
-                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
-                  {{/each}}
-                </select>
+                {{#if isGM}}
+                  <select class="attr-int cs-ability-select" id="attr-int" name="system.attributes.int.value">
+                    {{#each (range 3 18) as |val|}}
+                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
+                    {{/each}}
+                  </select>
+                {{else}}
+                  <span class="cs-ability-static">{{system.attributes.int.value}}</span>
+                {{/if}}
               </div>
 
               <!-- WIS Ability Score -->
               <div class="ability cs-ability cs-abs">
-                <select class="attr-wis cs-ability-select" id="attr-wis" name="system.attributes.wis.value">
-                  {{#each (range 3 18) as |val|}}
-                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
-                  {{/each}}
-                </select>
+                {{#if isGM}}
+                  <select class="attr-wis cs-ability-select" id="attr-wis" name="system.attributes.wis.value">
+                    {{#each (range 3 18) as |val|}}
+                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
+                    {{/each}}
+                  </select>
+                {{else}}
+                  <span class="cs-ability-static">{{system.attributes.wis.value}}</span>
+                {{/if}}
               </div>
 
               <!-- CHA Ability Score -->
               <div class="ability cs-ability cs-abs">
-                <select class="attr-cha cs-ability-select" id="attr-cha" name="system.attributes.cha.value">
-                  {{#each (range 3 18) as |val|}}
-                    <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
-                  {{/each}}
-                </select>
+                {{#if isGM}}
+                  <select class="attr-cha cs-ability-select" id="attr-cha" name="system.attributes.cha.value">
+                    {{#each (range 3 18) as |val|}}
+                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
+                    {{/each}}
+                  </select>
+                {{else}}
+                  <span class="cs-ability-static">{{system.attributes.cha.value}}</span>
+                {{/if}}
               </div>
 
             </div>

@@ -48,6 +48,9 @@ import OspCombatTracker from "./module/combat/combat-tracker.js";
 // DM Toolkit sidebar tab
 import DmToolkitTab from "./module/sidebar/dm-toolkit.js";
 
+// Character creation dialog (4d6 drop lowest ability rolls)
+import { CharacterCreationDialog } from "./module/actor/character-creation-dialog.js";
+
 // Token ruler
 import { TokenRulerOSP } from "./module/actor/token-ruler.js";
 
@@ -159,6 +162,41 @@ Hooks.once("init", () => {
     });
   });
 
+  // ── Character creation: roll 4d6-drop-lowest for ability scores ──────────
+  Hooks.on("preCreateActor", (document, data, options, userId) => {
+    if (options.osprSkipDialog) return;
+    if (document.type !== "character") return;
+    if (game.userId !== userId) return;
+
+    const attrs = document.system?.attributes;
+    const keys = ['str', 'int', 'wis', 'dex', 'con', 'cha'];
+    const hasScores = attrs && keys.some(k => Number(attrs[k]?.value) > 0);
+    if (hasScores) return;
+
+    const sourceData = document.toObject();
+    delete sourceData._id;
+
+    (async () => {
+      const result = await CharacterCreationDialog.prompt();
+      if (!result) return;
+      const newData = foundry.utils.mergeObject(
+        sourceData,
+        {
+          system: {
+            attributes: result.attributes,
+            race:        result.race        || '',
+            class:       result.class       || '',
+            alignment:   result.alignment   || '',
+            background:  result.background  || ''
+          }
+        },
+        { inplace: false }
+      );
+      await Actor.create(newData, { osprSkipDialog: true, renderSheet: true });
+    })();
+
+    return false;
+  });
 
 });
 

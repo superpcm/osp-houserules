@@ -1026,27 +1026,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   initializeBioFieldAutoResize(html) {
-    const bioFields = html.find('.bio-text-field');
-
-    const autoResize = (textarea) => {
-      textarea.style.height = 'auto';
-      textarea.style.height = textarea.scrollHeight + 'px';
-    };
-
-    const resizeAll = () => bioFields.each((_, field) => autoResize(field));
-
-    // Resize as user types
-    bioFields.on('input', function() { autoResize(this); });
-
-    // Initial resize: wait until the bio tab is visible so scrollHeight is non-zero.
-    // setupTabSystem runs after this method, so we defer until the next frame after
-    // tab activation has had a chance to run.
-    setTimeout(resizeAll, 150);
-
-    // Also resize whenever the bio tab is activated (tab click or default open)
-    html.find('.sheet-tabs a[data-tab="bio"]').on('click', () => {
-      requestAnimationFrame(resizeAll);
-    });
+    // Bio textareas are fixed-height with internal scrolling — no auto-resize.
 
     // Recompute skill-input positions when the Skills tab is opened; the tab
     // may have been hidden (display: none) when the SVG first injected, in

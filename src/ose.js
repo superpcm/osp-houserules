@@ -179,9 +179,12 @@ Hooks.once("init", () => {
     (async () => {
       const result = await CharacterCreationDialog.prompt();
       if (!result) return;
+      const DEFAULT_PORTRAIT = 'systems/osp-houserules/assets/images/icons/generic-portrait.webp';
       const newData = foundry.utils.mergeObject(
         sourceData,
         {
+          img: DEFAULT_PORTRAIT,
+          prototypeToken: { texture: { src: DEFAULT_PORTRAIT } },
           system: {
             attributes: result.attributes,
             race:        result.race        || '',

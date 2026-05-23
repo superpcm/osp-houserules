@@ -2581,8 +2581,7 @@ input[type="number"] {
   top: 20px;
   left: 49px;
   width: 706px;
-  min-height: 100px;
-  max-height: none;
+  height: 100px;
   border: 1.5px solid black;
   border-radius: 5px;
   padding: 5px;
@@ -2591,7 +2590,7 @@ input[type="number"] {
   font-size: 30px;
   resize: none;
   background-color: transparent;
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
   display: block;
 }
@@ -2741,4 +2740,20 @@ input[type="number"] {
 .spell-memorize-indicator img {
   border: none;
   box-shadow: none;
+}
+
+// Generic portrait on the character sheet: always black, no adjustments.
+.portrait-img[src="systems/osp-houserules/assets/images/icons/generic-portrait.webp"] {
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+// Generic portrait thumbnails in sidebars: auto-contrast.
+// invert(1) makes it white, then difference blend produces |1 - bg|
+// so it reads dark on light backgrounds and light on dark backgrounds.
+#ui-left img[src="systems/osp-houserules/assets/images/icons/generic-portrait.webp"],
+#players img[src="systems/osp-houserules/assets/images/icons/generic-portrait.webp"],
+#sidebar img[src="systems/osp-houserules/assets/images/icons/generic-portrait.webp"] {
+  filter: invert(1);
+  mix-blend-mode: difference;
 }

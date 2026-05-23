@@ -1,5 +1,5 @@
 // ================================================================
-// Character Creation Dialog — 4d6 drop lowest ability rolls
+// Character Creation Dialog — drag-to-assign ability pool
 // ================================================================
 
 .osp-char-create {
@@ -15,6 +15,90 @@
     color: #444;
   }
 
+  // ── Pool section (Roll button + draggable chips) ───────────────
+  .cc-pool-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    margin-bottom: 4px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+  }
+
+  .cc-roll-btn {
+    flex: 0 0 auto;
+    padding: 6px 14px;
+    border: 1px solid #8fba8e;
+    border-radius: 4px;
+    background: #b5ddb4;
+    color: #1a1a1a;
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+
+    &:hover:not(:disabled) {
+      background: #9ec99d;
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+  }
+
+  .cc-pool {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 4px 6px;
+    border: 1px dashed rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.4);
+    transition: background 0.1s, border-color 0.1s;
+
+    &.cc-drag-over {
+      background: rgba(181, 221, 180, 0.5);
+      border-color: #8fba8e;
+      border-style: solid;
+    }
+  }
+
+  // ── Chip (the draggable rolled total) ──────────────────────────
+  .cc-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 30px;
+    padding: 0 10px;
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.15rem;
+    cursor: grab;
+    user-select: none;
+    transition: opacity 0.1s, transform 0.1s;
+
+    &:hover {
+      background: #333;
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &.dragging {
+      opacity: 0.4;
+      transform: scale(0.95);
+    }
+  }
+
+  // ── Ability rows ───────────────────────────────────────────────
   .char-create-row {
     display: flex;
     align-items: center;
@@ -30,47 +114,42 @@
     font-size: 1rem;
   }
 
-  .char-create-die {
+  .cc-drop-zone {
     flex: 1 1 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    cursor: pointer;
-    padding: 5px 8px;
-    border: 1px solid rgba(0, 0, 0, 0.35);
+    min-height: 36px;
+    padding: 2px 4px;
+    border: 1px dashed rgba(0, 0, 0, 0.3);
     border-radius: 4px;
-    background: #4a4a4a;
-    color: #fff;
-    transition: background 0.15s;
+    background: rgba(255, 255, 255, 0.3);
+    transition: background 0.1s, border-color 0.1s;
 
-    i {
-      font-size: 1.25rem;
+    &:has(.cc-chip) {
+      border-style: solid;
+      background: rgba(255, 255, 255, 0.55);
     }
 
-    &:hover:not(.rolled) {
-      background: #333;
-      border-color: #704214;
-    }
-
-    &.rolled {
-      cursor: default;
-      pointer-events: none;
-      background: #b5ddb4;
+    &.cc-drag-over {
+      background: rgba(181, 221, 180, 0.5);
       border-color: #8fba8e;
-
-      i {
-        font-size: 1.4rem;
-        color: #1a1a1a;
-      }
-
-      i.dropped {
-        opacity: 0.3;
-        color: #800000;
-      }
+      border-style: solid;
     }
   }
 
+  .cc-ability-mod {
+    flex: 0 0 36px;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #555;
+
+    &.positive { color: #1a6e1a; }
+    &.negative { color: #a02020; }
+  }
+
+  // ── Divider + detail selects ───────────────────────────────────
   .char-create-divider {
     height: 1px;
     background: rgba(0, 0, 0, 0.15);
@@ -104,14 +183,20 @@
     border-radius: 4px;
     background: #fff;
     color: #1a1a1a;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 
+  // ── Final value display (rightmost on each ability row) ────────
   .char-create-value {
     flex: 0 0 42px;
     text-align: center;
     font-weight: bold;
     font-size: 1.3rem;
-    padding: 4px 4px;
+    padding: 4px;
     border: 1px solid rgba(0, 0, 0, 0.5);
     border-radius: 3px;
     background: #1a1a1a;

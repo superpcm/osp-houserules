@@ -111,27 +111,6 @@ export class OspActorSheetCharacter extends ActorSheet {
     return (html && html.find) ? html.find(selector) : document.querySelectorAll(selector);
   }
 
-  /**
-   * Helper: Get CSS variable value from element
-   * @param {Element} element - DOM element
-   * @param {string} varName - CSS variable name (without --)
-   * @param {*} defaultValue - Default value if variable not found
-   * @returns {string|number|*} Parsed value or default
-   */
-  getCSSVariable(element, varName, defaultValue = null) {
-    try {
-      const cs = window.getComputedStyle(element);
-      const value = cs.getPropertyValue(`--${varName}`).trim();
-      if (!value) return defaultValue;
-      
-      // Try to parse as number if it looks numeric
-      const parsed = parseFloat(value);
-      return !isNaN(parsed) ? parsed : value;
-    } catch (e) {
-      console.error(`CharacterSheet: Failed to read CSS variable --${varName}`, e);
-      return defaultValue;
-    }
-  }
 
   /**
    * Helper: Handle tab click with common preventDefault/stop logic
@@ -1061,42 +1040,6 @@ export class OspActorSheetCharacter extends ActorSheet {
       this.handleTabClick(event, html);
     });
 
-    // Ensure tabs sit below the static header by measuring header height and setting .sheet-tabs top
-    try {
-      this.setTabsTopToHeader(html);
-    } catch (e) {
-      console.error('CharacterSheet: Failed to set tabs position', e);
-    }
-
-    // Auto-calibrate offsets from current DOM positions, then apply computed tab offsets (index-based)
-    try {
-      this.autoCalibrateTabOffsets(html);
-      this.applyComputedTabOffsets(html);
-
-      // Recompute on window resize
-      this._tabResizeHandler = () => {
-        try { 
-          this.setTabsTopToHeader(html); 
-        } catch (e) {
-          console.error('CharacterSheet: Failed to set tabs position on resize', e);
-        }
-        try { 
-          this.applyComputedTabOffsets(html); 
-        } catch (e) {
-          console.error('CharacterSheet: Failed to apply tab offsets on resize', e);
-        }
-      };
-      window.addEventListener('resize', this._tabResizeHandler);
-
-      // Observe tab list changes (add/remove) and recompute
-      const tabsElement = html.find('.sheet-tabs')[0];
-      if (tabsElement && window.MutationObserver) {
-        this._tabMutationObserver = new MutationObserver(() => this.applyComputedTabOffsets(html));
-        this._tabMutationObserver.observe(tabsElement, { childList: true });
-      }
-    } catch (err) {
-      console.error('CharacterSheet: Failed to initialize tab offset system', err);
-    }
   }
 
   /**
@@ -1292,20 +1235,6 @@ export class OspActorSheetCharacter extends ActorSheet {
       this._tabTimer = null;
     }
 
-    // Remove resize listener and disconnect mutation observer
-    if (this._tabResizeHandler) {
-      window.removeEventListener('resize', this._tabResizeHandler);
-      this._tabResizeHandler = null;
-    }
-    if (this._tabMutationObserver) {
-      try { 
-        this._tabMutationObserver.disconnect(); 
-      } catch(e) {
-        console.error('CharacterSheet: Failed to disconnect mutation observer', e);
-      }
-      this._tabMutationObserver = null;
-    }
-
     // Remove any explicit close-button handler we attached
     try {
       if (this._ospCloseEl && this._ospCloseHandler) {
@@ -1335,173 +1264,6 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
 
-
-  /**
-   * Compute tab offsets based on index and apply as CSS variables.
-   * Uses data attributes as overrides: data-tab-top / data-tab-left
-   */
-  applyComputedTabOffsets(html) {
-    const tabLinks = this.getElements(html, '.sheet-tabs a.item');
-    if (!tabLinks || tabLinks.length === 0) return;
-
-    // Configuration: base offset and step (pixels)
-    // These can be overridden by CSS variables on the .sheet-tabs element:
-    // --tab-base-top, --tab-step-top, --tab-base-left, --tab-step-left
-    // Defaults (original design): large negative top offsets used previously
-    let baseTop = -215; // px for first tab (original design)
-    let stepTop = 75;   // px between tabs
-    let baseLeft = 0;   // starting left offset
-    let stepLeft = -24; // left delta per index
-
-    // If we have a tabs element, attempt to read CSS variables or data attributes
-    const tabsEl = this.getElement(html, '.sheet-tabs');
-    if (tabsEl) {
-      const unwrappedTabsEl = tabsEl.jquery ? tabsEl[0] : tabsEl;
-      
-      // Read CSS variables using helper
-      baseTop = this.getCSSVariable(unwrappedTabsEl, 'tab-base-top', baseTop);
-      stepTop = this.getCSSVariable(unwrappedTabsEl, 'tab-step-top', stepTop);
-      baseLeft = this.getCSSVariable(unwrappedTabsEl, 'tab-base-left', baseLeft);
-      stepLeft = this.getCSSVariable(unwrappedTabsEl, 'tab-step-left', stepLeft);
-
-      // Also allow data attributes on the tabs element (data attributes override CSS vars)
-      try {
-        const dBaseTop = unwrappedTabsEl.getAttribute('data-tab-base-top');
-        const dStepTop = unwrappedTabsEl.getAttribute('data-tab-step-top');
-        const dBaseLeft = unwrappedTabsEl.getAttribute('data-tab-base-left');
-        const dStepLeft = unwrappedTabsEl.getAttribute('data-tab-step-left');
-        if (dBaseTop !== null) baseTop = parseFloat(dBaseTop);
-        if (dStepTop !== null) stepTop = parseFloat(dStepTop);
-        if (dBaseLeft !== null) baseLeft = parseFloat(dBaseLeft);
-        if (dStepLeft !== null) stepLeft = parseFloat(dStepLeft);
-      } catch (e) {
-        console.error('CharacterSheet: Failed to read data attributes', e);
-      }
-    }
-
-    // For NodeList/jQuery compatibility iterate with index
-    for (let i = 0; i < tabLinks.length; i++) {
-      const el = tabLinks[i];
-      // If jQuery object is present, unwrap
-      const dom = (el.jquery) ? el[0] : el;
-      if (!dom) continue;
-
-      // Allow explicit data attributes to override computation
-      const explicitTop = dom.getAttribute('data-tab-top');
-      const explicitLeft = dom.getAttribute('data-tab-left');
-      const top = explicitTop !== null ? explicitTop : (baseTop + i * stepTop) + 'px';
-      const left = explicitLeft !== null ? explicitLeft : (baseLeft + i * stepLeft) + 'px';
-
-      try {
-        dom.style.setProperty('--tab-top', top);
-        dom.style.setProperty('--tab-left', left);
-      } catch (err) {
-        console.error('CharacterSheet: Failed to set tab CSS properties', err);
-      }
-    }
-  }
-
-  /**
-   * Measure the static header and set the .sheet-tabs top so tabs start directly below it.
-   * This keeps tab placement correct even if the header height changes.
-   */
-  setTabsTopToHeader(html) {
-    const tabsEl = this.getElement(html, '.sheet-tabs');
-    const headerEl = this.getElement(html, '.static-header');
-    const sheetBody = this.getElement(html, '.sheet-body');
-    
-    if (!tabsEl || !headerEl || !sheetBody) return;
-    
-    // Unwrap jQuery if needed
-    const unwrappedTabs = tabsEl.jquery ? tabsEl[0] : tabsEl;
-    const unwrappedHeader = headerEl.jquery ? headerEl[0] : headerEl;
-    const unwrappedBody = sheetBody.jquery ? sheetBody[0] : sheetBody;
-    
-    try {
-      const headerRect = unwrappedHeader.getBoundingClientRect();
-      const sheetRect = unwrappedBody.getBoundingClientRect();
-      // Compute top relative to the sheet container
-      // Move tabs slightly upward (5px) so they don't sit flush with the header border
-      const topPx = Math.max(0, Math.round(headerRect.bottom - sheetRect.top) - 5);
-      // Apply as a CSS custom property on .sheet-tabs (CSS will pick up via var(--tabs-top))
-      try { 
-        unwrappedTabs.style.setProperty('--tabs-top', `${topPx}px`); 
-      } catch(e) {
-        console.error('CharacterSheet: Failed to set tabs-top CSS property', e);
-      }
-    } catch (e) {
-      console.error('CharacterSheet: Failed to measure header position', e);
-    }
-  }  /**
-   * Measure current tab anchor positions and compute base/step offsets.
-   * Writes CSS variables to the .sheet-tabs element so future computations use the calibrated values.
-   */
-  autoCalibrateTabOffsets(html) {
-    // Find tab anchors
-    const tabAnchors = this.getElements(html, '.sheet-tabs a.item');
-    const tabsEl = this.getElement(html, '.sheet-tabs');
-    if (!tabAnchors || tabAnchors.length < 2 || !tabsEl) return; // need at least 2 points to compute step
-
-    const unwrappedTabsEl = tabsEl.jquery ? tabsEl[0] : tabsEl;
-
-    // If the tabs element already provides CSS variables or explicit data attributes, don't auto-calibrate
-    try {
-      const cssBaseTop = this.getCSSVariable(unwrappedTabsEl, 'tab-base-top', null);
-      const hasCssVars = cssBaseTop !== null;
-      const hasDataAttrs = unwrappedTabsEl.hasAttribute('data-tab-base-top') || 
-                          unwrappedTabsEl.hasAttribute('data-tab-step-top') || 
-                          unwrappedTabsEl.hasAttribute('data-tab-base-left') || 
-                          unwrappedTabsEl.hasAttribute('data-tab-step-left');
-      if (hasCssVars || hasDataAttrs) {
-        return;
-      }
-    } catch (e) {
-      console.error('CharacterSheet: Failed to check for existing tab configuration', e);
-    }
-
-    // Convert to DOM nodes
-    const nodes = [];
-    for (let i = 0; i < tabAnchors.length; i++) {
-      const el = tabAnchors[i];
-      nodes.push(el.jquery ? el[0] : el);
-    }
-
-    // Measure positions relative to tabsEl
-    const tabRect = unwrappedTabsEl.getBoundingClientRect();
-    const measured = nodes.map(n => {
-      const r = n.getBoundingClientRect();
-      return { top: r.top - tabRect.top, left: r.left - tabRect.left };
-    });
-
-    // Use first two anchors to compute step; fall back to differences average
-    const first = measured[0];
-    const second = measured[1];
-    const baseTop = first.top;
-    const baseLeft = first.left;
-    // Compute vertical step as average difference of subsequent items to be robust
-    let totalTopStep = 0, totalLeftStep = 0, count = 0;
-    for (let i = 1; i < measured.length; i++) {
-      totalTopStep += (measured[i].top - measured[i-1].top);
-      totalLeftStep += (measured[i].left - measured[i-1].left);
-      count++;
-    }
-    const stepTop = count > 0 ? (totalTopStep / count) : (second.top - first.top);
-    const stepLeft = count > 0 ? (totalLeftStep / count) : (second.left - first.left);
-
-    try {
-      unwrappedTabsEl.style.setProperty('--tab-base-top', `${Math.round(baseTop)}px`);
-      unwrappedTabsEl.style.setProperty('--tab-step-top', `${Math.round(stepTop)}px`);
-      unwrappedTabsEl.style.setProperty('--tab-base-left', `${Math.round(baseLeft)}px`);
-      unwrappedTabsEl.style.setProperty('--tab-step-left', `${Math.round(stepLeft)}px`);
-      // Also write data attributes for convenience
-      unwrappedTabsEl.setAttribute('data-tab-base-top', Math.round(baseTop));
-      unwrappedTabsEl.setAttribute('data-tab-step-top', Math.round(stepTop));
-      unwrappedTabsEl.setAttribute('data-tab-base-left', Math.round(baseLeft));
-      unwrappedTabsEl.setAttribute('data-tab-step-left', Math.round(stepLeft));
-    } catch (e) {
-      console.error('CharacterSheet: Failed to write tab calibration values', e);
-    }
-  }
 
   /**
    * Get required skills for a character based on class and race

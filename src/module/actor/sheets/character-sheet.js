@@ -843,7 +843,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.updateSkillLayout(html);
 
     // Handle all bio textarea changes - use both blur and change events
-    html.find('.bio-text-field').on('blur change', async (event) => {
+    html.find('.bio-text-field, .notes-tab-field').on('blur change', async (event) => {
       const fieldName = event.target.name;
       const value = event.target.value;
       await this.actor.update({ [fieldName]: value });

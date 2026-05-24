@@ -20,6 +20,11 @@
   margin: 0;
   box-sizing: border-box;
   overflow: visible;
+
+  /* Vertical step between tabs — read by applyComputedTabOffsets() in
+     character-sheet.js. Must roughly match the tab height (minus desired
+     overlap) so each tab is fully visible. */
+  --tab-step-top: 100px;
 }
 
 /* Remove Foundry's default tab borders from all sheet apps */
@@ -33,7 +38,8 @@ body.game .sheet.app nav.sheet-tabs {
 .cs-tabs a.item {
   position: relative;
   width: 24px;
-  height: 75px;
+  height: 110px !important;
+  flex: 0 0 110px !important;
   display: flex;
   align-items: center;
   justify-content: center;

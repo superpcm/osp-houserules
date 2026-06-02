@@ -2867,7 +2867,7 @@
         <label class="bio-field-label">Appearance & Personality</label>
         <textarea class="bio-text-field" name="system.details.appearance" data-dtype="String" placeholder="Enter character appearance & personality...">{{system.details.appearance}}</textarea>
 
-        <label class="bio-field-label">Goals & Motivations</label>
+        <label class="bio-field-label bio-field-label-4">Goals & Motivations</label>
         <textarea class="bio-text-field bio-text-field-4" name="system.details.goals" data-dtype="String" placeholder="Enter character goals & motivations...">{{system.details.goals}}</textarea>
         </div>
       </div>
@@ -2875,14 +2875,14 @@
       <!-- Background Tab -->
       <div class="tab" data-group="primary" data-tab="background">
         <div class="notes-tab-content">
-          <textarea class="notes-tab-field" name="system.details.background" data-dtype="String" placeholder="Background & history...">{{system.details.background}}</textarea>
+          {{editor enrichedBackground target="system.details.background" editable=editable button=false engine="prosemirror"}}
         </div>
       </div>
 
       <!-- Notes Tab -->
       <div class="tab" data-group="primary" data-tab="notes">
         <div class="notes-tab-content">
-          <textarea class="notes-tab-field" name="system.tabNotes" data-dtype="String" placeholder="Notes...">{{system.tabNotes}}</textarea>
+          {{editor enrichedNotes target="system.tabNotes" editable=editable button=false engine="prosemirror"}}
         </div>
       </div>
 

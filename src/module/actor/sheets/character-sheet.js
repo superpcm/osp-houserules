@@ -163,6 +163,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.system = this.actor.system;
     context.isGM = game.user.isGM;
 
+    context.enrichedBackground = await TextEditor.enrichHTML(context.system.details?.background || '', { async: true, relativeTo: this.actor });
+    context.enrichedNotes = await TextEditor.enrichHTML(context.system.tabNotes || '', { async: true, relativeTo: this.actor });
+
     // Initialize position and portrait data if missing
     if (!context.system.levelPosition) {
       context.system.levelPosition = { x: 0, y: 0, zIndex: 0 };
@@ -822,10 +825,19 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.updateSkillLayout(html);
 
     // Handle all bio textarea changes - use both blur and change events
-    html.find('.bio-text-field, .notes-tab-field').on('blur change', async (event) => {
+    html.find('.bio-text-field').on('blur change', async (event) => {
       const fieldName = event.target.name;
       const value = event.target.value;
       await this.actor.update({ [fieldName]: value });
+    });
+
+    // Save ProseMirror editors when focus leaves the editor container
+    html.find('div.editor[data-edit]').on('focusout', (event) => {
+      const editorDiv = event.currentTarget;
+      const name = editorDiv.dataset.edit;
+      if (!editorDiv.contains(event.relatedTarget) && this.editors[name]?.instance) {
+        this.saveEditor(name, { remove: false });
+      }
     });
 
     // Set encumbrance bar widths - each bar shows its portion relative to its section

@@ -2479,7 +2479,7 @@ input[type="number"] {
   position: relative;
   background-color: transparent;
   height: 810px !important;
-  margin: 20px 0 0 0;
+  margin: 0;
   overflow: hidden;
   flex-direction: column;
 }
@@ -2510,7 +2510,7 @@ input[type="number"] {
 
 /* Ability scores image between basics and text fields */
 .tab[data-tab="bio"] .bio-abilities-image {
-  margin-top: 288px; /* 268px static header + 20px gap */
+  margin-top: 283px; /* 268px static header + 15px gap */
   display: block;
   width: 800px;
 
@@ -2557,7 +2557,7 @@ input[type="number"] {
 
 /* Push bio text fields below the portrait/basics area */
 .tab[data-tab="bio"] .bio-content-area {
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 /* Bio field label styling */
@@ -2581,7 +2581,7 @@ input[type="number"] {
   top: 20px;
   left: 49px;
   width: 706px;
-  height: 100px;
+  height: 120px;
   border: none;
   border-radius: 0;
   padding: 5px;
@@ -2593,10 +2593,18 @@ input[type="number"] {
   background-image: url('/systems/osp-houserules/assets/character-sheet/traits-box.webp');
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 706px 100px;
+  background-size: 706px 120px;
   overflow-y: auto;
   overflow-x: hidden;
   display: block;
+}
+
+/* Goals & Motivations — shifted 15px lower than base */
+.tab[data-tab="bio"] .bio-field-label-4 {
+  top: 38px;
+}
+.bio-text-field-4 {
+  top: 35px;
 }
 
 /* ============================
@@ -2746,8 +2754,9 @@ input[type="number"] {
   box-shadow: none;
 }
 
-// ── Notes Tab ──────────────────────────────────────────────────────────────
-.tab[data-tab="notes"] {
+// ── Background & Notes Tabs ─────────────────────────────────────────────────
+.tab[data-tab="notes"],
+.tab[data-tab="background"] {
   position: relative;
   width: 100%;
   height: 100%;
@@ -2755,30 +2764,53 @@ input[type="number"] {
 
 .notes-tab-content {
   position: absolute;
-  inset: 10px;
+  inset: 10px 40px;
   display: flex;
   flex-direction: column;
-}
 
-.notes-tab-field {
-  flex: 1 1 auto;
-  width: 100%;
-  height: 100%;
-  resize: none;
-  border: 1.5px solid rgba(0, 0, 0, 0.4);
-  border-radius: 4px;
-  padding: 8px;
-  box-sizing: border-box;
-  font-family: inherit;
-  font-size: 1rem;
-  background: rgba(255, 255, 255, 0.25);
-  color: inherit;
-  overflow-y: auto;
+  // Override the CSS variable Foundry uses for the menu toolbar background
+  --color-cool-4: transparent;
+  --menu-background: transparent;
 
-  &:focus {
-    outline: none;
-    border-color: rgba(0, 0, 0, 0.65);
-    background: rgba(255, 255, 255, 0.4);
+  // Nuclear reset: every element inside the content area is transparent
+  * {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  // ProseMirror editor wrapper
+  .editor {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: none !important;
+    overflow: hidden;
+  }
+
+  // Keep content area full-width; only the toolbar gets centered
+  .editor-container {
+    width: 100%;
+  }
+
+  menu {
+    align-self: center;
+  }
+
+  // Container that holds the absolutely-positioned content div
+  .editor-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    position: relative;
+  }
+
+  // ProseMirror editable content area (position: absolute; inset: 0 per Foundry)
+  .editor-content {
+    color: inherit;
+    font-family: inherit;
+    font-size: 1rem;
   }
 }
 

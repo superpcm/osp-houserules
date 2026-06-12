@@ -1,4 +1,13 @@
 export class OspItem extends Item {
+  /** @override — all players can view (observe) any item in the world directory */
+  testUserPermission(user, permission, { exact = false } = {}) {
+    const level = typeof permission === "string"
+      ? CONST.DOCUMENT_OWNERSHIP_LEVELS[permission]
+      : permission;
+    if (level <= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER) return true;
+    return super.testUserPermission(user, permission, { exact });
+  }
+
   /** @override */
   prepareData() {
     super.prepareData();

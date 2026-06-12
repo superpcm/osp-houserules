@@ -872,7 +872,7 @@ export class ItemHandler {
    * @returns {{ ok: boolean, reason?: string }}
    */
   _checkBeltConstraints(item, lashedAttachments) {
-    const SCABBARD_NAMES = new Set(['Scabbard, Small', 'Sword Frog']);
+    const SCABBARD_NAMES = new Set(['Scabbard, Dagger', 'Sword Frog']);
     const BULKY_NAMES    = new Set(['Sword Frog']);
 
     const isScabbard = SCABBARD_NAMES.has(item.name);
@@ -1144,9 +1144,8 @@ export class ItemHandler {
   /**
    * Returns whether a scabbard can accept the given weapon by name.
    * Uses allowedNames if populated; otherwise falls back to hardcoded defaults:
-   *   Scabbard, Small  → Shortsword, Dagger
-   *   Scabbard, Large  → Bastard Sword, Broadsword, Khopesh, Longsword
-   *   Scabbard, Back   → Zweihander
+   *   Scabbard, Dagger → Dagger, Misericorde
+   *   Scabbard, Sword  → Longsword, Broadsword, Bastard Sword, Khopesh, Shortsword
    * @param {Item} scabbard
    * @param {string} weaponName
    * @returns {boolean}
@@ -1168,10 +1167,11 @@ export class ItemHandler {
 
     // Hardcoded fallback for legacy items
     const defaults = {
-      'Scabbard, Small': ['Dagger', 'Misericorde', 'Shortsword'],
-      'Sword Frog':      ['Shortsword', 'Bastard Sword', 'Broadsword', 'Khopesh', 'Longsword'],
-      'Baldric':         ['Zweihander', 'Greatsword'],
-      'Axe Sling':       ['Battle Axe', 'Battle Axe, 2-Handed']
+      'Scabbard, Dagger': ['Dagger', 'Misericorde'],
+      'Scabbard, Sword':  ['Longsword', 'Broadsword', 'Bastard Sword', 'Khopesh', 'Shortsword'],
+      'Sword Frog':       ['Scabbard, Sword'],
+      'Baldric':          ['Zweihander', 'Greatsword'],
+      'Axe Sling':        ['Battle Axe', 'Battle Axe, 2-Handed']
     };
     return (defaults[scabbard.name] || []).includes(weaponName);
   }
@@ -1182,7 +1182,7 @@ export class ItemHandler {
    * @returns {Item|null}
    */
   _findEmptyScabbardForWeapon(weapon) {
-    const carrierNames = ['Scabbard, Small', 'Sword Frog', 'Baldric', 'Axe Sling'];
+    const carrierNames = ['Scabbard, Dagger', 'Scabbard, Sword', 'Sword Frog', 'Baldric', 'Axe Sling'];
     return this.actor.items.find(i => {
       if (i.type !== 'container') return false;
       if (!carrierNames.includes(i.name)) return false;
@@ -1518,7 +1518,7 @@ export class ItemHandler {
     const swapTargets = this.actor.items
       .filter(i => {
         if (i.type !== 'container') return false;
-        if (!['Scabbard, Small', 'Sword Frog', 'Baldric'].includes(i.name)) return false;
+        if (!['Scabbard, Dagger', 'Scabbard, Sword', 'Sword Frog', 'Baldric'].includes(i.name)) return false;
         if (!this._scabbardAcceptsWeapon(i, sword.name)) return false;
         return this.actor.items.some(w => w.type === 'weapon' && w.system.containerId === i.id);
       })

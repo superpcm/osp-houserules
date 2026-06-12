@@ -135,7 +135,25 @@ export class OspActorSheetCharacter extends ActorSheet {
       height: 835, // 800px content area + ~35px title bar
       resizable: false,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }],
+      submitOnClose: true,
     });
+  }
+
+  /**
+   * Override ProseMirror plugin config so every save path uses preventRender,
+   * keeping the editor alive through font/formatting changes.
+   */
+  _configureProseMirrorPlugins(name, { remove = true } = {}) {
+    const save = () => this.saveEditor(name, { remove, preventRender: true });
+    return {
+      menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
+        destroyOnSave: remove,
+        onSave: save,
+      }),
+      keyMaps: ProseMirror.ProseMirrorKeyMaps.build(ProseMirror.defaultSchema, {
+        onSave: save,
+      }),
+    };
   }
 
   _getHeaderButtons() {
@@ -285,6 +303,22 @@ export class OspActorSheetCharacter extends ActorSheet {
           c.slotCost = c.system.slotCost || 1;
           // Always (re)assign storedWeapon/storedItem so stale values from prior renders are cleared
           const storedWeapon = allWeapons.find(w => w.system.containerId === c.id) ?? null;
+          // Sub-containers stored inside this attachment (e.g. Scabbard, Sword inside Sword Frog)
+          c.subContainers = allContainers.filter(sc => sc.system.containerId === c.id).map(sub => {
+            const swt2 = parseFloat(sub.system.unitWeight || sub.system.weight) || 0;
+            sub.unitWeight = Math.round(swt2 * 10) / 10;
+            sub.displayWeight = Math.round(swt2 * (sub.system.quantity || 1) * 10) / 10;
+            sub.itemId = sub.id;
+            const subWeapon = allWeapons.find(w => w.system.containerId === sub.id) ?? null;
+            if (subWeapon) {
+              const wt2 = parseFloat(subWeapon.system.unitWeight || subWeapon.system.weight) || 0;
+              subWeapon.unitWeight = Math.round(wt2 * 10) / 10;
+              subWeapon.displayWeight = Math.round(wt2 * (subWeapon.system.quantity || 1) * 10) / 10;
+              subWeapon.itemId = subWeapon.id;
+            }
+            sub.storedWeapon = subWeapon;
+            return sub;
+          });
           if (storedWeapon) {
             const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
             storedWeapon.unitWeight = Math.round(swt * 10) / 10;
@@ -292,9 +326,18 @@ export class OspActorSheetCharacter extends ActorSheet {
             storedWeapon.itemId = storedWeapon.id;
           }
           c.storedWeapon = storedWeapon;
-          const storedItems = !storedWeapon
+          const isStackableWeapon = (i) => {
+            const tags = i.system.tags || [];
+            return i.type === 'weapon' &&
+              (tags.includes('consumable') || (tags.includes('missile') && tags.includes('reload')));
+          };
+          // For capacity containers (pouches etc.) include stackable weapons alongside items.
+          // For non-capacity containers (scabbards) keep the storedWeapon-exclusive pattern.
+          const hasCapacity = (parseFloat(c.system.capacity) || 0) > 0;
+          const storedItems = (hasCapacity || !storedWeapon)
             ? this.actor.items.filter(i =>
-                (i.type === 'item' || i.type === 'ammunition' || i.type === 'coin') && i.system.containerId === c.id
+                i.system.containerId === c.id &&
+                (i.type === 'item' || i.type === 'ammunition' || i.type === 'coin' || isStackableWeapon(i))
               ).map(i => {
                 const sit = parseFloat(i.system.unitWeight || i.system.weight) || 0;
                 i.unitWeight = Math.round(sit * 10) / 10;
@@ -305,9 +348,11 @@ export class OspActorSheetCharacter extends ActorSheet {
             : [];
           c.storedItems = storedItems;
           c.storedItem = storedItems[0] || null;
-          c.hasContents = !!(c.storedWeapon || storedItems.length > 0);
+          c.hasContents = !!(c.storedWeapon || storedItems.length > 0 || c.subContainers.length > 0);
           const storedContentWeight = (c.storedWeapon?.displayWeight || 0)
-            + storedItems.reduce((sum, i) => sum + (i.displayWeight || 0), 0);
+            + storedItems.reduce((sum, i) => sum + (i.displayWeight || 0), 0)
+            + c.subContainers.reduce((sum, sub) =>
+                sum + (sub.displayWeight || 0) + (sub.storedWeapon?.displayWeight || 0), 0);
           c.totalWeight = Math.round((c.displayWeight + storedContentWeight) * 10) / 10;
           c.storageCollapsed = c.hasContents
             ? (this.actor.getFlag('osp-houserules', `attachment-${c.id}-collapsed`) ?? true)
@@ -367,6 +412,24 @@ export class OspActorSheetCharacter extends ActorSheet {
         item.slingCapacityPercentage = item.hasStoredContent ? 100 : 0;
         item.storageCollapsed = this.actor.getFlag('osp-houserules', `sling-${item.id}-collapsed`) ?? true;
       }
+
+      // For slung containers (e.g. quiver), collect contained ammunition for display
+      if (item.type === 'container') {
+        const containedAmmo = allAmmunition.filter(a => a.system.containerId === item.id);
+        if (containedAmmo.length > 0) {
+          containedAmmo.forEach(ammo => {
+            const awt = parseFloat(ammo.system.unitWeight || ammo.system.weight) || 0;
+            ammo.unitWeight = Math.round(awt * 10) / 10;
+            ammo.displayWeight = Math.round(awt * (ammo.system.quantity || 1) * 10) / 10;
+            ammo.itemId = ammo.id;
+          });
+          item.containedAmmunition = containedAmmo;
+          item.hasStoredContent = true;
+          item.storageCollapsed = item.storageCollapsed ??
+            (this.actor.getFlag('osp-houserules', `sling-${item.id}-collapsed`) ?? true);
+        }
+      }
+
       return item;
     });
     const slungItemIds = new Set(slungItems.map(i => i.id));
@@ -479,7 +542,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
       
       containerData.maxCapacity = maxCapacity;
-      containerData.remainingCapacity = Math.max(0, containerData.maxCapacity - containerData.usedCapacity);
+      containerData.remainingCapacity = Math.round(Math.max(0, containerData.maxCapacity - containerData.usedCapacity) * 100) / 100;
       containerData.capacityPercentage = containerData.maxCapacity > 0 
         ? Math.min(100, (containerData.usedCapacity / containerData.maxCapacity) * 100) 
         : 0;
@@ -836,7 +899,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       const editorDiv = event.currentTarget;
       const name = editorDiv.dataset.edit;
       if (!editorDiv.contains(event.relatedTarget) && this.editors[name]?.instance) {
-        this.saveEditor(name, { remove: false });
+        // preventRender: true stops the actor update from triggering a sheet re-render,
+        // which would destroy the ProseMirror instance mid-interaction (e.g. while the
+        // font dropdown is open) and lose any pending formatting changes.
+        this.saveEditor(name, { remove: false, preventRender: true });
       }
     });
 
@@ -2113,11 +2179,22 @@ export class OspActorSheetCharacter extends ActorSheet {
       const trigger = e.trigger
         ? `<span class="skill-ability-trigger">${escape(e.trigger)}.</span> `
         : '';
-      return `<div class="skill-ability-entry">` +
-        `<div class="skill-ability-name">${escape(e.name)}${tag}</div>` +
+      return `<div class="skill-ability-entry skill-ability-collapsed">` +
+        `<div class="skill-ability-name skill-ability-toggle">` +
+        `<span class="skill-ability-caret">&#9654;</span>${escape(e.name)}${tag}</div>` +
         `<div class="skill-ability-effect">${trigger}${escape(e.effect || '')}</div>` +
         `</div>`;
     }).join('');
+
+    // Toggle expand/collapse on name click
+    el.addEventListener('click', (event) => {
+      const toggle = event.target.closest('.skill-ability-toggle');
+      if (!toggle) return;
+      const entry = toggle.closest('.skill-ability-entry');
+      const caret = toggle.querySelector('.skill-ability-caret');
+      const collapsed = entry.classList.toggle('skill-ability-collapsed');
+      caret.innerHTML = collapsed ? '&#9654;' : '&#9660;';
+    });
   }
 
   /**
@@ -2382,18 +2459,12 @@ export class OspActorSheetCharacter extends ActorSheet {
       return this.actor.createEmbeddedDocuments('Item', [itemData]);
     }
 
-    // Swords must always be stored in a scabbard — never dropped loose
-    // (Daggers are excluded: they keep lash option and can go freely)
-    if (itemData.type === "weapon" && this._itemIsSword(itemData) && !this._itemIsDagger(itemData)) {
+    // Swords and daggers dropped on open space: auto-provision carrying equipment
+    if (itemData.type === "weapon" && this._itemIsSword(itemData)) {
       if (!targetContainer || targetContainer.type !== "container") {
-        const swordCarriers = ["Scabbard, Small", "Sword Frog", "Baldric"];
-        const hasScabbard = this.actor.items.some(i => i.type === "container" && swordCarriers.includes(i.name));
-        if (hasScabbard) {
-          ui.notifications.error(`${itemData.name} must be stored in a Scabbard. Drag it onto a Scabbard.`);
-        } else {
-          ui.notifications.error(`${itemData.name} requires a Scabbard. Add a Scabbard to your gear first.`);
-        }
-        return false;
+        const provisioned = await this._autoProvisionSwordCarrier(item, itemData);
+        if (!provisioned) return false;
+        targetContainer = provisioned;
       }
     }
 
@@ -2767,6 +2838,13 @@ export class OspActorSheetCharacter extends ActorSheet {
       const check3 = this._isItemAllowedInContainer(itemData, targetContainer);
       if (!check3.allowed) { ui.notifications.error(check3.reason); return false; }
 
+      // Stackable thrown weapons (consumable splash weapons, darts) use the quantity dialog
+      const tags = itemData.system.tags || [];
+      if (itemData.type === 'weapon' &&
+          (tags.includes('consumable') || (tags.includes('missile') && tags.includes('reload')))) {
+        return this._handleAmmunitionDrop(item, itemData, targetContainer, isReordering);
+      }
+
       const alreadyInContainer3 = isReordering && itemData.system.containerId === targetContainer.id;
       if (!alreadyInContainer3 && !this._skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
         const totalRequired = this._getEffectiveDropSize(itemData);
@@ -2993,6 +3071,155 @@ export class OspActorSheetCharacter extends ActorSheet {
 
   _itemIsDagger(itemData) {
     return (itemData.system?.tags || []).includes('dagger');
+  }
+
+  // ── Sword carrier auto-provisioning ────────────────────────────────────────
+
+  async _autoProvisionSwordCarrier(item, itemData) {
+    const name = itemData.name;
+    if (name === 'Zweihander' || name === 'Greatsword') return this._provisionBaldric();
+    if (this._itemIsDagger(itemData)) return this._provisionBeltScabbard('Scabbard, Dagger');
+    return this._provisionSwordFrogAndScabbard();
+  }
+
+  _getEquippedBelt() {
+    return this.actor.items.find(
+      i => i.type === 'clothing' && (i.system.lashSlots || 0) > 0 && i.system.equipped
+    ) || null;
+  }
+
+  _containerIsEmpty(container) {
+    return !this.actor.items.some(i => i.system.containerId === container.id);
+  }
+
+  _getSwordCarrierTemplate(name) {
+    const templates = {
+      'Scabbard, Dagger': {
+        img: 'systems/osp-houserules/assets/thumbs/images/gear/scabbard-small_thumb.webp',
+        system: { description: '', cost: 3, unitWeight: 0.5, storedSize: 2, quantity: 1,
+          slotCost: 1, lashable: true, lashed: false, equipped: false, containerId: null,
+          tags: ['weapon-storage','scabbard'], capacity: 4, containerSize: 'small',
+          hideCapacity: true, maxItems: 1, lashSlots: 0,
+          allowedTypes: [], allowedSizes: [], allowedNames: ['Dagger','Misericorde'] }
+      },
+      'Scabbard, Sword': {
+        img: 'systems/osp-houserules/assets/thumbs/images/gear/scabbard-sword_thumb.webp',
+        system: { description: '', cost: 3, unitWeight: 0.5, storedSize: 2, quantity: 1,
+          slotCost: 0, lashable: false, lashed: false, equipped: false, containerId: null,
+          tags: ['weapon-storage','scabbard'], capacity: 4, containerSize: 'small',
+          hideCapacity: true, maxItems: 1, lashSlots: 0,
+          allowedTypes: [], allowedSizes: [],
+          allowedNames: ['Longsword','Broadsword','Bastard Sword','Khopesh','Shortsword'] }
+      },
+      'Sword Frog': {
+        img: 'systems/osp-houserules/assets/thumbs/images/gear/sword-frog_thumb.webp',
+        system: { description: '', cost: 4, unitWeight: 0.5, storedSize: 2, quantity: 1,
+          slotCost: 2, lashable: true, lashed: false, equipped: false, containerId: null,
+          tags: ['weapon-storage','scabbard','bulky'], capacity: 4, containerSize: 'small',
+          hideCapacity: true, maxItems: 1, lashSlots: 0,
+          allowedTypes: [], allowedSizes: [], allowedNames: ['Scabbard, Sword'] }
+      },
+      'Baldric': {
+        img: 'systems/osp-houserules/assets/thumbs/images/gear/baldric_thumb.webp',
+        system: { description: '', cost: 10, unitWeight: 2, storedSize: 6, quantity: 1,
+          lashable: false, lashed: false, equipped: false, containerId: null,
+          tags: ['weapon-storage','sling','slungable'], capacity: 8, containerSize: 'small',
+          hideCapacity: true, maxItems: 1, lashSlots: 0,
+          allowedTypes: [], allowedSizes: [], allowedNames: ['Zweihander','Greatsword'] }
+      },
+    };
+    return templates[name];
+  }
+
+  async _provisionBeltScabbard(scabbardName) {
+    const belt = this._getEquippedBelt();
+    if (!belt) {
+      ui.notifications.error('Cannot equip scabbard: this character does not have a belt.');
+      return null;
+    }
+    // Reuse existing empty scabbard of this type on the belt
+    const existing = this.actor.items.find(
+      i => i.name === scabbardName && i.system.containerId === belt.id && i.system.lashed && this._containerIsEmpty(i)
+    );
+    if (existing) return existing;
+
+    // Check belt capacity
+    const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
+    const tmpl = this._getSwordCarrierTemplate(scabbardName);
+    const itemHandler = this.getHandler('item');
+    const constraint = itemHandler._checkBeltConstraints({ name: scabbardName, system: tmpl.system }, lashedItems);
+    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+    if (!constraint.ok || usedSlots + (tmpl.system.slotCost || 1) > (belt.system.lashSlots || 0)) {
+      ui.notifications.error('Cannot equip scabbard: the belt is full.');
+      return null;
+    }
+    const [created] = await this.actor.createEmbeddedDocuments('Item', [{
+      name: scabbardName, type: 'container', img: tmpl.img,
+      system: { ...tmpl.system, containerId: belt.id, lashed: true }
+    }]);
+    return created;
+  }
+
+  async _provisionSwordFrogAndScabbard() {
+    const belt = this._getEquippedBelt();
+    if (!belt) {
+      ui.notifications.error('Cannot equip scabbard: this character does not have a belt.');
+      return null;
+    }
+    // Look for an existing Sword Frog on the belt with a usable (empty) Scabbard, Sword
+    const frogs = this.actor.items.filter(
+      i => i.name === 'Sword Frog' && i.system.containerId === belt.id && i.system.lashed
+    );
+    for (const frog of frogs) {
+      const scabbard = this.actor.items.find(
+        i => i.name === 'Scabbard, Sword' && i.system.containerId === frog.id
+      );
+      if (scabbard && this._containerIsEmpty(scabbard)) return scabbard;
+      if (!scabbard) {
+        // Frog present but missing its scabbard — fill it
+        const tmpl = this._getSwordCarrierTemplate('Scabbard, Sword');
+        const [created] = await this.actor.createEmbeddedDocuments('Item', [{
+          name: 'Scabbard, Sword', type: 'container', img: tmpl.img,
+          system: { ...tmpl.system, containerId: frog.id }
+        }]);
+        return created;
+      }
+    }
+    // No usable frog — check belt capacity for a new Sword Frog (slotCost 2, bulky)
+    const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
+    const frogTmpl = this._getSwordCarrierTemplate('Sword Frog');
+    const itemHandler = this.getHandler('item');
+    const constraint = itemHandler._checkBeltConstraints({ name: 'Sword Frog', system: frogTmpl.system }, lashedItems);
+    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+    if (!constraint.ok || usedSlots + 2 > (belt.system.lashSlots || 0)) {
+      ui.notifications.error('Cannot equip scabbard: the belt is full.');
+      return null;
+    }
+    const [frog] = await this.actor.createEmbeddedDocuments('Item', [{
+      name: 'Sword Frog', type: 'container', img: frogTmpl.img,
+      system: { ...frogTmpl.system, containerId: belt.id, lashed: true }
+    }]);
+    const scabbardTmpl = this._getSwordCarrierTemplate('Scabbard, Sword');
+    const [scabbard] = await this.actor.createEmbeddedDocuments('Item', [{
+      name: 'Scabbard, Sword', type: 'container', img: scabbardTmpl.img,
+      system: { ...scabbardTmpl.system, containerId: frog.id }
+    }]);
+    return scabbard;
+  }
+
+  async _provisionBaldric() {
+    // Reuse existing empty Baldric
+    const existing = this.actor.items.find(i => i.name === 'Baldric' && this._containerIsEmpty(i));
+    if (existing) {
+      if (!existing.system.equipped) await existing.update({ 'system.equipped': true });
+      return existing;
+    }
+    const tmpl = this._getSwordCarrierTemplate('Baldric');
+    const [created] = await this.actor.createEmbeddedDocuments('Item', [{
+      name: 'Baldric', type: 'container', img: tmpl.img,
+      system: { ...tmpl.system, equipped: true }
+    }]);
+    return created;
   }
 
   /**

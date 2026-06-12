@@ -531,7 +531,7 @@
     }
   },
   {
-    "name": "Scabbard, Small",
+    "name": "Scabbard, Dagger",
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/scabbard-small_thumb.webp",
     "system": {
@@ -557,6 +557,35 @@
       "allowedTypes": [],
       "allowedSizes": [],
       "allowedNames": ["Dagger", "Misericorde"]
+    }
+  },
+  {
+    "name": "Scabbard, Sword",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/scabbard-sword_thumb.webp",
+    "system": {
+      "description": "A rigid leather sheath for a standard sword, designed to sit within a sword frog attached to the belt.",
+      "cost": 3,
+      "unitWeight": 0.5,
+      "storedSize": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "lashed": false,
+      "containerId": null,
+      "slotCost": 0,
+      "tags": [
+        "weapon-storage",
+        "scabbard"
+      ],
+      "capacity": 4,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
+      "lashSlots": 0,
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": ["Longsword", "Broadsword", "Bastard Sword", "Khopesh", "Shortsword"]
     }
   },
   {
@@ -852,9 +881,9 @@
       "hideCapacity": true,
       "maxItems": 1,
       "lashSlots": 0,
-      "allowedTypes": ["sword"],
-      "allowedSizes": ["S", "M"],
-      "allowedNames": []
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": ["Scabbard, Sword"]
     }
   },
   {

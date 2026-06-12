@@ -84,6 +84,7 @@ Hooks.once("init", () => {
   CONFIG.Actor.documentClass = OspActor;
   CONFIG.Actor.label = game.i18n.localize("ose.Actor.documentLabel");
   CONFIG.Item.documentClass = OspItem;
+  CONFIG.Item.defaultOwnership = { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER };
 
   // ── Combat ────────────────────────────────────────────────────────────────
   CONFIG.Combat.documentClass = OspCombat;
@@ -211,6 +212,12 @@ Hooks.once("ready", () => {
 // ── Party system hooks ─────────────────────────────────────────────────────
 Hooks.on("renderActorDirectory", (app, html) => addPartyControl(app, html));
 Hooks.on("updateActor", (actor, data) => updatePartySheet(actor, data));
+
+// ── User Configuration — remove Pronouns field ───────────────────────────
+Hooks.on("renderUserConfig", (_app, html) => {
+  const el = html instanceof HTMLElement ? html : html[0];
+  el?.querySelector('[name="pronouns"]')?.closest('.form-group')?.remove();
+});
 
 // ── Chat hooks ────────────────────────────────────────────────────────────
 Hooks.on("getChatMessageContextOptions", addChatMessageContextOptions);

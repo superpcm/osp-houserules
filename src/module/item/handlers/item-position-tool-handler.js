@@ -54,8 +54,8 @@ export class ItemPositionToolHandler {
       const isOwner = this.item?.isOwner;
       const hasEditableClass = sheet.hasClass('editable');
       
-      // Allow positioning tool if user is GM, item owner, or in development mode
-      const canEditPositions = isGM || isOwner || hasEditableClass || game?.settings?.get('core', 'noCanvas') === true;
+      // Allow positioning tool for GMs only
+      const canEditPositions = isGM;
       
       if (!canEditPositions) {
         return;

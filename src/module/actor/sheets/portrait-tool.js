@@ -68,23 +68,47 @@ export class PortraitTool {
     portraitDisplay.addEventListener('dblclick', async (event) => {
       event.preventDefault();
       event.stopPropagation();
-      try {
-        const fp = new FilePicker({
-          type: 'image',
-          current: document.querySelector('input[name="system.portrait"]')?.value || '',
-          callback: (path) => {
-            const img = portraitDisplay.querySelector('.portrait-img, .cs-portrait-img');
-            if (img) img.src = path;
-            const input = document.querySelector('input[name="system.portrait"]');
-            if (input) {
-              input.value = path;
-              input.dispatchEvent(new Event('change', { bubbles: true }));
-            }
+
+      const applyPortrait = (path) => {
+        const img = portraitDisplay.querySelector('.portrait-img, .cs-portrait-img');
+        if (img) img.src = path;
+        const input = document.querySelector('input[name="system.portrait"]');
+        if (input) {
+          input.value = path;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      };
+
+      const canBrowse = game.user.can('FILES_BROWSE');
+
+      if (canBrowse) {
+        // GMs and users with browse permission: use the full FilePicker
+        try {
+          const fp = new FilePicker({
+            type: 'image',
+            current: document.querySelector('input[name="system.portrait"]')?.value || '',
+            callback: applyPortrait,
+          });
+          fp.render(true);
+        } catch (err) {
+          ui.notifications?.error('Failed to open file picker for portrait selection.');
+        }
+      } else {
+        // Players without browse permission: upload via a hidden file input
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.addEventListener('change', async () => {
+          const file = fileInput.files[0];
+          if (!file) return;
+          try {
+            const response = await FilePicker.upload('data', 'portraits', file, {});
+            if (response?.path) applyPortrait(response.path);
+          } catch (err) {
+            ui.notifications?.error('Failed to upload portrait image.');
           }
         });
-        fp.render(true);
-      } catch (err) {
-        ui.notifications?.error('Failed to open file picker for portrait selection.');
+        fileInput.click();
       }
     });
   }

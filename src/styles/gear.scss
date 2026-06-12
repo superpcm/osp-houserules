@@ -1926,6 +1926,76 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
+// Weapon/item row nested inside a sub-container (L3: e.g. Longsword inside Scabbard, Sword inside Sword Frog)
+// Branch line anchors at $sh-l2-img (92px) — center of the parent sub-container's image
+// Content starts at 116px (92 + 24px horizontal connector)
+.lashed-sub-stored-item {
+  position: relative;
+  padding-left: 116px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: $image-size + $item-padding-y * 2;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: $sh-l2-img;  // 92px — center of parent sub-container image
+    top: 0;
+    bottom: 50%;
+    width: $tree-line-thickness;
+    background: $tree-line-color;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: $sh-l2-img;  // 92px
+    top: 50%;
+    width: 24px;  // 116px content start − 92px line position
+    height: $tree-line-thickness;
+    background: $tree-line-color;
+    pointer-events: none;
+  }
+
+  > * {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    width: auto;
+    min-width: 0;
+  }
+
+  // Image and name indent deeper; data columns stay aligned with the L2 subheader above
+  > :nth-child(1) { left: 116px; width: $l2-col-image; }
+  > :nth-child(2) { left: $sh-l2-name + 48px; width: $l2-col-name - 48px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  > :nth-child(3) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
+  > :nth-child(4) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
+  > :nth-child(5) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
+  > :nth-child(6) { left: $sh-l2-wt;    transform: translateX(-50%); justify-content: center; }
+  > :nth-child(7) { right: 7px; left: auto; width: $l2-col-controls; justify-content: flex-end; }
+
+  .item-image {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .item-name.stored-weapon-name { font-size: $font-nested-item; }
+  .field-short { font-size: $font-nested-item; }
+
+  &.weapon-drawn {
+    .item-image { opacity: 0.5; }
+    .item-name.stored-weapon-name { font-style: italic; opacity: 0.6; }
+  }
+}
+
 // Slung Items — virtual section at character level
 .slung-section-entry {
   list-style: none;

@@ -407,7 +407,7 @@ $cs-ability-height: 79px !default;
 .skill-abilities-content {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 18px;
   padding-left: 20px;
   flex: 1;
   min-height: 0;
@@ -419,16 +419,30 @@ $cs-ability-height: 79px !default;
 .skill-ability-entry {
   break-inside: avoid;
 }
+.skill-ability-collapsed .skill-ability-effect {
+  display: none;
+}
+.skill-ability-toggle {
+  cursor: pointer;
+  user-select: none;
+}
+.skill-ability-caret {
+  flex: 0 0 auto;
+  font-size: 14px;
+  color: #704214;
+  line-height: 1;
+  margin-right: 4px;
+  vertical-align: middle;
+}
 .skill-ability-name {
   font-family: $font-cooper;
-  font-size: 24px;
+  font-size: 30px;
   font-weight: bold;
   color: #1a1a1a;
-  text-decoration: underline;
 }
 .skill-ability-tag {
   display: inline-block;
-  font-size: 9px;
+  font-size: 18px;
   font-weight: normal;
   padding: 1px 6px;
   margin-left: 6px;
@@ -452,10 +466,10 @@ $cs-ability-height: 79px !default;
 }
 .skill-ability-effect {
   font-family: $font-cooper;
-  font-size: 20px;
+  font-size: 30px;
   color: #555555;
   padding-left: 12px;
-  line-height: 1.1;
+  line-height: 0.8 !important;
 }
 
 /* Generic fallback layout (default positioning when no other conditions are met) */
@@ -2597,6 +2611,18 @@ input[type="number"] {
   overflow-y: auto;
   overflow-x: hidden;
   display: block;
+}
+
+/* Hide scrollbar for Bio tab text fields while preserving scroll behavior */
+.bio-text-field-appearance,
+.bio-text-field-goals {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bio-text-field-appearance::-webkit-scrollbar,
+.bio-text-field-goals::-webkit-scrollbar {
+  display: none;
 }
 
 /* Goals & Motivations — shifted 15px lower than base */

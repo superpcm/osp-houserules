@@ -173,6 +173,20 @@ export function getXPTable(characterClass) {
 }
 
 /**
+ * Derive level from accumulated XP and class.
+ * Returns the highest level whose XP threshold the character has met.
+ */
+export function getLevelFromXP(characterClass, xp) {
+  const xpTable = getXPTable(characterClass);
+  let level = 1;
+  for (let i = 0; i < xpTable.length; i++) {
+    if (xp >= xpTable[i]) level = i + 1;
+    else break;
+  }
+  return level;
+}
+
+/**
  * Get XP required for next level
  * @param {string} characterClass - The character class name
  * @param {number} currentLevel - Current character level

@@ -8,7 +8,8 @@ import DOMPurify from 'dompurify';
 window.DOMPurify = DOMPurify;
 
 // Import centralized configuration
-import { getNextLevelXP, calculateXPModifier } from "./config/classes.js";
+import { getNextLevelXP, calculateXPModifier, getLevelFromXP } from "./config/classes.js";
+import { SKILL_POINT_CONFIG, calcSkillPoints, showSkillPointDialog } from "./module/dialog/skill-point-dialog.js";
 import { NumberFormatter } from "./module/ui/number-formatter.js";
 import { OSP } from "./module/config.js";
 
@@ -207,11 +208,73 @@ Hooks.once("init", () => {
 // ── Position overrides ────────────────────────────────────────────────────
 Hooks.once("ready", () => {
   applyStoredPositionOverrides().catch(err => console.warn('OSP | applyStoredPositionOverrides failed:', err));
+
 });
 
 // ── Party system hooks ─────────────────────────────────────────────────────
 Hooks.on("renderActorDirectory", (app, html) => addPartyControl(app, html));
-Hooks.on("updateActor", (actor, data) => updatePartySheet(actor, data));
+Hooks.on("updateActor", async (actor, data, options) => {
+  updatePartySheet(actor, data);
+
+  // ── Skill point level-up detection ───────────────────────────────────────
+  // Only trigger when XP actually changed, on the owning player's client.
+  // If a non-GM owner is active, skip on GM to avoid duplicate dialogs.
+  if (data.system?.xp !== undefined && actor.type === 'character') {
+    const config = SKILL_POINT_CONFIG[(actor.system.class || '').trim()];
+    if (config) {
+      const isRelevantClient = actor.isOwner && (game.user.isGM
+        ? !game.users.some(u => !u.isGM && u.active && (actor.ownership[u.id] ?? 0) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
+        : true);
+
+      if (isRelevantClient) {
+        const newLevel      = parseInt(actor.system.level) || 1;
+        const lastKnownLevel = actor.getFlag('osp-houserules', 'lastKnownLevel') ?? 0;
+
+        if (newLevel > lastKnownLevel) {
+          const newPoints    = calcSkillPoints(config, lastKnownLevel, newLevel);
+          const prevPending  = actor.getFlag('osp-houserules', 'pendingSkillPoints') || 0;
+          const totalPending = prevPending + newPoints;
+
+          // Persist updated tracking in one update (avoids double hook)
+          await actor.update({
+            'flags.osp-houserules.lastKnownLevel':    newLevel,
+            'flags.osp-houserules.pendingSkillPoints': totalPending,
+          });
+
+          showSkillPointDialog(actor, totalPending);
+        }
+      }
+    }
+  }
+
+  // XP award popup — fires on every client; only show for actors owned by this user
+  if (options?.ospXPAward && actor.isOwner) {
+    const amount = options.ospXPAmount ?? 0;
+    const formatted = amount.toLocaleString();
+
+    const wrap = document.createElement('div');
+    wrap.className = 'osp-xp-award-popup';
+
+    const img = document.createElement('img');
+    img.src = 'systems/osp-houserules/assets/images/icons/xp_award.webp';
+
+    const badge = document.createElement('div');
+    badge.className = 'osp-xp-award-badge';
+    badge.innerHTML = `<span class="osp-xp-award-plus">+</span>${formatted}<span class="osp-xp-award-label"> XP</span>`;
+
+    const btn = document.createElement('button');
+    btn.className = 'osp-xp-award-close';
+    btn.textContent = '✕  Dismiss';
+    btn.addEventListener('click', () => wrap.remove());
+
+    wrap.appendChild(img);
+    wrap.appendChild(badge);
+    wrap.appendChild(btn);
+    document.body.appendChild(wrap);
+
+    foundry.audio.AudioHelper.play({ src: 'systems/osp-houserules/assets/sounds/xp_bonus.ogg', volume: 1.0, loop: false });
+  }
+});
 
 // ── User Configuration — remove Pronouns field ───────────────────────────
 Hooks.on("renderUserConfig", (_app, html) => {

@@ -52,9 +52,10 @@
   .dm-toolkit-header {
     font-size: 1rem;
     font-weight: bold;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
     padding-bottom: 4px;
     margin: 0 0 8px;
+    color: var(--color-text-primary, #1a1a1a);
   }
 
   .dm-tool-list {
@@ -67,48 +68,166 @@
   }
 
   .dm-tool-item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 8px;
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(0, 0, 0, 0.10);
+    border: 1px solid rgba(0, 0, 0, 0.18);
     border-radius: 4px;
     padding: 6px 8px;
   }
 
   .dm-tool-info {
-    flex: 1;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-width: 0;
   }
 
   .dm-tool-name {
     font-weight: bold;
     font-size: 0.9rem;
+    color: var(--color-text-primary, #1a1a1a);
   }
 
   .dm-tool-desc {
     font-size: 0.75rem;
-    opacity: 0.7;
+    color: var(--color-text-primary, #1a1a1a);
+    opacity: 0.65;
+    white-space: normal;
   }
 
   .osp-dm-rest-btn {
     cursor: pointer;
+    flex: 0 0 28px;
     width: 28px;
     height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    background: rgba(255, 255, 255, 0.4);
-    flex-shrink: 0;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.12);
+    color: var(--color-text-primary, #1a1a1a);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(0, 0, 0, 0.22);
+      border-color: rgba(0, 0, 0, 0.45);
     }
 
     i {
       font-size: 0.9rem;
+      color: inherit;
     }
+  }
+}
+
+// XP award popup
+.osp-xp-award-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background: transparent !important;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+
+  img {
+    max-width: min(400px, 55vw);
+    max-height: 50vh;
+    object-fit: contain;
+    display: block;
+    background: transparent !important;
+    filter: drop-shadow(0 4px 18px rgba(0,0,0,0.7));
+  }
+}
+
+.osp-xp-award-badge {
+  font-family: "Cooper Std Black", "Georgia", serif;
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  font-weight: 900;
+  color: #ffe066;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 0 18px rgba(255, 200, 0, 0.9),
+    0 0 40px rgba(255, 160, 0, 0.6),
+    2px 3px 0 rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+  white-space: nowrap;
+
+  .osp-xp-award-plus {
+    color: #ffd700;
+    margin-right: 2px;
+  }
+
+  .osp-xp-award-label {
+    font-size: 0.55em;
+    letter-spacing: 0.1em;
+    vertical-align: middle;
+    color: #ffc84a;
+    margin-left: 4px;
+  }
+}
+
+.osp-xp-award-close {
+  background: rgba(0, 0, 0, 0.55) !important;
+  border: 1px solid rgba(255, 210, 80, 0.5) !important;
+  border-radius: 4px;
+  color: #ffe8a0 !important;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: "Crimson Text", Georgia, serif;
+  letter-spacing: 0.05em;
+  padding: 5px 20px;
+  line-height: 1.4;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8) !important;
+    border-color: rgba(255, 210, 80, 0.85) !important;
+  }
+}
+
+// Give XP dialog
+.osp-give-xp-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+
+  .osp-xp-select-all-row {
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    padding-bottom: 6px;
+  }
+
+  .osp-xp-pc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 2px 0;
+  }
+
+  .osp-xp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .osp-xp-amount-row {
+    border-top: 1px solid rgba(0,0,0,0.15);
+    padding-top: 8px;
+    margin-top: 2px;
   }
 }

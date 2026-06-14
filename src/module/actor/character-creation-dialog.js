@@ -144,6 +144,7 @@ export class CharacterCreationDialog {
         <div class="cc-pool-section">
           <button type="button" class="cc-roll-btn">Roll</button>
           <div class="cc-pool" data-target="pool"></div>
+          <p class="cc-roll-notice" style="display:none;"></p>
         </div>
         ${abilityRows}
         <div class="char-create-divider"></div>
@@ -251,9 +252,12 @@ export class CharacterCreationDialog {
         });
 
         // === Roll button ==============================================
+        const rollNotice = el.querySelector('.cc-roll-notice');
         rollBtn.addEventListener('click', async () => {
           if (rollBtn.disabled) return;
           rollBtn.disabled = true;
+          rollNotice.style.display = 'none';
+          pool.innerHTML = '';
 
           const FACE = ['one', 'two', 'three', 'four', 'five', 'six'];
           const rolls = [];
@@ -261,15 +265,26 @@ export class CharacterCreationDialog {
             const roll = await (new Roll('4d6kh3')).evaluate();
             rolls.push(roll);
             const chip = document.createElement('span');
-            chip.className     = 'cc-chip';
-            chip.draggable     = true;
+            chip.className      = 'cc-chip';
+            chip.draggable      = true;
             chip.dataset.chipId = `chip-${i}`;
-            chip.dataset.value = String(roll.total);
-            chip.textContent   = String(roll.total);
-            chip.title         = `Rolled ${roll.dice[0].results.map(r => r.result).join(', ')} — drag to an ability`;
+            chip.dataset.value  = String(roll.total);
+            chip.textContent    = String(roll.total);
+            chip.title          = `Rolled ${roll.dice[0].results.map(r => r.result).join(', ')} — drag to an ability`;
             pool.appendChild(chip);
             attachChipDrag(chip);
           }
+
+          const poolTotal = rolls.reduce((sum, r) => sum + r.total, 0);
+          if (poolTotal < 66) {
+            pool.innerHTML = '';
+            rollNotice.textContent = `Total was ${poolTotal} (minimum 66). Roll again.`;
+            rollNotice.style.display = '';
+            rollBtn.disabled = false;
+            return;
+          }
+
+          rollNotice.style.display = 'none';
 
           // Single chat message summarizing all six rolls
           const lines = rolls.map((r, i) => {

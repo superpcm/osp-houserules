@@ -126,6 +126,7 @@ $sh-l2-qty:  298px;   // center of qty col     (68 + 40 + 150 + 80/2)
 $sh-l2-ssize: 378px;  // center of ssize col   (68 + 40 + 150 + 80 + 80/2)
 $sh-l2-twt:  444px;   // center of tWT col     (68 + 40 + 150 + 80 + 80 + 80/2)
 $sh-l2-wt:   510px;   // center of weight col — must stay < 476px to clear controls (570 − 86)
+$sh-l2-controls: 545px; // left edge of controls col — aligns with top-level row controls (gear-left + 605px; rows start at 60px offset → 545px)
 
 /* Belt attachment background — used for attachment row shade and the tree-line gutter on stored items */
 $attachment-row-bg: rgba(139, 69, 19, 0.05);
@@ -1905,7 +1906,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   > :nth-child(4) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
   > :nth-child(5) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
   > :nth-child(6) { left: $sh-l2-wt;    transform: translateX(-50%); justify-content: center; }
-  > :nth-child(7) { right: -62px; left: auto; width: $l2-col-controls; justify-content: flex-end; }
+  > :nth-child(7) { left: $sh-l2-controls; right: auto; width: $l2-col-controls; justify-content: flex-end; }
 
   .item-image {
     width: 48px !important;
@@ -1975,7 +1976,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   > :nth-child(4) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
   > :nth-child(5) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
   > :nth-child(6) { left: $sh-l2-wt;    transform: translateX(-50%); justify-content: center; }
-  > :nth-child(7) { right: 7px; left: auto; width: $l2-col-controls; justify-content: flex-end; }
+  > :nth-child(7) { left: $sh-l2-controls; right: auto; width: $l2-col-controls; justify-content: flex-end; }
 
   .item-image {
     width: 48px !important;

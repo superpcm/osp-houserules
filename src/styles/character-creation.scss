@@ -19,11 +19,21 @@
   .cc-pool-section {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
     padding: 8px;
     margin-bottom: 4px;
     background: rgba(0, 0, 0, 0.06);
     border-radius: 4px;
+  }
+
+  .cc-roll-notice {
+    flex: 0 0 100%;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: #8b1a1a;
+    margin: 0;
+    padding: 0;
   }
 
   .cc-roll-btn {

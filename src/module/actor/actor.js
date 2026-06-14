@@ -1,4 +1,4 @@
-import { calculateXPModifier, getNextLevelXP, getPrimeRequisites } from "../../config/classes.js";
+import { calculateXPModifier, getLevelFromXP, getNextLevelXP, getPrimeRequisites } from "../../config/classes.js";
 
 export class OspActor extends Actor {
   constructor(data, context) {
@@ -205,13 +205,23 @@ export class OspActor extends Actor {
   }
 
   /**
+   * Derive level from current XP and class. Must run before other calculations that read system.level.
+   */
+  _calculateLevel() {
+    const characterClass = this.system.class || '';
+    if (!characterClass) return;
+    const xp = parseInt(String(this.system.xp ?? 0).replace(/,/g, '')) || 0;
+    this.system.level = getLevelFromXP(characterClass, xp);
+  }
+
+  /**
    * Calculate next level XP based on class and current level
    * @private
    */
   _calculateNextLevelXP() {
     const characterClass = this.system.class || '';
     const level = parseInt(this.system.level) || 1;
-    
+
     this.system.nextLevelXP = getNextLevelXP(characterClass, level);
   }
 
@@ -277,6 +287,9 @@ export class OspActor extends Actor {
         container.system.equipped = shouldBeEquipped;
       }
     });
+
+    // Derive level from XP — must run first; saves, HP, and nextLevelXP all depend on it
+    this._calculateLevel();
 
     // Calculate encumbrance
     this._calculateEncumbrance();

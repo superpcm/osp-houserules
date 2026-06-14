@@ -6,7 +6,7 @@ import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 import { BackgroundHandler } from './handlers/background-handler.js';
 import { PositionToolHandler } from './handlers/position-tool-handler.js';
 import { PortraitTool } from './portrait-tool.js';
-import { calculateMaxHP } from '../../../config/classes.js';
+import { calculateMaxHP, XP_TABLES, CLASS_XP_MAPPING } from '../../../config/classes.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -767,6 +767,13 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // ALWAYS initialize position tool handler first, regardless of editable state
     this.ensurePositionToolHandler(html);
+
+    // Skill target selects are GM-only
+    if (!game.user.isGM) html.find('.cs-listening-select').prop('disabled', true);
+
+    // Age field tooltip — shows race age guidelines after 2-second hover
+    this._activateAgeTooltip(html);
+    this._activateLevelTooltip(html);
 
     // Container collapse/expand toggle
     html.find('.container-toggle').click(this._onContainerToggle.bind(this));
@@ -2310,6 +2317,175 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
+   * Age / Height / Weight tooltips — 2-second hover reveals race guidelines (Tables 10 & 11).
+   */
+  _activateAgeTooltip(html) {
+    const AGE_TABLE = {
+      'Dwarf':    { base: 40,  variable: '5d6',   max: '250+2d100' },
+      'Elf':      { base: 100, variable: '5d6',   max: '350+4d100', note: 'Upon attaining max age, an elf departs to another land rather than dying.' },
+      'Gnome':    { base: 60,  variable: '3d12',  max: '200+3d100' },
+      'Half-Elf': { base: 15,  variable: '1d6',   max: '125+3d20' },
+      'Half-Orc': { base: 14,  variable: '1d2',   max: '~60', note: 'Middle age ~30 · Old ~45 · Venerable ~60+' },
+      'Hobbit':   { base: 20,  variable: '3d4',   max: '100+1d100' },
+      'Human':    { base: 15,  variable: '1d4',   max: '90+2d20' },
+    };
+
+    // Base is Male/Female in inches; modifier is a dice roll
+    const HEIGHT_TABLE = {
+      'Dwarf':    { base: '43/41', modifier: '1d10' },
+      'Elf':      { base: '55/50', modifier: '1d10' },
+      'Gnome':    { base: '38/36', modifier: '1d6'  },
+      'Half-Elf': { base: '60/58', modifier: '2d6'  },
+      'Half-Orc': { base: '60/58',  modifier: '1d12' },
+      'Hobbit':   { base: '32/30', modifier: '2d8'  },
+      'Human':    { base: '60/59', modifier: '2d10' },
+    };
+
+    // Base is Male/Female in pounds; modifier is a dice roll
+    const WEIGHT_TABLE = {
+      'Dwarf':    { base: '130/105', modifier: '4d10' },
+      'Elf':      { base: '90/70',   modifier: '3d10' },
+      'Gnome':    { base: '72/68',   modifier: '5d4'  },
+      'Half-Elf': { base: '110/85',  modifier: '3d12' },
+      'Half-Orc': { base: '135/95',  modifier: '6d10' },
+      'Hobbit':   { base: '52/48',   modifier: '5d4'  },
+      'Human':    { base: '140/100', modifier: '6d10' },
+    };
+
+    const buildAgeHtml = (data, race) => {
+      if (!data) return `<div style="color:#a89060;font-style:italic;">No age table for ${race || 'this race'}.</div>`;
+      const noteHtml = data.note ? `<div class="age-tooltip-note">${data.note}</div>` : '';
+      return `
+        <div class="age-tooltip-row"><span>Base Age</span><span>${data.base}</span></div>
+        <div class="age-tooltip-row"><span>Variable</span><span>+${data.variable}</span></div>
+        <div class="age-tooltip-row"><span>Maximum</span><span>${data.max}</span></div>
+        ${noteHtml}`;
+    };
+
+    const buildStatHtml = (data, race, unit, label) => {
+      if (!data) return `<div style="color:#a89060;font-style:italic;">No ${label} table for ${race || 'this race'}.</div>`;
+      return `
+        <div class="age-tooltip-row"><span>Base (M/F)</span><span>${data.base} ${unit}</span></div>
+        <div class="age-tooltip-row"><span>Modifier</span><span>+${data.modifier}</span></div>`;
+    };
+
+    const attach = (containerId, tableData, buildFn, ...buildArgs) => {
+      const $group = html.find(`#${containerId}`);
+      if (!$group.length) return;
+
+      const $tooltip = $('<div class="age-tooltip"></div>');
+      html.append($tooltip);
+      let timer = null;
+
+      $group.on('mouseenter.statooltip', () => {
+        timer = setTimeout(() => {
+          const race = this.actor.system.race || '';
+          $tooltip.html(buildFn(tableData[race], race, ...buildArgs));
+          const offset = $group.position();
+          $tooltip.css({ top: (offset.top + $group.outerHeight() + 4) + 'px', left: offset.left + 'px' });
+          $tooltip.addClass('visible');
+        }, 2000);
+      });
+
+      $group.on('mouseleave.statooltip', () => {
+        clearTimeout(timer);
+        $tooltip.removeClass('visible');
+      });
+    };
+
+    attach('age-container',    AGE_TABLE,    buildAgeHtml);
+    attach('height-container', HEIGHT_TABLE, buildStatHtml, 'in', 'height');
+    attach('weight-container', WEIGHT_TABLE, buildStatHtml, 'lb', 'weight');
+  }
+
+  _activateLevelTooltip(html) {
+    // Level limits for demi-human races (class name → max level, null means unlimited)
+    const LEVEL_LIMITS = {
+      'Dwarf':    { Assassin: 9, Cleric: 8, Fighter: 10, Thief: 9 },
+      'Elf':      { Assassin: 10, Cleric: 7, Druid: 8, Fighter: 7, Knight: 11, 'Magic-User': 11, Ranger: 11, Thief: 10 },
+      'Gnome':    { Assassin: 6, Cleric: 7, Fighter: 6, Illusionist: 7, Thief: 8 },
+      'Half-Elf': { Assassin: 11, Bard: 12, Cleric: 5, Druid: 12, Fighter: 8, Knight: 12, 'Magic-User': 8, Paladin: 12, Ranger: 8, Thief: 12 },
+      'Hobbit':   { Druid: 6, Fighter: 6, Thief: 8 },
+      'Half-Orc': { Assassin: 8, Cleric: 4, Fighter: 10, Thief: 8 },
+    };
+
+    const $container = html.find('#level-container');
+    if (!$container.length) return;
+
+    const $tooltip = $('<div class="level-prog-tooltip"></div>');
+    html.append($tooltip);
+    let timer = null;
+
+    $container.on('mouseenter.levtip', () => {
+      timer = setTimeout(() => {
+        const cls   = this.actor.system.class  || '';
+        const race  = this.actor.system.race   || '';
+        const clsKey = cls.toLowerCase();
+
+        // Resolve XP table
+        const tableKey = CLASS_XP_MAPPING[clsKey];
+        const xpTable  = tableKey ? XP_TABLES[tableKey] : null;
+
+        if (!xpTable) {
+          $tooltip.html(`<div class="level-prog-tooltip-none">No progression table for <em>${cls || 'unknown class'}</em>.</div>`);
+        } else {
+          // Determine max level for this race/class combo
+          const raceLimits = LEVEL_LIMITS[race];
+          let maxLevel = xpTable.length; // default: full table
+
+          if (raceLimits) {
+            // Case-insensitive class match against limit keys
+            const limitKey = Object.keys(raceLimits).find(k => k.toLowerCase() === cls.toLowerCase());
+            if (limitKey !== undefined) maxLevel = raceLimits[limitKey];
+          }
+
+          // Format XP with commas
+          const fmt = n => n.toLocaleString();
+
+          const rows = xpTable.slice(0, maxLevel).map((xp, i) => {
+            const level = i + 1;
+            const isCurrent = level === (parseInt(this.actor.system.level) || 1);
+            const cls2 = isCurrent ? ' level-prog-current' : '';
+            const nextXP = xpTable[i + 1];
+            const range = nextXP !== undefined
+              ? `${fmt(xp)} – ${fmt(nextXP - 1)}`
+              : `${fmt(xp)}+`;
+            return `<tr class="level-prog-row${cls2}">
+              <td class="level-prog-lvl">${level}</td>
+              <td class="level-prog-range">${range}</td>
+            </tr>`;
+          }).join('');
+
+          const limitNote = raceLimits && maxLevel < xpTable.length
+            ? `<div class="level-prog-limit">Max level ${maxLevel} for ${race} ${cls}</div>`
+            : '';
+
+          $tooltip.html(`
+            <div class="level-prog-title">${cls} XP Progression</div>
+            <table class="level-prog-table">
+              <thead><tr><th>Lvl</th><th>XP Range</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+            ${limitNote}
+          `);
+        }
+
+        const offset = $container.position();
+        $tooltip.css({
+          top:  (offset.top + $container.outerHeight() + 4) + 'px',
+          left: offset.left + 'px'
+        });
+        $tooltip.addClass('visible');
+      }, 3000);
+    });
+
+    $container.on('mouseleave.levtip', () => {
+      clearTimeout(timer);
+      $tooltip.removeClass('visible');
+    });
+  }
+
+  /**
    * Handle toggling container collapsed state
    */
   async _onContainerToggle(event) {
@@ -3015,9 +3191,11 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
 
     // Check allowedNames (weapon name must be in list — takes priority for scabbards)
+    // Strip trailing modifier (e.g. " +2") so "Longsword +2" matches "Longsword"
     const allowedNames = container.system?.allowedNames;
     if (allowedNames && Array.isArray(allowedNames) && allowedNames.length > 0) {
-      if (!allowedNames.includes(itemData.name)) {
+      const baseName = itemData.name.replace(/\s*[+-]\d+$/, '');
+      if (!allowedNames.includes(baseName)) {
         return { allowed: false, reason: `${container.name} only accepts: ${allowedNames.join(', ')}.` };
       }
     }

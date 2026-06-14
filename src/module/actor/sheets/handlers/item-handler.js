@@ -145,10 +145,30 @@ export class ItemHandler {
     const item = this.getItemFromEvent(event);
     if (!item) return;
 
-    const currentQuantity = item.system.quantity || 1;
     // The actual DOM row for this item — a nested stored-item row (div) or a top-level item-entry (li)
     const nestedRow = $(event.currentTarget).closest(".lashed-stored-item, .contained-item");
     const row = nestedRow.length ? nestedRow : li;
+
+    // Warn if this item contains others that will also be deleted
+    const descendants = this._getContainedDescendants(item);
+    if (descendants.length > 0) {
+      const nameList = descendants.map(i => `<strong>${i.name}</strong>`).join(', ');
+      const confirmed = await new Promise(resolve => {
+        new Dialog({
+          title: `Delete ${item.name}`,
+          content: `<p>Deleting <strong>${item.name}</strong> will also delete: ${nameList}.</p>`,
+          buttons: {
+            yes:    { icon: '<i class="fas fa-trash"></i>', label: 'Yes, Delete All', callback: () => resolve(true) },
+            cancel: { icon: '<i class="fas fa-times"></i>', label: 'Cancel',           callback: () => resolve(false) }
+          },
+          default: 'cancel'
+        }).render(true);
+      });
+      if (!confirmed) return;
+      await Promise.all(descendants.map(d => d.delete()));
+    }
+
+    const currentQuantity = item.system.quantity || 1;
 
     // If quantity is 1 or item doesn't use quantity system, just delete
     if (currentQuantity <= 1) {
@@ -157,13 +177,6 @@ export class ItemHandler {
         await item.delete();
         this.actor.sheet.render(false);
         return;
-      }
-      // If deleting a container, clear containerId on all items inside it first
-      if (item.type === 'container') {
-        const orphans = this.actor.items.filter(i => i.system.containerId === item.id);
-        if (orphans.length) {
-          await Promise.all(orphans.map(i => i.update({ 'system.containerId': null, 'system.lashed': false })));
-        }
       }
       await item.delete();
       row.slideUp(200, () => this.actor.sheet.render(false));
@@ -194,12 +207,6 @@ export class ItemHandler {
               await item.delete();
               this.actor.sheet.render(false);
               return;
-            }
-            if (item.type === 'container') {
-              const orphans = this.actor.items.filter(i => i.system.containerId === item.id);
-              if (orphans.length) {
-                await Promise.all(orphans.map(i => i.update({ 'system.containerId': null, 'system.lashed': false })));
-              }
             }
             await item.delete();
             row.slideUp(200, () => this.actor.sheet.render(false));
@@ -306,6 +313,24 @@ export class ItemHandler {
       dropQuantity = dropAll;
     }
 
+    // Warn if dropping all of a container that holds other items
+    const descendants = this._getContainedDescendants(item);
+    if (descendants.length > 0 && dropQuantity >= currentQuantity) {
+      const nameList = descendants.map(i => `<strong>${i.name}</strong>`).join(', ');
+      const confirmed = await new Promise(resolve => {
+        new Dialog({
+          title: `Drop ${item.name}`,
+          content: `<p>Dropping <strong>${item.name}</strong> will also remove from your inventory: ${nameList}.</p>`,
+          buttons: {
+            yes:    { icon: '<i class="fas fa-box-open"></i>', label: 'Drop',   callback: () => resolve(true) },
+            cancel: { icon: '<i class="fas fa-times"></i>',   label: 'Cancel', callback: () => resolve(false) }
+          },
+          default: 'cancel'
+        }).render(true);
+      });
+      if (!confirmed) return;
+    }
+
     // Calculate drop position
     const gridSize = scene.grid.size;
     let dropX, dropY;
@@ -358,7 +383,8 @@ export class ItemHandler {
 
       // Update or delete the item from actor's inventory
       if (dropQuantity >= currentQuantity) {
-        // Dropped all, delete the item
+        // Dropped all — delete contents first, then the item
+        if (descendants.length > 0) await Promise.all(descendants.map(d => d.delete()));
         await item.delete();
         ui.notifications.info(`Dropped all ${item.name}.`);
       } else {
@@ -590,6 +616,10 @@ export class ItemHandler {
             await item.update({ 'system.equipped': false });
             ui.notifications.info(`${item.name} sheathed in ${currentScabbard.name}.`);
           } else {
+            // Scabbard deleted or never set — clear any stale containerId before searching
+            if (item.system.containerId && !currentScabbard) {
+              await item.update({ 'system.containerId': null });
+            }
             const scabbard = this._findEmptyScabbardForWeapon(item);
             if (scabbard) {
               await item.update({ 'system.equipped': false, 'system.containerId': scabbard.id, 'system.lashed': false });
@@ -1124,7 +1154,7 @@ export class ItemHandler {
       if (i.type !== 'container' || i.name !== 'Belt Loop') return false;
       if (!i.system.lashed) return false;
       const allowed = i.system.allowedNames || [];
-      if (allowed.length && !allowed.includes(weapon.name)) return false;
+      if (allowed.length && !allowed.includes(this._baseName(weapon.name))) return false;
       return !this.actor.items.some(w => w.type === 'weapon' && w.system.containerId === i.id);
     });
     if (beltLoop) return { container: beltLoop, lashed: false };
@@ -1150,9 +1180,23 @@ export class ItemHandler {
    * @param {string} weaponName
    * @returns {boolean}
    */
+  // Strip trailing modifier suffix (e.g. " +2", " -1") so "Longsword +2" matches "Longsword"
+  _baseName(name) {
+    return name.replace(/\s*[+-]\d+$/, '');
+  }
+
+  _getContainedDescendants(item) {
+    const direct = this.actor.items.filter(i => i.system.containerId === item.id);
+    return direct.reduce((all, child) => {
+      all.push(child, ...this._getContainedDescendants(child));
+      return all;
+    }, []);
+  }
+
   _scabbardAcceptsWeapon(scabbard, weaponName) {
+    const baseName = this._baseName(weaponName);
     const allowedNames = scabbard.system?.allowedNames;
-    if (allowedNames && allowedNames.length) return allowedNames.includes(weaponName);
+    if (allowedNames && allowedNames.length) return allowedNames.includes(baseName);
 
     // Check allowedTypes + allowedSizes (e.g. Sword Frog: sword + S/M)
     const allowedTypes = scabbard.system?.allowedTypes || [];
@@ -1173,7 +1217,7 @@ export class ItemHandler {
       'Baldric':          ['Zweihander', 'Greatsword'],
       'Axe Sling':        ['Battle Axe', 'Battle Axe, 2-Handed']
     };
-    return (defaults[scabbard.name] || []).includes(weaponName);
+    return (defaults[scabbard.name] || []).includes(baseName);
   }
 
   /**
@@ -1571,10 +1615,10 @@ export class ItemHandler {
           resolve(true);
         }
       };
-      b.cancel = { label: 'Keep in Hand', callback: () => resolve(false) };
+      b.cancel = { label: 'Cancel', callback: () => resolve(false) };
       new Dialog({
         title: `Sheathe ${sword.name}`,
-        content: `<p>No empty scabbard for <strong>${sword.name}</strong>. It must stay in hand or be dropped.${hasSwap ? ' Or swap with a sheathed sword.' : ''}</p>${swapContent}`,
+        content: `<p>There is no scabbard in which to sheathe <strong>${sword.name}</strong>.${hasSwap ? ' You may swap with a sheathed sword, or drop it.' : ' Drop it or cancel.'}</p>${swapContent}`,
         buttons: b,
         default: 'cancel'
       }).render(true);

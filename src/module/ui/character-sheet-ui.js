@@ -7,7 +7,6 @@ import { calculateXPModifier, getNextLevelXP } from '../../config/classes.js';
 
 export class CharacterSheetUI {
   constructor() {
-    this.xpHandlerUpdating = false;
   }
 
   /**
@@ -60,9 +59,6 @@ export class CharacterSheetUI {
     const xpField = document.getElementById('xp-display');
     if (!xpField) return;
 
-    // Check if we're in the middle of an XP update by our handler
-    if (this.xpHandlerUpdating) return;
-
     // Only format if not currently focused (to avoid interfering with user input)
     if (document.activeElement !== xpField) {
       const currentXP = parseInt(xpField.value.replace(/,/g, '')) || 0;
@@ -74,21 +70,6 @@ export class CharacterSheetUI {
    * Setup XP field formatting and event handlers
    */
   setupXPFieldFormatting() {
-    const xpField = document.getElementById('xp-display');
-    if (!xpField) return;
-
-    // Format on blur (when user leaves the field)
-    xpField.addEventListener('blur', () => {
-      this.updateXPDisplay();
-    });
-
-    // Clean input on focus (remove commas for editing)
-    xpField.addEventListener('focus', () => {
-      const rawValue = xpField.value.replace(/,/g, '');
-      xpField.value = rawValue;
-    });
-
-    // Initial formatting
     this.updateXPDisplay();
   }
 
@@ -169,8 +150,6 @@ export class CharacterSheetUI {
    * Cleanup event listeners when sheet is destroyed
    */
   destroy() {
-    // Remove any global event listeners if needed
-    this.xpHandlerUpdating = false;
   }
 }
 

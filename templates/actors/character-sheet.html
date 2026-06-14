@@ -572,63 +572,6 @@
         }
       });
 
-      // Setup dedicated tooltip for XP field with improved event handling
-      setTimeout(() => {
-        const xpElement = document.querySelector('#xp-display');
-        if (xpElement) {
-
-
-          // Create dedicated XP tooltip to avoid conflicts
-          let xpTooltip = document.getElementById('xp-tooltip');
-          if (!xpTooltip) {
-            xpTooltip = document.createElement('div');
-            xpTooltip.id = 'xp-tooltip';
-            // Apply tooltip classes - visual styles handled by CSS
-            xpTooltip.className = 'cs-tooltip cs-tooltip--xp';
-            document.body.appendChild(xpTooltip);
-          }
-          let xpTooltipTimeout;
-
-          // Remove any existing event listeners and add new ones
-          xpElement.removeEventListener('mouseenter', xpElement._tooltipMouseEnter);
-          xpElement.removeEventListener('mouseleave', xpElement._tooltipMouseLeave);
-          xpElement.removeEventListener('mouseover', xpElement._tooltipMouseOver);
-          xpElement.removeEventListener('mouseout', xpElement._tooltipMouseOut);
-
-          xpElement._tooltipMouseEnter = (e) => {
-
-            clearTimeout(xpTooltipTimeout);
-            xpTooltipTimeout = setTimeout(() => {
-              setTooltipContent(xpTooltip, 'Double-click to award XP');
-
-              // Position tooltip above the element
-              const rect = xpElement.getBoundingClientRect();
-              const tooltipRect = xpTooltip.getBoundingClientRect();
-
-              xpTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
-              xpTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-              xpTooltip.style.opacity = '1';
-
-            }, TOOLTIP_DELAY);
-          };
-
-          xpElement._tooltipMouseLeave = () => {
-
-            clearTimeout(xpTooltipTimeout);
-            xpTooltip.style.opacity = '0';
-          };
-
-          // Try both mouseenter/mouseleave and mouseover/mouseout
-          xpElement._tooltipMouseOver = xpElement._tooltipMouseEnter;
-          xpElement._tooltipMouseOut = xpElement._tooltipMouseLeave;
-
-          xpElement.addEventListener('mouseenter', xpElement._tooltipMouseEnter);
-          xpElement.addEventListener('mouseleave', xpElement._tooltipMouseLeave);
-          xpElement.addEventListener('mouseover', xpElement._tooltipMouseOver);
-          xpElement.addEventListener('mouseout', xpElement._tooltipMouseOut);
-        }
-      }, 100);
-
       // Language Tooltip System
       setTimeout(() => {
         const languageElement = document.querySelector('.open-language-dialog');
@@ -2825,7 +2768,7 @@
   <div class="xp-group cs-abs cs-pos-xp" id="xp-container">
   <!-- XP Progress Bar -->
   <div class="level-xp-progress"></div>
-  <input type="text" class="xp-display cs-field cs-xp-display" id="xp-display" name="system.xp" value="{{system.xp}}" />
+  <input type="text" class="xp-display cs-field cs-xp-display" id="xp-display" name="system.xp" value="{{system.xp}}" readonly />
   </div>
 
       <!-- Horizontal separator line at bottom of static header -->

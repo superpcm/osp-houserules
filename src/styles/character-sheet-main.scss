@@ -629,10 +629,6 @@ form.osp.sheet.actor.character .static-header::before,
 .char-height, .char-weight { background: transparent !important; border: none !important; border-radius: 0 !important; outline: none !important; }
 .height-group, .weight-group { background: transparent !important; border: none !important; outline: none !important; }
 
-/* XP Award Button */
-button.xp-award-btn { background: none !important; border: none !important; outline: none !important; }
-button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important; }
-
 /* Portrait adjustment controls */
 .portrait-controls { 
   position: absolute; 
@@ -742,110 +738,6 @@ button.xp-award-btn:hover, button.xp-award-btn:focus { color: #8B4513 !important
   10% { opacity: var(--tooltip-opacity, 0); }
   70% { opacity: var(--tooltip-opacity, 0); }
   100% { opacity: 0 !important; }
-}
-
-/* Dialog helper used by XP award dialog to centralize its presentation */
-.cs-xp-dialog { 
-  background: white !important; 
-}
-
-.cs-xp-dialog .window-header { 
-  background: black !important; 
-  color: white !important; 
-}
-
-.cs-xp-dialog .window-content { 
-  background: white !important; 
-}
-
-/* Dialog layout and control helpers for handler-generated markup */
-.cs-xp-dialog-container { 
-  padding: 10px; 
-}
-
-.cs-xp-row { 
-  margin-bottom: 20px; 
-  text-align: center; 
-}
-
-.cs-xp-inline { 
-  margin-bottom: 10px; 
-  display: flex; 
-  align-items: center; 
-  gap: 8px; 
-  justify-content: center; 
-}
-
-.cs-xp-flex { 
-  display: flex; 
-  gap: 20px; 
-}
-
-.cs-xp-col { 
-  flex: 1; 
-}
-
-.cs-input-small { 
-  width: 60px; 
-  padding: 5px; 
-  background-color: white; 
-  border: 1px solid black; 
-  border-radius: 9px; 
-  text-align: center; 
-}
-
-.cs-input-medium { 
-  width: 80px; 
-  padding: 5px; 
-  background-color: white; 
-  border: 1px solid black; 
-  border-radius: 9px; 
-  text-align: center; 
-}
-
-.cs-no-border { 
-  border: none; 
-  background: none; 
-  color: inherit; 
-  padding: 0; 
-}
-
-.cs-xp-preview { 
-  margin-top: 15px; 
-  padding: 8px; 
-  background: #f5f5f5; 
-  border-radius: 3px; 
-  display: none; 
-}
-
-/* XP dialog side column helpers (replaces small inline wrappers) */
-.cs-xp-side { 
-  flex: 1; 
-  display: flex; 
-  flex-direction: column; 
-  justify-content: center; 
-}
-
-.cs-xp-side-row { 
-  margin-bottom: 10px; 
-  display: flex; 
-  align-items: center; 
-  gap: 8px; 
-  justify-content: center; 
-}
-
-/* Reusable small select style for inline dialogs (appearance reset handled elsewhere) */
-.cs-select-inline { 
-  width: 60px; 
-  padding: 5px; 
-  background-color: white; 
-  border: 1px solid black; 
-  border-radius: 9px; 
-  text-align: center; 
-  line-height: 1.2; 
-  appearance: none; 
-  -webkit-appearance: none; 
-  -moz-appearance: none; 
 }
 
 /* Language dialog helpers */
@@ -2362,6 +2254,117 @@ input[type="number"] {
   vertical-align: middle;
 }
 
+/* Age tooltip — floats below the age field on 2-second hover */
+.age-tooltip {
+  position: absolute;
+  z-index: 100;
+  background: #1a1209;
+  border: 1px solid #8b6914;
+  border-radius: 4px;
+  padding: 8px 12px;
+  min-width: 200px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-family: "Crimson Text", Georgia, serif;
+  color: #e8d5a0;
+  font-size: 13px;
+  line-height: 1.5;
+
+  &.visible { opacity: 1; }
+
+  .age-tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    span:first-child {
+      color: #a89060;
+      white-space: nowrap;
+    }
+  }
+
+  .age-tooltip-note {
+    margin-top: 6px;
+    font-style: italic;
+    font-size: 11px;
+    color: #a89060;
+    border-top: 1px solid #4a3a1a;
+    padding-top: 4px;
+  }
+}
+
+.level-prog-tooltip {
+  position: absolute;
+  z-index: 100;
+  background: #1a1209;
+  border: 1px solid #8b6914;
+  border-radius: 4px;
+  padding: 8px 12px;
+  min-width: 220px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-family: "Crimson Text", Georgia, serif;
+  color: #e8d5a0;
+  font-size: 13px;
+  line-height: 1.4;
+
+  &.visible { opacity: 1; }
+
+  .level-prog-title {
+    font-weight: bold;
+    font-size: 14px;
+    color: #f0c060;
+    border-bottom: 1px solid #4a3a1a;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    white-space: nowrap;
+  }
+
+  .level-prog-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead th {
+      color: #a89060;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0 4px 3px;
+      text-align: left;
+      border-bottom: 1px solid #3a2a0a;
+    }
+
+    .level-prog-lvl  { width: 28px; text-align: center; padding: 1px 4px; }
+    .level-prog-range { padding: 1px 4px; font-variant-numeric: tabular-nums; }
+
+    .level-prog-row {
+      &:nth-child(even) { background: rgba(255,255,255,0.04); }
+    }
+
+    .level-prog-current {
+      background: rgba(255, 200, 60, 0.15) !important;
+      color: #f0c060;
+      font-weight: bold;
+    }
+  }
+
+  .level-prog-limit {
+    margin-top: 6px;
+    font-style: italic;
+    font-size: 11px;
+    color: #a89060;
+    border-top: 1px solid #4a3a1a;
+    padding-top: 4px;
+  }
+
+  .level-prog-tooltip-none {
+    color: #a89060;
+    font-style: italic;
+  }
+}
+
 /* Age field - separate class for independent control */
 .cs-age-field {
   @include center-flex-field;
@@ -2854,4 +2857,125 @@ input[type="number"] {
 #sidebar img[src="systems/osp-houserules/assets/images/icons/generic-portrait.webp"] {
   filter: invert(1);
   mix-blend-mode: difference;
+}
+
+// ── Skill Point Distribution Dialog ─────────────────────────────────────────
+.osp-skp-dialog {
+  font-family: "Crimson Text", Georgia, serif;
+  padding: 4px 0;
+
+  .osp-skp-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    font-size: 1rem;
+
+    .osp-skp-header-label { flex: 1 1 auto; font-weight: bold; }
+
+    .osp-skp-pool-val {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #5a3e00;
+      min-width: 28px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .osp-skp-clear-btn {
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: #666;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 4px;
+      padding: 3px 8px;
+      white-space: nowrap;
+      user-select: none;
+      &:hover { background: rgba(0,0,0,0.06); color: #333; }
+    }
+  }
+
+  .osp-skp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+
+    thead th {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #888;
+      padding: 0 6px 4px;
+      text-align: left;
+      border-bottom: 1px solid rgba(0,0,0,0.12);
+    }
+
+    .osp-skp-th-cur,
+    .osp-skp-th-chg,
+    .osp-skp-th-new { text-align: center; }
+
+    .osp-skp-row {
+      &:nth-child(even) { background: rgba(0,0,0,0.03); }
+    }
+
+    td { padding: 4px 6px; vertical-align: middle; }
+
+    .osp-skp-label   { min-width: 140px; }
+    .osp-skp-current { text-align: center; color: #666; white-space: nowrap; }
+
+    .osp-skp-ctrl {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .osp-skp-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border: 1px solid rgba(0,0,0,0.25);
+      border-radius: 4px;
+      background: rgba(0,0,0,0.07);
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      user-select: none;
+
+      &:hover:not(.disabled) { background: rgba(0,0,0,0.15); }
+
+      &.disabled {
+        opacity: 0.3;
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+
+    .osp-skp-delta {
+      min-width: 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #5a8a3a;
+      font-weight: bold;
+    }
+
+    .osp-skp-new { text-align: center; white-space: nowrap; }
+
+    .osp-skp-raised {
+      color: #3a7a1a;
+      font-weight: bold;
+    }
+  }
+
+  .osp-skp-note {
+    margin: 8px 0 0;
+    font-size: 0.75rem;
+    color: #888;
+    font-style: italic;
+  }
 }

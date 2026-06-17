@@ -1,19 +1,156 @@
 <form class="osp sheet actor monster" autocomplete="off">
-  <header class="sheet-header">
-    <h1>Monster Sheet</h1>
+
+  {{!-- ── Header ── --}}
+  <header class="monster-header">
+    <img class="monster-portrait" src="{{actor.img}}" title="{{actor.name}}" data-edit="img">
+    <span class="monster-name">{{actor.name}}</span>
+    <div class="monster-stat-box">
+      <label>Alignment</label>
+      <span class="monster-stat-value">{{system.details.alignment}}</span>
+    </div>
   </header>
-  <section class="sheet-body">
-    <div class="form-group">
-      <label for="osp-system-hitdice">Hit Dice:</label>
-      <input type="text" id="osp-system-hitdice" name="system.hitdice" value="{{system.hitdice}}" />
+
+  <div class="monster-sheet-scroll">
+
+    {{!-- ── Core Stats ── --}}
+    <p class="monster-section-label">Core Stats</p>
+    <div class="monster-stat-row">
+      <div class="monster-stat-box wide">
+        <label>Hit Dice</label>
+        <span class="monster-stat-value">{{system.hp.hd}}</span>
+      </div>
+      <div class="monster-hp-group">
+        <label>HP (current / max)</label>
+        <div class="monster-hp-inputs">
+          <span class="monster-stat-value">{{system.hp.value}}</span>
+          <span class="monster-hp-sep">/</span>
+          <span class="monster-stat-value">{{system.hp.max}}</span>
+        </div>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>AC</label>
+        <span class="monster-stat-value">{{system.ac.value}}</span>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>AAC</label>
+        <span class="monster-stat-value">{{system.aac.value}}</span>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>THAC0</label>
+        <span class="monster-stat-value">{{system.thac0.value}}</span>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>BBA</label>
+        <span class="monster-stat-value">{{system.thac0.bba}}</span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="osp-system-thaco">THAC0:</label>
-      <input type="number" id="osp-system-thaco" name="system.thaco" value="{{system.thaco}}" />
+
+    {{!-- ── Encounter Stats ── --}}
+    <p class="monster-section-label">Encounter</p>
+    <div class="monster-stat-row">
+      <div class="monster-stat-box wide">
+        <label>Movement</label>
+        <span class="monster-stat-value">{{system.details.movement}}</span>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>Morale</label>
+        <span class="monster-stat-value">{{system.details.morale}}</span>
+      </div>
+      <div class="monster-stat-box">
+        <label>XP</label>
+        <span class="monster-stat-value">{{system.details.xp}}</span>
+      </div>
+      <div class="monster-stat-box">
+        <label>Appearing (D)</label>
+        <span class="monster-stat-value">{{system.details.appearing.d}}</span>
+      </div>
+      <div class="monster-stat-box">
+        <label>Appearing (W)</label>
+        <span class="monster-stat-value">{{system.details.appearing.w}}</span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="osp-system-special">Special:</label>
-      <input type="text" id="osp-system-special" name="system.special" value="{{system.special}}" />
+
+    {{!-- ── Saving Throws ── --}}
+    <p class="monster-section-label">Saving Throws</p>
+    <div class="monster-stat-row">
+      <div class="monster-stat-box narrow">
+        <label>Death</label>
+        <span class="monster-stat-value">{{system.saves.death.value}}</span>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>Wands</label>
+        <span class="monster-stat-value">{{system.saves.wand.value}}</span>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>Paralysis</label>
+        <span class="monster-stat-value">{{system.saves.paralysis.value}}</span>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>Breath</label>
+        <span class="monster-stat-value">{{system.saves.breath.value}}</span>
+      </div>
+      <div class="monster-stat-box narrow">
+        <label>Spells</label>
+        <span class="monster-stat-value">{{system.saves.spell.value}}</span>
+      </div>
     </div>
-  </section>
+
+    {{!-- ── Attacks ── --}}
+    {{#if weapons}}
+    <p class="monster-section-label">Attacks</p>
+    <div class="monster-items-section">
+      <table class="monster-items-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Damage</th>
+            <th># of Att</th>
+            <th>Bonus</th>
+            <th>Type</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each weapons}}
+          <tr data-item-id="{{id}}">
+            <td class="attack-roll" title="Roll to attack"><i class="fas fa-dice-d20"></i></td>
+            <td class="item-name">{{name}}</td>
+            <td>{{damage}}</td>
+            <td class="attack-count-cell">{{attackCount}}</td>
+            <td>{{bonus}}</td>
+            <td>{{#if melee}}Melee{{/if}}{{#if missile}} Missile{{/if}}</td>
+            <td class="item-delete"><i class="fas fa-trash-alt"></i></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{/if}}
+
+    {{!-- ── Special Abilities ── --}}
+    {{#if abilities}}
+    <p class="monster-section-label">Special Abilities</p>
+    <div class="monster-items-section">
+      <ul class="monster-abilities-list">
+        {{#each abilities}}
+        <li data-item-id="{{id}}">
+          <span class="ability-name">{{name}}</span>
+          {{#if description}}<span class="ability-desc">{{{description}}}</span>{{/if}}
+          <i class="fas fa-trash-alt item-delete"></i>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+    {{!-- ── Description ── --}}
+    {{#if enrichedBiography}}
+    <p class="monster-section-label">Description</p>
+    <div class="monster-bio-section">
+      <div class="monster-bio-content">{{{enrichedBiography}}}</div>
+    </div>
+    {{/if}}
+
+  </div>{{!-- .monster-sheet-scroll --}}
 </form>

@@ -16,7 +16,9 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       giveXP: DmToolkitTab._onGiveXP,
       setXP: DmToolkitTab._onSetXP,
       editAbilityScore: DmToolkitTab._onEditAbilityScore,
-      editSkillValue: DmToolkitTab._onEditSkillValue
+      editSkillValue: DmToolkitTab._onEditSkillValue,
+      importMonsters:        DmToolkitTab._onImportMonsters,
+      updateMonsterAttacks:  DmToolkitTab._onUpdateMonsterAttacks
     }
   };
 
@@ -489,5 +491,254 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         valueInput.focus().select();
       }
     }).render(true);
+  }
+
+  static async _onImportMonsters(_event, _target) {
+    const content = `
+      <div style="padding:4px 0;">
+        <p style="margin:0 0 8px;font-size:12px;">Paste a monster JSON object or an array of monster objects.</p>
+        <textarea id="osp-monster-json" rows="22"
+          style="width:100%;font-family:monospace;font-size:10px;resize:vertical;"
+          placeholder='[{ "name": "Goblin", ... }]'></textarea>
+      </div>`;
+
+    new Dialog({
+      title: "Import Monsters",
+      content,
+      buttons: {
+        import: {
+          icon: '<i class="fas fa-file-import"></i>',
+          label: "Import",
+          callback: async (html) => {
+            const raw = html.find('#osp-monster-json').val().trim();
+            if (!raw) { ui.notifications.warn("No JSON provided."); return; }
+
+            let monsters;
+            try {
+              const parsed = JSON.parse(raw);
+              monsters = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (e) {
+              ui.notifications.error(`JSON parse error: ${e.message}`);
+              return;
+            }
+
+            let folder = game.folders.find(f => f.type === 'Actor' && f.name === 'Monsters');
+            if (!folder) folder = await Folder.create({ name: 'Monsters', type: 'Actor' });
+
+            let created = 0;
+            const errors = [];
+            for (const m of monsters) {
+              try {
+                await Actor.create({ ...DmToolkitTab._mapMonsterData(m), folder: folder.id });
+                created++;
+              } catch (e) {
+                errors.push(m.name || '(unnamed)');
+                console.error(`[OSP] Failed to import monster "${m.name}":`, e);
+              }
+            }
+
+            if (created) ui.notifications.info(`Imported ${created} monster${created === 1 ? '' : 's'}.`);
+            if (errors.length) ui.notifications.error(`Failed: ${errors.join(', ')}`);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "import"
+    }).render(true);
+  }
+
+  static _mapMonsterData(m) {
+    const src = m.system || {};
+    const d   = src.details || {};
+
+    const system = {
+      hp: {
+        hd:    src.hp?.hd    ?? '',
+        value: src.hp?.value ?? 0,
+        max:   src.hp?.max   ?? 0
+      },
+      ac: {
+        value: src.ac?.value ?? 9,
+        mod:   src.ac?.mod   ?? 0
+      },
+      aac: {
+        value: src.aac?.value ?? 10,
+        mod:   src.aac?.mod   ?? 0
+      },
+      thac0: {
+        value: src.thac0?.value ?? 19,
+        bba:   src.thac0?.bba   ?? 0,
+        mod: {
+          missile: src.thac0?.mod?.missile ?? 0,
+          melee:   src.thac0?.mod?.melee   ?? 0
+        }
+      },
+      saves: {
+        death:     { value: src.saves?.death?.value     ?? 0 },
+        wand:      { value: src.saves?.wand?.value      ?? 0 },
+        paralysis: { value: src.saves?.paralysis?.value ?? 0 },
+        breath:    { value: src.saves?.breath?.value    ?? 0 },
+        spell:     { value: src.saves?.spell?.value     ?? 0 }
+      },
+      movement: {
+        base:      src.movement?.base      ?? 0,
+        encounter: src.movement?.encounter ?? 0
+      },
+      initiative: {
+        value: src.initiative?.value ?? 0,
+        mod:   src.initiative?.mod   ?? 0
+      },
+      details: {
+        biography:        d.biography        ?? '',
+        alignment:        d.alignment        ?? '',
+        xp:               d.xp               ?? '',
+        specialAbilities: d.specialAbilities ?? '',
+        appearing: {
+          d: d.appearing?.d ?? '',
+          w: d.appearing?.w ?? ''
+        },
+        morale:   d.morale   ?? '',
+        movement: d.movement ?? ''
+      }
+    };
+
+    const items = (m.items || []).map(DmToolkitTab._mapMonsterItem);
+
+    const pt = m.prototypeToken || {};
+    const prototypeToken = {
+      name:        m.name || 'Monster',
+      displayName: pt.displayName ?? 20,
+      width:       pt.width  ?? 1,
+      height:      pt.height ?? 1,
+      disposition: pt.disposition ?? -1,
+      displayBars: pt.displayBars ?? 20,
+      actorLink:   pt.actorLink   ?? false,
+      bar1: { attribute: pt.bar1?.attribute ?? 'hp' },
+      bar2: { attribute: pt.bar2?.attribute ?? null },
+      // Token texture left as source-JSON value — FA tokens are managed separately
+      texture: { src: pt.texture?.src || 'icons/svg/mystery-man.svg' }
+    };
+
+    return {
+      name:           m.name  || 'Unnamed Monster',
+      type:           'monster',
+      img:            m.img   || 'icons/svg/mystery-man.svg',
+      system,
+      items,
+      prototypeToken
+    };
+  }
+
+  static async _onUpdateMonsterAttacks(_event, _target) {
+    const content = `
+      <div style="padding:4px 0;">
+        <p style="margin:0 0 8px;font-size:12px;">
+          Paste the same JSON used for the original monster import.<br>
+          Each weapon's <code>counter.max</code> will be written to <strong>attacksPerRound</strong>
+          on the matching actor already in the world. No actors are deleted or re-created.
+        </p>
+        <textarea id="osp-atkupdate-json" rows="20"
+          style="width:100%;font-family:monospace;font-size:10px;resize:vertical;"
+          placeholder='[{ "name": "Goblin", ... }]'></textarea>
+      </div>`;
+
+    new Dialog({
+      title: "Update Monster Attack Counts",
+      content,
+      buttons: {
+        update: {
+          icon: '<i class="fas fa-sync-alt"></i>',
+          label: "Update",
+          callback: async (html) => {
+            const raw = html.find('#osp-atkupdate-json').val().trim();
+            if (!raw) { ui.notifications.warn("No JSON provided."); return; }
+
+            let monsters;
+            try {
+              const parsed = JSON.parse(raw);
+              monsters = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (e) {
+              ui.notifications.error(`JSON parse error: ${e.message}`);
+              return;
+            }
+
+            let weaponsUpdated = 0, alreadyCorrect = 0, notFound = 0;
+
+            for (const m of monsters) {
+              const sourceWeapons = (m.items || []).filter(i => i.type === 'weapon');
+              if (!sourceWeapons.length) continue;
+
+              const actors = game.actors.filter(a => a.type === 'monster' && a.name === m.name);
+              if (!actors.length) { notFound++; continue; }
+
+              for (const actor of actors) {
+                for (const sw of sourceWeapons) {
+                  const attacksPerRound = sw.system?.counter?.max ?? 1;
+                  const weapon = actor.items.find(i => i.type === 'weapon' && i.name === sw.name);
+                  if (!weapon) continue;
+
+                  if ((weapon.system.attacksPerRound ?? 1) === attacksPerRound) {
+                    alreadyCorrect++;
+                  } else {
+                    await weapon.update({ 'system.attacksPerRound': attacksPerRound });
+                    weaponsUpdated++;
+                  }
+                }
+              }
+            }
+
+            ui.notifications.info(
+              `Attack counts updated: ${weaponsUpdated} changed, ${alreadyCorrect} already correct, ${notFound} monster name(s) not found in world.`
+            );
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "update"
+    }, { width: 560 }).render(true);
+  }
+
+  static _mapMonsterItem(item) {
+    const s = item.system || {};
+    const base = {
+      name: item.name || 'Unnamed',
+      type: item.type,
+      img:  item.img  || null
+      // _id intentionally omitted — Foundry generates new IDs on create
+    };
+
+    if (item.type === 'weapon') {
+      base.system = {
+        description: s.description || '',
+        damage:      s.damage      || '',
+        damageType:  s.damageType  || '',
+        bonus:       s.bonus       ?? 0,
+        tags:        s.tags        || [],
+        melee:       s.melee       ?? true,
+        missile:     s.missile     ?? false,
+        slow:        s.slow        ?? false,
+        range: {
+          short:  s.range?.short  ?? 0,
+          medium: s.range?.medium ?? 0,
+          long:   s.range?.long   ?? 0
+        },
+        // source format stores quantity as {value, max}; ours is a plain number
+        quantity:        (typeof s.quantity === 'object' ? s.quantity?.value : s.quantity) ?? 1,
+        equipped:        s.equipped ?? false,
+        // source format stores attacks-per-round in counter.max
+        attacksPerRound: s.counter?.max ?? 1
+      };
+    } else {
+      // ability, spell, and any other types — keep only description
+      base.system = { description: s.description || '' };
+    }
+
+    return base;
   }
 }

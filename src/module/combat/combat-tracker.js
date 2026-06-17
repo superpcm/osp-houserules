@@ -11,7 +11,7 @@ export default class OspCombatTracker extends foundry.applications.sidebar.tabs.
     const groups = {};
     data.turns.forEach((turn) => {
       const combatant = this.viewed.combatants.get(turn.id);
-      const group = combatant?.group ?? "white";
+      const group = combatant?.ospGroup ?? "white";
       if (!groups[group]) {
         groups[group] = {
           group,

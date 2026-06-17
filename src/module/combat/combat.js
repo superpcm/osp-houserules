@@ -5,10 +5,10 @@ import OspCombatant from "./combatant.js";
 
 export default class OspCombat extends foundry.documents.Combat {
   /** Formula for group initiative (one roll per group) */
-  static GROUP_FORMULA = "1d6";
+  static GROUP_FORMULA = "1d20";
 
   /** Formula for individual initiative */
-  static FORMULA = "1d6 + @init";
+  static FORMULA = "1d20";
 
   /**
    * Whether combat uses group or individual initiative (from settings)
@@ -62,7 +62,7 @@ export default class OspCombat extends foundry.documents.Combat {
     // Collect unique groups
     const groups = {};
     combatants.forEach((c) => {
-      const group = c.group;
+      const group = c.ospGroup;
       if (!groups[group]) groups[group] = [];
       groups[group].push(c);
     });

@@ -1,0 +1,251 @@
+// ─── Monster Sheet (compact) ───────────────────────────────────────────────────
+
+// Outer window-app wrapper: layout only — no background/color so Foundry's
+// .window-header chrome (close button, PopOut icon, etc.) keeps its own styling.
+.osp.sheet.actor.monster {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+// All visual styling scoped to the form, which also carries the sheet classes.
+form.osp.sheet.actor.monster {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: var(--font-primary, 'Signika', sans-serif);
+  background: #ffffff;
+  color: #222;
+
+  // ── Header ──
+  .monster-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    background: #2a2a2a;
+    flex-shrink: 0;
+
+    .monster-portrait {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border: 1px solid #555;
+      border-radius: 3px;
+      cursor: pointer;
+      flex-shrink: 0;
+
+      &:hover { border-color: #999; }
+    }
+
+    .monster-name {
+      flex: 1;
+      color: #fff;
+      font-size: 2.8em;
+      font-weight: bold;
+      padding: 0 2px;
+    }
+
+    // alignment value in header: light-on-dark, inline (no box)
+    .monster-stat-box {
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+
+      label { color: #aaa; margin-bottom: 0; }
+      .monster-stat-value { color: #fff; min-width: 80px; }
+    }
+  }
+
+  // ── Scrollable body ──
+  .monster-sheet-scroll {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  // ── Section divider labels ──
+  .monster-section-label {
+    margin: 0;
+    padding: 2px 8px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #fff;
+    background: #555;
+  }
+
+  // ── Stat rows ──
+  .monster-stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 5px 8px;
+    border-bottom: 1px solid #e8e8e8;
+    align-items: flex-end;
+  }
+
+  .monster-stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    label {
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #777;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    &.wide  .monster-stat-value { min-width: 92px; }
+    &.narrow .monster-stat-value { min-width: 38px; }
+  }
+
+  // Shared static value (no box)
+  .monster-stat-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 52px;
+    min-height: 24px;
+    padding: 1px 5px;
+    font-size: 20px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .monster-hp-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    label {
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #777;
+      margin-bottom: 2px;
+    }
+
+    .monster-hp-inputs {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+
+      .monster-stat-value { min-width: 34px; }
+      .monster-hp-sep { color: #999; font-size: 20px; }
+    }
+  }
+
+  // ── Items (attacks table + abilities list) ──
+  .monster-items-section {
+    padding: 4px 8px 5px;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .monster-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 20px;
+
+    th {
+      text-align: left;
+      padding: 2px 6px;
+      border-bottom: 1px solid #ccc;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      background: #707070;
+      color: #fff;
+    }
+
+    td {
+      padding: 2px 6px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .item-name {
+      cursor: pointer;
+      font-weight: 500;
+      &:hover { text-decoration: underline; }
+    }
+
+    .attack-count-cell {
+      text-align: center;
+      width: 46px;
+    }
+
+    .attack-roll {
+      width: 26px;
+      text-align: center;
+      color: #8b1a1a;
+      cursor: pointer;
+      font-size: 22px;
+
+      &:hover { color: #cc0000; }
+    }
+
+    .item-delete {
+      text-align: right;
+      width: 22px;
+      color: #ccc;
+      cursor: pointer;
+      &:hover { color: #c00; }
+    }
+  }
+
+  .monster-abilities-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+
+    li {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      padding: 2px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      line-height: 1.35;
+
+      &:last-child { border-bottom: none; }
+
+      .ability-name {
+        font-weight: bold;
+        cursor: pointer;
+        flex-shrink: 0;
+        &:hover { text-decoration: underline; }
+      }
+
+      .ability-name::after { content: ":"; }
+
+      .ability-desc { flex: 1; }
+
+      .item-delete {
+        flex-shrink: 0;
+        color: #ccc;
+        cursor: pointer;
+        &:hover { color: #c00; }
+      }
+    }
+  }
+
+  // ── Biography / Description ──
+  .monster-bio-section {
+    padding: 4px 8px 6px;
+
+    .monster-bio-content {
+      font-size: 20px;
+      line-height: 1.4;
+
+      p { margin: 0 0 4px; }
+      p:last-child { margin-bottom: 0; }
+    }
+  }
+}

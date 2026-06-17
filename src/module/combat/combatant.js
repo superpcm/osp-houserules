@@ -37,14 +37,15 @@ export default class OspCombatant extends Combatant {
   }
 
   /**
-   * The group this combatant belongs to (may be overridden via flag)
+   * The OSP initiative group this combatant belongs to (may be overridden via flag).
+   * Renamed from `group` to avoid collision with Foundry v13's native BaseCombatant.group field.
    */
-  get group() {
+  get ospGroup() {
     return this.getFlag(game.system.id, "group") ?? this.groupRaw;
   }
 
   /**
-   * Assign this combatant to a group
+   * Assign this combatant to an OSP initiative group
    * @param {string} group - The group color string
    */
   async assignGroup(group) {

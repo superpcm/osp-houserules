@@ -1,0 +1,93 @@
+// ─── Morale Check Dialog ──────────────────────────────────────────────────────
+
+.osp-morale-popup .dialog-content,
+.osp-morale-dialog {
+  font-family: var(--font-primary, 'Signika', sans-serif);
+}
+
+.osp-morale-dialog {
+  padding: 4px 0 8px;
+
+  // ── Header bar ──
+  .morale-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+    background: #2a2a2a;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #fff;
+
+    .morale-trigger { font-size: 13px; }
+
+    .morale-all-pass  { color: #7fd47f; font-weight: bold; }
+    .morale-some-fail { color: #f4a460; font-weight: bold; }
+  }
+
+  // ── Results table ──
+  .morale-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    th {
+      padding: 5px 10px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #fff;
+      background: #444;
+      border-bottom: 2px solid #222;
+    }
+
+    td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #ddd;
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    // Pass row — subtle green tint
+    tr.morale-pass {
+      background: #f2fff2;
+      color: #333;
+    }
+
+    // Fail row — red tint
+    tr.morale-fail {
+      background: #fff2f2;
+      color: #222;
+    }
+
+    .morale-roll,
+    .morale-score {
+      text-align: center;
+      width: 50px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .morale-result {
+      width: 60px;
+      text-align: center;
+
+      strong { color: #c00; }
+    }
+
+    .morale-reaction {
+      font-style: italic;
+      color: #555;
+    }
+
+    tr.morale-fail .morale-reaction {
+      color: #8b0000;
+      font-style: normal;
+      font-weight: 500;
+    }
+  }
+}

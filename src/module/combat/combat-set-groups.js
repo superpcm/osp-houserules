@@ -45,7 +45,7 @@ export class OspCombatGroupSelector extends HandlebarsApplicationMixin(Applicati
       id: c.id,
       name: c.name,
       img: c.img,
-      group: c.group,
+      group: c.ospGroup,
     }));
 
     return { combatants, groups };

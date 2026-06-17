@@ -81,9 +81,54 @@
     "monster": {
       "templates": [],
       "system": {
-        "hitdice": "",
-        "thaco": 0,
-        "special": ""
+        "hp": {
+          "hd": "",
+          "value": 0,
+          "max": 0
+        },
+        "ac": {
+          "value": 9,
+          "mod": 0
+        },
+        "aac": {
+          "value": 10,
+          "mod": 0
+        },
+        "thac0": {
+          "value": 19,
+          "bba": 0,
+          "mod": {
+            "missile": 0,
+            "melee": 0
+          }
+        },
+        "saves": {
+          "death":     { "value": 0 },
+          "wand":      { "value": 0 },
+          "paralysis": { "value": 0 },
+          "breath":    { "value": 0 },
+          "spell":     { "value": 0 }
+        },
+        "movement": {
+          "base": 0,
+          "encounter": 0
+        },
+        "initiative": {
+          "value": 0,
+          "mod": 0
+        },
+        "details": {
+          "biography": "",
+          "alignment": "",
+          "xp": "",
+          "specialAbilities": "",
+          "appearing": {
+            "d": "",
+            "w": ""
+          },
+          "morale": "",
+          "movement": ""
+        }
       }
     }
   },
@@ -113,6 +158,7 @@
         "speedFactor": "",
         "rof": 1,
         "bonus": 0,
+        "attacksPerRound": 1,
         "tags": [],
         "melee": true,
         "missile": false,
@@ -183,11 +229,15 @@
     },
     "ability": {
       "templates": [],
-      "system": {}
+      "system": {
+        "description": ""
+      }
     },
     "spell": {
       "templates": [],
-      "system": {}
+      "system": {
+        "description": ""
+      }
     }
   }
 }

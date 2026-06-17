@@ -45,6 +45,7 @@ import { MagicItemCreator } from "./module/dialog/magic-item-creator.js";
 import OspCombat from "./module/combat/combat.js";
 import OspCombatant from "./module/combat/combatant.js";
 import OspCombatTracker from "./module/combat/combat-tracker.js";
+import { registerMoraleHooks } from "./module/combat/morale.js";
 
 // DM Toolkit sidebar tab
 import DmToolkitTab from "./module/sidebar/dm-toolkit.js";
@@ -91,6 +92,7 @@ Hooks.once("init", () => {
   CONFIG.Combat.documentClass = OspCombat;
   CONFIG.Combatant.documentClass = OspCombatant;
   CONFIG.ui.combat = OspCombatTracker;
+  CONFIG.Combat.initiative = { formula: "1d20", decimals: 0 };
 
   // ── DM Toolkit (GM only) ─────────────────────────────────────────────────
   foundry.applications.sidebar.Sidebar.TABS.dmtoolkit = {
@@ -109,7 +111,7 @@ Hooks.once("init", () => {
   CONFIG.Item.dataModels.spell = OspDataModelSpell;
 
   // ── Sheets ────────────────────────────────────────────────────────────────
-  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet, { types: ["character"] });
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
 
   foundry.documents.collections.Actors.registerSheet("ose", OspActorSheetCharacter, {
@@ -210,6 +212,9 @@ Hooks.once("ready", () => {
   applyStoredPositionOverrides().catch(err => console.warn('OSP | applyStoredPositionOverrides failed:', err));
 
 });
+
+// ── Morale system ─────────────────────────────────────────────────────────
+registerMoraleHooks();
 
 // ── Party system hooks ─────────────────────────────────────────────────────
 Hooks.on("renderActorDirectory", (app, html) => addPartyControl(app, html));

@@ -290,6 +290,42 @@ Hooks.on("renderUserConfig", (_app, html) => {
 // ── Chat hooks ────────────────────────────────────────────────────────────
 Hooks.on("getChatMessageContextOptions", addChatMessageContextOptions);
 Hooks.on("renderChatMessageHTML", addChatMessageButtons);
+Hooks.on("createChatMessage", (message) => {
+  const flags    = message.flags?.["osp-houserules"] ?? {};
+  const dsnActive = game.modules.get("dice-so-nice")?.active;
+  const isManual  = flags.manualRoll === true;
+
+  const result = flags.attackResult;
+  if (result === "hit" || result === "miss" || result === "critical_hit" || result === "critical-miss") {
+    // Manual rolls have no DSN animation — show popup immediately
+    if (!isManual && dsnActive) _pendingAttackResults.set(message.id, result);
+    else showCombatResultPopup(result);
+  }
+
+  if (flags.combatDamage) {
+    // For manual rolls the total is stored in the flag (no rolls[] on the message)
+    const total = isManual ? flags.manualDamageTotal : message.rolls?.[0]?.total;
+    if (total !== undefined) {
+      if (!isManual && dsnActive) _pendingDamageResults.set(message.id, total);
+      else updateHitPopupWithDamage(total);
+    }
+  }
+});
+
+Hooks.on("diceSoNiceRollComplete", (messageId) => {
+  const result = _pendingAttackResults.get(messageId);
+  if (result) {
+    _pendingAttackResults.delete(messageId);
+    showCombatResultPopup(result);
+    return;
+  }
+
+  const total = _pendingDamageResults.get(messageId);
+  if (total !== undefined) {
+    _pendingDamageResults.delete(messageId);
+    updateHitPopupWithDamage(total);
+  }
+});
 
 // ── Magic item creator — right-click weapon/armor/ammunition in Items sidebar ─
 // Foundry v13 AppV2 fires "getItemContextOptions"; li is a raw HTMLElement with data-entry-id
@@ -706,9 +742,75 @@ Hooks.on("hotbarDrop", (bar, data, slot) => {
 /**
  * Prevent default sheet opening for dropped item tokens and handle pickup
  */
-Hooks.on("preUpdateToken", (tokenDoc, change, options, userId) => {
-  // This prevents any default behaviors we don't want
+const _pendingAttackResults = new Map();
+const _pendingDamageResults = new Map();
+let _hitPopupEl = null;
+
+function showCombatResultPopup(result) {
+  document.querySelector('.osp-combat-result-popup')?.remove();
+  const wrap = document.createElement('div');
+  wrap.className = 'osp-combat-result-popup';
+  const img = document.createElement('img');
+  img.src = `systems/osp-houserules/assets/images/icons/${result}.webp`;
+  wrap.appendChild(img);
+  document.body.appendChild(wrap);
+
+  if (result === "hit" || result === "critical_hit") {
+    _hitPopupEl = wrap;
+  } else {
+    _hitPopupEl = null;
+    setTimeout(() => wrap.remove(), 4000);
+  }
+}
+
+function updateHitPopupWithDamage(total) {
+  if (!_hitPopupEl) return;
+  const badge = document.createElement('div');
+  badge.className = 'osp-xp-award-badge';
+  badge.innerHTML = `${total}<span class="osp-xp-award-label"> DMG</span>`;
+  _hitPopupEl.appendChild(badge);
+  const wrap = _hitPopupEl;
+  _hitPopupEl = null;
+  setTimeout(() => wrap.remove(), 4000);
+}
+
+function showPlayerLockPopup() {
+  if (document.querySelector('.osp-player-lock-popup')) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'osp-xp-award-popup osp-player-lock-popup';
+
+  const img = document.createElement('img');
+  img.src = 'systems/osp-houserules/assets/images/icons/action_locked.webp';
+
+  const btn = document.createElement('button');
+  btn.className = 'osp-xp-award-close';
+  btn.textContent = '✕  Dismiss';
+  btn.addEventListener('click', () => wrap.remove());
+
+  wrap.appendChild(img);
+  wrap.appendChild(btn);
+  document.body.appendChild(wrap);
+
+  foundry.audio.AudioHelper.play({ src: 'systems/osp-houserules/assets/sounds/locked.ogg', volume: 1.0, loop: false });
+}
+
+Hooks.on("preUpdateToken", (tokenDoc, changes, options, userId) => {
+  if (game.settings.get("osp-houserules", "playerLock") && !game.user.isGM) {
+    if ("x" in changes || "y" in changes) {
+      showPlayerLockPopup();
+      return false;
+    }
+  }
   return true;
+});
+
+Hooks.on("preCreateChatMessage", (message, options, userId) => {
+  if (!game.settings.get("osp-houserules", "playerLock")) return;
+  if (game.user.isGM) return;
+  if (message.rolls?.length > 0) {
+    showPlayerLockPopup();
+    return false;
+  }
 });
 
 /**

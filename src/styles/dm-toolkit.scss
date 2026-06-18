@@ -123,6 +123,45 @@
       color: inherit;
     }
   }
+
+  .osp-player-lock-btn {
+    &.active {
+      background: rgba(160, 20, 20, 0.18);
+      border-color: rgba(160, 20, 20, 0.55);
+      color: #c03030;
+    }
+
+    &.active:hover {
+      background: rgba(160, 20, 20, 0.30);
+      border-color: rgba(160, 20, 20, 0.80);
+    }
+  }
+}
+
+// Combat hit/miss popup
+.osp-combat-result-popup {
+  position: fixed;
+  top: calc(20% - 100px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  pointer-events: none;
+
+  img {
+    max-width: min(360px, 50vw);
+    max-height: 30vh;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 4px 18px rgba(0,0,0,0.7));
+  }
+
+  .osp-xp-award-badge {
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
 }
 
 // XP award popup
@@ -194,6 +233,138 @@
   &:hover {
     background: rgba(0, 0, 0, 0.8) !important;
     border-color: rgba(255, 210, 80, 0.85) !important;
+  }
+}
+
+// ── Manual Physical Dice — roll entry dialog ──────────────────────────────────
+.osp-manual-roll-dialog {
+  padding: 4px 0 8px;
+
+  .osp-dialog-roll-label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    color: var(--color-text-primary, #1a1a1a);
+  }
+
+  .osp-dialog-formula {
+    font-size: 0.8rem;
+    color: var(--color-text-primary, #1a1a1a);
+    opacity: 0.7;
+    margin-bottom: 10px;
+
+    code {
+      background: rgba(0,0,0,0.08);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.85em;
+    }
+  }
+
+  .osp-die-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .osp-die-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .osp-die-label {
+    flex: 0 0 60px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #1a1a1a);
+  }
+
+  .osp-die-input {
+    flex: 0 0 72px;
+    padding: 4px 6px;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 3px;
+    font-size: 1rem;
+    text-align: center;
+
+    &.osp-die-invalid {
+      border-color: #c03030;
+      background: rgba(200, 0, 0, 0.06);
+    }
+  }
+
+  .osp-die-error {
+    font-size: 0.75rem;
+    color: #c03030;
+    flex: 1;
+  }
+
+  .osp-die-modifier {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: var(--color-text-primary, #1a1a1a);
+    opacity: 0.8;
+  }
+
+  .osp-die-total {
+    font-size: 0.9rem;
+    color: var(--color-text-primary, #1a1a1a);
+
+    .osp-total-display {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// ── Manual Physical Dice — chat card ─────────────────────────────────────────
+.osp-manual-roll-card {
+  font-family: "Crimson Text", Georgia, serif;
+  padding: 6px 8px;
+  background: rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  .osp-manual-roll-badge {
+    font-size: 0.72rem;
+    font-weight: bold;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #555;
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    padding-bottom: 4px;
+    margin-bottom: 2px;
+
+    i {
+      color: #666;
+      margin-right: 3px;
+    }
+  }
+
+  .osp-manual-die {
+    font-size: 0.9rem;
+    color: var(--color-text-primary, #1a1a1a);
+
+    strong {
+      font-size: 1rem;
+    }
+  }
+
+  .osp-manual-math {
+    font-size: 0.82rem;
+    color: #555;
+    margin-top: 2px;
+    border-top: 1px solid rgba(0,0,0,0.10);
+    padding-top: 3px;
+
+    strong {
+      font-size: 0.95rem;
+      color: var(--color-text-primary, #1a1a1a);
+    }
   }
 }
 

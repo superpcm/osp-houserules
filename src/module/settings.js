@@ -88,4 +88,45 @@ export const registerSettings = () => {
     config: true,
     type: Boolean,
   });
+
+  game.settings.register(game.system.id, "playerLock", {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: () => { if (ui.dmtoolkit) ui.dmtoolkit.render(); }
+  });
+
+  // ── Manual Physical Dice ───────────────────────────────────────────────────
+  game.settings.register(game.system.id, "allowManualPhysicalRolls", {
+    name: "Allow Manual Physical Rolls",
+    hint: "Let players enter physical die results instead of rolling virtually.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register(game.system.id, "gmRequireVirtualRolls", {
+    name: "Require Virtual Rolls",
+    hint: "When enabled, manual rolling is blocked for all users regardless of their Dice Mode preference.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register(game.system.id, "diceMode", {
+    name: "Dice Mode",
+    hint: "Virtual uses Foundry's dice roller. Manual opens a dialog to enter physical dice results. Ask prompts on every roll.",
+    scope: "client",
+    config: true,
+    type: String,
+    default: "virtual",
+    choices: {
+      virtual: "Virtual Dice",
+      manual: "Manual Physical Dice",
+      ask: "Ask Every Time"
+    }
+  });
 };

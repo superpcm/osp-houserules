@@ -3,6 +3,10 @@
  */
 import { getAttackBonus, getAbilityModifier } from "../../../../config/classes.js";
 import { ItemCardDialog } from "../../../cards/item-card-dialog.js";
+import { ospRoll, buildManualChatContent } from "../../../dice.js";
+
+const critDamageFormula = (formula) =>
+  formula.replace(/(\d+)d(\d+)/gi, (_, n, d) => `${parseInt(n) * 2}d${d}`);
 
 export class ItemHandler {
   constructor(html, actor, sheet) {
@@ -1710,17 +1714,23 @@ export class ItemHandler {
       
       const flavor = `${item.name} Attack Roll<br><small>${bonusBreakdown}</small>`;
 
-      // Roll the attack
-      await this._rollAttack(formula, flavor);
+      // Resolve target for hit/miss comparison
+      const targetOpts = this._resolveTargetOpts(totalBonus);
 
-      // Roll damage if the weapon has a damage formula
-      if (item.system.damage) {
-        const dmgFormula = weaponBonus > 0
+      const { isHit, isCrit, cancelled } = await this._rollAttack(formula, flavor, targetOpts);
+      if (cancelled) return;
+
+      // Roll damage: always when no target, only on a hit when targeting
+      if (item.system.damage && (isHit === null || isHit)) {
+        const baseDmgFormula = weaponBonus > 0
           ? `${item.system.damage} + ${weaponBonus}`
           : item.system.damage;
-        const dmgFlavor = weaponBonus > 0
-          ? `${item.name} Damage<br><small>Weapon bonus: +${weaponBonus}</small>`
-          : `${item.name} Damage`;
+        const dmgFormula = isCrit ? critDamageFormula(baseDmgFormula) : baseDmgFormula;
+        const dmgFlavor = isCrit
+          ? `${item.name} Damage <em>(Critical Hit!)</em>`
+          : weaponBonus > 0
+            ? `${item.name} Damage<br><small>Weapon bonus: +${weaponBonus}</small>`
+            : `${item.name} Damage`;
         await this._rollDamage(dmgFormula, dmgFlavor);
       }
     }
@@ -1746,31 +1756,95 @@ export class ItemHandler {
       `STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}`
     ].join(', ');
 
-    await this._rollAttack(formula, `Unarmed Attack (Punch/Kick)<br><small>${bonusBreakdown}</small>`);
+    const targetOpts = this._resolveTargetOpts(totalBonus);
+    const { isHit, isCrit, cancelled } = await this._rollAttack(formula, `Unarmed Attack (Punch/Kick)<br><small>${bonusBreakdown}</small>`, targetOpts);
+    if (cancelled) return;
 
-    const dmgFormula = abilityModifier >= 0
-      ? `1d2 + ${abilityModifier}`
-      : `1d2 - ${Math.abs(abilityModifier)}`;
-    const dmgFlavor = `Unarmed Damage<br><small>STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}</small>`;
-    await this._rollDamage(dmgFormula, dmgFlavor);
+    if (isHit === null || isHit) {
+      const baseDmgFormula = abilityModifier >= 0
+        ? `1d2 + ${abilityModifier}`
+        : `1d2 - ${Math.abs(abilityModifier)}`;
+      const dmgFormula = isCrit ? critDamageFormula(baseDmgFormula) : baseDmgFormula;
+      const dmgFlavor = isCrit
+        ? `Unarmed Damage <em>(Critical Hit!)</em>`
+        : `Unarmed Damage<br><small>STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}</small>`;
+      await this._rollDamage(dmgFormula, dmgFlavor);
+    }
   }
 
-  async _rollAttack(formula, flavor) {
-    const roll = await new Roll(formula).evaluate();
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor,
-      rollMode: game.settings.get('core', 'rollMode')
-    });
+  _resolveTargetOpts(totalBonus) {
+    const targets = [...game.user.targets];
+    if (!targets.length) return null;
+    const targetToken = targets[0];
+    const targetActor = targetToken.actor;
+    if (!targetActor) return null;
+    const rawAAC = targetActor.system.aac;
+    const targetAAC = (rawAAC !== null && typeof rawAAC === "object")
+      ? (rawAAC.value ?? 10)
+      : (targetActor.system.ac ?? 10);
+    return { targetAAC, targetName: targetToken.name, needRoll: targetAAC - totalBonus };
+  }
+
+  async _rollAttack(formula, flavor, targetOpts = null) {
+    const result = await ospRoll(formula, { label: flavor });
+    if (result.cancelled) return { isHit: null, isCrit: false, cancelled: true };
+
+    let finalFlavor = flavor;
+    let isHit = null;
+    let isCrit = false;
+    let flags = {};
+
+    if (targetOpts) {
+      const { targetAAC, targetName, needRoll } = targetOpts;
+      const natural  = result.naturalD20;
+      isCrit         = natural === 20;
+      const isFumble = natural === 1;
+      isHit = isCrit || (!isFumble && result.total >= targetAAC);
+      const attackResult = isCrit ? "critical_hit" : isFumble ? "critical-miss" : isHit ? "hit" : "miss";
+      const color = isHit ? "#006600" : "#990000";
+      finalFlavor = `${flavor} vs <strong>${targetName}</strong> (AAC&nbsp;${targetAAC}, need&nbsp;${needRoll}+) — <strong style="color:${color}">${isHit ? "HIT" : "MISS"}</strong>`;
+      flags = { "osp-houserules": { attackResult, manualRoll: result.manual } };
+    }
+
+    const speaker  = ChatMessage.getSpeaker({ actor: this.actor });
+    const rollMode = game.settings.get('core', 'rollMode');
+
+    if (result.foundryRoll) {
+      await result.foundryRoll.toMessage({ speaker, flavor: finalFlavor, rollMode, flags });
+    } else {
+      const whisperData = ChatMessage.applyRollMode({}, rollMode);
+      await ChatMessage.create({
+        ...whisperData,
+        speaker,
+        flavor: finalFlavor,
+        content: buildManualChatContent(result, { formula, label: flavor }),
+        flags
+      });
+    }
+
+    return { isHit, isCrit, cancelled: false };
   }
 
   async _rollDamage(formula, flavor) {
-    const roll = await new Roll(formula).evaluate();
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor,
-      rollMode: game.settings.get('core', 'rollMode')
-    });
+    const result = await ospRoll(formula, { label: flavor });
+    if (result.cancelled) return;
+
+    const speaker  = ChatMessage.getSpeaker({ actor: this.actor });
+    const rollMode = game.settings.get('core', 'rollMode');
+    const flags    = { "osp-houserules": { combatDamage: true, manualRoll: result.manual, manualDamageTotal: result.manual ? result.total : undefined } };
+
+    if (result.foundryRoll) {
+      await result.foundryRoll.toMessage({ speaker, flavor, rollMode, flags });
+    } else {
+      const whisperData = ChatMessage.applyRollMode({}, rollMode);
+      await ChatMessage.create({
+        ...whisperData,
+        speaker,
+        flavor,
+        content: buildManualChatContent(result, { formula, label: flavor }),
+        flags
+      });
+    }
   }
 
   /**

@@ -3,7 +3,11 @@
   {{!-- ── Header ── --}}
   <header class="monster-header">
     <img class="monster-portrait" src="{{actor.img}}" title="{{actor.name}}" data-edit="img">
+    {{#if editable}}
+    <input class="monster-name monster-name-input" type="text" name="name" value="{{actor.name}}" placeholder="Monster Name">
+    {{else}}
     <span class="monster-name">{{actor.name}}</span>
+    {{/if}}
     <div class="monster-stat-box">
       <label>Alignment</label>
       <span class="monster-stat-value">{{system.details.alignment}}</span>

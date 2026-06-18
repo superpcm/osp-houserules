@@ -2,6 +2,7 @@
  * @file OSP Combat - extends Foundry Combat with group initiative support
  */
 import OspCombatant from "./combatant.js";
+import { ospRoll } from "../dice.js";
 
 export default class OspCombat extends foundry.documents.Combat {
   /** Formula for group initiative (one roll per group) */
@@ -69,9 +70,9 @@ export default class OspCombat extends foundry.documents.Combat {
 
     const updates = [];
     for (const [group, groupCombatants] of Object.entries(groups)) {
-      const roll = new Roll(OspCombat.GROUP_FORMULA);
-      await roll.evaluate();
-      const initiative = roll.total;
+      const rollResult = await ospRoll(OspCombat.GROUP_FORMULA, { label: `${group} Initiative` });
+      if (rollResult.cancelled) continue;
+      const initiative = rollResult.total;
 
       groupCombatants.forEach((c) => {
         const finalInit = c.isDefeated

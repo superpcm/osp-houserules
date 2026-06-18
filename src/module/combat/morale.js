@@ -1,6 +1,7 @@
 /**
  * @file Morale system — automatic 2d6 checks on first enemy casualty and 50% losses.
  */
+import { ospRoll } from "../dice.js";
 
 const REACTIONS = [
   "Flee",
@@ -73,20 +74,21 @@ async function runMoraleCheck(combat, state, trigger) {
   const candidates = livingHostiles(combat, state);
   if (!candidates.length) return;
 
-  const results = await Promise.all(candidates.map(async c => {
-    const morale = parseInt(c.actor?.system?.details?.morale ?? "0") || 0;
-    const roll   = new Roll("2d6");
-    await roll.evaluate();
-    const total  = roll.total;
+  const results = [];
+  for (const c of candidates) {
+    const morale    = parseInt(c.actor?.system?.details?.morale ?? "0") || 0;
+    const rollResult = await ospRoll("2d6", { label: `${c.name} Morale Check` });
+    if (rollResult.cancelled) continue;
+    const total  = rollResult.total;
     const failed = total > morale;
-    return {
+    results.push({
       name:     c.name,
       roll:     total,
       morale,
       failed,
       reaction: failed ? REACTIONS[Math.floor(Math.random() * REACTIONS.length)] : null
-    };
-  }));
+    });
+  }
 
   showMoraleDialog(trigger, results, state);
 }

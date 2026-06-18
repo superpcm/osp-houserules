@@ -46,6 +46,18 @@ form.osp.sheet.actor.monster {
       padding: 0 2px;
     }
 
+    // Editable name (GM): blends into the dark header, faint underline cue
+    input.monster-name-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid transparent;
+      font-family: inherit;
+
+      &:hover { border-bottom-color: #555; }
+      &:focus { outline: none; border-bottom-color: #aaa; }
+      &::placeholder { color: #777; }
+    }
+
     // alignment value in header: light-on-dark, inline (no box)
     .monster-stat-box {
       flex-direction: row;
@@ -80,8 +92,9 @@ form.osp.sheet.actor.monster {
   .monster-stat-row {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     gap: 6px;
-    padding: 5px 8px;
+    padding: 6px 14px;
     border-bottom: 1px solid #e8e8e8;
     align-items: flex-end;
   }
@@ -205,6 +218,8 @@ form.osp.sheet.actor.monster {
     margin: 0;
     padding: 0;
     font-size: 20px;
+    max-height: 250px;
+    overflow-y: auto;
 
     li {
       display: flex;
@@ -239,6 +254,8 @@ form.osp.sheet.actor.monster {
   // ── Biography / Description ──
   .monster-bio-section {
     padding: 4px 8px 6px;
+    max-height: 250px;
+    overflow-y: auto;
 
     .monster-bio-content {
       font-size: 20px;

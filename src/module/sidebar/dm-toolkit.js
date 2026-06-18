@@ -18,7 +18,8 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       editAbilityScore: DmToolkitTab._onEditAbilityScore,
       editSkillValue: DmToolkitTab._onEditSkillValue,
       importMonsters:        DmToolkitTab._onImportMonsters,
-      updateMonsterAttacks:  DmToolkitTab._onUpdateMonsterAttacks
+      updateMonsterAttacks:  DmToolkitTab._onUpdateMonsterAttacks,
+      togglePlayerLock:      DmToolkitTab._onTogglePlayerLock
     }
   };
 
@@ -27,6 +28,19 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       template: "systems/osp-houserules/templates/sidebar/dm-toolkit.html"
     }
   };
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    context.playerLockActive = game.settings.get("osp-houserules", "playerLock");
+    return context;
+  }
+
+  static async _onTogglePlayerLock(_event, _target) {
+    const current = game.settings.get("osp-houserules", "playerLock");
+    await game.settings.set("osp-houserules", "playerLock", !current);
+    const msg = current ? "Player Lock OFF — players can roll and move freely." : "Player Lock ON — dice rolling and token movement are blocked.";
+    ui.notifications.info(msg);
+  }
 
   static async _onRest(_event, _target) {
     const confirmed = await foundry.applications.api.DialogV2.confirm({

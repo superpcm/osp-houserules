@@ -83,5 +83,14 @@
         <i class="fas {{#if playerLockActive}}fa-lock{{else}}fa-lock-open{{/if}}"></i>
       </span>
     </li>
+    <li class="dm-tool-item flexrow">
+      <div class="dm-tool-info">
+        <span class="dm-tool-name">Lock the Store</span>
+        <span class="dm-tool-desc">{{#if storeLockActive}}LOCKED — players cannot drag items to their inventory.{{else}}Players can drag items from item lists freely.{{/if}}</span>
+      </div>
+      <span role="button" class="osp-dm-rest-btn osp-player-lock-btn {{#if storeLockActive}}active{{/if}}" data-action="toggleStoreLock" title="{{#if storeLockActive}}Unlock Store{{else}}Lock Store{{/if}}">
+        <i class="fas {{#if storeLockActive}}fa-lock{{else}}fa-store{{/if}}"></i>
+      </span>
+    </li>
   </ul>
 </div>

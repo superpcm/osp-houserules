@@ -10,11 +10,14 @@
     "minimum": "13.0.0",
     "verified": "13.0.0"
   },
-  "author": "Old School Player",
+  "authors": [{ "name": "Old School Player" }],
   "esmodules": ["dist/ose.js"],
   "styles": ["dist/ose.css"],
   "background": "systems/osp-houserules/system-image.webp",
-  "template": "template.json",
+  "documentTypes": {
+    "Actor": ["character", "monster"],
+    "Item": ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock", "ability", "spell"]
+  },
   "languages": [
     {
       "lang": "en",

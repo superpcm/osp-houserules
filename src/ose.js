@@ -327,6 +327,49 @@ Hooks.on("diceSoNiceRollComplete", (messageId) => {
   }
 });
 
+// ── Monster HD artwork — override "View Character Artwork" in Actors sidebar ──
+// Converts actor name to the kebab-case filename used in assets/images/monsters_artwork/.
+// Falls back to the built-in handler if no matching HD file is found.
+function _ospMonsterArtFilename(name) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '-')  // non-alphanumeric (incl. accents, parens, commas) → hyphen
+    .replace(/\s+/g, '-')            // spaces → hyphen
+    .replace(/-+/g, '-')             // collapse runs of hyphens
+    .replace(/^-|-$/g, '');          // trim leading/trailing hyphens
+}
+
+// Foundry v14 fires "getActorContextOptions" for the Actors sidebar right-click menu.
+// li is a raw HTMLElement; use li.dataset.entryId to get the actor ID.
+// onClick receives (event, li). Hook signature: (app, options).
+Hooks.on("getActorContextOptions", (_app, options) => {
+  const artOpt = options.find(o => o.label === "SIDEBAR.CharArt");
+  if (!artOpt) return;
+
+  const originalOnClick = artOpt.onClick;
+  artOpt.onClick = async (event, li) => {
+    const actorId = li.dataset.entryId;
+    const actor   = game.actors.get(actorId);
+
+    if (actor?.type !== "monster") {
+      return originalOnClick(event, li);
+    }
+
+    const filename = _ospMonsterArtFilename(actor.name);
+    const hdPath   = `systems/osp-houserules/assets/images/monsters_artwork/${filename}.webp`;
+
+    try {
+      const res = await fetch(hdPath, { method: "HEAD" });
+      if (res.ok) {
+        new foundry.applications.apps.ImagePopout({ src: hdPath, window: { title: actor.name }, uuid: actor.uuid }).render({ force: true });
+        return;
+      }
+    } catch (_e) { /* fall through to default */ }
+
+    originalOnClick(event, li);
+  };
+});
+
 // ── Magic item creator — right-click weapon/armor/ammunition in Items sidebar ─
 // Foundry v13 AppV2 fires "getItemContextOptions"; li is a raw HTMLElement with data-entry-id
 Hooks.on("getItemContextOptions", (app, options) => {

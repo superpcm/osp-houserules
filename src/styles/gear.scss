@@ -101,8 +101,8 @@ $nested-col-controls: 82px;
 
 // Default L1 subheader (inside backpacks / containers)
 // Data row grid: image(48) name(138) qty(150) storedsize(80) twt(52) weight(80) controls(82)
-$sh-img:   24px;   // center of image col      (48/2)
-$sh-name:  48px;   // left edge of name col     (48)
+$sh-img:   42px;   // center of image col      (18+48/2) — accounts for 18px nested toggle column
+$sh-name:  66px;   // left edge of name col     (18+48) — accounts for 18px nested toggle column
 $sh-qty:  261px;   // center of qty col         (48+138+150/2)
 $sh-ssize: 376px;  // center of storedsize col  (48+138+150+80/2)
 $sh-twt:  442px;   // center of tWT col         (48+138+150+80+52/2)
@@ -578,7 +578,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Without these, .field-short forces width: 50px, .item-image forces 32px, etc.,
 // which conflict with grid column widths and require manual margin-left offsets.
 .osp.sheet.actor .item-category-title,
-.osp.sheet.actor .item-header:not(.lashed-stored-item) {
+.osp.sheet.actor .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item) {
   .item-image,
   .item-roll-icon,
   .item-name,
@@ -831,18 +831,43 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   width: 697px;
 }
 
-// Drag-over highlight for containers
-.container-entry.drag-over,
-.slung-section-entry.drag-over,
-.slung-item.drag-over {
-  border: 5px solid #00ff00 !important;
-  border-radius: 5px;
+// Drag-over: valid target (green outline), invalid (red outline), neutral/unknown (grey dashed)
+.container-entry.drag-valid,
+.contained-item.drag-valid,
+.lashed-item.drag-valid,
+.slung-item.drag-valid {
+  outline: 3px solid #00c000 !important;
+  border-radius: 3px;
 }
 
-// Suppress parent section highlight when a specific slung-item container is already highlighted
-.slung-section-entry:has(.slung-item.drag-over) {
-  border: none !important;
-  border-radius: 0 !important;
+.container-entry.drag-invalid,
+.contained-item.drag-invalid,
+.lashed-item.drag-invalid,
+.slung-item.drag-invalid {
+  outline: 3px solid #c00000 !important;
+  border-radius: 3px;
+}
+
+.container-entry.drag-over,
+.contained-item.drag-over,
+.lashed-item.drag-over,
+.slung-section-entry.drag-over,
+.slung-item.drag-over {
+  outline: 2px dashed #888888 !important;
+  border-radius: 3px;
+}
+
+// Suppress parent outline when a specific child container row is highlighted
+.slung-section-entry:has(.slung-item.drag-over),
+.slung-section-entry:has(.slung-item.drag-valid),
+.slung-section-entry:has(.slung-item.drag-invalid),
+.container-entry:has(.contained-item.drag-over),
+.container-entry:has(.contained-item.drag-valid),
+.container-entry:has(.contained-item.drag-invalid),
+.container-entry:has(.lashed-item.drag-over),
+.container-entry:has(.lashed-item.drag-valid),
+.container-entry:has(.lashed-item.drag-invalid) {
+  outline: none !important;
 }
 
 // Item header row (aligns with category title)
@@ -1558,6 +1583,14 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
+// Toggle caret for nested containers (container stored inside another container).
+// Sits in the 18px $col-caret grid column of .contained-item .item-header.
+.nested-container-toggle {
+  width: $col-caret;
+  min-width: $col-caret;
+  margin-right: 0;
+}
+
 .contained-items-list {
   list-style: none;
   margin: 0;
@@ -1616,20 +1649,21 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     background: $tree-line-color;
   }
   
-  // Horizontal connector to item
+  // Horizontal connector to item — fixed offset so expanded rows (sub-items below header)
+  // don't shift the branch away from the header caret.
   &::after {
     content: '';
     position: absolute;
     left: $tree-line-position;
-    top: 50%;
+    top: calc(#{$item-row-height} / 2);
     width: calc(-5px + #{abs($tree-line-position)});
     height: $tree-line-thickness;
     background: $tree-line-color;
   }
-  
-  // Last item gets an L-shaped connector instead of T (vertical line stops at middle)
+
+  // Last item gets an L-shaped connector instead of T (vertical line stops at header center)
   &:last-child::before {
-    bottom: 50%;
+    bottom: calc(100% - #{$item-row-height} / 2);
   }
   
   .item-header {
@@ -1637,8 +1671,8 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     max-width: 638px; /* Parent width (698px) minus indent (60px) */
     box-sizing: border-box;
-    // Override grid template for nested items
-    grid-template-columns: $nested-col-image $nested-col-name $nested-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+    // Override grid template for nested items — first column is 18px for the nested container toggle
+    grid-template-columns: $col-caret $nested-col-image ($nested-col-name - $col-caret) $nested-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
 
   }
   
@@ -1658,9 +1692,9 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
-// Nested items in equipped containers - hide the Qty column
+// Nested items in equipped containers - hide the Qty column; keep the 18px toggle column
 .container-entry.item[data-equipped="true"] .contained-item .item-header {
-  grid-template-columns: $nested-col-image $nested-col-name $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+  grid-template-columns: $col-caret $nested-col-image ($nested-col-name - $col-caret) $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
 
 }
 
@@ -1678,7 +1712,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     > :nth-child(1) { left: $sh-belt-img; }
     > :nth-child(2) { left: $sh-belt-name; }
-    > :nth-child(3) { left: calc(#{$nested-indent} + #{$nested-col-image} + #{$nested-col-name} + #{$gear-containers-col-capacity} / 2); } // capacity bar center: 60+50+138+75=323px
+    > :nth-child(3) { left: calc(#{$nested-col-image} + #{$nested-col-name} + #{$gear-containers-col-capacity} / 2); } // capacity col center: 48+138+75=261px
     > :nth-child(4) { left: $sh-belt-ssize; }
     > :nth-child(5) { left: $sh-belt-twt; }
     > :nth-child(6) { left: $sh-belt-wt; }
@@ -1842,9 +1876,15 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // than contained items (572px vs 632px). Name is reduced by 60px so qty/controls align on screen.
 // Col 5 (tWT) is empty — WT and controls are explicitly placed in cols 6 and 7.
 .lashed-items-section:has(.lashed-header) .lashed-item .item-header:not(.lashed-stored-item) {
-  grid-template-columns: $nested-col-image ($nested-col-name - $nested-indent) $nested-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
-  > :nth-child(5) { grid-column: 6; }  // WT → WT column (skips empty tWT col 5)
-  > :nth-child(6) { grid-column: 7; }  // controls → controls column
+  // $col-caret for the nested container toggle; tWT column removed (was always empty here)
+  grid-template-columns: $col-caret $nested-col-image ($nested-col-name - $nested-indent) $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
+}
+
+// Belt attachment qty (non-container, no capacity bar): align with sub-item Qty column.
+// The capacity grid col center is at 261px (18+48+120+75) but $sh-l2-qty is 298px — 37px right.
+// translateX(37px) shifts the visual position without affecting the grid layout.
+.lashed-items-section:not(:has(.lashed-header)) .lashed-item .item-header > :nth-child(4):not(.capacity-bar-cell) {
+  transform: translateX(37px);
 }
 
 // Slot cost label inside belt attachment name (e.g. "Scabbard, Medium (2)")
@@ -1925,6 +1965,21 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     .item-image { opacity: 0.5; }
     .item-name.stored-weapon-name { font-style: italic; opacity: 0.6; }
   }
+}
+
+// Items inside a nested container (e.g. Oil Flask inside Belt Pouch inside Backpack).
+// When multiple sub-items follow each other, extend the vertical branch to span between them.
+.contained-item .lashed-stored-item:not(:last-child)::before {
+  bottom: 0;
+}
+
+// Sub-items inside a contained-item (e.g. Garlic inside Belt Pouch inside Backpack) must
+// align with the parent contained-item grid columns, not the belt-attachment L2 positions.
+li.contained-item .lashed-stored-item {
+  > :nth-child(3) { left: $sh-qty; }
+  > :nth-child(4) { left: $sh-ssize; }
+  > :nth-child(5) { left: $sh-twt; }
+  > :nth-child(6) { left: $sh-wt; }
 }
 
 // Weapon/item row nested inside a sub-container (L3: e.g. Longsword inside Scabbard, Sword inside Sword Frog)

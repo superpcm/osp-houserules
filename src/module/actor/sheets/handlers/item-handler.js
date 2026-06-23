@@ -140,6 +140,18 @@ export class ItemHandler {
   }
 
   /**
+   * Returns the parent scabbard container for an item, or null if none.
+   * A "scabbard" is any container with the 'scabbard' tag that holds this item.
+   */
+  _getParentScabbard(item) {
+    if (!item.system.containerId) return null;
+    const parent = this.actor.items.get(item.system.containerId);
+    if (!parent) return null;
+    const tags = parent.system?.tags || [];
+    return tags.includes('scabbard') ? parent : null;
+  }
+
+  /**
    * Handle deleting an item
    */
   async onItemDelete(event) {
@@ -172,18 +184,34 @@ export class ItemHandler {
       await Promise.all(descendants.map(d => d.delete()));
     }
 
+    const parentScabbard = this._getParentScabbard(item);
     const currentQuantity = item.system.quantity || 1;
+
+    // Helper: delete item + scabbard together (or just item if no scabbard)
+    const deleteAll = async () => {
+      if (nestedRow.length) nestedRow.remove();
+      const ops = [item.delete()];
+      if (parentScabbard) ops.push(parentScabbard.delete());
+      await Promise.all(ops);
+      if (!nestedRow.length) row.slideUp(200, () => this.actor.sheet.render(false));
+      else this.actor.sheet.render(false);
+    };
+
+    // Helper: reduce qty by deleteQty; if it reaches 0 delete both
+    const reduceQty = async (deleteQty) => {
+      const remaining = currentQuantity - deleteQty;
+      if (remaining <= 0) {
+        await deleteAll();
+      } else {
+        const ops = [item.update({ "system.quantity": remaining })];
+        if (parentScabbard) ops.push(parentScabbard.update({ "system.quantity": remaining }));
+        await Promise.all(ops);
+      }
+    };
 
     // If quantity is 1 or item doesn't use quantity system, just delete
     if (currentQuantity <= 1) {
-      if (nestedRow.length) {
-        nestedRow.remove();
-        await item.delete();
-        this.actor.sheet.render(false);
-        return;
-      }
-      await item.delete();
-      row.slideUp(200, () => this.actor.sheet.render(false));
+      await deleteAll();
       return;
     }
 
@@ -205,34 +233,14 @@ export class ItemHandler {
         deleteAll: {
           icon: '<i class="fas fa-trash"></i>',
           label: "Delete All",
-          callback: async () => {
-            if (nestedRow.length) {
-              nestedRow.remove();
-              await item.delete();
-              this.actor.sheet.render(false);
-              return;
-            }
-            await item.delete();
-            row.slideUp(200, () => this.actor.sheet.render(false));
-          }
+          callback: async () => deleteAll()
         },
         deleteSpecific: {
           icon: '<i class="fas fa-minus"></i>',
           label: "Delete Quantity",
           callback: async (html) => {
-            const deleteQty = parseInt(html.find('[name="deleteQuantity"]').val());
-            if (deleteQty >= currentQuantity) {
-              if (nestedRow.length) {
-                nestedRow.remove();
-                await item.delete();
-                this.actor.sheet.render(false);
-                return;
-              }
-              await item.delete();
-              row.slideUp(200, () => this.actor.sheet.render(false));
-            } else if (deleteQty > 0) {
-              item.update({ "system.quantity": currentQuantity - deleteQty });
-            }
+            const deleteQty = parseInt(html.find('[name="deleteQuantity"]').val()) || 1;
+            await reduceQty(deleteQty);
           }
         },
         cancel: {
@@ -426,8 +434,42 @@ export class ItemHandler {
     // Special handling for containers and clothing: equipped = top-level, unequipped = nested
     if (item.type === "container" || item.type === "clothing") {
       if (newEquippedState) {
+        // Lashable containers (belt pouches, sword frogs, etc.): shirt icon attaches to belt or detaches
+        if (item.type === 'container' && item.system.lashable) {
+          if (item.system.lashed) {
+            // Already on belt — shirt icon detaches it (same as unlash)
+            await this.onItemLashToggle(event);
+            return;
+          }
+          // Not yet on belt — attach to it
+          const belt = this.actor.items.find(i =>
+            i.type === 'clothing' && (i.system.lashSlots || 0) > 0 && i.system.equipped
+          );
+          if (!belt) {
+            ui.notifications.error(`No equipped belt found. Equip a belt first.`);
+            return;
+          }
+          const lashedAttachments = this.actor.items.filter(i =>
+            i.type === 'container' && i.system.containerId === belt.id && i.system.lashed && i.id !== item.id
+          );
+          const usedSlots = lashedAttachments.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+          const itemSlotCost = item.system.slotCost || 1;
+          if (usedSlots + itemSlotCost > (belt.system.lashSlots || 0)) {
+            ui.notifications.error(`${belt.name} is full (${usedSlots}/${belt.system.lashSlots} slots used, need ${itemSlotCost} for ${item.name}).`);
+            return;
+          }
+          const constraint = this._checkBeltConstraints(item, lashedAttachments);
+          if (!constraint.ok) {
+            ui.notifications.error(constraint.reason);
+            return;
+          }
+          await item.update({ 'system.lashed': true, 'system.containerId': belt.id, 'system.equipped': false });
+          ui.notifications.info(`${item.name} attached to ${belt.name}.`);
+          return;
+        }
+
         // Equipping = moving to top-level
-        
+
         // For clothing: Only one set of "Clothes" can be equipped at a time
         if (item.type === "clothing" && item.name.startsWith("Clothes,")) {
           const equippedClothes = this.actor.items.filter(i => 
@@ -594,6 +636,29 @@ export class ItemHandler {
     } else if (item.type === "weapon") {
       // ── WEAPON EQUIP TOGGLE ───────────────────────────────────────────────
       if (newEquippedState) {
+        // Consumable thrown weapons (Oil Flask, Holy Water, Darts): ready from container without
+        // occupying hand slots.
+        const _tags = item.system?.tags || [];
+        if (_tags.includes('consumable') || (_tags.includes('missile') && _tags.includes('reload'))) {
+          const currentQty = item.system.quantity || 1;
+          if (currentQty > 1) {
+            // Split: leave (qty-1) in storage, create a new equipped copy with qty=1
+            const itemData = item.toObject();
+            delete itemData._id;
+            itemData.system.quantity = 1;
+            itemData.system.equipped = true;
+            itemData.system.containerId = null;
+            itemData.system.lashed = false;
+            await item.update({ 'system.quantity': currentQty - 1 });
+            await this.actor.createEmbeddedDocuments('Item', [itemData]);
+            ui.notifications.info(`${item.name} readied (${currentQty - 1} remaining in storage).`);
+          } else {
+            // qty=1: equip in place, keep containerId so stow can return it to the same container
+            await item.update({ 'system.equipped': true });
+            ui.notifications.info(`${item.name} readied.`);
+          }
+          return;
+        }
         // Equipping (draw): check hand slots
         const { canEquip, reason } = this._canEquipWeapon(item);
         if (canEquip) {
@@ -611,6 +676,39 @@ export class ItemHandler {
       } else {
         // Unequipping: swords (non-dagger) → scabbard only; daggers → scabbard → belt → lash
         const tags = item.system?.tags || [];
+
+        // Consumable thrown weapons: stow back to container
+        const isConsumable = tags.includes('consumable') || (tags.includes('missile') && tags.includes('reload'));
+        if (isConsumable) {
+          const currentContainer = item.system.containerId ? this.actor.items.get(item.system.containerId) : null;
+          if (currentContainer) {
+            // qty=1 path: item still references its container — just unequip in place
+            await item.update({ 'system.equipped': false });
+            ui.notifications.info(`${item.name} stowed in ${currentContainer.name}.`);
+          } else {
+            // qty>1 split path: find matching stack in any container and merge, then delete this copy
+            const allContainerItems = this.actor.items.filter(i =>
+              i.system.containerId && i.name === item.name && !i.system.equipped && i.id !== item.id
+            );
+            if (allContainerItems.length > 0) {
+              const target = allContainerItems[0];
+              await target.update({ 'system.quantity': (target.system.quantity || 1) + 1 });
+              await item.delete();
+              ui.notifications.info(`${item.name} stowed in container.`);
+            } else {
+              // No matching stack — find best container and create there
+              const storage = this._findStorageForWeapon(item);
+              if (storage) {
+                await item.update({ 'system.equipped': false, 'system.containerId': storage.container.id, 'system.lashed': false });
+                ui.notifications.info(`${item.name} stowed in ${storage.container.name}.`);
+              } else {
+                await this._showNoStorageDialog(item);
+              }
+            }
+          }
+          return;
+        }
+
         const isSword = tags.includes('sword');
         const isDagger = tags.includes('dagger');
         if (isSword && !isDagger) {
@@ -750,6 +848,15 @@ export class ItemHandler {
     // ── UNLASH PATH ──────────────────────────────────────────────────────────
     if (isCurrentlyLashed) {
       if (item.type === 'container') {
+        // If lashed to another container (backpack etc.), just store it there — don't show belt dialog
+        const parent = item.system.containerId
+          ? this.actor.items.get(item.system.containerId)
+          : null;
+        if (parent && parent.type === 'container') {
+          await item.update({ 'system.lashed': false });
+          ui.notifications.info(`${item.name} stored in ${parent.name}.`);
+          return;
+        }
         // Belt attachment being removed — show drop/delete/cancel dialog
         await this._showUnlashContainerDialog(item);
       } else if (item.type === 'weapon') {
@@ -1510,31 +1617,42 @@ export class ItemHandler {
    * Detaches from the belt only if the user confirms.
    */
   async _showUnlashContainerDialog(item) {
+    const storageContainer = this._findContainerWithSpace(item);
     return new Promise(resolve => {
+      const buttons = {};
+      if (storageContainer) {
+        buttons.store = {
+          label: `Store in ${storageContainer.name}`,
+          callback: async () => {
+            await item.update({ 'system.lashed': false, 'system.containerId': storageContainer.id });
+            ui.notifications.info(`${item.name} stored in ${storageContainer.name}.`);
+            resolve(true);
+          }
+        };
+      }
+      buttons.drop = {
+        label: 'Drop',
+        callback: async () => {
+          await item.update({ 'system.lashed': false, 'system.containerId': null });
+          await this._dropItem(item);
+          resolve(true);
+        }
+      };
+      buttons.delete = {
+        label: 'Delete',
+        callback: async () => {
+          await item.update({ 'system.lashed': false, 'system.containerId': null });
+          await item.delete();
+          resolve(true);
+        }
+      };
+      buttons.cancel = { label: 'Cancel', callback: () => resolve(false) };
       new Dialog({
         title: `Unlash ${item.name}`,
         content: `<p>Where does <strong>${item.name}</strong> go?</p>`,
-        buttons: {
-          drop: {
-            label: 'Drop',
-            callback: async () => {
-              await item.update({ 'system.lashed': false, 'system.containerId': null });
-              await this._dropItem(item);
-              resolve(true);
-            }
-          },
-          delete: {
-            label: 'Delete',
-            callback: async () => {
-              await item.update({ 'system.lashed': false, 'system.containerId': null });
-              await item.delete();
-              resolve(true);
-            }
-          },
-          cancel: { label: 'Cancel', callback: () => resolve(false) }
-        },
-        default: 'cancel'
-      }).render(true);
+        buttons,
+        default: storageContainer ? 'store' : 'cancel'
+      }, { width: 520 }).render(true);
     });
   }
 
@@ -1676,25 +1794,51 @@ export class ItemHandler {
       const level = parseInt(this.actor.system.level) || 1;
       const strScore = parseInt(this.actor.system.attributes?.str?.value) || 10;
       const dexScore = parseInt(this.actor.system.attributes?.dex?.value) || 10;
-      
+
+      // Dual-use weapons (melee AND missile): ask how it's being employed.
+      // Check both boolean fields and tags — older items may lack the boolean fields.
+      let isThrown = false;
+      const itemTags = item.system?.tags || [];
+      const isMelee   = item.system.melee   || itemTags.includes('melee');
+      const isMissile = item.system.missile  || itemTags.includes('missile');
+      const isDualUse = isMelee && isMissile &&
+        !itemTags.includes('consumable') &&
+        !(itemTags.includes('missile') && itemTags.includes('reload'));
+      if (isDualUse) {
+        const choice = await new Promise(resolve => {
+          new Dialog({
+            title: `${item.name} — Attack Mode`,
+            content: `<p>How are you attacking with the <strong>${item.name}</strong>?</p>`,
+            buttons: {
+              melee:  { icon: '<i class="fas fa-hand-fist"></i>', label: 'Melee (STR)',  callback: () => resolve('melee') },
+              thrown: { icon: '<i class="fas fa-bullseye"></i>',  label: 'Thrown (DEX)', callback: () => resolve('thrown') },
+              cancel: { icon: '<i class="fas fa-times"></i>',     label: 'Cancel',       callback: () => resolve(null) }
+            },
+            default: 'melee'
+          }).render(true);
+        });
+        if (!choice) return;
+        isThrown = choice === 'thrown';
+      }
+
       // Calculate attack bonus from class/level
       const classAttackBonus = getAttackBonus(characterClass, level);
-      
+
       // Get weapon's inherent bonus
       const weaponBonus = parseInt(item.system.bonus) || 0;
-      
+
       // Determine ability modifier based on weapon type
       let abilityModifier = 0;
       let abilityName = '';
-      
-      if (item.system.melee) {
+
+      if (isThrown || (!isMelee && isMissile)) {
+        // Thrown or pure missile weapons use DEX
+        abilityModifier = getAbilityModifier(dexScore);
+        abilityName = 'DEX';
+      } else if (isMelee) {
         // Melee weapons use STR
         abilityModifier = getAbilityModifier(strScore);
         abilityName = 'STR';
-      } else if (item.system.missile) {
-        // Missile weapons use DEX
-        abilityModifier = getAbilityModifier(dexScore);
-        abilityName = 'DEX';
       } else {
         // Default to STR for unspecified weapons
         abilityModifier = getAbilityModifier(strScore);
@@ -1719,6 +1863,36 @@ export class ItemHandler {
 
       const { isHit, isCrit, cancelled } = await this._rollAttack(formula, flavor, targetOpts);
       if (cancelled) return;
+
+      // Consumable thrown weapons are expended on throw (hit or miss)
+      if (itemTags.includes('consumable') || (itemTags.includes('missile') && itemTags.includes('reload'))) {
+        const qty = item.system.quantity || 1;
+        if (qty <= 1) {
+          await item.delete();
+          ui.notifications.info(`${item.name} used — none remaining.`);
+        } else {
+          await item.update({ 'system.quantity': qty - 1 });
+          ui.notifications.info(`${item.name} used (${qty - 1} remaining).`);
+        }
+        // item is now deleted or updated; fall through to roll damage using cached item data
+      }
+
+      // Dual-use weapon thrown: remove one from inventory and sync scabbard qty
+      if (isThrown) {
+        const qty = item.system.quantity || 1;
+        const scabbard = this._getParentScabbard(item);
+        if (qty <= 1) {
+          const ops = [item.delete()];
+          if (scabbard) ops.push(scabbard.delete());
+          await Promise.all(ops);
+          ui.notifications.info(`${item.name} thrown — none remaining.`);
+        } else {
+          const ops = [item.update({ 'system.quantity': qty - 1 })];
+          if (scabbard) ops.push(scabbard.update({ 'system.quantity': qty - 1 }));
+          await Promise.all(ops);
+          ui.notifications.info(`${item.name} thrown (${qty - 1} remaining).`);
+        }
+      }
 
       // Roll damage: always when no target, only on a hit when targeting
       if (item.system.damage && (isHit === null || isHit)) {

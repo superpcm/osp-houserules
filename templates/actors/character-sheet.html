@@ -1937,6 +1937,13 @@
                     {{#each item.containedItems as |nestedItem|}}
                     <li class="item-entry item contained-item" data-item-id="{{nestedItem.id}}">
                       <div class="item-header flexrow">
+                        {{#if (eq nestedItem.type "container")}}
+                        <a class="container-toggle nested-container-toggle">
+                          <i class="fas {{#if nestedItem.collapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
+                        </a>
+                        {{else}}
+                        <span class="nested-container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
+                        {{/if}}
                         <div class="item-image" style="background-image: url('{{nestedItem.img}}');"></div>
                         <h4 class="item-name" title="{{nestedItem.name}}">{{nestedItem.name}}</h4>
                         <div class="field-short quantity">
@@ -1962,7 +1969,12 @@
                           <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="Carry/Put Down" data-item-id="{{nestedItem.id}}">
                             <i class="fas fa-hand"></i>
                           </a>
+                          {{else if nestedItem.isConsumableWeapon}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Stow{{else}}Ready{{/if}}" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
                           {{else}}
+                          {{#unless (eq nestedItem.type "container")}}
                           {{#if nestedItem.system.lashable}}
                           <a class="item-control item-lash-toggle {{#if nestedItem.system.lashed}}item-lashed{{/if}}" title="Lash/Unlash" data-item-id="{{nestedItem.id}}">
                             <img src="systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp" alt="Lash">
@@ -1973,6 +1985,7 @@
                             <img src="systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp" alt="Lash">
                           </a>
                           {{/if}}
+                          {{/unless}}
                           {{#if (or (eq nestedItem.type "container") (eq nestedItem.type "clothing") (eq nestedItem.type "armor"))}}
                           <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip" data-item-id="{{nestedItem.id}}">
                             <i class="fas fa-tshirt"></i>
@@ -1991,6 +2004,33 @@
                           {{/if}}
                         </div>
                       </div>
+                      {{!-- Items inside a nested container --}}
+                      {{#unless nestedItem.collapsed}}
+                      {{#each nestedItem.containedItems as |subItem|}}
+                      <div class="item-header flexrow lashed-stored-item" data-item-id="{{subItem.id}}">
+                        <div class="item-image" style="background-image: url('{{subItem.img}}');"></div>
+                        <h4 class="item-name stored-weapon-name" title="{{subItem.name}}">{{subItem.name}}</h4>
+                        <div class="field-short">{{subItem.system.quantity}}</div>
+                        <div class="field-short">{{#if subItem.system.storedSize}}{{subItem.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{subItem.displayWeight}}</div>
+                        <div class="field-short">{{subItem.unitWeight}}</div>
+                        <div class="item-controls">
+                          {{#if @root.owner}}
+                          {{#if subItem.isConsumableWeapon}}
+                          <a class="item-control item-toggle {{#unless subItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if subItem.system.equipped}}Stow{{else}}Ready{{/if}}" data-item-id="{{subItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{/if}}
+                          <a class="item-control item-edit" title="Edit Item" data-item-id="{{subItem.id}}"><i class="fas fa-eye"></i></a>
+                          <a class="item-control item-delete" title="Delete Item" data-item-id="{{subItem.id}}"><i class="fas fa-trash"></i></a>
+                          <a class="item-control item-drop" title="Drop Item" data-item-id="{{subItem.id}}">
+                            <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
+                          </a>
+                          {{/if}}
+                        </div>
+                      </div>
+                      {{/each}}
+                      {{/unless}}
                     </li>
                     {{/each}}
                   </ol>
@@ -2039,8 +2079,8 @@
                         <div class="field-short">{{attachment.displayWeight}}</div>
                         <div class="item-controls">
                           {{#if @root.owner}}
-                          <a class="item-control item-lash-toggle item-lashed" title="Remove from belt" data-item-id="{{attachment.id}}">
-                            <img src="systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp" alt="Lash">
+                          <a class="item-control item-toggle" title="Remove from belt" data-item-id="{{attachment.id}}">
+                            <i class="fas fa-tshirt"></i>
                           </a>
                           <a class="item-control item-edit" title="Edit Item"><i class="fas fa-eye"></i></a>
                           <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
@@ -2094,6 +2134,11 @@
                         <div class="field-short">{{storedItem.unitWeight}}</div>
                         <div class="item-controls">
                           {{#if @root.owner}}
+                          {{#if storedItem.isConsumableWeapon}}
+                          <a class="item-control item-toggle {{#unless storedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if storedItem.system.equipped}}Stow{{else}}Ready{{/if}}" data-item-id="{{storedItem.itemId}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{/if}}
                           <a class="item-control item-edit" title="Edit Item" data-item-id="{{storedItem.itemId}}"><i class="fas fa-eye"></i></a>
                           <a class="item-control item-delete" title="Delete Item" data-item-id="{{storedItem.itemId}}"><i class="fas fa-trash"></i></a>
                           <a class="item-control item-drop" title="Drop Item" data-item-id="{{storedItem.itemId}}">
@@ -2171,7 +2216,7 @@
                   <span class="container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-                  <div class="field-short">{{item.system.quantity}}</div>
+                  <div class="field-short">—</div>
                   <div class="field-short">{{item.system.storedSize}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
@@ -2200,7 +2245,7 @@
                   <span class="container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-                  <div class="field-short">{{item.system.quantity}}</div>
+                  <div class="field-short">—</div>
                   <div class="field-short">{{item.system.storedSize}}</div>
                   <div class="field-short">{{item.system.unitWeight}}</div>
                   <div class="field-short">{{item.system.unitWeight}}</div>
@@ -2232,7 +2277,7 @@
                   <span class="container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
-                  <div class="field-short">{{item.system.quantity}}</div>
+                  <div class="field-short">—</div>
                   <div class="field-short">{{item.system.storedSize}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
@@ -2319,6 +2364,13 @@
                     {{#each item.containedItems as |nestedItem|}}
                     <li class="item-entry item contained-item" data-item-id="{{nestedItem.id}}">
                       <div class="item-header flexrow">
+                        {{#if (eq nestedItem.type "container")}}
+                        <a class="container-toggle nested-container-toggle">
+                          <i class="fas {{#if nestedItem.collapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
+                        </a>
+                        {{else}}
+                        <span class="nested-container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
+                        {{/if}}
                         <div class="item-image" style="background-image: url('{{nestedItem.img}}');"></div>
                         <h4 class="item-name" title="{{nestedItem.name}}">{{nestedItem.name}}</h4>
                         <div class="field-short quantity">
@@ -2344,7 +2396,12 @@
                           <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="Carry/Put Down" data-item-id="{{nestedItem.id}}">
                             <i class="fas fa-hand"></i>
                           </a>
+                          {{else if nestedItem.isConsumableWeapon}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Stow{{else}}Ready{{/if}}" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
                           {{else}}
+                          {{#unless (eq nestedItem.type "container")}}
                           {{#if nestedItem.system.lashable}}
                           <a class="item-control item-lash-toggle {{#if nestedItem.system.lashed}}item-lashed{{/if}}" title="Lash/Unlash" data-item-id="{{nestedItem.id}}">
                             <img src="systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp" alt="Lash">
@@ -2355,6 +2412,7 @@
                             <img src="systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp" alt="Lash">
                           </a>
                           {{/if}}
+                          {{/unless}}
                           {{#if (or (eq nestedItem.type "container") (eq nestedItem.type "clothing") (eq nestedItem.type "armor"))}}
                           <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip" data-item-id="{{nestedItem.id}}">
                             <i class="fas fa-tshirt"></i>
@@ -2373,6 +2431,33 @@
                           {{/if}}
                         </div>
                       </div>
+                      {{!-- Items inside a nested container --}}
+                      {{#unless nestedItem.collapsed}}
+                      {{#each nestedItem.containedItems as |subItem|}}
+                      <div class="item-header flexrow lashed-stored-item" data-item-id="{{subItem.id}}">
+                        <div class="item-image" style="background-image: url('{{subItem.img}}');"></div>
+                        <h4 class="item-name stored-weapon-name" title="{{subItem.name}}">{{subItem.name}}</h4>
+                        <div class="field-short">{{subItem.system.quantity}}</div>
+                        <div class="field-short">{{#if subItem.system.storedSize}}{{subItem.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{subItem.displayWeight}}</div>
+                        <div class="field-short">{{subItem.unitWeight}}</div>
+                        <div class="item-controls">
+                          {{#if @root.owner}}
+                          {{#if subItem.isConsumableWeapon}}
+                          <a class="item-control item-toggle {{#unless subItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if subItem.system.equipped}}Stow{{else}}Ready{{/if}}" data-item-id="{{subItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{/if}}
+                          <a class="item-control item-edit" title="Edit Item" data-item-id="{{subItem.id}}"><i class="fas fa-eye"></i></a>
+                          <a class="item-control item-delete" title="Delete Item" data-item-id="{{subItem.id}}"><i class="fas fa-trash"></i></a>
+                          <a class="item-control item-drop" title="Drop Item" data-item-id="{{subItem.id}}">
+                            <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
+                          </a>
+                          {{/if}}
+                        </div>
+                      </div>
+                      {{/each}}
+                      {{/unless}}
                     </li>
                     {{/each}}
                   </ol>
@@ -2392,6 +2477,13 @@
                       {{#each item.lashedItems as |lashedItem|}}
                       <li class="item-entry item lashed-item" data-item-id="{{lashedItem.id}}">
                         <div class="item-header flexrow">
+                          {{#if (eq lashedItem.type "container")}}
+                          <a class="container-toggle nested-container-toggle">
+                            <i class="fas {{#if lashedItem.collapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
+                          </a>
+                          {{else}}
+                          <span class="nested-container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
+                          {{/if}}
                           <div class="item-image" style="background-image: url('{{lashedItem.img}}');"></div>
                           <h4 class="item-name" title="{{lashedItem.name}}">{{lashedItem.name}}</h4>
                           <div class="field-short quantity">
@@ -2434,6 +2526,28 @@
                             {{/if}}
                           </div>
                         </div>
+                        {{!-- Items inside a lashed container (e.g. belt pouch lashed to backpack) --}}
+                        {{#unless lashedItem.collapsed}}
+                        {{#each lashedItem.containedItems as |subItem|}}
+                        <div class="item-header flexrow lashed-stored-item" data-item-id="{{subItem.id}}">
+                          <div class="item-image" style="background-image: url('{{subItem.img}}');"></div>
+                          <h4 class="item-name stored-weapon-name" title="{{subItem.name}}">{{subItem.name}}</h4>
+                          <div class="field-short">{{subItem.system.quantity}}</div>
+                          <div class="field-short">{{#if subItem.system.storedSize}}{{subItem.system.storedSize}}{{else}}—{{/if}}</div>
+                          <div class="field-short">{{subItem.displayWeight}}</div>
+                          <div class="field-short">{{subItem.unitWeight}}</div>
+                          <div class="item-controls">
+                            {{#if @root.owner}}
+                            <a class="item-control item-edit" title="Edit Item" data-item-id="{{subItem.id}}"><i class="fas fa-eye"></i></a>
+                            <a class="item-control item-delete" title="Delete Item" data-item-id="{{subItem.id}}"><i class="fas fa-trash"></i></a>
+                            <a class="item-control item-drop" title="Drop Item" data-item-id="{{subItem.id}}">
+                              <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
+                            </a>
+                            {{/if}}
+                          </div>
+                        </div>
+                        {{/each}}
+                        {{/unless}}
                       </li>
                       {{/each}}
                     </ol>

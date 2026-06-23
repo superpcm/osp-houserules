@@ -19,7 +19,8 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       editSkillValue: DmToolkitTab._onEditSkillValue,
       importMonsters:        DmToolkitTab._onImportMonsters,
       updateMonsterAttacks:  DmToolkitTab._onUpdateMonsterAttacks,
-      togglePlayerLock:      DmToolkitTab._onTogglePlayerLock
+      togglePlayerLock:      DmToolkitTab._onTogglePlayerLock,
+      toggleStoreLock:       DmToolkitTab._onToggleStoreLock
     }
   };
 
@@ -32,6 +33,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     context.playerLockActive = game.settings.get("osp-houserules", "playerLock");
+    context.storeLockActive  = game.settings.get("osp-houserules", "storeLock");
     return context;
   }
 
@@ -39,6 +41,13 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     const current = game.settings.get("osp-houserules", "playerLock");
     await game.settings.set("osp-houserules", "playerLock", !current);
     const msg = current ? "Player Lock OFF — players can roll and move freely." : "Player Lock ON — dice rolling and token movement are blocked.";
+    ui.notifications.info(msg);
+  }
+
+  static async _onToggleStoreLock(_event, _target) {
+    const current = game.settings.get("osp-houserules", "storeLock");
+    await game.settings.set("osp-houserules", "storeLock", !current);
+    const msg = current ? "Store Lock OFF — players can drag items to their inventory." : "Store Lock ON — players cannot drag items from item lists.";
     ui.notifications.info(msg);
   }
 

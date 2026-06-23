@@ -38,7 +38,7 @@
     }
   },
   {
-    "name": "Belt Pouch, Large",
+    "name": "Belt Pouch (L)",
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-large_thumb.webp",
     "system": {
@@ -58,7 +58,7 @@
     }
   },
   {
-    "name": "Belt Pouch, Small",
+    "name": "Belt Pouch (S)",
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-small_thumb.webp",
     "system": {

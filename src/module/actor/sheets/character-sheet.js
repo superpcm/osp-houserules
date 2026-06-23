@@ -231,6 +231,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     const allArmor = this.actor.items.filter(i => i.type === "armor");
     const allAmmunition = this.actor.items.filter(i => i.type === "ammunition");
     const allCoins = this.actor.items.filter(i => i.type === "coin");
+
+    // Consumable weapons (Oil Flask, Holy Water, Darts, etc.) can be readied from containers.
+    // When equipped, they appear on the combat tab and hide from their container.
+    const isConsumableWeapon = (i) => {
+      const tags = i.system?.tags || [];
+      return i.type === 'weapon' && (tags.includes('consumable') || (tags.includes('missile') && tags.includes('reload')));
+    };
     
     // Filter top-level clothing items (equipped, not in containers)
     const allClothing = this.actor.items.filter(i => i.type === "clothing");
@@ -247,7 +254,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       if (item.system.capacity) {
         // Find items stored in this clothing
         const containedItems = allItems.filter(i => i.system.containerId === item.id);
-        const containedWeapons = allWeapons.filter(w => w.system.containerId === item.id);
+        const containedWeapons = allWeapons.filter(w => w.system.containerId === item.id && !(w.system.equipped && isConsumableWeapon(w)));
         const containedArmor = allArmor.filter(a => a.system.containerId === item.id);
         const containedAmmunition = allAmmunition.filter(a => a.system.containerId === item.id);
         const containedContainers = allContainers.filter(c => c.system.containerId === item.id);
@@ -270,9 +277,27 @@ export class OspActorSheetCharacter extends ActorSheet {
           const nestedQuantity = nestedItem.system.quantity !== undefined ? nestedItem.system.quantity : 1;
           nestedItem.unitWeight = Math.round(nestedWeight * 10) / 10;
           nestedItem.displayWeight = Math.round(nestedWeight * nestedQuantity * 10) / 10;
-          
+
           const storedSize = parseFloat(nestedItem.system.storedSize) || 0;
           nestedItem.displayCapacity = Math.round(storedSize * nestedQuantity);
+          nestedItem.isConsumableWeapon = isConsumableWeapon(nestedItem);
+
+          if (nestedItem.type === 'container') {
+            const subItems = this.actor.items.filter(i => i.system.containerId === nestedItem.id && !i.system.lashed && !(i.system.equipped && isConsumableWeapon(i)));
+            subItems.forEach(si => {
+              const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
+              const siQty = si.system.quantity || 1;
+              si.unitWeight = Math.round(siWeight * 10) / 10;
+              si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
+              si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
+              si.isConsumableWeapon = isConsumableWeapon(si);
+            });
+            nestedItem.containedItems = subItems;
+            nestedItem.collapsed = this.actor.getFlag('osp-houserules', `container-${nestedItem.id}-collapsed`) ?? false;
+          } else {
+            nestedItem.containedItems = [];
+            nestedItem.collapsed = true;
+          }
         });
         
         item.containedItems = allContainedItems;
@@ -302,7 +327,13 @@ export class OspActorSheetCharacter extends ActorSheet {
           c.displayWeight = Math.round(wt * (c.system.quantity || 1) * 10) / 10;
           c.slotCost = c.system.slotCost || 1;
           // Always (re)assign storedWeapon/storedItem so stale values from prior renders are cleared
-          const storedWeapon = allWeapons.find(w => w.system.containerId === c.id) ?? null;
+          // For capacity containers (pouches etc.) include stackable weapons alongside items.
+          // For non-capacity containers (scabbards) keep the storedWeapon-exclusive pattern.
+          const hasCapacity = (parseFloat(c.system.capacity) || 0) > 0;
+          // Exclude stackable weapons from storedWeapon in capacity containers — they go in storedItems instead
+          const storedWeapon = allWeapons.find(w =>
+            w.system.containerId === c.id && (!hasCapacity || !isConsumableWeapon(w))
+          ) ?? null;
           // Sub-containers stored inside this attachment (e.g. Scabbard, Sword inside Sword Frog)
           c.subContainers = allContainers.filter(sc => sc.system.containerId === c.id).map(sub => {
             const swt2 = parseFloat(sub.system.unitWeight || sub.system.weight) || 0;
@@ -326,23 +357,17 @@ export class OspActorSheetCharacter extends ActorSheet {
             storedWeapon.itemId = storedWeapon.id;
           }
           c.storedWeapon = storedWeapon;
-          const isStackableWeapon = (i) => {
-            const tags = i.system.tags || [];
-            return i.type === 'weapon' &&
-              (tags.includes('consumable') || (tags.includes('missile') && tags.includes('reload')));
-          };
-          // For capacity containers (pouches etc.) include stackable weapons alongside items.
-          // For non-capacity containers (scabbards) keep the storedWeapon-exclusive pattern.
-          const hasCapacity = (parseFloat(c.system.capacity) || 0) > 0;
           const storedItems = (hasCapacity || !storedWeapon)
             ? this.actor.items.filter(i =>
                 i.system.containerId === c.id &&
-                (i.type === 'item' || i.type === 'ammunition' || i.type === 'coin' || isStackableWeapon(i))
+                (i.type === 'item' || i.type === 'ammunition' || i.type === 'coin' || isConsumableWeapon(i)) &&
+                !(i.system.equipped && isConsumableWeapon(i))
               ).map(i => {
                 const sit = parseFloat(i.system.unitWeight || i.system.weight) || 0;
                 i.unitWeight = Math.round(sit * 10) / 10;
                 i.displayWeight = Math.round(sit * (i.system.quantity || 1) * 10) / 10;
                 i.itemId = i.id;
+                i.isConsumableWeapon = isConsumableWeapon(i);
                 return i;
               })
             : [];
@@ -354,9 +379,7 @@ export class OspActorSheetCharacter extends ActorSheet {
             + c.subContainers.reduce((sum, sub) =>
                 sum + (sub.displayWeight || 0) + (sub.storedWeapon?.displayWeight || 0), 0);
           c.totalWeight = Math.round((c.displayWeight + storedContentWeight) * 10) / 10;
-          c.storageCollapsed = c.hasContents
-            ? (this.actor.getFlag('osp-houserules', `attachment-${c.id}-collapsed`) ?? true)
-            : false;
+          c.storageCollapsed = this.actor.getFlag('osp-houserules', `attachment-${c.id}-collapsed`) ?? false;
           // Capacity bar for attachments that are containers
           const cap = parseFloat(c.system.capacity) || 0;
           if (cap > 0) {
@@ -466,7 +489,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       
       // Find ALL items in this container - items, weapons, armor, ammunition, coins, AND nested containers
       const containedItems = allItems.filter(item => item.system.containerId === container.id);
-      const containedWeapons = allWeapons.filter(weapon => weapon.system.containerId === container.id);
+      const containedWeapons = allWeapons.filter(weapon => weapon.system.containerId === container.id && !(weapon.system.equipped && isConsumableWeapon(weapon)));
       const containedArmor = allArmor.filter(armor => armor.system.containerId === container.id);
       const containedAmmunition = allAmmunition.filter(ammo => ammo.system.containerId === container.id);
       const containedContainers = allContainers.filter(c => c.system.containerId === container.id);
@@ -502,7 +525,26 @@ export class OspActorSheetCharacter extends ActorSheet {
         // Capacity: storedSize is per-unit; coins use same logic
         const itemCapacity = storedSize * currentQuantity;
         item.displayCapacity = Math.round(itemCapacity * 10) / 10;
-        
+        item.isConsumableWeapon = isConsumableWeapon(item);
+
+        // Build sub-items for nested containers so the template can show their contents
+        if (item.type === 'container') {
+          const subItems = this.actor.items.filter(i => i.system.containerId === item.id && !i.system.lashed && !(i.system.equipped && isConsumableWeapon(i)));
+          subItems.forEach(si => {
+            const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
+            const siQty = si.system.quantity || 1;
+            si.unitWeight = Math.round(siWeight * 10) / 10;
+            si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
+            si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
+            si.isConsumableWeapon = isConsumableWeapon(si);
+          });
+          item.containedItems = subItems;
+          item.collapsed = this.actor.getFlag('osp-houserules', `container-${item.id}-collapsed`) ?? false;
+        } else {
+          item.containedItems = [];
+          item.collapsed = true;
+        }
+
         // Separate lashed from stored items
         if (item.system.lashed) {
           lashedItems.push(item);
@@ -510,7 +552,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           storedItems.push(item);
         }
       });
-      
+
       containerData.containedItems = storedItems;
       containerData.lashedItems = lashedItems;
       
@@ -788,63 +830,37 @@ export class OspActorSheetCharacter extends ActorSheet {
       await this.actor.setFlag('osp-houserules', 'slung-collapsed', !current);
     });
 
-    // Slung Items section — enable as a drop target (dragover must preventDefault for drop to fire)
-    const slungEntry = html.find('.slung-section-entry')[0];
-    if (slungEntry) {
-      let dragCounter = 0;
-      slungEntry.addEventListener('dragenter', (e) => {
-        e.preventDefault();
-        dragCounter++;
-        slungEntry.classList.add('drag-over');
-      });
-      slungEntry.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dragCounter--;
-        if (dragCounter === 0) slungEntry.classList.remove('drag-over');
-      });
-      slungEntry.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-      });
-      slungEntry.addEventListener('drop', (e) => {
-        dragCounter = 0;
-        slungEntry.classList.remove('drag-over');
-        // let the event bubble to the sheet's _onDrop handler
-      });
+    // Capture the dragged item's ID via DOM lookup — reading dataTransfer.getData in ancestor
+    // dragstart handlers returns empty in most browsers (only the originating handler can read it back).
+    // Uses capture:true so this fires before Foundry's target-phase DragDrop handler, which calls
+    // stopPropagation and would otherwise prevent this bubble-phase listener from ever running.
+    const gearSection = html.find('.gear-tab')[0];
+    if (gearSection) {
+      gearSection.addEventListener('dragstart', (e) => {
+        this._gearDragItemId = null;
+        const el = e.target.closest('[data-item-id]');
+        if (el) this._gearDragItemId = el.dataset.itemId;
+      }, { capture: true });
+      gearSection.addEventListener('dragend', () => { this._gearDragItemId = null; }, { capture: true });
     }
 
-    // Add drag-over highlight for individual slung items (containers like Baldric)
+    // Slung Items section — neutral drop target (equip/sling logic handled in _onDropItem)
+    const slungEntry = html.find('.slung-section-entry')[0];
+    if (slungEntry) {
+      this._wireGearDropTarget(slungEntry, null);
+    }
+
+    // Individual slung containers (Baldric etc.)
     html.find('.slung-item[data-item-id]').each((i, el) => {
-      const itemId = el.dataset.itemId;
-      const item = this.actor.items.get(itemId);
+      const item = this.actor.items.get(el.dataset.itemId);
       if (!item || item.type !== 'container') return;
-      let dragCounter = 0;
-      el.addEventListener('dragenter', (e) => {
-        e.preventDefault();
-        dragCounter++;
-        el.classList.add('drag-over');
-      });
-      el.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dragCounter--;
-        if (dragCounter === 0) el.classList.remove('drag-over');
-      });
-      el.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        e.stopPropagation(); // prevent slung-section-entry dragover from also firing
-      });
-      el.addEventListener('drop', (e) => {
-        dragCounter = 0;
-        el.classList.remove('drag-over');
-        // bubble to sheet _onDrop
-      });
+      this._wireGearDropTarget(el, item);
     });
 
-    // Make belt-attachment containers (slotCost > 0) draggable so they can be dropped onto the belt
+    // Make belt-attachment containers (slotCost > 0) draggable so they can be dropped onto the belt.
+    // stopPropagation on dragstart prevents the gear-tab listener from firing, so set _gearDragItemId directly.
     html.find('.container-entry[data-item-id]').each((i, el) => {
-      const itemId = el.dataset.itemId;
-      const item = this.actor.items.get(itemId);
+      const item = this.actor.items.get(el.dataset.itemId);
       if (!item) return;
       const isBeltAttachment = item.system.lashable || (item.system.slotCost || 0) > 0;
       if (!isBeltAttachment) return;
@@ -853,33 +869,46 @@ export class OspActorSheetCharacter extends ActorSheet {
         const dragData = item.toDragData();
         e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
         e.dataTransfer.effectAllowed = 'move';
+        this._gearDragItemId = item.id;
         e.stopPropagation();
       });
     });
 
-    // Add drag-over highlight for containers
-    html.find('.container-entry').each((i, el) => {
-      let dragCounter = 0;
+    // Top-level container rows
+    html.find('.container-entry[data-item-id]').each((i, el) => {
+      const item = this.actor.items.get(el.dataset.itemId);
+      this._wireGearDropTarget(el, item || null);
+    });
 
-      el.addEventListener('dragenter', (e) => {
-        e.preventDefault();
-        dragCounter++;
-        el.classList.add('drag-over');
-      });
+    // Nested containers inside top-level containers (contained-item rows that are containers)
+    html.find('.contained-item[data-item-id]').each((i, el) => {
+      const item = this.actor.items.get(el.dataset.itemId);
+      if (!item || (item.type !== 'container' && !(item.type === 'clothing' && item.system.capacity))) return;
+      this._wireGearDropTarget(el, item);
+    });
 
-      el.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dragCounter--;
-        if (dragCounter === 0) el.classList.remove('drag-over');
-      });
+    // Belt attachment container rows (lashed-item rows)
+    html.find('.lashed-item[data-item-id]').each((i, el) => {
+      const item = this.actor.items.get(el.dataset.itemId);
+      if (!item || item.type !== 'container') return;
+      this._wireGearDropTarget(el, item);
+    });
 
-      el.addEventListener('dragover', (e) => {
-        e.preventDefault();
-      });
-
-      el.addEventListener('drop', (e) => {
-        dragCounter = 0;
-        el.classList.remove('drag-over');
+    // div.lashed-stored-item and div.lashed-sub-stored-item are not matched by Foundry's
+    // DragDrop selector (.item-list .item) so they have no draggable ancestor closer than
+    // the parent li.lashed-item. Without this block, dragging a dagger from inside a Belt
+    // Pouch would drag the Pouch instead. Give each such div its own dragstart so the correct
+    // item moves and stopPropagation keeps the parent from hijacking the drag.
+    html.find('.lashed-stored-item[data-item-id], .lashed-sub-stored-item[data-item-id]').each((i, el) => {
+      const item = this.actor.items.get(el.dataset.itemId);
+      if (!item) return;
+      el.setAttribute('draggable', 'true');
+      el.addEventListener('dragstart', (e) => {
+        const dragData = item.toDragData();
+        e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+        e.dataTransfer.effectAllowed = 'move';
+        this._gearDragItemId = item.id;
+        e.stopPropagation();
       });
     });
 
@@ -2574,33 +2603,32 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     // If we dropped on a contained item (not a container or clothing with capacity), find its parent container
     if (targetContainer && targetContainer.type !== "container" && !(targetContainer.type === "clothing" && targetContainer.system.capacity) && targetContainer.system.containerId) {
-      // This is a contained item, find its parent container
-      const parentContainerId = targetContainer.system.containerId;
-      targetContainer = this.actor.items.get(parentContainerId);
+      targetContainer = this.actor.items.get(targetContainer.system.containerId);
     }
-    
-    // If target container is itself stored inside another container (and not equipped/worn, and not belt-lashed),
-    // traverse up to find the top-level equipped/worn container.
-    // Skip traversal for belt-lashed containers — they are intentional drop targets (e.g. drop sword into scabbard on belt).
-    if (targetContainer &&
-        (targetContainer.type === "container" || (targetContainer.type === "clothing" && targetContainer.system.capacity)) &&
-        targetContainer.system.containerId &&
-        !targetContainer.system.equipped &&
-        !targetContainer.system.lashed) {
-      let topContainer = targetContainer;
-      while (topContainer.system.containerId && !topContainer.system.lashed) {
-        const parentContainer = this.actor.items.get(topContainer.system.containerId);
-        if (!parentContainer) break;
-        topContainer = parentContainer;
-      }
-      targetContainer = topContainer;
-    }
-    
+
     // Check if this item already exists on this actor
     const existingItemCheck = this.actor.items.get(itemData._id);
-    
+
     // Check if this is a reordering operation or a new item
     const isReordering = item.actor && item.actor.id === this.actor.id;
+
+    // Prevent circular containment: a container cannot be moved into itself or its own descendants
+    if (isReordering && targetContainer && itemData.type === 'container') {
+      if (targetContainer.id === item.id) {
+        ui.notifications.error(`Cannot drop ${item.name} into itself.`);
+        return false;
+      }
+      if (this._containerIsDescendant(targetContainer, item)) {
+        ui.notifications.error(`Cannot drop ${item.name} into one of its own contents.`);
+        return false;
+      }
+    }
+
+    // Store Lock — block non-GM players from acquiring items from outside their inventory
+    if (game.settings.get("osp-houserules", "storeLock") && !game.user.isGM && !isReordering) {
+      ui.notifications.warn("The store is locked — you cannot add items to your inventory right now.");
+      return false;
+    }
 
     // Drop onto the Slung Items section → equip the item (= sling it)
     // But skip if dropping onto a specific slung container (e.g. Baldric) — let normal container logic handle it
@@ -2636,11 +2664,30 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
 
     // Swords and daggers dropped on open space: auto-provision carrying equipment
-    if (itemData.type === "weapon" && this._itemIsSword(itemData)) {
+    if (itemData.type === "weapon" && (this._itemIsSword(itemData) || this._itemIsDagger(itemData))) {
       if (!targetContainer || targetContainer.type !== "container") {
         const provisioned = await this._autoProvisionSwordCarrier(item, itemData);
         if (!provisioned) return false;
         targetContainer = provisioned;
+      } else if (this._itemIsSword(itemData) && targetContainer.name === 'Sword Frog') {
+        // Dropped directly on a Sword Frog — find or create its Scabbard, then redirect there
+        let scabbard = this.actor.items.find(
+          i => i.name === 'Scabbard, Sword' && i.system.containerId === targetContainer.id
+        );
+        if (!scabbard) {
+          const tmpl = this._getSwordCarrierTemplate('Scabbard, Sword');
+          const [created] = await this.actor.createEmbeddedDocuments('Item', [{
+            name: 'Scabbard, Sword', type: 'container', img: tmpl.img,
+            system: { ...tmpl.system, containerId: targetContainer.id }
+          }]);
+          scabbard = created;
+        }
+        targetContainer = scabbard;
+      } else if (this._itemIsDagger(itemData) && !(targetContainer.system?.tags || []).some(t => ['weapon-storage', 'scabbard', 'sling'].includes(t))) {
+        // Dagger dropped on a general container: wrap it in a Scabbard, Dagger inside that container
+        const scabbard = await this._findOrCreateScabbardInContainer('Scabbard, Dagger', targetContainer);
+        if (!scabbard) return false;
+        targetContainer = scabbard;
       }
     }
 
@@ -2885,8 +2932,8 @@ export class OspActorSheetCharacter extends ActorSheet {
             (_weaponTags.includes('missile') && _weaponTags.includes('two-handed')) ||
             (itemData.name || '').toLowerCase().includes('crossbow')
           );
-          // Try lash first if item supports it (bows/crossbows/sacks must not be lashed to backpack)
-          if (itemData.system.lashable && !_noBackpackLash && !HAND_CARRY_CONTAINERS.has(itemData.name)) {
+          // Try lash first if item supports it (bows/crossbows/sacks/containers must not be lashed to backpack)
+          if (itemData.system.lashable && itemData.type !== 'container' && !_noBackpackLash && !HAND_CARRY_CONTAINERS.has(itemData.name)) {
             const lashContainer = this._findContainerWithLashSlot(itemData);
             if (lashContainer) {
               itemData.system.containerId = lashContainer.id;
@@ -2966,24 +3013,12 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Set the container ID
       itemData.system.containerId = targetContainer.id;
     }
-    // Allow containers to be stored in other containers if they're empty
-    // Only check for emptiness when reordering (new containers from compendium are always empty)
+    // Containers can be stored in other containers regardless of their contents,
+    // as long as the target has capacity for the container's own storedSize.
     else if (itemData.type === "container" && targetContainer && targetContainer.type === "container") {
       // Check container restrictions
       const check2 = this._isItemAllowedInContainer(itemData, targetContainer);
       if (!check2.allowed) { ui.notifications.error(check2.reason); return false; }
-
-      // If reordering, check if the container being dropped has any items in it
-      if (isReordering) {
-        const droppedContainerId = item.id;
-        const itemsInDroppedContainer = droppedContainerId ?
-          this.actor.items.filter(i => i.system.containerId === droppedContainerId) : [];
-
-        if (itemsInDroppedContainer.length > 0) {
-          ui.notifications.error(`Cannot store ${item.name} - it contains ${itemsInDroppedContainer.length} item(s). Empty it first.`);
-          return false;
-        }
-      }
 
       // Check if there's enough space in the target container
       const alreadyInContainer2 = isReordering && itemData.system.containerId === targetContainer.id;
@@ -2994,6 +3029,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
 
       itemData.system.containerId = targetContainer.id;
+      itemData.system.lashed = false;
+      itemData.system.equipped = false;
     }
     // Belt with items attached cannot be stored in a container
     else if (itemData.type === "clothing" && targetContainer && targetContainer.type === "container") {
@@ -3010,6 +3047,33 @@ export class OspActorSheetCharacter extends ActorSheet {
     else if (targetContainer &&
              (targetContainer.type === "container" ||
               (targetContainer.type === "clothing" && targetContainer.system.capacity))) {
+      // Stack-merge: if an identical item already exists in this container, merge quantities
+      // and return early — this bypasses maxItems so daggers in a scabbard can stack.
+      const stackMatch3 = this.actor.items.find(i =>
+        i.name === itemData.name &&
+        i.type === itemData.type &&
+        i.system.containerId === targetContainer.id &&
+        i.system.storedSize === itemData.system.storedSize &&
+        (!isReordering || i.id !== item.id)
+      );
+      if (stackMatch3) {
+        const addingQty = itemData.system.quantity || 1;
+        const newQty = (stackMatch3.system.quantity || 1) + addingQty;
+        ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
+        // If the container is a scabbard (weapon-storage), its qty mirrors the contained stack
+        const isScabbardContainer = (targetContainer.system?.tags || []).includes('scabbard');
+        const syncScabbardQty = isScabbardContainer
+          ? targetContainer.update({"system.quantity": newQty})
+          : Promise.resolve();
+        if (isReordering) return item.delete().then(() => Promise.all([stackMatch3.update({"system.quantity": newQty}), syncScabbardQty]));
+        if (item.actor && item.actor.id !== this.actor.id) {
+          return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
+            Promise.all([stackMatch3.update({"system.quantity": newQty}), syncScabbardQty])
+          );
+        }
+        return Promise.all([stackMatch3.update({"system.quantity": newQty}), syncScabbardQty]);
+      }
+
       // Check container restrictions
       const check3 = this._isItemAllowedInContainer(itemData, targetContainer);
       if (!check3.allowed) { ui.notifications.error(check3.reason); return false; }
@@ -3094,12 +3158,12 @@ export class OspActorSheetCharacter extends ActorSheet {
       const currentContainerId = item.system.containerId;
       const targetContainerId = targetContainer?.id || null;
       
-      if (movingQty > 1 && currentContainerId !== targetContainerId && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition")) {
+      if (movingQty > 1 && currentContainerId !== targetContainerId && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor")) {
         return this._handleStackedItemDrop(item, itemData, targetContainer, currentContainerId);
       }
       
       // Check if we should stack this item with an existing one in the target container
-      if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition")) {
+      if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor")) {
         // Find matching item in the target container (excluding the item being moved)
         const matchingItem = this.actor.items.find(i => 
           i.id !== item.id && // Don't match with itself
@@ -3128,20 +3192,30 @@ export class OspActorSheetCharacter extends ActorSheet {
         }
       }
       
-      // No matching item found, just update the containerId
-      return item.update({"system.containerId": itemData.system.containerId});
+      // No matching item found, just update the containerId (and clear lashed/equipped when storing in a container)
+      const updatePayload = {"system.containerId": itemData.system.containerId};
+      if (itemData.system.containerId) {
+        updatePayload["system.lashed"] = false;
+        updatePayload["system.equipped"] = false;
+      }
+      return item.update(updatePayload);
     }
 
     // Check if this item already exists on this actor (handles case where item.actor is null)
     const existingItem = this.actor.items.get(itemData._id);
     if (existingItem) {
-      return existingItem.update({"system.containerId": itemData.system.containerId});
+      const existingUpdatePayload = {"system.containerId": itemData.system.containerId};
+      if (itemData.system.containerId) {
+        existingUpdatePayload["system.lashed"] = false;
+        existingUpdatePayload["system.equipped"] = false;
+      }
+      return existingItem.update(existingUpdatePayload);
     }
 
     // Handle item from compendium or elsewhere - check for stacking
     
     // Check if we should stack this item with an existing one
-    if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition")) {
+    if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor")) {
       // Find matching item in the same container
       const matchingItem = this.actor.items.find(i => 
         i.name === itemData.name &&
@@ -3243,6 +3317,143 @@ export class OspActorSheetCharacter extends ActorSheet {
     return container.system?.hideCapacity === true;
   }
 
+  /**
+   * Wire a gear-tab element as a drop target with validity-based highlighting.
+   * Uses relatedTarget for accurate entry/exit detection — no counter needed, no stopPropagation.
+   * Parent outlines are suppressed via CSS :has() when a child row is highlighted.
+   * Drop events bubble to Foundry's _onDrop handler.
+   */
+  _wireGearDropTarget(el, containerItem) {
+    const applyHighlight = () => {
+      el.classList.remove('drag-over', 'drag-valid', 'drag-invalid');
+      const result = containerItem ? this._getContainerDropValidity(containerItem) : null;
+      if (result === null) {
+        el.classList.add('drag-over');
+      } else if (result.valid) {
+        el.classList.add('drag-valid');
+      } else {
+        el.classList.add('drag-invalid');
+      }
+    };
+
+    el.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      // Only apply when entering from outside this element
+      if (!el.contains(e.relatedTarget)) applyHighlight();
+    });
+    el.addEventListener('dragleave', (e) => {
+      // Only clear when leaving to outside this element
+      if (!el.contains(e.relatedTarget)) {
+        el.classList.remove('drag-over', 'drag-valid', 'drag-invalid');
+      }
+    });
+    el.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    el.addEventListener('drop', () => {
+      el.classList.remove('drag-over', 'drag-valid', 'drag-invalid');
+    });
+  }
+
+  /**
+   * Synchronous validity check for dropping the currently-dragged item onto targetContainer.
+   * Returns {valid: true}, {valid: false, reason}, or null (cannot determine — show neutral).
+   * Only works for items dragged from this actor; external/cross-actor drags return null.
+   */
+  _getContainerDropValidity(targetContainer) {
+    if (!this._gearDragItemId) return null;
+
+    const draggedItem = this.actor.items.get(this._gearDragItemId);
+    if (!draggedItem) return null; // cross-actor drag — can't validate synchronously
+
+    if (draggedItem.id === targetContainer.id) {
+      return { valid: false, reason: 'Cannot drop a container into itself.' };
+    }
+    if (this._containerIsDescendant(targetContainer, draggedItem)) {
+      return { valid: false, reason: 'Cannot drop a container into its own contents.' };
+    }
+
+    // Lash-mount targets (Belt, bandolier — clothing with lashSlots but no capacity).
+    const isLashMount = targetContainer.type === 'clothing' &&
+      (targetContainer.system.lashSlots || 0) > 0 &&
+      !targetContainer.system.capacity;
+    if (isLashMount) {
+      if (!targetContainer.system.equipped) {
+        return { valid: false, reason: `${targetContainer.name} must be worn to attach items.` };
+      }
+      const tags = draggedItem.system?.tags || [];
+      const isSlungOnly = (draggedItem.name || '').toLowerCase().includes('crossbow') ||
+        (tags.includes('missile') && tags.includes('two-handed'));
+      if (isSlungOnly) {
+        return { valid: false, reason: `${draggedItem.name} cannot be lashed — sling it instead.` };
+      }
+      const itemData = draggedItem.toObject();
+      // Swords and daggers go through _autoProvisionSwordCarrier on drop, which reuses existing
+      // empty scabbards and has its own slot accounting. Belt-equipped check above is sufficient.
+      if (draggedItem.type === 'weapon' && (this._itemIsSword(itemData) || this._itemIsDagger(itemData))) {
+        return { valid: true };
+      }
+      const isWeapon = draggedItem.type === 'weapon';
+      const isLashable = draggedItem.system?.lashable === true || (draggedItem.system?.slotCost || 0) > 0;
+      if (!isWeapon && !isLashable) return null;
+      // lashAllowedSizes is only enforced by the isBeltLash drop path, which only runs for weapons.
+      // Non-weapon lashable containers take the isReordering path (no size check), so skip here.
+      if (isWeapon) {
+        const allowedSizes = targetContainer.system.lashAllowedSizes || [];
+        if (allowedSizes.length > 0 && !allowedSizes.includes(draggedItem.system?.size)) {
+          return { valid: false, reason: `${draggedItem.name} is the wrong size for ${targetContainer.name}.` };
+        }
+      }
+      // Use slot-cost reduce (matches item-handler._checkBeltConstraints and auto-provision logic).
+      // Exclude draggedItem itself — when reordering an already-lashed item its slots are already counted.
+      const usedSlots = this.actor.items
+        .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== draggedItem.id)
+        .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+      const itemSlotCost = draggedItem.system?.slotCost || 1;
+      if (usedSlots + itemSlotCost > (targetContainer.system.lashSlots || 0)) {
+        return { valid: false, reason: `${targetContainer.name} has no free lash slots.` };
+      }
+      return { valid: true };
+    }
+
+    // Only containers and clothing-with-capacity are storage targets
+    const isStorage = targetContainer.type === 'container' ||
+      (targetContainer.type === 'clothing' && targetContainer.system.capacity);
+    if (!isStorage) return null;
+
+    const itemData = draggedItem.toObject();
+
+    const typeCheck = this._isItemAllowedInContainer(itemData, targetContainer);
+    if (!typeCheck.allowed) return { valid: false, reason: typeCheck.reason };
+
+    // Use quantity 1 for hover check so a partial-stack move shows valid when any space exists
+    if (!this._skipCapacityCheck(targetContainer)) {
+      const checkData = foundry.utils.mergeObject(itemData, { system: { quantity: 1 } }, { inplace: false });
+      if (!this._hasContainerSpace(targetContainer, checkData)) {
+        return { valid: false, reason: `Not enough space in ${targetContainer.name}.` };
+      }
+    }
+
+    return { valid: true };
+  }
+
+  /**
+   * Returns true if potentialChild is a descendant of potentialAncestor in the containment tree.
+   */
+  _containerIsDescendant(potentialChild, potentialAncestor) {
+    const visited = new Set();
+    let current = potentialChild;
+    while (current.system?.containerId) {
+      if (visited.has(current.id)) break; // cycle guard
+      visited.add(current.id);
+      const parent = this.actor.items.get(current.system.containerId);
+      if (!parent) break;
+      if (parent.id === potentialAncestor.id) return true;
+      current = parent;
+    }
+    return false;
+  }
+
   _itemIsSword(itemData) {
     return (itemData.system?.tags || []).includes('sword');
   }
@@ -3321,19 +3532,46 @@ export class OspActorSheetCharacter extends ActorSheet {
     );
     if (existing) return existing;
 
-    // Check belt capacity
+    // Check belt slot capacity (category constraints are skipped for auto-provisioning)
     const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
     const tmpl = this._getSwordCarrierTemplate(scabbardName);
-    const itemHandler = this.getHandler('item');
-    const constraint = itemHandler._checkBeltConstraints({ name: scabbardName, system: tmpl.system }, lashedItems);
-    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-    if (!constraint.ok || usedSlots + (tmpl.system.slotCost || 1) > (belt.system.lashSlots || 0)) {
-      ui.notifications.error('Cannot equip scabbard: the belt is full.');
+    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 0), 0);
+    const neededSlots = tmpl.system.slotCost || 0;
+    if (usedSlots + neededSlots > (belt.system.lashSlots || 0)) {
+      ui.notifications.error(`Cannot create ${scabbardName}: belt is full (${usedSlots}/${belt.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
       return null;
     }
     const [created] = await this.actor.createEmbeddedDocuments('Item', [{
       name: scabbardName, type: 'container', img: tmpl.img,
       system: { ...tmpl.system, containerId: belt.id, lashed: true }
+    }]);
+    return created;
+  }
+
+  async _findOrCreateScabbardInContainer(scabbardName, container) {
+    // Reuse any existing scabbard of this type already in this container
+    const existing = this.actor.items.find(
+      i => i.name === scabbardName && i.system.containerId === container.id
+    );
+    if (existing) return existing;
+
+    const tmpl = this._getSwordCarrierTemplate(scabbardName);
+    if (!tmpl) return null;
+
+    const scabbardItemData = { name: scabbardName, type: 'container', system: { ...tmpl.system, quantity: 1 } };
+    const containerCheck = this._isItemAllowedInContainer(scabbardItemData, container);
+    if (!containerCheck.allowed) {
+      ui.notifications.error(`${container.name} cannot hold a ${scabbardName}: ${containerCheck.reason}`);
+      return null;
+    }
+    if (!this._skipCapacityCheck(container) && !this._hasContainerSpace(container, scabbardItemData)) {
+      ui.notifications.error(`Not enough space in ${container.name} for a ${scabbardName}.`);
+      return null;
+    }
+
+    const [created] = await this.actor.createEmbeddedDocuments('Item', [{
+      name: scabbardName, type: 'container', img: tmpl.img,
+      system: { ...tmpl.system, containerId: container.id, lashed: false, equipped: false }
     }]);
     return created;
   }
@@ -3465,21 +3703,15 @@ export class OspActorSheetCharacter extends ActorSheet {
       .reduce((total, item) => total + this._getEffectiveStoredSize(item), 0);
   }
 
-  // Returns the stored-size footprint of item, including anything stored inside it (e.g. cloak pockets).
+  // Returns the stored-size footprint of an item in its parent container.
+  // A container occupies only its own storedSize regardless of its contents.
   _getEffectiveStoredSize(item) {
-    const own = (parseFloat(item.system.storedSize) || 0) * (item.system.quantity || 1);
-    if (!item.system.capacity) return own;
-    const nested = this.actor.items.filter(i => i.system.containerId === item.id && !i.system.lashed);
-    return own + nested.reduce((sum, i) => sum + this._getEffectiveStoredSize(i), 0);
+    return (parseFloat(item.system.storedSize) || 0) * (item.system.quantity || 1);
   }
 
   // Returns the effective size for an item being dropped (may be a plain data object, not a live item).
   _getEffectiveDropSize(itemData) {
-    const own = (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
-    const itemId = itemData._id ?? itemData.id;
-    if (!itemData.system.capacity || !itemId) return own;
-    const nested = this.actor.items.filter(i => i.system.containerId === itemId && !i.system.lashed);
-    return own + nested.reduce((sum, i) => sum + this._getEffectiveStoredSize(i), 0);
+    return (parseFloat(itemData.system.storedSize) || 0) * (itemData.system.quantity || 1);
   }
 
   /**
@@ -3501,130 +3733,82 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Handle dropping stacked items with quantity dialog
+   * Show a dialog asking how many items to move when dragging a stacked item to a different container.
+   * Supports full-stack moves (merge if matching stack exists) and partial splits.
    */
   async _handleStackedItemDrop(item, itemData, targetContainer, currentContainerId) {
     const totalQuantity = itemData.system.quantity || 1;
-    
-    // Show dialog to ask how many to move
+    const targetName = targetContainer ? targetContainer.name : 'top level';
+
     return new Promise((resolve) => {
       const content = `
         <form>
           <div class="form-group">
-            <label>Current Quantity: <strong>${totalQuantity}</strong></label>
-            <label style="margin-top: 10px;">Move how many to ${targetContainer ? targetContainer.name : 'top level'}?</label>
-            <input type="number" name="moveQuantity" value="${totalQuantity}" min="1" max="${totalQuantity}" style="width: 100%;" autofocus />
+            <label>Stack size: <strong>${totalQuantity}</strong></label>
+            <label style="margin-top: 8px;">How many to move to ${targetName}?</label>
+            <input type="number" name="moveQuantity" value="${totalQuantity}" min="1" max="${totalQuantity}" style="width: 100%; margin-top: 4px;" autofocus />
           </div>
         </form>
       `;
 
       new Dialog({
         title: `Move ${item.name}`,
-        content: content,
+        content,
         buttons: {
-          moveAll: {
+          move: {
             icon: '<i class="fas fa-arrows-alt"></i>',
-            label: "Move All",
-            callback: async () => {
-              // Check if there's a matching item in target to stack with
-              const matchingItem = this.actor.items.find(i => 
-                i.id !== item.id &&
-                i.name === itemData.name &&
-                i.type === itemData.type &&
-                i.system.containerId === (targetContainer?.id || null) &&
-                i.system.storedSize === itemData.system.storedSize
-              );
-              
-              if (matchingItem) {
-                // Stack with existing item
-                const newTargetQty = (matchingItem.system.quantity || 1) + totalQuantity;
-                await matchingItem.update({"system.quantity": newTargetQty});
-                await item.delete();
-                ui.notifications.info(`Merged ${totalQuantity} ${itemData.name}(s) with existing stack.`);
-              } else {
-                // Move all - just update the containerId
-                await item.update({"system.containerId": itemData.system.containerId});
-              }
-              resolve(true);
-            }
-          },
-          moveSpecific: {
-            icon: '<i class="fas fa-hand-holding"></i>',
-            label: "Move Quantity",
+            label: 'Move',
             callback: async (html) => {
               const moveQty = parseInt(html.find('[name="moveQuantity"]').val());
-              
-              if (moveQty <= 0 || moveQty > totalQuantity) {
-                ui.notifications.error(`Invalid quantity. Must be between 1 and ${totalQuantity}`);
+              if (!moveQty || moveQty < 1 || moveQty > totalQuantity) {
+                ui.notifications.error(`Quantity must be between 1 and ${totalQuantity}.`);
                 resolve(false);
                 return;
               }
-              
-              if (moveQty === totalQuantity) {
-                // Moving all - check if there's a matching item in target to stack with
-                const matchingItemAll = this.actor.items.find(i => 
-                  i.id !== item.id &&
-                  i.name === itemData.name &&
-                  i.type === itemData.type &&
-                  i.system.containerId === (targetContainer?.id || null) &&
-                  i.system.storedSize === itemData.system.storedSize
-                );
-                
-                if (matchingItemAll) {
-                  // Stack with existing item
-                  const newTargetQty = (matchingItemAll.system.quantity || 1) + totalQuantity;
-                  await matchingItemAll.update({"system.quantity": newTargetQty});
-                  await item.delete();
-                  ui.notifications.info(`Merged ${totalQuantity} ${itemData.name}(s) with existing stack.`);
-                } else {
-                  // Just update the containerId
-                  await item.update({"system.containerId": itemData.system.containerId});
-                }
-                resolve(true);
-                return;
-              }
-              
-              // Moving partial quantity - check if there's a matching item in target
-              const matchingItem = this.actor.items.find(i => 
+
+              const targetContainerId = targetContainer?.id ?? null;
+              const matchingItem = this.actor.items.find(i =>
                 i.id !== item.id &&
                 i.name === itemData.name &&
                 i.type === itemData.type &&
-                i.system.containerId === (targetContainer?.id || null) &&
+                i.system.containerId === targetContainerId &&
                 i.system.storedSize === itemData.system.storedSize
               );
-              
-              if (matchingItem) {
-                // Stack with existing item
-                const newTargetQty = (matchingItem.system.quantity || 1) + moveQty;
-                const newSourceQty = totalQuantity - moveQty;
-                
-                await matchingItem.update({"system.quantity": newTargetQty});
-                await item.update({"system.quantity": newSourceQty});
-                ui.notifications.info(`Moved ${moveQty} ${itemData.name}(s) to existing stack.`);
+
+              if (moveQty === totalQuantity) {
+                if (matchingItem) {
+                  await matchingItem.update({ 'system.quantity': (matchingItem.system.quantity || 1) + totalQuantity });
+                  await item.delete();
+                  ui.notifications.info(`Merged ${totalQuantity}× ${itemData.name} with existing stack.`);
+                } else {
+                  await item.update({ 'system.containerId': itemData.system.containerId });
+                }
               } else {
-                // Create new item in target location
-                const newItemData = foundry.utils.duplicate(itemData);
-                newItemData.system.quantity = moveQty;
-                newItemData.system.containerId = targetContainer?.id || null;
-                delete newItemData._id; // Remove ID so a new one is generated
-                
-                // Reduce quantity of source item
-                const newSourceQty = totalQuantity - moveQty;
-                await item.update({"system.quantity": newSourceQty});
-                await this.actor.createEmbeddedDocuments("Item", [newItemData]);
-                ui.notifications.info(`Moved ${moveQty} ${itemData.name}(s).`);
+                if (matchingItem) {
+                  await matchingItem.update({ 'system.quantity': (matchingItem.system.quantity || 1) + moveQty });
+                  await item.update({ 'system.quantity': totalQuantity - moveQty });
+                  ui.notifications.info(`Moved ${moveQty}× ${itemData.name} to existing stack.`);
+                } else {
+                  const newItemData = foundry.utils.duplicate(itemData);
+                  newItemData.system.quantity = moveQty;
+                  newItemData.system.containerId = targetContainerId;
+                  delete newItemData._id;
+                  await item.update({ 'system.quantity': totalQuantity - moveQty });
+                  await this.actor.createEmbeddedDocuments('Item', [newItemData]);
+                  ui.notifications.info(`Split: moved ${moveQty}× ${itemData.name}.`);
+                }
               }
-              
               resolve(true);
             }
           },
           cancel: {
             icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
+            label: 'Cancel',
             callback: () => resolve(false)
           }
         },
-        default: "moveSpecific"
+        default: 'move',
+        render: (html) => html.find('[name="moveQuantity"]').focus().select()
       }).render(true);
     });
   }

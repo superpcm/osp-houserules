@@ -97,6 +97,14 @@ export const registerSettings = () => {
     onChange: () => { if (ui.dmtoolkit) ui.dmtoolkit.render(); }
   });
 
+  game.settings.register(game.system.id, "storeLock", {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: () => { if (ui.dmtoolkit) ui.dmtoolkit.render(); }
+  });
+
   // ── Manual Physical Dice ───────────────────────────────────────────────────
   game.settings.register(game.system.id, "allowManualPhysicalRolls", {
     name: "Allow Manual Physical Rolls",

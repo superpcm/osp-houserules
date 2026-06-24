@@ -16,7 +16,8 @@
       ],
       "capacity": 16,
       "containerSize": "medium",
-      "lashSlots": 4
+      "lashSlots": 4,
+      "blockedTypes": ["slungable", "sword"]
     }
   },
   {
@@ -54,7 +55,8 @@
       "containerId": null,
       "tags": ["bulky"],
       "capacity": 4,
-      "containerSize": "small"
+      "containerSize": "small",
+      "blockedTypes": ["armor", "container", "clothing", "sword", "dagger"]
     }
   },
   {
@@ -74,7 +76,8 @@
       "containerId": null,
       "tags": [],
       "capacity": 2,
-      "containerSize": "small"
+      "containerSize": "small",
+      "blockedTypes": ["armor", "container", "clothing", "sword", "dagger"]
     }
   },
   {
@@ -510,7 +513,8 @@
       "lashed": false,
       "tags": [],
       "capacity": 24,
-      "containerSize": "medium"
+      "containerSize": "medium",
+      "blockedTypes": ["slungable"]
     }
   },
   {
@@ -527,7 +531,8 @@
       "lashable": false,
       "tags": [],
       "capacity": 8,
-      "containerSize": "medium"
+      "containerSize": "medium",
+      "blockedTypes": ["slungable"]
     }
   },
   {
@@ -567,7 +572,7 @@
       "description": "A rigid leather sheath for a standard sword, designed to sit within a sword frog attached to the belt.",
       "cost": 3,
       "unitWeight": 0.5,
-      "storedSize": 2,
+      "storedSize": 99,
       "quantity": 1,
       "equipped": false,
       "lashable": false,

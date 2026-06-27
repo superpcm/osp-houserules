@@ -501,6 +501,18 @@ form.osp.sheet.actor.character {
   background-position: top left;
 }
 
+form.osp.sheet.actor.character.theme-parchment {
+  background-image: url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp');
+}
+
+/* Parchment theme - transparent gear backgrounds so parchment shows through */
+.theme-parchment .window-content {
+  background-color: transparent !important;
+}
+.theme-parchment .item-category {
+  background-color: transparent !important;
+}
+
 /* Global form element reset - remove redundant declarations */
 form.osp.sheet.actor.character input,
 form.osp.sheet.actor.character select,
@@ -556,6 +568,11 @@ form.osp.sheet.actor.character {
 .application.window-app.sheet.actor.character.osp .window-header .header-button:hover,
 .osp .window-header .header-button:hover { background: rgba(255,255,255,0.2) !important; }
 
+/* Parchment theme - no bottom border on window header */
+.osp.theme-parchment .window-header {
+  border-bottom: none !important;
+}
+
 /* Static header - consolidated background image and layout properties */
 form.osp.sheet.actor.character .static-header,
 .static-header,
@@ -595,27 +612,33 @@ form.osp.sheet.actor.character .static-header::before,
   margin-bottom: 0;
 }
 
-/* Tab items - match sheet parchment background */
-.osp.sheet.actor.character .sheet-tabs a.item { 
-  opacity: 1 !important;  /* Override Foundry default */
-  background-color: $color-parchment !important;  /* Override Foundry default */
-  filter: none !important;  /* Override Foundry default */
-  border: 1px solid #000 !important;  /* Override Foundry default */
+/* Tab items */
+.osp.sheet.actor.character .sheet-tabs a.item {
+  opacity: 1 !important;
+  background-color: #000 !important;
+  color: #fff !important;
+  filter: none !important;
+  border: 1px solid #444 !important;
+  border-left: none !important;
   position: relative;
   z-index: 10;
 }
 
-/* Tab hover state - slightly brighter */
-.osp.sheet.actor.character .sheet-tabs a.item:hover { 
-  filter: brightness(1.05) !important;  /* Override Foundry default */
-  border-color: #000;
+/* Tab hover state */
+.osp.sheet.actor.character .sheet-tabs a.item:hover {
+  background-color: #333 !important;
+  color: #fff !important;
+  filter: none !important;
+  border-color: #444 !important;
   z-index: 15;
 }
 
-/* Active tab - seamless connection to sheet */
-.osp.sheet.actor.character .sheet-tabs a.item.active { 
-  filter: none !important;  /* Override Foundry default */
-  border-left: none !important;  /* Override Foundry default border */
+/* Active tab */
+.osp.sheet.actor.character .sheet-tabs a.item.active {
+  background-color: #000 !important;
+  color: #704215 !important;
+  filter: none !important;
+  border-left: none !important;
   z-index: 20;
   margin-bottom: -1px;
 }

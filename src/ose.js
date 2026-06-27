@@ -1044,3 +1044,35 @@ Hooks.on("targetToken", async (user, token, targeted) => {
     }).render(true);
   }
 });
+
+// Inject OSP theme picker into the Sheet Configuration dialog for character actors.
+// Foundry v13 disables its native theme dropdown for AppV1 sheets, so we add our own row
+// to the Document fieldset and save the choice as an actor flag on form submit.
+Hooks.on('renderDocumentSheetConfig', (app, element) => {
+  const fdoc = app.document;
+  if (fdoc?.documentName !== 'Actor' || fdoc.type !== 'character') return;
+  if (element.querySelector('.osp-theme-picker')) return;
+
+  const fieldset = element.querySelector('fieldset');
+  if (!fieldset) return;
+
+  const currentTheme = fdoc.getFlag(game.system.id, 'sheetTheme') ?? 'default';
+
+  const row = document.createElement('div');
+  row.className = 'form-group osp-theme-picker';
+  row.innerHTML = `
+    <label>OSP Theme</label>
+    <div class="form-fields">
+      <select name="osp-sheetTheme">
+        <option value="default"${currentTheme === 'default' ? ' selected' : ''}>Old School Green</option>
+        <option value="parchment"${currentTheme === 'parchment' ? ' selected' : ''}>Cliche Parchment</option>
+      </select>
+    </div>
+    <p class="hint">Visual theme for this character's sheet.</p>
+  `;
+  fieldset.appendChild(row);
+
+  row.querySelector('select').addEventListener('change', (e) => {
+    fdoc.setFlag(game.system.id, 'sheetTheme', e.currentTarget.value);
+  });
+});

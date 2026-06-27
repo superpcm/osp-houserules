@@ -10,6 +10,8 @@ import { calculateMaxHP, XP_TABLES, CLASS_XP_MAPPING } from '../../../config/cla
 
 const { ActorSheet } = foundry.appv1.sheets;
 
+const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 const SLUNG_MAX = 3;
 const isSlungable = (tags) => tags.includes('slungable') || tags.includes('sling')
   || (tags.includes('missile') && tags.includes('two-handed'));
@@ -807,6 +809,14 @@ export class OspActorSheetCharacter extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Apply theme class to the form element and outer app element
+    const theme = this.actor.getFlag(game.system.id, 'sheetTheme') ?? 'default';
+    if (theme !== 'default') {
+      const formEl = html[0]?.closest?.('form') ?? html[0];
+      formEl?.classList.add(`theme-${theme}`);
+      this.element[0]?.classList.add(`theme-${theme}`);
+    }
+
     // ALWAYS initialize position tool handler first, regardless of editable state
     this.ensurePositionToolHandler(html);
 
@@ -857,13 +867,14 @@ export class OspActorSheetCharacter extends ActorSheet {
       this._wireGearDropTarget(el, item);
     });
 
-    // Make belt-attachment containers (slotCost > 0) draggable so they can be dropped onto the belt.
+    // Make belt-attachment and sling containers draggable.
     // stopPropagation on dragstart prevents the gear-tab listener from firing, so set _gearDragItemId directly.
-    html.find('.container-entry[data-item-id]').each((i, el) => {
+    const _wireDraggableContainer = (el) => {
       const item = this.actor.items.get(el.dataset.itemId);
       if (!item) return;
-      const isBeltAttachment = item.system.lashable || (item.system.slotCost || 0) > 0;
-      if (!isBeltAttachment) return;
+      const tags = item.system?.tags || [];
+      const isDraggable = item.system.lashable || (item.system.slotCost || 0) > 0 || tags.includes('sling');
+      if (!isDraggable) return;
       el.setAttribute('draggable', 'true');
       el.addEventListener('dragstart', (e) => {
         const dragData = item.toDragData();
@@ -872,7 +883,8 @@ export class OspActorSheetCharacter extends ActorSheet {
         this._gearDragItemId = item.id;
         e.stopPropagation();
       });
-    });
+    };
+    html.find('.container-entry[data-item-id], .slung-item[data-item-id]').each((i, el) => _wireDraggableContainer(el));
 
     // Top-level container rows
     html.find('.container-entry[data-item-id]').each((i, el) => {
@@ -1726,7 +1738,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       slotHTML += '</div>';
 
       // Formula breakdown
-      const charClass = system.class || '?';
+      const charClass = esc(system.class || '?');
       const charLevel = parseInt(system.level) || 1;
       const levelLabelsOrd = ['1st','2nd','3rd','4th','5th','6th'];
       let formulaLines = [];
@@ -1741,12 +1753,13 @@ export class OspActorSheetCharacter extends ActorSheet {
       let formulaStatLine = '';
       if (formulaMeta) {
         const { stat, statValue, bracket, isExcluded } = formulaMeta;
+        const eStat = esc(stat); const eVal = esc(String(statValue));
         if (isExcluded) {
-          formulaStatLine = `${stat} ${statValue} — no bonus (class excluded)`;
+          formulaStatLine = `${eStat} ${eVal} — no bonus (class excluded)`;
         } else if (bracket) {
-          formulaStatLine = `${stat} ${statValue} → bracket ${bracket} applies`;
+          formulaStatLine = `${eStat} ${eVal} → bracket ${esc(bracket)} applies`;
         } else {
-          formulaStatLine = `${stat} ${statValue} — no bonus bracket matched`;
+          formulaStatLine = `${eStat} ${eVal} — no bonus bracket matched`;
         }
       }
       slotHTML += `<div class="spell-formula">`;
@@ -1915,19 +1928,19 @@ export class OspActorSheetCharacter extends ActorSheet {
       const levelLabel  = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
       const castType    = isDivine ? 'Divine Prayer' : 'Arcane Spell';
       const meta = [levelLabel];
-      if (sp.duration) meta.push(`Duration: ${sp.duration}`);
-      if (sp.range)    meta.push(`Range: ${sp.range}`);
-      const actorName = this.actor.name || 'Unknown';
-      const content = `<div class="osp-spell-cast-card">
+      if (sp.duration) meta.push(`Duration: ${esc(sp.duration)}`);
+      if (sp.range)    meta.push(`Range: ${esc(sp.range)}`);
+      const actorName = esc(this.actor.name || 'Unknown');
+      const rawContent = `<div class="osp-spell-cast-card">
         <div class="spell-card-header">
-          <div class="spell-card-name">${actorName} casts ${sp.name}</div>
+          <div class="spell-card-name">${actorName} casts ${esc(sp.name)}</div>
           <div class="spell-card-type">${castType}</div>
         </div>
         <div class="spell-card-meta">${meta.join(' &bull; ')}</div>
         ${sp.description ? `<div class="spell-card-desc">${sp.description}</div>` : ''}
       </div>`;
       ChatMessage.create({
-        content,
+        content: DOMPurify.sanitize(rawContent),
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         rollMode: game.settings.get('core', 'rollMode'),
       });
@@ -2382,7 +2395,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     };
 
     const buildAgeHtml = (data, race) => {
-      if (!data) return `<div style="color:#a89060;font-style:italic;">No age table for ${race || 'this race'}.</div>`;
+      if (!data) return `<div style="color:#a89060;font-style:italic;">No age table for ${esc(race) || 'this race'}.</div>`;
       const noteHtml = data.note ? `<div class="age-tooltip-note">${data.note}</div>` : '';
       return `
         <div class="age-tooltip-row"><span>Base Age</span><span>${data.base}</span></div>
@@ -2392,7 +2405,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     };
 
     const buildStatHtml = (data, race, unit, label) => {
-      if (!data) return `<div style="color:#a89060;font-style:italic;">No ${label} table for ${race || 'this race'}.</div>`;
+      if (!data) return `<div style="color:#a89060;font-style:italic;">No ${label} table for ${esc(race) || 'this race'}.</div>`;
       return `
         <div class="age-tooltip-row"><span>Base (M/F)</span><span>${data.base} ${unit}</span></div>
         <div class="age-tooltip-row"><span>Modifier</span><span>+${data.modifier}</span></div>`;
@@ -2456,7 +2469,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         const xpTable  = tableKey ? XP_TABLES[tableKey] : null;
 
         if (!xpTable) {
-          $tooltip.html(`<div class="level-prog-tooltip-none">No progression table for <em>${cls || 'unknown class'}</em>.</div>`);
+          $tooltip.html(`<div class="level-prog-tooltip-none">No progression table for <em>${esc(cls) || 'unknown class'}</em>.</div>`);
         } else {
           // Determine max level for this race/class combo
           const raceLimits = LEVEL_LIMITS[race];
@@ -2486,11 +2499,11 @@ export class OspActorSheetCharacter extends ActorSheet {
           }).join('');
 
           const limitNote = raceLimits && maxLevel < xpTable.length
-            ? `<div class="level-prog-limit">Max level ${maxLevel} for ${race} ${cls}</div>`
+            ? `<div class="level-prog-limit">Max level ${maxLevel} for ${esc(race)} ${esc(cls)}</div>`
             : '';
 
           $tooltip.html(`
-            <div class="level-prog-title">${cls} XP Progression</div>
+            <div class="level-prog-title">${esc(cls)} XP Progression</div>
             <table class="level-prog-table">
               <thead><tr><th>Lvl</th><th>XP Range</th></tr></thead>
               <tbody>${rows}</tbody>
@@ -2874,17 +2887,6 @@ export class OspActorSheetCharacter extends ActorSheet {
         return false;
       }
 
-      const itemHandler = this.getHandler('item');
-      // Build a temporary item-like object for constraint check (uses name + system.tags)
-      const constraint = itemHandler._checkBeltConstraints(
-        { name: itemData.name, system: itemData.system },
-        lashedAttachments
-      );
-      if (!constraint.ok) {
-        ui.notifications.error(constraint.reason);
-        return false;
-      }
-
       if (isReordering) {
         return item.update({ 'system.lashed': true, 'system.containerId': belt.id });
       }
@@ -3044,8 +3046,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Set the container ID
       itemData.system.containerId = targetContainer.id;
     }
-    // Containers can be stored in other containers regardless of their contents,
-    // as long as the target has capacity for the container's own storedSize.
+    // Containers can be stored in other containers, but the target must have capacity
+    // for the container's own storedSize plus all items stored inside it.
     else if (itemData.type === "container" && targetContainer && targetContainer.type === "container") {
       // Check container restrictions
       const check2 = this._isItemAllowedInContainer(itemData, targetContainer);
@@ -3122,6 +3124,17 @@ export class OspActorSheetCharacter extends ActorSheet {
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
+      // When the target has hidden capacity (e.g. belt loop inside a backpack), also verify
+      // the parent container has room for the incoming item.
+      // Skip this check when lashed — lashed containers don't consume parent capacity.
+      if (!alreadyInContainer3 && this._skipCapacityCheck(targetContainer) && targetContainer.system.containerId && !targetContainer.system.lashed) {
+        const parentContainer = this.actor.items.get(targetContainer.system.containerId);
+        if (parentContainer && !this._skipCapacityCheck(parentContainer) && !this._hasContainerSpace(parentContainer, itemData)) {
+          const itemSize = this._getEffectiveDropSize(itemData);
+          ui.notifications.error(`Not enough space in ${parentContainer.name} for ${itemData.name} (size ${itemSize}).`);
+          return false;
+        }
+      }
       itemData.system.containerId = targetContainer.id;
     }
     // Belt dropped onto open gear tab space: auto-equip if no belt worn, else auto-store
@@ -3163,20 +3176,15 @@ export class OspActorSheetCharacter extends ActorSheet {
         // Lashable belt attachment (Sword Frog, Belt Pouch, Quiver, etc.) — auto-belt-lash
         const belt = this.actor.items.find(i => i.type === 'clothing' && (i.system.lashSlots || 0) > 0 && i.system.equipped);
         if (belt) {
-          const itemHandler = this.getHandler('item');
           const lashedAttachments = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed && (!isReordering || i.id !== item.id));
-          const constraint = itemHandler
-            ? itemHandler._checkBeltConstraints({ name: itemData.name, system: itemData.system }, lashedAttachments)
-            : { ok: true };
           const usedSlots = lashedAttachments.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
           const itemSlotCost = itemData.system.slotCost || 1;
-          if (constraint.ok && usedSlots + itemSlotCost <= (belt.system.lashSlots || 0)) {
+          if (usedSlots + itemSlotCost <= (belt.system.lashSlots || 0)) {
             itemData.system.lashed = true;
             itemData.system.containerId = belt.id;
             itemData.system.equipped = false;
           } else {
-            const reason = !constraint.ok ? constraint.reason : `No free belt slots for ${itemData.name}.`;
-            ui.notifications.error(`${reason} Drop it onto a container to store it instead.`);
+            ui.notifications.error(`No free belt slots for ${itemData.name}. Drop it onto a container to store it instead.`);
             return false;
           }
         } else {
@@ -3476,7 +3484,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
       const tags = draggedItem.system?.tags || [];
       const isSlungOnly = (draggedItem.name || '').toLowerCase().includes('crossbow') ||
-        (tags.includes('missile') && tags.includes('two-handed'));
+        (tags.includes('missile') && tags.includes('two-handed')) ||
+        tags.includes('sling');
       if (isSlungOnly) {
         return { valid: false, reason: `${draggedItem.name} cannot be lashed — sling it instead.` };
       }
@@ -3497,7 +3506,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           return { valid: false, reason: `${draggedItem.name} is the wrong size for ${targetContainer.name}.` };
         }
       }
-      // Use slot-cost reduce (matches item-handler._checkBeltConstraints and auto-provision logic).
+      // Use slot-cost reduce (matches auto-provision logic).
       // Exclude draggedItem itself — when reordering an already-lashed item its slots are already counted.
       const usedSlots = this.actor.items
         .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== draggedItem.id)
@@ -3729,12 +3738,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     // No usable frog — check belt capacity for a new Sword Frog (slotCost 2, bulky)
     const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
     const frogTmpl = this._getSwordCarrierTemplate('Sword Frog');
-    const itemHandler = this.getHandler('item');
     const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-    const constraint = itemHandler
-      ? itemHandler._checkBeltConstraints({ name: 'Sword Frog', system: frogTmpl.system }, lashedItems)
-      : { ok: true };
-    if (!constraint.ok || usedSlots + 2 > (belt.system.lashSlots || 0)) {
+    if (usedSlots + 2 > (belt.system.lashSlots || 0)) {
       ui.notifications.error('Cannot equip scabbard: the belt is full.');
       return null;
     }
@@ -3772,11 +3777,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const frogTmpl = this._getSwordCarrierTemplate('Sword Frog');
     const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
     const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-    const itemHandler = this.getHandler('item');
-    const constraint = itemHandler
-      ? itemHandler._checkBeltConstraints({ name: 'Sword Frog', system: frogTmpl.system }, lashedItems)
-      : { ok: true };
-    if (!constraint.ok || usedSlots + 2 > (belt.system.lashSlots || 0)) {
+    if (usedSlots + 2 > (belt.system.lashSlots || 0)) {
       ui.notifications.error('Cannot add Sword Frog: belt is full. Remove an attachment to make room.');
       return null;
     }
@@ -3862,12 +3863,17 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Calculate used capacity in a container
+   * Calculate used capacity in a container.
+   * Includes nested contents of any sub-containers (e.g. weapons inside a belt loop inside a backpack).
    */
   _getUsedCapacity(container) {
     return this.actor.items
       .filter(item => item.system.containerId === container.id && !item.system.lashed)
-      .reduce((total, item) => total + this._getEffectiveStoredSize(item), 0);
+      .reduce((total, item) => {
+        const ownSize = (parseFloat(item.system.storedSize) || 0) * (item.system.quantity || 1);
+        const nestedSize = item.type === 'container' ? this._getTotalNestedSize(item.id) : 0;
+        return total + ownSize + nestedSize;
+      }, 0);
   }
 
   // Returns the stored-size footprint of an item in its parent container.
@@ -3877,12 +3883,27 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   // Returns the effective size for an item being dropped (may be a plain data object, not a live item).
+  // For containers, includes the total stored size of all nested contents.
   _getEffectiveDropSize(itemData) {
     const ss = parseFloat(itemData.system?.storedSize);
-    if (!isNaN(ss) && ss >= 0) return ss * (parseFloat(itemData.system.quantity) || 1);
-    // storedSize is missing (item pre-dates the field). Weapons and armour without it are
-    // physically too large for general containers — treat as non-storable.
-    return (itemData.type === 'weapon' || itemData.type === 'armor') ? 9999 : 0;
+    if (isNaN(ss) || ss < 0) {
+      return (itemData.type === 'weapon' || itemData.type === 'armor') ? 9999 : 0;
+    }
+    const ownSize = ss * (parseFloat(itemData.system.quantity) || 1);
+    if (itemData.type === 'container' && itemData._id) {
+      return ownSize + this._getTotalNestedSize(itemData._id);
+    }
+    return ownSize;
+  }
+
+  // Recursively sums storedSize of all items inside a container (by id), including deep descendants.
+  _getTotalNestedSize(containerId) {
+    return this.actor.items
+      .filter(i => i.system.containerId === containerId)
+      .reduce((sum, child) => {
+        const childSize = (parseFloat(child.system.storedSize) || 0) * (child.system.quantity || 1);
+        return sum + childSize + (child.type === 'container' ? this._getTotalNestedSize(child.id) : 0);
+      }, 0);
   }
 
   /**
@@ -3892,7 +3913,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     return new Promise(resolve => {
       new Dialog({
         title: `Cannot Wear ${item.name}`,
-        content: `<p>You are already wearing a <strong>${item.name}</strong>. It cannot be stored or lashed. What would you like to do?</p>`,
+        content: `<p>You are already wearing a <strong>${esc(item.name)}</strong>. It cannot be stored or lashed. What would you like to do?</p>`,
         buttons: {
           drop:   { label: 'Drop',   callback: async () => { await itemHandler._dropItem(item); resolve(true); } },
           delete: { label: 'Delete', callback: async () => { await item.delete(); resolve(true); } },
@@ -3909,7 +3930,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   async _handleStackedItemDrop(item, itemData, targetContainer, currentContainerId) {
     const totalQuantity = itemData.system.quantity || 1;
-    const targetName = targetContainer ? targetContainer.name : 'top level';
+    const targetName = targetContainer ? esc(targetContainer.name) : 'top level';
 
     return new Promise((resolve) => {
       const content = `
@@ -3998,7 +4019,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const content = `
         <form>
           <div class="form-group">
-            <label>How many coins to add to ${targetContainer.name}?</label>
+            <label>How many coins to add to ${esc(targetContainer.name)}?</label>
             <input type="number" name="coinQuantity" value="${Math.min(currentQuantity, maxCoins)}" min="0" style="width: 100%;" autofocus />
             <p style="margin-top: 8px; font-size: 12px; color: #666;">
               Available space in container: ${availableSpace} slots<br>
@@ -4134,7 +4155,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const content = `
         <form>
           <div class="form-group">
-            <label>${isReordering ? 'Move' : 'Add'} how many ${itemData.name} to ${targetContainer.name}?</label>
+            <label>${isReordering ? 'Move' : 'Add'} how many ${esc(itemData.name)} to ${esc(targetContainer.name)}?</label>
             <input type="number" name="ammoQuantity" value="${totalQuantity}" min="1" ${maxAttr} style="width: 100%; margin-top: 5px;" autofocus />
           </div>
         </form>

@@ -47,8 +47,9 @@ body.game .sheet.app nav.sheet-tabs {
   text-decoration: none;
 
   /* Appearance */
-  background: white;
-  border: 1px solid #000;
+  background: #000 !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
   border-radius: 0 20px 0 0;
 
   /* Behavior */
@@ -72,8 +73,8 @@ body.game .sheet.app nav.sheet-tabs {
 
 /* Tab hover state */
 .cs-tabs a.item:hover {
-  background: #f7f7f7;
-  color: #3a2915;
+  background: #333 !important;
+  color: #fff !important;
 }
 
 /* Tab focus state */
@@ -85,9 +86,9 @@ body.game .sheet.app nav.sheet-tabs {
 
 /* Active tab */
 .cs-tabs a.item.active {
-  background: #fff;
-  color: #000;
-  border: 1px solid #000;
+  background: #000 !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
   text-shadow: none !important;
   box-shadow: none;
   z-index: var(--z-tab-active, 1000) !important;

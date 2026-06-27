@@ -137,4 +137,5 @@ export const registerSettings = () => {
       ask: "Ask Every Time"
     }
   });
+
 };

@@ -8,6 +8,8 @@ import { ospRoll, buildManualChatContent } from "../../../dice.js";
 const critDamageFormula = (formula) =>
   formula.replace(/(\d+)d(\d+)/gi, (_, n, d) => `${parseInt(n) * 2}d${d}`);
 
+const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 export class ItemHandler {
   constructor(html, actor, sheet) {
     this.html = html;
@@ -168,11 +170,11 @@ export class ItemHandler {
     // Warn if this item contains others that will also be deleted
     const descendants = this._getContainedDescendants(item);
     if (descendants.length > 0) {
-      const nameList = descendants.map(i => `<strong>${i.name}</strong>`).join(', ');
+      const nameList = descendants.map(i => `<strong>${esc(i.name)}</strong>`).join(', ');
       const confirmed = await new Promise(resolve => {
         new Dialog({
           title: `Delete ${item.name}`,
-          content: `<p>Deleting <strong>${item.name}</strong> will also delete: ${nameList}.</p>`,
+          content: `<p>Deleting <strong>${esc(item.name)}</strong> will also delete: ${nameList}.</p>`,
           buttons: {
             yes:    { icon: '<i class="fas fa-trash"></i>', label: 'Yes, Delete All', callback: () => resolve(true) },
             cancel: { icon: '<i class="fas fa-times"></i>', label: 'Cancel',           callback: () => resolve(false) }
@@ -328,11 +330,11 @@ export class ItemHandler {
     // Warn if dropping all of a container that holds other items
     const descendants = this._getContainedDescendants(item);
     if (descendants.length > 0 && dropQuantity >= currentQuantity) {
-      const nameList = descendants.map(i => `<strong>${i.name}</strong>`).join(', ');
+      const nameList = descendants.map(i => `<strong>${esc(i.name)}</strong>`).join(', ');
       const confirmed = await new Promise(resolve => {
         new Dialog({
           title: `Drop ${item.name}`,
-          content: `<p>Dropping <strong>${item.name}</strong> will also remove from your inventory: ${nameList}.</p>`,
+          content: `<p>Dropping <strong>${esc(item.name)}</strong> will also remove from your inventory: ${nameList}.</p>`,
           buttons: {
             yes:    { icon: '<i class="fas fa-box-open"></i>', label: 'Drop',   callback: () => resolve(true) },
             cancel: { icon: '<i class="fas fa-times"></i>',   label: 'Cancel', callback: () => resolve(false) }
@@ -456,11 +458,6 @@ export class ItemHandler {
           const itemSlotCost = item.system.slotCost || 1;
           if (usedSlots + itemSlotCost > (belt.system.lashSlots || 0)) {
             ui.notifications.error(`${belt.name} is full (${usedSlots}/${belt.system.lashSlots} slots used, need ${itemSlotCost} for ${item.name}).`);
-            return;
-          }
-          const constraint = this._checkBeltConstraints(item, lashedAttachments);
-          if (!constraint.ok) {
-            ui.notifications.error(constraint.reason);
             return;
           }
           await item.update({ 'system.lashed': true, 'system.containerId': belt.id, 'system.equipped': false });
@@ -895,8 +892,7 @@ export class ItemHandler {
           await this._showArmorNoStorageDialog(item);
         }
       } else {
-        await item.update({ 'system.lashed': false, 'system.containerId': null });
-        ui.notifications.info(`${item.name} unlashed.`);
+        await this._showUnlashItemDialog(item);
       }
       return;
     }
@@ -956,13 +952,6 @@ export class ItemHandler {
         return;
       }
 
-      // Constraint rules
-      const constraint = this._checkBeltConstraints(item, lashedAttachments);
-      if (!constraint.ok) {
-        ui.notifications.error(constraint.reason);
-        return;
-      }
-
       await item.update({ 'system.lashed': true, 'system.containerId': belt.id });
       ui.notifications.info(`${item.name} attached to ${belt.name}.`);
       return;
@@ -1006,46 +995,6 @@ export class ItemHandler {
     ui.notifications.info(`${item.name} lashed to ${container.name}.`);
   }
 
-  /**
-   * Validates belt attachment constraint rules beyond slot counting.
-   * @param {Item} item  The item being attached
-   * @param {Item[]} lashedAttachments  Existing lashed attachments (excluding item)
-   * @returns {{ ok: boolean, reason?: string }}
-   */
-  _checkBeltConstraints(item, lashedAttachments) {
-    const SCABBARD_NAMES = new Set(['Scabbard, Dagger', 'Sword Frog']);
-    const BULKY_NAMES    = new Set(['Sword Frog']);
-
-    const isScabbard = SCABBARD_NAMES.has(item.name);
-    const isBulky    = BULKY_NAMES.has(item.name);
-
-    const existingScabbards = lashedAttachments.filter(i => SCABBARD_NAMES.has(i.name));
-    const existingBulky     = lashedAttachments.filter(i => BULKY_NAMES.has(i.name));
-
-    // Max 2 scabbards total
-    if (isScabbard && existingScabbards.length >= 2) {
-      return { ok: false, reason: 'A belt can hold at most 2 scabbards.' };
-    }
-
-    // Max 2 bulky items
-    if (isBulky && existingBulky.length >= 2) {
-      return { ok: false, reason: 'A belt can hold at most 2 bulky items.' };
-    }
-
-    // Max 1 belt loop
-    if (item.name === 'Belt Loop' && lashedAttachments.some(i => i.name === 'Belt Loop')) {
-      return { ok: false, reason: 'A belt can hold at most 1 belt loop.' };
-    }
-
-    // Max 2 flask/potion holders
-    const flaskCount = lashedAttachments.filter(i => i.name === 'Flask/Potion Holder').length;
-    if (item.name === 'Flask/Potion Holder' && flaskCount >= 2) {
-      return { ok: false, reason: 'A belt can hold at most 2 flask/potion holders.' };
-    }
-
-    return { ok: true };
-  }
-  
   /**
    * Parse capacity string (e.g., "6M" = 24 slots)
    */
@@ -1649,10 +1598,48 @@ export class ItemHandler {
       buttons.cancel = { label: 'Cancel', callback: () => resolve(false) };
       new Dialog({
         title: `Unlash ${item.name}`,
-        content: `<p>Where does <strong>${item.name}</strong> go?</p>`,
+        content: `<p>Where does <strong>${esc(item.name)}</strong> go?</p>`,
         buttons,
         default: storageContainer ? 'store' : 'cancel'
       }, { width: 520 }).render(true);
+    });
+  }
+
+  /**
+   * Shows Store / Drop / Cancel dialog when a lashed item (waterskin, etc.) is unlashed.
+   */
+  async _showUnlashItemDialog(item) {
+    const containers = this.actor.items.filter(c =>
+      c.type === 'container' && !c.system.containerId && !c.system.lashed &&
+      this._hasContainerSpace(c, item)
+    );
+    return new Promise(resolve => {
+      const buttons = {};
+      for (const container of containers) {
+        buttons[`store_${container.id}`] = {
+          label: `Store in ${container.name}`,
+          callback: async () => {
+            await item.update({ 'system.lashed': false, 'system.containerId': container.id });
+            ui.notifications.info(`${item.name} stored in ${container.name}.`);
+            resolve(true);
+          }
+        };
+      }
+      buttons.drop = {
+        label: 'Drop',
+        callback: async () => {
+          await item.update({ 'system.lashed': false, 'system.containerId': null });
+          await this._dropItem(item);
+          resolve(true);
+        }
+      };
+      buttons.cancel = { label: 'Cancel', callback: () => resolve(false) };
+      new Dialog({
+        title: `Unlash ${item.name}`,
+        content: `<p>Where does <strong>${esc(item.name)}</strong> go?</p>`,
+        buttons,
+        default: 'cancel'
+      }).render(true);
     });
   }
 
@@ -1663,7 +1650,7 @@ export class ItemHandler {
     return new Promise(resolve => {
       new Dialog({
         title: `Unequip ${item.name}`,
-        content: `<p>No container has enough space for <strong>${item.name}</strong>. What would you like to do?</p>`,
+        content: `<p>No container has enough space for <strong>${esc(item.name)}</strong>. What would you like to do?</p>`,
         buttons: {
           drop: { label: 'Drop', callback: async () => { await this._dropItem(item); resolve(true); } },
           delete: { label: 'Delete', callback: async () => { await item.delete(); resolve(true); } },
@@ -1697,9 +1684,9 @@ export class ItemHandler {
     const hasSwap = swapTargets.length > 0;
     const swapContent = hasSwap
       ? (swapTargets.length === 1
-        ? `<p>Swap with: <strong>${swapTargets[0].occupant.name}</strong> (${swapTargets[0].scabbard.name})</p>`
+        ? `<p>Swap with: <strong>${esc(swapTargets[0].occupant.name)}</strong> (${esc(swapTargets[0].scabbard.name)})</p>`
         : `<p>Choose a sword to swap with:</p>${swapTargets.map(t =>
-            `<label style="display:block;margin:4px 0;"><input type="radio" name="swapTarget" value="${t.scabbard.id}"> ${t.occupant.name} (${t.scabbard.name})</label>`
+            `<label style="display:block;margin:4px 0;"><input type="radio" name="swapTarget" value="${t.scabbard.id}"> ${esc(t.occupant.name)} (${esc(t.scabbard.name)})</label>`
           ).join('')}`)
       : '';
 
@@ -1740,7 +1727,7 @@ export class ItemHandler {
       b.cancel = { label: 'Cancel', callback: () => resolve(false) };
       new Dialog({
         title: `Sheathe ${sword.name}`,
-        content: `<p>There is no scabbard in which to sheathe <strong>${sword.name}</strong>.${hasSwap ? ' You may swap with a sheathed sword, or drop it.' : ' Drop it or cancel.'}</p>${swapContent}`,
+        content: `<p>There is no scabbard in which to sheathe <strong>${esc(sword.name)}</strong>.${hasSwap ? ' You may swap with a sheathed sword, or drop it.' : ' Drop it or cancel.'}</p>${swapContent}`,
         buttons: b,
         default: 'cancel'
       }).render(true);
@@ -1856,7 +1843,7 @@ export class ItemHandler {
         `${abilityName}: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}`
       ].filter(b => b !== null).join(', ');
       
-      const flavor = `${item.name} Attack Roll<br><small>${bonusBreakdown}</small>`;
+      const flavor = `${esc(item.name)} Attack Roll<br><small>${bonusBreakdown}</small>`;
 
       // Resolve target for hit/miss comparison
       const targetOpts = this._resolveTargetOpts(totalBonus);
@@ -1976,21 +1963,22 @@ export class ItemHandler {
       isHit = isCrit || (!isFumble && result.total >= targetAAC);
       const attackResult = isCrit ? "critical_hit" : isFumble ? "critical-miss" : isHit ? "hit" : "miss";
       const color = isHit ? "#006600" : "#990000";
-      finalFlavor = `${flavor} vs <strong>${targetName}</strong> (AAC&nbsp;${targetAAC}, need&nbsp;${needRoll}+) — <strong style="color:${color}">${isHit ? "HIT" : "MISS"}</strong>`;
+      finalFlavor = `${flavor} vs <strong>${esc(targetName)}</strong> (AAC&nbsp;${targetAAC}, need&nbsp;${needRoll}+) — <strong style="color:${color}">${isHit ? "HIT" : "MISS"}</strong>`;
       flags = { "osp-houserules": { attackResult, manualRoll: result.manual } };
     }
 
     const speaker  = ChatMessage.getSpeaker({ actor: this.actor });
     const rollMode = game.settings.get('core', 'rollMode');
 
+    const safeFlavor = DOMPurify.sanitize(finalFlavor);
     if (result.foundryRoll) {
-      await result.foundryRoll.toMessage({ speaker, flavor: finalFlavor, rollMode, flags });
+      await result.foundryRoll.toMessage({ speaker, flavor: safeFlavor, rollMode, flags });
     } else {
       const whisperData = ChatMessage.applyRollMode({}, rollMode);
       await ChatMessage.create({
         ...whisperData,
         speaker,
-        flavor: finalFlavor,
+        flavor: safeFlavor,
         content: buildManualChatContent(result, { formula, label: flavor }),
         flags
       });
@@ -2089,32 +2077,6 @@ export class ItemHandler {
     const ancestor = $(event.currentTarget).parents("[data-item-id]").first();
     const itemId = ancestor.data("item-id");
     return itemId ? this.actor.items.get(itemId) : null;
-  }
-
-  /**
-   * Build chat content for item display
-   */
-  buildItemChatContent(item) {
-    let content = `<div class="item-card"><h3>${item.name}</h3>`;
-    
-    if (item.system.description) {
-      content += `<p>${item.system.description}</p>`;
-    }
-    
-    if (item.type === "weapon" && item.system.damage) {
-      content += `<p><strong>Damage:</strong> ${item.system.damage}</p>`;
-    }
-    
-    if (item.type === "armor" && item.system.ac?.value) {
-      content += `<p><strong>AC:</strong> ${item.system.ac.value}</p>`;
-    }
-    
-    if (item.system.unitWeight) {
-      content += `<p><strong>Weight:</strong> ${item.system.unitWeight} lbs</p>`;
-    }
-    
-    content += `</div>`;
-    return content;
   }
 
   /**

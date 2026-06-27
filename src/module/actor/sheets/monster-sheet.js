@@ -3,6 +3,8 @@ import { ospRoll, buildManualChatContent } from "../../dice.js";
 const critDamageFormula = (formula) =>
   formula.replace(/(\d+)d(\d+)/gi, (_, n, d) => `${parseInt(n) * 2}d${d}`);
 
+const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -38,14 +40,17 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
         missile: i.system.missile         ?? false
       }));
 
-    context.abilities = this.actor.items
-      .filter(i => i.type === "ability")
-      .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
-      .map(i => ({
-        id:          i.id,
-        name:        i.name,
-        description: i.system.description ?? ""
-      }));
+    context.abilities = await Promise.all(
+      this.actor.items
+        .filter(i => i.type === "ability")
+        .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+        .map(async i => ({
+          id:                  i.id,
+          name:                i.name,
+          description:         i.system.description ?? "",
+          enrichedDescription: await TextEditor.enrichHTML(i.system.description ?? "", { async: true, relativeTo: i })
+        }))
+    );
 
     context.enrichedBiography = await TextEditor.enrichHTML(
       context.system.details?.biography ?? "",
@@ -117,17 +122,17 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
         const hitColour    = isHit ? "#006600" : "#990000";
         const hitLabel2    = isHit ? "HIT" : "MISS";
         const totalStr     = totalBonus !== 0 ? `${natural}${bonusStr} = <strong>${rollTotal}</strong>` : `<strong>${rollTotal}</strong>`;
-        const atkFlavor    = `<strong>${attackerName}</strong> → <em>${weaponName}</em>${attackLabel} vs <strong>${targetName}</strong>
+        const atkFlavor    = DOMPurify.sanitize(`<strong>${esc(attackerName)}</strong> → <em>${esc(weaponName)}</em>${attackLabel} vs <strong>${esc(targetName)}</strong>
                    (AAC&nbsp;${targetAAC}, need&nbsp;${needRoll}+) —
                    ${totalStr} —
-                   <strong style="color:${hitColour}">${hitLabel2}</strong>`;
+                   <strong style="color:${hitColour}">${hitLabel2}</strong>`);
         const atkFlags     = { "osp-houserules": { attackResult, manualRoll: atkResult.manual } };
 
         if (atkResult.foundryRoll) {
           await atkResult.foundryRoll.toMessage({ speaker, flavor: atkFlavor, flags: atkFlags });
         } else {
           const whisperData = ChatMessage.applyRollMode({}, game.settings.get('core', 'rollMode'));
-          await ChatMessage.create({ ...whisperData, speaker, flavor: atkFlavor, content: buildManualChatContent(atkResult, { formula: "1d20", label: `${weaponName} Attack` }), flags: atkFlags });
+          await ChatMessage.create({ ...whisperData, speaker, flavor: atkFlavor, content: buildManualChatContent(atkResult, { formula: "1d20", label: `${esc(weaponName)} Attack` }), flags: atkFlags });
         }
       }
 

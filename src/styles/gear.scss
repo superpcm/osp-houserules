@@ -808,19 +808,24 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   border-radius: 3px;
 }
 
-// Hover effect for all item rows - highlight only the direct header child
-// Only highlight the primary row header, never the stored-item divs via parent hover
-.item-entry:hover > .item-header:not(.lashed-stored-item) {
+// Hover effect for all item rows - highlight only the direct header child.
+// Excludes .lashed-stored-item and .lashed-sub-stored-item so that sub-container
+// rows (Scabbard) and their stored items (Longsword) inside a lashed-item are
+// never highlighted by the parent item-entry's hover state.
+.item-entry:hover > .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item) {
   background: rgba(44, 24, 16, 0.2) !important;
   width: $content-width;
   box-sizing: border-box;
 }
 
-// Remove container highlight when hovering over nested items
-.item-entry:has(.contained-items-list:hover) > .item-header:not(.lashed-stored-item),
-.item-entry:has(.lashed-items-list:hover) > .item-header:not(.lashed-stored-item),
-.item-entry:has(.lashed-stored-item:hover) > .item-header:not(.lashed-stored-item),
-.item-entry:has(.slung-items-list:hover) > .item-header:not(.lashed-stored-item) {
+// Remove container highlight when hovering over nested items.
+// Also covers .lashed-sub-stored-item (e.g. Longsword inside Scabbard inside Sword Frog)
+// so that hovering the stored weapon doesn't light up the attachment row.
+.item-entry:has(.contained-items-list:hover) > .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item),
+.item-entry:has(.lashed-items-list:hover) > .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item),
+.item-entry:has(.lashed-stored-item:hover) > .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item),
+.item-entry:has(.lashed-sub-stored-item:hover) > .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item),
+.item-entry:has(.slung-items-list:hover) > .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item) {
   background: transparent !important;
 }
 
@@ -835,6 +840,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .container-entry.drag-valid,
 .contained-item.drag-valid,
 .lashed-item.drag-valid,
+.slung-section-entry.drag-valid,
 .slung-item.drag-valid {
   outline: 3px solid #00c000 !important;
   border-radius: 3px;
@@ -843,6 +849,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .container-entry.drag-invalid,
 .contained-item.drag-invalid,
 .lashed-item.drag-invalid,
+.slung-section-entry.drag-invalid,
 .slung-item.drag-invalid {
   outline: 3px solid #c00000 !important;
   border-radius: 3px;

@@ -513,6 +513,14 @@ form.osp.sheet.actor.character.theme-parchment {
   background-color: transparent !important;
 }
 
+/* Parchment theme - warm sepia row shading instead of mint green */
+.theme-parchment .combat-tab .item-entry:nth-child(even) {
+  background: rgba(112, 66, 20, 0.15) !important;
+}
+.theme-parchment .item-header.item-rollable:hover {
+  background: rgba(112, 66, 20, 0.22) !important;
+}
+
 /* Global form element reset - remove redundant declarations */
 form.osp.sheet.actor.character input,
 form.osp.sheet.actor.character select,

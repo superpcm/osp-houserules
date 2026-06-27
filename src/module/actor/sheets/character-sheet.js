@@ -854,10 +854,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       gearSection.addEventListener('dragend', () => { this._gearDragItemId = null; }, { capture: true });
     }
 
-    // Slung Items section — neutral drop target (equip/sling logic handled in _onDropItem)
+    // Slung Items section — validity-aware drop target (slungable items show green, others red)
     const slungEntry = html.find('.slung-section-entry')[0];
     if (slungEntry) {
-      this._wireGearDropTarget(slungEntry, null);
+      this._wireGearDropTarget(slungEntry, null, () => this._getSlungDropValidity());
     }
 
     // Individual slung containers (Baldric etc.)
@@ -3418,16 +3418,25 @@ export class OspActorSheetCharacter extends ActorSheet {
     return container.system?.hideCapacity === true;
   }
 
+  _getSlungDropValidity() {
+    if (!this._gearDragItemId) return null;
+    const draggedItem = this.actor.items.get(this._gearDragItemId);
+    if (!draggedItem) return null;
+    const tags = draggedItem.system?.tags ?? [];
+    if (isSlungable(tags)) return { valid: true };
+    return { valid: false, reason: `${draggedItem.name} cannot be slung.` };
+  }
+
   /**
    * Wire a gear-tab element as a drop target with validity-based highlighting.
    * Uses relatedTarget for accurate entry/exit detection — no counter needed, no stopPropagation.
    * Parent outlines are suppressed via CSS :has() when a child row is highlighted.
    * Drop events bubble to Foundry's _onDrop handler.
    */
-  _wireGearDropTarget(el, containerItem) {
+  _wireGearDropTarget(el, containerItem, validityFn = null) {
     const applyHighlight = () => {
       el.classList.remove('drag-over', 'drag-valid', 'drag-invalid');
-      const result = containerItem ? this._getContainerDropValidity(containerItem) : null;
+      const result = validityFn ? validityFn() : (containerItem ? this._getContainerDropValidity(containerItem) : null);
       if (result === null) {
         el.classList.add('drag-over');
       } else if (result.valid) {

@@ -1043,11 +1043,13 @@ export class ItemHandler {
     );
   }
 
-  /** Returns all currently equipped hand items (weapons + shields), optionally excluding one by id. */
+  /** Returns all currently equipped hand items (weapons + shields + sacks), optionally excluding one by id. */
   _getEquippedHandItems(excludeId = null) {
     return this.actor.items.filter(i =>
       i.system.equipped && i.id !== excludeId &&
-      (i.type === 'weapon' || (i.type === 'armor' && i.name.toLowerCase().includes('shield')))
+      (i.type === 'weapon' ||
+       (i.type === 'armor' && i.name.toLowerCase().includes('shield')) ||
+       i.name === 'Sack, Large' || i.name === 'Sack, Small')
     );
   }
 
@@ -1068,17 +1070,26 @@ export class ItemHandler {
     const hasShield = this._isShieldEquipped(excludeId);
     const equipped = this._getEquippedWeapons(excludeId);
 
+    // Hands occupied by equipped sacks (not captured by weapon/shield checks)
+    const sackHandsUsed = this.actor.items.reduce((total, i) => {
+      if (!i.system.equipped || i.id === excludeId) return total;
+      if (i.name === 'Sack, Large') return total + 2;
+      if (i.name === 'Sack, Small') return total + 1;
+      return total;
+    }, 0);
+
     // Cannot add anything if a two-handed weapon is already equipped
     if (equipped.some(w => (w.system?.tags || []).includes('two-handed'))) {
       return { canEquip: false, reason: 'hands_full' };
     }
 
     if (isTwoHanded) {
-      if (equipped.length > 0 || hasShield) return { canEquip: false, reason: 'hands_full' };
+      if (equipped.length > 0 || hasShield || sackHandsUsed > 0)
+        return { canEquip: false, reason: 'hands_full' };
       return { canEquip: true, reason: null };
     }
 
-    const maxWeapons = hasShield ? 1 : 2;
+    const maxWeapons = Math.max(0, 2 - sackHandsUsed - (hasShield ? 1 : 0));
     if (equipped.length >= maxWeapons) return { canEquip: false, reason: 'hands_full' };
 
     // At most one non-S weapon can be held at a time
@@ -1379,6 +1390,10 @@ export class ItemHandler {
             await item.update({ 'system.equipped': false });
             ui.notifications.info(`${item.name} unequipped (no scabbard available).`);
           }
+        } else if (item.name === 'Sack, Large' || item.name === 'Sack, Small') {
+          // Sack — put it down (unequipped, free-floating until stored)
+          await item.update({ 'system.equipped': false, 'system.containerId': null, 'system.lashed': false });
+          ui.notifications.info(`${item.name} put down.`);
         } else {
           // Shield — try to lash to a backpack, otherwise drop it
           const backpack = this.actor.items.find(c =>

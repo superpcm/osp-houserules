@@ -1836,7 +1836,6 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (!this._collapsedSpellLevels) this._collapsedSpellLevels = new Set();
     if (!this._collapsedSpellbookLevels) this._collapsedSpellbookLevels = new Set();
 
-    const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const imgMem            = '/systems/osp-houserules/assets/images/icons/spell-memorized.webp';
     const imgNo             = '/systems/osp-houserules/assets/images/icons/spell_no_memory.webp';
     const imgLearn          = '/systems/osp-houserules/assets/images/icons/learn-spell.webp';

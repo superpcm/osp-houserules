@@ -184,6 +184,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.isGM = game.user.isGM;
 
     context.enrichedBackground = await TextEditor.enrichHTML(context.system.details?.background || '', { async: true, relativeTo: this.actor });
+    context.enrichedHistory = await TextEditor.enrichHTML(context.system.details?.notes || '', { async: true, relativeTo: this.actor });
     context.enrichedNotes = await TextEditor.enrichHTML(context.system.tabNotes || '', { async: true, relativeTo: this.actor });
 
     // Initialize position and portrait data if missing

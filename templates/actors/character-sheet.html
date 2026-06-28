@@ -2993,8 +2993,40 @@
 
       <!-- Background Tab -->
       <div class="tab" data-group="primary" data-tab="background">
-        <div class="notes-tab-content">
-          {{editor enrichedBackground target="system.details.background" editable=editable button=false engine="prosemirror"}}
+        <div class="bg-tab-content">
+
+          <!-- Suggestion 3: Career background badge -->
+          {{#if system.background}}
+          <div class="bg-career-badge">
+            <span class="bg-career-label">Former Occupation:</span>
+            <span class="bg-career-value">{{system.background}}</span>
+          </div>
+          {{/if}}
+
+          <!-- Suggestion 1: Section header with prompt -->
+          <div class="bg-tab-header">
+            <div class="bg-tab-title">Character Background</div>
+            <div class="bg-tab-subtitle">Where did this character come from? What shaped them?</div>
+          </div>
+
+          <!-- Suggestion 2: Two labelled panels side by side -->
+          <div class="bg-panels">
+            <div class="bg-panel">
+              <div class="bg-panel-title">Origins</div>
+              <div class="bg-panel-hint">Homeland, family, and early life.</div>
+              <div class="notes-tab-content bg-panel-editor">
+                {{editor enrichedBackground target="system.details.background" editable=editable button=false engine="prosemirror"}}
+              </div>
+            </div>
+            <div class="bg-panel">
+              <div class="bg-panel-title">History</div>
+              <div class="bg-panel-hint">Key events that led to adventuring.</div>
+              <div class="notes-tab-content bg-panel-editor">
+                {{editor enrichedHistory target="system.details.notes" editable=editable button=false engine="prosemirror"}}
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 

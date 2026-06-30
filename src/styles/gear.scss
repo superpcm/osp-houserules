@@ -855,23 +855,11 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   border-radius: 3px;
 }
 
-.container-entry.drag-over,
-.contained-item.drag-over,
-.lashed-item.drag-over,
-.slung-section-entry.drag-over,
-.slung-item.drag-over {
-  outline: 2px dashed #888888 !important;
-  border-radius: 3px;
-}
-
 // Suppress parent outline when a specific child container row is highlighted
-.slung-section-entry:has(.slung-item.drag-over),
 .slung-section-entry:has(.slung-item.drag-valid),
 .slung-section-entry:has(.slung-item.drag-invalid),
-.container-entry:has(.contained-item.drag-over),
 .container-entry:has(.contained-item.drag-valid),
 .container-entry:has(.contained-item.drag-invalid),
-.container-entry:has(.lashed-item.drag-over),
 .container-entry:has(.lashed-item.drag-valid),
 .container-entry:has(.lashed-item.drag-invalid) {
   outline: none !important;

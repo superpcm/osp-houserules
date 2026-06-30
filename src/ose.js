@@ -436,6 +436,10 @@ Handlebars.registerHelper('includes', function(str, substring) {
   return String(str || '').includes(substring);
 });
 
+Handlebars.registerHelper('abbrevTime', function(value) {
+  return value ? String(value).replace(/\s+minutes?/i, ' min') : '';
+});
+
 // Register a Handlebars helper for checking if an array contains a value
 Handlebars.registerHelper('hasTag', function(arr, value) {
   return Array.isArray(arr) && arr.includes(value);

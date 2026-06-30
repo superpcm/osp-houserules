@@ -841,19 +841,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       await this.actor.setFlag('osp-houserules', 'slung-collapsed', !current);
     });
 
-    // Capture the dragged item's ID via DOM lookup — reading dataTransfer.getData in ancestor
-    // dragstart handlers returns empty in most browsers (only the originating handler can read it back).
-    // Uses capture:true so this fires before Foundry's target-phase DragDrop handler, which calls
-    // stopPropagation and would otherwise prevent this bubble-phase listener from ever running.
+    // _gearDragItemId is set in _onDragStart (Foundry's DragDrop hook) for all .item-list .item
+    // elements, and set directly in _wireDraggableContainer for belt/slung items that use
+    // stopPropagation to bypass Foundry's DragDrop. Cleared on dragend via form capture.
+    html[0].addEventListener('dragend', () => { this._gearDragItemId = null; }, { capture: true });
     const gearSection = html.find('.gear-tab')[0];
-    if (gearSection) {
-      gearSection.addEventListener('dragstart', (e) => {
-        this._gearDragItemId = null;
-        const el = e.target.closest('[data-item-id]');
-        if (el) this._gearDragItemId = el.dataset.itemId;
-      }, { capture: true });
-      gearSection.addEventListener('dragend', () => { this._gearDragItemId = null; }, { capture: true });
-    }
 
     // Slung Items section — validity-aware drop target (slungable items show green, others red)
     const slungEntry = html.find('.slung-section-entry')[0];
@@ -869,7 +861,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     });
 
     // Make belt-attachment and sling containers draggable.
-    // stopPropagation on dragstart prevents the gear-tab listener from firing, so set _gearDragItemId directly.
+    // These items are NOT in .item-list so Foundry's DragDrop doesn't handle them;
+    // set _gearDragItemId directly. stopPropagation prevents the parent container-entry
+    // drag from hijacking the drag of the attachment itself.
     const _wireDraggableContainer = (el) => {
       const item = this.actor.items.get(el.dataset.itemId);
       if (!item) return;
@@ -2582,6 +2576,15 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
+   * Called by Foundry's DragDrop controller for every .item-list .item dragstart.
+   * Captures the item ID so hover validity checks have it synchronously.
+   */
+  async _onDragStart(event) {
+    this._gearDragItemId = event.currentTarget?.dataset?.itemId ?? null;
+    return super._onDragStart(event);
+  }
+
+  /**
    * Handle dropping an item onto the sheet
    */
   async _onDrop(event) {
@@ -3438,7 +3441,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       el.classList.remove('drag-over', 'drag-valid', 'drag-invalid');
       const result = validityFn ? validityFn() : (containerItem ? this._getContainerDropValidity(containerItem) : null);
       if (result === null) {
-        el.classList.add('drag-over');
+        // External or cross-actor drag — can't determine validity; show no highlight
       } else if (result.valid) {
         el.classList.add('drag-valid');
       } else {
@@ -3506,7 +3509,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
       const isWeapon = draggedItem.type === 'weapon';
       const isLashable = draggedItem.system?.lashable === true || (draggedItem.system?.slotCost || 0) > 0;
-      if (!isWeapon && !isLashable) return null;
+      if (!isWeapon && !isLashable) return { valid: false, reason: `${draggedItem.name} cannot be attached to ${targetContainer.name}.` };
       // lashAllowedSizes is only enforced by the isBeltLash drop path, which only runs for weapons.
       // Non-weapon lashable containers take the isReordering path (no size check), so skip here.
       if (isWeapon) {
@@ -3530,7 +3533,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Only containers and clothing-with-capacity are storage targets
     const isStorage = targetContainer.type === 'container' ||
       (targetContainer.type === 'clothing' && targetContainer.system.capacity);
-    if (!isStorage) return null;
+    if (!isStorage) return { valid: false, reason: `${targetContainer.name} cannot store items.` };
 
     const itemData = draggedItem.toObject();
 

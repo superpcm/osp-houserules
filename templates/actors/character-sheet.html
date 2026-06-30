@@ -1411,7 +1411,7 @@
               <label for="char-hp" class="cs-field-label">HP</label>
             </div>
             <div class="combat-stat cs-combat-stat cs-pos-combat-hp-value">
-              <input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="number" value="{{system.hitpoints}}" min="0" />
+              <input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="text" inputmode="numeric" value="{{system.hitpoints}}" />
             </div>
             <div class="combat-stat cs-combat-stat cs-pos-combat-mhp-label">
               <label class="cs-field-label">maxHP</label>
@@ -1579,8 +1579,8 @@
               <div class="field-short">AC</div>
               <div class="field-short">Don</div>
               <div class="field-short">Doff</div>
-              <div class="field-short">mDEX</div>
-              <div class="field-short">mSTR</div>
+              <div class="field-short">maxDex</div>
+              <div class="field-short">minSTR</div>
               <div class="field-short">WT</div>
             </div>
             <ol class="item-list">
@@ -1595,8 +1595,8 @@
                     <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                     <div class="field-short">{{item.system.type}}</div>
                     <div class="field-short">{{add item.system.aac.value item.system.bonus}}</div>
-                    <div class="field-short">{{item.system.donTime}}</div>
-                    <div class="field-short">{{item.system.doffTime}}</div>
+                    <div class="field-short">{{abbrevTime item.system.donTime}}</div>
+                    <div class="field-short">{{abbrevTime item.system.doffTime}}</div>
                     <div class="field-short">{{signedInt item.system.maxDex}}</div>
                     <div class="field-short">{{item.system.minStr}}</div>
                     <div class="field-short">{{item.system.unitWeight}}</div>
@@ -1646,8 +1646,8 @@
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{item.system.type}}</div>
                   <div class="field-short">{{add item.system.aac.value item.system.bonus}}</div>
-                  <div class="field-short">{{item.system.donTime}}</div>
-                  <div class="field-short">{{item.system.doffTime}}</div>
+                  <div class="field-short">{{abbrevTime item.system.donTime}}</div>
+                  <div class="field-short">{{abbrevTime item.system.doffTime}}</div>
                   <div class="field-short">{{signedInt item.system.maxDex}}</div>
                   <div class="field-short">{{item.system.minStr}}</div>
                   <div class="field-short">{{item.system.unitWeight}}</div>
@@ -1946,16 +1946,7 @@
                         {{/if}}
                         <div class="item-image" style="background-image: url('{{nestedItem.img}}');"></div>
                         <h4 class="item-name" title="{{nestedItem.name}}">{{nestedItem.name}}</h4>
-                        <div class="field-short quantity">
-                          <input
-                            value="{{nestedItem.system.quantity}}"
-                            type="number"
-                            min="0"
-                            data-field="system.quantity"
-                            data-item-id="{{nestedItem.id}}"
-                            readonly
-                          />
-                        </div>
+                        <div class="field-short quantity">{{nestedItem.system.quantity}}</div>
                         <div class="field-short">{{nestedItem.displayCapacity}}</div>
                         <div class="field-short">{{nestedItem.displayWeight}}</div>
                         <div class="field-short">{{nestedItem.unitWeight}}</div>
@@ -2373,16 +2364,7 @@
                         {{/if}}
                         <div class="item-image" style="background-image: url('{{nestedItem.img}}');"></div>
                         <h4 class="item-name" title="{{nestedItem.name}}">{{nestedItem.name}}</h4>
-                        <div class="field-short quantity">
-                          <input
-                            value="{{nestedItem.system.quantity}}"
-                            type="number"
-                            min="0"
-                            data-field="system.quantity"
-                            data-item-id="{{nestedItem.id}}"
-                            readonly
-                          />
-                        </div>
+                        <div class="field-short quantity">{{nestedItem.system.quantity}}</div>
                         <div class="field-short">{{nestedItem.displayCapacity}}</div>
                         <div class="field-short">{{nestedItem.displayWeight}}</div>
                         <div class="field-short">{{nestedItem.unitWeight}}</div>
@@ -2486,16 +2468,7 @@
                           {{/if}}
                           <div class="item-image" style="background-image: url('{{lashedItem.img}}');"></div>
                           <h4 class="item-name" title="{{lashedItem.name}}">{{lashedItem.name}}</h4>
-                          <div class="field-short quantity">
-                            <input
-                              value="{{lashedItem.system.quantity}}"
-                              type="number"
-                              min="0"
-                              data-field="system.quantity"
-                              data-item-id="{{lashedItem.id}}"
-                              readonly
-                            />
-                          </div>
+                          <div class="field-short quantity">{{lashedItem.system.quantity}}</div>
                           <div class="field-short">{{#if lashedItem.system.storedSize}}{{lashedItem.system.storedSize}}{{else}}—{{/if}}</div>
                           <div class="field-short">{{lashedItem.displayWeight}}</div>
                           <div class="item-controls">

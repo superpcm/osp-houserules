@@ -1024,12 +1024,21 @@ form.osp.sheet.actor.character .static-header::before,
 .cs-combat-input {
   @include center-flex-field;
   font-variant-numeric: tabular-nums;
-  
+
   width: 80px;
   height: 40px;
   border: none;
   border-radius: 0;
   background-color: transparent;
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    margin: 0;
+  }
 }
 
 /* ============================
@@ -2837,17 +2846,18 @@ input[type="number"] {
     display: flex;
     align-items: center;
     gap: 6px;
+    margin-top: 5px;
 
     .bg-career-label {
       font-family: $font-cooper !important;
-      font-size: 16px;
-      color: #3d2800;
+      font-size: 12px;
+      color: rgba(61, 40, 0, 0.45);
     }
 
     .bg-career-value {
       font-family: $font-cooper !important;
-      font-size: 16px;
-      color: #3d2800;
+      font-size: 12px;
+      color: rgba(61, 40, 0, 0.45);
     }
   }
 
@@ -2875,7 +2885,7 @@ input[type="number"] {
   .bg-panels {
     flex: 1 1 auto;
     display: flex;
-    gap: 14px;
+    gap: 0;
     min-height: 0;
   }
 
@@ -2885,20 +2895,23 @@ input[type="number"] {
     flex-direction: column;
     min-height: 0;
     min-width: 0;
+    padding: 0 10px;
+
+    & + .bg-panel {
+      border-left: 1px solid rgba(139, 90, 43, 0.3);
+    }
   }
 
   .bg-panel-title {
     font-family: $font-cooper !important;
     font-size: 16px;
     color: #3d2800;
-    padding-bottom: 3px;
-    border-bottom: 1px solid rgba(139, 90, 43, 0.18);
     margin-bottom: 2px;
   }
 
   .bg-panel-hint {
     font-family: $font-cooper !important;
-    font-size: 12px;
+    font-size: 10px;
     color: rgba(0, 0, 0, 0.45);
     font-style: italic;
     margin: 0 0 3px 0;

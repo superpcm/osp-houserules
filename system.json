@@ -15,8 +15,22 @@
   "styles": ["dist/ose.css"],
   "background": "systems/osp-houserules/system-image.webp",
   "documentTypes": {
-    "Actor": ["character", "monster"],
-    "Item": ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock", "ability", "spell"]
+    "Actor": {
+      "character": {},
+      "monster": {}
+    },
+    "Item": {
+      "weapon": {},
+      "armor": {},
+      "item": {},
+      "container": {},
+      "coin": {},
+      "clothing": {},
+      "ammunition": {},
+      "livestock": {},
+      "ability": {},
+      "spell": {}
+    }
   },
   "languages": [
     {

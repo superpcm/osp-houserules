@@ -56,7 +56,12 @@ import { CharacterCreationDialog } from "./module/actor/character-creation-dialo
 // Token ruler
 import { TokenRulerOSP } from "./module/actor/token-ruler.js";
 
+// Cross-window drag tracking (Items sidebar → actor sheet drop-target highlighting)
+import { initExternalDragTracker } from "./module/external-drag-tracker.js";
+
 Hooks.once("init", () => {
+  initExternalDragTracker();
+
   // ── Config ────────────────────────────────────────────────────────────────
   // Expose OSP config globally and alias as CONFIG.OSE so all OSE templates work
   CONFIG.OSE = OSP;

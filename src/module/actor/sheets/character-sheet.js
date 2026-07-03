@@ -7,6 +7,7 @@ import { BackgroundHandler } from './handlers/background-handler.js';
 import { PositionToolHandler } from './handlers/position-tool-handler.js';
 import { PortraitTool } from './portrait-tool.js';
 import { calculateMaxHP, XP_TABLES, CLASS_XP_MAPPING } from '../../../config/classes.js';
+import { externalDrag } from '../../external-drag-tracker.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -3421,9 +3422,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     return container.system?.hideCapacity === true;
   }
 
+  /**
+   * Resolve the item currently being dragged, whether it's an in-progress reorder of an
+   * item already on this actor, or an incoming drag from the Items sidebar (see
+   * external-drag-tracker.js — sidebar dataTransfer isn't readable until drop).
+   */
+  _getDraggedItem() {
+    if (this._gearDragItemId) return this.actor.items.get(this._gearDragItemId) ?? null;
+    return externalDrag.item;
+  }
+
   _getSlungDropValidity() {
-    if (!this._gearDragItemId) return null;
-    const draggedItem = this.actor.items.get(this._gearDragItemId);
+    const draggedItem = this._getDraggedItem();
     if (!draggedItem) return null;
     const tags = draggedItem.system?.tags ?? [];
     if (isSlungable(tags)) return { valid: true };
@@ -3474,9 +3484,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Only works for items dragged from this actor; external/cross-actor drags return null.
    */
   _getContainerDropValidity(targetContainer) {
-    if (!this._gearDragItemId) return null;
-
-    const draggedItem = this.actor.items.get(this._gearDragItemId);
+    const draggedItem = this._getDraggedItem();
     if (!draggedItem) return null; // cross-actor drag — can't validate synchronously
 
     if (draggedItem.id === targetContainer.id) {

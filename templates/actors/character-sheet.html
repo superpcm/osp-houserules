@@ -1727,6 +1727,7 @@
                 </div>
                 {{#unless slungCollapsed}}
                 <div class="slung-items-list">
+                  {{#if slungItems.length}}
                   <div class="container-items-subheader slung-subheader">
                     <div class="subheader-col subheader-img"></div>
                     <div class="subheader-col subheader-name">Item</div>
@@ -1736,6 +1737,7 @@
                     <div class="subheader-col subheader-wt">WT</div>
                     <div class="subheader-col subheader-controls"></div>
                   </div>
+                  {{/if}}
                   {{#each slungItems as |item|}}
                   <div class="slung-item" data-item-id="{{item.id}}">
                     <div class="item-header flexrow">
@@ -1924,6 +1926,7 @@
                 {{#if item.system.capacity}}
                 {{#unless item.collapsed}}
                 <div class="container-contents">
+                  {{#if item.containedItems.length}}
                   <div class="container-items-subheader">
                     <div class="subheader-col subheader-img"></div>
                     <div class="subheader-col subheader-name">Item</div>
@@ -1933,6 +1936,7 @@
                     <div class="subheader-col subheader-wt">WT</div>
                     <div class="subheader-col subheader-controls"></div>
                   </div>
+                  {{/if}}
                   <ol class="contained-items-list">
                     {{#each item.containedItems as |nestedItem|}}
                     <li class="item-entry item contained-item" data-item-id="{{nestedItem.id}}">
@@ -2036,7 +2040,7 @@
                   <div class="container-items-subheader">
                     <div class="subheader-col subheader-img"></div>
                     <div class="subheader-col subheader-name">Item</div>
-                    <div class="subheader-col subheader-qty">Capacity</div>
+                    <div class="subheader-col subheader-qty"></div>
                     <div class="subheader-col subheader-size">sSize</div>
                     <div class="subheader-col subheader-twt">tWT</div>
                     <div class="subheader-col subheader-wt">WT</div>
@@ -2063,8 +2067,8 @@
                             <span class="capacity-value">{{attachment.remainingCapacity}}</span>
                           </div>
                         </div>
-                        {{else}}<div class="field-short">{{attachment.system.quantity}}</div>
-                        {{/unless}}{{else}}<div class="field-short">{{attachment.system.quantity}}</div>{{/if}}
+                        {{else}}<div class="field-short"></div>
+                        {{/unless}}{{else}}<div class="field-short"></div>{{/if}}
                         <div class="field-short">{{#if attachment.system.storedSize}}{{attachment.system.storedSize}}{{else}}—{{/if}}</div>
                         <div class="field-short">{{attachment.totalWeight}}</div>
                         <div class="field-short">{{attachment.displayWeight}}</div>
@@ -2085,7 +2089,7 @@
                       <div class="container-items-subheader">
                         <div class="subheader-col subheader-img"></div>
                         <div class="subheader-col subheader-name">Item</div>
-                        <div class="subheader-col subheader-qty">Qty</div>
+                        <div class="subheader-col subheader-qty">{{#if attachment.system.capacity}}{{#unless attachment.system.hideCapacity}}Qty{{/unless}}{{/if}}</div>
                         <div class="subheader-col subheader-size">sSize</div>
                         <div class="subheader-col subheader-twt">tWT</div>
                         <div class="subheader-col subheader-wt">WT</div>
@@ -2096,7 +2100,7 @@
                       <div class="item-header flexrow lashed-stored-item {{#if attachment.storedWeapon.system.equipped}}weapon-drawn{{/if}}" data-item-id="{{attachment.storedWeapon.itemId}}">
                         <div class="item-image" style="background-image: url('{{attachment.storedWeapon.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{attachment.storedWeapon.name}}" data-item-id="{{attachment.storedWeapon.itemId}}">{{attachment.storedWeapon.name}}</h4>
-                        <div class="field-short">{{attachment.storedWeapon.system.quantity}}</div>
+                        <div class="field-short"></div>
                         <div class="field-short">{{#if attachment.storedWeapon.system.storedSize}}{{attachment.storedWeapon.system.storedSize}}{{else}}—{{/if}}</div>
                         <div class="field-short">{{attachment.storedWeapon.displayWeight}}</div>
                         <div class="field-short">{{attachment.storedWeapon.unitWeight}}</div>
@@ -2144,7 +2148,7 @@
                       <div class="item-header flexrow lashed-stored-item" data-item-id="{{sub.itemId}}">
                         <div class="item-image" style="background-image: url('{{sub.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{sub.name}}" data-item-id="{{sub.itemId}}">{{sub.name}}</h4>
-                        <div class="field-short">{{sub.system.quantity}}</div>
+                        <div class="field-short"></div>
                         <div class="field-short">{{#if sub.system.storedSize}}{{sub.system.storedSize}}{{else}}—{{/if}}</div>
                         <div class="field-short">{{sub.displayWeight}}</div>
                         <div class="field-short">{{sub.unitWeight}}</div>
@@ -2162,7 +2166,7 @@
                       <div class="item-header flexrow lashed-sub-stored-item {{#if sub.storedWeapon.system.equipped}}weapon-drawn{{/if}}" data-item-id="{{sub.storedWeapon.itemId}}">
                         <div class="item-image" style="background-image: url('{{sub.storedWeapon.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{sub.storedWeapon.name}}" data-item-id="{{sub.storedWeapon.itemId}}">{{sub.storedWeapon.name}}</h4>
-                        <div class="field-short">{{sub.storedWeapon.system.quantity}}</div>
+                        <div class="field-short"></div>
                         <div class="field-short">{{#if sub.storedWeapon.system.storedSize}}{{sub.storedWeapon.system.storedSize}}{{else}}—{{/if}}</div>
                         <div class="field-short">{{sub.storedWeapon.displayWeight}}</div>
                         <div class="field-short">{{sub.storedWeapon.unitWeight}}</div>
@@ -2342,6 +2346,7 @@
                 {{!-- Nested items in this container --}}
                 {{#unless item.collapsed}}
                 <div class="container-contents">
+                  {{#if item.containedItems.length}}
                   <div class="container-items-subheader">
                     <div class="subheader-col subheader-img"></div>
                     <div class="subheader-col subheader-name">Item</div>
@@ -2351,6 +2356,7 @@
                     <div class="subheader-col subheader-wt">WT</div>
                     <div class="subheader-col subheader-controls"></div>
                   </div>
+                  {{/if}}
                   <ol class="contained-items-list">
                     {{#each item.containedItems as |nestedItem|}}
                     <li class="item-entry item contained-item" data-item-id="{{nestedItem.id}}">
@@ -2455,6 +2461,17 @@
                       <span class="lashed-title">Lashed Items ({{item.usedLashSlots}}/{{item.lashSlots}})</span>
                     </div>
                     {{#unless item.lashedCollapsed}}
+                    {{#if item.lashedItems.length}}
+                    <div class="container-items-subheader">
+                      <div class="subheader-col subheader-img"></div>
+                      <div class="subheader-col subheader-name">Item</div>
+                      <div class="subheader-col subheader-qty"></div>
+                      <div class="subheader-col subheader-size">sSize</div>
+                      <div class="subheader-col subheader-twt">tWT</div>
+                      <div class="subheader-col subheader-wt">WT</div>
+                      <div class="subheader-col subheader-controls"></div>
+                    </div>
+                    {{/if}}
                     <ol class="lashed-items-list">
                       {{#each item.lashedItems as |lashedItem|}}
                       <li class="item-entry item lashed-item" data-item-id="{{lashedItem.id}}">
@@ -2468,9 +2485,10 @@
                           {{/if}}
                           <div class="item-image" style="background-image: url('{{lashedItem.img}}');"></div>
                           <h4 class="item-name" title="{{lashedItem.name}}">{{lashedItem.name}}</h4>
-                          <div class="field-short quantity">{{lashedItem.system.quantity}}</div>
+                          <div class="field-short quantity"></div>
                           <div class="field-short">{{#if lashedItem.system.storedSize}}{{lashedItem.system.storedSize}}{{else}}—{{/if}}</div>
                           <div class="field-short">{{lashedItem.displayWeight}}</div>
+                          <div class="field-short">{{lashedItem.unitWeight}}</div>
                           <div class="item-controls">
                             {{#if @root.owner}}
                             {{#if (eq lashedItem.type "armor")}}

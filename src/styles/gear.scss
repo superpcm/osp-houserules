@@ -122,7 +122,10 @@ $sh-belt-wt:   508px;   // center of weight col          (66+190+80+80+52+80/2)
 // Data row grid: image(40) name(150) field(80) field(80) twt(80) weight(50) controls(86)
 $sh-l2-img:   92px;   // center of image col   (68 + 48/2)
 $sh-l2-name: 118px;   // left edge of name col (68 + 48 = 116, +2px gap)
-$sh-l2-qty:  298px;   // center of qty col     (68 + 40 + 150 + 80/2)
+// Matches $sh-qty (261px, absolute) so belt-nested contents (Garlic in Belt Pouch) line up
+// with plain top-level container contents (Silver Coins in Sack, Iron Spike in Backpack)
+// down the whole page, instead of sitting 37px further right (the old value was 298px).
+$sh-l2-qty:  261px;   // center of qty col — unified with $sh-qty
 $sh-l2-ssize: 378px;  // center of ssize col   (68 + 40 + 150 + 80 + 80/2)
 $sh-l2-twt:  444px;   // center of tWT col     (68 + 40 + 150 + 80 + 80 + 80/2)
 $sh-l2-wt:   510px;   // center of weight col — must stay < 476px to clear controls (570 − 86)
@@ -1767,17 +1770,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   padding: 0;
 }
 
-// Lashed items inside a container (e.g. backpack) get an extra indent level
-.container-contents .lashed-items-list {
-  padding-left: $nested-indent;
-
-  // Available width = 638px (L1) - 60px (extra indent) = 578px
-  // No toggle column — 6 cells: image / name / qty / sSize / weight / controls
-  .lashed-item .item-header {
-    max-width: calc(638px - #{$nested-indent});
-    grid-template-columns: $nested-col-image calc(#{$nested-col-name} - #{$nested-indent}) $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
-  }
-}
+// NOTE: previously added an extra $nested-indent (60px) padding-left here, pushing Bedroll/
+// Crowbar/Club etc. 60px right of the "Lashed Items" subheader above them (and of unrelated
+// sibling sections like Silver Coins/Iron Spike). That predates the subheader added alongside
+// ".lashed-items-section:has(.lashed-header) .lashed-item .item-header:not(.lashed-stored-item)"
+// (which now owns this row's grid-template-columns at full specificity) — removed so the data
+// rows sit flush with their own subheader instead of drifting right of it.
 
 .attachment-toggle,
 .attachment-toggle-placeholder {
@@ -1866,21 +1864,31 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
-// Lashed items of a container (Shield, etc.) — 6 content children, 7-column grid.
-// The lashed-items-section has margin-left: $nested-indent (60px), so the grid is 60px narrower
-// than contained items (572px vs 632px). Name is reduced by 60px so qty/controls align on screen.
-// Col 5 (tWT) is empty — WT and controls are explicitly placed in cols 6 and 7.
+// Lashed items of a container (Shield, etc.) — 7 content children, 8-column grid.
+// Matches the same column math as .contained-item .item-header (name reduced by the 18px
+// caret, not by the 60px section indent — that indent already lives on .lashed-items-section's
+// own margin-left, so subtracting it again here shifted every column left of the subheader above).
 .lashed-items-section:has(.lashed-header) .lashed-item .item-header:not(.lashed-stored-item) {
-  // $col-caret for the nested container toggle; tWT column removed (was always empty here)
-  grid-template-columns: $col-caret $nested-col-image ($nested-col-name - $nested-indent) $nested-col-qty $nested-col-storedsize $nested-col-weight $nested-col-controls !important;
+  grid-template-columns: $col-caret $nested-col-image ($nested-col-name - $col-caret) $nested-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
 }
 
-// Belt attachment qty (non-container, no capacity bar): align with sub-item Qty column.
-// The capacity grid col center is at 261px (18+48+120+75) but $sh-l2-qty is 298px — 37px right.
-// translateX(37px) shifts the visual position without affecting the grid layout.
-.lashed-items-section:not(:has(.lashed-header)) .lashed-item .item-header > :nth-child(4):not(.capacity-bar-cell) {
-  transform: translateX(37px);
+// The subheader above this list inherits the belt-specific position override (below) via
+// ".lashed-items-section > .container-items-subheader", but this is a container's own lashed
+// items (grid-based, not the belt's absolute L1/L2 system) — revert to the default $sh-* positions
+// that match the grid-template-columns above. Higher specificity (:has()) wins over that override.
+.lashed-items-section:has(.lashed-header) > .container-items-subheader {
+  > :nth-child(1) { left: $sh-img; }
+  > :nth-child(2) { left: $sh-name; }
+  > :nth-child(3) { left: $sh-qty; }
+  > :nth-child(4) { left: $sh-ssize; }
+  > :nth-child(5) { left: $sh-twt; }
+  > :nth-child(6) { left: $sh-wt; }
 }
+
+// Belt attachment qty/capacity cell (non-container, no capacity bar): its grid col center
+// (18+48+120+75=261) already matches $sh-l2-qty (261, unified with $sh-qty above), so no
+// corrective shift is needed here anymore — removed the old translateX(37px) hack that
+// existed only to match the previous (since-unified) $sh-l2-qty value of 298px.
 
 // Slot cost label inside belt attachment name (e.g. "Scabbard, Medium (2)")
 .slot-cost {
@@ -2021,7 +2029,7 @@ li.contained-item .lashed-stored-item {
 
   // Image and name indent deeper; data columns stay aligned with the L2 subheader above
   > :nth-child(1) { left: 116px; width: $l2-col-image; }
-  > :nth-child(2) { left: $sh-l2-name + 48px; width: $l2-col-name - 48px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  > :nth-child(2) { left: $sh-l2-name + 48px; width: $l2-col-name - 48px + 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   > :nth-child(3) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
   > :nth-child(4) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
   > :nth-child(5) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }

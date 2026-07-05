@@ -519,7 +519,8 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
 // Gear-tab.html – Containers title (5 children: caret+Containers+Capacity+Weight+controls)
 // Overridden by .gear-scrollable-content rule below for character-sheet
-.osp.sheet.actor .gear-tab .item-category-title.containers-title {
+.osp.sheet.actor .gear-tab .item-category-title.containers-title,
+.osp.sheet.actor .gear-tab .item-category-title.vehicles-title {
   width: $content-width;
 
   @include title-bar-children;
@@ -558,7 +559,8 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Gear Tab (character-sheet) – Gear sticky title
 // 8 children: [roll-icon placeholder]["Gear"]["" empty]["Capacity"]["sSize"]["tWT"]["WT"][controls]
 // Positions computed from container row column widths so labels align with data cells.
-.osp.sheet.actor .gear-scrollable-content .item-category-title.containers-title {
+.osp.sheet.actor .gear-scrollable-content .item-category-title.containers-title,
+.osp.sheet.actor .gear-scrollable-content .item-category-title.vehicles-title {
   width: $content-width;
   height: 24px;
   position: sticky;
@@ -568,7 +570,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
   @include title-bar-children;
   // child 1: roll-icon placeholder (occupies same width as $col-caret for alignment)
-  > :nth-child(2) { left: col-start($col-caret, $gear-containers-col-image); transform: none; }  // "Gear"
+  > :nth-child(2) { left: col-start($col-caret, $gear-containers-col-image); transform: none; }  // "Gear" / "Vehicles"
   > :nth-child(3) { left: 0; }  // empty cell
   > :nth-child(4) { left: col-center($gear-containers-col-capacity,   $col-caret, $gear-containers-col-image, $gear-containers-col-name); }  // "Capacity"
   > :nth-child(5) { left: col-center($gear-containers-col-storedsize, $col-caret, $gear-containers-col-image, $gear-containers-col-name, $gear-containers-col-capacity); }  // "sSize"

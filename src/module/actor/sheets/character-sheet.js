@@ -235,6 +235,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const allArmor = this.actor.items.filter(i => i.type === "armor");
     const allAmmunition = this.actor.items.filter(i => i.type === "ammunition");
     const allCoins = this.actor.items.filter(i => i.type === "coin");
+    const allLivestock = this.actor.items.filter(i => i.type === "livestock");
 
     // Consumable weapons (Oil Flask, Holy Water, Darts, etc.) can be readied from containers.
     // When equipped, they appear on the combat tab and hide from their container.
@@ -279,7 +280,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         allContainedItems.forEach(nestedItem => {
           const nestedWeight = parseFloat(nestedItem.system.unitWeight || nestedItem.system.weight) || 0;
           const nestedQuantity = nestedItem.system.quantity !== undefined ? nestedItem.system.quantity : 1;
-          nestedItem.unitWeight = Math.round(nestedWeight * 10) / 10;
+          nestedItem.unitWeight = Math.round(nestedWeight * 100) / 100;
           nestedItem.displayWeight = Math.round(nestedWeight * nestedQuantity * 10) / 10;
 
           const storedSize = parseFloat(nestedItem.system.storedSize) || 0;
@@ -291,7 +292,7 @@ export class OspActorSheetCharacter extends ActorSheet {
             subItems.forEach(si => {
               const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
               const siQty = si.system.quantity || 1;
-              si.unitWeight = Math.round(siWeight * 10) / 10;
+              si.unitWeight = Math.round(siWeight * 100) / 100;
               si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
               si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
               si.isConsumableWeapon = isConsumableWeapon(si);
@@ -341,13 +342,13 @@ export class OspActorSheetCharacter extends ActorSheet {
           // Sub-containers stored inside this attachment (e.g. Scabbard, Sword inside Sword Frog)
           c.subContainers = allContainers.filter(sc => sc.system.containerId === c.id).map(sub => {
             const swt2 = parseFloat(sub.system.unitWeight || sub.system.weight) || 0;
-            sub.unitWeight = Math.round(swt2 * 10) / 10;
+            sub.unitWeight = Math.round(swt2 * 100) / 100;
             sub.displayWeight = Math.round(swt2 * (sub.system.quantity || 1) * 10) / 10;
             sub.itemId = sub.id;
             const subWeapon = allWeapons.find(w => w.system.containerId === sub.id) ?? null;
             if (subWeapon) {
               const wt2 = parseFloat(subWeapon.system.unitWeight || subWeapon.system.weight) || 0;
-              subWeapon.unitWeight = Math.round(wt2 * 10) / 10;
+              subWeapon.unitWeight = Math.round(wt2 * 100) / 100;
               subWeapon.displayWeight = Math.round(wt2 * (subWeapon.system.quantity || 1) * 10) / 10;
               subWeapon.itemId = subWeapon.id;
             }
@@ -356,7 +357,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           });
           if (storedWeapon) {
             const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
-            storedWeapon.unitWeight = Math.round(swt * 10) / 10;
+            storedWeapon.unitWeight = Math.round(swt * 100) / 100;
             storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
             storedWeapon.itemId = storedWeapon.id;
           }
@@ -368,7 +369,7 @@ export class OspActorSheetCharacter extends ActorSheet {
                 !(i.system.equipped && isConsumableWeapon(i))
               ).map(i => {
                 const sit = parseFloat(i.system.unitWeight || i.system.weight) || 0;
-                i.unitWeight = Math.round(sit * 10) / 10;
+                i.unitWeight = Math.round(sit * 100) / 100;
                 i.displayWeight = Math.round(sit * (i.system.quantity || 1) * 10) / 10;
                 i.itemId = i.id;
                 i.isConsumableWeapon = isConsumableWeapon(i);
@@ -416,12 +417,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     const slungItems = allSlungable.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(item => {
       const wt = parseFloat(item.system.unitWeight || item.system.weight) || 0;
       item.displayWeight = Math.round(wt * (item.system.quantity || 1) * 10) / 10;
-      item.unitWeight = Math.round(wt * 10) / 10;
+      item.unitWeight = Math.round(wt * 100) / 100;
       if ((item.system.tags || []).includes('sling')) {
         const storedWeapon = allWeapons.find(w => w.system.containerId === item.id) ?? null;
         if (storedWeapon) {
           const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
-          storedWeapon.unitWeight = Math.round(swt * 10) / 10;
+          storedWeapon.unitWeight = Math.round(swt * 100) / 100;
           storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
           storedWeapon.itemId = storedWeapon.id;
         }
@@ -429,7 +430,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         const storedIt = (!storedWeapon && allItems.find(i2 => i2.system.containerId === item.id)) || null;
         if (storedIt) {
           const sit = parseFloat(storedIt.system.unitWeight || storedIt.system.weight) || 0;
-          storedIt.unitWeight = Math.round(sit * 10) / 10;
+          storedIt.unitWeight = Math.round(sit * 100) / 100;
           storedIt.displayWeight = Math.round(sit * (storedIt.system.quantity || 1) * 10) / 10;
           storedIt.itemId = storedIt.id;
         }
@@ -446,7 +447,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         if (containedAmmo.length > 0) {
           containedAmmo.forEach(ammo => {
             const awt = parseFloat(ammo.system.unitWeight || ammo.system.weight) || 0;
-            ammo.unitWeight = Math.round(awt * 10) / 10;
+            ammo.unitWeight = Math.round(awt * 100) / 100;
             ammo.displayWeight = Math.round(awt * (ammo.system.quantity || 1) * 10) / 10;
             ammo.itemId = ammo.id;
           });
@@ -491,7 +492,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         ...container
       };
       
-      // Find ALL items in this container - items, weapons, armor, ammunition, coins, AND nested containers
+      // Find ALL items in this container - items, weapons, armor, ammunition, coins, livestock, AND nested containers
       const containedItems = allItems.filter(item => item.system.containerId === container.id);
       const containedWeapons = allWeapons.filter(weapon => weapon.system.containerId === container.id && !(weapon.system.equipped && isConsumableWeapon(weapon)));
       const containedArmor = allArmor.filter(armor => armor.system.containerId === container.id);
@@ -499,6 +500,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const containedContainers = allContainers.filter(c => c.system.containerId === container.id);
       const containedClothing = allClothing.filter(c => c.system.containerId === container.id);
       const containedCoins = allCoins.filter(c => c.system.containerId === container.id);
+      const containedLivestock = allLivestock.filter(l => l.system.containerId === container.id);
 
       // Combine all contained items
       const allContainedItems = [
@@ -508,7 +510,8 @@ export class OspActorSheetCharacter extends ActorSheet {
         ...containedAmmunition,
         ...containedContainers,
         ...containedClothing,
-        ...containedCoins
+        ...containedCoins,
+        ...containedLivestock
       ];
       
       // Separate lashed items from stored items
@@ -523,7 +526,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         const storedSize = parseFloat(item.system.storedSize) || 0;
 
         // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
-        item.unitWeight = Math.round(itemWeight * 10) / 10;
+        item.unitWeight = Math.round(itemWeight * 100) / 100;
         item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
 
         // Capacity: storedSize is per-unit; coins use same logic
@@ -537,7 +540,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           subItems.forEach(si => {
             const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
             const siQty = si.system.quantity || 1;
-            si.unitWeight = Math.round(siWeight * 10) / 10;
+            si.unitWeight = Math.round(siWeight * 100) / 100;
             si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
             si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
             si.isConsumableWeapon = isConsumableWeapon(si);
@@ -610,7 +613,13 @@ export class OspActorSheetCharacter extends ActorSheet {
 
       return containerData;
     });
-    
+
+    // Vehicles (Cart, Wagon, etc.) get their own dedicated Gear tab section instead of
+    // sitting in the general container list — pulled out here, after the shared containerData
+    // build above, by the "vehicle" tag.
+    context.vehicles = context.containers.filter(c => (c.system.tags || []).includes('vehicle'));
+    context.containers = context.containers.filter(c => !(c.system.tags || []).includes('vehicle'));
+
     // Build set of all valid container/clothing-with-capacity IDs so we can detect orphaned items
     const validContainerIds = new Set([
       ...allContainers.map(c => c.id),
@@ -639,7 +648,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       !a.name.toLowerCase().includes('shield') &&
       (!a.system.containerId || !validContainerIds.has(a.system.containerId))
     );
-    const generalItems = [...freeItems, ...freeAmmunition, ...unequippedArmor];
+    const freeLivestock = allLivestock.filter(l =>
+      !l.system.lashed &&
+      (!l.system.containerId || !validContainerIds.has(l.system.containerId))
+    );
+    const generalItems = [...freeItems, ...freeAmmunition, ...unequippedArmor, ...freeLivestock];
 
     // Calculate displayWeight for general items and loose weapons
     [...generalItems, ...unequippedWeapons].forEach(item => {

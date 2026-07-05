@@ -30,6 +30,7 @@ export class ItemCardRenderer {
     };
     
     this.templateImage = null;
+    this.templateTheme = null;
     this.fontLoaded = false;
     
     this._loadFont();
@@ -48,26 +49,30 @@ export class ItemCardRenderer {
   /**
    * Load template image or create parchment background
    */
-  async _loadTemplate() {
-    if (this.templateImage) return this.templateImage;
-    
+  async _loadTemplate(theme = 'default') {
+    if (this.templateImage && this.templateTheme === theme) return this.templateImage;
+
+    const fileName = theme === 'parchment' ? 'item-card-parchment.webp' : 'item-card.webp';
+
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
-      
+
       img.onload = () => {
         this.templateImage = img;
+        this.templateTheme = theme;
         resolve(img);
       };
-      
+
       img.onerror = (error) => {
         // Template not found - create programmatic parchment background
         this.templateImage = this._createParchmentTemplate();
+        this.templateTheme = theme;
         resolve(this.templateImage);
       };
-      
+
       // Try to load template with aggressive cache busting
-      img.src = `systems/osp-houserules/assets/character-sheet/item-card.webp?v=${Date.now()}&r=${Math.random()}`;
+      img.src = `systems/osp-houserules/assets/character-sheet/${fileName}?v=${Date.now()}&r=${Math.random()}`;
     });
   }
   
@@ -112,8 +117,12 @@ export class ItemCardRenderer {
       await this._loadFont();
     }
     
-    await this._loadTemplate();
-    
+    // World items (e.g. opened from the sidebar) have no owning actor, so fall back
+    // to the currently selected/controlled token's actor.
+    const themeSource = item.actor ?? game.canvas?.tokens?.controlled[0]?.actor;
+    const theme = themeSource?.getFlag(game.system.id, 'sheetTheme') ?? 'default';
+    await this._loadTemplate(theme);
+
     const canvas = document.createElement('canvas');
     canvas.width = this.CARD_WIDTH;
     canvas.height = this.CARD_HEIGHT;

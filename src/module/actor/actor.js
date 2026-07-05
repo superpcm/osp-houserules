@@ -316,6 +316,9 @@ export class OspActor extends Actor {
     let totalWeight = 0;
 
     this.items.forEach(item => {
+      // Vehicles (Cart, Wagon, etc.) are pulled by draft animals, not carried — exclude their weight
+      if ((item.system.tags || []).includes('vehicle')) return;
+
       // Handle quantity as either a number or an object with a value property
       let quantity = 1;
       if (typeof item.system.quantity === 'number') {
@@ -323,7 +326,7 @@ export class OspActor extends Actor {
       } else if (typeof item.system.quantity === 'object' && item.system.quantity !== null) {
         quantity = item.system.quantity.value || 1;
       }
-      
+
       const weight = item.system.unitWeight || 0;
       totalWeight += weight * quantity;
     });

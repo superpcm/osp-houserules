@@ -27,6 +27,7 @@ async function refreshAllItems() {
     'systems/osp-houserules/data/misc.json',
     'systems/osp-houserules/data/tack.json',
     'systems/osp-houserules/data/treasure.json',
+    'systems/osp-houserules/data/vehicles.json',
     'systems/osp-houserules/data/weapons.json'
   ];
   

@@ -1720,7 +1720,7 @@
                       <span class="capacity-value">{{slungUsed}}/{{slungMax}}</span>
                     </div>
                   </div>
-                  <div class="field-short">—</div>
+                  <div class="field-short">N/A</div>
                   <div class="field-short">{{slungTotalWeight}}</div>
                   <div class="field-short"></div>
                   <div class="item-controls"></div>
@@ -1760,7 +1760,7 @@
                       {{else}}
                       <div class="field-short">{{item.system.quantity}}</div>
                       {{/if}}
-                      <div class="field-short">{{#if item.system.storedSize}}{{item.system.storedSize}}{{else}}—{{/if}}</div>
+                      <div class="field-short">{{displaySize item.system "—"}}</div>
                       <div class="field-short">{{item.displayWeight}}</div>
                       <div class="field-short">{{item.unitWeight}}</div>
                       <div class="item-controls">
@@ -1793,7 +1793,7 @@
                       <div class="item-image" style="background-image: url('{{item.storedWeapon.img}}');"></div>
                       <h4 class="item-name stored-weapon-name" title="{{item.storedWeapon.name}}" data-item-id="{{item.storedWeapon.itemId}}">{{item.storedWeapon.name}}</h4>
                       <div class="field-short">{{item.storedWeapon.system.quantity}}</div>
-                      <div class="field-short">{{#if item.storedWeapon.system.storedSize}}{{item.storedWeapon.system.storedSize}}{{else}}—{{/if}}</div>
+                      <div class="field-short">{{displaySize item.storedWeapon.system "—"}}</div>
                       <div class="field-short">{{item.storedWeapon.displayWeight}}</div>
                       <div class="field-short">{{item.storedWeapon.unitWeight}}</div>
                       <div class="item-controls">
@@ -1815,7 +1815,7 @@
                       <div class="item-image" style="background-image: url('{{item.storedItem.img}}'); opacity: 0.8;"></div>
                       <h4 class="item-name stored-weapon-name" title="{{item.storedItem.name}}" data-item-id="{{item.storedItem.itemId}}">{{item.storedItem.name}}</h4>
                       <div class="field-short">{{item.storedItem.system.quantity}}</div>
-                      <div class="field-short">{{#if item.storedItem.system.storedSize}}{{item.storedItem.system.storedSize}}{{else}}—{{/if}}</div>
+                      <div class="field-short">{{displaySize item.storedItem.system "—"}}</div>
                       <div class="field-short">{{item.storedItem.displayWeight}}</div>
                       <div class="field-short">{{item.storedItem.unitWeight}}</div>
                       <div class="item-controls">
@@ -1835,7 +1835,7 @@
                       <div class="item-image" style="background-image: url('{{ammo.img}}');"></div>
                       <h4 class="item-name stored-weapon-name" title="{{ammo.name}}" data-item-id="{{ammo.itemId}}">{{ammo.name}}</h4>
                       <div class="field-short">{{ammo.system.quantity}}</div>
-                      <div class="field-short">{{#if ammo.system.storedSize}}{{ammo.system.storedSize}}{{else}}—{{/if}}</div>
+                      <div class="field-short">{{displaySize ammo.system "—"}}</div>
                       <div class="field-short">{{ammo.displayWeight}}</div>
                       <div class="field-short">{{ammo.unitWeight}}</div>
                       <div class="item-controls">
@@ -1901,7 +1901,7 @@
                   {{else}}
                   <div class="field-short">—</div>
                   {{/if}}
-                  <div class="field-short">{{item.system.storedSize}}</div>
+                  <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.totalWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
@@ -2006,7 +2006,7 @@
                         <div class="item-image" style="background-image: url('{{subItem.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{subItem.name}}">{{subItem.name}}</h4>
                         <div class="field-short">{{subItem.system.quantity}}</div>
-                        <div class="field-short">{{#if subItem.system.storedSize}}{{subItem.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{displaySize subItem.system "—"}}</div>
                         <div class="field-short">{{subItem.displayWeight}}</div>
                         <div class="field-short">{{subItem.unitWeight}}</div>
                         <div class="item-controls">
@@ -2069,7 +2069,7 @@
                         </div>
                         {{else}}<div class="field-short"></div>
                         {{/unless}}{{else}}<div class="field-short"></div>{{/if}}
-                        <div class="field-short">{{#if attachment.system.storedSize}}{{attachment.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{displaySize attachment.system "—"}}</div>
                         <div class="field-short">{{attachment.totalWeight}}</div>
                         <div class="field-short">{{attachment.displayWeight}}</div>
                         <div class="item-controls">
@@ -2101,7 +2101,7 @@
                         <div class="item-image" style="background-image: url('{{attachment.storedWeapon.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{attachment.storedWeapon.name}}" data-item-id="{{attachment.storedWeapon.itemId}}">{{attachment.storedWeapon.name}}</h4>
                         <div class="field-short"></div>
-                        <div class="field-short">{{#if attachment.storedWeapon.system.storedSize}}{{attachment.storedWeapon.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{displaySize attachment.storedWeapon.system "—"}}</div>
                         <div class="field-short">{{attachment.storedWeapon.displayWeight}}</div>
                         <div class="field-short">{{attachment.storedWeapon.unitWeight}}</div>
                         <div class="item-controls">
@@ -2124,7 +2124,7 @@
                         <div class="item-image" style="background-image: url('{{storedItem.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{storedItem.name}}" data-item-id="{{storedItem.itemId}}">{{storedItem.name}}</h4>
                         <div class="field-short">{{storedItem.system.quantity}}</div>
-                        <div class="field-short">{{#if storedItem.system.storedSize}}{{storedItem.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{displaySize storedItem.system "—"}}</div>
                         <div class="field-short">{{storedItem.displayWeight}}</div>
                         <div class="field-short">{{storedItem.unitWeight}}</div>
                         <div class="item-controls">
@@ -2149,7 +2149,7 @@
                         <div class="item-image" style="background-image: url('{{sub.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{sub.name}}" data-item-id="{{sub.itemId}}">{{sub.name}}</h4>
                         <div class="field-short"></div>
-                        <div class="field-short">{{#if sub.system.storedSize}}{{sub.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{displaySize sub.system "—"}}</div>
                         <div class="field-short">{{sub.displayWeight}}</div>
                         <div class="field-short">{{sub.unitWeight}}</div>
                         <div class="item-controls">
@@ -2167,7 +2167,7 @@
                         <div class="item-image" style="background-image: url('{{sub.storedWeapon.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{sub.storedWeapon.name}}" data-item-id="{{sub.storedWeapon.itemId}}">{{sub.storedWeapon.name}}</h4>
                         <div class="field-short"></div>
-                        <div class="field-short">{{#if sub.storedWeapon.system.storedSize}}{{sub.storedWeapon.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{displaySize sub.storedWeapon.system "—"}}</div>
                         <div class="field-short">{{sub.storedWeapon.displayWeight}}</div>
                         <div class="field-short">{{sub.storedWeapon.unitWeight}}</div>
                         <div class="item-controls">
@@ -2212,7 +2212,7 @@
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">—</div>
-                  <div class="field-short">{{item.system.storedSize}}</div>
+                  <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
@@ -2241,7 +2241,7 @@
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">—</div>
-                  <div class="field-short">{{item.system.storedSize}}</div>
+                  <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.system.unitWeight}}</div>
                   <div class="field-short">{{item.system.unitWeight}}</div>
                   <div class="item-controls">
@@ -2273,7 +2273,7 @@
                   <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">—</div>
-                  <div class="field-short">{{item.system.storedSize}}</div>
+                  <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
@@ -2312,7 +2312,7 @@
                   {{else}}
                   <div class="field-short">—</div>
                   {{/unless}}
-                  <div class="field-short">{{item.system.storedSize}}</div>
+                  <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.totalWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
@@ -2426,7 +2426,7 @@
                         <div class="item-image" style="background-image: url('{{subItem.img}}');"></div>
                         <h4 class="item-name stored-weapon-name" title="{{subItem.name}}">{{subItem.name}}</h4>
                         <div class="field-short">{{subItem.system.quantity}}</div>
-                        <div class="field-short">{{#if subItem.system.storedSize}}{{subItem.system.storedSize}}{{else}}—{{/if}}</div>
+                        <div class="field-short">{{displaySize subItem.system "—"}}</div>
                         <div class="field-short">{{subItem.displayWeight}}</div>
                         <div class="field-short">{{subItem.unitWeight}}</div>
                         <div class="item-controls">
@@ -2486,7 +2486,7 @@
                           <div class="item-image" style="background-image: url('{{lashedItem.img}}');"></div>
                           <h4 class="item-name" title="{{lashedItem.name}}">{{lashedItem.name}}</h4>
                           <div class="field-short quantity"></div>
-                          <div class="field-short">{{#if lashedItem.system.storedSize}}{{lashedItem.system.storedSize}}{{else}}—{{/if}}</div>
+                          <div class="field-short">{{displaySize lashedItem.system "—"}}</div>
                           <div class="field-short">{{lashedItem.displayWeight}}</div>
                           <div class="field-short">{{lashedItem.unitWeight}}</div>
                           <div class="item-controls">
@@ -2524,7 +2524,7 @@
                           <div class="item-image" style="background-image: url('{{subItem.img}}');"></div>
                           <h4 class="item-name stored-weapon-name" title="{{subItem.name}}">{{subItem.name}}</h4>
                           <div class="field-short">{{subItem.system.quantity}}</div>
-                          <div class="field-short">{{#if subItem.system.storedSize}}{{subItem.system.storedSize}}{{else}}—{{/if}}</div>
+                          <div class="field-short">{{displaySize subItem.system "—"}}</div>
                           <div class="field-short">{{subItem.displayWeight}}</div>
                           <div class="field-short">{{subItem.unitWeight}}</div>
                           <div class="item-controls">
@@ -2596,7 +2596,7 @@
                   {{else}}
                   <div class="field-short">—</div>
                   {{/unless}}
-                  <div class="field-short">{{item.system.storedSize}}</div>
+                  <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.totalWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
@@ -2664,6 +2664,59 @@
                   </ol>
                 </div>
                 {{/unless}}
+
+                <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
+                  {{#if item.system.description}}
+                  <div class="item-description">{{item.system.description}}</div>
+                  {{/if}}
+                </div>
+              </li>
+              {{/each}}
+            </ol>
+          </div>
+          {{/if}}
+
+          {{!-- LIVESTOCK — dedicated category for owned animals; excluded from encumbrance --}}
+          {{#if livestock.length}}
+          <div class="item-category-title livestock-title flexrow">
+            <div class="item-roll-icon"></div>
+            <div class="category-name">Livestock</div>
+            <div class="field-short">Qty</div>
+            <div class="field-short">MV</div>
+            <div class="field-short">AC</div>
+            <div class="field-short">HD</div>
+            <div class="field-short">sSize</div>
+            <div class="field-short">WT</div>
+            <div class="item-controls"></div>
+          </div>
+          <div class="item-category">
+            <ol class="item-list">
+              {{#each livestock as |item|}}
+              <li class="item-entry item livestock-entry" data-item-id="{{item.id}}">
+                <div class="item-sort-controls">
+                  <a class="item-sort-up" title="Move Up"><i class="fas fa-caret-up"></i></a>
+                  <a class="item-sort-down" title="Move Down"><i class="fas fa-caret-down"></i></a>
+                </div>
+                <div class="item-header livestock-header flexrow">
+                  <span class="container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                  <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
+                  <div class="field-short quantity">{{item.system.quantity}}</div>
+                  <div class="field-short">{{item.system.movement}}</div>
+                  <div class="field-short">{{item.system.ac}}</div>
+                  <div class="field-short">{{item.system.hd}}</div>
+                  <div class="field-short">{{displaySize item.system}}</div>
+                  <div class="field-short">{{item.displayWeight}}</div>
+                  <div class="item-controls">
+                    {{#if @root.owner}}
+                    <a class="item-control item-edit" title="Edit Item"><i class="fas fa-eye"></i></a>
+                    <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
+                    <a class="item-control item-drop" title="Drop Item" data-item-id="{{item.id}}">
+                      <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
+                    </a>
+                    {{/if}}
+                  </div>
+                </div>
 
                 <div class="item-summary {{#if item.isExpanded}}expanded{{/if}}">
                   {{#if item.system.description}}

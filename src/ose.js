@@ -450,6 +450,14 @@ Handlebars.registerHelper('hasTag', function(arr, value) {
   return Array.isArray(arr) && arr.includes(value);
 });
 
+// Register a Handlebars helper to render the sSize column: "N/A" for no-store items,
+// otherwise the stored size (or a fallback string, e.g. "—", when unset).
+Handlebars.registerHelper('displaySize', function(sys, fallback) {
+  if (typeof fallback !== 'string') fallback = '';
+  if (sys && Array.isArray(sys.tags) && sys.tags.includes('no-store')) return 'N/A';
+  return (sys && sys.storedSize) ? sys.storedSize : fallback;
+});
+
 // Register a Handlebars helper to check if item is a regular shield (not body shield)
 Handlebars.registerHelper('isRegularShield', function(item) {
   const type = String(item.system.type || '').toLowerCase();

@@ -14,7 +14,8 @@
       "tags": [
         "tack",
         "vehicle",
-        "container"
+        "container",
+        "no-store"
       ],
       "capacity": 80,
       "requiresAnimal": "draft"
@@ -35,7 +36,8 @@
       "tags": [
         "tack",
         "vehicle",
-        "container"
+        "container",
+        "no-store"
       ],
       "capacity": 200,
       "requiresAnimal": "draft (2+)"

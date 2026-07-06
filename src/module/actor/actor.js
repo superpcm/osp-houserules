@@ -319,6 +319,9 @@ export class OspActor extends Actor {
       // Vehicles (Cart, Wagon, etc.) are pulled by draft animals, not carried — exclude their weight
       if ((item.system.tags || []).includes('vehicle')) return;
 
+      // Livestock move under their own power and aren't carried — exclude their weight
+      if (item.type === 'livestock') return;
+
       // Handle quantity as either a number or an object with a value property
       let quantity = 1;
       if (typeof item.system.quantity === 'number') {

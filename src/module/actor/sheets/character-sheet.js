@@ -652,16 +652,19 @@ export class OspActorSheetCharacter extends ActorSheet {
       !l.system.lashed &&
       (!l.system.containerId || !validContainerIds.has(l.system.containerId))
     );
-    const generalItems = [...freeItems, ...freeAmmunition, ...unequippedArmor, ...freeLivestock];
+    const generalItems = [...freeItems, ...freeAmmunition, ...unequippedArmor];
 
-    // Calculate displayWeight for general items and loose weapons
-    [...generalItems, ...unequippedWeapons].forEach(item => {
+    // Calculate displayWeight for general items, loose weapons, and livestock
+    [...generalItems, ...unequippedWeapons, ...freeLivestock].forEach(item => {
       const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
       const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
     });
 
     context.items = generalItems.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    // Livestock (Chicken, Horse, Mule, etc.) get their own dedicated Gear tab section instead of
+    // sitting in the general item list — same treatment as Vehicles, and also excluded from encumbrance.
+    context.livestock = freeLivestock.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     // Unequipped weapons rendered separately in gear tab with weapon-row layout
     context.unequippedWeapons = unequippedWeapons.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     // All weapons for combat tab (equipped, sheathed, and lashed all appear; unequipped shown greyed out)
@@ -2636,6 +2639,21 @@ export class OspActorSheetCharacter extends ActorSheet {
       targetContainer = this.actor.items.get(targetContainer.system.containerId);
     }
 
+    // Some items (e.g. wagons, carts) are too large to ever be stored inside a container.
+    const isStorageTarget = targetContainer && (targetContainer.type === "container" ||
+      (targetContainer.type === "clothing" && targetContainer.system.capacity));
+    if (isStorageTarget && (itemData.system?.tags || []).includes('no-store')) {
+      ui.notifications.warn(`${itemData.name} is too large to be stored in a container.`);
+      return false;
+    }
+
+    // Draft/pack/mount animals (Horse, Donkey, Mule, Ox, Pony) cannot be stowed inside a Cart or Wagon.
+    const isVehicleTarget = targetContainer && (targetContainer.system?.tags || []).includes('vehicle');
+    if (isVehicleTarget && (itemData.system?.tags || []).includes('no-vehicle-store')) {
+      ui.notifications.warn(`${itemData.name} cannot be stowed inside ${targetContainer.name}.`);
+      return false;
+    }
+
     // Check if this item already exists on this actor
     const existingItemCheck = this.actor.items.get(itemData._id);
 
@@ -2658,6 +2676,35 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (game.settings.get("osp-houserules", "storeLock") && !game.user.isGM && !isReordering) {
       ui.notifications.warn("The store is locked — you cannot add items to your inventory right now.");
       return false;
+    }
+
+    // Livestock roam free (not stored in containers), so they never hit the container-drop
+    // stacking logic below. Merge a duplicate dropped at the top level into the existing
+    // free-standing stack instead of creating a second row. Use isStorageTarget rather than
+    // targetContainer directly — dropping onto another livestock row (or any non-container
+    // item-entry) resolves targetContainer to that item, which isn't a real storage target.
+    if (itemData.type === 'livestock' && !isStorageTarget) {
+      const matchingLivestock = this.actor.items.find(i =>
+        i.type === 'livestock' &&
+        i.name === itemData.name &&
+        !i.system.containerId &&
+        !i.system.lashed &&
+        (!isReordering || i.id !== item.id)
+      );
+      if (matchingLivestock) {
+        const addingQty = itemData.system.quantity || 1;
+        const newQty = (matchingLivestock.system.quantity || 1) + addingQty;
+        ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
+        if (isReordering) {
+          return item.delete().then(() => matchingLivestock.update({"system.quantity": newQty}));
+        }
+        if (item.actor && item.actor.id !== this.actor.id) {
+          return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
+            matchingLivestock.update({"system.quantity": newQty})
+          );
+        }
+        return matchingLivestock.update({"system.quantity": newQty});
+      }
     }
 
     // Drop onto the Slung Items section → equip the item (= sling it)
@@ -3236,12 +3283,12 @@ export class OspActorSheetCharacter extends ActorSheet {
       const currentContainerId = item.system.containerId;
       const targetContainerId = targetContainer?.id || null;
       
-      if (movingQty > 1 && currentContainerId !== targetContainerId && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor")) {
+      if (movingQty > 1 && currentContainerId !== targetContainerId && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor" || itemData.type === "livestock")) {
         return this._handleStackedItemDrop(item, itemData, targetContainer, currentContainerId);
       }
       
       // Check if we should stack this item with an existing one in the target container
-      if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor")) {
+      if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor" || itemData.type === "livestock")) {
         // Find matching item in the target container (excluding the item being moved)
         const matchingItem = this.actor.items.find(i => 
           i.id !== item.id && // Don't match with itself
@@ -3295,7 +3342,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Handle item from compendium or elsewhere - check for stacking
     
     // Check if we should stack this item with an existing one
-    if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor")) {
+    if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor" || itemData.type === "livestock")) {
       // Find matching item in the same container
       const matchingItem = this.actor.items.find(i => 
         i.name === itemData.name &&

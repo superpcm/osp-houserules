@@ -7,7 +7,7 @@
       "description": "Chain mail barding is a flexible suit of interlocking metal rings designed to protect a horse from cuts and punctures while maintaining mobility. It is typically used for light and medium cavalry, offering a balance of protection and movement without the restrictive weight of full plate barding.",
       "cost": 500,
       "unitWeight": 60,
-      "storedSize": 99,
+      "storedSize": 20,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -18,7 +18,8 @@
       ],
       "armorBonus": 4,
       "movementPenalty": -60,
-      "animalType": "horse"
+      "animalType": "horse",
+      "tackSlot": "barding"
     }
   },
   {
@@ -40,7 +41,8 @@
       ],
       "armorBonus": 2,
       "movementPenalty": -30,
-      "animalType": "horse"
+      "animalType": "horse",
+      "tackSlot": "barding"
     }
   },
   {
@@ -62,7 +64,8 @@
       ],
       "armorBonus": 6,
       "movementPenalty": -90,
-      "animalType": "horse"
+      "animalType": "horse",
+      "tackSlot": "barding"
     }
   },
   {
@@ -84,7 +87,8 @@
       ],
       "armorBonus": 6,
       "movementPenalty": -90,
-      "animalType": "horse"
+      "animalType": "horse",
+      "tackSlot": "barding"
     }
   },
   {
@@ -101,8 +105,9 @@
       "lashable": false,
       "tags": [
         "tack",
-        "riding"
-      ]
+        "rideable"
+      ],
+      "tackSlot": "control"
     }
   },
   {
@@ -119,8 +124,9 @@
       "lashable": false,
       "tags": [
         "tack",
-        "riding"
-      ]
+        "rideable"
+      ],
+      "tackSlot": "saddle"
     }
   },
   {
@@ -141,7 +147,8 @@
         "pack animal"
       ],
       "capacity": 40,
-      "lashSlots": 6
+      "lashSlots": 6,
+      "tackSlot": "saddle"
     }
   },
   {
@@ -159,10 +166,12 @@
       "tags": [
         "tack",
         "container",
-        "riding"
+        "rideable"
       ],
       "capacity": 24,
-      "requiresMounted": true
+      "requiresMounted": true,
+      "tackSlot": "bags",
+      "minAnimalSize": "large"
     }
   },
   {
@@ -180,10 +189,11 @@
       "tags": [
         "tack",
         "container",
-        "riding"
+        "rideable"
       ],
       "capacity": 12,
-      "requiresMounted": true
+      "requiresMounted": true,
+      "tackSlot": "bags"
     }
   }
 ]

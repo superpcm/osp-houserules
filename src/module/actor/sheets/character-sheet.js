@@ -620,10 +620,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.vehicles = context.containers.filter(c => (c.system.tags || []).includes('vehicle'));
     context.containers = context.containers.filter(c => !(c.system.tags || []).includes('vehicle'));
 
-    // Build set of all valid container/clothing-with-capacity IDs so we can detect orphaned items
+    // Build set of all valid container/clothing-with-capacity/livestock IDs so we can detect
+    // orphaned items. Livestock are included since tack (Saddle, Bit & Bridle, etc.) is "stored"
+    // on them via the same containerId mechanism, even though they aren't type "container".
     const validContainerIds = new Set([
       ...allContainers.map(c => c.id),
-      ...this.actor.items.filter(i => i.type === "clothing" && i.system.capacity).map(i => i.id)
+      ...this.actor.items.filter(i => i.type === "clothing" && i.system.capacity).map(i => i.id),
+      ...allLivestock.map(l => l.id)
     ]);
 
     // Only show items that are NOT in containers AND are not containers or clothing themselves.
@@ -665,6 +668,51 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Livestock (Chicken, Horse, Mule, etc.) get their own dedicated Gear tab section instead of
     // sitting in the general item list — same treatment as Vehicles, and also excluded from encumbrance.
     context.livestock = freeLivestock.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+
+    // Tack worn by livestock (saddles, barding, bit & bridle, saddlebags) — reuses the same
+    // container-toggle/collapsed-flag machinery as real containers (see _onContainerToggle),
+    // just keyed by the livestock item's id instead of a container's id.
+    context.livestock.forEach(l => {
+      const wornTack = this.actor.items.filter(i => i.system.containerId === l.id);
+      wornTack.forEach(t => {
+        const tWeight = parseFloat(t.system.unitWeight || t.system.weight) || 0;
+        const tQty = t.system.quantity || 1;
+        t.unitWeight = Math.round(tWeight * 100) / 100;
+        t.displayWeight = Math.round(tWeight * tQty * 10) / 10;
+        t.displayCapacity = Math.round((parseFloat(t.system.storedSize) || 0) * tQty * 10) / 10;
+
+        // Saddle Pack / Saddlebags are themselves containers — surface their own contents
+        // one level deeper, same as a backpack nested inside another container.
+        if (t.type === 'container') {
+          const subItems = this.actor.items.filter(i => i.system.containerId === t.id && !i.system.lashed);
+          subItems.forEach(si => {
+            const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
+            const siQty = si.system.quantity || 1;
+            si.unitWeight = Math.round(siWeight * 100) / 100;
+            si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
+            si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
+          });
+          t.containedItems = subItems;
+          t.collapsed = this.actor.getFlag('osp-houserules', `container-${t.id}-collapsed`) ?? false;
+          const usedCapacity = subItems.reduce((sum, si) => sum + (parseFloat(si.system.storedSize) || 0) * (si.system.quantity || 1), 0);
+          t.remainingCapacity = Math.round(Math.max(0, (t.system.capacity || 0) - usedCapacity) * 100) / 100;
+          t.capacityPercentage = t.system.capacity ? Math.min(100, Math.round((usedCapacity / t.system.capacity) * 100)) : 0;
+        } else {
+          t.containedItems = [];
+          t.collapsed = true;
+        }
+      });
+      l.containedItems = wornTack;
+      l.collapsed = this.actor.getFlag('osp-houserules', `container-${l.id}-collapsed`) ?? true;
+
+      // Total weight shown in tWT: the animal's own weight plus everything it's wearing/carrying.
+      const ownWeight = (parseFloat(l.system.unitWeight) || 0) * (l.system.quantity || 1);
+      const tackWeight = wornTack.reduce((sum, t) => {
+        const nestedWeight = (t.containedItems || []).reduce((s2, si) => s2 + si.displayWeight, 0);
+        return sum + t.displayWeight + nestedWeight;
+      }, 0);
+      l.totalWeight = Math.round((ownWeight + tackWeight) * 10) / 10;
+    });
     // Unequipped weapons rendered separately in gear tab with weapon-row layout
     context.unequippedWeapons = unequippedWeapons.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     // All weapons for combat tab (equipped, sheathed, and lashed all appear; unequipped shown greyed out)
@@ -2678,6 +2726,13 @@ export class OspActorSheetCharacter extends ActorSheet {
       return false;
     }
 
+    // Tack (saddles, barding, bit & bridle, saddlebags) worn by livestock — dispatched early,
+    // mirroring the coin/ammunition special-case handlers below, since livestock aren't a real
+    // container type and none of the generic container-type branches further down apply to them.
+    if (targetContainer && targetContainer.type === 'livestock') {
+      return this._handleTackDrop(item, itemData, targetContainer, isReordering);
+    }
+
     // Livestock roam free (not stored in containers), so they never hit the container-drop
     // stacking logic below. Merge a duplicate dropped at the top level into the existing
     // free-standing stack instead of creating a second row. Use isStorageTarget rather than
@@ -3598,6 +3653,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       return { valid: true };
     }
 
+    // Livestock aren't a real container — tack compatibility/slot rules apply instead.
+    if (targetContainer.type === 'livestock') {
+      return this._getTackCompatibility(draggedItem.toObject(), targetContainer, draggedItem.id);
+    }
+
     // Only containers and clothing-with-capacity are storage targets
     const isStorage = targetContainer.type === 'container' ||
       (targetContainer.type === 'clothing' && targetContainer.system.capacity);
@@ -4083,6 +4143,113 @@ export class OspActorSheetCharacter extends ActorSheet {
         render: (html) => html.find('[name="moveQuantity"]').focus().select()
       }).render(true);
     });
+  }
+
+  /**
+   * Shared by _handleTackDrop (the real drop) and _getContainerDropValidity (the drag-hover
+   * highlight) so the green/red preview never disagrees with what actually happens on drop.
+   * excludeItemId excludes the dragged item itself from slot-occupancy checks when reordering.
+   */
+  _getTackCompatibility(itemData, targetContainer, excludeItemId = null) {
+    const tags = itemData.system?.tags || [];
+    if (!tags.includes('tack')) {
+      return { valid: false, reason: `${targetContainer.name} can only wear tack.` };
+    }
+
+    // Species compatibility: Barding uses the stricter animalType field (only actual horses);
+    // everything else falls back to matching any non-generic tag against the livestock's tags
+    // (e.g. "rideable" for Saddle/Bit & Bridle, "pack animal" for Saddle Pack).
+    const livestockTags = targetContainer.system?.tags || [];
+    const animalType = itemData.system?.animalType;
+    if (animalType) {
+      if (!livestockTags.includes(animalType)) {
+        return { valid: false, reason: `${itemData.name} doesn't fit ${targetContainer.name}.` };
+      }
+    } else {
+      const compatTags = tags.filter(t => !['tack', 'container', 'armor'].includes(t));
+      if (compatTags.length && !compatTags.some(t => livestockTags.includes(t))) {
+        return { valid: false, reason: `${itemData.name} doesn't fit ${targetContainer.name}.` };
+      }
+    }
+
+    // Size gate: e.g. Saddlebags, Large need a large animal — a Pony can only carry the Small ones.
+    const minAnimalSize = itemData.system?.minAnimalSize;
+    if (minAnimalSize) {
+      const sizeOrder = { small: 1, medium: 2, large: 3 };
+      const livestockSize = sizeOrder[targetContainer.system?.animalSize] || 0;
+      if (livestockSize < (sizeOrder[minAnimalSize] || 0)) {
+        return { valid: false, reason: `${itemData.name} is too large for ${targetContainer.name}.` };
+      }
+    }
+
+    // One item per tack slot (saddle/barding/control/bags); saddlebags additionally require
+    // a saddle already worn, since they drape over one.
+    const tackSlot = itemData.system?.tackSlot;
+    if (tackSlot) {
+      const slotTaken = this.actor.items.find(i =>
+        i.system.containerId === targetContainer.id &&
+        i.system.tackSlot === tackSlot &&
+        i.id !== excludeItemId
+      );
+      if (slotTaken) {
+        return { valid: false, reason: `${targetContainer.name} already has ${slotTaken.name} equipped in that slot. Remove it first.` };
+      }
+      if (tackSlot === 'bags') {
+        const hasSaddle = this.actor.items.find(i =>
+          i.system.containerId === targetContainer.id && i.system.tackSlot === 'saddle' &&
+          i.id !== excludeItemId
+        );
+        if (!hasSaddle) {
+          return { valid: false, reason: `${targetContainer.name} needs a saddle before saddlebags can be attached.` };
+        }
+      }
+    }
+
+    return { valid: true };
+  }
+
+  /**
+   * Handle dropping tack (saddles, barding, bit & bridle, saddlebags) onto a livestock item.
+   * Livestock aren't a real container type, so this validates species compatibility and
+   * one-per-slot limits (saddle/barding/control/bags) instead of capacity/size like a container.
+   */
+  async _handleTackDrop(item, itemData, targetContainer, isReordering) {
+    const check = this._getTackCompatibility(itemData, targetContainer, isReordering ? item.id : null);
+    if (!check.valid) {
+      ui.notifications.error(check.reason);
+      return false;
+    }
+
+    if (isReordering) {
+      return item.update({
+        "system.containerId": targetContainer.id,
+        "system.lashed": false,
+        "system.equipped": false
+      });
+    }
+
+    if (item.actor && item.actor.id !== this.actor.id) {
+      return item.actor.deleteEmbeddedDocuments("Item", [item.id]).then(() => {
+        itemData.system.containerId = targetContainer.id;
+        itemData.system.lashed = false;
+        itemData.system.equipped = false;
+        return this.actor.createEmbeddedDocuments("Item", [itemData]);
+      });
+    }
+
+    const existingItem = this.actor.items.get(itemData._id);
+    if (existingItem) {
+      return existingItem.update({
+        "system.containerId": targetContainer.id,
+        "system.lashed": false,
+        "system.equipped": false
+      });
+    }
+
+    itemData.system.containerId = targetContainer.id;
+    itemData.system.lashed = false;
+    itemData.system.equipped = false;
+    return this.actor.createEmbeddedDocuments("Item", [itemData]);
   }
 
   /**

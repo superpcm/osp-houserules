@@ -78,17 +78,17 @@ $gear-containers-header-qty: 69px;       // Width of container header quantity c
 $gear-containers-header-capacity: 87px;  // Width of container header capacity column
 $gear-containers-header-weight: 60px;    // Width of container header weight column
 
-/* Gear Tab – Livestock: Column Widths (Qty/MV/AC/HD/sSize/WT — no capacity bar, not a container) */
-$gear-livestock-col-image: 48px;        // Width of livestock image
+/* Gear Tab – Livestock: Column Widths (Qty/MV/AC/HD/sSize/WT — no capacity bar, not a container)
+   image/storedsize/weight/controls reuse the Containers variables so sSize and WT line up at the
+   exact same x position as the Vehicles/Containers section above them. The name column is
+   narrower than Containers' (livestock names are shorter, no capacity bar needed), and that
+   reclaimed width is added to Qty+MV+AC+HD instead — name+qty+mv+ac+hd still sums to the same
+   330px as Containers' name+capacity, so sSize still starts at the same offset. */
 $gear-livestock-col-name: 130px;        // Width of name column
-$gear-livestock-col-qty: 45px;          // Width of quantity column
-$gear-livestock-col-mv: 45px;           // Width of movement column
-$gear-livestock-col-ac: 40px;           // Width of AC column
-$gear-livestock-col-hd: 40px;           // Width of hit dice column
-$gear-livestock-col-storedsize: 60px;   // Width of storedSize (sSize) column
-$gear-livestock-col-weight: 60px;       // Width of weight column
-$gear-livestock-col-controls: 85px;     // Width of controls column
-$gear-livestock-grid-gap: 8px;          // Gap between grid columns in Livestock section
+$gear-livestock-col-qty: 50px;          // Width of quantity column
+$gear-livestock-col-mv: 50px;           // Width of movement column
+$gear-livestock-col-ac: 50px;           // Width of AC column
+$gear-livestock-col-hd: 50px;           // Width of hit dice column
 
 
 /* Gear Tab – Treasure: Column Widths */
@@ -592,7 +592,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 // Gear Tab (character-sheet) – Livestock sticky title
-// 9 children: [roll-icon placeholder]["Livestock"]["Qty"]["MV"]["AC"]["HD"]["sSize"]["WT"][controls]
+// 10 children: [roll-icon placeholder]["Livestock"]["Qty"]["MV"]["AC"]["HD"]["sSize"]["tWT"]["WT"][controls]
 // Positions computed from livestock row column widths so labels align with data cells.
 .osp.sheet.actor .gear-scrollable-content .item-category-title.livestock-title {
   width: $content-width;
@@ -604,14 +604,17 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
   @include title-bar-children;
   // child 1: roll-icon placeholder (occupies same width as $col-caret for alignment)
-  > :nth-child(2) { left: col-start($col-caret, $gear-livestock-col-image); transform: none; }  // "Livestock"
-  > :nth-child(3) { left: col-center($gear-livestock-col-qty,         $col-caret, $gear-livestock-col-image, $gear-livestock-col-name); }  // "Qty"
-  > :nth-child(4) { left: col-center($gear-livestock-col-mv,          $col-caret, $gear-livestock-col-image, $gear-livestock-col-name, $gear-livestock-col-qty); }  // "MV"
-  > :nth-child(5) { left: col-center($gear-livestock-col-ac,          $col-caret, $gear-livestock-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv); }  // "AC"
-  > :nth-child(6) { left: col-center($gear-livestock-col-hd,          $col-caret, $gear-livestock-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv, $gear-livestock-col-ac); }  // "HD"
-  > :nth-child(7) { left: col-center($gear-livestock-col-storedsize,  $col-caret, $gear-livestock-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv, $gear-livestock-col-ac, $gear-livestock-col-hd); }  // "sSize"
-  > :nth-child(8) { left: col-center($gear-livestock-col-weight,      $col-caret, $gear-livestock-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv, $gear-livestock-col-ac, $gear-livestock-col-hd, $gear-livestock-col-storedsize); }  // "WT"
-  // child 9 (item-controls): empty
+  // image/name/storedsize/twt/weight below reuse the Containers variables, so sSize/tWT/WT land
+  // at the same x as the Vehicles/Containers section's sSize/tWT/WT columns above.
+  > :nth-child(2) { left: col-start($col-caret, $gear-containers-col-image); transform: none; }  // "Livestock"
+  > :nth-child(3) { left: col-center($gear-livestock-col-qty,        $col-caret, $gear-containers-col-image, $gear-livestock-col-name); }  // "Qty"
+  > :nth-child(4) { left: col-center($gear-livestock-col-mv,         $col-caret, $gear-containers-col-image, $gear-livestock-col-name, $gear-livestock-col-qty); }  // "MV"
+  > :nth-child(5) { left: col-center($gear-livestock-col-ac,         $col-caret, $gear-containers-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv); }  // "AC"
+  > :nth-child(6) { left: col-center($gear-livestock-col-hd,         $col-caret, $gear-containers-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv, $gear-livestock-col-ac); }  // "HD"
+  > :nth-child(7) { left: col-center($gear-containers-col-storedsize, $col-caret, $gear-containers-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv, $gear-livestock-col-ac, $gear-livestock-col-hd); }  // "sSize"
+  > :nth-child(8) { left: col-center($gear-containers-col-twt,        $col-caret, $gear-containers-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv, $gear-livestock-col-ac, $gear-livestock-col-hd, $gear-containers-col-storedsize); }  // "tWT"
+  > :nth-child(9) { left: col-center($gear-containers-col-weight,     $col-caret, $gear-containers-col-image, $gear-livestock-col-name, $gear-livestock-col-qty, $gear-livestock-col-mv, $gear-livestock-col-ac, $gear-livestock-col-hd, $gear-containers-col-storedsize, $gear-containers-col-twt); }  // "WT"
+  // child 10 (item-controls): empty
 }
 
 // Grid child overrides: let grid-template-columns be the single source of truth for sizing.
@@ -938,8 +941,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   &.livestock-header {
     width: $content-width;
     box-sizing: border-box;
-    grid-template-columns: $col-caret $gear-livestock-col-image $gear-livestock-col-name $gear-livestock-col-qty $gear-livestock-col-mv $gear-livestock-col-ac $gear-livestock-col-hd $gear-livestock-col-storedsize $gear-livestock-col-weight $gear-livestock-col-controls;
-    gap: $gear-livestock-grid-gap;
+    // storedsize/twt/weight reuse the Containers variables so sSize/tWT/WT land at the same x
+    // position as the Containers/Vehicles section's sSize/tWT/WT columns above. name+qty+mv+ac+hd
+    // together sum to the same width as Containers' name+capacity, so sSize still starts in place.
+    grid-template-columns: $col-caret $gear-containers-col-image $gear-livestock-col-name $gear-livestock-col-qty $gear-livestock-col-mv $gear-livestock-col-ac $gear-livestock-col-hd $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $gear-containers-col-controls;
+    // No gap override — the sticky title's col-center()/col-start() math assumes zero gap
+    // between columns (same as .container-header, which also inherits gap:0 from the base rule).
   }
 }
 

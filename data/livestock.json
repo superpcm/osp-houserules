@@ -110,7 +110,8 @@
         "livestock",
         "pack animal",
         "no-vehicle-store",
-        "no-store"
+        "no-store",
+        "pack-only"
       ],
       "movement": 120,
       "carrying": 40,
@@ -310,7 +311,8 @@
         "livestock",
         "pack animal",
         "no-vehicle-store",
-        "no-store"
+        "no-store",
+        "pack-only"
       ],
       "movement": 120,
       "carrying": 80,

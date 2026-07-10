@@ -126,7 +126,31 @@
         "tack",
         "rideable"
       ],
-      "tackSlot": "saddle"
+      "tackSlot": "saddle",
+      "saddleType": "riding"
+    }
+  },
+  {
+    "name": "Panniers",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/images/tack/panniers.webp",
+    "system": {
+      "description": "A matched pair of mule saddle packs, with one rugged leather-and-canvas pannier hanging on the left and one on the right, joined by a central over-the-back yoke so they clearly balance across a pack animal.",
+      "cost": 12,
+      "unitWeight": 10,
+      "storedSize": 20,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "container",
+        "pack animal"
+      ],
+      "capacity": 40,
+      "requiresMounted": true,
+      "tackSlot": "bags",
+      "requiresSaddleType": "pack"
     }
   },
   {
@@ -146,9 +170,12 @@
         "container",
         "pack animal"
       ],
-      "capacity": 40,
-      "lashSlots": 6,
-      "tackSlot": "saddle"
+      "capacity": 0,
+      "hideCapacity": true,
+      "lashSlots": 4,
+      "tackSlot": "saddle",
+      "saddleType": "pack",
+      "animalType": "pack-only"
     }
   },
   {

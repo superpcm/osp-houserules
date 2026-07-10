@@ -2796,6 +2796,42 @@
                         </div>
                       </div>
                       {{/each}}
+
+                      {{!-- Items lashed to this tack container's own lash slots (e.g. dagger lashed to Saddle, Pack) --}}
+                      {{#if tackItem.lashSlots}}
+                      <div class="lashed-items-section" data-container-id="{{tackItem.id}}">
+                        <div class="lashed-header">
+                          <a class="lashed-toggle">
+                            <i class="fas {{#if tackItem.lashedCollapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
+                          </a>
+                          <span class="lashed-title">Lashed Items ({{tackItem.usedLashSlots}}/{{tackItem.lashSlots}})</span>
+                        </div>
+                        {{#unless tackItem.lashedCollapsed}}
+                        {{#each tackItem.lashedItems as |lashedItem|}}
+                        <div class="item-header flexrow lashed-stored-item" data-item-id="{{lashedItem.id}}">
+                          <div class="item-image" style="background-image: url('{{lashedItem.img}}');"></div>
+                          <h4 class="item-name stored-weapon-name" title="{{lashedItem.name}}">{{lashedItem.name}}</h4>
+                          <div class="field-short"></div>
+                          <div class="field-short">{{displaySize lashedItem.system "—"}}</div>
+                          <div class="field-short">{{lashedItem.displayWeight}}</div>
+                          <div class="field-short">{{lashedItem.unitWeight}}</div>
+                          <div class="item-controls">
+                            {{#if @root.owner}}
+                            <a class="item-control item-lash-toggle item-lashed" title="Unlash" data-item-id="{{lashedItem.id}}">
+                              <img src="systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp" alt="Lash">
+                            </a>
+                            <a class="item-control item-edit" title="Edit Item" data-item-id="{{lashedItem.id}}"><i class="fas fa-eye"></i></a>
+                            <a class="item-control item-delete" title="Delete Item" data-item-id="{{lashedItem.id}}"><i class="fas fa-trash"></i></a>
+                            <a class="item-control item-drop" title="Drop Item" data-item-id="{{lashedItem.id}}">
+                              <img src="systems/osp-houserules/assets/thumbs/images/icons/drop-icon_thumb.webp" alt="Drop" style="width: 16px; height: 16px;">
+                            </a>
+                            {{/if}}
+                          </div>
+                        </div>
+                        {{/each}}
+                        {{/unless}}
+                      </div>
+                      {{/if}}
                       {{/unless}}
                     </li>
                     {{/each}}

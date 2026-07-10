@@ -688,10 +688,13 @@ export class OspActorSheetCharacter extends ActorSheet {
         t.displayCapacity = Math.round((parseFloat(t.system.storedSize) || 0) * tQty * 10) / 10;
 
         // Saddle Pack / Saddlebags are themselves containers — surface their own contents
-        // one level deeper, same as a backpack nested inside another container.
+        // one level deeper, same as a backpack nested inside another container. Anything lashed
+        // to them (e.g. a dagger lashed to Saddle, Pack's lash slots) is surfaced separately,
+        // same as a Belt's lashedItems, since it doesn't count against capacity.
         if (t.type === 'container') {
           const subItems = this.actor.items.filter(i => i.system.containerId === t.id && !i.system.lashed);
-          subItems.forEach(si => {
+          const lashedItems = this.actor.items.filter(i => i.system.containerId === t.id && i.system.lashed);
+          [...subItems, ...lashedItems].forEach(si => {
             const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
             const siQty = si.system.quantity || 1;
             si.unitWeight = Math.round(siWeight * 100) / 100;
@@ -703,8 +706,16 @@ export class OspActorSheetCharacter extends ActorSheet {
           const usedCapacity = subItems.reduce((sum, si) => sum + (parseFloat(si.system.storedSize) || 0) * (si.system.quantity || 1), 0);
           t.remainingCapacity = Math.round(Math.max(0, (t.system.capacity || 0) - usedCapacity) * 100) / 100;
           t.capacityPercentage = t.system.capacity ? Math.min(100, Math.round((usedCapacity / t.system.capacity) * 100)) : 0;
+
+          t.lashedItems = lashedItems;
+          const lashSlots = t.system.lashSlots || 0;
+          t.lashSlots = lashSlots;
+          t.usedLashSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+          t.remainingLashSlots = Math.max(0, lashSlots - t.usedLashSlots);
+          t.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${t.id}-collapsed`) ?? true;
         } else {
           t.containedItems = [];
+          t.lashedItems = [];
           t.collapsed = true;
         }
       });
@@ -2672,6 +2683,17 @@ export class OspActorSheetCharacter extends ActorSheet {
       return this._handleTackDrop(item, itemData, targetContainer, isReordering);
     }
 
+    // Tack containers (Saddle, Pack; Panniers; Saddlebags) attach directly to a livestock's
+    // root — they must never nest inside another container (a regular backpack, each other,
+    // open gear-tab space as a stray top-level item, etc.). Without this guard they'd fall
+    // through to ordinary capacity-based storage, which rejects them anyway since these have
+    // no capacity field, but with a confusing "invalid capacity" error instead of a clear one.
+    if (itemData.type === 'container' && (itemData.system?.tags || []).includes('tack') &&
+        (!targetContainer || targetContainer.type !== 'livestock')) {
+      ui.notifications.error(`${itemData.name} must be attached directly to a compatible animal, not stored in a container.`);
+      return false;
+    }
+
     // Livestock roam free (not stored in containers), so they never hit the container-drop
     // stacking logic below. Merge a duplicate dropped at the top level into the existing
     // free-standing stack instead of creating a second row. Use isStorageTarget rather than
@@ -2873,89 +2895,84 @@ export class OspActorSheetCharacter extends ActorSheet {
       return this.actor.createEmbeddedDocuments('Item', [itemData]);
     }
 
-    // Weapons and armor: auto-equip if slot free, else auto-store, else error
-    if (itemData.type === 'weapon' || itemData.type === 'armor') {
-      // Check if dropping a weapon onto a lash-mount clothing item (e.g. Belt)
-      const isBeltLash = itemData.type === 'weapon' &&
-        targetContainer &&
-        targetContainer.type === 'clothing' &&
-        (targetContainer.system.lashSlots || 0) > 0 &&
-        !targetContainer.system.capacity;
+    // Try lashing first for anything that qualifies, before it ever reaches ordinary container
+    // storage. Weapons are lash-eligible by default (existing house-rule convention); armor,
+    // item, and container types need an explicit lashable flag/slotCost (Sacks are the sole hard
+    // exception — carried in hand or stored, never lashed). If the target ALSO has capacity
+    // (e.g. Backpack, unlike a pure lash mount like Belt or Saddle, Pack) and lashing isn't
+    // possible for any reason, fall through to ordinary capacity storage instead of erroring —
+    // only pure lash mounts hard-error, since there's nowhere else for the item to go.
+    const targetLashSlots = targetContainer?.system?.lashSlots || 0;
+    const targetHasCapacity = !!targetContainer?.system?.capacity;
+    const isWeaponLashCandidate = itemData.type === 'weapon';
+    const isFlaggedLashable = itemData.type !== 'weapon' &&
+      (item.system?.lashable || itemData.system?.lashable || (item.system?.slotCost || 0) > 0 || (itemData.system?.slotCost || 0) > 0 || LASHABLE_CONTAINER_NAMES.has(itemData.name)) &&
+      !HAND_CARRY_CONTAINERS.has(itemData.name);
 
-      if (isBeltLash) {
-        if (!targetContainer.system.equipped) {
-          ui.notifications.error(`${targetContainer.name} must be worn to lash items to it.`);
-          return false;
-        }
-        const _beltBlockTags = itemData.system?.tags || [];
+    if (targetContainer && targetLashSlots > 0 && (isWeaponLashCandidate || isFlaggedLashable)) {
+      let lashReason = null;
+
+      // Clothing lash mounts (e.g. Belt) must be worn; container lash mounts (Saddle, Pack,
+      // Backpack) have no equivalent "worn" state.
+      if (targetContainer.type === 'clothing' && !targetContainer.system.equipped) {
+        lashReason = `${targetContainer.name} must be worn to attach items to it.`;
+      } else if (itemData.type === 'weapon') {
+        const _tags = itemData.system?.tags || [];
         const _isSlungOnly = (itemData.name || '').toLowerCase().includes('crossbow') ||
-          (_beltBlockTags.includes('missile') && _beltBlockTags.includes('two-handed'));
+          (_tags.includes('missile') && _tags.includes('two-handed'));
         if (_isSlungOnly) {
-          ui.notifications.error(`${itemData.name} cannot be lashed — sling it instead.`);
-          return false;
+          lashReason = `${itemData.name} cannot be lashed — sling it instead.`;
+        } else {
+          const allowedSizes = targetContainer.system.lashAllowedSizes || [];
+          if (allowedSizes.length > 0 && !allowedSizes.includes(itemData.system.size)) {
+            lashReason = `${targetContainer.name} can only hold ${allowedSizes.join('/')} weapons. ${itemData.name} is size ${itemData.system.size || '?'}.`;
+          }
         }
-        const allowedSizes = targetContainer.system.lashAllowedSizes || [];
-        if (allowedSizes.length > 0 && !allowedSizes.includes(itemData.system.size)) {
-          ui.notifications.error(`${targetContainer.name} can only hold Small weapons. ${itemData.name} is size ${itemData.system.size || '?'}.`);
-          return false;
+      }
+
+      if (!lashReason) {
+        const usedSlots = this.actor.items
+          .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== itemData._id)
+          .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+        const itemSlotCost = item.system?.slotCost || itemData.system?.slotCost || 1;
+        if (usedSlots + itemSlotCost > targetLashSlots) {
+          lashReason = `${targetContainer.name} has no available lash slots (${usedSlots}/${targetLashSlots} used).`;
         }
-        const usedSlots = this.actor.items.filter(i => i.system.containerId === targetContainer.id && i.system.lashed).length;
-        if (usedSlots >= targetContainer.system.lashSlots) {
-          ui.notifications.error(`${targetContainer.name} has no available lash slots (${usedSlots}/${targetContainer.system.lashSlots} used).`);
-          return false;
-        }
+      }
+
+      if (!lashReason) {
         itemData.system.containerId = targetContainer.id;
         itemData.system.lashed = true;
-        itemData.system.equipped = false;
+        if (itemData.type === 'weapon' || itemData.type === 'armor') itemData.system.equipped = false;
+        if (isReordering) {
+          const updatePayload = { 'system.containerId': itemData.system.containerId, 'system.lashed': true };
+          if (itemData.type === 'weapon' || itemData.type === 'armor') updatePayload['system.equipped'] = false;
+          return item.update(updatePayload);
+        }
         if (item.actor && item.actor.id !== this.actor.id) {
           return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
             this.actor.createEmbeddedDocuments('Item', [itemData])
           );
         }
-        if (item.actor && item.actor.id === this.actor.id) {
-          return item.update({ 'system.containerId': itemData.system.containerId, 'system.lashed': true, 'system.equipped': false });
-        }
         return this.actor.createEmbeddedDocuments('Item', [itemData]);
       }
+
+      if (!targetHasCapacity) {
+        ui.notifications.error(lashReason);
+        return false;
+      }
+      // else: target also has capacity — fall through to ordinary storage below.
     }
 
-    // Lashable container dropped onto a belt (clothing with lashSlots)
-    const isBeltAttachmentDrop = itemData.type === 'container' &&
-      (item.system?.lashable || itemData.system?.lashable || (item.system?.slotCost || 0) > 0 || (itemData.system?.slotCost || 0) > 0 || LASHABLE_CONTAINER_NAMES.has(itemData.name)) &&
-      targetContainer && targetContainer.type === 'clothing' &&
-      (targetContainer.system.lashSlots || 0) > 0;
-    if (isBeltAttachmentDrop) {
-      if (HAND_CARRY_CONTAINERS.has(itemData.name)) {
-        ui.notifications.error(`${itemData.name} must be stored in a container or carried in hand — it cannot be lashed.`);
-        return false;
-      }
-      if (!targetContainer.system.equipped) {
-        ui.notifications.error(`${targetContainer.name} must be worn to attach items to it.`);
-        return false;
-      }
-
-      const belt = targetContainer;
-      const lashedAttachments = this.actor.items.filter(i =>
-        i.type === 'container' && i.system.containerId === belt.id && i.system.lashed && i.id !== itemData._id
-      );
-      const usedSlots = lashedAttachments.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-      const itemSlotCost = item.system?.slotCost || itemData.system?.slotCost || 1;
-      if (usedSlots + itemSlotCost > belt.system.lashSlots) {
-        ui.notifications.error(`${belt.name} has no room for ${itemData.name} (${usedSlots}/${belt.system.lashSlots} slots used, need ${itemSlotCost}).`);
-        return false;
-      }
-
-      if (isReordering) {
-        return item.update({ 'system.lashed': true, 'system.containerId': belt.id });
-      }
-      itemData.system.lashed = true;
-      itemData.system.containerId = belt.id;
-      if (item.actor && item.actor.id !== this.actor.id) {
-        return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
-          this.actor.createEmbeddedDocuments('Item', [itemData])
-        );
-      }
-      return this.actor.createEmbeddedDocuments('Item', [itemData]);
+    // Anything other than a weapon or a lashable container can't go on a lash-only mount (no
+    // capacity, e.g. Saddle, Pack) — give a clear reason instead of falling through to the
+    // generic capacity check below, which treats capacity:0 as a data error rather than "this
+    // is a lash mount, not general storage". (Lash-eligible items that failed above already
+    // returned; this only catches items that were never lash candidates in the first place.)
+    if (targetContainer && itemData.type !== 'weapon' && itemData.type !== 'container' &&
+        this._isLashMountTarget(targetContainer)) {
+      ui.notifications.error(`${targetContainer.name} can only hold lashed weapons or containers, not ${itemData.name}.`);
+      return false;
     }
 
     if (itemData.type === 'weapon' || itemData.type === 'armor') {
@@ -3548,53 +3565,71 @@ export class OspActorSheetCharacter extends ActorSheet {
       return { valid: false, reason: 'Cannot drop a container into its own contents.' };
     }
 
-    // Lash-mount targets (Belt, bandolier — clothing with lashSlots but no capacity).
-    const isLashMount = targetContainer.type === 'clothing' &&
-      (targetContainer.system.lashSlots || 0) > 0 &&
-      !targetContainer.system.capacity;
-    if (isLashMount) {
-      if (!targetContainer.system.equipped) {
-        return { valid: false, reason: `${targetContainer.name} must be worn to attach items.` };
-      }
-      const tags = draggedItem.system?.tags || [];
-      const isSlungOnly = (draggedItem.name || '').toLowerCase().includes('crossbow') ||
-        (tags.includes('missile') && tags.includes('two-handed')) ||
-        tags.includes('sling');
-      if (isSlungOnly) {
-        return { valid: false, reason: `${draggedItem.name} cannot be lashed — sling it instead.` };
-      }
-      const itemData = draggedItem.toObject();
-      // Swords and daggers go through _autoProvisionSwordCarrier on drop, which reuses existing
-      // empty scabbards and has its own slot accounting. Belt-equipped check above is sufficient.
-      if (draggedItem.type === 'weapon' && (this._itemIsSword(itemData) || this._itemIsDagger(itemData))) {
-        return { valid: true };
-      }
-      const isWeapon = draggedItem.type === 'weapon';
-      const isLashable = draggedItem.system?.lashable === true || (draggedItem.system?.slotCost || 0) > 0;
-      if (!isWeapon && !isLashable) return { valid: false, reason: `${draggedItem.name} cannot be attached to ${targetContainer.name}.` };
-      // lashAllowedSizes is only enforced by the isBeltLash drop path, which only runs for weapons.
-      // Non-weapon lashable containers take the isReordering path (no size check), so skip here.
-      if (isWeapon) {
-        const allowedSizes = targetContainer.system.lashAllowedSizes || [];
-        if (allowedSizes.length > 0 && !allowedSizes.includes(draggedItem.system?.size)) {
-          return { valid: false, reason: `${draggedItem.name} is the wrong size for ${targetContainer.name}.` };
-        }
-      }
-      // Use slot-cost reduce (matches auto-provision logic).
-      // Exclude draggedItem itself — when reordering an already-lashed item its slots are already counted.
-      const usedSlots = this.actor.items
-        .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== draggedItem.id)
-        .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-      const itemSlotCost = draggedItem.system?.slotCost || 1;
-      if (usedSlots + itemSlotCost > (targetContainer.system.lashSlots || 0)) {
-        return { valid: false, reason: `${targetContainer.name} has no free lash slots.` };
-      }
-      return { valid: true };
+    // Tack containers (Saddle, Pack; Panniers; Saddlebags) attach directly to a livestock's
+    // root — never nested inside another container. targetContainer here is never type
+    // 'livestock' itself (that's handled separately below), so any tack container reaching
+    // this point is being hovered over an invalid target.
+    const draggedTags = draggedItem.system?.tags || [];
+    if (draggedItem.type === 'container' && draggedTags.includes('tack')) {
+      return { valid: false, reason: `${draggedItem.name} must be attached directly to a compatible animal, not stored in a container.` };
     }
 
     // Livestock aren't a real container — tack compatibility/slot rules apply instead.
     if (targetContainer.type === 'livestock') {
       return this._getTackCompatibility(draggedItem.toObject(), targetContainer, draggedItem.id);
+    }
+
+    // Try lashing first for anything that qualifies (matches _onDropItem): worn clothing (Belt),
+    // or any container with lash slots, whether lash-only (Saddle, Pack) or hybrid with capacity
+    // too (Backpack). Weapons are lash-eligible by default; everything else needs an explicit
+    // lashable flag/slotCost. If lashing isn't possible for any reason and the target also has
+    // capacity, fall through to the ordinary storage check below instead of showing invalid.
+    const targetLashSlots = targetContainer.system?.lashSlots || 0;
+    const targetHasCapacity = !!targetContainer.system?.capacity;
+    const isWeaponLashCandidate = draggedItem.type === 'weapon';
+    const isFlaggedLashable = draggedItem.type !== 'weapon' &&
+      (draggedItem.system?.lashable === true || (draggedItem.system?.slotCost || 0) > 0);
+
+    if (targetLashSlots > 0 && (isWeaponLashCandidate || isFlaggedLashable)) {
+      let lashReason = null;
+      if (targetContainer.type === 'clothing' && !targetContainer.system.equipped) {
+        lashReason = `${targetContainer.name} must be worn to attach items.`;
+      } else {
+        const itemData = draggedItem.toObject();
+        // Swords and daggers go through _autoProvisionSwordCarrier on drop, which reuses
+        // existing empty scabbards and has its own slot accounting.
+        if (draggedItem.type === 'weapon' && (this._itemIsSword(itemData) || this._itemIsDagger(itemData))) {
+          return { valid: true };
+        }
+        if (draggedItem.type === 'weapon') {
+          const isSlungOnly = (draggedItem.name || '').toLowerCase().includes('crossbow') ||
+            (draggedTags.includes('missile') && draggedTags.includes('two-handed')) ||
+            draggedTags.includes('sling');
+          if (isSlungOnly) {
+            lashReason = `${draggedItem.name} cannot be lashed — sling it instead.`;
+          } else {
+            const allowedSizes = targetContainer.system.lashAllowedSizes || [];
+            if (allowedSizes.length > 0 && !allowedSizes.includes(draggedItem.system?.size)) {
+              lashReason = `${draggedItem.name} is the wrong size for ${targetContainer.name}.`;
+            }
+          }
+        }
+        if (!lashReason) {
+          // Exclude draggedItem itself — when reordering an already-lashed item its slot is
+          // already counted.
+          const usedSlots = this.actor.items
+            .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== draggedItem.id)
+            .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+          const itemSlotCost = draggedItem.system?.slotCost || 1;
+          if (usedSlots + itemSlotCost > targetLashSlots) {
+            lashReason = `${targetContainer.name} has no free lash slots.`;
+          }
+        }
+      }
+
+      if (!lashReason) return { valid: true };
+      if (!targetHasCapacity) return { valid: false, reason: lashReason };
+      // else: target also has capacity — fall through to the ordinary storage check below.
     }
 
     // Only containers and clothing-with-capacity are storage targets
@@ -3891,6 +3926,10 @@ export class OspActorSheetCharacter extends ActorSheet {
   _hasContainerSpace(container, itemData) {
     const capacity = parseFloat(container.system?.capacity);
 
+    // A lash-only mount (lashSlots set, capacity intentionally 0) isn't a storage container at
+    // all — that's not a data error, so skip the scary notification callers would otherwise get.
+    if (this._isLashMountTarget(container)) return false;
+
     if (isNaN(capacity) || capacity <= 0) {
       console.error('ERROR: Container capacity must be a positive number', container.system?.capacity);
       ui.notifications.error(`Container "${container.name}" has invalid capacity. Delete and re-add the container.`);
@@ -3920,6 +3959,20 @@ export class OspActorSheetCharacter extends ActorSheet {
       !c.system.containerId &&
       this._hasContainerSpace(c, itemData)
     ) ?? null;
+  }
+
+  /**
+   * True if targetContainer is a valid deliberate lash-drop target: worn clothing with lash
+   * slots (e.g. Belt), or a lash-only container with no capacity (e.g. Saddle, Pack). Containers
+   * that also have capacity (e.g. Backpack) are excluded — dropping directly onto those always
+   * goes through ordinary capacity-based storage; their lash slots are only reachable via the
+   * automatic fallback in _findContainerWithLashSlot when a weapon has nowhere else to go.
+   */
+  _isLashMountTarget(targetContainer) {
+    if ((targetContainer.system.lashSlots || 0) <= 0) return false;
+    if (targetContainer.type === 'clothing') return !targetContainer.system.capacity;
+    if (targetContainer.type === 'container') return !targetContainer.system.capacity;
+    return false;
   }
 
   /**
@@ -4134,12 +4187,16 @@ export class OspActorSheetCharacter extends ActorSheet {
         return { valid: false, reason: `${targetContainer.name} already has ${slotTaken.name} equipped in that slot. Remove it first.` };
       }
       if (tackSlot === 'bags') {
+        // Some bags need a specific kind of saddle (e.g. Panniers need Saddle, Pack —
+        // not just any rideable saddle) — requiresSaddleType narrows the match when set.
+        const requiredSaddleType = itemData.system?.requiresSaddleType;
         const hasSaddle = this.actor.items.find(i =>
           i.system.containerId === targetContainer.id && i.system.tackSlot === 'saddle' &&
+          (!requiredSaddleType || i.system.saddleType === requiredSaddleType) &&
           i.id !== excludeItemId
         );
         if (!hasSaddle) {
-          return { valid: false, reason: `${targetContainer.name} needs a saddle before saddlebags can be attached.` };
+          return { valid: false, reason: `${targetContainer.name} needs the right saddle before ${itemData.name} can be attached.` };
         }
       }
     }

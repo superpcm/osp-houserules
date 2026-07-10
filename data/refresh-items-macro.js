@@ -11,6 +11,23 @@
  * 4. Run the macro to refresh all items
  */
 
+// Foundry's update() merges by default: keys present in the payload overwrite the document,
+// but keys simply absent from the payload are left untouched. So when a field is removed from
+// the JSON source (e.g. Saddle, Pack's capacity), spreading the new system data alone never
+// clears the old value already stored on existing items — it has to be explicitly deleted via
+// Foundry's "-=key" update syntax. This returns those deletion entries for any key that existed
+// on oldSystem but is gone from newSystem.
+function buildRemovedFieldDeletions(oldSystem, newSystem, preserveKeys = []) {
+  const deletions = {};
+  for (const key of Object.keys(oldSystem || {})) {
+    if (preserveKeys.includes(key)) continue;
+    if (!(key in (newSystem || {}))) {
+      deletions[`-=${key}`] = null;
+    }
+  }
+  return deletions;
+}
+
 async function refreshAllItems() {
   ui.notifications.info("Starting item refresh and duplicate removal...");
   
@@ -147,12 +164,18 @@ async function refreshAllItems() {
       if (existing) {
         // Update existing item with new data
         const updateData = { ...itemData };
-        
+
         // Ensure proper image path
         if (updateData.img && !updateData.img.startsWith('systems/') && !updateData.img.startsWith('icons/')) {
           updateData.img = `systems/osp-houserules/${updateData.img}`;
         }
-        
+
+        // Clear any fields that existed on the old item but were removed from the JSON
+        updateData.system = {
+          ...itemData.system,
+          ...buildRemovedFieldDeletions(existing.system, itemData.system)
+        };
+
         await existing.update(updateData);
         console.log(`✅ Updated: ${itemData.name}`);
         updated++;
@@ -212,6 +235,7 @@ async function refreshAllItems() {
         
         if (matchingData) {
           // Update actor's item with new data (preserve container/equipped state)
+          const preserveKeys = ['containerId', 'equipped', 'quantity'];
           const updateData = {
             name: matchingData.name,
             img: matchingData.img,
@@ -220,10 +244,12 @@ async function refreshAllItems() {
               // Preserve actor-specific state
               containerId: item.system.containerId,
               equipped: item.system.equipped,
-              quantity: item.system.quantity
+              quantity: item.system.quantity,
+              // Clear any fields that existed on the old item but were removed from the JSON
+              ...buildRemovedFieldDeletions(item.system, matchingData.system, preserveKeys)
             }
           };
-          
+
           await item.update(updateData);
           actorItemsUpdated++;
         } else {

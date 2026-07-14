@@ -112,7 +112,7 @@
   },
   {
     "name": "Saddle",
-    "type": "item",
+    "type": "container",
     "img": "systems/osp-houserules/assets/images/tack/saddle.webp",
     "system": {
       "description": "A leather riding saddle with stirrups, pommel, and cantle, designed for comfort on long journeys. Well-crafted and essential for any serious rider, it provides security in the saddle and reduces fatigue for both horse and rider.",
@@ -126,6 +126,9 @@
         "tack",
         "rideable"
       ],
+      "capacity": 0,
+      "hideCapacity": true,
+      "lashSlots": 3,
       "tackSlot": "saddle",
       "saddleType": "riding"
     }

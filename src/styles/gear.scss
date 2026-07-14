@@ -1755,6 +1755,17 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   padding-top: 2px;
   margin-right: 1px;
 
+  // A tack item's own lash slots (e.g. a dagger lashed to a Saddle's 3 slots, worn by
+  // Livestock) sit inside li.contained-item, one level deeper than the top-level Belt/
+  // Backpack case this section is normally used for. Its .lashed-stored-item rows are
+  // already repositioned by "li.contained-item .lashed-stored-item" below to match the
+  // sibling contained-item columns exactly, assuming zero extra indent — the 60px margin
+  // above stacks on top of that and shifts every numeric column 60px right of the header.
+  li.contained-item & {
+    margin-left: 0;
+    width: 100%;
+  }
+
   // Belt direct subheader — 7 cols (merged 68px toggle+img, + tWT between sSize and WT)
   > .container-items-subheader {
     margin-left: 0;

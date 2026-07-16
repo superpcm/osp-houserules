@@ -12,6 +12,9 @@
       "equipped": false,
       "lashable": false,
       "lashed": false,
+      "tags": [
+        "coins"
+      ],
       "containerId": null
     }
   },
@@ -28,6 +31,9 @@
       "equipped": false,
       "lashable": false,
       "lashed": false,
+      "tags": [
+        "coins"
+      ],
       "containerId": null
     }
   },
@@ -44,6 +50,9 @@
       "equipped": false,
       "lashable": false,
       "lashed": false,
+      "tags": [
+        "coins"
+      ],
       "containerId": null
     }
   }

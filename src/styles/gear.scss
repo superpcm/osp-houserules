@@ -2111,14 +2111,18 @@ li.contained-item .lashed-stored-item {
     min-width: 0;
   }
 
-  // Image and name indent deeper; data columns stay aligned with the L2 subheader above
-  > :nth-child(1) { left: 116px; width: $l2-col-image; }
-  > :nth-child(2) { left: $sh-l2-name + 48px; width: $l2-col-name - 48px + 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  > :nth-child(3) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
-  > :nth-child(4) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
-  > :nth-child(5) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
-  > :nth-child(6) { left: $sh-l2-wt;    transform: translateX(-50%); justify-content: center; }
-  > :nth-child(7) { left: $sh-l2-controls; right: auto; width: $l2-col-controls; justify-content: flex-end; }
+  // First child is the (possibly hidden) expand/collapse toggle — a container nested this deep
+  // (e.g. a Coin Purse inside a lashed Sack) needs its own caret; everything below shifts one
+  // nth-child slot to make room for it, image and name indent deeper; data columns stay aligned
+  // with the L2 subheader above.
+  > :nth-child(1) { left: 98px; width: $col-caret; }
+  > :nth-child(2) { left: 116px; width: $l2-col-image; }
+  > :nth-child(3) { left: $sh-l2-name + 48px; width: $l2-col-name - 48px + 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  > :nth-child(4) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
+  > :nth-child(5) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
+  > :nth-child(6) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
+  > :nth-child(7) { left: $sh-l2-wt;    transform: translateX(-50%); justify-content: center; }
+  > :nth-child(8) { left: $sh-l2-controls; right: auto; width: $l2-col-controls; justify-content: flex-end; }
 
   .item-image {
     width: 48px !important;

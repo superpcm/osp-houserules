@@ -753,6 +753,24 @@ export class OspActorSheetCharacter extends ActorSheet {
               ci.unitWeight = Math.round(ciWeight * 100) / 100;
               ci.displayWeight = Math.round(ciWeight * ciQty * 10) / 10;
               ci.displayCapacity = Math.round((parseFloat(ci.system.storedSize) || 0) * ciQty * 10) / 10;
+
+              // A container (e.g. Coin Purse) stored inside a lashed Sack is itself a
+              // container — surface its own contents one level deeper still.
+              if (ci.type === 'container') {
+                const ciContents = this.actor.items.filter(i => i.system.containerId === ci.id);
+                ciContents.forEach(deep => {
+                  const deepWeight = parseFloat(deep.system.unitWeight || deep.system.weight) || 0;
+                  const deepQty = deep.system.quantity || 1;
+                  deep.unitWeight = Math.round(deepWeight * 100) / 100;
+                  deep.displayWeight = Math.round(deepWeight * deepQty * 10) / 10;
+                  deep.displayCapacity = Math.round((parseFloat(deep.system.storedSize) || 0) * deepQty * 10) / 10;
+                });
+                ci.containedItems = ciContents;
+                ci.collapsed = this.actor.getFlag('osp-houserules', `container-${ci.id}-collapsed`) ?? false;
+              } else {
+                ci.containedItems = [];
+                ci.collapsed = true;
+              }
             });
             li.containedItems = liContents;
             li.collapsed = this.actor.getFlag('osp-houserules', `container-${li.id}-collapsed`) ?? false;
@@ -2614,8 +2632,13 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _onContainerToggle(event) {
     event.preventDefault();
     event.stopPropagation();
-    
-    const containerEntry = $(event.currentTarget).closest('.item-entry');
+
+    // Use the nearest ancestor carrying a data-item-id rather than requiring the
+    // `.item-entry` class specifically — deep "flat row" nesting levels (e.g. a Coin
+    // Purse inside a lashed Sack) intentionally omit `.item-entry` to avoid picking up
+    // its hover/sort-control CSS, but still need their own toggle to resolve correctly
+    // rather than bubbling up to whichever ancestor `.item-entry` happens to own them.
+    const containerEntry = $(event.currentTarget).closest('[data-item-id]');
     const containerId = containerEntry.data('item-id');
     const currentState = this.actor.getFlag('osp-houserules', `container-${containerId}-collapsed`) ?? true;
     
@@ -2699,13 +2722,15 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Check if dropping onto a container or a contained item.
     // Also match .slung-item rows (containers in the Slung Items virtual section) and
-    // .lashed-stored-item rows (items lashed to a container's own lash slots — e.g. a Sack
-    // lashed to a Saddle — which use a bare div, not an li.item-entry, so a drop landing on
-    // one would otherwise resolve past it to whatever ancestor .item-entry it's nested inside).
+    // .lashed-stored-item / .lashed-sub-stored-item rows (items lashed to a container's own
+    // lash slots — e.g. a Sack lashed to a Saddle — or a container nested inside one of those
+    // (e.g. a Coin Purse inside that lashed Sack), which use a bare div, not an li.item-entry,
+    // so a drop landing on one would otherwise resolve past it to whatever ancestor
+    // .item-entry it's nested inside).
     // A single comma-separated selector is required here — closest(A) || closest(B) picks
     // whichever of A/B has ANY match, even an outer ancestor, ignoring which is actually nearer;
     // closest('A, B') correctly finds the nearest ancestor matching either.
-    let dropTarget = event.target.closest('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id]');
+    let dropTarget = event.target.closest('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id], .lashed-sub-stored-item[data-item-id]');
     let targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
     
     // If we dropped on a contained item (not a container or clothing with capacity), find its parent container

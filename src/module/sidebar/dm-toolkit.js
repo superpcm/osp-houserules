@@ -2,6 +2,8 @@
  * @file DM's Toolkit — GM-only sidebar tab with party utility actions.
  */
 
+import { AddItemDialog } from "../dialog/add-item/add-item-dialog.js";
+
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { AbstractSidebarTab } = foundry.applications.sidebar;
 
@@ -19,6 +21,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       editSkillValue: DmToolkitTab._onEditSkillValue,
       importMonsters:        DmToolkitTab._onImportMonsters,
       updateMonsterAttacks:  DmToolkitTab._onUpdateMonsterAttacks,
+      addItem:                DmToolkitTab._onAddItem,
       togglePlayerLock:      DmToolkitTab._onTogglePlayerLock,
       toggleStoreLock:       DmToolkitTab._onToggleStoreLock
     }
@@ -35,6 +38,10 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     context.playerLockActive = game.settings.get("osp-houserules", "playerLock");
     context.storeLockActive  = game.settings.get("osp-houserules", "storeLock");
     return context;
+  }
+
+  static async _onAddItem(_event, _target) {
+    await AddItemDialog.prompt();
   }
 
   static async _onTogglePlayerLock(_event, _target) {

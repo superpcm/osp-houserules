@@ -104,6 +104,29 @@
     }
   },
   {
+    "name": "Coin Purse",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/coin-purse_thumb.webp",
+    "system": {
+      "description": "A small, soft leather pouch worn from the belt by a short loop or thong. Its round body is gathered shut with a braided drawstring, leaving the top puckered into folds. It can hold 100 coins.",
+      "cost": 1,
+      "unitWeight": 0.25,
+      "storedSize": 1,
+      "slotCost": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "lashed": false,
+      "containerId": null,
+      "capacity": 4,
+      "tags": [
+        "container"
+      ],
+      "allowedTypes": ["coins", "gems", "jewelry"],
+      "containerSize": "small"
+    }
+  },
+  {
     "name": "Crowbar",
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/crowbar_thumb.webp",

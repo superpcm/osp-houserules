@@ -883,6 +883,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .container-entry.drag-valid,
 .contained-item.drag-valid,
 .lashed-item.drag-valid,
+.lashed-stored-item.drag-valid,
 .slung-section-entry.drag-valid,
 .slung-item.drag-valid {
   outline: 3px solid #00c000 !important;
@@ -892,19 +893,31 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 .container-entry.drag-invalid,
 .contained-item.drag-invalid,
 .lashed-item.drag-invalid,
+.lashed-stored-item.drag-invalid,
 .slung-section-entry.drag-invalid,
 .slung-item.drag-invalid {
   outline: 3px solid #c00000 !important;
   border-radius: 3px;
 }
 
-// Suppress parent outline when a specific child container row is highlighted
+// Suppress parent outline when a specific child container row is highlighted. dragenter bubbles,
+// so every ancestor up the tree gets its own highlight applied too — without this, hovering a
+// deeply-nested row (e.g. a Sack lashed to a Saddle) would show every ancestor's outline at once
+// instead of just the row actually being targeted.
 .slung-section-entry:has(.slung-item.drag-valid),
 .slung-section-entry:has(.slung-item.drag-invalid),
 .container-entry:has(.contained-item.drag-valid),
 .container-entry:has(.contained-item.drag-invalid),
 .container-entry:has(.lashed-item.drag-valid),
-.container-entry:has(.lashed-item.drag-invalid) {
+.container-entry:has(.lashed-item.drag-invalid),
+.container-entry:has(.lashed-stored-item.drag-valid),
+.container-entry:has(.lashed-stored-item.drag-invalid),
+.contained-item:has(.lashed-stored-item.drag-valid),
+.contained-item:has(.lashed-stored-item.drag-invalid),
+.lashed-item:has(.lashed-stored-item.drag-valid),
+.lashed-item:has(.lashed-stored-item.drag-invalid),
+.slung-item:has(.lashed-stored-item.drag-valid),
+.slung-item:has(.lashed-stored-item.drag-invalid) {
   outline: none !important;
 }
 
@@ -1884,19 +1897,24 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     background: $tree-line-color;
   }
 
+  // First/last are driven by explicit {{@first}}/{{@last}} classes from the Handlebars loop
+  // rather than :first-child/:last-child — this list's <li> height varies per row (a lashed
+  // Sack's own contents add extra rows inside the same <li>), and structural pseudo-classes
+  // here proved unreliable at picking out the true first/last attachment.
+
   // First attachment: extend trunk up through the subheader to close the gap to the parent Belt
-  &:first-child::before {
+  &.first-lashed-item::before {
     top: calc(-1px - #{$font-nested-header} - 6px);
   }
 
   // Sling context has a .lashed-header toggle above the list instead of a subheader bar;
   // don't extend the trunk into that header text.
-  .lashed-items-section:has(.lashed-header) &:first-child::before {
+  .lashed-items-section:has(.lashed-header) &.first-lashed-item::before {
     top: -1px;
   }
 
   // Last attachment: trunk stops at the header row's vertical center
-  &:last-child::before {
+  &.last-lashed-item::before {
     bottom: calc(100% - #{$item-row-height} / 2);
   }
 
@@ -2032,9 +2050,13 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
-// Items inside a nested container (e.g. Oil Flask inside Belt Pouch inside Backpack).
-// When multiple sub-items follow each other, extend the vertical branch to span between them.
-.contained-item .lashed-stored-item:not(:last-child)::before {
+// Items inside a nested container (e.g. Oil Flask inside Belt Pouch inside Backpack), or inside
+// a top-level lashed container's own capacity (e.g. Rope/Rations/Garlic inside a lashed Sack,
+// Large). When multiple sub-items follow each other, extend the vertical branch to span between
+// them — otherwise each row falls back to the default half-height trunk (top half + midpoint
+// tick), leaving a gap instead of a continuous line down to the next sibling.
+.contained-item .lashed-stored-item:not(:last-child)::before,
+.lashed-item .lashed-stored-item:not(:last-child)::before {
   bottom: 0;
 }
 
@@ -2115,6 +2137,55 @@ li.contained-item .lashed-stored-item {
     .item-image { opacity: 0.5; }
     .item-name.stored-weapon-name { font-style: italic; opacity: 0.6; }
   }
+}
+
+// Consecutive sub-items under the same lashed attachment (e.g. Rope, Rations, Garlic all
+// inside one lashed Sack) are flat siblings, not nested inside their parent row — :not(:last-
+// child) would wrongly keep extending through the START of the NEXT attachment's own row too,
+// since that's also just the next sibling in the flat list. :has(+ ...) checks the immediate
+// next sibling is specifically another .lashed-sub-stored-item, so the line only continues
+// while there's more of the same sack's contents to reach, and stops cleanly at the true last one.
+.lashed-sub-stored-item:has(+ .lashed-sub-stored-item)::before {
+  bottom: 0;
+}
+
+// Wraps one tack-lashed attachment (e.g. a Sack lashed to a Saddle) plus its own contained
+// items (.lashed-stored-item header + any .lashed-sub-stored-item contents) so a single trunk
+// line can span the whole group — including however many contents rows it has — and connect
+// seamlessly into the next attachment below it. Without this wrapper, the attachment's own
+// branch line (drawn by .lashed-stored-item) only covers its own 60px row, leaving a gap
+// through its contents' rows before the next attachment's row picks the trunk back up.
+.lashed-attachment {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 43px; // matches .lashed-stored-item's own branch position
+    top: -1px;
+    bottom: -1px; // default: spans this attachment's full height, connecting to the next one
+    width: $tree-line-thickness;
+    background: $tree-line-color;
+    pointer-events: none;
+  }
+
+  // Last attachment: trunk stops at its own header row's vertical center, matching the branch
+  // tick drawn by its .lashed-stored-item header — no next attachment to connect down to.
+  &.last-lashed-attachment::before {
+    bottom: calc(100% - #{$item-row-height} / 2);
+  }
+}
+
+// An attachment's own header row (e.g. Sack, Small itself) is a .lashed-stored-item sitting
+// inside a .contained-item (the tack item's own <li>), which would otherwise match ".contained-
+// item .lashed-stored-item:not(:last-child)" above and extend its tick to full row height —
+// that rule is meant for a nested container's plain contents, not this header row, but with the
+// .lashed-attachment wrapper in place this row is never really :last-child (Piton/Iron Spike
+// trail after it as siblings), so it matched anyway, leaving a short stray stub below the tick.
+// The wrapper's own trunk (above) already handles connecting/terminating between attachments —
+// reset this row back to its plain half-height tick.
+.lashed-items-section .lashed-attachment > .lashed-stored-item::before {
+  bottom: 50%;
 }
 
 // Slung Items — virtual section at character level

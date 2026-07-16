@@ -11,7 +11,13 @@
   // Map of clothing item names → their correct lash configuration.
   // Add entries here if other clothing items gain lash slots in future.
   const lashConfig = {
-    "Belt": { lashSlots: 2, lashAllowedSizes: ["S"] },
+    "Belt": { lashSlots: 6, lashAllowedSizes: ["S", "M"] },
+  };
+
+  const sameSizes = (a, b) => {
+    const arrA = a || [];
+    const arrB = b || [];
+    return arrA.length === arrB.length && arrA.every((v, i) => v === arrB[i]);
   };
 
   let updatedCount = 0;
@@ -24,8 +30,9 @@
       const cfg = lashConfig[item.name];
       if (!cfg) continue;
 
-      // Skip if already correct
-      if (item.system.lashSlots === cfg.lashSlots) {
+      // Skip only if BOTH fields already match — a belt could already have the right
+      // lashSlots from an earlier partial fix while still carrying the stale lashAllowedSizes.
+      if (item.system.lashSlots === cfg.lashSlots && sameSizes(item.system.lashAllowedSizes, cfg.lashAllowedSizes)) {
         skippedCount++;
         continue;
       }
@@ -46,7 +53,7 @@
     const cfg = lashConfig[item.name];
     if (!cfg) continue;
 
-    if (item.system.lashSlots === cfg.lashSlots) {
+    if (item.system.lashSlots === cfg.lashSlots && sameSizes(item.system.lashAllowedSizes, cfg.lashAllowedSizes)) {
       skippedCount++;
       continue;
     }

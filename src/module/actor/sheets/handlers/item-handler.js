@@ -1626,7 +1626,7 @@ export class ItemHandler {
   async _showUnlashItemDialog(item) {
     const containers = this.actor.items.filter(c =>
       c.type === 'container' && !c.system.containerId && !c.system.lashed &&
-      this._hasContainerSpace(c, item)
+      this.sheet._hasContainerSpace(c, item)
     );
     return new Promise(resolve => {
       const buttons = {};

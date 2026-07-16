@@ -20,10 +20,38 @@ const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const SADDLE_LASH_HOSTS = new Set(['Saddle', 'Saddle, Pack']);
 const HAND_CARRY_CONTAINERS = new Set(['Sack, Large', 'Sack, Small']);
 
-const SLUNG_MAX = 3;
 const isSlungable = (tags) => tags.includes('slungable') || tags.includes('sling')
   || (tags.includes('missile') && tags.includes('two-handed'));
-const slungSlots = (item) => item.system.slungSlots ?? 1;
+
+// Back-carry compatibility: Backpack, Weapon-Sling Harness (Baldric/Axe Sling), a personally
+// slung Bow (Longbow/Shortbow), Crossbow (Light/Heavy), Quiver, and Skin Sling all compete for
+// the same shoulder/back real estate. Confirmed 2026-07-15: every category here is single-
+// occupancy (only 1 Harness total — Baldric and Axe Sling can't both be worn — and only 1 Skin
+// Sling; Bow and Crossbow were already capped at 1 each and additionally exclude each other),
+// governed by BACK_SLOT_INCOMPATIBLE below. This replaces the old shared SLUNG_MAX budget
+// (removed) — a weighted numeric budget can't express "these two specific things can't
+// coexist" (it would have let a Bow and a Crossbow be slung together, since that's only 2 of 3
+// slots, which this table explicitly forbids). See _checkBackSlotCompatibility.
+const BACK_SLOT_CATEGORY = {
+  'Baldric': 'harness', 'Axe Sling': 'harness',
+  'Longbow': 'bow', 'Shortbow': 'bow',
+  'Crossbow, Light': 'crossbow', 'Crossbow, Heavy': 'crossbow',
+  'Quiver': 'quiver',
+  'Skin Sling': 'skinsling',
+};
+const BACK_SLOT_LABEL = {
+  backpack: 'a Backpack', harness: 'a Weapon-Sling Harness', bow: 'a Bow',
+  crossbow: 'a Crossbow', quiver: 'a Quiver', skinsling: 'a Skin Sling',
+};
+// category -> set of categories it cannot be worn alongside. Symmetric by construction.
+const BACK_SLOT_INCOMPATIBLE = {
+  backpack: new Set(['harness', 'crossbow', 'quiver']),
+  harness: new Set(['backpack', 'crossbow', 'quiver']),
+  bow: new Set(['crossbow']),
+  crossbow: new Set(['backpack', 'harness', 'bow']),
+  quiver: new Set(['backpack', 'harness']),
+  skinsling: new Set(),
+};
 
 export class OspActorSheetCharacter extends ActorSheet {
   // Skill configuration: defines which skills are available for each class and race
@@ -337,9 +365,13 @@ export class OspActorSheetCharacter extends ActorSheet {
         item.collapsed = this.actor.getFlag('osp-houserules', `container-${item.id}-collapsed`) ?? true;
       }
 
-      // If clothing has lash slots (e.g. Belt), expose belt attachment data for the template
+      // If clothing has lash slots (e.g. Belt), expose belt attachment data for the template.
+      // Not container-only: a weapon (Warhammer, Mace, ...) or a lashable "item" (Crowbar) can
+      // also lash directly to the belt via the generic weapon/item lash path in _onDropItem —
+      // restricting this to allContainers silently dropped those from the belt's own list even
+      // though the item itself was created correctly (containerId + lashed both set).
       if (item.system.lashSlots > 0) {
-        const lashedAttachments = allContainers.filter(c => c.system.containerId === item.id && c.system.lashed);
+        const lashedAttachments = this.actor.items.filter(c => c.system.containerId === item.id && c.system.lashed);
         lashedAttachments.forEach(c => {
           const wt = parseFloat(c.system.unitWeight || c.system.weight) || 0;
           c.displayWeight = Math.round(wt * (c.system.quantity || 1) * 10) / 10;
@@ -474,11 +506,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       return item;
     });
     const slungItemIds = new Set(slungItems.map(i => i.id));
-    const slungSlotsUsed = slungItems.reduce((sum, i) => sum + slungSlots(i), 0);
     context.slungItems = slungItems;
-    context.slungUsed = slungSlotsUsed;
-    context.slungMax = SLUNG_MAX;
-    context.slungCapacityPercentage = Math.round((slungSlotsUsed / SLUNG_MAX) * 100);
     context.slungTotalWeight = Math.round(
       slungItems.reduce((sum, i) => {
         const storedWt = (i.storedWeapon?.displayWeight || 0) + (i.storedItem?.displayWeight || 0);
@@ -717,7 +745,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           // Items lashed to t's own lash slots (e.g. Scabbard, Sword / Baldric lashed to a
           // Saddle) are themselves containers holding one weapon — surface that weapon too,
           // same as subItems above, so it actually shows up under the Saddle in the Gear tab.
-          lashedItems.forEach(li => {
+          lashedItems.forEach((li, liIndex) => {
             const liContents = this.actor.items.filter(i => i.system.containerId === li.id);
             liContents.forEach(ci => {
               const ciWeight = parseFloat(ci.system.unitWeight || ci.system.weight) || 0;
@@ -728,6 +756,12 @@ export class OspActorSheetCharacter extends ActorSheet {
             });
             li.containedItems = liContents;
             li.collapsed = this.actor.getFlag('osp-houserules', `container-${li.id}-collapsed`) ?? false;
+            // Explicit first/last flags for the tree-line CSS — the .lashed-attachment wrapper's
+            // trunk needs to know whether it's the last attachment to know where to stop, and
+            // Handlebars' {{@last}} inside this doubly-nested each (tackItem -> lashedItem) isn't
+            // reliable enough to hang the branch termination on.
+            li.isFirstLashedAttachment = liIndex === 0;
+            li.isLastLashedAttachment = liIndex === lashedItems.length - 1;
           });
 
           t.lashedItems = lashedItems;
@@ -940,6 +974,15 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Belt attachment container rows (lashed-item rows)
     html.find('.lashed-item[data-item-id]').each((i, el) => {
+      const item = this.actor.items.get(el.dataset.itemId);
+      if (!item || item.type !== 'container') return;
+      this._wireGearDropTarget(el, item);
+    });
+
+    // Container-type items lashed to another container's own lash slots (e.g. a Sack lashed
+    // to a Saddle) — same treatment as .lashed-item above, just for the bare-div row style
+    // used when something is lashed one level deeper than a top-level container.
+    html.find('.lashed-stored-item[data-item-id]').each((i, el) => {
       const item = this.actor.items.get(el.dataset.itemId);
       if (!item || item.type !== 'container') return;
       this._wireGearDropTarget(el, item);
@@ -2654,10 +2697,15 @@ export class OspActorSheetCharacter extends ActorSheet {
     const item = await Item.implementation.fromDropData(data);
     const itemData = item.toObject();
 
-    // Check if dropping onto a container or a contained item
-    // Also match .slung-item rows (containers in the Slung Items virtual section)
-    let dropTarget = event.target.closest('.item-entry[data-item-id]')
-                  || event.target.closest('.slung-item[data-item-id]');
+    // Check if dropping onto a container or a contained item.
+    // Also match .slung-item rows (containers in the Slung Items virtual section) and
+    // .lashed-stored-item rows (items lashed to a container's own lash slots — e.g. a Sack
+    // lashed to a Saddle — which use a bare div, not an li.item-entry, so a drop landing on
+    // one would otherwise resolve past it to whatever ancestor .item-entry it's nested inside).
+    // A single comma-separated selector is required here — closest(A) || closest(B) picks
+    // whichever of A/B has ANY match, even an outer ancestor, ignoring which is actually nearer;
+    // closest('A, B') correctly finds the nearest ancestor matching either.
+    let dropTarget = event.target.closest('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id]');
     let targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
     
     // If we dropped on a contained item (not a container or clothing with capacity), find its parent container
@@ -2665,18 +2713,13 @@ export class OspActorSheetCharacter extends ActorSheet {
       targetContainer = this.actor.items.get(targetContainer.system.containerId);
     }
 
-    // Some items (e.g. wagons, carts) are too large to ever be stored inside a container.
+    // Some items (e.g. wagons, carts) are too large to ever be stored inside a container;
+    // draft/pack/mount animals can't be stowed inside a Cart or Wagon.
     const isStorageTarget = targetContainer && (targetContainer.type === "container" ||
       (targetContainer.type === "clothing" && targetContainer.system.capacity));
-    if (isStorageTarget && (itemData.system?.tags || []).includes('no-store')) {
-      ui.notifications.warn(`${itemData.name} is too large to be stored in a container.`);
-      return false;
-    }
-
-    // Draft/pack/mount animals (Horse, Donkey, Mule, Ox, Pony) cannot be stowed inside a Cart or Wagon.
-    const isVehicleTarget = targetContainer && (targetContainer.system?.tags || []).includes('vehicle');
-    if (isVehicleTarget && (itemData.system?.tags || []).includes('no-vehicle-store')) {
-      ui.notifications.warn(`${itemData.name} cannot be stowed inside ${targetContainer.name}.`);
+    const noStoreReason = this._getNoStoreRejection(itemData, targetContainer);
+    if (noStoreReason) {
+      ui.notifications.warn(noStoreReason);
       return false;
     }
 
@@ -2699,7 +2742,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
 
     // Store Lock — block non-GM players from acquiring items from outside their inventory
-    if (game.settings.get("osp-houserules", "storeLock") && !game.user.isGM && !isReordering) {
+    if (this._isStoreLocked(isReordering)) {
       ui.notifications.warn("The store is locked — you cannot add items to your inventory right now.");
       return false;
     }
@@ -2759,8 +2802,23 @@ export class OspActorSheetCharacter extends ActorSheet {
       if (!isSlungable(tags)) {
         // Zweihander/Greatsword aren't slungable themselves — they ride inside an equipped
         // Baldric. Route through the same auto-provisioning as an open-space drop instead of
-        // rejecting the drop outright (targetContainer is null here, same as open space).
+        // rejecting the drop outright (targetContainer is null here, same as open space) — but
+        // check Harness compatibility first. _autoProvisionSwordCarrier/_provisionBaldric already
+        // reuses an existing *empty* worn Baldric, so only block when a worn harness is occupied
+        // by something else (which would otherwise silently spawn a second Baldric/Axe Sling) or
+        // when a different back-slot category (Backpack, Crossbow, Quiver) is already worn.
         if (itemData.type === 'weapon' && (itemData.name === 'Zweihander' || itemData.name === 'Greatsword')) {
+          const wornHarness = this.actor.items.find(i => this._backSlotCategory(i) === 'harness' && this._isWornInBackSlot(i));
+          const harnessOccupied = wornHarness && this.actor.items.some(i => i.system.containerId === wornHarness.id && i.id !== item.id);
+          if (harnessOccupied) {
+            ui.notifications.warn(`Already wearing a Weapon-Sling Harness (${wornHarness.name}) holding another weapon.`);
+            return false;
+          }
+          const harnessCheck = this._checkBackSlotCompatibility('harness', item.id);
+          if (!harnessCheck.allowed && !harnessCheck.sameCategory) {
+            ui.notifications.warn(harnessCheck.reason);
+            return false;
+          }
           let provisioned;
           try {
             provisioned = await this._autoProvisionSwordCarrier(item, itemData, null);
@@ -2776,14 +2834,15 @@ export class OspActorSheetCharacter extends ActorSheet {
           return false;
         }
       } else {
-        const currentSlung = this.actor.items.filter(i =>
-          isSlungable(i.system.tags || []) && i.system.equipped && i.id !== item.id
-        );
-        const slotsUsed = currentSlung.reduce((sum, i) => sum + slungSlots(i), 0);
-        const slotsNeeded = itemData.system?.slungSlots ?? 1;
-        if (slotsUsed + slotsNeeded > SLUNG_MAX) {
-          ui.notifications.warn(`Not enough slung capacity (need ${slotsNeeded}, have ${SLUNG_MAX - slotsUsed}).`);
-          return false;
+        // Back-slot compatibility replaces the old shared SLUNG_MAX budget — see the constant's
+        // comment near the top of the file for why a numeric budget couldn't express this.
+        const category = this._backSlotCategory(itemData);
+        if (category) {
+          const check = this._checkBackSlotCompatibility(category, item.id);
+          if (!check.allowed) {
+            ui.notifications.warn(check.reason);
+            return false;
+          }
         }
         const slungEquipped = itemData.type !== 'weapon';
         if (isReordering) {
@@ -2876,6 +2935,17 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     }
 
+    // Belt Loop-eligible items (Warhammer, Mace, Morning Star, Flail, Hand Axe, Light Hammer,
+    // Waterskin, ...) dropped directly on the belt: auto-provision a Belt Loop to hold them,
+    // same as the sword/dagger block above auto-provisions a Scabbard/Sword Frog — otherwise
+    // they'd bare-lash straight to the belt via the generic weapon-lash path further down.
+    if (targetContainer && targetContainer.type === 'clothing' && (targetContainer.system?.lashSlots || 0) > 0 &&
+        this._itemIsBeltLoopWeapon(itemData)) {
+      const loop = await this._provisionBeltLoop(item, itemData);
+      if (!loop) return false;
+      targetContainer = loop;
+    }
+
     // Special validation for Backpacks - only one can be at top-level
     if (itemData.type === "container" && itemData.name.toLowerCase().includes('backpack')) {
       // Check if adding as top-level (no target container)
@@ -2890,6 +2960,14 @@ export class OspActorSheetCharacter extends ActorSheet {
         
         if (existingBackpacks.length > 0) {
           ui.notifications.error("You can only carry one Backpack at a time. Store additional backpacks inside containers.");
+          return false;
+        }
+
+        // A worn Weapon-Sling Harness or Quiver takes the same shoulder/back real estate a
+        // Backpack needs — see BACK_SLOT_INCOMPATIBLE.
+        const backpackCheck = this._checkBackSlotCompatibility('backpack', itemData._id);
+        if (!backpackCheck.allowed) {
+          ui.notifications.error(backpackCheck.reason);
           return false;
         }
       }
@@ -2947,10 +3025,25 @@ export class OspActorSheetCharacter extends ActorSheet {
         return this.actor.createEmbeddedDocuments('Item', [itemData]);
       }
 
-      // Check if another sling of the same name already exists on this actor
+      // Cross-category exclusion first (e.g. a Backpack already worn) — no drop/delete/cancel
+      // dialog makes sense here, since the fix is to take the conflicting item off, not to
+      // replace either one. Every sling container maps to a back-slot category (harness,
+      // quiver, skinsling), so this always resolves — see BACK_SLOT_CATEGORY.
+      const category = this._backSlotCategory(itemData);
+      if (category) {
+        const crossCheck = this._checkBackSlotCompatibility(category, itemData._id);
+        if (!crossCheck.allowed && !crossCheck.sameCategory) {
+          ui.notifications.error(crossCheck.reason);
+          return false;
+        }
+      }
+
+      // Check if another sling in the same back-slot category already exists on this actor.
+      // Baldric and Axe Sling are different items but share the Harness slot, so either one
+      // already worn now blocks the other here too, not just an exact-name duplicate.
       const existingSling = this.actor.items.find(i =>
         i.type === 'container' &&
-        i.name === itemData.name &&
+        (category ? this._backSlotCategory(i) === category : i.name === itemData.name) &&
         (!isReordering || i.id !== itemData._id)
       );
 
@@ -2991,8 +3084,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     // possible for any reason, fall through to ordinary capacity storage instead of erroring —
     // only pure lash mounts hard-error, since there's nowhere else for the item to go.
     const targetLashSlots = targetContainer?.system?.lashSlots || 0;
-    const targetHasCapacity = !!targetContainer?.system?.capacity;
-    const isWeaponLashCandidate = itemData.type === 'weapon';
+    const targetHasCapacity = !!targetContainer && !this._isLashMountTarget(targetContainer) && !!targetContainer.system?.capacity;
+    // Weapons are lash-eligible by default, but every weapon in the data explicitly sets
+    // lashable true/false (e.g. Holy Water/Dart/Spear/Sling are false — small/awkward things
+    // that belong in a container, not strapped loose to a belt or saddle) — honor an explicit
+    // opt-out instead of overriding it unconditionally for every weapon type.
+    const isWeaponLashCandidate = itemData.type === 'weapon' && itemData.system?.lashable !== false;
     const isSackOntoSaddle = HAND_CARRY_CONTAINERS.has(itemData.name) &&
       targetContainer && SADDLE_LASH_HOSTS.has(targetContainer.name);
     const isFlaggedLashable = itemData.type !== 'weapon' &&
@@ -3233,11 +3330,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
     // Belt with items attached cannot be stored in a container
     else if (itemData.type === "clothing" && targetContainer && targetContainer.type === "container") {
-      const attachedItems = isReordering
-        ? this.actor.items.filter(i => i.system.containerId === item.id && i.system.lashed)
-        : [];
-      if (attachedItems.length > 0) {
-        ui.notifications.error(`Cannot store ${itemData.name} in a container — it has ${attachedItems.length} item(s) attached. Remove attachments first.`);
+      const beltReason = this._getBeltAttachmentRejection(itemData, item.id, targetContainer, isReordering);
+      if (beltReason) {
+        ui.notifications.error(beltReason);
         return false;
       }
       itemData.system.containerId = targetContainer.id;
@@ -3290,16 +3385,10 @@ export class OspActorSheetCharacter extends ActorSheet {
         ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
         return false;
       }
-      // When the target has hidden capacity (e.g. belt loop inside a backpack), also verify
-      // the parent container has room for the incoming item.
-      // Skip this check when lashed — lashed containers don't consume parent capacity.
-      if (!alreadyInContainer3 && this._skipCapacityCheck(targetContainer) && targetContainer.system.containerId && !targetContainer.system.lashed) {
-        const parentContainer = this.actor.items.get(targetContainer.system.containerId);
-        if (parentContainer && !this._skipCapacityCheck(parentContainer) && !this._hasContainerSpace(parentContainer, itemData)) {
-          const itemSize = this._getEffectiveDropSize(itemData);
-          ui.notifications.error(`Not enough space in ${parentContainer.name} for ${itemData.name} (size ${itemSize}).`);
-          return false;
-        }
+      const parentReason = this._getHiddenCapacityParentRejection(itemData, targetContainer, alreadyInContainer3);
+      if (parentReason) {
+        ui.notifications.error(parentReason);
+        return false;
       }
       itemData.system.containerId = targetContainer.id;
     }
@@ -3594,17 +3683,101 @@ export class OspActorSheetCharacter extends ActorSheet {
     return externalDrag.item;
   }
 
+  /** Classify an item (document or plain data) into a back-carry slot category, or null if it
+   * doesn't participate in the Backpack/Harness/Bow/Crossbow/Quiver/Skin Sling system. */
+  _backSlotCategory(itemLike) {
+    if (itemLike.type === 'container' && (itemLike.name || '').toLowerCase().includes('backpack')) return 'backpack';
+    return BACK_SLOT_CATEGORY[itemLike.name] || null;
+  }
+
+  /** Whether `itemLike` is currently worn in its back-slot sense. Backpack = top-level (no
+   * containerId); Bow/Crossbow = the weapon "limbo" state (not equipped, not stored, not
+   * lashed — see the Slung Items comment in getData()); everything else (Harness, Quiver,
+   * Skin Sling) = system.equipped, same as any other worn container. */
+  _isWornInBackSlot(itemLike) {
+    const category = this._backSlotCategory(itemLike);
+    if (!category) return false;
+    if (category === 'backpack') return !itemLike.system.containerId;
+    if (category === 'bow' || category === 'crossbow') {
+      return !itemLike.system.equipped && !itemLike.system.containerId && !itemLike.system.lashed;
+    }
+    return !!itemLike.system.equipped;
+  }
+
+  /** Currently-worn back-slot items on the actor, grouped by category, excluding `excludeId`
+   * (the item being moved — so re-dropping something already worn onto itself isn't a
+   * self-conflict). */
+  _getWornBackSlotItems(excludeId = null) {
+    const worn = {};
+    for (const i of this.actor.items) {
+      if (excludeId && i.id === excludeId) continue;
+      if (!this._isWornInBackSlot(i)) continue;
+      const category = this._backSlotCategory(i);
+      (worn[category] ||= []).push(i);
+    }
+    return worn;
+  }
+
+  /** Check whether wearing something in `category` is compatible with whatever's already worn
+   * in a back-slot category on this actor. Every category is single-occupancy (1 Backpack, 1
+   * Harness, 1 Bow, 1 Crossbow, 1 Quiver, 1 Skin Sling), plus the cross-category exclusions in
+   * BACK_SLOT_INCOMPATIBLE. Returns {allowed, reason, sameCategory}. */
+  _checkBackSlotCompatibility(category, excludeId = null) {
+    const worn = this._getWornBackSlotItems(excludeId);
+    if ((worn[category] || []).length > 0) {
+      return { allowed: false, sameCategory: true, reason: `Already wearing ${BACK_SLOT_LABEL[category]}.` };
+    }
+    for (const [otherCategory, items] of Object.entries(worn)) {
+      if (items.length && BACK_SLOT_INCOMPATIBLE[category]?.has(otherCategory)) {
+        return {
+          allowed: false, sameCategory: false,
+          reason: `${items[0].name} is already worn — ${BACK_SLOT_LABEL[category]} can't be worn at the same time.`
+        };
+      }
+    }
+    return { allowed: true };
+  }
+
   _getSlungDropValidity() {
     const draggedItem = this._getDraggedItem();
     if (!draggedItem) return null;
+
+    const isReordering = draggedItem.actor?.id === this.actor.id;
+    if (this._isStoreLocked(isReordering)) {
+      return { valid: false, reason: 'The store is locked — you cannot add items to your inventory right now.' };
+    }
+
     const tags = draggedItem.system?.tags ?? [];
-    if (isSlungable(tags)) return { valid: true };
     // Zweihander/Greatsword aren't slungable themselves — they ride inside an auto-provisioned
-    // Baldric (see _onDropItem's Slung Items handler), so a drop here is still valid for them.
-    if (draggedItem.type === 'weapon' && (draggedItem.name === 'Zweihander' || draggedItem.name === 'Greatsword')) {
+    // Baldric (see _onDropItem's Slung Items handler), so a drop here is still valid for them,
+    // and they're checked against the Harness category (below) via the Baldric they'll be
+    // provisioned into, not directly.
+    const isBaldricOnlySword = draggedItem.type === 'weapon' && (draggedItem.name === 'Zweihander' || draggedItem.name === 'Greatsword');
+    if (isBaldricOnlySword) {
+      // Mirrors the occupancy-aware check in _onDropItem: reusing an already-worn *empty*
+      // Baldric is fine, only a harness occupied by a different weapon (or a conflicting
+      // category) is invalid.
+      const wornHarness = this.actor.items.find(i => this._backSlotCategory(i) === 'harness' && this._isWornInBackSlot(i));
+      const harnessOccupied = wornHarness && this.actor.items.some(i => i.system.containerId === wornHarness.id && i.id !== draggedItem.id);
+      if (harnessOccupied) {
+        return { valid: false, reason: `Already wearing a Weapon-Sling Harness (${wornHarness.name}) holding another weapon.` };
+      }
+      const harnessCheck = this._checkBackSlotCompatibility('harness', draggedItem.id);
+      if (!harnessCheck.allowed && !harnessCheck.sameCategory) {
+        return { valid: false, reason: harnessCheck.reason };
+      }
       return { valid: true };
     }
-    return { valid: false, reason: `${draggedItem.name} cannot be slung.` };
+    if (!isSlungable(tags)) {
+      return { valid: false, reason: `${draggedItem.name} cannot be slung.` };
+    }
+
+    // Matches _onDropItem's back-slot compatibility check so hover doesn't show valid for a
+    // combination that would actually be rejected (e.g. a Crossbow while a Bow is already slung).
+    const category = this._backSlotCategory(draggedItem);
+    if (!category) return { valid: true };
+    const check = this._checkBackSlotCompatibility(category, draggedItem.id);
+    return check.allowed ? { valid: true } : { valid: false, reason: check.reason };
   }
 
   /**
@@ -3614,16 +3787,22 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Drop events bubble to Foundry's _onDrop handler.
    */
   _wireGearDropTarget(el, containerItem, validityFn = null) {
+    // validityFn/_getContainerDropValidity may return a plain result or a Promise (the sword/
+    // dagger prediction awaits the real async provisioning helpers in dry-run mode) —
+    // Promise.resolve() normalizes either case to a resolved-next-microtask callback, so this
+    // works identically whether the check was sync or async.
     const applyHighlight = () => {
       el.classList.remove('drag-over', 'drag-valid', 'drag-invalid');
-      const result = validityFn ? validityFn() : (containerItem ? this._getContainerDropValidity(containerItem) : null);
-      if (result === null) {
-        // External or cross-actor drag — can't determine validity; show no highlight
-      } else if (result.valid) {
-        el.classList.add('drag-valid');
-      } else {
-        el.classList.add('drag-invalid');
-      }
+      const resultOrPromise = validityFn ? validityFn() : (containerItem ? this._getContainerDropValidity(containerItem) : null);
+      Promise.resolve(resultOrPromise).then((result) => {
+        if (result === null || result === undefined) {
+          // External or cross-actor drag — can't determine validity; show no highlight
+        } else if (result.valid) {
+          el.classList.add('drag-valid');
+        } else {
+          el.classList.add('drag-invalid');
+        }
+      });
     };
 
     el.addEventListener('dragenter', (e) => {
@@ -3646,11 +3825,14 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Synchronous validity check for dropping the currently-dragged item onto targetContainer.
-   * Returns {valid: true}, {valid: false, reason}, or null (cannot determine — show neutral).
+   * Validity check for dropping the currently-dragged item onto targetContainer. Returns a
+   * Promise resolving to {valid: true}, {valid: false, reason}, or null (cannot determine —
+   * show neutral). Async because the sword/dagger prediction below shares the real
+   * (async) provisioning helpers with _onDropItem in dry-run mode, rather than a hand-mirrored
+   * copy — see _wireGearDropTarget, which awaits this before applying the highlight class.
    * Only works for items dragged from this actor; external/cross-actor drags return null.
    */
-  _getContainerDropValidity(targetContainer) {
+  async _getContainerDropValidity(targetContainer) {
     const draggedItem = this._getDraggedItem();
     if (!draggedItem) return null; // cross-actor drag — can't validate synchronously
 
@@ -3675,13 +3857,40 @@ export class OspActorSheetCharacter extends ActorSheet {
       return this._getTackCompatibility(draggedItem.toObject(), targetContainer, draggedItem.id);
     }
 
+    const isReordering = draggedItem.actor?.id === this.actor.id;
+    const itemDataEarly = draggedItem.toObject();
+
+    const noStoreReason = this._getNoStoreRejection(itemDataEarly, targetContainer);
+    if (noStoreReason) return { valid: false, reason: noStoreReason };
+
+    if (this._isStoreLocked(isReordering)) {
+      return { valid: false, reason: 'The store is locked — you cannot add items to your inventory right now.' };
+    }
+
+    // Swords/daggers: mirrors _onDropItem's dedicated auto-provisioning block, which runs
+    // before any of the generic lash-slots logic below (see that block for the authoritative
+    // version). A non-null result here is authoritative; null means "not handled, fall through."
+    if (draggedItem.type === 'weapon' && (this._itemIsSword(itemDataEarly) || this._itemIsDagger(itemDataEarly))) {
+      const prediction = await this._predictSwordDaggerPlacement(draggedItem, itemDataEarly, targetContainer);
+      if (prediction) return prediction;
+    }
+
+    // Belt Loop-eligible items dropped directly on the belt: mirrors _onDropItem's Belt Loop
+    // auto-provisioning above, so the hover preview matches the real outcome instead of
+    // predicting the generic bare-lash-to-belt path below.
+    if (targetContainer.type === 'clothing' && (targetContainer.system?.lashSlots || 0) > 0 &&
+        this._itemIsBeltLoopWeapon(itemDataEarly)) {
+      const wouldProvision = await this._provisionBeltLoop(draggedItem, itemDataEarly, true);
+      return wouldProvision ? { valid: true } : { valid: false, reason: `No available belt loop for ${itemDataEarly.name}.` };
+    }
+
     // Try lashing first for anything that qualifies (matches _onDropItem): worn clothing (Belt),
     // or any container with lash slots, whether lash-only (Saddle, Pack) or hybrid with capacity
     // too (Backpack). Weapons are lash-eligible by default; everything else needs an explicit
     // lashable flag/slotCost. If lashing isn't possible for any reason and the target also has
     // capacity, fall through to the ordinary storage check below instead of showing invalid.
     const targetLashSlots = targetContainer.system?.lashSlots || 0;
-    const targetHasCapacity = !!targetContainer.system?.capacity;
+    const targetHasCapacity = !this._isLashMountTarget(targetContainer) && !!targetContainer.system?.capacity;
 
     // Sling containers (Baldric, Axe Sling, Skin Sling) are never itemData.system.lashable
     // themselves, so they'd fall through the generic isFlaggedLashable check below. Handle them
@@ -3702,7 +3911,9 @@ export class OspActorSheetCharacter extends ActorSheet {
       return { valid: true };
     }
 
-    const isWeaponLashCandidate = draggedItem.type === 'weapon';
+    // Matches _onDropItem: honor an explicit lashable:false opt-out instead of treating every
+    // weapon as lash-eligible.
+    const isWeaponLashCandidate = draggedItem.type === 'weapon' && draggedItem.system?.lashable !== false;
     // Sacks are normally carried in hand or stored, never lashed — except directly onto a
     // Saddle/Saddle, Pack (matches _onDropItem's isSackOntoSaddle exception).
     const isSackOntoSaddle = HAND_CARRY_CONTAINERS.has(draggedItem.name) && SADDLE_LASH_HOSTS.has(targetContainer.name);
@@ -3713,36 +3924,29 @@ export class OspActorSheetCharacter extends ActorSheet {
       let lashReason = null;
       if (targetContainer.type === 'clothing' && !targetContainer.system.equipped) {
         lashReason = `${targetContainer.name} must be worn to attach items.`;
-      } else {
-        const itemData = draggedItem.toObject();
-        // Swords and daggers go through _autoProvisionSwordCarrier on drop, which reuses
-        // existing empty scabbards and has its own slot accounting.
-        if (draggedItem.type === 'weapon' && (this._itemIsSword(itemData) || this._itemIsDagger(itemData))) {
-          return { valid: true };
-        }
-        if (draggedItem.type === 'weapon') {
-          const isSlungOnly = (draggedItem.name || '').toLowerCase().includes('crossbow') ||
-            (draggedTags.includes('missile') && draggedTags.includes('two-handed')) ||
-            draggedTags.includes('sling');
-          if (isSlungOnly) {
-            lashReason = `${draggedItem.name} cannot be lashed — sling it instead.`;
-          } else {
-            const allowedSizes = targetContainer.system.lashAllowedSizes || [];
-            if (allowedSizes.length > 0 && !allowedSizes.includes(draggedItem.system?.size)) {
-              lashReason = `${draggedItem.name} is the wrong size for ${targetContainer.name}.`;
-            }
+      } else if (draggedItem.type === 'weapon') {
+        const isSlungOnly = (draggedItem.name || '').toLowerCase().includes('crossbow') ||
+          (draggedTags.includes('missile') && draggedTags.includes('two-handed')) ||
+          draggedTags.includes('sling');
+        if (isSlungOnly) {
+          lashReason = `${draggedItem.name} cannot be lashed — sling it instead.`;
+        } else {
+          const allowedSizes = targetContainer.system.lashAllowedSizes || [];
+          if (allowedSizes.length > 0 && !allowedSizes.includes(draggedItem.system?.size)) {
+            lashReason = `${draggedItem.name} is the wrong size for ${targetContainer.name}.`;
           }
         }
-        if (!lashReason) {
-          // Exclude draggedItem itself — when reordering an already-lashed item its slot is
-          // already counted.
-          const usedSlots = this.actor.items
-            .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== draggedItem.id)
-            .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-          const itemSlotCost = draggedItem.system?.slotCost || 1;
-          if (usedSlots + itemSlotCost > targetLashSlots) {
-            lashReason = `${targetContainer.name} has no free lash slots.`;
-          }
+      }
+
+      if (!lashReason) {
+        // Exclude draggedItem itself — when reordering an already-lashed item its slot is
+        // already counted.
+        const usedSlots = this.actor.items
+          .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== draggedItem.id)
+          .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+        const itemSlotCost = draggedItem.system?.slotCost || 1;
+        if (usedSlots + itemSlotCost > targetLashSlots) {
+          lashReason = `${targetContainer.name} has no free lash slots.`;
         }
       }
 
@@ -3750,6 +3954,18 @@ export class OspActorSheetCharacter extends ActorSheet {
       if (!targetHasCapacity) return { valid: false, reason: lashReason };
       // else: target also has capacity — fall through to the ordinary storage check below.
     }
+
+    // Nothing that reaches this point can go on a lash-only mount (no capacity, e.g. Saddle) —
+    // matches _onDropItem's dedicated guard, which the generic isStorage/typeCheck/capacity
+    // checks below never had an equivalent for (they only look at targetContainer.type, not
+    // whether it actually has real capacity).
+    if (this._isLashMountTarget(targetContainer)) {
+      return { valid: false, reason: `${targetContainer.name} can only hold lashed items, not ${draggedItem.name}.` };
+    }
+
+    // Belt with lashed attachments can't be packed into a container.
+    const beltReason = this._getBeltAttachmentRejection(itemDataEarly, draggedItem.id, targetContainer, isReordering);
+    if (beltReason) return { valid: false, reason: beltReason };
 
     // Only containers and clothing-with-capacity are storage targets
     const isStorage = targetContainer.type === 'container' ||
@@ -3762,12 +3978,16 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (!typeCheck.allowed) return { valid: false, reason: typeCheck.reason };
 
     // Use quantity 1 for hover check so a partial-stack move shows valid when any space exists
+    const alreadyInContainer = isReordering && draggedItem.system.containerId === targetContainer.id;
     if (!this._skipCapacityCheck(targetContainer)) {
       const checkData = foundry.utils.mergeObject(itemData, { system: { quantity: 1 } }, { inplace: false });
-      if (!this._hasContainerSpace(targetContainer, checkData)) {
+      if (!alreadyInContainer && !this._hasContainerSpace(targetContainer, checkData)) {
         return { valid: false, reason: `Not enough space in ${targetContainer.name}.` };
       }
     }
+
+    const parentReason = this._getHiddenCapacityParentRejection(itemData, targetContainer, alreadyInContainer);
+    if (parentReason) return { valid: false, reason: parentReason };
 
     return { valid: true };
   }
@@ -3797,23 +4017,79 @@ export class OspActorSheetCharacter extends ActorSheet {
     return (itemData.system?.tags || []).includes('dagger');
   }
 
+  /**
+   * Dry-run mirror of _onDropItem's sword/dagger auto-provisioning block — same branch
+   * conditions, in the same order, but calling the provisioning helpers in dryRun mode instead
+   * of writing. Used by _getContainerDropValidity so the hover preview predicts the real
+   * outcome (including host/scabbard capacity) instead of assuming success.
+   * Returns {valid, reason}, or null if this item/target combo isn't handled by this block at
+   * all — the caller should fall through to the ordinary weapon-lash validity flow below.
+   */
+  async _predictSwordDaggerPlacement(draggedItem, itemData, targetContainer) {
+    const isSword = this._itemIsSword(itemData);
+    const isDagger = this._itemIsDagger(itemData);
+    if (!isSword && !isDagger) return null;
+
+    const isPureLashMount = targetContainer && this._isLashMountTarget(targetContainer);
+    const explicitLashHost = targetContainer && targetContainer.type === 'container' &&
+      (targetContainer.system?.lashSlots || 0) > 0 && (isSword || isPureLashMount)
+      ? targetContainer : null;
+
+    if (!targetContainer || targetContainer.type !== "container" || explicitLashHost) {
+      const wouldProvision = await this._autoProvisionSwordCarrier(draggedItem, itemData, explicitLashHost, true);
+      return wouldProvision ? { valid: true } : { valid: false, reason: `No available carrier for ${itemData.name}.` };
+    }
+    if (isSword && targetContainer.name === 'Sword Frog') {
+      // Redirect to (or predict creating) its Scabbard, Sword — never capacity-gated itself
+      // (hideCapacity), so the only real constraint is the scabbard's allowedNames whitelist.
+      const existing = this.actor.items.find(
+        i => i.name === 'Scabbard, Sword' && i.system.containerId === targetContainer.id
+      );
+      const carrier = existing || { name: 'Scabbard, Sword', system: this._getSwordCarrierTemplate('Scabbard, Sword').system };
+      const check = this._isItemAllowedInContainer(itemData, carrier);
+      return check.allowed ? { valid: true } : { valid: false, reason: check.reason };
+    }
+    if (isDagger && !(targetContainer.system?.tags || []).some(t => ['weapon-storage', 'scabbard', 'sling'].includes(t))) {
+      // Dagger on a general container: predict find-or-create of a Scabbard, Dagger stored
+      // (not lashed) via ordinary capacity, mirroring _findOrCreateScabbardInContainer.
+      const existing = this.actor.items.find(
+        i => i.name === 'Scabbard, Dagger' && i.system.containerId === targetContainer.id
+      );
+      if (existing) {
+        const check = this._isItemAllowedInContainer(itemData, existing);
+        return check.allowed ? { valid: true } : { valid: false, reason: check.reason };
+      }
+      const scabbardData = { name: 'Scabbard, Dagger', type: 'container',
+        system: { ...this._getSwordCarrierTemplate('Scabbard, Dagger').system, quantity: 1 } };
+      const containerCheck = this._isItemAllowedInContainer(scabbardData, targetContainer);
+      if (!containerCheck.allowed) return { valid: false, reason: containerCheck.reason };
+      if (!this._skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, scabbardData)) {
+        return { valid: false, reason: `Not enough space in ${targetContainer.name} for a Scabbard, Dagger.` };
+      }
+      return { valid: true };
+    }
+    // Falls through to the ordinary weapon-lash validity flow (e.g. a sword dropped on a
+    // generic container that isn't a Sword Frog — treated like any other weapon).
+    return null;
+  }
+
   // ── Sword carrier auto-provisioning ────────────────────────────────────────
 
-  async _autoProvisionSwordCarrier(item, itemData, hostOverride = null) {
+  async _autoProvisionSwordCarrier(item, itemData, hostOverride = null, dryRun = false) {
     const name = itemData.name;
     if (name === 'Zweihander' || name === 'Greatsword') {
       // The Baldric is their "scabbard" either way: lashed to an explicit Saddle/Saddle, Pack
       // target, or equipped/slung across the back when dropped with no such target. Both are
       // valid carrying states for the same weapon — which one applies depends on the drop target.
       return hostOverride
-        ? this._provisionBeltScabbard('Baldric', item, hostOverride)
-        : this._provisionBaldric(item);
+        ? this._provisionBeltScabbard('Baldric', item, hostOverride, dryRun)
+        : this._provisionBaldric(item, dryRun);
     }
-    if (this._itemIsDagger(itemData)) return this._provisionBeltScabbard('Scabbard, Dagger', item, hostOverride);
+    if (this._itemIsDagger(itemData)) return this._provisionBeltScabbard('Scabbard, Dagger', item, hostOverride, dryRun);
     // A Saddle/Saddle, Pack lashes the Scabbard, Sword directly — no Sword Frog wrapper.
     // The Frog exists to hang a scabbard off a belt; a saddle's lash slots don't need it.
-    if (hostOverride) return this._provisionBeltScabbard('Scabbard, Sword', item, hostOverride);
-    return this._provisionSwordFrogAndScabbard(item);
+    if (hostOverride) return this._provisionBeltScabbard('Scabbard, Sword', item, hostOverride, dryRun);
+    return this._provisionSwordFrogAndScabbard(item, null, dryRun);
   }
 
   _getEquippedBelt() {
@@ -3845,8 +4121,11 @@ export class OspActorSheetCharacter extends ActorSheet {
       },
       'Scabbard, Sword': {
         img: 'systems/osp-houserules/assets/thumbs/images/gear/scabbard-sword_thumb.webp',
+        // slotCost 1: matters now that this lashes directly to a host (Saddle/Backpack) instead
+        // of always sitting unlashed inside a Sword Frog — 0 was a leftover from when this value
+        // was never actually read for lash-slot math.
         system: { description: '', cost: 3, unitWeight: 0.5, storedSize: 2, quantity: 1,
-          slotCost: 0, lashable: false, lashed: false, equipped: false, containerId: null,
+          slotCost: 1, lashable: false, lashed: false, equipped: false, containerId: null,
           tags: ['weapon-storage','scabbard'], capacity: 4, containerSize: 'small',
           hideCapacity: true, maxItems: 1, lashSlots: 0,
           allowedTypes: [], allowedSizes: [],
@@ -3863,19 +4142,75 @@ export class OspActorSheetCharacter extends ActorSheet {
       'Baldric': {
         img: 'systems/osp-houserules/assets/thumbs/images/gear/baldric_thumb.webp',
         system: { description: '', cost: 10, unitWeight: 2, storedSize: 6, quantity: 1,
-          lashable: false, lashed: false, equipped: false, containerId: null,
+          slotCost: 1, lashable: false, lashed: false, equipped: false, containerId: null,
           tags: ['weapon-storage','sling','slungable'], capacity: 8, containerSize: 'small',
           hideCapacity: true, maxItems: 1, lashSlots: 0,
           allowedTypes: [], allowedSizes: [], allowedNames: ['Zweihander','Greatsword'] }
+      },
+      'Belt Loop': {
+        img: 'systems/osp-houserules/assets/thumbs/images/gear/belt-loop_thumb.webp',
+        system: { description: '', cost: 2, unitWeight: 0.25, storedSize: 2, quantity: 1,
+          slotCost: 2, lashable: true, lashed: false, equipped: false, containerId: null,
+          tags: ['bulky'], capacity: 4, containerSize: 'small',
+          hideCapacity: true, maxItems: 1, lashSlots: 0,
+          allowedTypes: [], allowedSizes: [],
+          allowedNames: ['Hand Axe','Light Hammer','Warhammer','Waterskin','Mace','Morning Star','Flail'] }
       },
     };
     return templates[name];
   }
 
-  async _provisionBeltScabbard(scabbardName, itemBeingMoved = null, hostOverride = null) {
+  // True if this item (by base name, magic-bonus suffix stripped) is one of the things a Belt
+  // Loop is built to carry — driven by the Belt Loop template's own allowedNames rather than a
+  // second hardcoded list, so it can't drift out of sync with what a loop actually accepts.
+  _itemIsBeltLoopWeapon(itemData) {
+    const baseName = (itemData.name || '').replace(/\s*[+-]\d+$/, '');
+    return (this._getSwordCarrierTemplate('Belt Loop').system.allowedNames || []).includes(baseName);
+  }
+
+  // Find an existing belt-lashed Belt Loop with room for this item, or create a new one —
+  // mirrors _autoProvisionSwordCarrier's Scabbard/Sword Frog provisioning for the belt-hung
+  // tools/weapons a loop is meant to carry (Warhammer, Mace, Morning Star, ...).
+  async _provisionBeltLoop(item, itemData, dryRun = false) {
+    const belt = this._getEquippedBelt();
+    if (!belt) {
+      if (!dryRun) ui.notifications.error('Cannot equip belt loop: this character does not have a belt.');
+      return null;
+    }
+    const baseName = (itemData.name || '').replace(/\s*[+-]\d+$/, '');
+    // Reuse an existing loop on the belt that's empty (excluding the item being moved, so an
+    // item dragged out of its own loop and back can return to it) and actually accepts this item.
+    const existing = this.actor.items.find(i =>
+      i.name === 'Belt Loop' && i.system.containerId === belt.id && i.system.lashed &&
+      (i.system.allowedNames || []).includes(baseName) &&
+      !this.actor.items.some(j => j.system.containerId === i.id && j.id !== item?.id)
+    );
+    if (existing) return dryRun ? true : existing;
+
+    const tmpl = this._getSwordCarrierTemplate('Belt Loop');
+    const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
+    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+    const neededSlots = tmpl.system.slotCost ?? 1;
+    if (usedSlots + neededSlots > (belt.system.lashSlots || 0)) {
+      if (!dryRun) ui.notifications.error(`Cannot add Belt Loop: ${belt.name} is full (${usedSlots}/${belt.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
+      return null;
+    }
+    if (dryRun) return true;
+    const [created] = await this.actor.createEmbeddedDocuments('Item', [{
+      name: 'Belt Loop', type: 'container', img: tmpl.img,
+      system: { ...tmpl.system, containerId: belt.id, lashed: true }
+    }]);
+    return created;
+  }
+
+  // dryRun: predict the outcome without writing anything (no document creation/update/delete,
+  // no error toasts) — used by the hover-validity preview so it shares this exact logic with the
+  // real drop instead of a hand-mirrored copy. On success returns `true` in dry-run mode (the
+  // caller only needs truthiness) instead of the actual/reused document.
+  async _provisionBeltScabbard(scabbardName, itemBeingMoved = null, hostOverride = null, dryRun = false) {
     const host = this._resolveScabbardHost(hostOverride);
     if (!host) {
-      ui.notifications.error('Cannot equip scabbard: this character does not have a belt.');
+      if (!dryRun) ui.notifications.error('Cannot equip scabbard: this character does not have a belt.');
       return null;
     }
     // Reuse existing scabbard of this type on the host, excluding the item being moved from the occupancy check
@@ -3884,6 +4219,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         !this.actor.items.some(j => j.system.containerId === i.id && j.id !== itemBeingMoved?.id)
     );
     if (existing) {
+      if (dryRun) return true;
       // Source scabbard (e.g. inside a container) becomes empty after the move — delete it.
       if (itemBeingMoved) {
         const sourceScabbard = this.actor.items.get(itemBeingMoved.system.containerId);
@@ -3903,9 +4239,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       if (sourceScabbard && sourceScabbard.name === scabbardName &&
           !(sourceScabbard.system.containerId === host.id && sourceScabbard.system.lashed)) {
         const lashedItems = this.actor.items.filter(i => i.system.containerId === host.id && i.system.lashed);
-        const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 0), 0);
-        const neededSlots = tmpl?.system?.slotCost || 0;
+        const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+        const neededSlots = tmpl?.system?.slotCost ?? 1;
         if (usedSlots + neededSlots <= (host.system.lashSlots || 0)) {
+          if (dryRun) return true;
           await sourceScabbard.update({ 'system.containerId': host.id, 'system.lashed': true, 'system.equipped': false });
           return sourceScabbard;
         }
@@ -3913,14 +4250,18 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
     }
 
-    // Check host slot capacity (category constraints are skipped for auto-provisioning)
+    // Check host slot capacity (category constraints are skipped for auto-provisioning).
+    // slotCost defaults to 1 when unset (matching every other lash-slot tally in this file);
+    // an item that explicitly sets slotCost: 0 (e.g. Scabbard, Sword — free once the Sword
+    // Frog is out of the picture) is still honored via ?? rather than ||.
     const lashedItems = this.actor.items.filter(i => i.system.containerId === host.id && i.system.lashed);
-    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 0), 0);
-    const neededSlots = tmpl.system.slotCost || 0;
+    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+    const neededSlots = tmpl.system.slotCost ?? 1;
     if (usedSlots + neededSlots > (host.system.lashSlots || 0)) {
-      ui.notifications.error(`Cannot create ${scabbardName}: ${host.name} is full (${usedSlots}/${host.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
+      if (!dryRun) ui.notifications.error(`Cannot create ${scabbardName}: ${host.name} is full (${usedSlots}/${host.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
       return null;
     }
+    if (dryRun) return true;
     const [created] = await this.actor.createEmbeddedDocuments('Item', [{
       name: scabbardName, type: 'container', img: tmpl.img,
       system: { ...tmpl.system, containerId: host.id, lashed: true }
@@ -3956,10 +4297,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     return created;
   }
 
-  async _provisionSwordFrogAndScabbard(itemBeingMoved = null, hostOverride = null) {
+  async _provisionSwordFrogAndScabbard(itemBeingMoved = null, hostOverride = null, dryRun = false) {
     const host = this._resolveScabbardHost(hostOverride);
     if (!host) {
-      ui.notifications.error('Cannot equip scabbard: this character does not have a belt.');
+      if (!dryRun) ui.notifications.error('Cannot equip scabbard: this character does not have a belt.');
       return null;
     }
     // Look for an existing Sword Frog on the host with a usable Scabbard, Sword.
@@ -3974,9 +4315,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       const scabbardFree = scabbard && !this.actor.items.some(
         i => i.system.containerId === scabbard.id && i.id !== itemBeingMoved?.id
       );
-      if (scabbardFree) return scabbard;
+      if (scabbardFree) return dryRun ? true : scabbard;
       if (!scabbard) {
         // Frog present but missing its scabbard — fill it
+        if (dryRun) return true;
         const tmpl = this._getSwordCarrierTemplate('Scabbard, Sword');
         const [created] = await this.actor.createEmbeddedDocuments('Item', [{
           name: 'Scabbard, Sword', type: 'container', img: tmpl.img,
@@ -3990,9 +4332,10 @@ export class OspActorSheetCharacter extends ActorSheet {
     const frogTmpl = this._getSwordCarrierTemplate('Sword Frog');
     const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
     if (usedSlots + 2 > (host.system.lashSlots || 0)) {
-      ui.notifications.error(`Cannot equip scabbard: ${host.name} is full.`);
+      if (!dryRun) ui.notifications.error(`Cannot equip scabbard: ${host.name} is full.`);
       return null;
     }
+    if (dryRun) return true;
     const [frog] = await this.actor.createEmbeddedDocuments('Item', [{
       name: 'Sword Frog', type: 'container', img: frogTmpl.img,
       system: { ...frogTmpl.system, containerId: host.id, lashed: true }
@@ -4038,16 +4381,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     return frog;
   }
 
-  async _provisionBaldric(itemBeingMoved = null) {
+  async _provisionBaldric(itemBeingMoved = null, dryRun = false) {
     // Reuse existing Baldric, excluding the item being moved from the occupancy check
     const existing = this.actor.items.find(
       i => i.name === 'Baldric' &&
         !this.actor.items.some(j => j.system.containerId === i.id && j.id !== itemBeingMoved?.id)
     );
     if (existing) {
+      if (dryRun) return true;
       if (!existing.system.equipped) await existing.update({ 'system.equipped': true });
       return existing;
     }
+    if (dryRun) return true; // creating a fresh Baldric always succeeds — no capacity gate
     const tmpl = this._getSwordCarrierTemplate('Baldric');
     const [created] = await this.actor.createEmbeddedDocuments('Item', [{
       name: 'Baldric', type: 'container', img: tmpl.img,
@@ -4097,6 +4442,64 @@ export class OspActorSheetCharacter extends ActorSheet {
     ) ?? null;
   }
 
+  // ── Shared placement guards ─────────────────────────────────────────────────
+  // Extracted so _onDropItem (the real drop) and _getContainerDropValidity/_getSlungDropValidity
+  // (the hover preview) evaluate identical rules instead of hand-mirrored copies that can drift.
+
+  _isStoreLocked(isReordering) {
+    return game.settings.get("osp-houserules", "storeLock") && !game.user.isGM && !isReordering;
+  }
+
+  // Items tagged no-store can never go in any container; no-vehicle-store items additionally
+  // can't go in a vehicle-tagged container (Cart/Wagon) even though they could store elsewhere.
+  _getNoStoreRejection(itemData, targetContainer) {
+    const isStorageTarget = targetContainer && (targetContainer.type === "container" ||
+      (targetContainer.type === "clothing" && targetContainer.system.capacity));
+    if (isStorageTarget && (itemData.system?.tags || []).includes('no-store')) {
+      return `${itemData.name} is too large to be stored in a container.`;
+    }
+    const isVehicleTarget = targetContainer && (targetContainer.system?.tags || []).includes('vehicle');
+    if (isVehicleTarget && (itemData.system?.tags || []).includes('no-vehicle-store')) {
+      return `${itemData.name} cannot be stowed inside ${targetContainer.name}.`;
+    }
+    return null;
+  }
+
+  // A worn Belt with lashed attachments (Sword Frog, pouches, etc.) can't be packed into a
+  // container — the attachments would have nowhere to go. Only relevant when reordering an
+  // existing, already-worn Belt; a freshly-dropped one never has attachments yet.
+  _getBeltAttachmentRejection(itemData, itemId, targetContainer, isReordering) {
+    if (itemData.type !== "clothing" || !targetContainer || targetContainer.type !== "container") return null;
+    const attachedItems = isReordering
+      ? this.actor.items.filter(i => i.system.containerId === itemId && i.system.lashed)
+      : [];
+    if (attachedItems.length > 0) {
+      return `Cannot store ${itemData.name} in a container — it has ${attachedItems.length} item(s) attached. Remove attachments first.`;
+    }
+    return null;
+  }
+
+  // When the target has hidden capacity (e.g. a Belt Loop) and is itself stored, non-lashed,
+  // inside a parent container, the parent also needs room for the incoming item — a hideCapacity
+  // container's own capacity bar doesn't reflect what it silently adds to its parent's load.
+  _getHiddenCapacityParentRejection(itemData, targetContainer, alreadyInContainer) {
+    if (alreadyInContainer || !this._skipCapacityCheck(targetContainer) ||
+        !targetContainer.system.containerId || targetContainer.system.lashed) {
+      return null;
+    }
+    const parentContainer = this.actor.items.get(targetContainer.system.containerId);
+    // Tack (Saddle, Saddle, Pack, etc.) points its containerId at the livestock wearing it, not
+    // a real storage container — livestock have no capacity concept at all, so _hasContainerSpace
+    // would treat their missing capacity field as a data error. Nothing "consumes" an animal's
+    // capacity the way it would a Backpack's, so there's nothing to check here.
+    if (!parentContainer || parentContainer.type === 'livestock') return null;
+    if (!this._skipCapacityCheck(parentContainer) && !this._hasContainerSpace(parentContainer, itemData)) {
+      const itemSize = this._getEffectiveDropSize(itemData);
+      return `Not enough space in ${parentContainer.name} for ${itemData.name} (size ${itemSize}).`;
+    }
+    return null;
+  }
+
   /**
    * True if targetContainer is a valid deliberate lash-drop target: worn clothing with lash
    * slots (e.g. Belt), or a lash-only container with no capacity (e.g. Saddle, Pack). Containers
@@ -4107,7 +4510,14 @@ export class OspActorSheetCharacter extends ActorSheet {
   _isLashMountTarget(targetContainer) {
     if ((targetContainer.system.lashSlots || 0) <= 0) return false;
     if (targetContainer.type === 'clothing') return !targetContainer.system.capacity;
-    if (targetContainer.type === 'container') return !targetContainer.system.capacity;
+    if (targetContainer.type === 'container') {
+      // Saddle/Saddle, Pack are lash-only by house rule regardless of whatever capacity value
+      // happens to be baked into a given item instance — items created before capacity was set
+      // to 0 in tack.json would otherwise slip past this guard as ordinary stored contents
+      // instead of lashed items.
+      if (SADDLE_LASH_HOSTS.has(targetContainer.name)) return true;
+      return !targetContainer.system.capacity;
+    }
     return false;
   }
 
@@ -4597,12 +5007,16 @@ export class OspActorSheetCharacter extends ActorSheet {
                   delete newItemData._id;
                   newItemData.system.quantity = quantity;
                   newItemData.system.containerId = targetContainer.id;
+                  newItemData.system.equipped = false;
+                  newItemData.system.lashed = false;
                   await item.update({"system.quantity": totalQuantity - quantity});
                   await this.actor.createEmbeddedDocuments("Item", [newItemData]);
                   ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
                 } else {
-                  // Move entire stack
-                  await item.update({"system.containerId": targetContainer.id});
+                  // Move entire stack — clear equipped/lashed too, or a consumable weapon
+                  // dragged in already-readied would stay hidden from this container's contents
+                  // (and its capacity total) since the display filter excludes equipped weapons.
+                  await item.update({"system.containerId": targetContainer.id, "system.equipped": false, "system.lashed": false});
                 }
               } else if (isOtherActor) {
                 if (existingAmmo) {
@@ -4617,6 +5031,8 @@ export class OspActorSheetCharacter extends ActorSheet {
                   delete newItemData._id;
                   newItemData.system.quantity = quantity;
                   newItemData.system.containerId = targetContainer.id;
+                  newItemData.system.equipped = false;
+                  newItemData.system.lashed = false;
                   if (isPartialMove) {
                     await item.update({"system.quantity": totalQuantity - quantity});
                   } else {
@@ -4635,6 +5051,8 @@ export class OspActorSheetCharacter extends ActorSheet {
                   delete newItemData._id;
                   newItemData.system.quantity = quantity;
                   newItemData.system.containerId = targetContainer.id;
+                  newItemData.system.equipped = false;
+                  newItemData.system.lashed = false;
                   await this.actor.createEmbeddedDocuments("Item", [newItemData]);
                 }
               }

@@ -400,59 +400,6 @@ export class OspActor extends Actor {
       overland: Math.floor(finalMovement / 3),  // Travel speed (overland movement, 1/3 of tactical)
       dash: finalMovement * 3  // Run speed (3x tactical)
     };
-
-    // Calculate capacity usage for containers
-    this._calculateCapacity();
-  }
-
-  /**
-   * Calculate capacity usage in containers
-   * @private
-   */
-  _calculateCapacity() {
-    // Size conversion table: how many of each smaller size fits in one unit
-    // 1L = 600 coins, 1M = 100 coins, 1S = 50 coins, 1T = 25 coins
-    // 1L = 6M = 12S = 24T
-    const sizeToSlots = {
-      'T': 1,    // Tiny = 1 slot
-      'S': 2,    // Small = 2 slots (2T)
-      'M': 4,    // Medium = 4 slots (2S, 4T)
-      'L': 24,   // Large = 24 slots (6M, 12S, 24T)
-      'W': 0,    // Worn items don't consume capacity
-      'B': 0     // Beast-sized items don't fit in standard containers
-    };
-
-    // Calculate capacity for each container
-    const containers = this.items.filter(item => item.type === "container");
-    
-    containers.forEach(container => {
-      const maxCapacitySlots = parseFloat(container.system.capacity) || 0;
-      let usedCapacitySlots = 0;
-
-      // Find all items stored in this container (equipped=false means stored)
-      this.items.forEach(item => {
-        // Skip the container itself and items that are equipped (carried on person)
-        if (item.id === container.id || item.system.equipped) return;
-        
-        // For simplicity, assume items with equipped=false are in containers
-        // A more sophisticated system would track which specific container
-        const itemSize = item.system.sizeCat || 'M';
-        const quantity = item.system.quantity || 1;
-        
-        // Worn items (W) don't consume container capacity
-        if (itemSize === 'W') return;
-        
-        const slotsPerItem = sizeToSlots[itemSize] || 0;
-        usedCapacitySlots += slotsPerItem * quantity;
-      });
-
-      // Store capacity info on the container (for UI display)
-      container.system.capacityUsed = usedCapacitySlots;
-      container.system.capacityMax = maxCapacitySlots;
-      container.system.capacityPercentage = maxCapacitySlots > 0 
-        ? Math.round((usedCapacitySlots / maxCapacitySlots) * 100)
-        : 0;
-    });
   }
 
   /**

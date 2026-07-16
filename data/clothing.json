@@ -12,6 +12,7 @@
       "equipped": false,
       "lashable": false,
       "lashSlots": 6,
+      "lashAllowedSizes": ["S", "M"],
       "tags": [
         "clothing"
       ]

@@ -4799,10 +4799,16 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   async _handleCoinDrop(item, itemData, targetContainer, isReordering) {
     const currentQuantity = itemData.system.quantity || 0;
+
+    // A single coin has no quantity to choose — move/add it directly, no dialog needed.
+    if (currentQuantity <= 1) {
+      return this._resolveCoinMove(item, itemData, targetContainer, currentQuantity || 1);
+    }
+
     const availableSpace = this._getAvailableSpace(targetContainer);
     const storedSize = parseFloat(itemData.system.storedSize) || 0.04;
     const maxCoins = Math.floor(availableSpace / storedSize);
-    
+
     // Show dialog to ask how many coins to add
     return new Promise((resolve) => {
       const content = `
@@ -4827,93 +4833,8 @@ export class OspActorSheetCharacter extends ActorSheet {
             label: "Add Coins",
             callback: async (html) => {
               const quantity = parseInt(html.find('[name="coinQuantity"]').val());
-              
-              if (quantity <= 0) {
-                ui.notifications.warn("Quantity must be greater than 0");
-                resolve(false);
-                return;
-              }
-
-              if (quantity > maxCoins) {
-                ui.notifications.error(`Not enough space in ${targetContainer.name}. Maximum coins that fit: ${maxCoins}`);
-                resolve(false);
-                return;
-              }
-              
-              // Check if there's already a coin of this type in the target container
-              const existingCoin = this.actor.items.find(i => 
-                i.type === "coin" &&
-                i.name === itemData.name &&
-                i.system.containerId === targetContainer.id &&
-                (!item.actor || i.id !== item.id) // Don't match with the coin being moved
-              );
-              
-              // Validate space based on whether we're stacking or creating new
-              if (existingCoin) {
-                // Stacking: check if adding MORE coins to existing stack will fit
-                const additionalSpace = storedSize * quantity;
-                const availableSpace = this._getAvailableSpace(targetContainer);
-                
-                if (additionalSpace > availableSpace) {
-                  ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${additionalSpace} slots, have ${availableSpace} available.`);
-                  resolve(false);
-                  return;
-                }
-              } else {
-                // New stack: validate all coins will fit
-                itemData.system.quantity = quantity;
-                
-                if (!this._hasContainerSpace(targetContainer, itemData)) {
-                  ui.notifications.error(`Not enough space in ${targetContainer.name} for ${quantity} coins.`);
-                  resolve(false);
-                  return;
-                }
-              }
-              
-              // Update the item data with the specified quantity
-              itemData.system.quantity = quantity;
-              
-              // Set the container ID
-              itemData.system.containerId = targetContainer.id;
-              
-              // Handle item from another actor
-              if (item.actor && item.actor.id !== this.actor.id) {
-                if (existingCoin) {
-                  // Stack with existing coin
-                  const newQuantity = (existingCoin.system.quantity || 0) + quantity;
-                  await existingCoin.update({"system.quantity": newQuantity});
-                  await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
-                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
-                } else {
-                  await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
-                  await this.actor.createEmbeddedDocuments("Item", [itemData]);
-                }
-              } 
-              // Handle reordering within same actor
-              else if (item.actor && item.actor.id === this.actor.id) {
-                if (existingCoin) {
-                  // Stack with existing coin and delete the one being moved
-                  const newQuantity = (existingCoin.system.quantity || 0) + quantity;
-                  await existingCoin.update({"system.quantity": newQuantity});
-                  await item.delete();
-                  ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack`);
-                } else {
-                  await item.update(itemData);
-                }
-              }
-              // Handle new item from compendium/sidebar (no actor)
-              else {
-                if (existingCoin) {
-                  // Stack with existing coin
-                  const newQuantity = (existingCoin.system.quantity || 0) + quantity;
-                  await existingCoin.update({"system.quantity": newQuantity});
-                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
-                } else {
-                  await this.actor.createEmbeddedDocuments("Item", [itemData]);
-                }
-              }
-              
-              resolve(true);
+              const result = await this._resolveCoinMove(item, itemData, targetContainer, quantity);
+              resolve(result);
             }
           },
           cancel: {
@@ -4932,10 +4853,111 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
+   * Perform the actual coin move once a quantity has been decided — either chosen in the
+   * dialog, or (for a single coin) the implicit "move the 1 coin" quantity from
+   * _handleCoinDrop skipping the dialog entirely. Returns true/false like the old per-callback
+   * resolve() calls did.
+   */
+  async _resolveCoinMove(item, itemData, targetContainer, quantity) {
+    const storedSize = parseFloat(itemData.system.storedSize) || 0.04;
+    const maxCoins = Math.floor(this._getAvailableSpace(targetContainer) / storedSize);
+
+    if (quantity <= 0) {
+      ui.notifications.warn("Quantity must be greater than 0");
+      return false;
+    }
+
+    if (quantity > maxCoins) {
+      ui.notifications.error(`Not enough space in ${targetContainer.name}. Maximum coins that fit: ${maxCoins}`);
+      return false;
+    }
+
+    // Check if there's already a coin of this type in the target container
+    const existingCoin = this.actor.items.find(i =>
+      i.type === "coin" &&
+      i.name === itemData.name &&
+      i.system.containerId === targetContainer.id &&
+      (!item.actor || i.id !== item.id) // Don't match with the coin being moved
+    );
+
+    // Validate space based on whether we're stacking or creating new
+    if (existingCoin) {
+      // Stacking: check if adding MORE coins to existing stack will fit
+      const additionalSpace = storedSize * quantity;
+      const availableSpace = this._getAvailableSpace(targetContainer);
+
+      if (additionalSpace > availableSpace) {
+        ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${additionalSpace} slots, have ${availableSpace} available.`);
+        return false;
+      }
+    } else {
+      // New stack: validate all coins will fit
+      itemData.system.quantity = quantity;
+
+      if (!this._hasContainerSpace(targetContainer, itemData)) {
+        ui.notifications.error(`Not enough space in ${targetContainer.name} for ${quantity} coins.`);
+        return false;
+      }
+    }
+
+    // Update the item data with the specified quantity
+    itemData.system.quantity = quantity;
+
+    // Set the container ID
+    itemData.system.containerId = targetContainer.id;
+
+    // Handle item from another actor
+    if (item.actor && item.actor.id !== this.actor.id) {
+      if (existingCoin) {
+        // Stack with existing coin
+        const newQuantity = (existingCoin.system.quantity || 0) + quantity;
+        await existingCoin.update({"system.quantity": newQuantity});
+        await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+        ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
+      } else {
+        await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+        await this.actor.createEmbeddedDocuments("Item", [itemData]);
+      }
+    }
+    // Handle reordering within same actor
+    else if (item.actor && item.actor.id === this.actor.id) {
+      if (existingCoin) {
+        // Stack with existing coin and delete the one being moved
+        const newQuantity = (existingCoin.system.quantity || 0) + quantity;
+        await existingCoin.update({"system.quantity": newQuantity});
+        await item.delete();
+        ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack`);
+      } else {
+        await item.update(itemData);
+      }
+    }
+    // Handle new item from compendium/sidebar (no actor)
+    else {
+      if (existingCoin) {
+        // Stack with existing coin
+        const newQuantity = (existingCoin.system.quantity || 0) + quantity;
+        await existingCoin.update({"system.quantity": newQuantity});
+        ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
+      } else {
+        await this.actor.createEmbeddedDocuments("Item", [itemData]);
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Handle dropping ammunition with quantity dialog
    */
   async _handleAmmunitionDrop(item, itemData, targetContainer, isReordering) {
     const totalQuantity = itemData.system.quantity || 1;
+
+    // A single-unit stack has no quantity to choose — move/add the one unit directly, no
+    // dialog needed. The dialog only earns its keep when there's an actual split decision.
+    if (totalQuantity <= 1) {
+      return this._resolveAmmunitionMove(item, itemData, targetContainer, totalQuantity, totalQuantity, isReordering);
+    }
+
     // Limit input to stack size only when moving within the same actor;
     // compendium/sidebar drops can specify any quantity
     const maxAttr = isReordering ? `max="${totalQuantity}"` : '';
@@ -4959,105 +4981,8 @@ export class OspActorSheetCharacter extends ActorSheet {
             label: isReordering ? "Move" : "Add",
             callback: async (html) => {
               const quantity = parseInt(html.find('[name="ammoQuantity"]').val());
-
-              if (!quantity || quantity <= 0 || (isReordering && quantity > totalQuantity)) {
-                ui.notifications.warn(isReordering
-                  ? `Quantity must be between 1 and ${totalQuantity}`
-                  : "Quantity must be greater than 0");
-                resolve(false);
-                return;
-              }
-
-              // Check if there's already a matching stack of this item in the target container
-              const existingAmmo = this.actor.items.find(i =>
-                i.type === itemData.type &&
-                i.name === itemData.name &&
-                i.system.containerId === targetContainer.id &&
-                i.id !== item.id
-              );
-
-              // Validate space for the quantity being moved
-              const storedSize = parseFloat(itemData.system.storedSize) || 0;
-              const spaceNeeded = storedSize * quantity;
-              const availableSpace = this._getAvailableSpace(targetContainer);
-
-              if (spaceNeeded > availableSpace) {
-                ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${spaceNeeded} slots, have ${availableSpace} available.`);
-                resolve(false);
-                return;
-              }
-
-              const isPartialMove = quantity < totalQuantity;
-              const isSameActor = item.actor && item.actor.id === this.actor.id;
-              const isOtherActor = item.actor && item.actor.id !== this.actor.id;
-
-              if (isSameActor) {
-                if (existingAmmo) {
-                  // Add to existing stack in target
-                  await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
-                  if (isPartialMove) {
-                    await item.update({"system.quantity": totalQuantity - quantity});
-                  } else {
-                    await item.delete();
-                  }
-                  ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack.`);
-                } else if (isPartialMove) {
-                  // Split: create new stack in target, reduce source
-                  const newItemData = foundry.utils.duplicate(itemData);
-                  delete newItemData._id;
-                  newItemData.system.quantity = quantity;
-                  newItemData.system.containerId = targetContainer.id;
-                  newItemData.system.equipped = false;
-                  newItemData.system.lashed = false;
-                  await item.update({"system.quantity": totalQuantity - quantity});
-                  await this.actor.createEmbeddedDocuments("Item", [newItemData]);
-                  ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
-                } else {
-                  // Move entire stack — clear equipped/lashed too, or a consumable weapon
-                  // dragged in already-readied would stay hidden from this container's contents
-                  // (and its capacity total) since the display filter excludes equipped weapons.
-                  await item.update({"system.containerId": targetContainer.id, "system.equipped": false, "system.lashed": false});
-                }
-              } else if (isOtherActor) {
-                if (existingAmmo) {
-                  await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
-                  if (isPartialMove) {
-                    await item.update({"system.quantity": totalQuantity - quantity});
-                  } else {
-                    await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
-                  }
-                } else {
-                  const newItemData = foundry.utils.duplicate(itemData);
-                  delete newItemData._id;
-                  newItemData.system.quantity = quantity;
-                  newItemData.system.containerId = targetContainer.id;
-                  newItemData.system.equipped = false;
-                  newItemData.system.lashed = false;
-                  if (isPartialMove) {
-                    await item.update({"system.quantity": totalQuantity - quantity});
-                  } else {
-                    await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
-                  }
-                  await this.actor.createEmbeddedDocuments("Item", [newItemData]);
-                }
-                ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
-              } else {
-                // New item from compendium/sidebar (no actor)
-                if (existingAmmo) {
-                  await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
-                  ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack.`);
-                } else {
-                  const newItemData = foundry.utils.duplicate(itemData);
-                  delete newItemData._id;
-                  newItemData.system.quantity = quantity;
-                  newItemData.system.containerId = targetContainer.id;
-                  newItemData.system.equipped = false;
-                  newItemData.system.lashed = false;
-                  await this.actor.createEmbeddedDocuments("Item", [newItemData]);
-                }
-              }
-
-              resolve(true);
+              const result = await this._resolveAmmunitionMove(item, itemData, targetContainer, quantity, totalQuantity, isReordering);
+              resolve(result);
             }
           },
           cancel: {
@@ -5072,5 +4997,110 @@ export class OspActorSheetCharacter extends ActorSheet {
         }
       }).render(true);
     });
+  }
+
+  /**
+   * Perform the actual ammunition/item move once a quantity has been decided — either chosen
+   * in the dialog, or (for a single-unit stack) the implicit "move all 1 of it" quantity from
+   * _handleAmmunitionDrop skipping the dialog entirely. Returns true/false like the old
+   * per-callback resolve() calls did.
+   */
+  async _resolveAmmunitionMove(item, itemData, targetContainer, quantity, totalQuantity, isReordering) {
+    if (!quantity || quantity <= 0 || (isReordering && quantity > totalQuantity)) {
+      ui.notifications.warn(isReordering
+        ? `Quantity must be between 1 and ${totalQuantity}`
+        : "Quantity must be greater than 0");
+      return false;
+    }
+
+    // Check if there's already a matching stack of this item in the target container
+    const existingAmmo = this.actor.items.find(i =>
+      i.type === itemData.type &&
+      i.name === itemData.name &&
+      i.system.containerId === targetContainer.id &&
+      i.id !== item.id
+    );
+
+    // Validate space for the quantity being moved
+    const storedSize = parseFloat(itemData.system.storedSize) || 0;
+    const spaceNeeded = storedSize * quantity;
+    const availableSpace = this._getAvailableSpace(targetContainer);
+
+    if (spaceNeeded > availableSpace) {
+      ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${spaceNeeded} slots, have ${availableSpace} available.`);
+      return false;
+    }
+
+    const isPartialMove = quantity < totalQuantity;
+    const isSameActor = item.actor && item.actor.id === this.actor.id;
+    const isOtherActor = item.actor && item.actor.id !== this.actor.id;
+
+    if (isSameActor) {
+      if (existingAmmo) {
+        // Add to existing stack in target
+        await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
+        if (isPartialMove) {
+          await item.update({"system.quantity": totalQuantity - quantity});
+        } else {
+          await item.delete();
+        }
+        ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack.`);
+      } else if (isPartialMove) {
+        // Split: create new stack in target, reduce source
+        const newItemData = foundry.utils.duplicate(itemData);
+        delete newItemData._id;
+        newItemData.system.quantity = quantity;
+        newItemData.system.containerId = targetContainer.id;
+        newItemData.system.equipped = false;
+        newItemData.system.lashed = false;
+        await item.update({"system.quantity": totalQuantity - quantity});
+        await this.actor.createEmbeddedDocuments("Item", [newItemData]);
+        ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
+      } else {
+        // Move entire stack — clear equipped/lashed too, or a consumable weapon
+        // dragged in already-readied would stay hidden from this container's contents
+        // (and its capacity total) since the display filter excludes equipped weapons.
+        await item.update({"system.containerId": targetContainer.id, "system.equipped": false, "system.lashed": false});
+      }
+    } else if (isOtherActor) {
+      if (existingAmmo) {
+        await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
+        if (isPartialMove) {
+          await item.update({"system.quantity": totalQuantity - quantity});
+        } else {
+          await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+        }
+      } else {
+        const newItemData = foundry.utils.duplicate(itemData);
+        delete newItemData._id;
+        newItemData.system.quantity = quantity;
+        newItemData.system.containerId = targetContainer.id;
+        newItemData.system.equipped = false;
+        newItemData.system.lashed = false;
+        if (isPartialMove) {
+          await item.update({"system.quantity": totalQuantity - quantity});
+        } else {
+          await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
+        }
+        await this.actor.createEmbeddedDocuments("Item", [newItemData]);
+      }
+      ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
+    } else {
+      // New item from compendium/sidebar (no actor)
+      if (existingAmmo) {
+        await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
+        ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack.`);
+      } else {
+        const newItemData = foundry.utils.duplicate(itemData);
+        delete newItemData._id;
+        newItemData.system.quantity = quantity;
+        newItemData.system.containerId = targetContainer.id;
+        newItemData.system.equipped = false;
+        newItemData.system.lashed = false;
+        await this.actor.createEmbeddedDocuments("Item", [newItemData]);
+      }
+    }
+
+    return true;
   }
 }

@@ -1167,19 +1167,19 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
 .encumbrance-bar-light {
   left: 0;
-  background: rgba(44, 24, 16, 0.1);  // Lighter shade for 0-33%
+  background: rgba(46, 125, 50, 0.6);  // Green — unencumbered, 0-33%
   max-width: 33%;  // Can't extend beyond 33%
 }
 
 .encumbrance-bar-normal {
   left: 33%;
-  background: rgba(44, 24, 16, 0.2);  // Normal shade for 33-66%
+  background: rgba(224, 120, 20, 0.6);  // Orange — light encumbrance, 33-66%
   max-width: 33%;  // Can't extend beyond 33%
 }
 
 .encumbrance-bar-heavy {
   left: 66%;
-  background: rgba(44, 24, 16, 0.35);  // Darker shade for 66-100%
+  background: rgba(178, 34, 34, 0.65);  // Red — heavy encumbrance, 66-100%
   max-width: 34%;  // Can't extend beyond 34%
 }
 

@@ -311,16 +311,34 @@ export class OspActor extends Actor {
    * Calculate encumbrance for the character
    * @private
    */
+  /**
+   * True if `item` is a Vehicle/Livestock, or is nested (directly or transitively, via
+   * containerId) inside one — cargo in a Cart's bed, tack worn by a mount, or anything lashed/
+   * stored inside that tack (e.g. a sword lashed to a Saddle). All of that weight is carried by
+   * the vehicle/animal, not the character, so none of it should count toward personal
+   * encumbrance no matter how deep the nesting goes.
+   * @private
+   */
+  _isCarriedByMountOrVehicle(item, visited = new Set()) {
+    if (visited.has(item.id)) return false; // guard against a malformed containerId cycle
+    visited.add(item.id);
+    if ((item.system.tags || []).includes('vehicle')) return true;
+    if (item.type === 'livestock') return true;
+    const containerId = item.system.containerId;
+    if (!containerId) return false;
+    const parent = this.items.get(containerId);
+    if (!parent) return false;
+    return this._isCarriedByMountOrVehicle(parent, visited);
+  }
+
   _calculateEncumbrance() {
     // Calculate total weight - ALL items count regardless of equipped status
     let totalWeight = 0;
 
     this.items.forEach(item => {
-      // Vehicles (Cart, Wagon, etc.) are pulled by draft animals, not carried — exclude their weight
-      if ((item.system.tags || []).includes('vehicle')) return;
-
-      // Livestock move under their own power and aren't carried — exclude their weight
-      if (item.type === 'livestock') return;
+      // Vehicles/Livestock, and anything stored or lashed inside them (cargo, tack, gear lashed
+      // to tack), are carried by the vehicle/mount, not the character — exclude their weight.
+      if (this._isCarriedByMountOrVehicle(item)) return;
 
       // Handle quantity as either a number or an object with a value property
       let quantity = 1;

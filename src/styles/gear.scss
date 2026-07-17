@@ -144,6 +144,16 @@ $sh-l2-twt:  444px;   // center of tWT col     (68 + 40 + 150 + 80 + 80 + 80/2)
 $sh-l2-wt:   510px;   // center of weight col — must stay < 476px to clear controls (570 − 86)
 $sh-l2-controls: 545px; // left edge of controls col — aligns with top-level row controls (gear-left + 605px; rows start at 60px offset → 545px)
 
+// Name column right-edge boundaries for the lashed-item nesting tiers — derived as a fixed
+// safe right edge (limit − left = width) rather than a fixed per-level shrink, so the name box
+// can never grow into the fixed-position Qty column no matter how deep the name's own left
+// edge has to start.
+$l2-field-half-width: 28px;  // ~half a standard 55px field-short cell — safety margin before a
+                              // fixed data-column's center so name's right edge never paints under it
+$l2-name-right-limit: $sh-l2-qty - $l2-field-half-width;  // 233px — safe boundary for tiers 1 & 2
+$l3-name-right-limit: 329px; // 214px (tier-3 name left) + 115px — capped to match tier 1's width,
+                              // used only at .lashed-deep-stored-item after hiding its sSize cell
+
 /* Belt attachment background — used for attachment row shade and the tree-line gutter on stored items */
 $attachment-row-bg: rgba(139, 69, 19, 0.05);
 
@@ -622,7 +632,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Without these, .field-short forces width: 50px, .item-image forces 32px, etc.,
 // which conflict with grid column widths and require manual margin-left offsets.
 .osp.sheet.actor .item-category-title,
-.osp.sheet.actor .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item) {
+.osp.sheet.actor .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item):not(.lashed-deep-stored-item) {
   .item-image,
   .item-roll-icon,
   .item-name,
@@ -2043,7 +2053,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 
   > :nth-child(1) { left: 68px; width: $l2-col-image; }
-  > :nth-child(2) { left: $sh-l2-name; width: $l2-col-name; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  > :nth-child(2) { left: $sh-l2-name; width: $l2-name-right-limit - $sh-l2-name; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   > :nth-child(3) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
   > :nth-child(4) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
   > :nth-child(5) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
@@ -2074,8 +2084,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Large). When multiple sub-items follow each other, extend the vertical branch to span between
 // them — otherwise each row falls back to the default half-height trunk (top half + midpoint
 // tick), leaving a gap instead of a continuous line down to the next sibling.
-.contained-item .lashed-stored-item:not(:last-child)::before,
-.lashed-item .lashed-stored-item:not(:last-child)::before {
+// Uses :has(+ .lashed-stored-item), not :not(:last-child) — a lone contained item (e.g. a single
+// Crowbar in a Saddle Pack) is routinely followed by an unrelated sibling (that same tack item's
+// own .lashed-items-section for its worn attachments), which made :not(:last-child) match and
+// wrongly extend the trunk past a row that has no next contained-item sibling to reach.
+.contained-item .lashed-stored-item:has(+ .lashed-stored-item)::before,
+.lashed-item .lashed-stored-item:has(+ .lashed-stored-item)::before {
   bottom: 0;
 }
 
@@ -2142,7 +2156,7 @@ li.contained-item .lashed-stored-item {
   // with the L2 subheader above.
   > :nth-child(1) { left: 98px; width: $col-caret; }
   > :nth-child(2) { left: 116px; width: $l2-col-image; }
-  > :nth-child(3) { left: $sh-l2-name + 48px; width: $l2-col-name - 48px + 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  > :nth-child(3) { left: $sh-l2-name + 48px; width: $l2-name-right-limit - ($sh-l2-name + 48px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   > :nth-child(4) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
   > :nth-child(5) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
   > :nth-child(6) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
@@ -2232,9 +2246,12 @@ li.contained-item .lashed-stored-item {
   // placeholder, kept purely for column-count/alignment consistency with the tier above.
   > :nth-child(1) { left: 146px; width: $col-caret; }
   > :nth-child(2) { left: 164px; width: $l2-col-image; }
-  > :nth-child(3) { left: $sh-l2-name + 96px; width: $l2-col-name - 96px + 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  > :nth-child(3) { left: $sh-l2-name + 96px; width: $l3-name-right-limit - ($sh-l2-name + 96px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   > :nth-child(4) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
-  > :nth-child(5) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
+  // sSize is hidden at this tier only (reclaimed for the name column above) — rarely meaningful
+  // 4 levels deep (e.g. loose coins); the column label in the shared subheader stays visible for
+  // shallower rows.
+  > :nth-child(5) { display: none; }
   > :nth-child(6) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
   > :nth-child(7) { left: $sh-l2-wt;    transform: translateX(-50%); justify-content: center; }
   > :nth-child(8) { left: $sh-l2-controls; right: auto; width: $l2-col-controls; justify-content: flex-end; }
@@ -2287,13 +2304,11 @@ li.contained-item .lashed-stored-item {
 }
 
 // An attachment's own header row (e.g. Sack, Small itself) is a .lashed-stored-item sitting
-// inside a .contained-item (the tack item's own <li>), which would otherwise match ".contained-
-// item .lashed-stored-item:not(:last-child)" above and extend its tick to full row height —
-// that rule is meant for a nested container's plain contents, not this header row, but with the
-// .lashed-attachment wrapper in place this row is never really :last-child (Piton/Iron Spike
-// trail after it as siblings), so it matched anyway, leaving a short stray stub below the tick.
-// The wrapper's own trunk (above) already handles connecting/terminating between attachments —
-// reset this row back to its plain half-height tick.
+// inside a .contained-item (the tack item's own <li>). This reset predates the ":has(+
+// .lashed-stored-item)" fix above (this row's own next sibling isn't another .lashed-stored-item,
+// so the fixed rule no longer misfires here either) — kept as a harmless belt-and-suspenders
+// reset now that the wrapper's own trunk (above) already handles connecting/terminating between
+// attachments.
 .lashed-items-section .lashed-attachment > .lashed-stored-item::before {
   bottom: 50%;
 }

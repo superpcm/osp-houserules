@@ -64,9 +64,13 @@ $geartab-col2-x: 547px;           // center of second data col (Weight)
 
 /* Gear Tab – Containers: Column Widths */
 $gear-containers-col-image: 48px;       // Width of container image
-$gear-containers-col-name: 180px;       // Width of name column
+// +37.5px vs the original 180px — absorbs exactly what the capacity column below gave up, so
+// the row's total width and every downstream column (sSize/tWT/WT/controls) stay anchored at
+// their original position, matching untouched rows (Livestock, Crowbar/Bedroll) instead of
+// shifting the whole row narrower.
+$gear-containers-col-name: 217.5px;     // Width of name column
 $gear-containers-col-qty: 60px;         // Width of quantity column
-$gear-containers-col-capacity: 150px;   // Width of capacity column
+$gear-containers-col-capacity: 112.5px; // Width of capacity column — 75% of the original 150px; freed space goes to $gear-containers-col-name above, not to shrinking the row
 $gear-containers-col-storedsize: 80px;  // Width of storedSize column
 $gear-containers-col-twt: 51px;        // Width of total weight (tWT) column
 $gear-containers-col-weight: 78px;      // Width of weight column
@@ -883,6 +887,8 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   background: transparent !important;
 }
 
+// Container headers must never change width on hover (nested hover bubbles up and
+// the generic hover rule would narrow to 698px, shifting the Qty/capacity columns).
 // Container headers must never change width on hover (nested hover bubbles up and
 // the generic hover rule would narrow to 698px, shifting the Qty/capacity columns)
 .item-header.container-header:hover,
@@ -1804,7 +1810,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     > :nth-child(1) { left: $sh-belt-img; }
     > :nth-child(2) { left: $sh-belt-name; }
-    > :nth-child(3) { left: calc(#{$nested-col-image} + #{$nested-col-name} + #{$gear-containers-col-capacity} / 2); } // capacity col center: 48+138+75=261px
+    > :nth-child(3) { left: calc(#{$nested-col-image} + #{$nested-col-name} + 37.5px + #{$gear-containers-col-capacity} / 2); } // capacity col center — matches the data row's local +37.5px name-column widening
     > :nth-child(4) { left: $sh-belt-ssize; }
     > :nth-child(5) { left: $sh-belt-twt; }
     > :nth-child(6) { left: $sh-belt-wt; }
@@ -1952,9 +1958,11 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     max-width: 638px; /* Parent width (698px) minus indent (60px) */
     box-sizing: border-box;
-    // capacity col = $gear-containers-col-capacity (150px) to match top-level Belt bar width;
-    // name reduced by 70px (190→120px) to keep total = 632px
-    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px) $gear-containers-col-capacity $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+    // capacity col = $gear-containers-col-capacity (112.5px, 75% of the original 150px); name
+    // gets a local +37.5px (not the shared $nested-col-name, which other non-capacity rows like
+    // Crowbar/Bedroll also use) to absorb exactly what capacity gave up, keeping this row's total
+    // width and right-edge controls position identical to before.
+    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px + 37.5px) $gear-containers-col-capacity $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
   }
 
   .item-name {
@@ -2342,7 +2350,9 @@ li.contained-item .lashed-stored-item {
   position: relative;
 
   > .item-header {
-    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px) $gear-containers-col-capacity $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+    // Name gets a local +37.5px (not the shared $nested-col-name, also used by non-capacity rows
+    // like Battle Axe's own stored-item subheader) to absorb what the capacity column gave up.
+    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px + 37.5px) $gear-containers-col-capacity $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
     max-width: 638px;
     box-sizing: border-box;
   }
@@ -2357,23 +2367,26 @@ li.contained-item .lashed-stored-item {
     max-width: none;
 
     > :nth-child(7) {
-      // Use left positioning to match the slung-item header grid controls column exactly
-      // 18(caret)+50(img)+120(name)+150(cap)+80(ssize)+52(twt)+80(wt) = 550px
-      left: $nested-col-image + $nested-col-name + $gear-containers-col-capacity + $nested-col-storedsize + $nested-col-twt + $nested-col-weight !important;
+      // Use left positioning to match the slung-item header grid controls column exactly.
+      // The +37.5px matches the same local name-column widening applied to .slung-item >
+      // .item-header's own grid-template-columns above, so this independently-computed
+      // position stays in sync instead of landing 37.5px short (this override doesn't read
+      // that grid, so it never picked up the compensation automatically).
+      left: $nested-col-image + $nested-col-name + 37.5px + $gear-containers-col-capacity + $nested-col-storedsize + $nested-col-twt + $nested-col-weight !important;
       right: auto !important;
       width: $nested-col-controls !important;
     }
   }
 }
 
-// Slung-items-list subheader — absolute column positions matching slung-item grid
+// Slung-items-list subheader — absolute column positions matching slung-item grid.
 .slung-items-list .container-items-subheader {
   margin-left: 68px;
   width: calc(100% - 68px);
   box-sizing: border-box;
   > :nth-child(1) { left: $sh-l2-img - 68px; }
   > :nth-child(2) { left: $sh-l2-name - 68px; }
-  > :nth-child(3) { left: calc(#{$nested-col-image} + #{$nested-col-name} + #{$gear-containers-col-capacity} / 2 - 68px); } // capacity bar center: 50+138+75-68=195px
+  > :nth-child(3) { left: calc(#{$nested-col-image} + #{$nested-col-name} + 37.5px + #{$gear-containers-col-capacity} / 2 - 68px); } // capacity bar center — matches the data row's local +37.5px name-column widening
   > :nth-child(4) { left: $sh-l2-ssize - 68px; }
   > :nth-child(5) { left: $sh-l2-twt - 68px; }
   > :nth-child(6) { left: $sh-l2-wt - 68px; }

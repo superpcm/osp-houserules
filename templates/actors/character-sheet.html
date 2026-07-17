@@ -2877,7 +2877,7 @@
                           {{!-- Items stored inside a container that's itself inside a lashed Sack (e.g. coins inside a Coin Purse packed in the Sack) --}}
                           {{#unless lashedSubItem.collapsed}}
                           {{#each lashedSubItem.containedItems as |deepItem|}}
-                          <div class="item-header flexrow lashed-sub-stored-item" data-item-id="{{deepItem.id}}">
+                          <div class="item-header flexrow lashed-deep-stored-item" data-item-id="{{deepItem.id}}">
                             {{!-- No further nesting is built past this level yet, so this is always the hidden placeholder — kept for column alignment with the sibling row above, which does show a live toggle. --}}
                             <span class="nested-container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
                             <div class="item-image" style="background-image: url('{{deepItem.img}}');"></div>

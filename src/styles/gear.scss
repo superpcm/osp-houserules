@@ -133,6 +133,7 @@ $sh-belt-wt:   508px;   // center of weight col          (66+190+80+80+52+80/2)
 // Both subheader and data row share 68px content offset, so positions include that offset.
 // Data row grid: image(40) name(150) field(80) field(80) twt(80) weight(50) controls(86)
 $sh-l2-img:   92px;   // center of image col   (68 + 48/2)
+$sh-l3-img:  140px;   // center of L3's own image col (116 + 48/2) — anchor point for an L4 branch
 $sh-l2-name: 118px;   // left edge of name col (68 + 48 = 116, +2px gap)
 // Matches $sh-qty (261px, absolute) so belt-nested contents (Garlic in Belt Pouch) line up
 // with plain top-level container contents (Silver Coins in Sack, Iron Spike in Backpack)
@@ -1712,15 +1713,23 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
   
   // Horizontal connector to item — fixed offset so expanded rows (sub-items below header)
-  // don't shift the branch away from the header caret.
+  // don't shift the branch away from the header caret. Reaches all the way to the thumbnail
+  // (touching its left edge) by default; when the row itself shows a live caret (it's a
+  // container, e.g. a Coin Purse inside this Cart), it stops short at the caret's own grid
+  // column instead of running through the icon — same standardized rule as the deeper
+  // .lashed-sub-stored-item/.lashed-deep-stored-item tiers.
   &::after {
     content: '';
     position: absolute;
     left: $tree-line-position;
     top: calc(#{$item-row-height} / 2);
-    width: calc(-5px + #{abs($tree-line-position)});
+    width: calc(#{abs($tree-line-position)} + #{$col-caret});
     height: $tree-line-thickness;
     background: $tree-line-color;
+  }
+
+  &:has(> .item-header > a.nested-container-toggle)::after {
+    width: abs($tree-line-position);
   }
 
   // Last item gets an L-shaped connector instead of T (vertical line stops at header center)
@@ -1886,15 +1895,25 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 
   // Horizontal branch — fixed vertical offset so expanded rows (stored weapon below header)
-  // don't shift the branch away from the header caret.
+  // don't shift the branch away from the header caret. Same standardized reach as
+  // .contained-item::after: touches the thumbnail by default, stops short at the caret's grid
+  // column when this attachment itself is a container showing a live toggle.
   &::after {
     content: '';
     position: absolute;
     left: $tree-line-position;
     top: calc(#{$item-row-height} / 2);
-    width: calc(-5px + #{abs($tree-line-position)});
+    width: calc(#{abs($tree-line-position)} + #{$col-caret});
     height: $tree-line-thickness;
     background: $tree-line-color;
+  }
+
+  // A belt attachment (e.g. Scabbard, Dagger; Belt Pouch) uses its own .attachment-toggle
+  // class instead of .nested-container-toggle — match both so either live caret gets the
+  // same shortened connector.
+  &:has(> .item-header > a.nested-container-toggle)::after,
+  &:has(> .item-header > a.attachment-toggle)::after {
+    width: abs($tree-line-position);
   }
 
   // First/last are driven by explicit {{@first}}/{{@last}} classes from the Handlebars loop
@@ -2095,10 +2114,16 @@ li.contained-item .lashed-stored-item {
     position: absolute;
     left: $sh-l2-img;  // 92px
     top: 50%;
-    width: 24px;  // 116px content start − 92px line position
+    width: 24px;  // 116px content start − 92px line position — full length by default (no caret to clear)
     height: $tree-line-thickness;
     background: $tree-line-color;
     pointer-events: none;
+  }
+
+  // When this row actually shows a live caret (it's itself a container, e.g. a Coin Purse),
+  // stop the connector short at the toggle column instead of running through the icon.
+  &:has(> a.nested-container-toggle)::after {
+    width: 6px;  // 98px toggle column start − 92px line position
   }
 
   > * {
@@ -2150,6 +2175,87 @@ li.contained-item .lashed-stored-item {
 // next sibling is specifically another .lashed-sub-stored-item, so the line only continues
 // while there's more of the same sack's contents to reach, and stops cleanly at the true last one.
 .lashed-sub-stored-item:has(+ .lashed-sub-stored-item)::before {
+  bottom: 0;
+}
+
+// Item row nested inside a container that's itself inside a lashed attachment (L4: e.g. Silver
+// Coins inside a Coin Purse inside a lashed Sack). Branch line anchors at $sh-l3-img (140px) —
+// center of the L3 row's own image — one indent step deeper than .lashed-sub-stored-item, same
+// +48px-per-level pattern used going from L2 to L3. Data columns (qty/sSize/tWT/WT/controls)
+// stay at the same fixed positions as every other level; only image/name indent further.
+.lashed-deep-stored-item {
+  position: relative;
+  padding-left: 164px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: $image-size + $item-padding-y * 2;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: $sh-l3-img;  // 140px — center of parent (L3) row's own image
+    top: 0;
+    bottom: 50%;
+    width: $tree-line-thickness;
+    background: $tree-line-color;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: $sh-l3-img;  // 140px
+    top: 50%;
+    width: 24px;  // 164px content start − 140px line position — full length by default (no caret to clear)
+    height: $tree-line-thickness;
+    background: $tree-line-color;
+    pointer-events: none;
+  }
+
+  // When this row actually shows a live caret (it's itself a container), stop the connector
+  // short at the toggle column instead of running through the icon.
+  &:has(> a.nested-container-toggle)::after {
+    width: 6px;  // 146px toggle column start − 140px line position
+  }
+
+  > * {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    width: auto;
+    min-width: 0;
+  }
+
+  // First child is the (always hidden, for now — no fifth level is built yet) toggle
+  // placeholder, kept purely for column-count/alignment consistency with the tier above.
+  > :nth-child(1) { left: 146px; width: $col-caret; }
+  > :nth-child(2) { left: 164px; width: $l2-col-image; }
+  > :nth-child(3) { left: $sh-l2-name + 96px; width: $l2-col-name - 96px + 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  > :nth-child(4) { left: $sh-l2-qty;   transform: translateX(-50%); justify-content: center; }
+  > :nth-child(5) { left: $sh-l2-ssize; transform: translateX(-50%); justify-content: center; }
+  > :nth-child(6) { left: $sh-l2-twt;   transform: translateX(-50%); justify-content: center; }
+  > :nth-child(7) { left: $sh-l2-wt;    transform: translateX(-50%); justify-content: center; }
+  > :nth-child(8) { left: $sh-l2-controls; right: auto; width: $l2-col-controls; justify-content: flex-end; }
+
+  .item-image {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .item-name.stored-weapon-name { font-size: $font-nested-item; }
+  .field-short { font-size: $font-nested-item; }
+}
+
+// Consecutive items inside the same nested container (e.g. Silver Coins, Gold Coins both
+// inside one Coin Purse) — same flat-siblings tree-line extension as the tier above.
+.lashed-deep-stored-item:has(+ .lashed-deep-stored-item)::before {
   bottom: 0;
 }
 

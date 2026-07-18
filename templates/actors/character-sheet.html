@@ -1746,6 +1746,9 @@
                       {{/if}}
                       <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                       <h4 class="item-name" title="{{item.name}}" data-item-id="{{item.id}}">{{item.name}}</h4>
+                      {{#if item.system.hideCapacity}}
+                      <div class="field-short"></div>
+                      {{else}}
                       {{#if item.hasStoredContent}}
                       <div class="field-short capacity-bar-cell">
                         <div class="capacity-bar-background" style="--capacity-progress: {{item.slingCapacityPercentage}}%;">
@@ -1755,6 +1758,7 @@
                       </div>
                       {{else}}
                       <div class="field-short">{{item.system.quantity}}</div>
+                      {{/if}}
                       {{/if}}
                       <div class="field-short">{{displaySize item.system "—"}}</div>
                       <div class="field-short">{{item.displayWeight}}</div>

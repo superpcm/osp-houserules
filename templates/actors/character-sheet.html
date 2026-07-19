@@ -1693,7 +1693,7 @@
             <div class="item-roll-icon"></div>
             <div class="category-name">Gear</div>
             <div class="field-short"></div>
-            <div class="field-short">Capacity</div>
+            <div class="field-short">Qty</div>
             <div class="field-short">sSize</div>
             <div class="field-short">tWT</div>
             <div class="field-short">WT</div>
@@ -1715,7 +1715,7 @@
                   </a>
                   <div class="item-image slung-header-image" style="background-image: url('systems/osp-houserules/assets/thumbs/images/misc/slung_thumb.webp');"></div>
                   <h4 class="item-name">Slung Items</h4>
-                  <div class="field-short capacity-bar-cell"></div>
+                  <div class="field-short"></div>
                   <div class="field-short">N/A</div>
                   <div class="field-short">{{slungTotalWeight}}</div>
                   <div class="field-short"></div>
@@ -1727,7 +1727,7 @@
                   <div class="container-items-subheader slung-subheader">
                     <div class="subheader-col subheader-img"></div>
                     <div class="subheader-col subheader-name">Item</div>
-                    <div class="subheader-col subheader-qty">Capacity</div>
+                    <div class="subheader-col subheader-qty">Qty</div>
                     <div class="subheader-col subheader-size">sSize</div>
                     <div class="subheader-col subheader-twt">tWT</div>
                     <div class="subheader-col subheader-wt">WT</div>
@@ -1744,18 +1744,21 @@
                       {{else}}
                       <span class="attachment-toggle-placeholder"></span>
                       {{/if}}
+                      {{#if item.system.hideCapacity}}
                       <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                      {{else}}
+                      {{#if item.hasStoredContent}}
+                      <div class="item-image capacity-ring" style="background-image: url('{{item.img}}'); --capacity-progress: {{item.slingCapacityPercentage}};" title="{{item.slingUsedCapacity}}/1"></div>
+                      {{else}}
+                      <div class="item-image" style="background-image: url('{{item.img}}');"></div>
+                      {{/if}}
+                      {{/if}}
                       <h4 class="item-name" title="{{item.name}}" data-item-id="{{item.id}}">{{item.name}}</h4>
                       {{#if item.system.hideCapacity}}
                       <div class="field-short"></div>
                       {{else}}
                       {{#if item.hasStoredContent}}
-                      <div class="field-short capacity-bar-cell">
-                        <div class="capacity-bar-background" style="--capacity-progress: {{item.slingCapacityPercentage}}%;">
-                          <div class="capacity-bar-fill"></div>
-                          <span class="capacity-value">{{item.slingUsedCapacity}}/1</span>
-                        </div>
-                      </div>
+                      <div class="field-short"></div>
                       {{else}}
                       <div class="field-short">{{item.system.quantity}}</div>
                       {{/if}}
@@ -1879,28 +1882,17 @@
                     <i class="fas fa-caret-down"></i>
                   </span>
                   {{/if}}
-                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
-                  <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   {{#if item.system.capacity}}{{#unless item.system.hideCapacity}}
-                  <div class="field-short capacity-bar-cell">
-                    <div class="capacity-bar-background" style="--capacity-progress: {{item.capacityPercentage}}%;">
-                      <div class="capacity-bar-fill"></div>
-                      <span class="capacity-value">{{item.remainingCapacity}}</span>
-                    </div>
-                  </div>
+                  <div class="item-image capacity-ring" style="background-image: url('{{item.img}}'); --capacity-progress: {{item.capacityPercentage}};" title="{{item.capacityLabel}}"></div>
                   {{else}}
-                  <div class="field-short">—</div>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   {{/unless}}
                   {{else if item.lashSlots}}
-                  <div class="field-short capacity-bar-cell">
-                    <div class="capacity-bar-background" style="--capacity-progress: {{item.lashSlotPercentage}}%;">
-                      <div class="capacity-bar-fill"></div>
-                      <span class="capacity-value">{{item.usedLashSlots}}/{{item.lashSlots}}</span>
-                    </div>
-                  </div>
+                  <div class="item-image capacity-ring" style="background-image: url('{{item.img}}'); --capacity-progress: {{item.lashSlotPercentage}};" title="{{item.usedLashSlots}}/{{item.lashSlots}}"></div>
                   {{else}}
-                  <div class="field-short">—</div>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   {{/if}}
+                  <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.totalWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
@@ -2058,17 +2050,14 @@
                         {{else}}
                         <span class="attachment-toggle-placeholder"></span>
                         {{/if}}
-                        <div class="item-image" style="background-image: url('{{attachment.img}}');"></div>
-                        <h4 class="item-name" title="{{attachment.name}}" data-item-id="{{attachment.id}}">{{attachment.name}}</h4>
                         {{#if attachment.system.capacity}}{{#unless attachment.system.hideCapacity}}
-                        <div class="field-short capacity-bar-cell">
-                          <div class="capacity-bar-background" style="--capacity-progress: {{attachment.capacityPercentage}}%;">
-                            <div class="capacity-bar-fill"></div>
-                            <span class="capacity-value">{{attachment.remainingCapacity}}</span>
-                          </div>
-                        </div>
-                        {{else}}<div class="field-short"></div>
-                        {{/unless}}{{else}}<div class="field-short"></div>{{/if}}
+                        <div class="item-image capacity-ring" style="background-image: url('{{attachment.img}}'); --capacity-progress: {{attachment.capacityPercentage}};" title="{{attachment.capacityLabel}}"></div>
+                        {{else}}
+                        <div class="item-image" style="background-image: url('{{attachment.img}}');"></div>
+                        {{/unless}}{{else}}
+                        <div class="item-image" style="background-image: url('{{attachment.img}}');"></div>
+                        {{/if}}
+                        <h4 class="item-name" title="{{attachment.name}}" data-item-id="{{attachment.id}}">{{attachment.name}}</h4>
                         <div class="field-short">{{displaySize attachment.system "—"}}</div>
                         <div class="field-short">{{attachment.totalWeight}}</div>
                         <div class="field-short">{{attachment.displayWeight}}</div>
@@ -2301,18 +2290,12 @@
                   <a class="container-toggle">
                     <i class="fas {{#if item.collapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
                   </a>
-                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
-                  <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   {{#unless item.system.hideCapacity}}
-                  <div class="field-short capacity-bar-cell">
-                    <div class="capacity-bar-background" style="--capacity-progress: {{item.capacityPercentage}}%;">
-                      <div class="capacity-bar-fill"></div>
-                      <span class="capacity-value">{{item.remainingCapacity}}</span>
-                    </div>
-                  </div>
+                  <div class="item-image capacity-ring" style="background-image: url('{{item.img}}'); --capacity-progress: {{item.capacityPercentage}};" title="{{item.capacityLabel}}"></div>
                   {{else}}
-                  <div class="field-short">—</div>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   {{/unless}}
+                  <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.totalWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
@@ -2567,7 +2550,7 @@
             <div class="item-roll-icon"></div>
             <div class="category-name">Vehicles</div>
             <div class="field-short"></div>
-            <div class="field-short">Capacity</div>
+            <div class="field-short"></div>
             <div class="field-short">sSize</div>
             <div class="field-short">tWT</div>
             <div class="field-short">WT</div>
@@ -2585,18 +2568,12 @@
                   <a class="container-toggle">
                     <i class="fas {{#if item.collapsed}}fa-caret-right{{else}}fa-caret-down{{/if}}"></i>
                   </a>
-                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
-                  <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   {{#unless item.system.hideCapacity}}
-                  <div class="field-short capacity-bar-cell">
-                    <div class="capacity-bar-background" style="--capacity-progress: {{item.capacityPercentage}}%;">
-                      <div class="capacity-bar-fill"></div>
-                      <span class="capacity-value">{{item.remainingCapacity}}</span>
-                    </div>
-                  </div>
+                  <div class="item-image capacity-ring" style="background-image: url('{{item.img}}'); --capacity-progress: {{item.capacityPercentage}};" title="{{item.capacityLabel}}"></div>
                   {{else}}
-                  <div class="field-short">—</div>
+                  <div class="item-image" style="background-image: url('{{item.img}}');"></div>
                   {{/unless}}
+                  <h4 class="item-name" title="{{item.name}}">{{item.name}}</h4>
                   <div class="field-short">{{displaySize item.system}}</div>
                   <div class="field-short">{{item.totalWeight}}</div>
                   <div class="field-short">{{item.displayWeight}}</div>
@@ -2774,15 +2751,16 @@
                         {{else}}
                         <span class="nested-container-toggle" style="visibility: hidden;"><i class="fas fa-caret-down"></i></span>
                         {{/if}}
+                        {{#if tackItem.system.capacity}}{{#unless tackItem.system.hideCapacity}}
+                        <div class="item-image capacity-ring" style="background-image: url('{{tackItem.img}}'); --capacity-progress: {{tackItem.capacityPercentage}};" title="{{tackItem.capacityLabel}}"></div>
+                        {{else}}
                         <div class="item-image" style="background-image: url('{{tackItem.img}}');"></div>
+                        {{/unless}}{{else}}
+                        <div class="item-image" style="background-image: url('{{tackItem.img}}');"></div>
+                        {{/if}}
                         <h4 class="item-name" title="{{tackItem.name}}">{{tackItem.name}}</h4>
                         {{#if tackItem.system.capacity}}{{#unless tackItem.system.hideCapacity}}
-                        <div class="field-short capacity-bar-cell">
-                          <div class="capacity-bar-background" style="--capacity-progress: {{tackItem.capacityPercentage}}%;">
-                            <div class="capacity-bar-fill"></div>
-                            <span class="capacity-value">{{tackItem.remainingCapacity}}</span>
-                          </div>
-                        </div>
+                        <div class="field-short"></div>
                         {{else}}<div class="field-short quantity">{{tackItem.system.quantity}}</div>
                         {{/unless}}{{else}}<div class="field-short quantity">{{tackItem.system.quantity}}</div>{{/if}}
                         <div class="field-short">{{displaySize tackItem.system}}</div>
@@ -2833,7 +2811,13 @@
                         {{#each tackItem.lashedItems as |lashedItem|}}
                         <div class="lashed-attachment{{#if lashedItem.isFirstLashedAttachment}} first-lashed-attachment{{/if}}{{#if lashedItem.isLastLashedAttachment}} last-lashed-attachment{{/if}}" data-item-id="{{lashedItem.id}}">
                           <div class="item-header flexrow lashed-stored-item" data-item-id="{{lashedItem.id}}">
+                            {{#if lashedItem.system.capacity}}{{#unless lashedItem.system.hideCapacity}}
+                            <div class="item-image capacity-ring" style="background-image: url('{{lashedItem.img}}'); --capacity-progress: {{lashedItem.capacityPercentage}};" title="{{lashedItem.capacityLabel}}"></div>
+                            {{else}}
                             <div class="item-image" style="background-image: url('{{lashedItem.img}}');"></div>
+                            {{/unless}}{{else}}
+                            <div class="item-image" style="background-image: url('{{lashedItem.img}}');"></div>
+                            {{/if}}
                             <h4 class="item-name stored-weapon-name" title="{{lashedItem.name}}">{{lashedItem.name}}</h4>
                             <div class="field-short"></div>
                             <div class="field-short">{{displaySize lashedItem.system "—"}}</div>

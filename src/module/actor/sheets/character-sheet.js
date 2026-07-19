@@ -362,6 +362,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         
         item.remainingCapacity = Math.round((capacity - usedCapacity) * 10) / 10;
         item.capacityPercentage = capacity > 0 ? Math.round((usedCapacity / capacity) * 100) : 0;
+        item.capacityLabel = `${Math.round(usedCapacity * 10) / 10}/${capacity}`;
         item.collapsed = this.actor.getFlag('osp-houserules', `container-${item.id}-collapsed`) ?? true;
       }
 
@@ -437,6 +438,7 @@ export class OspActorSheetCharacter extends ActorSheet {
             const usedCap = allStored.reduce((sum, i) => sum + (parseFloat(i.system.storedSize) || 0) * (i.system.quantity || 1), 0);
             c.remainingCapacity = Math.round((cap - usedCap) * 10) / 10;
             c.capacityPercentage = Math.round((usedCap / cap) * 100);
+            c.capacityLabel = `${Math.round(usedCap * 10) / 10}/${cap}`;
           }
         });
         item.lashedItems = lashedAttachments;
@@ -633,9 +635,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       
       containerData.maxCapacity = maxCapacity;
       containerData.remainingCapacity = Math.round(Math.max(0, containerData.maxCapacity - containerData.usedCapacity) * 100) / 100;
-      containerData.capacityPercentage = containerData.maxCapacity > 0 
-        ? Math.min(100, (containerData.usedCapacity / containerData.maxCapacity) * 100) 
+      containerData.capacityPercentage = containerData.maxCapacity > 0
+        ? Math.min(100, (containerData.usedCapacity / containerData.maxCapacity) * 100)
         : 0;
+      containerData.capacityLabel = `${containerData.usedCapacity}/${containerData.maxCapacity}`;
       
       // Calculate lash slot usage
       const lashSlots = container.system.lashSlots || 0;
@@ -741,6 +744,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           const usedCapacity = subItems.reduce((sum, si) => sum + (parseFloat(si.system.storedSize) || 0) * (si.system.quantity || 1), 0);
           t.remainingCapacity = Math.round(Math.max(0, (t.system.capacity || 0) - usedCapacity) * 100) / 100;
           t.capacityPercentage = t.system.capacity ? Math.min(100, Math.round((usedCapacity / t.system.capacity) * 100)) : 0;
+          t.capacityLabel = `${Math.round(usedCapacity * 10) / 10}/${t.system.capacity || 0}`;
 
           // Items lashed to t's own lash slots (e.g. Scabbard, Sword / Baldric lashed to a
           // Saddle) are themselves containers holding one weapon — surface that weapon too,
@@ -774,6 +778,12 @@ export class OspActorSheetCharacter extends ActorSheet {
             });
             li.containedItems = liContents;
             li.collapsed = this.actor.getFlag('osp-houserules', `container-${li.id}-collapsed`) ?? false;
+            // Capacity for the lashed item itself (e.g. Sack lashed to a Saddle's lash slots) —
+            // separate from the Saddle's own lashSlots capacity computed above.
+            const liUsedCapacity = liContents.reduce((sum, ci) => sum + (parseFloat(ci.system.storedSize) || 0) * (ci.system.quantity || 1), 0);
+            li.remainingCapacity = Math.round(Math.max(0, (li.system.capacity || 0) - liUsedCapacity) * 100) / 100;
+            li.capacityPercentage = li.system.capacity ? Math.min(100, Math.round((liUsedCapacity / li.system.capacity) * 100)) : 0;
+            li.capacityLabel = `${Math.round(liUsedCapacity * 10) / 10}/${li.system.capacity || 0}`;
             // Explicit first/last flags for the tree-line CSS — the .lashed-attachment wrapper's
             // trunk needs to know whether it's the last attachment to know where to stop, and
             // Handlebars' {{@last}} inside this doubly-nested each (tackItem -> lashedItem) isn't
@@ -4825,8 +4835,11 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _handleCoinDrop(item, itemData, targetContainer, isReordering) {
     const currentQuantity = itemData.system.quantity || 0;
 
-    // A single coin has no quantity to choose — move/add it directly, no dialog needed.
-    if (currentQuantity <= 1) {
+    // Reordering an existing stack already down to a single coin has no quantity to choose —
+    // move it directly. A coin dropped from outside (sidebar, compendium, another actor) always
+    // prompts even when its quantity reads 1 — that's just the item template's default starting
+    // value, not a real "down to my last coin" state, so the user still needs to say how many.
+    if (isReordering && currentQuantity <= 1) {
       return this._resolveCoinMove(item, itemData, targetContainer, currentQuantity || 1);
     }
 

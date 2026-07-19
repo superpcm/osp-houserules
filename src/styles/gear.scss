@@ -71,6 +71,16 @@ $gear-containers-col-image: 48px;       // Width of container image
 $gear-containers-col-name: 217.5px;     // Width of name column
 $gear-containers-col-qty: 60px;         // Width of quantity column
 $gear-containers-col-capacity: 112.5px; // Width of capacity column — 75% of the original 150px; freed space goes to $gear-containers-col-name above, not to shrinking the row
+// Still referenced by the Slung Items grid (dual-purpose Qty/capacity column, kept at this
+// width for visual consistency) and by the belt-attachment/slung-item name-widening math below,
+// even though the container/vehicle/belt rows above no longer use it as a separate grid track.
+// Capacity ring fill color is computed from --capacity-progress (green→yellow→red), not a
+// fixed value — see .item-image.capacity-ring::after below. Track must be fully OPAQUE (not
+// translucent): it's layered on top of the rainbow gradient to mask out the unfilled portion,
+// and a translucent top layer would let the rainbow bleed through underneath instead of hiding
+// it. The ring's overall 70% transparency is applied separately via `opacity` on the whole
+// pseudo-element, after this masking has already happened.
+$capacity-ring-track: #8a6a4f;                // Capacity ring — empty (remaining) portion
 $gear-containers-col-storedsize: 80px;  // Width of storedSize column
 $gear-containers-col-twt: 51px;        // Width of total weight (tWT) column
 $gear-containers-col-weight: 78px;      // Width of weight column
@@ -740,50 +750,51 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   justify-self: center;  // Center the field within its grid column
 }
 
-// Capacity bar styling for containers - matches XP progress bar
-.capacity-bar-cell {
-  padding: 0 !important;  // Remove padding to use full cell width
-  justify-self: center;  // Center the capacity bar within its grid column
-  width: $gear-containers-col-capacity;
-  min-width: $gear-containers-col-capacity;
-  max-width: $gear-containers-col-capacity;
-}
-
-.capacity-bar-background {
+// Capacity ring — a thin ring drawn around an item's icon (.item-image.capacity-ring) showing
+// used/max capacity via conic-gradient sweep. Replaces the old separate capacity-bar column;
+// exact "used/max" values are available via the element's title attribute (native tooltip).
+// --capacity-progress is a unitless 0-100 number (not a percentage string). The ring is two
+// stacked conic-gradients: a fixed green→yellow→red rainbow underneath (always spans the full
+// circle so the color at a given angle is stable regardless of fill), and a mask layer on top
+// that's transparent up to the fill point (revealing the rainbow) and flat track-color beyond it
+// (covering the unfilled remainder) — clamped to 100 so overfull containers (unclamped
+// capacityPercentage can exceed 100) show a fully-revealed ring instead of wrapping past a full turn.
+.item-image.capacity-ring {
   position: relative;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  background-image: url('../assets/character-sheet/capacity-back.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border: 1px solid #000000;
-  border-radius: 3px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.capacity-bar-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: var(--capacity-progress, 0%);
-  background: rgba(44, 24, 16, 0.2);  // Same color as XP progress bar
-  transition: width 0.3s ease;
+// .item-image gains position:relative above for the ring's ::after — that promotes it into its
+// own stacking context, which (regardless of DOM order) paints above the still-static .item-name
+// sibling, letting the ring's outward bleed cover the first letter or two of the name. Scoped to
+// rows with a ring (not all .item-name globally) to avoid touching stacking anywhere else.
+// margin-left nudges the text clear of the ring's outward bleed without affecting the grid
+// track's own width, so later columns (sSize/tWT/WT) don't shift.
+.item-header:has(.capacity-ring) .item-name {
+  position: relative;
   z-index: 1;
-  border-radius: 3px;
+  margin-left: 5px;
 }
 
-.capacity-value {
-  position: relative;
-  z-index: 2;
-  font-size: 24px;
-  color: #4B4B4B;
-  font-weight: normal;
+.item-image.capacity-ring::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  opacity: 0.6;
+  background:
+    conic-gradient(
+      transparent calc(min(var(--capacity-progress, 0), 100) * 1%),
+      $capacity-ring-track calc(min(var(--capacity-progress, 0), 100) * 1%)
+    ),
+    conic-gradient(
+      hsl(120deg 70% 42%) 0%,
+      hsl(60deg 70% 42%) 50%,
+      hsl(0deg 70% 42%) 100%
+    );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  pointer-events: none;
+  transition: background 0.3s ease;
 }
 
 .field-long {
@@ -998,7 +1009,10 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   &.container-header {
     width: 697px;
     box-sizing: border-box;
-    grid-template-columns: $col-caret $gear-containers-col-image $gear-containers-col-name $gear-containers-col-capacity $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $gear-containers-col-controls;
+    // Capacity is now shown as a ring around the item icon (see .capacity-ring), not a separate
+    // column — its old track width is folded into name so sSize/tWT/WT/controls stay exactly
+    // where they were (same technique as the belt-attachment/slung-item name-widening below).
+    grid-template-columns: $col-caret $gear-containers-col-image ($gear-containers-col-name + $gear-containers-col-capacity) $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $gear-containers-col-controls;
     margin-left: $container-left-shift;
   }
 
@@ -2009,11 +2023,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     max-width: 638px; /* Parent width (698px) minus indent (60px) */
     box-sizing: border-box;
-    // capacity col = $gear-containers-col-capacity (112.5px, 75% of the original 150px); name
-    // gets a local +37.5px (not the shared $nested-col-name, which other non-capacity rows like
-    // Crowbar/Bedroll also use) to absorb exactly what capacity gave up, keeping this row's total
-    // width and right-edge controls position identical to before.
-    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px + 37.5px) $gear-containers-col-capacity $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+    // Capacity is now a ring around the item icon (see .capacity-ring), not a separate column.
+    // Name gets a local +37.5px (not the shared $nested-col-name, which other non-capacity rows
+    // like Crowbar/Bedroll also use) plus the folded-in $gear-containers-col-capacity (112.5px,
+    // 75% of the original 150px), keeping this row's total width and right-edge controls
+    // position identical to before.
+    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px + 37.5px + $gear-containers-col-capacity) $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
   }
 
   .item-name {

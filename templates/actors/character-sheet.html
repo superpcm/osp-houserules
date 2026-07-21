@@ -1693,7 +1693,7 @@
             <div class="item-roll-icon"></div>
             <div class="category-name">Gear</div>
             <div class="field-short"></div>
-            <div class="field-short">Qty</div>
+            <div class="field-short"></div>
             <div class="field-short">sSize</div>
             <div class="field-short">tWT</div>
             <div class="field-short">WT</div>
@@ -1727,7 +1727,7 @@
                   <div class="container-items-subheader slung-subheader">
                     <div class="subheader-col subheader-img"></div>
                     <div class="subheader-col subheader-name">Item</div>
-                    <div class="subheader-col subheader-qty">Qty</div>
+                    <div class="subheader-col subheader-qty"></div>
                     <div class="subheader-col subheader-size">sSize</div>
                     <div class="subheader-col subheader-twt">tWT</div>
                     <div class="subheader-col subheader-wt">WT</div>
@@ -1754,15 +1754,7 @@
                       {{/if}}
                       {{/if}}
                       <h4 class="item-name" title="{{item.name}}" data-item-id="{{item.id}}">{{item.name}}</h4>
-                      {{#if item.system.hideCapacity}}
                       <div class="field-short"></div>
-                      {{else}}
-                      {{#if item.hasStoredContent}}
-                      <div class="field-short"></div>
-                      {{else}}
-                      <div class="field-short">{{item.system.quantity}}</div>
-                      {{/if}}
-                      {{/if}}
                       <div class="field-short">{{displaySize item.system "—"}}</div>
                       <div class="field-short">{{item.displayWeight}}</div>
                       <div class="field-short">{{item.unitWeight}}</div>
@@ -1784,7 +1776,7 @@
                     <div class="container-items-subheader slung-stored-subheader">
                       <div class="subheader-col subheader-img"></div>
                       <div class="subheader-col subheader-name">Item</div>
-                      <div class="subheader-col subheader-qty">Qty</div>
+                      <div class="subheader-col subheader-qty"></div>
                       <div class="subheader-col subheader-size">sSize</div>
                       <div class="subheader-col subheader-twt">tWT</div>
                       <div class="subheader-col subheader-wt">WT</div>
@@ -1795,7 +1787,7 @@
                     <div class="item-header flexrow lashed-stored-item {{#if item.storedWeapon.system.equipped}}weapon-drawn{{/if}}" data-item-id="{{item.storedWeapon.itemId}}">
                       <div class="item-image" style="background-image: url('{{item.storedWeapon.img}}');"></div>
                       <h4 class="item-name stored-weapon-name" title="{{item.storedWeapon.name}}" data-item-id="{{item.storedWeapon.itemId}}">{{item.storedWeapon.name}}</h4>
-                      <div class="field-short">{{item.storedWeapon.system.quantity}}</div>
+                      <div class="field-short"></div>
                       <div class="field-short">{{displaySize item.storedWeapon.system "—"}}</div>
                       <div class="field-short">{{item.storedWeapon.displayWeight}}</div>
                       <div class="field-short">{{item.storedWeapon.unitWeight}}</div>

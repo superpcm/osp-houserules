@@ -649,7 +649,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   // child 1: roll-icon placeholder (occupies same width as $col-caret for alignment)
   > :nth-child(2) { left: col-start($col-caret, $gear-containers-col-image); transform: none; }  // "Gear" / "Vehicles"
   > :nth-child(3) { left: 0; }  // empty cell
-  > :nth-child(4) { left: col-center($gear-containers-col-capacity,   $col-caret, $gear-containers-col-image, $gear-containers-col-name); }  // "Capacity"
+  > :nth-child(4) { left: col-center($gear-containers-col-capacity,   $col-caret, $gear-containers-col-image, $gear-containers-col-name); }  // "Qty"
   > :nth-child(5) { left: col-center($gear-containers-col-storedsize, $col-caret, $gear-containers-col-image, $gear-containers-col-name, $gear-containers-col-capacity); }  // "sSize"
   > :nth-child(6) { left: col-center($gear-containers-col-twt,        $col-caret, $gear-containers-col-image, $gear-containers-col-name, $gear-containers-col-capacity, $gear-containers-col-storedsize); }  // "tWT"
   > :nth-child(7) { left: col-center($gear-containers-col-weight,     $col-caret, $gear-containers-col-image, $gear-containers-col-name, $gear-containers-col-capacity, $gear-containers-col-storedsize, $gear-containers-col-twt); }  // "WT"
@@ -1866,24 +1866,22 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 
   // Belt direct subheader — 7 cols (merged 68px toggle+img, + tWT between sSize and WT)
-  // sSize/tWT/WT now reuse $sh-ssize/twt/wt directly (the Vehicles/contained-item reference
-  // positions), not $sh-l2-*, per explicit request that Gear's columns match Vehicles' exactly.
+  // sSize/tWT/WT reuse $sh-l2-*, not $sh-belt-*, so this bar's labels stay lined up with the
+  // Belt L2 subheader directly below it (both now read the post-Grid-conversion positions) —
+  // this row's own sSize/tWT/WT data cells sit ~9px off from these labels as a result, a much
+  // less noticeable mismatch than two adjacent label bars visibly not lining up with each other.
   > .container-items-subheader {
     margin-left: 0;
     width: 100%;
     > :nth-child(1) { left: $sh-belt-img; }
     > :nth-child(2) { left: $sh-belt-name; }
     > :nth-child(3) { left: calc(#{$nested-col-image} + #{$nested-col-name} + 37.5px + #{$gear-containers-col-capacity} / 2); } // capacity col center — matches the data row's local +37.5px name-column widening
-    > :nth-child(4) { left: $sh-ssize; }
-    > :nth-child(5) { left: $sh-twt; }
-    > :nth-child(6) { left: $sh-wt; }
+    > :nth-child(4) { left: $sh-l2-ssize; }
+    > :nth-child(5) { left: $sh-l2-twt; }
+    > :nth-child(6) { left: $sh-l2-wt; }
   }
 
-  // Belt L2 subheader — starts at 68px (image column left edge); child lefts are offset by -68px.
-  // Qty/sSize/tWT/WT reuse $sh-qty/ssize/twt/wt directly (Vehicles/contained-item reference
-  // positions) instead of the drifted $sh-l2-* values, so a belt attachment's own contents (e.g.
-  // Silver/Gold/Copper Coins in a Coin Purse) line up with Vehicles' contained items (e.g.
-  // Crowbar/Bedroll in a Cart) column-for-column, per explicit request.
+  // Belt L2 subheader — starts at 68px (image column left edge); child lefts are offset by -68px
   .lashed-item .container-items-subheader {
     margin-left: 68px;
     width: calc(100% - 68px);
@@ -2040,11 +2038,9 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     width: 100%;
     max-width: 638px; /* Parent width (698px) minus indent (60px) */
     box-sizing: border-box;
-    // Capacity is now a ring around the item icon (see .capacity-ring), not a separate column.
-    // Name gets a local +37.5px (not the shared $nested-col-name, which other non-capacity rows
-    // like Crowbar/Bedroll also use) plus the folded-in $gear-containers-col-capacity (112.5px,
-    // 75% of the original 150px), keeping this row's total width and right-edge controls
-    // position identical to before.
+    // Capacity is now a ring around the item icon (see .capacity-ring), not a separate
+    // column — its old track width is folded into name so sSize/tWT/WT/controls stay exactly
+    // where they were (same technique as the belt-attachment/slung-item name-widening below).
     grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px + 37.5px + $gear-containers-col-capacity) $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
   }
 
@@ -2378,6 +2374,42 @@ li.contained-item .lashed-stored-item {
   bottom: 0;
 }
 
+// Livestock Tack items (e.g. Rope/Rations/Garlic/Coin Purse inside a Sack lashed to a Saddle,
+// Silver Coins inside that Coin Purse) reuse .lashed-stored-item/.lashed-sub-stored-item/
+// .lashed-deep-stored-item for their rows, but the Gear section's qty/sSize/tWT/WT tracks on
+// those classes were tuned for the Gear/Vehicles column scheme. Livestock's own header has a
+// completely different layout (Qty/MV/AC/HD before sSize), so those tracks land in the wrong
+// place under a Livestock ancestor. Trailing tracks below reuse the same width constants as the
+// Livestock header's own sSize/tWT/WT so they land in the same place; only the leading
+// (indent/toggle/image/name) tracks are widened or narrowed per tier so qty starts at the same
+// absolute point regardless of nesting depth.
+//
+// sSize's start position ($liv-ssize-start) is the fixed anchor. Qty gets its own narrower
+// track (30px — plenty for 1-3 digit stack counts) instead of reusing the header's 50px Qty
+// column width; the 20px this frees up goes entirely to the name column at every tier, since
+// deeply-nested names (e.g. "Silver Coins", "Rations, Standard") were truncating badly. Total
+// row width is unchanged (630px), so max-width below doesn't need to change either.
+$liv-ssize-start: 335px;
+$liv-qty-track: 30px;
+$liv-l2-name-track: ($liv-ssize-start - $liv-qty-track) - $l2-indent-track - $l2-image-track;
+$liv-l3-name-track: ($liv-ssize-start - $liv-qty-track) - 98px - $col-caret - $l2-image-track;
+$liv-l4-name-track: ($liv-ssize-start - $liv-qty-track) - 146px - $col-caret - $l2-image-track;
+
+// li.contained-item .lashed-stored-item (above) has (0,0,2,1) specificity — one class-only
+// selector can't outrank it, hence the extra "li" here to tie and win on source order.
+li.livestock-entry .lashed-stored-item {
+  grid-template-columns: $l2-indent-track $l2-image-track $liv-l2-name-track $liv-qty-track $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $l2-col-controls;
+  max-width: 630px;
+}
+
+.livestock-entry .lashed-sub-stored-item {
+  grid-template-columns: 98px $col-caret $l2-image-track $liv-l3-name-track $liv-qty-track $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $l2-col-controls;
+}
+
+.livestock-entry .lashed-deep-stored-item {
+  grid-template-columns: 146px $col-caret $l2-image-track $liv-l4-name-track $liv-qty-track $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $l2-col-controls;
+}
+
 // Wraps one tack-lashed attachment (e.g. a Sack lashed to a Saddle) plus its own contained
 // items (.lashed-stored-item header + any .lashed-sub-stored-item contents) so a single trunk
 // line can span the whole group — including however many contents rows it has — and connect
@@ -2439,14 +2471,6 @@ li.contained-item .lashed-stored-item {
   width: calc(100% - #{$nested-indent});
 }
 
-// Where a slung-item's own header controls column begins — derived from the exact same
-// variables as that header's grid-template-columns below, so the stored-item row's controls
-// column (which needs to align with it) stays in sync if those widths ever change.
-$slung-controls-left: col-start(18px, $nested-col-image, ($nested-col-name - 18px + 37.5px), $gear-containers-col-capacity, $nested-col-storedsize, $nested-col-twt, $nested-col-weight);
-// Extra Grid track absorbing the gap between the L2 stored-item row's own wt-track end and
-// $slung-controls-left — normally invisible; recomputes automatically if either grid changes.
-$slung-l2-spacer: $slung-controls-left - ($l2-indent-track + $l2-image-track + $l2-name-track + $l2-qty-track + $l2-ssize-track + $l2-twt-track + $l2-wt-track);
-
 // Each slung item row
 .slung-item {
   position: relative;
@@ -2457,9 +2481,11 @@ $slung-l2-spacer: $slung-controls-left - ($l2-indent-track + $l2-image-track + $
   // conversion, when its children were position:absolute and ignored grid-template-columns
   // entirely; now that they're real Grid items, it broke image/name/data-column placement).
   > .item-header:not(.lashed-stored-item) {
-    // Name gets a local +37.5px (not the shared $nested-col-name, also used by non-capacity rows
-    // like Battle Axe's own stored-item subheader) to absorb what the capacity column gave up.
-    grid-template-columns: 18px $nested-col-image ($nested-col-name - 18px + 37.5px) $gear-containers-col-capacity $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
+    // sSize/tWT/WT were already correctly at $sh-ssize/twt/wt (376/442/508) here — only Qty was
+    // off (was centered at 279.75px, not $sh-qty's 310px). Name/Qty now use $contained-col-name/
+    // $contained-col-qty (218/52, same combined 270px as before: 157.5+112.5 = 218+52) so Qty's
+    // center lands on 310 while sSize/tWT/WT (and the controls-start math below) stay unmoved.
+    grid-template-columns: 18px $nested-col-image $contained-col-name $contained-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
     max-width: 638px;
     box-sizing: border-box;
   }
@@ -2473,49 +2499,45 @@ $slung-l2-spacer: $slung-controls-left - ($l2-indent-track + $l2-image-track + $
     margin-left: 0;
     max-width: none;
 
-    // Controls column must align with .slung-item's own header controls column above (computed
-    // from the same $nested-col-*/$gear-containers-col-capacity variables as that header's
-    // grid-template-columns, via $slung-controls-left below) rather than the generic
-    // $l2-col-controls position — a slung item's own header total width differs slightly from
-    // a plain belt attachment's. $slung-l2-spacer is an extra, normally-invisible Grid track
-    // that absorbs the difference, so this stays in sync automatically if the header's column
-    // widths ever change instead of silently drifting out of sync again.
-    grid-template-columns: $l2-indent-track $l2-image-track $l2-name-track $l2-qty-track $l2-ssize-track $l2-twt-track $l2-wt-track $slung-l2-spacer $nested-col-controls;
-
-    > :nth-child(7) { grid-column: 9; justify-content: flex-end; }
+    // sSize/tWT/WT now match $sh-ssize/twt/wt (376/442/508) instead of the drifted base
+    // .lashed-stored-item's $l2-ssize/twt/wt — same fix, and same point-column widths, as
+    // .lashed-item .lashed-stored-item (belt attachments' own contents) above. No spacer track
+    // needed: this row's own prefix (68+50+166+52+80+52+80=548) already matches .slung-item's
+    // own header controls-start (548, unchanged by the Qty-only fix above), so controls simply
+    // follows at grid-column 8 via the base .lashed-stored-item nth-child mapping — the old
+    // explicit nth-child(7){grid-column:9} override and $slung-l2-spacer/$slung-controls-left
+    // (which existed only to bridge a gap that no longer exists) have been removed.
+    grid-template-columns: $l2-indent-track $l2-image-track 166px $contained-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls;
   }
 }
 
-// Slung-items-list subheader — labels .slung-item's own header row (unconverted, still a real
-// Grid) directly above, but sSize/tWT/WT below reuse $sh-l2-ssize/twt/wt (the converted
-// .lashed-stored-item row's positions) instead of that header's own real column centers, so this
-// bar's labels stay lined up with the Slung-item subheader directly below it. That leaves this
-// bar's labels ~9px off from its own row's data cells — a much less noticeable mismatch than two
-// adjacent label bars visibly not lining up with each other.
+// Slung-items-list subheader — labels .slung-item's own header row directly above. Qty/sSize/
+// tWT/WT now reuse $sh-qty/ssize/twt/wt directly (310/376/442/508 — the Vehicles/contained-item
+// reference), matching the Qty-only fix applied to that header row above.
 .slung-items-list .container-items-subheader {
   margin-left: 68px;
   width: calc(100% - 68px);
   box-sizing: border-box;
   > :nth-child(1) { left: $sh-l2-img - 68px; }
   > :nth-child(2) { left: $sh-l2-name - 68px; }
-  > :nth-child(3) { left: calc(#{$nested-col-image} + #{$nested-col-name} + 37.5px + #{$gear-containers-col-capacity} / 2 - 68px); } // capacity bar center — matches the data row's local +37.5px name-column widening
-  > :nth-child(4) { left: $sh-l2-ssize - 68px; }
-  > :nth-child(5) { left: $sh-l2-twt - 68px; }
-  > :nth-child(6) { left: $sh-l2-wt - 68px; }
+  > :nth-child(3) { left: $sh-qty - 68px; }
+  > :nth-child(4) { left: $sh-ssize - 68px; }
+  > :nth-child(5) { left: $sh-twt - 68px; }
+  > :nth-child(6) { left: $sh-wt - 68px; }
 }
 
-// Subheader inside a slung sling-container (above stored weapon/item rows)
-// Shares margin-left:68px with lashed-stored-item padding, children at standard $sh-l2-* positions
+// Subheader inside a slung sling-container (above stored weapon/item rows) — Qty/sSize/tWT/WT
+// now reuse $sh-qty/ssize/twt/wt directly, matching the fixed .slung-item > .lashed-stored-item above.
 .slung-item .container-items-subheader {
   margin-left: 68px;
   width: calc(100% - 68px);
   box-sizing: border-box;
   > :nth-child(1) { left: $sh-l2-img - 68px; }
   > :nth-child(2) { left: $sh-l2-name - 68px; }
-  > :nth-child(3) { left: $sh-l2-qty - 68px; }
-  > :nth-child(4) { left: $sh-l2-ssize - 68px; }
-  > :nth-child(5) { left: $sh-l2-twt - 68px; }
-  > :nth-child(6) { left: $sh-l2-wt - 68px; }
+  > :nth-child(3) { left: $sh-qty - 68px; }
+  > :nth-child(4) { left: $sh-ssize - 68px; }
+  > :nth-child(5) { left: $sh-twt - 68px; }
+  > :nth-child(6) { left: $sh-wt - 68px; }
 }
 
 // Sling section header row in the clothing/gear list

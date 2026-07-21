@@ -633,6 +633,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   margin-top: 0;
 }
 
+// 5px gap below the sticky Vehicles header so a capacity ring on the first row (e.g. Cart)
+// doesn't visually touch the header bar.
+.osp.sheet.actor .gear-scrollable-content .item-category-title.vehicles-title + .item-category {
+  margin-top: 5px;
+}
+
 // Gear Tab (character-sheet) – Gear sticky title
 // 8 children: [roll-icon placeholder]["Gear"]["" empty]["Capacity"]["sSize"]["tWT"]["WT"][controls]
 // Positions computed from container row column widths so labels align with data cells.

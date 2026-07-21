@@ -74,13 +74,9 @@ $gear-containers-col-capacity: 112.5px; // Width of capacity column — 75% of t
 // Still referenced by the Slung Items grid (dual-purpose Qty/capacity column, kept at this
 // width for visual consistency) and by the belt-attachment/slung-item name-widening math below,
 // even though the container/vehicle/belt rows above no longer use it as a separate grid track.
-// Capacity ring fill color is computed from --capacity-progress (green→yellow→red), not a
-// fixed value — see .item-image.capacity-ring::after below. Track must be fully OPAQUE (not
-// translucent): it's layered on top of the rainbow gradient to mask out the unfilled portion,
-// and a translucent top layer would let the rainbow bleed through underneath instead of hiding
-// it. The ring's overall 70% transparency is applied separately via `opacity` on the whole
-// pseudo-element, after this masking has already happened.
-$capacity-ring-track: #8a6a4f;                // Capacity ring — empty (remaining) portion
+// Capacity ring fill — the unused remainder is fully transparent (see
+// .item-image.capacity-ring::after below), so only this used-arc color needs defining.
+$capacity-ring-fill: #7a4a23;                 // Capacity ring — filled (used) portion, a complementary brown
 $gear-containers-col-storedsize: 80px;  // Width of storedSize column
 $gear-containers-col-twt: 51px;        // Width of total weight (tWT) column
 $gear-containers-col-weight: 78px;      // Width of weight column
@@ -759,12 +755,10 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Capacity ring — a thin ring drawn around an item's icon (.item-image.capacity-ring) showing
 // used/max capacity via conic-gradient sweep. Replaces the old separate capacity-bar column;
 // exact "used/max" values are available via the element's title attribute (native tooltip).
-// --capacity-progress is a unitless 0-100 number (not a percentage string). The ring is two
-// stacked conic-gradients: a fixed green→yellow→red rainbow underneath (always spans the full
-// circle so the color at a given angle is stable regardless of fill), and a mask layer on top
-// that's transparent up to the fill point (revealing the rainbow) and flat track-color beyond it
-// (covering the unfilled remainder) — clamped to 100 so overfull containers (unclamped
-// capacityPercentage can exceed 100) show a fully-revealed ring instead of wrapping past a full turn.
+// --capacity-progress is a unitless 0-100 number (not a percentage string). The used arc is
+// $capacity-ring-fill; the unused remainder is fully transparent (no track arc at all) — clamped
+// to 100 so overfull containers (unclamped capacityPercentage can exceed 100) show a
+// fully-revealed ring instead of wrapping past a full turn.
 .item-image.capacity-ring {
   position: relative;
 }
@@ -786,16 +780,11 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  opacity: 0.6;
+  opacity: 0.25;
   background:
     conic-gradient(
-      transparent calc(min(var(--capacity-progress, 0), 100) * 1%),
-      $capacity-ring-track calc(min(var(--capacity-progress, 0), 100) * 1%)
-    ),
-    conic-gradient(
-      hsl(120deg 70% 42%) 0%,
-      hsl(60deg 70% 42%) 50%,
-      hsl(0deg 70% 42%) 100%
+      $capacity-ring-fill calc(min(var(--capacity-progress, 0), 100) * 1%),
+      transparent calc(min(var(--capacity-progress, 0), 100) * 1%)
     );
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
           mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
@@ -1954,6 +1943,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+// 5px gap below the subheader so a capacity ring on the first lashed attachment (e.g. Belt
+// Pouch) doesn't visually touch the subheader bar above it.
+.container-items-subheader + .lashed-items-list {
+  margin-top: 5px;
 }
 
 // NOTE: previously added an extra $nested-indent (60px) padding-left here, pushing Bedroll/

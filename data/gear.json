@@ -56,7 +56,7 @@
       "tags": ["bulky"],
       "capacity": 4,
       "containerSize": "small",
-      "blockedTypes": ["armor", "container", "clothing", "sword", "dagger"]
+      "blockedTypes": ["armor", "container", "clothing", "sword", "dagger", "arrows", "bolts"]
     }
   },
   {
@@ -77,7 +77,7 @@
       "tags": [],
       "capacity": 2,
       "containerSize": "small",
-      "blockedTypes": ["armor", "container", "clothing", "sword", "dagger"]
+      "blockedTypes": ["armor", "container", "clothing", "sword", "dagger", "arrows", "bolts"]
     }
   },
   {

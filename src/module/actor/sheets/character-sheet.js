@@ -3604,8 +3604,8 @@ export class OspActorSheetCharacter extends ActorSheet {
   // data has been refreshed. Keyed by container name. Container.system.blockedTypes takes
   // precedence when set (after running the refresh macro), otherwise this table is the source.
   static BUILT_IN_BLOCKED_TYPES = {
-    'Belt Pouch (S)': ['armor', 'container', 'clothing', 'sword', 'dagger'],
-    'Belt Pouch (L)': ['armor', 'container', 'clothing', 'sword', 'dagger'],
+    'Belt Pouch (S)': ['armor', 'container', 'clothing', 'sword', 'dagger', 'arrows', 'bolts'],
+    'Belt Pouch (L)': ['armor', 'container', 'clothing', 'sword', 'dagger', 'arrows', 'bolts'],
     'Backpack':       ['slungable', 'sword'],
     'Sack, Small':    ['slungable'],
     'Sack, Large':    ['slungable'],
@@ -3698,6 +3698,12 @@ export class OspActorSheetCharacter extends ActorSheet {
           return `${itemData.name} belongs in a sheath, not stored in ${container.name}.`;
         if (tags.includes('slungable'))
           return `${itemData.name} must be slung, not stored in a container.`;
+        return `${itemData.name} cannot be stored in ${container.name}.`;
+      case 'ammunition':
+        if (tags.includes('arrows'))
+          return `${itemData.name} belongs in a quiver, not stored in ${container.name}.`;
+        if (tags.includes('bolts'))
+          return `${itemData.name} belongs in a bolt case, not stored in ${container.name}.`;
         return `${itemData.name} cannot be stored in ${container.name}.`;
       default:
         return `${itemData.name} cannot be stored in ${container.name}.`;

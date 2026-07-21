@@ -4996,9 +4996,12 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _handleAmmunitionDrop(item, itemData, targetContainer, isReordering) {
     const totalQuantity = itemData.system.quantity || 1;
 
-    // A single-unit stack has no quantity to choose — move/add the one unit directly, no
-    // dialog needed. The dialog only earns its keep when there's an actual split decision.
-    if (totalQuantity <= 1) {
+    // Reordering an existing stack already down to a single unit has no quantity to choose —
+    // move it directly. Ammunition dropped from outside (sidebar, compendium, another actor)
+    // always prompts even when its quantity reads 1 — that's just the item template's default
+    // starting value, not a real "down to my last arrow" state, so the user still needs to say
+    // how many (same fix as the coin-drop dialog above).
+    if (isReordering && totalQuantity <= 1) {
       return this._resolveAmmunitionMove(item, itemData, targetContainer, totalQuantity, totalQuantity, isReordering);
     }
 

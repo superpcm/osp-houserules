@@ -9,7 +9,8 @@
     "build:prod": "npm run build:css && npm run build:js && node ./scripts/strip-diagnostics.cjs",
     "build": "npm run build:css && npm run build:js",
     "watch": "rollup -c -w",
-    "test-upgrades": "node ./scripts/test-upgrade.js"
+    "test-upgrades": "node ./scripts/test-upgrade.js",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.6",
@@ -18,7 +19,8 @@
     "glob": "^11.0.3",
     "rollup": "^4.49.0",
     "rollup-plugin-typescript2": "^0.36.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "dompurify": "^3.0.0",

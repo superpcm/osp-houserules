@@ -146,7 +146,8 @@
         "lashable": false,
         "lashed": false,
         "containerId": null,
-        "slotCost": 0
+        "slotCost": 0,
+        "allowedContainers": []
       }
     },
     "weapon": {
@@ -162,6 +163,7 @@
         "tags": [],
         "melee": true,
         "missile": false,
+        "ammoTag": "",
         "slow": false,
         "range": {
           "short": 0,

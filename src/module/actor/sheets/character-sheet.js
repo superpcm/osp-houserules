@@ -8,6 +8,8 @@ import { PositionToolHandler } from './handlers/position-tool-handler.js';
 import { PortraitTool } from './portrait-tool.js';
 import { calculateMaxHP, XP_TABLES, CLASS_XP_MAPPING } from '../../../config/classes.js';
 import { externalDrag } from '../../external-drag-tracker.js';
+import { isConsumableWeapon } from '../../combat/ammo-logic.js';
+import { checkAllowedContainers } from '../../inventory/container-allowlist.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -280,11 +282,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Consumable weapons (Oil Flask, Holy Water, Darts, etc.) can be readied from containers.
     // When equipped, they appear on the combat tab and hide from their container.
-    const isConsumableWeapon = (i) => {
-      const tags = i.system?.tags || [];
-      return i.type === 'weapon' && (tags.includes('consumable') || (tags.includes('missile') && tags.includes('reload')));
-    };
-    
+
     // Filter top-level clothing items (equipped, not in containers)
     const allClothing = this.actor.items.filter(i => i.type === "clothing");
     const topLevelClothing = allClothing.filter(item => !item.system.containerId);
@@ -3408,9 +3406,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       if (!check3.allowed) { ui.notifications.error(check3.reason); return false; }
 
       // Stackable thrown weapons (consumable splash weapons, darts) use the quantity dialog
-      const tags = itemData.system.tags || [];
-      if (itemData.type === 'weapon' &&
-          (tags.includes('consumable') || (tags.includes('missile') && tags.includes('reload')))) {
+      if (isConsumableWeapon(itemData)) {
         return this._handleAmmunitionDrop(item, itemData, targetContainer, isReordering);
       }
 
@@ -3616,6 +3612,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (itemData.type === 'container' && (itemData.system?.tags || []).includes('sling')) {
       return { allowed: false, reason: `${itemData.name} cannot be stored in a container.` };
     }
+
+    // Item-side allowlist — oversized gear (Barding, Greatswords, a sword's own Scabbard) that
+    // only fits in specific named containers (e.g. Cart/Wagon) rather than any container with
+    // enough capacity. See src/module/inventory/container-allowlist.js.
+    const allowlistCheck = checkAllowedContainers(itemData, container);
+    if (!allowlistCheck.allowed) return allowlistCheck;
 
     // Check allowedNames — strict whitelist by item name (used by scabbards, frogs, slings).
     // Strip trailing modifier (e.g. " +2") so "Longsword +2" matches "Longsword".

@@ -4,6 +4,7 @@
 import { getAttackBonus, getAbilityModifier } from "../../../../config/classes.js";
 import { ItemCardDialog } from "../../../cards/item-card-dialog.js";
 import { ospRoll, buildManualChatContent } from "../../../dice.js";
+import { isConsumableWeapon, checkAmmoAvailability } from "../../../combat/ammo-logic.js";
 
 const critDamageFormula = (formula) =>
   formula.replace(/(\d+)d(\d+)/gi, (_, n, d) => `${parseInt(n) * 2}d${d}`);
@@ -635,8 +636,7 @@ export class ItemHandler {
       if (newEquippedState) {
         // Consumable thrown weapons (Oil Flask, Holy Water, Darts): ready from container without
         // occupying hand slots.
-        const _tags = item.system?.tags || [];
-        if (_tags.includes('consumable') || (_tags.includes('missile') && _tags.includes('reload'))) {
+        if (isConsumableWeapon(item)) {
           const currentQty = item.system.quantity || 1;
           if (currentQty > 1) {
             // Split: leave (qty-1) in storage, create a new equipped copy with qty=1
@@ -675,8 +675,7 @@ export class ItemHandler {
         const tags = item.system?.tags || [];
 
         // Consumable thrown weapons: stow back to container
-        const isConsumable = tags.includes('consumable') || (tags.includes('missile') && tags.includes('reload'));
-        if (isConsumable) {
+        if (isConsumableWeapon(item)) {
           const currentContainer = item.system.containerId ? this.actor.items.get(item.system.containerId) : null;
           if (currentContainer) {
             // qty=1 path: item still references its container — just unequip in place
@@ -1823,6 +1822,15 @@ export class ItemHandler {
         isThrown = choice === 'thrown';
       }
 
+      // Ammunition / thrown-weapon availability gate — blocks the attack before any roll
+      // if the required ammo (external, e.g. Arrows) or the weapon itself (self-consumed,
+      // e.g. Javelin/Dart) isn't available.
+      const availability = checkAmmoAvailability(item, this.actor.items, { isThrown });
+      if (!availability.ok) {
+        ui.notifications.error(availability.message);
+        return;
+      }
+
       // Calculate attack bonus from class/level
       const classAttackBonus = getAttackBonus(characterClass, level);
 
@@ -1867,7 +1875,7 @@ export class ItemHandler {
       if (cancelled) return;
 
       // Consumable thrown weapons are expended on throw (hit or miss)
-      if (itemTags.includes('consumable') || (itemTags.includes('missile') && itemTags.includes('reload'))) {
+      if (!isThrown && availability.requirement?.kind === 'self') {
         const qty = item.system.quantity || 1;
         if (qty <= 1) {
           await item.delete();
@@ -1893,6 +1901,19 @@ export class ItemHandler {
           if (scabbard) ops.push(scabbard.update({ 'system.quantity': qty - 1 }));
           await Promise.all(ops);
           ui.notifications.info(`${item.name} thrown (${qty - 1} remaining).`);
+        }
+      }
+
+      // Launcher weapons (Bow/Crossbow/Sling): expend one unit of the matched ammo stack
+      if (availability.requirement?.kind === 'external' && availability.ammoItem) {
+        const ammoItem = availability.ammoItem;
+        const ammoQty = ammoItem.system.quantity || 1;
+        if (ammoQty <= 1) {
+          await ammoItem.delete();
+          ui.notifications.info(`${ammoItem.name} used — none remaining.`);
+        } else {
+          await ammoItem.update({ 'system.quantity': ammoQty - 1 });
+          ui.notifications.info(`${ammoItem.name} used (${ammoQty - 1} remaining).`);
         }
       }
 

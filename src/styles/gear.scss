@@ -1903,6 +1903,20 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   .lashed-item .lashed-stored-item {
     grid-template-columns: $l2-indent-track $l2-image-track 166px $contained-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight 90px;
   }
+
+  // Weapon/item row nested inside a sub-container in this same belt-attachment context (L3:
+  // e.g. Longsword inside Scabbard, Sword inside Sword Frog inside a lashed Belt) — mirrors the
+  // .lashed-item .lashed-stored-item override immediately above, one tier deeper. This row's
+  // leading spacer+caret+image tracks (98+18+50=166px) need a 118px name track so the total
+  // leading width (166+118=284px) matches that override's own indent+image+name (68+50+166=284px),
+  // landing Qty/sSize/tWT/WT on the exact same $sh-qty/ssize/twt/wt centers as every other tier.
+  // Without this, the row falls back to .lashed-sub-stored-item's base (un-migrated) $l2-*-track
+  // constants — still anchored to the pre-Grid-conversion 261/369/453/501 positions, including an
+  // 8px-wide tWT track — which crowds the row's own data columns and runs them into the controls
+  // icons that follow.
+  .lashed-item .lashed-sub-stored-item {
+    grid-template-columns: 98px $col-caret $l2-image-track 118px $contained-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight 90px;
+  }
 }
 
 .lashed-header {
@@ -2034,7 +2048,12 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     bottom: calc(100% - #{$item-row-height} / 2);
   }
 
-  .item-header:not(.lashed-stored-item) {
+  // :not() must list every nested-weapon tier (matches the pattern already used correctly at
+  // the top-level .item-header:not(...) rules) — .lashed-sub-stored-item/.lashed-deep-stored-item
+  // are distinct classes from .lashed-stored-item, so excluding only the latter left this
+  // !important rule silently clobbering the L3/L4 tiers' own grid-template-columns, no matter
+  // how specific a later override was (nothing without !important can beat it).
+  .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item):not(.lashed-deep-stored-item) {
     padding-left: 0px;
     width: 100%;
     max-width: 638px; /* Parent width (698px) minus indent (60px) */
@@ -2065,7 +2084,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Matches the same column math as .contained-item .item-header (name reduced by the 18px
 // caret, not by the 60px section indent — that indent already lives on .lashed-items-section's
 // own margin-left, so subtracting it again here shifted every column left of the subheader above).
-.lashed-items-section:has(.lashed-header) .lashed-item .item-header:not(.lashed-stored-item) {
+.lashed-items-section:has(.lashed-header) .lashed-item .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item):not(.lashed-deep-stored-item) {
   grid-template-columns: $col-caret $nested-col-image $contained-col-name $contained-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
 }
 
@@ -2481,7 +2500,7 @@ li.livestock-entry .lashed-stored-item {
   // !important grid-template-columns silently hijacked its own Grid (harmless before the Grid
   // conversion, when its children were position:absolute and ignored grid-template-columns
   // entirely; now that they're real Grid items, it broke image/name/data-column placement).
-  > .item-header:not(.lashed-stored-item) {
+  > .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item):not(.lashed-deep-stored-item) {
     // sSize/tWT/WT were already correctly at $sh-ssize/twt/wt (376/442/508) here — only Qty was
     // off (was centered at 279.75px, not $sh-qty's 310px). Name/Qty now use $contained-col-name/
     // $contained-col-qty (218/52, same combined 270px as before: 157.5+112.5 = 218+52) so Qty's

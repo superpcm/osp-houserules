@@ -234,8 +234,8 @@ async function refreshAllItems() {
         }
         
         if (matchingData) {
-          // Update actor's item with new data (preserve container/equipped state)
-          const preserveKeys = ['containerId', 'equipped', 'quantity'];
+          // Update actor's item with new data (preserve container/equipped/lashed state)
+          const preserveKeys = ['containerId', 'equipped', 'quantity', 'lashed'];
           const updateData = {
             name: matchingData.name,
             img: matchingData.img,
@@ -245,6 +245,7 @@ async function refreshAllItems() {
               containerId: item.system.containerId,
               equipped: item.system.equipped,
               quantity: item.system.quantity,
+              lashed: item.system.lashed,
               // Clear any fields that existed on the old item but were removed from the JSON
               ...buildRemovedFieldDeletions(item.system, matchingData.system, preserveKeys)
             }

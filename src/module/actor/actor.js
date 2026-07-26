@@ -433,9 +433,23 @@ export class OspActor extends Actor {
     const rawDexMod = this._getAttributeModifier(dexScore);
 
     // Get equipped armor (non-shield armor pieces)
-    const equippedArmor = this.system.armor.filter(item =>
+    const equippedNonShield = this.system.armor.filter(item =>
       item.system.equipped && item.system.type !== "shield"
     );
+
+    // "Underarmor" (e.g. Gambeson) acts as a base armor when worn alone, but as a
+    // shield-like +1 bonus when worn beneath another equipped armor from its allow list.
+    const isPairedUnderArmor = (item) => {
+      const tags = item.system.tags || [];
+      if (!tags.includes("underarmor")) return false;
+      const allowList = item.system.allowedArmors || [];
+      return equippedNonShield.some(other =>
+        other !== item && allowList.includes(other.name)
+      );
+    };
+
+    const pairedUnderArmor = equippedNonShield.filter(isPairedUnderArmor);
+    const equippedArmor = equippedNonShield.filter(item => !isPairedUnderArmor(item));
 
     // Determine effective DEX mod: lowest maxDex among equipped armor caps the bonus
     let dexMod = rawDexMod;
@@ -466,6 +480,11 @@ export class OspActor extends Actor {
     equippedShields.forEach(shield => {
       const shieldBonus = (parseInt(shield.system.aac?.value) || 0) + (parseInt(shield.system.bonus) || 0);
       calculatedAC += shieldBonus;
+    });
+
+    // Add paired underarmor bonuses (e.g. Gambeson worn beneath compatible armor)
+    pairedUnderArmor.forEach(item => {
+      calculatedAC += parseInt(item.system.pairedBonus) || 0;
     });
 
     // Store the calculated AC

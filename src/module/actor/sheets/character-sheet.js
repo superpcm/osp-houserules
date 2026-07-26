@@ -10,6 +10,7 @@ import { calculateMaxHP, XP_TABLES, CLASS_XP_MAPPING } from '../../../config/cla
 import { externalDrag } from '../../external-drag-tracker.js';
 import { isConsumableWeapon } from '../../combat/ammo-logic.js';
 import { checkAllowedContainers } from '../../inventory/container-allowlist.js';
+import { chargeItemCost } from '../../inventory/treasure-cost.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -865,11 +866,24 @@ export class OspActorSheetCharacter extends ActorSheet {
       spells: { value: 0 }
     };
 
-    // Calculate Max HP based on class, level, and CON modifier
+    // Calculate Max HP based on class, level, and CON modifier — this formula (always-max Hit
+    // Die) is now only the ONE-TIME baseline system.maxhitpoints gets banked from; every level
+    // past that baseline is a rolled Hit Die accumulated by module/actor/level-up.js instead.
     const characterClass = this.actor.system.class || '';
     const level = this.actor.system.level || 1;
     const conScore = this.actor.system.attributes?.con?.value || 10;
     context.calculatedMaxHP = calculateMaxHP(characterClass, level, conScore);
+
+    // One-time bake-in for characters that predate the banked-maxHP system (including brand
+    // new level-1 characters): freeze their current formula-derived HP as the starting balance,
+    // and mark their current level as "already accounted for" so level-up detection in ose.js
+    // only rolls Hit Dice for levels gained *after* this point, never retroactively.
+    if (this.actor.isOwner) {
+      const bakeIn = {};
+      if (!this.actor.system.maxhitpoints) bakeIn['system.maxhitpoints'] = context.calculatedMaxHP;
+      if (this.actor.getFlag('osp-houserules', 'lastKnownLevel') === undefined) bakeIn['flags.osp-houserules.lastKnownLevel'] = level;
+      if (Object.keys(bakeIn).length) this.actor.update(bakeIn, { render: false });
+    }
 
     const { classes } = await this.loadProfileData();
     context.showSpellsTab = this._shouldShowSpellsTab(context.system, classes);
@@ -914,8 +928,9 @@ export class OspActorSheetCharacter extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Apply theme class to the form element and outer app element
-    const theme = this.actor.getFlag(game.system.id, 'sheetTheme') ?? 'default';
+    // Apply theme class to the form element and outer app element.
+    // Parchment is the default look; "default" (Old School Green) is the opt-out.
+    const theme = this.actor.getFlag(game.system.id, 'sheetTheme') ?? 'parchment';
     if (theme !== 'default') {
       const formEl = html[0]?.closest?.('form') ?? html[0];
       formEl?.classList.add(`theme-${theme}`);
@@ -2780,6 +2795,19 @@ export class OspActorSheetCharacter extends ActorSheet {
       return false;
     }
 
+    // Charge the item's cost against stored treasure before it's ever added to the sheet.
+    // Applies to any newly-acquired item (not a reorder within the actor's own inventory) that
+    // carries a cost — single shared path so every item type (gear, weapon, armor, livestock...)
+    // inherits it automatically. GMs bypass this like they bypass Store Lock above: granting an
+    // item for free is a GM action, not a purchase.
+    if (!isReordering && !game.user.isGM) {
+      const charge = await chargeItemCost(itemData, this.actor);
+      if (!charge.success) {
+        ui.notifications.warn(`Not enough treasure to acquire ${itemData.name} — need ${charge.shortfallSp} more sp.`);
+        return false;
+      }
+    }
+
     // Tack (saddles, barding, bit & bridle, saddlebags) worn by livestock — dispatched early,
     // mirroring the coin/ammunition special-case handlers below, since livestock aren't a real
     // container type and none of the generic container-type branches further down apply to them.
@@ -3243,18 +3271,46 @@ export class OspActorSheetCharacter extends ActorSheet {
         if (itemData.type === 'weapon') {
           slotFree = !this.actor.items.some(i => i.type === 'weapon' && i.system.equipped);
         } else if (armorBodyTypes.includes(itemData.system?.type)) {
-          slotFree = !this.actor.items.some(i =>
+          // Underarmor (e.g. Gambeson) can share the body-armor slot with one compatible
+          // main armor — either order is allowed as long as they're on each other's allow list.
+          const equippedBodyArmor = this.actor.items.filter(i =>
             i.type === 'armor' && armorBodyTypes.includes(i.system.type) && i.system.equipped);
+          const incomingTags = itemData.system?.tags || [];
+          const incomingIsUnderArmor = incomingTags.includes('underarmor');
+          const incomingAllowList = itemData.system?.allowedArmors || [];
+          if (equippedBodyArmor.length === 0) {
+            slotFree = true;
+          } else if (incomingIsUnderArmor) {
+            slotFree = equippedBodyArmor.length === 1 &&
+              !(equippedBodyArmor[0].system.tags || []).includes('underarmor') &&
+              incomingAllowList.includes(equippedBodyArmor[0].name);
+          } else {
+            slotFree = equippedBodyArmor.length === 1 &&
+              (equippedBodyArmor[0].system.tags || []).includes('underarmor') &&
+              (equippedBodyArmor[0].system.allowedArmors || []).includes(itemData.name);
+          }
         } else {
           // Shield or other non-body armor
           slotFree = !this.actor.items.some(i =>
             i.type === 'armor' && !armorBodyTypes.includes(i.system.type) && i.system.equipped);
         }
 
-        if (slotFree) {
+        // Class armor restrictions gate auto-equip on drop the same as the manual toggle —
+        // a disallowed piece is still added to inventory, just stored rather than worn.
+        let armorAllowed = true, armorDenyReason = null;
+        if (itemData.type === 'armor' && slotFree) {
+          const itemHandler = this.getHandler('item');
+          const permissions = await itemHandler._getClassArmorPermissions();
+          ({ allowed: armorAllowed, reason: armorDenyReason } = itemHandler._checkArmorPermission(itemData, permissions));
+        }
+
+        if (slotFree && armorAllowed) {
           itemData.system.equipped = true;
           itemData.system.containerId = null;
         } else {
+          if (itemData.type === 'armor' && !armorAllowed) {
+            ui.notifications.warn(`${armorDenyReason} Stored instead.`);
+          }
           let stored = false;
           const _weaponTags = itemData.system?.tags || [];
           const _noBackpackLash = itemData.type === 'weapon' && (
@@ -4172,7 +4228,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           tags: ['weapon-storage','scabbard'], capacity: 4, containerSize: 'small',
           hideCapacity: true, maxItems: 1, lashSlots: 0,
           allowedTypes: [], allowedSizes: [],
-          allowedNames: ['Longsword','Broadsword','Bastard Sword','Khopesh','Shortsword'] }
+          allowedNames: ['Longsword','Broadsword','Bastard Sword','Khopesh','Shortsword','Rapier'] }
       },
       'Sword Frog': {
         img: 'systems/osp-houserules/assets/thumbs/images/gear/sword-frog_thumb.webp',

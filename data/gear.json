@@ -17,7 +17,10 @@
       "capacity": 16,
       "containerSize": "medium",
       "lashSlots": 4,
-      "blockedTypes": ["slungable", "sword"]
+      "blockedTypes": [
+        "slungable",
+        "sword"
+      ]
     }
   },
   {
@@ -32,7 +35,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
       "tags": [
         "sleep"
       ]
@@ -43,7 +45,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-large_thumb.webp",
     "system": {
-      "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin\u2014when a small pouch simply won\u2019t suffice. 1 pouch can be attached to a single belt.",
+      "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt.",
       "cost": 4,
       "unitWeight": 1,
       "storedSize": 2,
@@ -51,12 +53,20 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
-      "tags": ["bulky"],
+      "tags": [
+        "bulky"
+      ],
       "capacity": 4,
       "containerSize": "small",
-      "blockedTypes": ["armor", "container", "clothing", "sword", "dagger", "arrows", "bolts"]
+      "blockedTypes": [
+        "armor",
+        "container",
+        "clothing",
+        "sword",
+        "dagger",
+        "arrows",
+        "bolts"
+      ]
     }
   },
   {
@@ -72,12 +82,18 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
       "tags": [],
       "capacity": 2,
       "containerSize": "small",
-      "blockedTypes": ["armor", "container", "clothing", "sword", "dagger", "arrows", "bolts"]
+      "blockedTypes": [
+        "armor",
+        "container",
+        "clothing",
+        "sword",
+        "dagger",
+        "arrows",
+        "bolts"
+      ]
     }
   },
   {
@@ -93,13 +109,13 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
       "capacity": 6,
       "tags": [
         "container"
       ],
-      "allowedTypes": ["bolts"],
+      "allowedTypes": [
+        "bolts"
+      ],
       "containerSize": "small"
     }
   },
@@ -116,13 +132,15 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
       "capacity": 4,
       "tags": [
         "container"
       ],
-      "allowedTypes": ["coins", "gems", "jewelry"],
+      "allowedTypes": [
+        "coins",
+        "gems",
+        "jewelry"
+      ],
       "containerSize": "small"
     }
   },
@@ -138,7 +156,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
       "tags": [
         "tool"
       ]
@@ -173,7 +190,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
       "tags": [
         "tool",
         "climbing"
@@ -202,7 +218,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/holy-symbol_thumb.webp",
     "system": {
-      "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed \u00bd lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
+      "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
       "cost": 25,
       "unitWeight": 0.3,
       "storedSize": 1,
@@ -254,7 +270,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/iron-spike_thumb.webp",
     "system": {
-      "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6-8 inches long, about \u00bd inch thick. Typically carried in a small leather pouch or tool roll.",
+      "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6-8 inches long, about ½ inch thick. Typically carried in a small leather pouch or tool roll.",
       "cost": 0.1,
       "unitWeight": 0.25,
       "storedSize": 0.3,
@@ -399,7 +415,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
       "tags": [
         "tool",
         "dungeon"
@@ -418,11 +433,15 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "containerId": null,
-      "tags": ["sling", "slungable"],
+      "tags": [
+        "sling",
+        "slungable"
+      ],
       "capacity": 5,
       "lashSlots": 0,
-      "allowedTypes": ["arrows"],
+      "allowedTypes": [
+        "arrows"
+      ],
       "containerSize": "small"
     }
   },
@@ -439,11 +458,11 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
       "capacity": 3,
       "lashSlots": 0,
-      "allowedTypes": ["arrows"],
+      "allowedTypes": [
+        "arrows"
+      ],
       "containerSize": "small"
     }
   },
@@ -495,7 +514,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
       "tags": [
         "tool",
         "climbing"
@@ -514,7 +532,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
       "tags": [
         "tool",
         "climbing"
@@ -533,11 +550,12 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
       "tags": [],
       "capacity": 24,
       "containerSize": "medium",
-      "blockedTypes": ["slungable"]
+      "blockedTypes": [
+        "slungable"
+      ]
     }
   },
   {
@@ -555,7 +573,9 @@
       "tags": [],
       "capacity": 8,
       "containerSize": "medium",
-      "blockedTypes": ["slungable"]
+      "blockedTypes": [
+        "slungable"
+      ]
     }
   },
   {
@@ -570,8 +590,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
       "slotCost": 1,
       "tags": [
         "weapon-storage",
@@ -584,7 +602,10 @@
       "lashSlots": 0,
       "allowedTypes": [],
       "allowedSizes": [],
-      "allowedNames": ["Dagger", "Misericorde"]
+      "allowedNames": [
+        "Dagger",
+        "Misericorde"
+      ]
     }
   },
   {
@@ -596,12 +617,15 @@
       "cost": 3,
       "unitWeight": 0.5,
       "storedSize": 30,
-      "allowedContainers": ["Cart", "Wagon", "Sack, Large", "Panniers"],
+      "allowedContainers": [
+        "Cart",
+        "Wagon",
+        "Sack, Large",
+        "Panniers"
+      ],
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "slotCost": 0,
       "tags": [
         "weapon-storage",
@@ -614,7 +638,14 @@
       "lashSlots": 0,
       "allowedTypes": [],
       "allowedSizes": [],
-      "allowedNames": ["Longsword", "Broadsword", "Bastard Sword", "Khopesh", "Shortsword"]
+      "allowedNames": [
+        "Longsword",
+        "Broadsword",
+        "Bastard Sword",
+        "Khopesh",
+        "Shortsword",
+        "Rapier"
+      ]
     }
   },
   {
@@ -641,7 +672,10 @@
       "lashSlots": 0,
       "allowedTypes": [],
       "allowedSizes": [],
-      "allowedNames": ["Zweihander", "Greatsword"]
+      "allowedNames": [
+        "Zweihander",
+        "Greatsword"
+      ]
     }
   },
   {
@@ -699,8 +733,8 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/weapons/torch_thumb.webp",
     "system": {
-      "description": "A bundle of six torches, wooden shafts wrapped with oil-soaked rags. Each burns for 1 hour (6 turns) and casts light in a 30' radius. An individual torch can also serve as an improvised melee weapon.",
-      "cost": 1,
+      "description": "Wooden shafts wrapped with oil-soaked rags. Each torch burns for 1 hour (6 turns) and casts light in a 30' radius. An individual torch can also serve as an improvised melee weapon.",
+      "cost": 0.2,
       "unitWeight": 0.5,
       "storedSize": 0.75,
       "quantity": 6,
@@ -795,10 +829,10 @@
     "img": "systems/osp-houserules/assets/thumbs/images/gear/stake-wooden_thumb.webp",
     "system": {
       "description": "This wooden spike is a rough-hewn stake with one end whittled to a sharp point and the other left blunt for hammering. It's typically used to secure tents and ropes, mark trails, or improvise simple traps and defenses in the field.",
-      "cost": 0.25,
-      "unitWeight": 0.5,
-      "storedSize": 3,
-      "quantity": 3,
+      "cost": 0.1,
+      "unitWeight": 0.25,
+      "storedSize": 0.5,
+      "quantity": 1,
       "equipped": false,
       "lashable": false,
       "tags": [
@@ -830,7 +864,10 @@
       "lashSlots": 0,
       "allowedTypes": [],
       "allowedSizes": [],
-      "allowedNames": ["Battle Axe", "Battle Axe, 2-Handed"]
+      "allowedNames": [
+        "Battle Axe",
+        "Battle Axe, 2-Handed"
+      ]
     }
   },
   {
@@ -846,9 +883,9 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
-      "tags": ["bulky"],
+      "tags": [
+        "bulky"
+      ],
       "capacity": 4,
       "containerSize": "small",
       "hideCapacity": true,
@@ -856,7 +893,15 @@
       "lashSlots": 0,
       "allowedTypes": [],
       "allowedSizes": [],
-      "allowedNames": ["Hand Axe", "Light Hammer", "Warhammer", "Waterskin", "Mace", "Morning Star", "Flail"]
+      "allowedNames": [
+        "Hand Axe",
+        "Light Hammer",
+        "Warhammer",
+        "Waterskin",
+        "Mace",
+        "Morning Star",
+        "Flail"
+      ]
     }
   },
   {
@@ -872,8 +917,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
       "tags": [],
       "capacity": 2,
       "containerSize": "small",
@@ -882,7 +925,11 @@
       "lashSlots": 0,
       "allowedTypes": [],
       "allowedSizes": [],
-      "allowedNames": ["Vial or Bottle", "Oil Flask", "Holy Water"]
+      "allowedNames": [
+        "Vial or Bottle",
+        "Oil Flask",
+        "Holy Water"
+      ]
     }
   },
   {
@@ -898,8 +945,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
       "tags": [
         "weapon-storage",
         "scabbard",
@@ -912,7 +957,40 @@
       "lashSlots": 0,
       "allowedTypes": [],
       "allowedSizes": [],
-      "allowedNames": ["Scabbard, Sword"]
+      "allowedNames": [
+        "Scabbard, Sword"
+      ]
+    }
+  },
+  {
+    "name": "Sidesack",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/sidesack_thumb.webp",
+    "system": {
+      "description": "A sidesack is a lightweight pack worn diagonally across the front of the body. Slimmer and less cumbersome than a traditional backpack, it leaves the wearer free to move while keeping essential gear close at hand. Its many pouches, pockets, and loops provide secure storage for tools, supplies, and other adventuring necessities.",
+      "cost": 6,
+      "unitWeight": 2,
+      "storedSize": 4,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "container"
+      ],
+      "containerSizeRequired": "",
+      "slotCost": 0,
+      "capacity": 12,
+      "containerSize": "medium",
+      "lashSlots": 0,
+      "hideCapacity": false,
+      "maxItems": 0,
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": [],
+      "blockedTypes": [
+        "Slungable",
+        "Sword"
+      ]
     }
   },
   {
@@ -927,7 +1005,10 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "tags": ["sling", "slungable"],
+      "tags": [
+        "sling",
+        "slungable"
+      ],
       "capacity": 4,
       "containerSize": "small",
       "hideCapacity": true,
@@ -935,7 +1016,10 @@
       "lashSlots": 0,
       "allowedTypes": [],
       "allowedSizes": [],
-      "allowedNames": ["Waterskin", "Wineskin"]
+      "allowedNames": [
+        "Waterskin",
+        "Wineskin"
+      ]
     }
   }
 ]

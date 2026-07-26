@@ -17,6 +17,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       exportCharacters: DmToolkitTab._onExportCharacters,
       giveXP: DmToolkitTab._onGiveXP,
       setXP: DmToolkitTab._onSetXP,
+      setMaxHP: DmToolkitTab._onSetMaxHP,
       editAbilityScore: DmToolkitTab._onEditAbilityScore,
       editSkillValue: DmToolkitTab._onEditSkillValue,
       importMonsters:        DmToolkitTab._onImportMonsters,
@@ -336,6 +337,71 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
           const actor = game.actors.get(select.val());
           if (actor) {
             const current = parseInt(String(actor.system.xp ?? 0).replace(/,/g, '')) || 0;
+            input.val(current);
+          }
+        };
+
+        select.on('change', prefill);
+        prefill();
+        input.focus().select();
+      }
+    }).render(true);
+  }
+
+  static async _onSetMaxHP(_event, _target) {
+    const pcs = game.actors.filter(a => a.type === "character").sort((a, b) => a.name.localeCompare(b.name));
+    if (pcs.length === 0) {
+      ui.notifications.warn("No player characters found.");
+      return;
+    }
+
+    const options = pcs.map(a => {
+      const current = parseInt(a.system.maxhitpoints ?? 0) || 0;
+      return `<option value="${a.id}">${a.name} (${current} maxHP)</option>`;
+    }).join('');
+
+    const content = `
+      <div class="osp-give-xp-dialog">
+        <div class="osp-xp-amount-row" style="border-top:none;padding-top:0;">
+          <label for="osp-set-maxhp-character">Character</label>
+          <select id="osp-set-maxhp-character" style="width:100%;margin-top:4px;">${options}</select>
+        </div>
+        <div class="osp-xp-amount-row">
+          <label for="osp-set-maxhp-value">New Max HP Value</label>
+          <input type="number" id="osp-set-maxhp-value" value="0" min="1" style="width:100%;margin-top:4px;">
+        </div>
+      </div>`;
+
+    new Dialog({
+      title: "Set Max HP",
+      content,
+      buttons: {
+        ok: {
+          icon: '<i class="fas fa-check"></i>',
+          label: "OK",
+          callback: async (html) => {
+            const actorId = html.find('#osp-set-maxhp-character').val();
+            const newMaxHP = parseInt(html.find('#osp-set-maxhp-value').val()) || 0;
+            const actor    = game.actors.get(actorId);
+            if (!actor) return;
+            await actor.update({ 'system.maxhitpoints': newMaxHP });
+            ui.notifications.info(`Set ${actor.name}'s max HP to ${newMaxHP}.`);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "ok",
+      render: (html) => {
+        const select = html.find('#osp-set-maxhp-character');
+        const input  = html.find('#osp-set-maxhp-value');
+
+        const prefill = () => {
+          const actor = game.actors.get(select.val());
+          if (actor) {
+            const current = parseInt(actor.system.maxhitpoints ?? 0) || 0;
             input.val(current);
           }
         };

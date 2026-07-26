@@ -11,8 +11,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 15
       },
@@ -36,8 +34,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 2
       },
@@ -61,8 +57,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 13
       },
@@ -85,8 +79,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 17
       },
@@ -109,8 +101,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 14
       },
@@ -133,8 +123,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 17
       },
@@ -157,8 +145,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 18
       },
@@ -174,15 +160,13 @@
     "type": "armor",
     "img": "systems/osp-houserules/assets/thumbs/images/armor/helm-great_thumb.webp",
     "system": {
-      "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head\u2014though at the cost of limited vision and airflow.",
+      "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head—though at the cost of limited vision and airflow.",
       "cost": 30,
       "unitWeight": 5,
       "storedSize": 12,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 0
       },
@@ -205,8 +189,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 0
       },
@@ -229,8 +211,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 13
       },
@@ -253,8 +233,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 12
       },
@@ -277,8 +255,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 11
       },
@@ -301,8 +277,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 13
       },
@@ -312,6 +286,51 @@
       "maxDex": 3,
       "minStr": null
     }
+  },
+  {
+    "name": "Gambeson",
+    "type": "armor",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/gambeson_thumb.webp",
+    "system": {
+      "description": "A gambeson is a thick, quilted garment worn as lightweight armor or as padding beneath mail and plate. Its layered fabric cushions blows, reduces chafing, and offers dependable protection without greatly restricting movement.",
+      "cost": 12,
+      "unitWeight": 10,
+      "storedSize": 8,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": ["underarmor"],
+      "containerSizeRequired": "",
+      "slotCost": 0,
+      "aac": {
+        "value": 11
+      },
+      "pairedBonus": 1,
+      "allowedArmors": [
+        "Chain mail",
+        "Banded mail",
+        "Brigandine",
+        "Bronze plate",
+        "Field plate",
+        "Full plate"
+      ],
+      "type": "light",
+      "donTime": "1",
+      "doffTime": "1",
+      "maxDex": 3,
+      "minStr": 0,
+      "material": "",
+      "allowedContainers": [
+        "Backpack",
+        "Cart",
+        "Chest, Large",
+        "Panniers",
+        "Sack, Large",
+        "Saddlebags, Large",
+        "Wagon"
+      ]
+    },
+    "folder": "CzfbCiZiPUb664YA"
   },
   {
     "name": "Shield",
@@ -326,8 +345,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 1
       },
@@ -351,8 +368,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "aac": {
         "value": 13
       },

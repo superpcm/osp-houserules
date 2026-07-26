@@ -11,11 +11,9 @@
       "quantity": 0,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
       "tags": [
         "coins"
-      ],
-      "containerId": null
+      ]
     }
   },
   {
@@ -30,11 +28,9 @@
       "quantity": 0,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
       "tags": [
         "coins"
-      ],
-      "containerId": null
+      ]
     }
   },
   {
@@ -49,11 +45,9 @@
       "quantity": 0,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
       "tags": [
         "coins"
-      ],
-      "containerId": null
+      ]
     }
   }
 ]

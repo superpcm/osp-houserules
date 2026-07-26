@@ -49,7 +49,7 @@ export class ItemCardRenderer {
   /**
    * Load template image or create parchment background
    */
-  async _loadTemplate(theme = 'default') {
+  async _loadTemplate(theme = 'parchment') {
     if (this.templateImage && this.templateTheme === theme) return this.templateImage;
 
     const fileName = theme === 'parchment' ? 'item-card-parchment.webp' : 'item-card.webp';
@@ -117,17 +117,31 @@ export class ItemCardRenderer {
       await this._loadFont();
     }
     
-    // World items (e.g. opened from the sidebar) have no owning actor, so fall back
-    // to the currently selected/controlled token's actor.
-    const themeSource = item.actor ?? game.canvas?.tokens?.controlled[0]?.actor;
-    const theme = themeSource?.getFlag(game.system.id, 'sheetTheme') ?? 'default';
+    // sheetTheme is only ever set on "character" type actors (see the theme picker in
+    // ose.js), so monster-owned and ownerless world items never carry a theme of their
+    // own. Fall back through the controlled token's actor, then the viewing user's own
+    // assigned character, before defaulting to parchment (the opt-out is explicit "default"/green).
+    // NOTE: a local `const cardCanvas` (below) shadows the Foundry `canvas` global for
+    // the rest of this function via TDZ, so the global must be captured up front.
+    const foundryCanvas = window.canvas;
+    const themeSources = [
+      item.actor,
+      foundryCanvas?.tokens?.controlled[0]?.actor,
+      game.user?.character
+    ];
+    let theme;
+    for (const source of themeSources) {
+      theme = source?.getFlag(game.system.id, 'sheetTheme');
+      if (theme) break;
+    }
+    theme ??= 'parchment';
     await this._loadTemplate(theme);
 
-    const canvas = document.createElement('canvas');
-    canvas.width = this.CARD_WIDTH;
-    canvas.height = this.CARD_HEIGHT;
-    const ctx = canvas.getContext('2d');
-    
+    const cardCanvas = document.createElement('canvas');
+    cardCanvas.width = this.CARD_WIDTH;
+    cardCanvas.height = this.CARD_HEIGHT;
+    const ctx = cardCanvas.getContext('2d');
+
     // Draw template (handles both Image and Canvas)
     if (this.templateImage instanceof HTMLCanvasElement) {
       ctx.drawImage(this.templateImage, 0, 0);
@@ -156,8 +170,8 @@ export class ItemCardRenderer {
     
     // Common equipment metadata (cost, weight, capacity) with icons
     await this._drawEquipmentMetadata(ctx, item);
-    
-    return canvas;
+
+    return cardCanvas;
   }
   
   /**

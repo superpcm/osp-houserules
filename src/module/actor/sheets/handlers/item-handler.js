@@ -82,6 +82,101 @@ export class ItemHandler {
   }
 
   /**
+   * Load weaponPermissions for the actor's current class from class_profiles.json.
+   * Falls back to ['Any'] if the class cannot be resolved.
+   */
+  async _getClassWeaponPermissions() {
+    if (!this.sheet?.loadProfileData) return ['Any'];
+    const classKey = (this.actor.system.class || '').toLowerCase();
+    try {
+      const { classes } = await this.sheet.loadProfileData();
+      const profile = classes.find(c => (c.id || c.name || '').toLowerCase() === classKey);
+      return profile?.weaponPermissions ?? ['Any'];
+    } catch {
+      return ['Any'];
+    }
+  }
+
+  /**
+   * Check whether a weapon may be wielded given the class's weaponPermissions.
+   * A character can still carry a restricted weapon (no drag-drop/storage check) —
+   * this only gates actually taking it in hand. Unrecognized permission phrases fail
+   * open (allowed) rather than block valid play.
+   * Returns { allowed: boolean, reason?: string }.
+   */
+  _checkWeaponPermission(item, permissions) {
+    const tags = item.system?.tags || [];
+    const size = item.system?.size;
+    const melee = !!item.system?.melee;
+    const missile = !!item.system?.missile;
+    const isBlunt = item.system?.damageType === 'B' || tags.includes('blunt');
+    const name = item.name;
+    const cls = this.actor.system.class || 'This class';
+
+    if (permissions.some(p => p === 'Any')) return { allowed: true };
+
+    if (permissions.includes('No longbows') && name === 'Longbow') {
+      return { allowed: false, reason: `${cls} cannot use longbows.` };
+    }
+    if (permissions.includes('No two-handed swords') && tags.includes('sword') && tags.includes('two-handed')) {
+      return { allowed: false, reason: `${cls} cannot use two-handed swords.` };
+    }
+
+    if (permissions.includes('Blunt weapons only')) {
+      return isBlunt
+        ? { allowed: true }
+        : { allowed: false, reason: `${cls} may only use blunt weapons.` };
+    }
+
+    if (permissions.includes('Melee weapons only')) {
+      return melee
+        ? { allowed: true }
+        : { allowed: false, reason: `${cls} may only use melee weapons.` };
+    }
+
+    if (permissions.includes('Missile weapons') || permissions.includes('One-handed melee weapons')) {
+      const okMissile = permissions.includes('Missile weapons') && missile;
+      const okMelee = permissions.includes('One-handed melee weapons') && melee && !tags.includes('two-handed');
+      return (okMissile || okMelee)
+        ? { allowed: true }
+        : { allowed: false, reason: `${cls} may only use missile weapons or one-handed melee weapons.` };
+    }
+
+    if (permissions.includes('Small-size weapons')) {
+      return size === 'S'
+        ? { allowed: true }
+        : { allowed: false, reason: `${cls} may only use small-size weapons.` };
+    }
+
+    if (permissions.includes('Small/normal weapons')) {
+      return size !== 'L'
+        ? { allowed: true }
+        : { allowed: false, reason: `${cls} cannot use large weapons.` };
+    }
+
+    // Named-item allowlist (e.g. Druid: Club/Dagger/Sling/Spear/Staff;
+    // Magic-User/Illusionist: Dagger + optional Staff; Mage: Dagger/Short sword/Staff/Sword)
+    const keywords = new Set(['Any', 'Missile weapons', 'One-handed melee weapons', 'Blunt weapons only',
+      'Melee weapons only', 'Small-size weapons', 'Small/normal weapons', 'No longbows', 'No two-handed swords']);
+    const namedItems = permissions.filter(p => !keywords.has(p)).map(p => p.replace(/\s*optional\s*$/i, '').trim());
+    if (namedItems.length > 0) {
+      const normalize = (s) => s.toLowerCase().replace(/[^a-z]/g, '');
+      const itemNorm = normalize(name);
+      const matchesNamed = namedItems.some((n) => {
+        const nNorm = normalize(n);
+        if (nNorm === 'sword') return tags.includes('sword');
+        if (nNorm === 'dagger') return tags.includes('dagger') || itemNorm === 'dagger';
+        return itemNorm === nNorm || itemNorm.includes(nNorm);
+      });
+      return matchesNamed
+        ? { allowed: true }
+        : { allowed: false, reason: `${cls} may only use: ${namedItems.join(', ')}.` };
+    }
+
+    return { allowed: true };
+  }
+
+  /**
    * Initialize item management
    */
   initialize() {
@@ -656,6 +751,13 @@ export class ItemHandler {
           }
           return;
         }
+        // Equipping (draw): class may carry this weapon but not wield it
+        const weaponPermissions = await this._getClassWeaponPermissions();
+        const { allowed: weaponAllowed, reason: weaponReason } = this._checkWeaponPermission(item, weaponPermissions);
+        if (!weaponAllowed) {
+          ui.notifications.warn(weaponReason);
+          return;
+        }
         // Equipping (draw): check hand slots
         const { canEquip, reason } = this._canEquipWeapon(item);
         if (canEquip) {
@@ -799,15 +901,25 @@ export class ItemHandler {
           }
         }
 
-        // Only one piece of body armor at a time
+        // Only one piece of body armor at a time — except underarmor (e.g. Gambeson),
+        // which can share the slot with one compatible main armor in either order.
         const armorBodyTypes = ["light", "medium", "heavy"];
         if (item.type === "armor" && armorBodyTypes.includes(item.system.type)) {
           const wornBodyArmor = this.actor.items.filter(i =>
             i.type === "armor" && armorBodyTypes.includes(i.system.type) &&
             i.system.equipped && i.id !== item.id
           );
-          if (wornBodyArmor.length > 0) {
-            const current = wornBodyArmor[0];
+          const itemIsUnderArmor = (item.system.tags || []).includes("underarmor");
+          const itemAllowList = item.system.allowedArmors || [];
+          const incompatible = wornBodyArmor.filter(other => {
+            const otherIsUnderArmor = (other.system.tags || []).includes("underarmor");
+            if (itemIsUnderArmor && !otherIsUnderArmor) return !itemAllowList.includes(other.name);
+            if (!itemIsUnderArmor && otherIsUnderArmor) {
+              return !(other.system.allowedArmors || []).includes(item.name);
+            }
+            return true;
+          });
+          for (const current of incompatible) {
             await current.update({"system.equipped": false});
             ui.notifications.info(`Removed ${current.name} to equip ${item.name}.`);
           }
@@ -856,6 +968,12 @@ export class ItemHandler {
         // Belt attachment being removed — show drop/delete/cancel dialog
         await this._showUnlashContainerDialog(item);
       } else if (item.type === 'weapon') {
+        const weaponPermissions = await this._getClassWeaponPermissions();
+        const { allowed: weaponAllowed, reason: weaponReason } = this._checkWeaponPermission(item, weaponPermissions);
+        if (!weaponAllowed) {
+          ui.notifications.warn(weaponReason);
+          return;
+        }
         const { canEquip, reason } = this._canEquipWeapon(item);
         if (canEquip) {
           await item.update({ 'system.lashed': false, 'system.containerId': null, 'system.equipped': true });
@@ -1245,7 +1363,7 @@ export class ItemHandler {
    * Returns whether a scabbard can accept the given weapon by name.
    * Uses allowedNames if populated; otherwise falls back to hardcoded defaults:
    *   Scabbard, Dagger → Dagger, Misericorde
-   *   Scabbard, Sword  → Longsword, Broadsword, Bastard Sword, Khopesh, Shortsword
+   *   Scabbard, Sword  → Longsword, Broadsword, Bastard Sword, Khopesh, Shortsword, Rapier
    * @param {Item} scabbard
    * @param {string} weaponName
    * @returns {boolean}
@@ -1282,7 +1400,7 @@ export class ItemHandler {
     // Hardcoded fallback for legacy items
     const defaults = {
       'Scabbard, Dagger': ['Dagger', 'Misericorde'],
-      'Scabbard, Sword':  ['Longsword', 'Broadsword', 'Bastard Sword', 'Khopesh', 'Shortsword'],
+      'Scabbard, Sword':  ['Longsword', 'Broadsword', 'Bastard Sword', 'Khopesh', 'Shortsword', 'Rapier'],
       'Sword Frog':       ['Scabbard, Sword'],
       'Baldric':          ['Zweihander', 'Greatsword'],
       'Axe Sling':        ['Battle Axe', 'Battle Axe, 2-Handed']

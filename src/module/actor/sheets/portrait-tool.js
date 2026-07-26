@@ -4,7 +4,9 @@
  * Manages all 3 portrait interactions:
  *   - Double-click: open FilePicker to change portrait
  *   - Right-click (no modifier): position tool pass-through
- *   - Shift+Right-click: show zoom/move/reset adjustment controls
+ *   - Ctrl/Alt+Right-click: show zoom/move/reset adjustment controls
+ *     (not Shift — Firefox always forces its native context menu on Shift+right-click,
+ *     ignoring contextmenu's preventDefault(), so that combo can never open our panel there)
  */
 
 export class PortraitTool {
@@ -19,6 +21,12 @@ export class PortraitTool {
    * Initialize the portrait tool
    */
   initialize() {
+    // Belt-and-suspenders: the sheet only calls initializeHandlers() when options.editable is
+    // true (itself tied to actor ownership), but that gate lives one level up in
+    // character-sheet.js — check ownership here too so upload/reposition stays owner-only (GMs
+    // included, since isOwner is always true for them) even if that outer gate ever changes.
+    if (!this.actorSheet?.actor?.isOwner) return;
+
     setTimeout(() => {
       const portraitDisplay = document.querySelector('.portrait-display');
       if (!portraitDisplay) return;
@@ -46,7 +54,7 @@ export class PortraitTool {
     portraitDisplay.addEventListener('mouseenter', () => {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
-        tooltip.textContent = 'Double-click to select portrait • Right-click to adjust position';
+        tooltip.textContent = 'Double-click to select portrait • Ctrl+Right-click to adjust position';
         tooltip.style.opacity = '1';
         const rect = portraitDisplay.getBoundingClientRect();
         const tipRect = tooltip.getBoundingClientRect();
@@ -115,12 +123,15 @@ export class PortraitTool {
 
   /**
    * Setup right-click handler to show portrait adjustment controls
-   * Plain right-click passes through; Shift/Ctrl/Alt+right-click shows controls
+   * Plain right-click passes through; Ctrl/Alt+right-click shows controls.
+   * Deliberately excludes Shift: Firefox always forces its native context menu on
+   * Shift+right-click and ignores contextmenu's preventDefault(), so a Shift-based trigger
+   * can never actually open our panel there.
    */
   setupRightClickHandler(portraitDisplay) {
     portraitDisplay.addEventListener('contextmenu', (event) => {
       // Plain right-click: pass through (no action)
-      if (!event.shiftKey && !event.ctrlKey && !event.altKey) return;
+      if (!event.ctrlKey && !event.altKey) return;
 
       event.preventDefault();
       event.stopPropagation();

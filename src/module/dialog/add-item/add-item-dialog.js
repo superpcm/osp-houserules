@@ -5,8 +5,8 @@
  * into the corresponding data/<category>.json catalog file.
  */
 
-import { CATALOG_CATEGORIES, TYPE_LABELS, renderTypeFields, renderCategoryExtras, collectSystemData } from "./catalog-schema.js";
-import { generateItemImages } from "./image-pipeline.js";
+import { CATALOG_CATEGORIES, TYPE_LABELS, renderTypeFields, renderCategoryExtras, renderAllowedContainersField, collectSystemData } from "./catalog-schema.js";
+import { uploadItemImages } from "./image-pipeline.js";
 
 export class AddItemDialog {
   static async prompt() {
@@ -25,6 +25,11 @@ export class AddItemDialog {
         <div id="add-item-type-row" class="add-item-field add-item-field-full is-hidden">
           <label>Item Type</label>
           <select id="add-item-type"></select>
+        </div>
+
+        <div class="add-item-field add-item-field-full">
+          <label>Folder</label>
+          <select id="add-item-folder"></select>
         </div>
 
         <div id="add-item-base-fields" class="is-hidden">
@@ -80,6 +85,7 @@ export class AddItemDialog {
                 <label>Slot Cost</label>
                 <input type="number" data-sys-field="slotCost" data-sys-kind="number" value="0">
               </div>
+              ${renderAllowedContainersField()}
             </div>
           </details>
         </div>
@@ -89,13 +95,22 @@ export class AddItemDialog {
 
         <div id="add-item-image-section" class="add-item-image-section is-hidden">
           <div class="add-item-field add-item-field-full">
-            <label>Source Image</label>
+            <label>Full-Size Image</label>
             <div class="add-item-image-row">
-              <span role="button" tabindex="0" class="add-item-browse-btn">Browse&hellip;</span>
-              <span class="add-item-file-name">No file selected</span>
-              <img class="add-item-image-preview" style="display:none;">
+              <span role="button" tabindex="0" class="add-item-browse-btn" data-target="full">Browse&hellip;</span>
+              <span class="add-item-file-name" data-target="full">No file selected</span>
+              <img class="add-item-image-preview" data-target="full" style="display:none;">
             </div>
-            <input type="file" id="add-item-file-input" accept="image/*" class="add-item-file-input-hidden">
+            <input type="file" id="add-item-file-input-full" accept="image/*" class="add-item-file-input-hidden">
+          </div>
+          <div class="add-item-field add-item-field-full">
+            <label>Thumbnail Image</label>
+            <div class="add-item-image-row">
+              <span role="button" tabindex="0" class="add-item-browse-btn" data-target="thumb">Browse&hellip;</span>
+              <span class="add-item-file-name" data-target="thumb">No file selected</span>
+              <img class="add-item-image-preview" data-target="thumb" style="display:none;">
+            </div>
+            <input type="file" id="add-item-file-input-thumb" accept="image/*" class="add-item-file-input-hidden">
           </div>
           <div class="add-item-field add-item-field-full">
             <label>Target Subfolder (under assets/images and assets/thumbs/images)</label>
@@ -136,23 +151,35 @@ export class AddItemDialog {
         const categorySelect  = el.querySelector('#add-item-category');
         const typeRow          = el.querySelector('#add-item-type-row');
         const typeSelect       = el.querySelector('#add-item-type');
+        const folderSelect     = el.querySelector('#add-item-folder');
         const baseFields       = el.querySelector('#add-item-base-fields');
         const typeFields       = el.querySelector('#add-item-type-fields');
         const categoryExtras   = el.querySelector('#add-item-category-extras');
         const imageSection     = el.querySelector('#add-item-image-section');
         const subfolderInput   = el.querySelector('#add-item-subfolder');
         const nameInput        = el.querySelector('#add-item-name');
-        const fileInput        = el.querySelector('#add-item-file-input');
-        const browseBtn        = el.querySelector('.add-item-browse-btn');
-        const fileNameSpan     = el.querySelector('.add-item-file-name');
-        const imgPreview       = el.querySelector('.add-item-image-preview');
+        const fileInputFull    = el.querySelector('#add-item-file-input-full');
+        const fileInputThumb   = el.querySelector('#add-item-file-input-thumb');
+        const browseBtnFull    = el.querySelector('.add-item-browse-btn[data-target="full"]');
+        const browseBtnThumb   = el.querySelector('.add-item-browse-btn[data-target="thumb"]');
+        const fileNameSpanFull  = el.querySelector('.add-item-file-name[data-target="full"]');
+        const fileNameSpanThumb = el.querySelector('.add-item-file-name[data-target="thumb"]');
+        const imgPreviewFull    = el.querySelector('.add-item-image-preview[data-target="full"]');
+        const imgPreviewThumb   = el.querySelector('.add-item-image-preview[data-target="thumb"]');
         const createBtn        = el.querySelector('.add-item-create-btn');
         const statusSpan       = el.querySelector('.add-item-status');
         const jsonSection      = el.querySelector('#add-item-json-section');
         const jsonTextarea     = el.querySelector('#add-item-json-preview');
         const copyBtn          = el.querySelector('.add-item-copy-btn');
 
-        let selectedFile = null;
+        let selectedFullFile  = null;
+        let selectedThumbFile = null;
+
+        // Item folders, indented to reflect nesting (Foundry supports up to 3 levels).
+        const itemFolders = game.folders.filter(f => f.type === "Item")
+          .sort((a, b) => (a.depth ?? 1) - (b.depth ?? 1) || a.name.localeCompare(b.name));
+        folderSelect.innerHTML = '<option value="">-- Root (no folder) --</option>' +
+          itemFolders.map(f => `<option value="${f.id}">${'  '.repeat((f.depth ?? 1) - 1)}${f.name}</option>`).join('');
 
         // Foundry's global `button { display:flex; ... }` rule breaks flex-item sizing
         // and hides siblings when a real <button> sits inside a flex row, so every
@@ -200,7 +227,8 @@ export class AddItemDialog {
         }
 
         function updateCreateEnabled() {
-          const enabled = !!(categorySelect.value && resolvedType() && nameInput.value.trim() && selectedFile);
+          const enabled = !!(categorySelect.value && resolvedType() && nameInput.value.trim()
+            && selectedFullFile && selectedThumbFile);
           createBtn.classList.toggle('is-disabled', !enabled);
         }
 
@@ -227,15 +255,28 @@ export class AddItemDialog {
 
         nameInput.addEventListener('input', updateCreateEnabled);
 
-        bindActivate(browseBtn, () => fileInput.click());
-        fileInput.addEventListener('change', () => {
-          selectedFile = fileInput.files[0] || null;
-          fileNameSpan.textContent = selectedFile ? selectedFile.name : 'No file selected';
-          if (selectedFile) {
-            imgPreview.src = URL.createObjectURL(selectedFile);
-            imgPreview.style.display = '';
+        bindActivate(browseBtnFull, () => fileInputFull.click());
+        fileInputFull.addEventListener('change', () => {
+          selectedFullFile = fileInputFull.files[0] || null;
+          fileNameSpanFull.textContent = selectedFullFile ? selectedFullFile.name : 'No file selected';
+          if (selectedFullFile) {
+            imgPreviewFull.src = URL.createObjectURL(selectedFullFile);
+            imgPreviewFull.style.display = '';
           } else {
-            imgPreview.style.display = 'none';
+            imgPreviewFull.style.display = 'none';
+          }
+          updateCreateEnabled();
+        });
+
+        bindActivate(browseBtnThumb, () => fileInputThumb.click());
+        fileInputThumb.addEventListener('change', () => {
+          selectedThumbFile = fileInputThumb.files[0] || null;
+          fileNameSpanThumb.textContent = selectedThumbFile ? selectedThumbFile.name : 'No file selected';
+          if (selectedThumbFile) {
+            imgPreviewThumb.src = URL.createObjectURL(selectedThumbFile);
+            imgPreviewThumb.style.display = '';
+          } else {
+            imgPreviewThumb.style.display = 'none';
           }
           updateCreateEnabled();
         });
@@ -246,8 +287,8 @@ export class AddItemDialog {
           const cat  = currentCategory();
           const type = resolvedType();
           const name = nameInput.value.trim();
-          if (!cat || !type || !name || !selectedFile) {
-            ui.notifications.warn("Pick a category, enter a name, and choose an image first.");
+          if (!cat || !type || !name || !selectedFullFile || !selectedThumbFile) {
+            ui.notifications.warn("Pick a category, enter a name, and choose both a full-size image and a thumbnail first.");
             return;
           }
 
@@ -256,7 +297,7 @@ export class AddItemDialog {
 
           let images = null;
           try {
-            images = await generateItemImages(selectedFile, subfolderInput.value.trim() || cat.thumbFolder);
+            images = await uploadItemImages(selectedFullFile, selectedThumbFile, subfolderInput.value.trim() || cat.thumbFolder, name);
           } catch (err) {
             console.error("[OSP] Add Item image upload failed:", err);
           }
@@ -270,6 +311,7 @@ export class AddItemDialog {
 
           const system = collectSystemData(el);
           const itemData = { name, type, img: images.imgThumb, system };
+          if (folderSelect.value) itemData.folder = folderSelect.value;
 
           try {
             await Item.create(itemData);

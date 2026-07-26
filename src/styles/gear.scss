@@ -1166,7 +1166,10 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   flex-wrap: wrap;
 }
 
-.tag {
+// Scoped to .item-tags — a bare .tag selector collides with Foundry core's own class names
+// (e.g. the v14 FilePicker's Favorites row uses "tag" too) and, because system styles sit in a
+// higher-priority CSS @layer than core, silently wins over core's own styling wherever it hits.
+.item-tags .tag {
   background: #e0e0e0;
   padding: 2px 6px;
   border-radius: 3px;
@@ -2494,6 +2497,47 @@ li.livestock-entry .lashed-stored-item {
 // Each slung item row
 .slung-item {
   position: relative;
+
+  // Vertical trunk line — same treatment as .lashed-item, so Slung Items gets the same tree
+  // connector as Belt/other lashed sections.
+  &::before {
+    content: '';
+    position: absolute;
+    left: $tree-line-position;
+    top: -1px;
+    bottom: -1px;
+    width: $tree-line-thickness;
+    background: $tree-line-color;
+  }
+
+  // Horizontal branch to the item — same fixed vertical offset/reach as .lashed-item::after so
+  // expanded rows (stored weapon below header) don't shift it away from the header caret.
+  &::after {
+    content: '';
+    position: absolute;
+    left: $tree-line-position;
+    top: calc(#{$item-row-height} / 2);
+    width: calc(#{abs($tree-line-position)} + #{$col-caret});
+    height: $tree-line-thickness;
+    background: $tree-line-color;
+  }
+
+  // Shorten the branch when this slung item itself shows a live toggle (e.g. a Quiver's
+  // sling-storage-toggle) — same rule as .lashed-item's nested-container-toggle/attachment-toggle.
+  &:has(> .item-header > a.sling-storage-toggle)::after {
+    width: abs($tree-line-position);
+  }
+
+  // First item: extend trunk up through the subheader to close the gap to it, matching
+  // .lashed-item.first-lashed-item (the subheader case, not the .lashed-header toggle case).
+  &.first-slung-item::before {
+    top: calc(-1px - #{$font-nested-header} - 6px);
+  }
+
+  // Last item: trunk stops at the header row's vertical center (L-shaped connector).
+  &.last-slung-item::before {
+    bottom: calc(100% - #{$item-row-height} / 2);
+  }
 
   // :not(.lashed-stored-item) — the stored-item row below (e.g. Battle Axe) is also a direct
   // child of .slung-item and also carries class "item-header", so without this exclusion this

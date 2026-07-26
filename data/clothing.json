@@ -12,7 +12,10 @@
       "equipped": false,
       "lashable": false,
       "lashSlots": 6,
-      "lashAllowedSizes": ["S", "M"],
+      "lashAllowedSizes": [
+        "S",
+        "M"
+      ],
       "tags": [
         "clothing"
       ]
@@ -47,8 +50,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "capacity": 2,
       "lashSlots": 0,
       "maxItemSize": 0.5
@@ -100,8 +101,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "lashed": false,
-      "containerId": null,
       "capacity": 2,
       "lashSlots": 0,
       "maxItemSize": 0.5

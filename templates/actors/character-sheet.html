@@ -510,12 +510,21 @@
         return lines.join('<br>');
       }
 
-      // Create tooltip element
-  const tooltip = document.createElement('div');
-  tooltip.id = 'ability-tooltip';
-  // Use CSS class for visual styling; styles live in src/styles/_character-sheet.scss
-  tooltip.className = 'cs-tooltip';
-  document.body.appendChild(tooltip);
+      // Create tooltip element — reuse one left over from a prior render instead of always
+      // creating a new one. Every sheet re-render (item drop, stat change, etc.) re-runs this
+      // script block; without the reuse check, each pass appended a fresh #ability-tooltip to
+      // document.body while the previous one(s) were orphaned — their trigger elements were
+      // replaced by the re-render, so no future mouseleave could ever fire to fade them out,
+      // leaving any tooltip that happened to be visible at render time stuck on screen forever.
+      let tooltip = document.getElementById('ability-tooltip');
+      if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'ability-tooltip';
+        // Use CSS class for visual styling; styles live in src/styles/_character-sheet.scss
+        tooltip.className = 'cs-tooltip';
+        document.body.appendChild(tooltip);
+      }
+      tooltip.style.opacity = '0';
 
       let tooltipTimeout;
 
@@ -1418,7 +1427,7 @@
             </div>
             <div class="combat-stat cs-combat-stat cs-pos-combat-mhp-value">
               <div class="cs-unarmored-box">
-                {{calculatedMaxHP}}
+                {{system.maxhitpoints}}
               </div>
             </div>
             <div class="combat-stat cs-combat-stat cs-pos-combat-tactical-label">
@@ -1735,7 +1744,7 @@
                   </div>
                   {{/if}}
                   {{#each slungItems as |item|}}
-                  <div class="slung-item" data-item-id="{{item.id}}">
+                  <div class="slung-item{{#if @first}} first-slung-item{{/if}}{{#if @last}} last-slung-item{{/if}}" data-item-id="{{item.id}}">
                     <div class="item-header flexrow">
                       {{#if item.hasStoredContent}}
                       <a class="sling-storage-toggle" data-item-id="{{item.id}}" title="{{#if item.storageCollapsed}}Expand{{else}}Collapse{{/if}}">
@@ -2617,6 +2626,23 @@
                         <div class="field-short">{{nestedItem.unitWeight}}</div>
                         <div class="item-controls">
                           {{#if @root.owner}}
+                          {{#if (hasTag nestedItem.system.tags "sword")}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{else if (includes nestedItem.name "Sack,")}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="Carry/Put Down" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{else if nestedItem.isConsumableWeapon}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Stow{{else}}Ready{{/if}}" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{else if (or (eq nestedItem.type "container") (eq nestedItem.type "clothing") (eq nestedItem.type "armor"))}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-tshirt"></i>
+                          </a>
+                          {{/if}}
                           <a class="item-control item-edit" title="Edit Item">
                             <i class="fas fa-eye"></i>
                           </a>
@@ -2933,7 +2959,7 @@
     <input type="hidden" name="system.userPortrait.y" value="{{system.userPortrait.y}}" />
 
     <!-- Portrait display area -->
-    <div class="portrait-display cs-portrait-display" title="Double-click: Change portrait&#10;Right-click: Position tool&#10;Shift+Right-click: Portrait adjustment controls">
+    <div class="portrait-display cs-portrait-display" title="Double-click: Change portrait&#10;Right-click: Position tool&#10;Ctrl+Right-click: Portrait adjustment controls">
       <img class="portrait-img cs-portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}systems/osp-houserules/assets/images/icons/generic-portrait.webp{{/if}}" alt="{{actor.name}}" draggable="false" />
     </div>
 

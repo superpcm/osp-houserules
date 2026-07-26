@@ -19,6 +19,7 @@ import { OspActorSheetMonster } from "./module/actor/sheets/monster-sheet.js";
 import { PositionToolHandler } from "./module/actor/sheets/handlers/position-tool-handler.js";
 import { registerPositionSettings, applyStoredPositionOverrides } from "./module/actor/sheets/handlers/position-file-writer.js";
 import { OspActor } from "./module/actor/actor.js";
+import { handleLevelUp } from "./module/actor/level-up.js";
 import { OspItem } from "./module/item/item.js";
 import { OspItemSheet } from "./module/item/item-sheet.js";
 
@@ -226,33 +227,36 @@ Hooks.on("renderActorDirectory", (app, html) => addPartyControl(app, html));
 Hooks.on("updateActor", async (actor, data, options) => {
   updatePartySheet(actor, data);
 
-  // ── Skill point level-up detection ───────────────────────────────────────
+  // ── Level-up detection (skill points + Hit Die roll) ─────────────────────
   // Only trigger when XP actually changed, on the owning player's client.
   // If a non-GM owner is active, skip on GM to avoid duplicate dialogs.
+  // Hoisted out of the skill-point class check (previously this whole block only ran for
+  // SKILL_POINT_CONFIG classes) since Hit Die rolling applies to every class, not just the
+  // ones with skill points — lastKnownLevel is shared as the single source of truth for
+  // "this actor's level as of the last time we processed an XP change" for both features.
   if (data.system?.xp !== undefined && actor.type === 'character') {
-    const config = SKILL_POINT_CONFIG[(actor.system.class || '').trim()];
-    if (config) {
-      const isRelevantClient = actor.isOwner && (game.user.isGM
-        ? !game.users.some(u => !u.isGM && u.active && (actor.ownership[u.id] ?? 0) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
-        : true);
+    const isRelevantClient = actor.isOwner && (game.user.isGM
+      ? !game.users.some(u => !u.isGM && u.active && (actor.ownership[u.id] ?? 0) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
+      : true);
 
-      if (isRelevantClient) {
-        const newLevel      = parseInt(actor.system.level) || 1;
-        const lastKnownLevel = actor.getFlag('osp-houserules', 'lastKnownLevel') ?? 0;
+    if (isRelevantClient) {
+      const newLevel      = parseInt(actor.system.level) || 1;
+      const lastKnownLevel = actor.getFlag('osp-houserules', 'lastKnownLevel') ?? 0;
 
-        if (newLevel > lastKnownLevel) {
-          const newPoints    = calcSkillPoints(config, lastKnownLevel, newLevel);
-          const prevPending  = actor.getFlag('osp-houserules', 'pendingSkillPoints') || 0;
-          const totalPending = prevPending + newPoints;
+      if (newLevel > lastKnownLevel) {
+        const config = SKILL_POINT_CONFIG[(actor.system.class || '').trim()];
+        const newPoints    = config ? calcSkillPoints(config, lastKnownLevel, newLevel) : 0;
+        const prevPending  = actor.getFlag('osp-houserules', 'pendingSkillPoints') || 0;
+        const totalPending = prevPending + newPoints;
 
-          // Persist updated tracking in one update (avoids double hook)
-          await actor.update({
-            'flags.osp-houserules.lastKnownLevel':    newLevel,
-            'flags.osp-houserules.pendingSkillPoints': totalPending,
-          });
+        // Persist updated tracking in one update (avoids double hook)
+        await actor.update({
+          'flags.osp-houserules.lastKnownLevel':    newLevel,
+          'flags.osp-houserules.pendingSkillPoints': totalPending,
+        });
 
-          showSkillPointDialog(actor, totalPending);
-        }
+        if (config) showSkillPointDialog(actor, totalPending);
+        await handleLevelUp(actor, lastKnownLevel, newLevel);
       }
     }
   }
@@ -1073,7 +1077,7 @@ Hooks.on('renderDocumentSheetConfig', (app, element) => {
   const fieldset = element.querySelector('fieldset');
   if (!fieldset) return;
 
-  const currentTheme = fdoc.getFlag(game.system.id, 'sheetTheme') ?? 'default';
+  const currentTheme = fdoc.getFlag(game.system.id, 'sheetTheme') ?? 'parchment';
 
   const row = document.createElement('div');
   row.className = 'form-group osp-theme-picker';

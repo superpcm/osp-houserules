@@ -1463,7 +1463,7 @@ form.osp.sheet.actor.character .static-header::before,
   overflow: visible;
 }
 
-.tab[data-tab="combat"] {
+form.osp.sheet.actor.character .tab[data-tab="combat"] {
   position: relative;
   background-color: transparent !important;
   height: 795px !important;

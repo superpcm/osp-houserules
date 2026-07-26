@@ -64,7 +64,6 @@
       "quantity": 1,
       "equipped": false,
       "lashable": true,
-      "lashed": false,
       "tags": [
         "tack",
         "light source"

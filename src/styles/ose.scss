@@ -155,6 +155,26 @@ form.osp button {
   }
 }
 
+/* Foundry core's FilePicker "Favorites" quick-access buttons (e.g. Images/fonts) render with
+   near-identical text and background colors in this environment, making them hard to read.
+   This is core UI, not part of our sheet, so it's patched globally rather than under .osp. */
+.filepicker .favorites .path {
+  background: rgba(0, 0, 0, 0.45);
+
+  a.link {
+    color: #f0e6d2;
+  }
+
+  a.remove {
+    color: #f0e6d2;
+    opacity: 0.85;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
 /* Grid overlay animation */
 .grid-overlay {
   animation: fadeIn 0.3s ease;

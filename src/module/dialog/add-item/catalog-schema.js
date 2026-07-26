@@ -17,6 +17,19 @@ export const CATALOG_CATEGORIES = [
   { key: 'treasure',   label: 'Treasure',   types: ['coin'],       fixedType: 'coin',       thumbFolder: 'treasure' },
 ];
 
+/**
+ * Names of every catalog item of type "container" (across gear/tack/misc/vehicles),
+ * used to populate the "Allowed Containers" checkbox list. Keep alphabetized and in
+ * sync with the container-type entries in data/*.json.
+ */
+export const CONTAINER_NAMES = [
+  'Axe Sling', 'Backpack', 'Baldric', 'Belt Loop', 'Belt Pouch (L)', 'Belt Pouch (S)',
+  'Bolt Case', 'Cart', 'Chest, Large', 'Chest, Small', 'Coin Purse', 'Flask/Potion Holder',
+  'Panniers', 'Quiver', 'Quiver, Hip', 'Sack, Large', 'Sack, Small', 'Saddle', 'Saddle, Pack',
+  'Saddlebags, Large', 'Saddlebags, Small', 'Scabbard, Dagger', 'Scabbard, Sword', 'Sidesack',
+  'Skin Sling', 'Sword Frog', 'Wagon',
+];
+
 export const TYPE_LABELS = {
   item: 'Item',
   container: 'Container',
@@ -154,6 +167,17 @@ function fieldHtml(def) {
       <input type="text" data-sys-field="${key}" data-sys-kind="tags" value="${val}" placeholder="comma, separated">
     </div>`;
   }
+  if (kind === 'checkboxgroup') {
+    const selected = Array.isArray(def0) ? def0 : [];
+    const boxes = options.map(name => {
+      const checked = selected.includes(name) ? 'checked' : '';
+      return `<label class="add-item-checkbox-chip"><input type="checkbox" data-sys-field="${key}" data-sys-kind="checkboxgroup" value="${name}" ${checked}> ${name}</label>`;
+    }).join('');
+    return `<div class="${cls} add-item-field-full">
+      <label>${label}</label>
+      <div class="add-item-checkbox-group">${boxes}</div>
+    </div>`;
+  }
   const inputType = kind === 'number' ? 'number' : 'text';
   return `<div class="${cls}">
     <label>${label}</label>
@@ -179,6 +203,21 @@ export function renderTypeFields(type) {
   return fieldsHtml(defs, 'Advanced fields');
 }
 
+/**
+ * Renders the "Allowed Containers" checkbox group — shared across all item
+ * types (weapon/item/container), gating which named containers an
+ * oversized item may be stored in. See container-allowlist.js.
+ */
+export function renderAllowedContainersField() {
+  return fieldHtml({
+    key: 'allowedContainers',
+    label: 'Allowed Containers (leave unchecked for no restriction)',
+    kind: 'checkboxgroup',
+    default: [],
+    options: CONTAINER_NAMES,
+  });
+}
+
 export function renderCategoryExtras(categoryKey) {
   const defs = CATEGORY_EXTRAS[categoryKey] || [];
   if (!defs.length) return '';
@@ -192,9 +231,17 @@ export function renderCategoryExtras(categoryKey) {
  */
 export function collectSystemData(root) {
   const flat = {};
+  const checkboxGroups = {};
   root.querySelectorAll('[data-sys-field]').forEach((el) => {
     const key  = el.dataset.sysField;
     const kind = el.dataset.sysKind;
+    // Multiple checkboxes share the same data-sys-field (e.g. allowedContainers) —
+    // accumulate the checked ones into an array instead of overwriting flat[key].
+    if (kind === 'checkboxgroup') {
+      if (!checkboxGroups[key]) checkboxGroups[key] = [];
+      if (el.checked) checkboxGroups[key].push(el.value);
+      return;
+    }
     let value;
     if (kind === 'checkbox') value = el.checked;
     else if (kind === 'number') value = el.value === '' ? 0 : (parseFloat(el.value) || 0);
@@ -202,5 +249,6 @@ export function collectSystemData(root) {
     else value = el.value;
     flat[key] = value;
   });
+  Object.assign(flat, checkboxGroups);
   return foundry.utils.expandObject(flat);
 }

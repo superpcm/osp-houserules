@@ -1072,7 +1072,10 @@
       "weaponPermissions": [
         "Club",
         "Dagger",
+        "Dart",
+        "Sickle",
         "Sling",
+        "Sling, Staff",
         "Spear",
         "Staff"
       ],
@@ -2369,7 +2372,8 @@
         }
       ],
       "armorPermissions": [
-        "None"
+        "Gambeson",
+        "Padded"
       ],
       "weaponPermissions": [
         "Dagger",

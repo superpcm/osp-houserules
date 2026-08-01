@@ -1,4 +1,6 @@
 import { OSP } from "../config.js";
+import { generateGlowImage, resolveFullRes, ensureMagicFolder } from "./magic-item-shared.js";
+import { slugify } from "./add-item/image-pipeline.js";
 
 export class MagicItemCreator extends FormApplication {
   constructor(sourceItem, options = {}) {
@@ -59,13 +61,24 @@ export class MagicItemCreator extends FormApplication {
   async _updateObject(event, formData) {
     const expanded = foundry.utils.expandObject(formData);
 
-    // Generate glow from the full-resolution source image, not the thumbnail
-    const glowImg = await MagicItemCreator._generateGlowImage(
-      MagicItemCreator._resolveFullRes(this.sourceItem.img)
-    );
+    // Glow both the full-size and thumbnail source art, uploading each as its own
+    // "magic/<type>" copy — never overwriting the mundane base item's own art files,
+    // since other actors/world items still reference those directly — with the same
+    // full/thumb sibling naming item-card-renderer.js expects, so the item card finds
+    // the glowing full-size image next to the glowing thumbnail instead of upscaling it.
+    const subDir   = { weapon: "weapons", armor: "armor", ammunition: "ammunition" }[this.sourceItem.type] || "misc";
+    const baseName = slugify(expanded.name || this.sourceItem.name);
+    const fullDir  = `systems/osp-houserules/assets/images/magic/${subDir}`;
+    const thumbDir = `systems/osp-houserules/assets/thumbs/images/magic/${subDir}`;
+
+    const [, glowImg] = await Promise.all([
+      generateGlowImage(resolveFullRes(this.sourceItem.img), { dir: fullDir,  fileName: `${baseName}.webp` }),
+      generateGlowImage(this.sourceItem.img,                  { dir: thumbDir, fileName: `${baseName}_thumb.webp` }),
+    ]);
 
     // Ensure folder hierarchy: Magic Items > Weapons/Armor/Ammunition
-    const folder = await MagicItemCreator._ensureFolder(this.sourceItem.type);
+    const subName = { weapon: "Weapons", armor: "Armor", ammunition: "Ammunition" }[this.sourceItem.type];
+    const folder = await ensureMagicFolder(subName);
 
     // Merge form data onto source item, stripping actor-placement fields
     const itemData = foundry.utils.mergeObject(
@@ -84,83 +97,5 @@ export class MagicItemCreator extends FormApplication {
 
     await Item.create(itemData);
     ui.notifications.info(`Magic item "${expanded.name}" created.`);
-  }
-
-  // ── Path helpers ─────────────────────────────────────────────────────────
-
-  static _resolveFullRes(imgPath) {
-    const THUMB_BASE = 'systems/osp-houserules/assets/thumbs/images/';
-    if (imgPath && imgPath.includes(THUMB_BASE)) {
-      const relative = imgPath.slice(imgPath.indexOf(THUMB_BASE) + THUMB_BASE.length);
-      return 'systems/osp-houserules/assets/images/' + relative.replace('_thumb.webp', '.webp');
-    }
-    return imgPath;
-  }
-
-  // ── Folder helpers ──────────────────────────────────────────────────────
-
-  static async _ensureFolder(itemType) {
-    const subName = { weapon: "Weapons", armor: "Armor", ammunition: "Ammunition" }[itemType];
-    if (!subName) return null;
-
-    let parent = game.folders.find(f => f.name === "Magic Items" && f.type === "Item" && !f.folder);
-    if (!parent) {
-      parent = await Folder.create({ name: "Magic Items", type: "Item", color: "#8B6914" });
-    }
-
-    let sub = game.folders.find(f => f.name === subName && f.type === "Item" && f.folder?.id === parent.id);
-    if (!sub) {
-      sub = await Folder.create({ name: subName, type: "Item", folder: parent.id });
-    }
-
-    return sub;
-  }
-
-  // ── Glow image generation ────────────────────────────────────────────────
-
-  static async _generateGlowImage(srcImg) {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-
-      img.onload = () => {
-        const PAD = 22;
-        const canvas = document.createElement("canvas");
-        canvas.width  = img.width  + PAD * 2;
-        canvas.height = img.height + PAD * 2;
-        const ctx = canvas.getContext("2d");
-
-        // Multiple glow passes to build up intensity
-        ctx.shadowColor = "#FFD700";
-        ctx.shadowBlur  = 20;
-        for (let i = 0; i < 4; i++) ctx.drawImage(img, PAD, PAD);
-
-        // Final sharp draw on top of the glow
-        ctx.shadowBlur = 0;
-        ctx.drawImage(img, PAD, PAD);
-
-        canvas.toBlob(async (blob) => {
-          if (!blob) { resolve(srcImg); return; }
-          const baseName = srcImg.split("/").pop().replace(/\.[^.]+$/, "").replace(/_thumb$/, "");
-          const fileName = `${baseName}-magic_${Date.now()}.webp`;
-          try {
-            await FilePicker.createDirectory("data", "magic-item-thumbs").catch(() => {});
-            const file   = new File([blob], fileName, { type: "image/webp" });
-            const result = await FilePicker.upload("data", "magic-item-thumbs", file, {});
-            resolve(result.path ?? srcImg);
-          } catch {
-            resolve(srcImg);
-          }
-        }, "image/webp", 0.92);
-      };
-
-      img.onerror = () => resolve(srcImg);
-
-      // Prefix path so the browser resolves it correctly from the Foundry origin
-      const resolved = srcImg.startsWith("http") || srcImg.startsWith("/")
-        ? srcImg
-        : `/${srcImg}`;
-      img.src = `${resolved}?v=${Date.now()}`;
-    });
   }
 }

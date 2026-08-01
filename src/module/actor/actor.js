@@ -40,18 +40,18 @@ export class OspActor extends Actor {
         spells: [16, 16, 16, 14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8]
       },
       'cleric': {
-        death: [11, 10, 9, 8, 7, 6, 5, 4, 2, 2, 2, 2, 2, 2],
-        wands: [12, 11, 10, 9, 8, 7, 6, 5, 3, 3, 3, 3, 2, 2],
-        paralysis: [14, 13, 12, 11, 10, 9, 8, 7, 5, 4, 3, 2, 2, 2],
-        breath: [16, 15, 14, 13, 12, 11, 10, 9, 7, 6, 5, 4, 2, 2],
-        spells: [15, 14, 13, 12, 11, 10, 9, 8, 6, 5, 4, 3, 2, 2]
+        death: [11, 11, 11, 11, 9, 9, 9, 9, 6, 6, 6, 6, 3, 3],
+        wands: [12, 12, 12, 12, 10, 10, 10, 10, 7, 7, 7, 7, 5, 5],
+        paralysis: [14, 14, 14, 14, 12, 12, 12, 12, 9, 9, 9, 9, 7, 7],
+        breath: [16, 16, 16, 16, 14, 14, 14, 14, 11, 11, 11, 11, 8, 8],
+        spells: [15, 15, 15, 15, 12, 12, 12, 12, 9, 9, 9, 9, 7, 7]
       },
       'magic-user': {
-        death: [13, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7],
-        wands: [14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8],
-        paralysis: [13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 7],
-        breath: [16, 15, 15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9],
-        spells: [15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8]
+        death: [13, 13, 13, 13, 13, 11, 11, 11, 11, 11, 8, 8, 8, 8],
+        wands: [14, 14, 14, 14, 14, 12, 12, 12, 12, 12, 9, 9, 9, 9],
+        paralysis: [13, 13, 13, 13, 13, 11, 11, 11, 11, 11, 8, 8, 8, 8],
+        breath: [16, 16, 16, 16, 16, 14, 14, 14, 14, 14, 11, 11, 11, 11],
+        spells: [15, 15, 15, 15, 15, 12, 12, 12, 12, 12, 8, 8, 8, 8]
       },
       'thief': {
         death: [13, 13, 13, 13, 12, 12, 12, 12, 10, 10, 10, 10, 8, 8],
@@ -61,9 +61,9 @@ export class OspActor extends Actor {
         spells: [15, 15, 15, 15, 13, 13, 13, 13, 10, 10, 10, 10, 8, 8]
       },
       'barbarian': {
-        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 3, 3],
+        death: [10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4, 4, 3, 3],
         wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5],
-        paralysis: [14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 6, 4, 4],
+        paralysis: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4],
         breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8, 5, 5],
         spells: [16, 16, 16, 13, 13, 13, 10, 10, 10, 7, 7, 7, 5, 5]
       },
@@ -75,18 +75,18 @@ export class OspActor extends Actor {
         spells: [15, 15, 15, 15, 13, 13, 13, 13, 10, 10, 10, 10, 8, 8]
       },
       'mage': {
-        death: [11, 11, 11, 11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
-        wands: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
-        paralysis: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
-        breath: [15, 15, 15, 15, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
-        spells: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10]
+        death: [12, 12, 12, 12, 12, 10, 10, 10, 10, 10, 7, 7, 7, 7],
+        wands: [13, 13, 13, 13, 13, 11, 11, 11, 11, 11, 8, 8, 8, 8],
+        paralysis: [12, 12, 12, 12, 12, 10, 10, 10, 10, 10, 7, 7, 7, 7],
+        breath: [15, 15, 15, 15, 15, 13, 13, 13, 13, 13, 10, 10, 10, 10],
+        spells: [14, 14, 14, 14, 14, 11, 11, 11, 11, 11, 7, 7, 7, 7]
       },
       'warden': {
-        death: [11, 11, 11, 11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
-        wands: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
-        paralysis: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
-        breath: [15, 15, 15, 15, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
-        spells: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10]
+        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4],
+        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5],
+        paralysis: [14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6],
+        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8, 5, 5],
+        spells: [16, 16, 16, 14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8]
       },
       'beast master': {
         death: [11, 11, 11, 11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
@@ -94,6 +94,41 @@ export class OspActor extends Actor {
         paralysis: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
         breath: [15, 15, 15, 15, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
         spells: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10]
+      },
+      'drow': {
+        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6],
+        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7],
+        paralysis: [13, 13, 13, 11, 11, 11, 9, 9, 9, 8],
+        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8],
+        spells: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6]
+      },
+      'paladin': {
+        death: [10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4, 4, 2, 2],
+        wands: [11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5, 5, 3, 3],
+        paralysis: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4],
+        breath: [13, 13, 13, 11, 11, 11, 8, 8, 8, 6, 6, 6, 3, 3],
+        spells: [14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6]
+      },
+      'elf': {
+        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6],
+        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7],
+        paralysis: [13, 13, 13, 11, 11, 11, 9, 9, 9, 8],
+        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8],
+        spells: [15, 15, 15, 12, 12, 12, 10, 10, 10, 8]
+      },
+      'half-elf': {
+        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6],
+        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7],
+        paralysis: [13, 13, 13, 11, 11, 11, 9, 9, 9, 8, 8, 8],
+        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8],
+        spells: [15, 15, 15, 12, 12, 12, 10, 10, 10, 8, 8, 8]
+      },
+      'gnome': {
+        death: [8, 8, 8, 8, 8, 6, 6, 6],
+        wands: [9, 9, 9, 9, 9, 7, 7, 7],
+        paralysis: [10, 10, 10, 10, 10, 8, 8, 8],
+        breath: [14, 14, 14, 14, 14, 11, 11, 11],
+        spells: [11, 11, 11, 11, 11, 9, 9, 9]
       },
       'dwarf': {
         death: [8, 8, 8, 6, 6, 6, 4, 4, 4, 2, 2, 2],
@@ -130,24 +165,25 @@ export class OspActor extends Actor {
 
       // Advanced Fantasy classes with specific tables
       'assassin': 'assassin',          // Assassins have their own progression
-      'barbarian': 'barbarian',        // Barbarians have their own progression  
+      'barbarian': 'barbarian',        // Barbarians have their own progression
       'bard': 'thief',                 // Bards use thief saves
       'beast master': 'beast master',  // Beast Masters have their own progression
       'druid': 'cleric',               // Druids use cleric saves
       'knight': 'fighter',             // Knights use fighter saves
-      'paladin': 'cleric',             // Paladins use cleric saves
+      'paladin': 'paladin',            // Paladins have their own progression
       'ranger': 'fighter',             // Rangers use fighter saves
-      'warden': 'warden',              // Wardens have their own progression
+      'warden': 'warden',              // Wardens have their own progression (matches fighter)
 
       // Magic users and variants
       'illusionist': 'magic-user',     // Illusionists use magic-user saves
       'mage': 'mage',                  // Mages have their own progression
 
       // Race-as-class options with specific tables
+      'drow': 'drow',                  // Drow class has its own progression
       'dwarf': 'dwarf',                // Dwarf class has its own progression
-      'elf': 'fighter',                // Elf class uses fighter saves (with some magic-user features)
-      'gnome': 'cleric',               // Gnome class uses cleric saves
-      'half-elf': 'fighter',           // Half-Elf class uses fighter saves
+      'elf': 'elf',                    // Elf class has its own progression
+      'gnome': 'gnome',                // Gnome class has its own progression
+      'half-elf': 'half-elf',          // Half-Elf class has its own progression
       'half-orc': 'half-orc',          // Half-Orc class has its own progression
       'hobbit': 'hobbit'               // Hobbit class has its own progression
     };

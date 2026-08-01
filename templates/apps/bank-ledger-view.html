@@ -1,0 +1,45 @@
+<div class="osp-bank-ledger-view flexcol">
+  <div class="osp-bank-currency-row">
+    <div class="osp-bank-currency-tile">
+      <i class="fas fa-coins osp-bank-coin-gold"></i>
+      <span class="osp-bank-currency-value">{{currency.gold}}</span>
+      <span class="osp-bank-currency-label">Gold</span>
+    </div>
+    <div class="osp-bank-currency-tile">
+      <i class="fas fa-coins osp-bank-coin-silver"></i>
+      <span class="osp-bank-currency-value">{{currency.silver}}</span>
+      <span class="osp-bank-currency-label">Silver</span>
+    </div>
+    <div class="osp-bank-currency-tile">
+      <i class="fas fa-coins osp-bank-coin-copper"></i>
+      <span class="osp-bank-currency-value">{{currency.copper}}</span>
+      <span class="osp-bank-currency-label">Copper</span>
+    </div>
+  </div>
+
+  <div class="osp-bank-items-section">
+    <h4 class="osp-bank-section-header">Deposited Treasure</h4>
+    {{#if hasItems}}
+      <ul class="osp-bank-item-list">
+        {{#each items}}
+          <li class="osp-bank-item-row">
+            <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+            <span class="osp-bank-item-name">{{name}}{{#if unique}} <i class="fas fa-star osp-bank-unique-star" title="Unique"></i>{{/if}}</span>
+            <span class="osp-bank-item-qty">×{{quantity}}</span>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="osp-bank-empty-note">No treasure deposited yet.</p>
+    {{/if}}
+  </div>
+
+  <div class="osp-bank-actions-row">
+    <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="deposit">
+      <i class="fas fa-arrow-down"></i> Deposit
+    </span>
+    <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="withdraw">
+      <i class="fas fa-arrow-up"></i> Withdraw
+    </span>
+  </div>
+</div>

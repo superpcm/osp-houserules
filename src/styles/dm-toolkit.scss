@@ -403,8 +403,9 @@
   }
 }
 
-// Add Item dialog
-.osp-add-item-dialog {
+// Add Item dialog (also reused by the Add Magic Item dialog — same field grid,
+// image-upload row, and action bar, just a different set of category fields)
+.osp-add-item-dialog, .osp-add-magic-item-dialog {
   display: flex;
   flex-direction: column;
   gap: 10px;

@@ -1,0 +1,61 @@
+<div class="osp-bank-deposit-dialog flexrow">
+  <div class="osp-bank-source-pane">
+    <h4 class="osp-bank-section-header">Your Inventory</h4>
+    {{#if hasSources}}
+      {{#each groups}}
+        <div class="osp-bank-source-group">
+          <div class="osp-bank-source-group-header">{{containerName}}</div>
+          {{#each coins}}
+            <div class="osp-bank-drag-source osp-bank-source-row" data-item-id="{{itemId}}">
+              <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+              <span class="osp-bank-item-name">{{name}}</span>
+              <span class="osp-bank-item-qty">×{{quantity}}</span>
+            </div>
+          {{/each}}
+          {{#each treasures}}
+            <div class="osp-bank-drag-source osp-bank-source-row" data-item-id="{{itemId}}">
+              <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+              <span class="osp-bank-item-name">{{name}}</span>
+              <span class="osp-bank-item-qty">×{{quantity}}</span>
+            </div>
+          {{/each}}
+        </div>
+      {{/each}}
+      {{#if looseTreasures}}
+        <div class="osp-bank-source-group">
+          <div class="osp-bank-source-group-header">Unstored</div>
+          {{#each looseTreasures}}
+            <div class="osp-bank-drag-source osp-bank-source-row" data-item-id="{{itemId}}">
+              <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+              <span class="osp-bank-item-name">{{name}}</span>
+              <span class="osp-bank-item-qty">×{{quantity}}</span>
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+    {{else}}
+      <p class="osp-bank-empty-note">No coins or treasure to deposit.</p>
+    {{/if}}
+  </div>
+
+  <div class="osp-bank-drop-zone">
+    <h4 class="osp-bank-section-header">Westford Bank</h4>
+    <p class="osp-bank-drop-hint">Drag a coin stack or treasure item here to deposit.</p>
+    <div class="osp-bank-currency-row">
+      <div class="osp-bank-currency-tile"><span class="osp-bank-currency-value">{{currency.gold}}</span><span class="osp-bank-currency-label">Gold</span></div>
+      <div class="osp-bank-currency-tile"><span class="osp-bank-currency-value">{{currency.silver}}</span><span class="osp-bank-currency-label">Silver</span></div>
+      <div class="osp-bank-currency-tile"><span class="osp-bank-currency-value">{{currency.copper}}</span><span class="osp-bank-currency-label">Copper</span></div>
+    </div>
+    {{#if hasItems}}
+      <ul class="osp-bank-item-list">
+        {{#each items}}
+          <li class="osp-bank-item-row">
+            <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+            <span class="osp-bank-item-name">{{name}}</span>
+            <span class="osp-bank-item-qty">×{{quantity}}</span>
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+  </div>
+</div>

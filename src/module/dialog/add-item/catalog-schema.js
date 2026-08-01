@@ -185,7 +185,7 @@ function fieldHtml(def) {
   </div>`;
 }
 
-function fieldsHtml(defs, advancedLabel) {
+export function fieldsHtml(defs, advancedLabel) {
   const primary  = defs.filter(d => !d.advanced);
   const advanced = defs.filter(d => d.advanced);
   let html = `<div class="add-item-fields-grid">${primary.map(fieldHtml).join('')}</div>`;

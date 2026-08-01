@@ -3,9 +3,18 @@
  * separately-browsed full-size image and thumbnail image into the catalog's
  * category subfolders under assets/images and assets/thumbs/images.
  * Extends the FilePicker.upload pattern already used by MagicItemCreator.
+ *
+ * Both files must be .webp: item-card-renderer.js and magic-item-creator.js locate the
+ * full-size image at render time by string-replacing "_thumb.webp" -> ".webp" on the stored
+ * thumb path (only the thumb path is ever saved to item JSON) — a non-.webp upload would land
+ * at the right path but never be found by that lookup, silently falling back to the thumbnail.
  */
 
-function slugify(name) {
+function isWebpFile(file) {
+  return file.type === 'image/webp' || /\.webp$/i.test(file.name);
+}
+
+export function slugify(name) {
   const slug = name.replace(/\.[^.]+$/, "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   return slug || `item-${Date.now()}`;
 }
@@ -22,6 +31,10 @@ function extOf(name) {
  * @returns {Promise<{imgFull: string|null, imgThumb: string|null}>}
  */
 export async function uploadItemImages(fullFile, thumbFile, subfolder, itemName) {
+  if (!isWebpFile(fullFile) || !isWebpFile(thumbFile)) {
+    throw new Error("Both the full-size image and the thumbnail must be .webp files.");
+  }
+
   const baseName = slugify(itemName || fullFile.name);
 
   const fullDir  = `systems/osp-houserules/assets/images/${subfolder}`;

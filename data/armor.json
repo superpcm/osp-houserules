@@ -117,14 +117,14 @@
     "img": "systems/osp-houserules/assets/thumbs/images/armor/field-plate_thumb.webp",
     "system": {
       "description": "Field plate is a well-crafted suit of articulated steel plates that balances protection with mobility, making it ideal for mounted knights. It is less refined than full plate but still represents elite craftsmanship and reliability.",
-      "cost": 2000,
+      "cost": 5000,
       "unitWeight": 45,
       "storedSize": 36,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
       "aac": {
-        "value": 17
+        "value": 18
       },
       "type": "heavy",
       "donTime": "10 minutes",
@@ -146,13 +146,35 @@
       "equipped": false,
       "lashable": false,
       "aac": {
-        "value": 18
+        "value": 19
       },
       "type": "heavy",
       "donTime": "10 minutes",
       "doffTime": "5 minutes",
       "maxDex": 0,
       "minStr": 16
+    }
+  },
+  {
+    "name": "Plate mail",
+    "type": "armor",
+    "img": "systems/osp-houserules/assets/thumbs/images/armor/plate-mail_thumb.webp",
+    "system": {
+      "description": "Plate mail is a heavy suit of armor made from shaped, overlapping steel plates worn over padding. It provides excellent protection against blades and crushing blows, though its weight, cost, and rigid construction can limit the wearer’s endurance and agility.",
+      "cost": 2000,
+      "unitWeight": 40,
+      "storedSize": 30,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "aac": {
+        "value": 17
+      },
+      "type": "heavy",
+      "donTime": "10 minutes",
+      "doffTime": "5 minutes",
+      "maxDex": 0,
+      "minStr": 14
     }
   },
   {

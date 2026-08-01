@@ -18,7 +18,7 @@ const COIN_NAMES = Object.keys(PENNIES_PER_COIN);
 
 // Mirrors data/treasure.json — needed to create a fresh coin stack when change must be
 // returned into a container that doesn't already hold that denomination.
-const COIN_TEMPLATES = {
+export const COIN_TEMPLATES = {
   'Copper Coins': { name: 'Copper Coins', type: 'coin', img: 'systems/osp-houserules/assets/images/treasure/copper-coins.webp', system: { cost: 0.1, unitWeight: 0.02, storedSize: 0.04, equipped: false, lashable: false, lashed: false, tags: ['coins'] } },
   'Silver Coins': { name: 'Silver Coins', type: 'coin', img: 'systems/osp-houserules/assets/images/treasure/silver-coins.webp', system: { cost: 1, unitWeight: 0.02, storedSize: 0.04, equipped: false, lashable: false, lashed: false, tags: ['coins'] } },
   'Gold Coins': { name: 'Gold Coins', type: 'coin', img: 'systems/osp-houserules/assets/images/treasure/gold-coins.webp', system: { cost: 10, unitWeight: 0.04, storedSize: 0.04, equipped: false, lashable: false, lashed: false, tags: ['coins'] } },

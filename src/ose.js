@@ -51,6 +51,9 @@ import { registerMoraleHooks } from "./module/combat/morale.js";
 // DM Toolkit sidebar tab
 import DmToolkitTab from "./module/sidebar/dm-toolkit.js";
 
+// Player's Toolkit sidebar tab
+import PlayerToolkitTab from "./module/sidebar/player-toolkit.js";
+
 // Character creation dialog (4d6 drop lowest ability rolls)
 import { CharacterCreationDialog } from "./module/actor/character-creation-dialog.js";
 
@@ -107,6 +110,13 @@ Hooks.once("init", () => {
     gmOnly: true
   };
   CONFIG.ui.dmtoolkit = DmToolkitTab;
+
+  // ── Player's Toolkit (all players) ───────────────────────────────────────
+  foundry.applications.sidebar.Sidebar.TABS.playertoolkit = {
+    tooltip: "Player's Toolkit",
+    icon: "osp-player-toolkit-icon"
+  };
+  CONFIG.ui.playertoolkit = PlayerToolkitTab;
 
   // ── Token Ruler ───────────────────────────────────────────────────────────
   CONFIG.Token.rulerClass = TokenRulerOSP;

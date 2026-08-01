@@ -1143,14 +1143,6 @@ form.osp.sheet.actor.character .static-header::before,
     background: rgba(44, 24, 16, 0.6);
   }
 }
-.spell-slots-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 4px;
-}
-.spell-rest-btn,
 .spell-known-filter-btn {
   font-family: $font-cooper !important;
   font-size: 12px;

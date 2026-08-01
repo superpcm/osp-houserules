@@ -3,6 +3,9 @@
  */
 
 import { AddItemDialog } from "../dialog/add-item/add-item-dialog.js";
+import { AddMagicItemDialog } from "../dialog/add-magic-item-dialog.js";
+import { getAbilityModifier } from "../../config/classes.js";
+import { BankDmLedgersView } from "../apps/bank-dm-ledgers-view.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { AbstractSidebarTab } = foundry.applications.sidebar;
@@ -14,6 +17,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     window: { title: "DM's Toolkit" },
     actions: {
       rest: DmToolkitTab._onRest,
+      awardRest: DmToolkitTab._onAwardRest,
       exportCharacters: DmToolkitTab._onExportCharacters,
       giveXP: DmToolkitTab._onGiveXP,
       setXP: DmToolkitTab._onSetXP,
@@ -23,8 +27,10 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       importMonsters:        DmToolkitTab._onImportMonsters,
       updateMonsterAttacks:  DmToolkitTab._onUpdateMonsterAttacks,
       addItem:                DmToolkitTab._onAddItem,
+      addMagicItem:           DmToolkitTab._onAddMagicItem,
       togglePlayerLock:      DmToolkitTab._onTogglePlayerLock,
-      toggleStoreLock:       DmToolkitTab._onToggleStoreLock
+      toggleStoreLock:       DmToolkitTab._onToggleStoreLock,
+      openBankLedgers:       DmToolkitTab._onOpenBankLedgers
     }
   };
 
@@ -43,6 +49,14 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
 
   static async _onAddItem(_event, _target) {
     await AddItemDialog.prompt();
+  }
+
+  static async _onAddMagicItem(_event, _target) {
+    await AddMagicItemDialog.prompt();
+  }
+
+  static async _onOpenBankLedgers(_event, _target) {
+    new BankDmLedgersView().render(true);
   }
 
   static async _onTogglePlayerLock(_event, _target) {
@@ -69,7 +83,12 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     if (!confirmed) return;
 
     const pcs = game.actors.filter(a => a.type === "character");
+    await DmToolkitTab._resetSpellSlots(pcs);
 
+    ui.notifications.info("Rest complete — all spell slots and memorized spells cleared.");
+  }
+
+  static async _resetSpellSlots(pcs) {
     const slotUpdates = {};
     for (let i = 1; i <= 6; i++) {
       slotUpdates[`system.spellSlots.${i}.used`] = 0;
@@ -79,8 +98,41 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       await actor.update(slotUpdates);
       await actor.unsetFlag("osp-houserules", "memorizedSpells");
     }
+  }
 
-    ui.notifications.info("Rest complete — all spell slots and memorized spells cleared.");
+  static async _onAwardRest(_event, _target) {
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Award Rest" },
+      content: "<p>Heal every player character (1d4 + CON modifier, minimum 1 HP, up to max HP) and reset all spell slots?</p>",
+      yes: { label: "Yes" },
+      no: { label: "Cancel" }
+    });
+    if (!confirmed) return;
+
+    const pcs = game.actors.filter(a => a.type === "character");
+
+    let totalHealed = 0;
+    for (const actor of pcs) {
+      const current = actor.system.hitpoints ?? 0;
+      const max = actor.system.maxhitpoints ?? current;
+      if (current >= max) continue;
+
+      const conMod = getAbilityModifier(actor.system.attributes?.con?.value);
+      const roll = await new Roll("1d4").evaluate();
+      const healed = Math.max(1, roll.total + conMod);
+      const newHP = Math.min(current + healed, max);
+      totalHealed += newHP - current;
+
+      await actor.update({ "system.hitpoints": newHP });
+
+      const speaker = ChatMessage.getSpeaker({ actor });
+      const flavor = `${actor.name} — Award Rest: <strong>+${newHP - current} HP</strong> (now ${newHP}/${max})`;
+      await roll.toMessage({ speaker, flavor: DOMPurify.sanitize(flavor) });
+    }
+
+    await DmToolkitTab._resetSpellSlots(pcs);
+
+    ui.notifications.info(`Award Rest complete — healed ${totalHealed} HP across ${pcs.length} character${pcs.length === 1 ? "" : "s"}; all spell slots restored.`);
   }
 
   static async _onExportCharacters(_event, _target) {

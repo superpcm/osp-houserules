@@ -1,0 +1,344 @@
+// ================================================================
+// Westford Bank — sidebar tab icon & panel styles
+// ================================================================
+
+// Player's Toolkit sidebar tab icon: reuses the existing coin icon as a color mask, same
+// technique as the DM Toolkit's icon (dm-toolkit.scss).
+#sidebar button.osp-player-toolkit-icon {
+  &::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    mask-image: url('/systems/osp-houserules/assets/images/icons/coin-icon.webp');
+    -webkit-mask-image: url('/systems/osp-houserules/assets/images/icons/coin-icon.webp');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: var(--control-icon-color);
+  }
+}
+
+// Parchment texture (same asset as the character sheet's "theme-parchment" background) instead
+// of the flat $color-parchment fill the generic `.osp .window-content` rule
+// (character-sheet-main.scss) would otherwise give every window carrying the shared "osp" class.
+// Specificity bumped with the .application prefix so this reliably wins that tie regardless of
+// SCSS import order. Text color is set dark here because that generic .osp rule only sets
+// font-family, not color — left at the browser/Foundry default (light) it's unreadable on tan.
+.application.osp-bank-ledger-view .window-content,
+.application.osp-bank-deposit-dialog .window-content,
+.application.osp-bank-withdraw-dialog .window-content,
+.application.osp-bank-dm-ledgers-view .window-content,
+.application.osp-bank-dm-edit-dialog .window-content {
+  background-color: $color-parchment;
+  background-image: url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: #4B4B4B;
+}
+
+// Shared building blocks used across all Bank windows/panels.
+.osp-bank-section-header {
+  font-size: 0.9rem;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  padding-bottom: 4px;
+  margin: 10px 0 6px;
+
+  &:first-child { margin-top: 0; }
+}
+
+.osp-bank-empty-note {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  font-style: italic;
+  margin: 4px 0;
+}
+
+.osp-bank-drop-hint {
+  font-size: 0.75rem;
+  opacity: 0.65;
+  margin: 0 0 6px;
+}
+
+.osp-bank-currency-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.osp-bank-currency-tile {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.10);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 4px;
+  padding: 6px 4px;
+
+  i { font-size: 1rem; margin-bottom: 2px; }
+}
+
+.osp-bank-coin-gold { color: #b8860b; }
+.osp-bank-coin-silver { color: #888; }
+.osp-bank-coin-copper { color: #a0522d; }
+
+.osp-bank-currency-value {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.osp-bank-currency-label {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.osp-bank-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.osp-bank-item-row,
+.osp-bank-source-row,
+.osp-bank-container-row,
+.osp-bank-dm-item-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+
+.osp-bank-item-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border: none;
+  flex: 0 0 auto;
+}
+
+.osp-bank-item-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.osp-bank-item-qty {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+.osp-bank-unique-star {
+  color: #c9a227;
+  font-size: 0.7rem;
+}
+
+.osp-bank-actions-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.osp-bank-action-btn {
+  cursor: pointer;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.12);
+  font-size: 0.8rem;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.22);
+    border-color: rgba(0, 0, 0, 0.45);
+  }
+}
+
+// ── Ledger view ──────────────────────────────────────────────────────────
+.osp-bank-ledger-view {
+  padding: 10px;
+  height: 100%;
+}
+
+// ── Deposit / Withdraw two-pane layout ──────────────────────────────────
+.osp-bank-deposit-dialog,
+.osp-bank-withdraw-dialog {
+  gap: 10px;
+  padding: 10px;
+  height: 100%;
+
+  .osp-bank-source-pane,
+  .osp-bank-drop-zone,
+  .osp-bank-target-pane {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.osp-bank-source-group {
+  margin-bottom: 8px;
+}
+
+.osp-bank-source-group-header {
+  font-size: 0.75rem;
+  font-weight: bold;
+  opacity: 0.7;
+  margin: 4px 0 2px;
+}
+
+.osp-bank-drag-source {
+  cursor: grab;
+
+  &:active { cursor: grabbing; }
+}
+
+.osp-bank-drop-zone,
+.osp-bank-drop-target {
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+.osp-bank-drop-zone {
+  border: 2px dashed rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.osp-bank-drop-target.osp-bank-container-row {
+  cursor: default;
+}
+
+.osp-bank-drag-over {
+  background-color: rgba(80, 160, 80, 0.18) !important;
+  border-color: rgba(40, 120, 40, 0.6) !important;
+}
+
+.osp-bank-container-capacity {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  opacity: 0.65;
+}
+
+// ── DM Ledgers view ──────────────────────────────────────────────────────
+.osp-bank-dm-ledgers-view {
+  padding: 10px;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.osp-bank-dm-ledger-card {
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.osp-bank-dm-ledger-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+
+  .osp-bank-action-btn { flex: 0 0 auto; }
+}
+
+.osp-bank-dm-ledger-portrait {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: none;
+}
+
+.osp-bank-dm-ledger-name {
+  flex: 1 1 auto;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.osp-bank-audit-log {
+  margin-top: 8px;
+
+  summary {
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    opacity: 0.8;
+  }
+}
+
+.osp-bank-log-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+  font-size: 0.75rem;
+}
+
+.osp-bank-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.7rem;
+
+  th, td {
+    text-align: left;
+    padding: 2px 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}
+
+// ── DM manual edit dialog ────────────────────────────────────────────────
+.osp-bank-dm-edit-dialog {
+  padding: 10px;
+  gap: 4px;
+}
+
+.osp-bank-dm-currency-row,
+.osp-bank-dm-add-item-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+
+  label { flex: 0 0 auto; font-size: 0.8rem; }
+  input[type="number"] { width: 70px; }
+  input[type="text"] { flex: 1 1 auto; }
+}
+
+.osp-bank-dm-unique-label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.osp-bank-dm-remove-qty {
+  width: 50px;
+  flex: 0 0 auto;
+}

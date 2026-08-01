@@ -44,6 +44,16 @@ export const preloadHandlebarsTemplates = async () => {
 
     // DM Toolkit
     `${path}/templates/sidebar/dm-toolkit.html`,
+
+    // Player's Toolkit
+    `${path}/templates/sidebar/player-toolkit.html`,
+
+    // Westford Bank
+    `${path}/templates/apps/bank-ledger-view.html`,
+    `${path}/templates/apps/bank-deposit-dialog.html`,
+    `${path}/templates/apps/bank-withdraw-dialog.html`,
+    `${path}/templates/apps/bank-dm-ledgers-view.html`,
+    `${path}/templates/apps/bank-dm-edit-dialog.html`,
   ];
 
   return foundry.applications.handlebars.loadTemplates(templatePaths);

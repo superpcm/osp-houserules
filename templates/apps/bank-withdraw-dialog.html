@@ -1,0 +1,38 @@
+<div class="osp-bank-withdraw-dialog flexrow">
+  <div class="osp-bank-source-pane">
+    <h4 class="osp-bank-section-header">Westford Bank</h4>
+    {{#if hasSources}}
+      {{#each currency}}
+        <div class="osp-bank-drag-source osp-bank-source-row" data-denomination="{{denomination}}">
+          <i class="fas fa-coins osp-bank-coin-{{denomination}}"></i>
+          <span class="osp-bank-item-name">{{label}}</span>
+          <span class="osp-bank-item-qty">×{{quantity}}</span>
+        </div>
+      {{/each}}
+      {{#each items}}
+        <div class="osp-bank-drag-source osp-bank-source-row" data-entry-id="{{entryId}}">
+          <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+          <span class="osp-bank-item-name">{{name}}{{#if unique}} <i class="fas fa-star osp-bank-unique-star" title="Unique"></i>{{/if}}</span>
+          <span class="osp-bank-item-qty">×{{quantity}}</span>
+        </div>
+      {{/each}}
+    {{else}}
+      <p class="osp-bank-empty-note">Nothing in the ledger to withdraw.</p>
+    {{/if}}
+  </div>
+
+  <div class="osp-bank-target-pane">
+    <h4 class="osp-bank-section-header">Your Containers</h4>
+    <p class="osp-bank-drop-hint">Drag coins or an item here to withdraw into that container.</p>
+    {{#if hasContainers}}
+      {{#each containers}}
+        <div class="osp-bank-drop-target osp-bank-container-row" data-item-id="{{itemId}}">
+          <span class="osp-bank-item-name">{{name}}</span>
+          <span class="osp-bank-container-capacity">{{used}} / {{max}}</span>
+        </div>
+      {{/each}}
+    {{else}}
+      <p class="osp-bank-empty-note">No containers available.</p>
+    {{/if}}
+  </div>
+</div>

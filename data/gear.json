@@ -14,7 +14,7 @@
       "tags": [
         "container"
       ],
-      "capacity": 16,
+      "capacity": 20,
       "containerSize": "medium",
       "lashSlots": 4,
       "blockedTypes": [
@@ -992,7 +992,211 @@
         "Sword"
       ]
     }
+},
+{
+  "name": "Ink Vial",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/ink-vial_thumb.webp",
+  "system": {
+    "description": "Ink is a dark liquid used with a quill to write, illustrate, or record information on parchment and paper. It is typically stored in a small, stoppered vial to prevent spills and keep it from drying out.",
+    "cost": 20,
+    "unitWeight": 0.5,
+    "storedSize": 1,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "tags": [],
+    "containerSizeRequired": "",
+    "slotCost": 0,
+    "allowedContainers": [
+      "Backpack",
+      "Belt Pouch (L)",
+      "Belt Pouch (S)",
+      "Cart",
+      "Chest, Large",
+      "Chest, Small",
+      "Panniers",
+      "Sack, Large",
+      "Sack, Small",
+      "Saddlebags, Large",
+      "Saddlebags, Small",
+      "Sidesack",
+      "Wagon"
+    ]
   },
+  "folder": "s6Thb2TUd0YuN0tG"
+},
+{
+  "name": "Healer's Kit",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/healer-s-kit_thumb.webp",
+  "system": {
+    "description": "A compact leather case containing bandages, clean cloth, salves, needles, thread, splints, and basic surgical instruments. It provides supplies for treating wounds and stabilizing the injured, and typically contains enough materials for several uses.",
+    "cost": 20,
+    "unitWeight": 3,
+    "storedSize": 4,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "tags": [
+      "tool",
+      "medical"
+    ],
+    "containerSizeRequired": "",
+    "slotCost": 0,
+    "allowedContainers": [
+      "Backpack",
+      "Belt Pouch (L)",
+      "Belt Pouch (S)",
+      "Cart",
+      "Chest, Large",
+      "Chest, Small",
+      "Panniers",
+      "Sack, Large",
+      "Sack, Small",
+      "Saddlebags, Large",
+      "Saddlebags, Small",
+      "Sidesack",
+      "Wagon"
+    ]
+  },
+  "folder": "s6Thb2TUd0YuN0tG"
+},
+{
+  "name": "Manacles",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/manacles_thumb.webp",
+  "system": {
+    "description": "A small glass vial sealed with a cork and filled with writing ink. Used with a quill for recording notes, copying texts, drawing maps, or inscribing messages.",
+    "cost": 2,
+    "unitWeight": 1,
+    "storedSize": 2,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "tags": [
+      "tool",
+      "restraint"
+    ],
+    "containerSizeRequired": "",
+    "slotCost": 0,
+    "allowedContainers": [
+      "Backpack",
+      "Belt Pouch (L)",
+      "Belt Pouch (S)",
+      "Cart",
+      "Chest, Large",
+      "Chest, Small",
+      "Panniers",
+      "Sack, Large",
+      "Sack, Small",
+      "Saddlebags, Large",
+      "Saddlebags, Small",
+      "Sidesack",
+      "Wagon"
+    ]
+  },
+  "folder": "s6Thb2TUd0YuN0tG"
+},
+{
+  "name": "Signal Horn",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/signal-horn_thumb.webp",
+  "system": {
+    "description": "A signal horn is a hollow animal horn used to produce loud, carrying notes over great distances. Its distinct calls can warn of danger, rally companions, announce an arrival, or convey simple messages across the wilderness or battlefield.",
+    "cost": 10,
+    "unitWeight": 2,
+    "storedSize": 4,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": true,
+    "tags": [
+      "tool",
+      "restraint",
+      "slungable"
+    ],
+    "containerSizeRequired": "",
+    "slotCost": 0,
+    "allowedContainers": [
+      "Backpack",
+      "Belt Pouch (L)",
+      "Cart",
+      "Chest, Large",
+      "Panniers",
+      "Sack, Large",
+      "Sack, Small",
+      "Saddlebags, Large",
+      "Saddlebags, Small",
+      "Sidesack",
+      "Wagon"
+    ]
+  },
+  "folder": "s6Thb2TUd0YuN0tG"
+},
+{
+  "name": "Spellbook",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/spellbook_thumb.webp",
+  "system": {
+    "description": "A spellbook is a carefully kept volume containing magical formulas, arcane symbols, rituals, and notes. Spellcasters use it to study, prepare, and preserve their spells. Contains 100 pages with each spell taking up a page per level.",
+    "cost": 50,
+    "unitWeight": 3,
+    "storedSize": 5,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": true,
+    "tags": [
+      "magic"
+    ],
+    "containerSizeRequired": "",
+    "slotCost": 0,
+    "allowedContainers": [
+      "Backpack",
+      "Cart",
+      "Chest, Large",
+      "Panniers",
+      "Sack, Large",
+      "Sack, Small",
+      "Saddlebags, Large",
+      "Saddlebags, Small",
+      "Sidesack",
+      "Wagon"
+    ]
+  },
+  "folder": "s6Thb2TUd0YuN0tG"
+},
+{
+  "name": "Mess Kit",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/mess-kit_thumb.webp",
+  "system": {
+    "description": "A mess kit is a compact set of utensils and cookware used to prepare and eat meals while traveling or camping. Its pieces typically nest together for convenient storage and may include a small pot, pan, plate, cup, and cutlery.",
+    "cost": 10,
+    "unitWeight": 2,
+    "storedSize": 4,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "tags": [
+      "tool"
+    ],
+    "containerSizeRequired": "",
+    "slotCost": 0,
+    "allowedContainers": [
+      "Backpack",
+      "Cart",
+      "Chest, Large",
+      "Panniers",
+      "Sack, Large",
+      "Sack, Small",
+      "Saddlebags, Large",
+      "Saddlebags, Small",
+      "Sidesack",
+      "Wagon"
+    ]
+  },
+  "folder": "s6Thb2TUd0YuN0tG"
+},
   {
     "name": "Skin Sling",
     "type": "container",

@@ -1,0 +1,40 @@
+<div class="osp-bank-dm-edit-dialog flexcol">
+  <h4 class="osp-bank-section-header">Currency</h4>
+  <div class="osp-bank-dm-currency-row" data-denomination="gold">
+    <label>Gold</label>
+    <input type="number" class="osp-bank-dm-currency-input" min="0" value="{{currency.gold}}">
+    <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="setCurrency" data-denomination="gold">Set</span>
+  </div>
+  <div class="osp-bank-dm-currency-row" data-denomination="silver">
+    <label>Silver</label>
+    <input type="number" class="osp-bank-dm-currency-input" min="0" value="{{currency.silver}}">
+    <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="setCurrency" data-denomination="silver">Set</span>
+  </div>
+  <div class="osp-bank-dm-currency-row" data-denomination="copper">
+    <label>Copper</label>
+    <input type="number" class="osp-bank-dm-currency-input" min="0" value="{{currency.copper}}">
+    <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="setCurrency" data-denomination="copper">Set</span>
+  </div>
+
+  <h4 class="osp-bank-section-header">Add Item</h4>
+  <div class="osp-bank-dm-add-item-row">
+    <input type="text" id="osp-bank-dm-add-name" placeholder="Item name">
+    <input type="number" id="osp-bank-dm-add-qty" min="1" value="1">
+    <label class="osp-bank-dm-unique-label"><input type="checkbox" id="osp-bank-dm-add-unique"> Unique</label>
+    <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="addItem">Add</span>
+  </div>
+
+  <h4 class="osp-bank-section-header">Deposited Items</h4>
+  {{#if hasItems}}
+    {{#each items}}
+      <div class="osp-bank-dm-item-row" data-entry-id="{{entryId}}">
+        <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+        <span class="osp-bank-item-name">{{name}}{{#if unique}} <i class="fas fa-star osp-bank-unique-star" title="Unique"></i>{{/if}}</span>
+        <input type="number" class="osp-bank-dm-remove-qty" min="1" max="{{quantity}}" value="{{quantity}}">
+        <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="removeItem" data-entry-id="{{entryId}}">Remove</span>
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="osp-bank-empty-note">No items in this ledger.</p>
+  {{/if}}
+</div>

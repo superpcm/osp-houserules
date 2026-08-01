@@ -8,6 +8,14 @@
 import { CATALOG_CATEGORIES, TYPE_LABELS, renderTypeFields, renderCategoryExtras, renderAllowedContainersField, collectSystemData } from "./catalog-schema.js";
 import { uploadItemImages } from "./image-pipeline.js";
 
+// The full-size image is never stored in item JSON — item-card-renderer.js and
+// magic-item-creator.js both derive it from the thumb path by string-replacing
+// "_thumb.webp" -> ".webp", so both uploads must actually be .webp or that derivation
+// silently fails to resolve and falls back to showing the thumbnail everywhere.
+function isWebpFile(file) {
+  return file.type === 'image/webp' || /\.webp$/i.test(file.name);
+}
+
 export class AddItemDialog {
   static async prompt() {
     const categoryOptions = CATALOG_CATEGORIES.map(c => `<option value="${c.key}">${c.label}</option>`).join('');
@@ -101,7 +109,7 @@ export class AddItemDialog {
               <span class="add-item-file-name" data-target="full">No file selected</span>
               <img class="add-item-image-preview" data-target="full" style="display:none;">
             </div>
-            <input type="file" id="add-item-file-input-full" accept="image/*" class="add-item-file-input-hidden">
+            <input type="file" id="add-item-file-input-full" accept="image/webp,.webp" class="add-item-file-input-hidden">
           </div>
           <div class="add-item-field add-item-field-full">
             <label>Thumbnail Image</label>
@@ -110,7 +118,7 @@ export class AddItemDialog {
               <span class="add-item-file-name" data-target="thumb">No file selected</span>
               <img class="add-item-image-preview" data-target="thumb" style="display:none;">
             </div>
-            <input type="file" id="add-item-file-input-thumb" accept="image/*" class="add-item-file-input-hidden">
+            <input type="file" id="add-item-file-input-thumb" accept="image/webp,.webp" class="add-item-file-input-hidden">
           </div>
           <div class="add-item-field add-item-field-full">
             <label>Target Subfolder (under assets/images and assets/thumbs/images)</label>
@@ -257,7 +265,17 @@ export class AddItemDialog {
 
         bindActivate(browseBtnFull, () => fileInputFull.click());
         fileInputFull.addEventListener('change', () => {
-          selectedFullFile = fileInputFull.files[0] || null;
+          const file = fileInputFull.files[0] || null;
+          if (file && !isWebpFile(file)) {
+            ui.notifications.warn(`"${file.name}" isn't a .webp file — the full-size image must be .webp.`);
+            fileInputFull.value = '';
+            selectedFullFile = null;
+            fileNameSpanFull.textContent = 'No file selected';
+            imgPreviewFull.style.display = 'none';
+            updateCreateEnabled();
+            return;
+          }
+          selectedFullFile = file;
           fileNameSpanFull.textContent = selectedFullFile ? selectedFullFile.name : 'No file selected';
           if (selectedFullFile) {
             imgPreviewFull.src = URL.createObjectURL(selectedFullFile);
@@ -270,7 +288,17 @@ export class AddItemDialog {
 
         bindActivate(browseBtnThumb, () => fileInputThumb.click());
         fileInputThumb.addEventListener('change', () => {
-          selectedThumbFile = fileInputThumb.files[0] || null;
+          const file = fileInputThumb.files[0] || null;
+          if (file && !isWebpFile(file)) {
+            ui.notifications.warn(`"${file.name}" isn't a .webp file — the thumbnail must be .webp.`);
+            fileInputThumb.value = '';
+            selectedThumbFile = null;
+            fileNameSpanThumb.textContent = 'No file selected';
+            imgPreviewThumb.style.display = 'none';
+            updateCreateEnabled();
+            return;
+          }
+          selectedThumbFile = file;
           fileNameSpanThumb.textContent = selectedThumbFile ? selectedThumbFile.name : 'No file selected';
           if (selectedThumbFile) {
             imgPreviewThumb.src = URL.createObjectURL(selectedThumbFile);

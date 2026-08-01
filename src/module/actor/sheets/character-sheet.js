@@ -1890,13 +1890,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       slotHTML += `<div class="spell-formula-slots">${formulaLines.join(' &nbsp;|&nbsp; ')}</div>`;
       slotHTML += `</div>`;
 
-      slotHTML += '<div class="spell-slots-actions">';
-      slotHTML += `<button type="button" class="spell-rest-btn" style="font-family:${cooperFont};" title="Restore all spell slots after a full rest">Rest</button>`;
-      slotHTML += '</div>';
       slotEl.innerHTML = slotHTML;
 
-      // Force Cooper Std on slot labels, action buttons, and formula panel — inline style= loses to Foundry's button layer rules
-      slotEl.querySelectorAll('.spell-slot-label, .spell-rest-btn, .spell-formula, .spell-formula-header, .spell-formula-slots').forEach(el => {
+      // Force Cooper Std on slot labels and formula panel — inline style= loses to Foundry's button layer rules
+      slotEl.querySelectorAll('.spell-slot-label, .spell-formula, .spell-formula-header, .spell-formula-slots').forEach(el => {
         el.style.setProperty('font-family', cooperFont, 'important');
       });
 
@@ -1911,17 +1908,6 @@ export class OspActorSheetCharacter extends ActorSheet {
           await this.actor.update({ [`system.spellSlots.${lv}.used`]: Math.max(0, Math.min(newUsed, max)) });
         });
       });
-
-      // Rest button
-      const restBtn = slotEl.querySelector('.spell-rest-btn');
-      if (restBtn) {
-        restBtn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          const updates = {};
-          for (const lv of spellLevels) updates[`system.spellSlots.${lv}.used`] = 0;
-          await this.actor.update(updates);
-        });
-      }
 
     }
 

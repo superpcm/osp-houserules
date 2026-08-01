@@ -1,0 +1,67 @@
+<div class="osp-bank-dm-ledgers-view flexcol">
+  {{#if hasLedgers}}
+    {{#each ledgers}}
+      <div class="osp-bank-dm-ledger-card" data-actor-id="{{actorId}}">
+        <div class="osp-bank-dm-ledger-header">
+          <img class="osp-bank-dm-ledger-portrait" src="{{actorImg}}" alt="{{actorName}}">
+          <span class="osp-bank-dm-ledger-name">{{actorName}}</span>
+          <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="manageLedger" title="Manage Ledger">
+            <i class="fas fa-pen"></i> Manage
+          </span>
+        </div>
+
+        <div class="osp-bank-currency-row">
+          <div class="osp-bank-currency-tile"><span class="osp-bank-currency-value">{{currency.gold}}</span><span class="osp-bank-currency-label">Gold</span></div>
+          <div class="osp-bank-currency-tile"><span class="osp-bank-currency-value">{{currency.silver}}</span><span class="osp-bank-currency-label">Silver</span></div>
+          <div class="osp-bank-currency-tile"><span class="osp-bank-currency-value">{{currency.copper}}</span><span class="osp-bank-currency-label">Copper</span></div>
+        </div>
+
+        {{#if hasItems}}
+          <ul class="osp-bank-item-list">
+            {{#each items}}
+              <li class="osp-bank-item-row">
+                <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+                <span class="osp-bank-item-name">{{name}}{{#if unique}} <i class="fas fa-star osp-bank-unique-star" title="Unique"></i>{{/if}}</span>
+                <span class="osp-bank-item-qty">×{{quantity}}</span>
+              </li>
+            {{/each}}
+          </ul>
+        {{/if}}
+
+        <details class="osp-bank-audit-log">
+          <summary>Audit Log{{#if hasLog}} ({{log.length}}){{/if}}</summary>
+          {{#if hasLog}}
+            <div class="osp-bank-log-filter-row">
+              <label>Filter:</label>
+              <select class="osp-bank-log-filter" data-filter-target="{{actorId}}">
+                <option value="all">All</option>
+                <option value="player">Player</option>
+                <option value="dm">DM</option>
+              </select>
+            </div>
+            <table class="osp-bank-log-table">
+              <thead>
+                <tr><th>When</th><th>Actor</th><th>Action</th><th>Detail</th><th>Qty</th></tr>
+              </thead>
+              <tbody>
+                {{#each log}}
+                  <tr class="osp-bank-log-row" data-ledger-actor="{{../actorId}}" data-log-actor="{{actor}}">
+                    <td>{{timeLabel}}</td>
+                    <td>{{actor}}</td>
+                    <td>{{action}}</td>
+                    <td>{{#if itemName}}{{itemName}}{{else}}{{denomination}}{{/if}}</td>
+                    <td>{{quantity}}</td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          {{else}}
+            <p class="osp-bank-empty-note">No transactions yet.</p>
+          {{/if}}
+        </details>
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="osp-bank-empty-note">No player characters found.</p>
+  {{/if}}
+</div>

@@ -1922,17 +1922,40 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   }
 }
 
+// Deepen the indent for the caret+title "Lashed Items" variant (Backpack/Sidesack/Sling) so its
+// rows read as one level deeper than the container's own contained items above them, instead of
+// sitting flush at the same 60px indent. The Belt-attachment subheader variant above intentionally
+// stays flush (see the "previously added an extra $nested-indent" NOTE below) — this only targets
+// the .lashed-header case, matching the codebase's existing ~30px per-tier indent step (see the
+// 68px -> 98px L2 -> L3 belt-track comments above).
+.lashed-items-section:has(.lashed-header) {
+  margin-left: calc(#{$nested-indent} + 30px);
+  width: calc(100% - #{$nested-indent} - 30px);
+}
+
+// A tack item's own lash slots (a caret+title "Lashed Items" block one level deeper, e.g. inside
+// li.contained-item — see the NOTE above the "li.contained-item &" rule near the top of this
+// section) would otherwise have that rule's `margin-left: 0; width: 100%;` win on specificity
+// over the rule above and silently cancel this indent — restate it here at matching specificity.
+li.contained-item .lashed-items-section:has(.lashed-header) {
+  margin-left: calc(#{$nested-indent} + 30px);
+  width: calc(100% - #{$nested-indent} - 30px);
+}
+
 .lashed-header {
   padding: 4px 8px;
   border-radius: 3px;
   margin-bottom: 4px;
-  display: flex;
-  align-items: center;
+  // Pull the caret left so it sits directly above the trunk line the list below draws at
+  // $tree-line-position — the trunk is relative to .lashed-item (a sibling with no left offset
+  // of its own). The icon glyph's own left-side bearing sits a few px in from its box edge, so
+  // this needs a touch less pull than a literal box-edge alignment would (tuned against a screenshot).
+  margin-left: calc(#{$tree-line-position} - 15px);
   display: flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
-  
+
   &:hover {
     background: rgba(0, 0, 0, 0.25);
   }
@@ -2040,10 +2063,14 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
     top: calc(-1px - #{$font-nested-header} - 6px);
   }
 
-  // Sling context has a .lashed-header toggle above the list instead of a subheader bar;
-  // don't extend the trunk into that header text.
+  // Sling/Backpack/Sidesack context has a .lashed-header toggle (caret + "Lashed Items (N/N)"
+  // title) above the list instead of a subheader bar. Reach the trunk up to the toggle's own
+  // caret instead of stopping at -1px, so the branch visibly descends from "▼ Lashed Items"
+  // rather than floating disconnected below it — .lashed-header is padding: 4px 8px with a
+  // 16px-line-height title and margin-bottom: 4px, so its caret sits ~13px into the header and
+  // the list starts ~18px below that.
   .lashed-items-section:has(.lashed-header) &.first-lashed-item::before {
-    top: -1px;
+    top: -19px;
   }
 
   // Last attachment: trunk stops at the header row's vertical center
@@ -2087,7 +2114,11 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 // Matches the same column math as .contained-item .item-header (name reduced by the 18px
 // caret, not by the 60px section indent — that indent already lives on .lashed-items-section's
 // own margin-left, so subtracting it again here shifted every column left of the subheader above).
+// max-width overrides the unscoped .lashed-item .item-header rule's stale 638px (which assumed
+// the base 60px indent) — this variant's real indent is $nested-indent + 30px, so available
+// width is 698px parent minus that, or the grid's own tracks overflow past the row's right edge.
 .lashed-items-section:has(.lashed-header) .lashed-item .item-header:not(.lashed-stored-item):not(.lashed-sub-stored-item):not(.lashed-deep-stored-item) {
+  max-width: calc(698px - #{$nested-indent} - 30px);
   grid-template-columns: $col-caret $nested-col-image $contained-col-name $contained-col-qty $nested-col-storedsize $nested-col-twt $nested-col-weight $nested-col-controls !important;
 }
 

@@ -18,6 +18,17 @@ export class PortraitTool {
   }
 
   /**
+   * Scopes a query to this sheet's own DOM instead of the whole document. With more than one
+   * character sheet rendered at once (or a previous instance's DOM not yet torn down from a
+   * re-render), an unscoped document.querySelector('.portrait-display') can silently bind the
+   * dblclick handler to a different sheet's node — double-clicking the visible portrait then
+   * does nothing, since the working listener is on a background sheet the user isn't looking at.
+   */
+  _sheetElement() {
+    return this.actorSheet?.element?.[0] ?? document;
+  }
+
+  /**
    * Initialize the portrait tool
    */
   initialize() {
@@ -28,7 +39,7 @@ export class PortraitTool {
     if (!this.actorSheet?.actor?.isOwner) return;
 
     setTimeout(() => {
-      const portraitDisplay = document.querySelector('.portrait-display');
+      const portraitDisplay = this._sheetElement().querySelector('.portrait-display');
       if (!portraitDisplay) return;
 
       this.setupTooltip(portraitDisplay);
@@ -80,7 +91,7 @@ export class PortraitTool {
       const applyPortrait = (path) => {
         const img = portraitDisplay.querySelector('.portrait-img, .cs-portrait-img');
         if (img) img.src = path;
-        const input = document.querySelector('input[name="system.portrait"]');
+        const input = this._sheetElement().querySelector('input[name="system.portrait"]');
         if (input) {
           input.value = path;
           input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -94,7 +105,7 @@ export class PortraitTool {
         try {
           const fp = new FilePicker({
             type: 'image',
-            current: document.querySelector('input[name="system.portrait"]')?.value || '',
+            current: this._sheetElement().querySelector('input[name="system.portrait"]')?.value || '',
             callback: applyPortrait,
           });
           fp.render(true);

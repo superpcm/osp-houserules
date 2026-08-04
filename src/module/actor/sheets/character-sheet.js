@@ -677,7 +677,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // are visible and manageable rather than silently inflating encumbrance.
     const freeItems = allItems.filter(item =>
       item.type !== 'container' && item.type !== 'clothing' &&
-      !item.system.lashed &&
+      !item.system.lashed && !slungItemIds.has(item.id) &&
       (!item.system.containerId || !validContainerIds.has(item.system.containerId))
     );
     const freeAmmunition = allAmmunition.filter(ammo =>

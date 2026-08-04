@@ -225,8 +225,13 @@ export class ItemCardRenderer {
       if (imgSrc.includes(THUMB_BASE)) {
         const relative = imgSrc.slice(imgSrc.indexOf(THUMB_BASE) + THUMB_BASE.length).replace(/\?.*$/, '');
         imgSrc = 'systems/osp-houserules/assets/images/' + relative.replace('_thumb.webp', '.webp');
+      } else if (imgSrc.startsWith('magic-item-thumbs/')) {
+        // GM-generated magic item art lives outside systems/osp-houserules/ so it survives
+        // a system update (see magic-item-shared.js), with full and thumb as siblings in
+        // the same folder — so the full-size image is just the "_thumb" suffix stripped.
+        imgSrc = imgSrc.replace(/_thumb(\.webp)$/, '$1');
       }
-      
+
       // Use both timestamp and random to defeat all caching
       img.src = `${imgSrc}?v=${Date.now()}&r=${Math.random()}`;
     });

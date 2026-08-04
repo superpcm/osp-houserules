@@ -10,7 +10,7 @@
 
 import { MAGIC_CATEGORIES, renderMagicCategoryFields, initMagicCategoryFields } from "./magic-item-schema.js";
 import { collectSystemData } from "./add-item/catalog-schema.js";
-import { uploadItemImages } from "./add-item/image-pipeline.js";
+import { slugify } from "./add-item/image-pipeline.js";
 import { generateGlowImage, ensureMagicFolder } from "./magic-item-shared.js";
 
 // See add-item-dialog.js — both the full-size and thumbnail uploads must
@@ -236,35 +236,23 @@ export class AddMagicItemDialog {
           }
 
           createBtn.classList.add('is-disabled');
-          statusSpan.textContent = 'Uploading images…';
-
-          let images = null;
-          try {
-            images = await uploadItemImages(selectedFullFile, selectedThumbFile, cat.imageDir, name);
-          } catch (err) {
-            console.error("[OSP] Add Magic Item image upload failed:", err);
-          }
-
-          if (!images?.imgFull || !images?.imgThumb) {
-            ui.notifications.error("Image upload failed — item was not created.");
-            statusSpan.textContent = 'Upload failed.';
-            createBtn.classList.remove('is-disabled');
-            return;
-          }
-
           statusSpan.textContent = 'Generating glow…';
 
-          // Glow both images in place (same path, same filename) rather than routing
-          // through the catch-all magic-item-thumbs folder: item-card-renderer.js finds
-          // the full-size image for the item card by string-replacing "_thumb.webp" ->
-          // ".webp" on item.img's path, so the glowing full-size image needs to stay at
-          // that exact sibling path or the card falls back to upscaling the small thumb.
+          // Glow both browsed files directly and upload straight into the top-level
+          // "magic-item-thumbs/<category>/" folder — never into systems/osp-houserules/,
+          // since GM-generated magic item art must survive a system update/reinstall,
+          // which wipes the system's own package directory. Full and thumb are siblings
+          // in the same folder (item-card-renderer.js strips "_thumb" from the filename
+          // to find the full-size image), so no separate images/ vs thumbs/images/ tree
+          // is needed the way catalog items use.
+          const dir = `magic-item-thumbs/${cat.imageDir}`;
+          const baseName = slugify(name);
+
           let glowThumb = null;
           try {
-            const splitPath = (p) => ({ dir: p.slice(0, p.lastIndexOf('/')), fileName: p.slice(p.lastIndexOf('/') + 1) });
             [, glowThumb] = await Promise.all([
-              generateGlowImage(images.imgFull,  splitPath(images.imgFull)),
-              generateGlowImage(images.imgThumb, splitPath(images.imgThumb)),
+              generateGlowImage(URL.createObjectURL(selectedFullFile),  { dir, fileName: `${baseName}.webp` }),
+              generateGlowImage(URL.createObjectURL(selectedThumbFile), { dir, fileName: `${baseName}_thumb.webp` }),
             ]);
           } catch (err) {
             console.error("[OSP] Add Magic Item glow generation failed:", err);

@@ -25,6 +25,28 @@ function extOf(name) {
 }
 
 /**
+ * FilePicker.createDirectory doesn't create missing parent directories on its
+ * own — asking it for "magic-item-thumbs/wands" fails outright if
+ * "magic-item-thumbs" doesn't already exist. This walks the path one segment
+ * at a time so every ancestor gets created (existing ones just fail with
+ * "already exists", which is expected and silently skipped).
+ */
+export async function ensureDirectory(fullPath) {
+  const segments = fullPath.split('/').filter(Boolean);
+  let current = '';
+  for (const segment of segments) {
+    current = current ? `${current}/${segment}` : segment;
+    try {
+      await FilePicker.createDirectory("data", current);
+    } catch (err) {
+      if (!/already exists/i.test(err?.message ?? '')) {
+        console.warn(`[OSP] createDirectory failed for "${current}":`, err);
+      }
+    }
+  }
+}
+
+/**
  * Uploads a full-size image and a thumbnail image, as browsed, into the given
  * category subfolder under assets/images and assets/thumbs/images respectively.
  * Files are renamed from the item's name but otherwise uploaded unmodified.
@@ -40,8 +62,8 @@ export async function uploadItemImages(fullFile, thumbFile, subfolder, itemName)
   const fullDir  = `systems/osp-houserules/assets/images/${subfolder}`;
   const thumbDir = `systems/osp-houserules/assets/thumbs/images/${subfolder}`;
 
-  await FilePicker.createDirectory("data", fullDir).catch(() => {});
-  await FilePicker.createDirectory("data", thumbDir).catch(() => {});
+  await ensureDirectory(fullDir);
+  await ensureDirectory(thumbDir);
 
   const fullUpload  = new File([fullFile],  `${baseName}${extOf(fullFile.name)}`,          { type: fullFile.type });
   const thumbUpload = new File([thumbFile], `${baseName}_thumb${extOf(thumbFile.name)}`,   { type: thumbFile.type });

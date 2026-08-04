@@ -7,6 +7,8 @@
  * despite having no source item in common.
  */
 
+import { ensureDirectory } from "./add-item/image-pipeline.js";
+
 /**
  * Renders a gold drop-shadow glow around `srcImg` and uploads the result,
  * returning its path for use as an item's `img`. `srcImg` may be a
@@ -43,23 +45,29 @@ export async function generateGlowImage(srcImg, uploadTarget = null) {
       ctx.shadowBlur = 0;
       ctx.drawImage(img, PAD, PAD);
 
+      // On any failure below, fall back to the original srcImg — except when srcImg is
+      // a blob: object URL (a freshly-browsed local file, not yet uploaded anywhere):
+      // that URL only lives as long as this browser tab, so storing it as item.img
+      // would look fine right now and break permanently on the next page reload.
+      const fallback = srcImg.startsWith("blob:") ? null : srcImg;
+
       canvas.toBlob(async (blob) => {
-        if (!blob) { resolve(srcImg); return; }
+        if (!blob) { resolve(fallback); return; }
         const dir = uploadTarget?.dir ?? "magic-item-thumbs";
         const fileName = uploadTarget?.fileName
           ?? `${srcImg.split("/").pop().replace(/\.[^.]+$/, "").replace(/_thumb$/, "")}-magic_${Date.now()}.webp`;
         try {
-          await FilePicker.createDirectory("data", dir).catch(() => {});
+          await ensureDirectory(dir);
           const file   = new File([blob], fileName, { type: "image/webp" });
           const result = await FilePicker.upload("data", dir, file, {});
-          resolve(result.path ?? srcImg);
+          resolve(result.path ?? fallback);
         } catch {
-          resolve(srcImg);
+          resolve(fallback);
         }
       }, "image/webp", 0.92);
     };
 
-    img.onerror = () => resolve(srcImg);
+    img.onerror = () => resolve(srcImg.startsWith("blob:") ? null : srcImg);
 
     // Blob URLs are already unique per upload and don't accept a query string;
     // server-relative paths need a leading slash and a cache-busting version.

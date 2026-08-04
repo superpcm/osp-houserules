@@ -8,12 +8,16 @@
 
 import { fieldsHtml } from "./add-item/catalog-schema.js";
 
+// imageDir is relative to the top-level "magic-item-thumbs/" upload folder (outside
+// systems/osp-houserules/) — GM-generated magic item art must never live inside the
+// system package directory, since a system update/reinstall wipes that folder and
+// would take player-facing loot art with it. See magic-item-shared.js.
 export const MAGIC_CATEGORIES = [
-  { key: 'wand',     label: 'Wand / Rod / Staff', folder: 'Wands & Rods',   imageDir: 'magic/wands',     tags: ['magic', 'wand'] },
-  { key: 'ring',     label: 'Ring',               folder: 'Rings',          imageDir: 'magic/rings',     tags: ['magic', 'ring'] },
-  { key: 'wondrous', label: 'Cloak / Wondrous Item', folder: 'Wondrous Items', imageDir: 'magic/wondrous', tags: ['magic', 'wondrous'] },
-  { key: 'scroll',   label: 'Scroll',             folder: 'Scrolls',        imageDir: 'magic/scrolls',   tags: ['magic', 'scroll', 'consumable'] },
-  { key: 'potion',   label: 'Potion',             folder: 'Potions',        imageDir: 'magic/potions',   tags: ['magic', 'potion', 'consumable'] },
+  { key: 'wand',     label: 'Wand / Rod / Staff', folder: 'Wands & Rods',   imageDir: 'wands',     tags: ['magic', 'wand'] },
+  { key: 'ring',     label: 'Ring',               folder: 'Rings',          imageDir: 'rings',     tags: ['magic', 'ring'] },
+  { key: 'wondrous', label: 'Cloak / Wondrous Item', folder: 'Wondrous Items', imageDir: 'wondrous', tags: ['magic', 'wondrous'] },
+  { key: 'scroll',   label: 'Scroll',             folder: 'Scrolls',        imageDir: 'scrolls',   tags: ['magic', 'scroll', 'consumable'] },
+  { key: 'potion',   label: 'Potion',             folder: 'Potions',        imageDir: 'potions',   tags: ['magic', 'potion', 'consumable'] },
 ];
 
 const SPELL_CLASS_LABELS = {
@@ -40,9 +44,7 @@ const MAGIC_TYPE_FIELDS = {
     { key: 'attunement', label: 'Requires Attunement', kind: 'checkbox', default: false },
     { key: 'property',   label: 'Property', kind: 'textarea', default: '', fullWidth: true },
   ],
-  scroll: [
-    { key: 'casterLevel', label: 'Caster Level', kind: 'number', default: 1 },
-  ],
+  scroll: [],
   potion: [
     { key: 'effect',   label: 'Effect', kind: 'textarea', default: '', fullWidth: true },
     { key: 'duration', label: 'Duration', kind: 'text', default: '' },
@@ -64,6 +66,23 @@ async function loadSpellLists() {
   return _spellListsCache;
 }
 
+/**
+ * Expands a class's spell list into one pickable entry per castable form —
+ * the base spell, plus a second entry for its reverse if data/spells.json
+ * gives it one (e.g. Remove Fear's "reversed" -> Cause Fear). B/X reversed
+ * spells share their base spell's level, so no separate level lookup is needed.
+ */
+function buildPickableSpells(spells) {
+  const out = [];
+  for (const s of spells) {
+    out.push({ optionValue: `${s.id}|f`, id: s.id, name: s.name, level: s.level, description: s.description, reversed: false });
+    if (s.reversed) {
+      out.push({ optionValue: `${s.id}|r`, id: s.id, name: s.reversed.name, level: s.level, description: s.reversed.description, reversed: true });
+    }
+  }
+  return out.sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));
+}
+
 function renderScrollSpellPickerHtml() {
   const classOptions = Object.entries(SPELL_CLASS_LABELS)
     .map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
@@ -78,14 +97,16 @@ function renderScrollSpellPickerHtml() {
       </div>
       <div class="add-item-field">
         <label>Spell</label>
-        <select id="magic-scroll-spell-select" data-sys-field="spellKey" data-sys-kind="text" disabled>
+        <select id="magic-scroll-spell-select" disabled>
           <option value="">-- Select a class first --</option>
         </select>
       </div>
     </div>
-    <input type="hidden" id="magic-scroll-spell-name"  data-sys-field="spellName"  data-sys-kind="text">
-    <input type="hidden" id="magic-scroll-spell-level" data-sys-field="spellLevel" data-sys-kind="number">
-    <input type="hidden" id="magic-scroll-spell-class" data-sys-field="spellClass" data-sys-kind="text">
+    <input type="hidden"  id="magic-scroll-spell-key"      data-sys-field="spellKey"      data-sys-kind="text">
+    <input type="hidden"  id="magic-scroll-spell-name"     data-sys-field="spellName"     data-sys-kind="text">
+    <input type="hidden"  id="magic-scroll-spell-level"    data-sys-field="spellLevel"    data-sys-kind="number">
+    <input type="hidden"  id="magic-scroll-spell-class"    data-sys-field="spellClass"    data-sys-kind="text">
+    <input type="checkbox" id="magic-scroll-spell-reversed" data-sys-field="spellReversed" data-sys-kind="checkbox" style="display:none">
   `;
 }
 
@@ -105,34 +126,38 @@ export function renderMagicCategoryFields(key) {
 export async function initMagicCategoryFields(root, key, { onSpellChosen } = {}) {
   if (key !== 'scroll') return;
 
-  const classSelect = root.querySelector('#magic-scroll-class-select');
-  const spellSelect = root.querySelector('#magic-scroll-spell-select');
-  const nameHidden  = root.querySelector('#magic-scroll-spell-name');
-  const levelHidden = root.querySelector('#magic-scroll-spell-level');
-  const classHidden = root.querySelector('#magic-scroll-spell-class');
+  const classSelect     = root.querySelector('#magic-scroll-class-select');
+  const spellSelect     = root.querySelector('#magic-scroll-spell-select');
+  const keyHidden       = root.querySelector('#magic-scroll-spell-key');
+  const nameHidden      = root.querySelector('#magic-scroll-spell-name');
+  const levelHidden     = root.querySelector('#magic-scroll-spell-level');
+  const classHidden     = root.querySelector('#magic-scroll-spell-class');
+  const reversedHidden  = root.querySelector('#magic-scroll-spell-reversed');
   if (!classSelect || !spellSelect) return;
 
   const spellLists = await loadSpellLists();
+  let pickable = [];
 
   classSelect.addEventListener('change', () => {
-    const spells = (spellLists[classSelect.value] || [])
-      .slice()
-      .sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));
-    spellSelect.disabled = !spells.length;
+    pickable = buildPickableSpells(spellLists[classSelect.value] || []);
+    spellSelect.disabled = !pickable.length;
     spellSelect.innerHTML = '<option value="">-- Select --</option>' +
-      spells.map(s => `<option value="${s.id}">L${s.level} — ${s.name}</option>`).join('');
+      pickable.map(s => `<option value="${s.optionValue}">L${s.level} — ${s.name}${s.reversed ? ' (reversed)' : ''}</option>`).join('');
+    keyHidden.value = '';
     nameHidden.value = '';
     levelHidden.value = '';
     classHidden.value = '';
+    reversedHidden.checked = false;
     onSpellChosen?.(null);
   });
 
   spellSelect.addEventListener('change', () => {
-    const spells = spellLists[classSelect.value] || [];
-    const spell = spells.find(s => s.id === spellSelect.value) || null;
-    nameHidden.value  = spell?.name ?? '';
-    levelHidden.value = spell ? String(spell.level) : '';
-    classHidden.value = classSelect.value;
+    const spell = pickable.find(s => s.optionValue === spellSelect.value) || null;
+    keyHidden.value        = spell?.id ?? '';
+    nameHidden.value       = spell?.name ?? '';
+    levelHidden.value      = spell ? String(spell.level) : '';
+    classHidden.value      = classSelect.value;
+    reversedHidden.checked = spell?.reversed ?? false;
     onSpellChosen?.(spell);
   });
 }

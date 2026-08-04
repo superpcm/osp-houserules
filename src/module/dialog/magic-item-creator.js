@@ -61,19 +61,20 @@ export class MagicItemCreator extends FormApplication {
   async _updateObject(event, formData) {
     const expanded = foundry.utils.expandObject(formData);
 
-    // Glow both the full-size and thumbnail source art, uploading each as its own
-    // "magic/<type>" copy — never overwriting the mundane base item's own art files,
-    // since other actors/world items still reference those directly — with the same
-    // full/thumb sibling naming item-card-renderer.js expects, so the item card finds
-    // the glowing full-size image next to the glowing thumbnail instead of upscaling it.
+    // Glow both the full-size and thumbnail source art, uploading each as its own copy
+    // into the top-level "magic-item-thumbs/<type>/" folder — never into
+    // systems/osp-houserules/, since GM-generated magic item art must survive a system
+    // update/reinstall (which wipes the system's own package directory), and never
+    // overwriting the mundane base item's own art files, since other actors/world items
+    // still reference those directly. Full and thumb are siblings in the same folder —
+    // item-card-renderer.js strips "_thumb" from the filename to find the full-size image.
     const subDir   = { weapon: "weapons", armor: "armor", ammunition: "ammunition" }[this.sourceItem.type] || "misc";
     const baseName = slugify(expanded.name || this.sourceItem.name);
-    const fullDir  = `systems/osp-houserules/assets/images/magic/${subDir}`;
-    const thumbDir = `systems/osp-houserules/assets/thumbs/images/magic/${subDir}`;
+    const dir      = `magic-item-thumbs/${subDir}`;
 
     const [, glowImg] = await Promise.all([
-      generateGlowImage(resolveFullRes(this.sourceItem.img), { dir: fullDir,  fileName: `${baseName}.webp` }),
-      generateGlowImage(this.sourceItem.img,                  { dir: thumbDir, fileName: `${baseName}_thumb.webp` }),
+      generateGlowImage(resolveFullRes(this.sourceItem.img), { dir, fileName: `${baseName}.webp` }),
+      generateGlowImage(this.sourceItem.img,                  { dir, fileName: `${baseName}_thumb.webp` }),
     ]);
 
     // Ensure folder hierarchy: Magic Items > Weapons/Armor/Ammunition

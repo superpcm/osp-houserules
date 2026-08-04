@@ -680,7 +680,7 @@
   },
   {
     "name": "Scroll Case",
-    "type": "item",
+    "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/scroll-case_thumb.webp",
     "system": {
       "description": "A protective tube designed to store and transport parchment scrolls, maps, or important documents. Crafted from sturdy materials like wood, leather, and metal, it shields its contents from weather and wear while allowing adventurers or scholars to carry their writings safely on the road.",
@@ -689,7 +689,12 @@
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
-      "lashable": false
+      "lashable": true,
+      "capacity": 3,
+      "lashSlots": 0,
+      "allowedTypes": ["scroll"],
+      "maxItems": 3,
+      "containerSize": "small"
     }
   },
   {
@@ -981,7 +986,7 @@
       "slotCost": 0,
       "capacity": 12,
       "containerSize": "medium",
-      "lashSlots": 0,
+      "lashSlots": 1,
       "hideCapacity": false,
       "maxItems": 0,
       "allowedTypes": [],

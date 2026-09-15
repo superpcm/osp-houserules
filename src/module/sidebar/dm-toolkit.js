@@ -56,7 +56,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
   }
 
   static async _onOpenBankLedgers(_event, _target) {
-    new BankDmLedgersView().render(true);
+    new BankDmLedgersView().render({ force: true });
   }
 
   static async _onTogglePlayerLock(_event, _target) {

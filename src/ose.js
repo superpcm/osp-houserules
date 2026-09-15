@@ -28,7 +28,7 @@ import OspDataModelAbility from "./module/item/data-model-ability.js";
 import OspDataModelSpell from "./module/item/data-model-spell.js";
 
 // Settings
-import { registerSettings } from "./module/settings.js";
+import { applyBankFontSetting, registerSettings } from "./module/settings.js";
 
 // Helper modules
 import { registerHelpers } from "./module/helpers-handlebars.js";
@@ -62,6 +62,8 @@ import { TokenRulerOSP } from "./module/actor/token-ruler.js";
 
 // Cross-window drag tracking (Items sidebar → actor sheet drop-target highlighting)
 import { initExternalDragTracker } from "./module/external-drag-tracker.js";
+import { initPartyTreasury } from "./module/inventory/party-treasury.js";
+import { initStorehouse } from "./module/inventory/storehouse.js";
 
 Hooks.once("init", () => {
   initExternalDragTracker();
@@ -225,6 +227,9 @@ Hooks.once("init", () => {
 
 // ── Position overrides ────────────────────────────────────────────────────
 Hooks.once("ready", () => {
+  applyBankFontSetting();
+  initPartyTreasury();
+  initStorehouse();
   applyStoredPositionOverrides().catch(err => console.warn('OSP | applyStoredPositionOverrides failed:', err));
 
 });
@@ -742,11 +747,12 @@ Handlebars.registerHelper('path', function(templatePath) {
   return `systems/osp-houserules${templatePath}`;
 });
 
-// Unpause the game when Foundry VTT starts
+// Optionally unpause on startup. Only the active GM may change world pause state.
 Hooks.once("ready", () => {
-  if (game.paused) {
-    game.togglePause();
-
+  const activeGM = game.users?.activeGM;
+  const isActiveGM = game.user?.isGM && (!activeGM || activeGM.id === game.user.id);
+  if (isActiveGM && game.settings.get(game.system.id, "autoUnpause") && game.paused) {
+    game.togglePause(false);
   }
 
   // Add global utility function to reset all character sheet fields

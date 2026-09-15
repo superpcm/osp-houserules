@@ -13,4 +13,7 @@ dist/
 
 # Editor and system files
 .DS_Store
+._*
+__pycache__/
+*.py[cod]
 .vscode/

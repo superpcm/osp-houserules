@@ -2,7 +2,7 @@
   <h3 class="dm-toolkit-header">DM's Toolkit</h3>
 
   <ul class="dm-tool-list">
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="rest">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Rest</span>
         <span class="dm-tool-desc">Restore all spell slots for player characters.</span>
@@ -11,7 +11,7 @@
         <i class="fas fa-bed"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="awardRest">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Award Rest</span>
         <span class="dm-tool-desc">Heal every player character (1d4 + CON modifier, minimum 1 HP, up to max HP) and reset all spell slots.</span>
@@ -20,7 +20,7 @@
         <i class="fas fa-campground"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="exportCharacters">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Export Characters</span>
         <span class="dm-tool-desc">Download all player characters as a JSON file.</span>
@@ -29,7 +29,7 @@
         <i class="fas fa-download"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="giveXP">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Give XP</span>
         <span class="dm-tool-desc">Award XP to selected player characters.</span>
@@ -38,7 +38,7 @@
         <i class="fas fa-star"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="setXP">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Set XP</span>
         <span class="dm-tool-desc">Set a character's XP to a specific value.</span>
@@ -47,7 +47,7 @@
         <i class="fas fa-pen"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="setMaxHP">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Set maxHP</span>
         <span class="dm-tool-desc">Set a character's max HP to a specific value.</span>
@@ -56,7 +56,7 @@
         <i class="fas fa-heart"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="editAbilityScore">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Edit Ability Score</span>
         <span class="dm-tool-desc">Set a character's ability score to a specific value.</span>
@@ -65,7 +65,7 @@
         <i class="fas fa-dumbbell"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="editSkillValue">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Edit Skill Value</span>
         <span class="dm-tool-desc">Set a character's skill target to a specific value.</span>
@@ -74,7 +74,7 @@
         <i class="fas fa-screwdriver-wrench"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="importMonsters">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Import Monsters</span>
         <span class="dm-tool-desc">Paste a JSON array of monster stat blocks to create Actor documents.</span>
@@ -83,7 +83,7 @@
         <i class="fas fa-dragon"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="updateMonsterAttacks">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Update Monster Attacks</span>
         <span class="dm-tool-desc">Patch attacks-per-round on existing monsters from the original import JSON.</span>
@@ -92,7 +92,7 @@
         <i class="fas fa-sync-alt"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="addItem">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Add Item</span>
         <span class="dm-tool-desc">Create a new equipment catalog item, generate its thumbnail, and get its JSON entry.</span>
@@ -101,7 +101,7 @@
         <i class="fas fa-box-open"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="addMagicItem">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Add Magic Item</span>
         <span class="dm-tool-desc">Create a wand, ring, wondrous item, scroll, or potion from scratch, with an auto-generated glow icon.</span>
@@ -110,7 +110,7 @@
         <i class="fas fa-hat-wizard"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="openBankLedgers">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Westford Bank Ledgers</span>
         <span class="dm-tool-desc">View and manage every player's bank ledger, live-updating.</span>
@@ -119,7 +119,7 @@
         <i class="fas fa-landmark"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="togglePlayerLock">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Player Lock</span>
         <span class="dm-tool-desc">{{#if playerLockActive}}LOCKED — players cannot roll dice or move tokens.{{else}}Players can roll dice and move tokens freely.{{/if}}</span>
@@ -128,7 +128,7 @@
         <i class="fas {{#if playerLockActive}}fa-lock{{else}}fa-lock-open{{/if}}"></i>
       </span>
     </li>
-    <li class="dm-tool-item flexrow">
+    <li class="dm-tool-item flexrow" role="button" tabindex="0" data-action="toggleStoreLock">
       <div class="dm-tool-info">
         <span class="dm-tool-name">Lock the Store</span>
         <span class="dm-tool-desc">{{#if storeLockActive}}LOCKED — players cannot drag items to their inventory.{{else}}Players can drag items from item lists freely.{{/if}}</span>

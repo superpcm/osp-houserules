@@ -4,6 +4,7 @@
  * own character.
  */
 import { BankLedgerView } from "../apps/bank-ledger-view.js";
+import { StorehouseView } from "../apps/storehouse-view.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { AbstractSidebarTab } = foundry.applications.sidebar;
@@ -14,7 +15,8 @@ export default class PlayerToolkitTab extends HandlebarsApplicationMixin(Abstrac
   static DEFAULT_OPTIONS = {
     window: { title: "Player's Toolkit" },
     actions: {
-      openBank: PlayerToolkitTab._onOpenBank
+      openBank: PlayerToolkitTab._onOpenBank,
+      openStorehouse: PlayerToolkitTab._onOpenStorehouse,
     }
   };
 
@@ -25,9 +27,15 @@ export default class PlayerToolkitTab extends HandlebarsApplicationMixin(Abstrac
   };
 
   static async _onOpenBank(_event, _target) {
-    const actor = await PlayerToolkitTab._resolvePlayerActor();
+    const actor = await PlayerToolkitTab._resolvePlayerActor("Westford Bank", "ledger");
     if (!actor) return;
-    new BankLedgerView({ actor }).render(true);
+    new BankLedgerView({ actor }).render({ force: true });
+  }
+
+  static async _onOpenStorehouse(_event, _target) {
+    const actor = await PlayerToolkitTab._resolvePlayerActor("Westford Storehouse", "locker");
+    if (!actor) return;
+    new StorehouseView({ actor }).render({ force: true });
   }
 
   // Trusts game.user.character (the "Assigned Character" set in Configure Player Characters)
@@ -37,7 +45,7 @@ export default class PlayerToolkitTab extends HandlebarsApplicationMixin(Abstrac
   // with more than one candidate (e.g. a GM, who owns every actor) it prompts rather than
   // silently picking one — a silent guess here previously bound the Bank dialogs to the wrong
   // actor with no visible indication why.
-  static async _resolvePlayerActor() {
+  static async _resolvePlayerActor(serviceName = "Player's Toolkit", accountName = "account") {
     if (game.user.character) return game.user.character;
 
     const owned = game.actors.filter(a => a.type === 'character' && a.isOwner);
@@ -47,18 +55,18 @@ export default class PlayerToolkitTab extends HandlebarsApplicationMixin(Abstrac
     }
     if (owned.length === 1) return owned[0];
 
-    return PlayerToolkitTab._promptChooseActor(owned);
+    return PlayerToolkitTab._promptChooseActor(owned, serviceName, accountName);
   }
 
-  static async _promptChooseActor(actors) {
+  static async _promptChooseActor(actors, serviceName, accountName) {
     const options = actors.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
     return new Promise((resolve) => {
       new Dialog({
-        title: "Westford Bank — Choose Character",
+        title: `${serviceName} — Choose Character`,
         content: `
           <form>
             <div class="form-group">
-              <label>No character is assigned to your user, and you own more than one. Which ledger do you want to open?</label>
+              <label>No character is assigned to your user, and you own more than one. Which ${accountName} do you want to open?</label>
               <select name="actorId" style="width:100%;margin-top:6px;">${options}</select>
             </div>
           </form>`,

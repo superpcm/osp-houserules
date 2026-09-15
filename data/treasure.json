@@ -49,5 +49,284 @@
         "coins"
       ]
     }
+  },
+  {
+    "name": "Diamond",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/diamond.webp",
+    "system": {
+      "description": "A brilliant, colorless diamond cut into a precise round form, its many facets catching even the faintest light and scattering it in cold, prismatic fire. Entirely natural and unenchanted, it is prized for its exceptional clarity, enduring hardness, and the costly skill required to reveal such radiance.",
+      "cost": 1000,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": [
+        "gem",
+        "treasure"
+      ]
+    }
+  },
+  {
+    "name": "Ruby Necklace",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/ruby-necklace.webp",
+    "system": {
+      "description": "A finely wrought gold necklace set with a procession of deep crimson rubies, each carefully cut to kindle with ember-red light as it moves. Though entirely unenchanted, the richness of its gems and the delicacy of its workmanship mark it as a jewel fit for a noble court.",
+      "cost": 1000,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": [
+        "gem",
+        "jewelry",
+        "treasure"
+      ]
+    }
+  },
+  {
+    "name": "Agate",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/agate.webp",
+    "system": {
+      "description": "A smooth, semi-translucent piece of quartz crossed by warm bands of cream, rust, and charcoal. Its concentric markings form a watchful eye at the stone's heart, a natural pattern prized by lapidaries despite the gem's modest worth.",
+      "cost": 10,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "treasure"]
+    }
+  },
+  {
+    "name": "Azurite",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/azurite.webp",
+    "system": {
+      "description": "A soft cluster of deep blue copper mineral, its craggy surfaces ranging from midnight cobalt to brilliant azure. Beautiful but easily scratched, azurite is often ground for pigment when it is not kept as an ornamental stone.",
+      "cost": 10,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "mineral", "treasure"]
+    }
+  },
+  {
+    "name": "Malachite",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/malachite.webp",
+    "system": {
+      "description": "An opaque green stone polished to reveal striking rings and rippling bands. Forest-dark whorls flow through brighter emerald layers, giving every piece of malachite a pattern unlike any other.",
+      "cost": 25,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "treasure"]
+    }
+  },
+  {
+    "name": "Quartz",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/quartz.webp",
+    "system": {
+      "description": "A compact spray of angular quartz crystals, some milky white and others dimmed by smoky grey veils. Cool blue tones gather in the clearer facets when the cluster is held to the light.",
+      "cost": 10,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "crystal", "treasure"]
+    }
+  },
+  {
+    "name": "Bloodstone",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/bloodstone.webp",
+    "system": {
+      "description": "A dark green variety of jasper scattered with irregular crimson flecks. The red inclusions resemble fresh drops of blood against mossy stone, lending the gem its ominous name without any enchantment of its own.",
+      "cost": 50,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "treasure"]
+    }
+  },
+  {
+    "name": "Moonstone",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/moonstone.webp",
+    "system": {
+      "description": "A pearly feldspar whose milky depths carry a soft blue-white sheen. As the stone turns, its opalescent light seems to drift beneath the surface like moonlight passing through thin cloud.",
+      "cost": 50,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "treasure"]
+    }
+  },
+  {
+    "name": "Onyx",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/onyx.webp",
+    "system": {
+      "description": "A polished, opaque stone of lustrous black divided by a clean ivory band. Its austere coloring makes it popular for seals, mourning jewelry, and the material components of certain necromantic rites, though the stone itself is wholly mundane.",
+      "cost": 25,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "spell-component", "treasure"]
+    }
+  },
+  {
+    "name": "Amber",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/amber.webp",
+    "system": {
+      "description": "A warm piece of fossilized tree resin, polished until its honey-gold depths shine. A tiny ancient insect lies perfectly preserved within, caught in a vanished forest's sunlight countless ages ago.",
+      "cost": 100,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "organic", "treasure"]
+    }
+  },
+  {
+    "name": "Amethyst",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/amethyst.webp",
+    "system": {
+      "description": "A finely cut variety of quartz saturated with royal violet. Lavender highlights flicker across its facets, while darker purple gathers near the stone's heart with the richness of old wine.",
+      "cost": 250,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "treasure"]
+    }
+  },
+  {
+    "name": "Carnelian",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/carnelian.webp",
+    "system": {
+      "description": "A smooth chalcedony gem glowing with reddish-orange warmth. Translucent bands of ember, rust, and flame seem layered within it, especially when sunlight passes through its polished surface.",
+      "cost": 100,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "treasure"]
+    }
+  },
+  {
+    "name": "Citrine",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/citrine.webp",
+    "system": {
+      "description": "A transparent quartz gem cut to gather every scrap of light. Its facets range from clear golden yellow to the warm orange of late autumn sun, giving the stone a bright and cheerful fire.",
+      "cost": 250,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "treasure"]
+    }
+  },
+  {
+    "name": "Jade",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/jade.webp",
+    "system": {
+      "description": "A remarkably tough ornamental stone polished to a quiet, waxen luster. Clouded layers of moss, celadon, and deep green drift through its body, prized as much for endurance as for beauty.",
+      "cost": 500,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "treasure"]
+    }
+  },
+  {
+    "name": "Pearl",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/pearl.webp",
+    "system": {
+      "description": "A large, naturally rounded pearl harvested from a mollusk and polished only by the patient work of the sea. Its creamy surface carries subtle blush, silver, and blue iridescence beneath a luminous sheen.",
+      "cost": 500,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "organic", "treasure"]
+    }
+  },
+  {
+    "name": "Sapphire",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/sapphire.webp",
+    "system": {
+      "description": "A rare, deep-blue corundum cut to reveal a natural six-rayed star across its face. The pale lines glide over midnight facets as the gem turns, an optical wonder born from minute inclusions rather than magic.",
+      "cost": 1000,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "precious", "treasure"]
+    }
+  },
+  {
+    "name": "Emerald",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/treasure/emerald.webp",
+    "system": {
+      "description": "A brilliant green beryl shaped in a precise rectangular step cut. Fine natural inclusions lie beneath its vivid facets like a hidden garden; diviners and ward-makers value such stones as costly components, though this emerald bears no enchantment itself.",
+      "cost": 5000,
+      "unitWeight": 0.01,
+      "storedSize": 0.02,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": true,
+      "tags": ["gem", "precious", "spell-component", "treasure"]
+    }
   }
 ]

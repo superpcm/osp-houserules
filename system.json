@@ -1,14 +1,14 @@
 {
   "id": "osp-houserules",
   "manifest": "https://github.com/superpcm/osp-houserules/system.json",
-  "download": "https://github.com/superpcm/osp-houserules/archive/refs/heads/main.zip",
+  "download": "https://github.com/superpcm/osp-houserules/releases/download/v1.0.12/osp-houserules-v1.0.12.zip",
   "name": "osp-houserules",
   "title": "OSP's House Rules",
   "version": "1.0.12",
-  "description": "OSP's House Rules is a Foundry VTT system that implements a set of house rules and modifications specific so Old School Player's specific gaming group.",
+  "description": "A Foundry VTT system implementing the Old School Player group's OSE house rules.",
   "compatibility": {
-    "minimum": "13.0.0",
-    "verified": "13.0.0"
+    "minimum": "14.0.0",
+    "verified": "14.0.0"
   },
   "authors": [{ "name": "Old School Player" }],
   "esmodules": ["dist/ose.js"],
@@ -64,5 +64,5 @@
   ],
   "scripts": [],
   "relationships": {},
-  "url": ""
+  "url": "https://github.com/superpcm/osp-houserules"
 }

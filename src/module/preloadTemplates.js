@@ -54,6 +54,8 @@ export const preloadHandlebarsTemplates = async () => {
     `${path}/templates/apps/bank-withdraw-dialog.html`,
     `${path}/templates/apps/bank-dm-ledgers-view.html`,
     `${path}/templates/apps/bank-dm-edit-dialog.html`,
+    `${path}/templates/apps/storehouse-view.html`,
+    `${path}/templates/apps/storehouse-withdraw.html`,
   ];
 
   return foundry.applications.handlebars.loadTemplates(templatePaths);

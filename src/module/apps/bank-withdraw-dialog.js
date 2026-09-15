@@ -11,14 +11,16 @@
 import { getLedger, withdrawItem, withdrawCurrency } from "../inventory/bank-ledger-orchestrator.js";
 import { getUsedCapacity } from "../inventory/container-capacity.js";
 import { QuantityDialog } from "../dialog/quantity-dialog.js";
+import { getPartyTreasury, requestPartyTreasury } from "../inventory/party-treasury.js";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
 export class BankWithdrawDialog extends HandlebarsApplicationMixin(ApplicationV2) {
-  constructor({ actor, ...options } = {}) {
-    options.id ??= `osp-bank-withdraw-dialog-${actor.id}`;
+  constructor({ actor, account = "personal", ...options } = {}) {
+    options.id ??= `osp-bank-withdraw-dialog-${actor.id}-${account}`;
     super(options);
     this.actor = actor;
+    this.account = account;
   }
 
   /** @override */
@@ -34,14 +36,14 @@ export class BankWithdrawDialog extends HandlebarsApplicationMixin(ApplicationV2
   };
 
   get title() {
-    return `Withdraw from Westford Bank — ${this.actor.name}`;
+    return `Withdraw from ${this.account === "party" ? "Party Treasury" : "Westford Bank"} — ${this.actor.name}`;
   }
 
   /** @override */
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     const actor = this.actor;
-    const ledger = getLedger(actor);
+    const ledger = this.account === "party" ? getPartyTreasury() : getLedger(actor);
 
     context.currency = [
       { denomination: 'gold', label: 'Gold', quantity: ledger.currency.gold },
@@ -114,7 +116,7 @@ export class BankWithdrawDialog extends HandlebarsApplicationMixin(ApplicationV2
   }
 
   async _handleCurrencyWithdraw(denomination, targetContainer) {
-    const ledger = getLedger(this.actor);
+    const ledger = this.account === "party" ? getPartyTreasury() : getLedger(this.actor);
     const available = ledger.currency[denomination] || 0;
     if (available <= 0) return;
 
@@ -124,7 +126,9 @@ export class BankWithdrawDialog extends HandlebarsApplicationMixin(ApplicationV2
     if (chosen === null) return;
 
     try {
-      const plan = await withdrawCurrency(this.actor, denomination, chosen, targetContainer);
+      const plan = this.account === "party"
+        ? await requestPartyTreasury("withdraw", { actorId: this.actor.id, denomination, quantity: chosen, containerId: targetContainer.id })
+        : await withdrawCurrency(this.actor, denomination, chosen, targetContainer);
       if (!plan.success) { ui.notifications.error(plan.reason); return; }
       ui.notifications.info(`Withdrew ${chosen} ${denomination} coins into ${targetContainer.name}.`);
     } catch (err) {
@@ -136,7 +140,7 @@ export class BankWithdrawDialog extends HandlebarsApplicationMixin(ApplicationV2
   }
 
   async _handleItemWithdraw(entryId, targetContainer) {
-    const ledger = getLedger(this.actor);
+    const ledger = this.account === "party" ? getPartyTreasury() : getLedger(this.actor);
     const entry = ledger.items.find((e) => e.entryId === entryId);
     if (!entry) return;
 
@@ -146,7 +150,9 @@ export class BankWithdrawDialog extends HandlebarsApplicationMixin(ApplicationV2
     if (chosen === null) return;
 
     try {
-      const plan = await withdrawItem(this.actor, entryId, chosen, targetContainer);
+      const plan = this.account === "party"
+        ? await requestPartyTreasury("withdraw", { actorId: this.actor.id, entryId, quantity: chosen, containerId: targetContainer.id })
+        : await withdrawItem(this.actor, entryId, chosen, targetContainer);
       if (!plan.success) { ui.notifications.error(plan.reason); return; }
       ui.notifications.info(`Withdrew ${chosen}× ${entry.name} into ${targetContainer.name}.`);
     } catch (err) {

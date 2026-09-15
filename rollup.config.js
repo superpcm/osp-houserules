@@ -2,15 +2,13 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
-import * as sass from "sass";
-import { resolve as resolvePath } from 'path';
 
 export default {
   input: "src/ose.js",
   output: {
     dir: "dist",
     format: "es",
-    sourcemap: true,
+    sourcemap: process.env.NODE_ENV !== "production",
   },
   plugins: [
     // Ensure imports of SCSS in JS don't break the JS bundle; return an empty module for .scss
@@ -33,6 +31,5 @@ export default {
       tsconfig: "./tsconfig.json",
       clean: true,
     }),
-  // ...existing code...
   ],
 };

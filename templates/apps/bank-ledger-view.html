@@ -1,16 +1,36 @@
 <div class="osp-bank-ledger-view flexcol">
+  <header class="osp-bank-ledger-summary">
+    <div class="osp-bank-masthead">
+      <div class="osp-bank-seal" aria-hidden="true"><i class="fas fa-landmark"></i></div>
+      <span class="osp-bank-kicker">Westford Bank</span>
+    </div>
+    <div class="osp-bank-ledger-identity">
+      <strong>{{ledgerTitle}}</strong>
+      <span class="osp-bank-status"><i class="fas fa-shield-check"></i> Vault account active</span>
+    </div>
+  </header>
+
+  <nav class="osp-bank-account-tabs" aria-label="Bank accounts">
+    <span role="button" tabindex="0" class="osp-bank-account-tab {{#unless isParty}}is-active{{/unless}}" data-action="selectAccount" data-account="personal" data-bank-account-tab>
+      <i class="fas fa-user"></i> Personal
+    </span>
+    <span role="button" tabindex="0" class="osp-bank-account-tab {{#if isParty}}is-active{{/if}}" data-action="selectAccount" data-account="party" data-bank-account-tab>
+      <i class="fas fa-users"></i> Party Treasury
+    </span>
+  </nav>
+
   <div class="osp-bank-currency-row">
-    <div class="osp-bank-currency-tile">
+    <div class="osp-bank-currency-tile" data-bank-transfer-source data-denomination="gold" draggable="true">
       <i class="fas fa-coins osp-bank-coin-gold"></i>
       <span class="osp-bank-currency-value">{{currency.gold}}</span>
       <span class="osp-bank-currency-label">Gold</span>
     </div>
-    <div class="osp-bank-currency-tile">
+    <div class="osp-bank-currency-tile" data-bank-transfer-source data-denomination="silver" draggable="true">
       <i class="fas fa-coins osp-bank-coin-silver"></i>
       <span class="osp-bank-currency-value">{{currency.silver}}</span>
       <span class="osp-bank-currency-label">Silver</span>
     </div>
-    <div class="osp-bank-currency-tile">
+    <div class="osp-bank-currency-tile" data-bank-transfer-source data-denomination="copper" draggable="true">
       <i class="fas fa-coins osp-bank-coin-copper"></i>
       <span class="osp-bank-currency-value">{{currency.copper}}</span>
       <span class="osp-bank-currency-label">Copper</span>
@@ -19,27 +39,49 @@
 
   <div class="osp-bank-items-section">
     <h4 class="osp-bank-section-header">Deposited Treasure</h4>
-    {{#if hasItems}}
-      <ul class="osp-bank-item-list">
-        {{#each items}}
-          <li class="osp-bank-item-row">
-            <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
-            <span class="osp-bank-item-name">{{name}}{{#if unique}} <i class="fas fa-star osp-bank-unique-star" title="Unique"></i>{{/if}}</span>
-            <span class="osp-bank-item-qty">×{{quantity}}</span>
-          </li>
-        {{/each}}
-      </ul>
-    {{else}}
-      <p class="osp-bank-empty-note">No treasure deposited yet.</p>
-    {{/if}}
+    <div class="osp-bank-vault-drop-zone" data-bank-vault-drop-zone>
+      {{#if hasItems}}
+        <section class="osp-bank-safe-deposit-box {{#if vaultOpen}}is-open{{/if}}">
+          <span
+            role="button"
+            tabindex="0"
+            class="osp-bank-safe-deposit-toggle"
+            data-action="toggleVault"
+            aria-expanded="{{#if vaultOpen}}true{{else}}false{{/if}}"
+          >
+            <i class="fas fa-lock" aria-hidden="true"></i>
+            <span>
+              <strong>Safe Deposit Box</strong>
+              <small>{{itemCountLabel}}</small>
+            </span>
+            <i class="fas {{#if vaultOpen}}fa-chevron-up{{else}}fa-chevron-down{{/if}} osp-bank-safe-deposit-chevron" aria-hidden="true"></i>
+          </span>
+          {{#if vaultOpen}}
+            <ul class="osp-bank-item-list">
+              {{#each items}}
+                <li class="osp-bank-item-row" data-bank-transfer-source data-entry-id="{{entryId}}" draggable="true">
+                  <img class="osp-bank-item-icon" src="{{img}}" alt="{{name}}">
+                  <span class="osp-bank-item-name">{{name}}{{#if unique}} <i class="fas fa-star osp-bank-unique-star" title="Unique"></i>{{/if}}</span>
+                  <span class="osp-bank-item-value" title="{{valueTitle}}">{{valueLabel}}</span>
+                  <span class="osp-bank-item-qty">×{{quantity}}</span>
+                </li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </section>
+      {{else}}
+        <div class="osp-bank-empty-state">
+          <i class="fas fa-gem" aria-hidden="true"></i>
+          <strong>Your vault is ready</strong>
+          <span>Drop coins or treasure here for safekeeping.</span>
+        </div>
+      {{/if}}
+    </div>
   </div>
 
-  <div class="osp-bank-actions-row">
-    <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="deposit">
-      <i class="fas fa-arrow-down"></i> Deposit
-    </span>
+  <div class="osp-bank-actions-row osp-bank-actions-row--single">
     <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="withdraw">
-      <i class="fas fa-arrow-up"></i> Withdraw
+      <i class="fas fa-arrow-up-from-line"></i><span><strong>Withdraw</strong><small>Retrieve stored assets</small></span>
     </span>
   </div>
 </div>

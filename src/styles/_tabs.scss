@@ -5,9 +5,10 @@
 /* Tab container — character sheet only */
 .cs-tabs {
   position: absolute;
-  left: 800px;
+  left: 750px;
   top: 352px;
-  width: 24px;
+  /* Match the rendered tab width so the items begin exactly at the page edge. */
+  width: 32px;
   height: 385px;
   z-index: var(--z-tabs, 200);
   pointer-events: auto;

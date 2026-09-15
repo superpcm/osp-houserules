@@ -11,6 +11,7 @@ import { externalDrag } from '../../external-drag-tracker.js';
 import { isConsumableWeapon } from '../../combat/ammo-logic.js';
 import { checkAllowedContainers } from '../../inventory/container-allowlist.js';
 import { chargeItemCost } from '../../inventory/treasure-cost.js';
+import { TreasureValueDialog } from '../../dialog/treasure-value-dialog.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -63,11 +64,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     base: ['listening', 'find-secret-door', 'open-stuck-doors'],
     
     // Race-specific skills (only if no qualifying class)
+    // Hiding is a Gnome/Hobbit *class* ability, not a racial trait — see
+    // race_profiles.json (no Hiding entry) vs class_profiles.json (has it).
     races: {
       dwarf: ['detect-construction', 'detect-room-traps'],
-      gnome: ['detect-construction', 'hiding'],
+      gnome: ['detect-construction'],
       'half-orc': [],
-      hobbit: ['hiding']
+      hobbit: []
     },
 
     // Class-specific skills (take priority over race)
@@ -139,7 +142,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const result = html.find(selector);
       return result.length > 0 ? result : null;
     }
-    return document.querySelector(selector);
+    return this.element?.[0]?.querySelector(selector) ?? null;
   }
 
   /**
@@ -149,7 +152,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * @returns {jQuery|NodeList} Elements collection
    */
   getElements(html, selector) {
-    return (html && html.find) ? html.find(selector) : document.querySelectorAll(selector);
+    return (html && html.find) ? html.find(selector) : (this.element?.[0]?.querySelectorAll(selector) ?? []);
   }
 
 
@@ -172,7 +175,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["osp", "sheet", "actor", "character"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
-      width: 800,
+      width: 750,
       height: 835, // 800px content area + ~35px title bar
       resizable: false,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }],
@@ -245,6 +248,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (!context.system.classPosition) {
       context.system.classPosition = { x: 0, y: 0, zIndex: 0 };
     }
+
+    // Open Stuck Doors chance is derived purely from STR (OSE table) and is
+    // always read-only, so compute it here rather than relying on client-side
+    // script — that script only ran when the STR field rendered as the GM's
+    // editable <select id="attr-str">, so it silently never fired for players.
+    context.openStuckDoorsTarget = this._calculateOpenStuckDoorsTarget();
 
     // Prepare items for template
     // Include regular weapons and items with weapon properties (like Holy Water, Oil Flask)
@@ -960,10 +969,18 @@ export class OspActorSheetCharacter extends ActorSheet {
       await this.actor.setFlag('osp-houserules', 'slung-collapsed', !current);
     });
 
-    // _gearDragItemId is set in _onDragStart (Foundry's DragDrop hook) for all .item-list .item
-    // elements, and set directly in _wireDraggableContainer for belt/slung items that use
-    // stopPropagation to bypass Foundry's DragDrop. Cleared on dragend via form capture.
-    html[0].addEventListener('dragend', () => { this._gearDragItemId = null; }, { capture: true });
+    // Keep the live embedded Item available during hover. Browsers hide dataTransfer payload text
+    // until drop time, so external targets such as Westford Bank cannot otherwise validate a
+    // character-sheet item soon enough to show the correct green/red hover state.
+    html[0].addEventListener('dragstart', (event) => {
+      const itemId = event.target.closest?.('[data-item-id]')?.dataset.itemId;
+      const item = itemId ? this.actor.items.get(itemId) : null;
+      if (item) externalDrag.item = item;
+    }, { capture: true });
+    html[0].addEventListener('dragend', () => {
+      this._gearDragItemId = null;
+      if (externalDrag.item?.actor?.id === this.actor.id) externalDrag.item = null;
+    }, { capture: true });
     const gearSection = html.find('.gear-tab')[0];
 
     // Slung Items section — validity-aware drop target (slungable items show green, others red)
@@ -1054,6 +1071,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Initialize all handlers
     this.initializeHandlers(html);
+    this._activateThemedBioSelects(html);
 
     // Update skill layout based on character class and race
     this.updateSkillLayout(html);
@@ -1132,7 +1150,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     }
 
     // Set up tab system AFTER all other handlers to ensure it has priority
-    setTimeout(() => {
+    clearTimeout(this._tabTimer);
+    this._tabTimer = setTimeout(() => {
       this.setupTabSystem(html);
     }, 100);
   }
@@ -1366,6 +1385,91 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
+   * Replace the browser-painted Bio select popup with a fully themeable menu.
+   * The original select remains the source of truth and receives normal change
+   * events, so existing handlers and Foundry form persistence keep working.
+   */
+  _activateThemedBioSelects(html) {
+    const selector = [
+      '.cs-class-select',
+      '.cs-race-select',
+      '.cs-alignment-select',
+      '.cs-background-select',
+      '.cs-sex-field'
+    ].join(',');
+
+    const closeMenus = (except = null) => {
+      html[0].querySelectorAll('.cs-themed-select.is-open').forEach((menu) => {
+        if (menu !== except) menu.classList.remove('is-open');
+      });
+    };
+
+    html[0].querySelectorAll(`.tab[data-tab="bio"] ${selector}`).forEach((select) => {
+      if (select.dataset.themedSelect === 'true' || select.disabled) return;
+      select.dataset.themedSelect = 'true';
+      select.classList.add('cs-themed-select-native');
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'cs-themed-select';
+
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'cs-themed-select-trigger';
+      trigger.setAttribute('aria-haspopup', 'listbox');
+
+      const menu = document.createElement('div');
+      menu.className = 'cs-themed-select-menu';
+      menu.setAttribute('role', 'listbox');
+
+      const update = () => {
+        trigger.textContent = select.selectedOptions[0]?.textContent ?? '';
+        menu.querySelectorAll('.cs-themed-select-option').forEach((option) => {
+          const selected = option.dataset.value === select.value;
+          option.classList.toggle('is-selected', selected);
+          option.setAttribute('aria-selected', String(selected));
+        });
+      };
+
+      Array.from(select.options).forEach((nativeOption) => {
+        const option = document.createElement('button');
+        option.type = 'button';
+        option.className = 'cs-themed-select-option';
+        option.dataset.value = nativeOption.value;
+        option.textContent = nativeOption.textContent;
+        option.setAttribute('role', 'option');
+        option.addEventListener('click', () => {
+          select.value = nativeOption.value;
+          select.dispatchEvent(new Event('input', { bubbles: true }));
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+          update();
+          wrapper.classList.remove('is-open');
+          trigger.focus();
+        });
+        menu.appendChild(option);
+      });
+
+      trigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const opening = !wrapper.classList.contains('is-open');
+        closeMenus(wrapper);
+        wrapper.classList.toggle('is-open', opening);
+      });
+      trigger.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') wrapper.classList.remove('is-open');
+      });
+      select.addEventListener('change', update);
+
+      select.parentElement.appendChild(wrapper);
+      wrapper.append(trigger, menu);
+      update();
+    });
+
+    html[0].addEventListener('click', (event) => {
+      if (!event.target.closest('.cs-themed-select')) closeMenus();
+    });
+  }
+
+  /**
    * Initialize all event handlers
    */
   initializeHandlers(html) {
@@ -1474,10 +1578,6 @@ export class OspActorSheetCharacter extends ActorSheet {
     this._isClosing = true;
     
     this.destroyHandlers();
-    // Clean up all tab-related event handlers
-    $(document).off('click.tabsystem');
-    $('body').off('click.tabsystem');
-
     // Clear any pending timers
     if (this._tabTimer) {
       clearTimeout(this._tabTimer);
@@ -1512,7 +1612,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     return this.handlers.get(name);
   }
 
-
+  /**
+   * OSE Open Doors chance (d6 target) based on STR.
+   * @returns {string}
+   */
+  _calculateOpenStuckDoorsTarget() {
+    const str = parseInt(this.actor.system.attributes?.str?.value) || 10;
+    if (str <= 8) return '1';
+    if (str <= 12) return '2';
+    if (str <= 15) return '3';
+    if (str <= 17) return '4';
+    return '5';
+  }
 
   /**
    * Get required skills for a character based on class and race
@@ -1611,60 +1722,77 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   /**
-   * Resolve the composite skill-circle SVG for a given class/race combo.
-   * Lookup order: class+race combo → class → race → base.
+   * Generate the complete skill-target diagram from the active class/race skill
+   * list. This replaces the old precomposed artwork files, so every possible
+   * combination uses the same themed circles and Cooper Std curved labels.
    */
-  getSkillSVGPath(characterClass, race) {
-    const base = '/systems/osp-houserules/assets/character-sheet';
-    const cls = (characterClass || '').toLowerCase().replace(/\s+/g, '-');
-    const rcRaw = (race || '').toLowerCase().replace(/\s+/g, '-');
-    const rc = rcRaw === 'half-orc' ? 'halforc' : rcRaw;
-
-    const classesWithSkills = new Set(['assassin', 'barbarian', 'ranger', 'thief', 'warden']);
-    const racesWithSkills = new Set(['dwarf', 'gnome', 'elf', 'hobbit', 'halforc']);
-    // Races with `skills-{class}-{race}.svg` files for skill-bearing classes.
-    const classComboRaces = new Set(['dwarf', 'gnome', 'hobbit']);
-    // Races with `skills-base-{race}.svg` files (race + non-skill class).
-    // Hobbit is intentionally absent: its non-skill-class layout comes from skills-hobbit.svg.
-    const baseComboRaces = new Set(['dwarf', 'gnome']);
-
-    if (classesWithSkills.has(cls)) {
-      if (classComboRaces.has(rc)) return `${base}/skills-${cls}-${rc}.svg`;
-      return `${base}/skills-${cls}.svg`;
-    }
-    if (baseComboRaces.has(rc)) return `${base}/skills-base-${rc}.svg`;
-    if (racesWithSkills.has(rc)) return `${base}/skills-${rc}.svg`;
-    return `${base}/skills-base.svg`;
-  }
-
-  /**
-   * Fetch the composite skill SVG and inject it into the Skills tab container.
-   * Caches fetched SVG text statically across sheet instances.
-   */
-  async fetchAndInjectSVG(html, svgPath) {
+  renderSkillTargetDiagram(html, requiredSkills) {
     const container = this.getElement(html, '.cs-skill-svg-container');
     if (!container) return;
     const el = container[0] || container;
 
-    if (el.dataset.svgPath === svgPath && el.innerHTML) return;
+    const labels = {
+      listening: 'Listen at Doors',
+      'find-secret-door': 'Find Secret Doors',
+      'open-stuck-doors': 'Open Stuck Doors',
+      'detect-construction': 'Detect Construction Tricks',
+      'detect-room-traps': 'Detect Room Traps',
+      assassination: 'Assassination',
+      'climb-sheer': 'Climb Sheer Surfaces',
+      'hide-shadows': 'Hide in Shadows',
+      'move-silently': 'Move Silently',
+      'find-traps': 'Find Traps',
+      'open-locks': 'Open Locks',
+      'pick-pockets': 'Pick Pockets',
+      'hide-undergrowth': 'Hide in Undergrowth',
+      'hide-dungeons': 'Hide in Dungeons',
+      'foraging-hunting': 'Forage & Hunt',
+      stealth: 'Stealth',
+      'wilderness-surprise-attack': 'Surprise Attack',
+      hiding: 'Hiding'
+    };
+    const skills = [...new Set(requiredSkills)].filter(skill => labels[skill]);
+    const columns = Math.min(6, Math.max(1, skills.length));
+    const cellWidth = 800 / columns;
+    const rowHeight = 142;
+    const rows = Math.ceil(skills.length / columns);
+    const height = Math.max(142, rows * rowHeight);
+    const escape = (value) => String(value).replace(/[&<>"']/g, char => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]
+    ));
 
-    if (!OspActorSheetCharacter._svgCache) OspActorSheetCharacter._svgCache = new Map();
-    const cache = OspActorSheetCharacter._svgCache;
+    const circles = skills.map((skill, index) => {
+      const row = Math.floor(index / columns);
+      const column = index % columns;
+      const itemsInRow = Math.min(columns, skills.length - row * columns);
+      const rowOffset = (800 - itemsInRow * cellWidth) / 2;
+      const cx = rowOffset + column * cellWidth + cellWidth / 2;
+      const cy = row * rowHeight + 72;
+      const pathId = `skill-label-path-${skill}`;
+      const label = labels[skill];
+      const labelSize = 12;
+      return `
+        <g class="cs-generated-skill" data-skill="${skill}">
+          <path id="${pathId}" d="M ${cx - 57} ${cy - 4} A 57 57 0 0 1 ${cx + 57} ${cy - 4}" fill="none" />
+          <circle class="cs-generated-skill-halo" cx="${cx}" cy="${cy}" r="53" />
+          <circle class="cs-generated-skill-ring" id="${skill}" cx="${cx}" cy="${cy}" r="48" />
+          <circle class="cs-generated-skill-inner" cx="${cx}" cy="${cy}" r="41" />
+          <text class="cs-generated-skill-label" style="font-size:${labelSize}px"><textPath href="#${pathId}" startOffset="50%" text-anchor="middle">${escape(label)}</textPath></text>
+        </g>`;
+    }).join('');
 
-    let svgText = cache.get(svgPath);
-    if (!svgText) {
-      try {
-        const response = await fetch(svgPath);
-        if (!response.ok) return;
-        svgText = await response.text();
-        cache.set(svgPath, svgText);
-      } catch (err) {
-        console.warn(`[osp-houserules] Failed to load skill SVG: ${svgPath}`, err);
-        return;
-      }
-    }
-    el.innerHTML = svgText;
-    el.dataset.svgPath = svgPath;
+    el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 ${height}" width="800" height="${height}" data-skill-svg="true" aria-hidden="true">
+      <defs>
+        <linearGradient id="cs-skill-parchment" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff4cf" />
+          <stop offset="1" stop-color="#caa66b" />
+        </linearGradient>
+        <filter id="cs-skill-shadow" x="-25%" y="-25%" width="150%" height="150%">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#3a2614" flood-opacity=".24" />
+        </filter>
+      </defs>${circles}
+    </svg>`;
+    el.dataset.skillSet = skills.join(',');
     // Defer to next frame so layout is computed before measuring.
     requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
   }
@@ -2398,7 +2526,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const h = targetEl.offsetHeight;
 
       const left = svgOffsetX + cx * scale - w / 2;
-      const top = svgOffsetY + cy * scale - h / 2 - 3;
+      const top = svgOffsetY + cy * scale - h / 2;
 
       targetEl.style.setProperty('--left', `${left}px`);
       targetEl.style.setProperty('--top', `${top}px`);
@@ -2439,8 +2567,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Apply skill visibility
     this.applySkillVisibility(html, skills);
 
-    // Inject the composite skill-circle SVG for this class/race
-    this.fetchAndInjectSVG(html, this.getSkillSVGPath(characterClass, race));
+    // Generate the complete skill-circle diagram for this class/race combination.
+    this.renderSkillTargetDiagram(html, skills);
 
     // Render class/race ability text below the skill circles
     this.renderAbilities(html, characterClass, race);
@@ -2779,6 +2907,18 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (this._isStoreLocked(isReordering)) {
       ui.notifications.warn("The store is locked — you cannot add items to your inventory right now.");
       return false;
+    }
+
+    // Treasure values often vary from one find to the next. When a GM grants a catalog treasure
+    // item, let them customize this particular copy while retaining the JSON value as the default.
+    // Reordering an item already on the actor must never reopen the prompt.
+    if (!isReordering && game.user.isGM && itemData.type === 'item' && itemData.system?.treasure === true) {
+      const value = await TreasureValueDialog.prompt({
+        itemName: itemData.name,
+        initialValue: itemData.system.cost,
+      });
+      if (value === null) return false;
+      itemData.system.cost = value;
     }
 
     // Charge the item's cost against stored treasure before it's ever added to the sheet.

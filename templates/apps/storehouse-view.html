@@ -1,0 +1,28 @@
+<div class="osp-storehouse flexcol">
+  <header class="osp-storehouse-header">
+    <div class="osp-storehouse-mark"><i class="fas fa-warehouse"></i></div>
+    <div><span>Westford Storehouse</span><strong>{{storeTitle}}</strong><small>{{totalCount}} items in storage</small></div>
+  </header>
+  <nav class="osp-storehouse-tabs">
+    <span role="button" data-action="selectStore" data-store="personal" class="{{#unless shared}}is-active{{/unless}}"><i class="fas fa-box"></i> Personal Locker</span>
+    <span role="button" data-action="selectStore" data-store="party" class="{{#if shared}}is-active{{/if}}"><i class="fas fa-people-carry-box"></i> Party Stores</span>
+  </nav>
+  <div class="osp-storehouse-filters">
+    {{#each categories}}<span role="button" data-action="setFilter" data-filter="{{value}}" class="{{#if active}}is-active{{/if}}">{{label}}</span>{{/each}}
+  </div>
+  <section class="osp-storehouse-shelves" data-storehouse-drop>
+    {{#if hasItems}}
+      {{#each items}}
+        <div class="osp-storehouse-item">
+          <img src="{{img}}" alt="{{name}}">
+          <span class="osp-storehouse-item-name"><strong>{{name}}</strong><small>{{category}}</small></span>
+          <span class="osp-storehouse-weight">{{totalWeight}} lb</span>
+          <span class="osp-storehouse-qty">×{{quantity}}</span>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="osp-storehouse-empty"><i class="fas fa-box-open"></i><strong>The shelves are ready</strong><span>Drop non-treasure equipment here for safekeeping.</span></div>
+    {{/if}}
+  </section>
+  <span role="button" class="osp-storehouse-withdraw" data-action="withdraw"><i class="fas fa-dolly"></i><span><strong>Retrieve Goods</strong><small>Move stored items into your containers</small></span></span>
+</div>

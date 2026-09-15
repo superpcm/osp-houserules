@@ -1800,7 +1800,7 @@
         {
           "name": "Hiding",
           "trigger": "Remain motionless in undergrowth, shadow, or rocky cover",
-          "effect": "Base 3-in-6 chance to hide; referee rolls in secret.",
+          "effect": "90% chance to hide in woodland cover; 2-in-6 chance to hide in dungeons or other cover. Referee rolls in secret.",
           "limits": [],
           "scaling": null
         },

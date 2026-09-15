@@ -38,6 +38,159 @@ $debug-form-fields: false; // Change to true to enable debug mode
   text-align: center;
 }
 
+/* Language picker — styled as a companion card to the parchment character sheet. */
+.window-app.osp-language-dialog {
+  overflow: hidden;
+  border: 1px solid rgba(69, 47, 27, 0.72);
+  border-radius: 9px;
+  box-shadow: 0 10px 28px rgba(24, 15, 8, 0.42);
+
+  .window-title,
+  .window-content,
+  .dialog-content,
+  label,
+  span,
+  input,
+  button {
+    font-family: $font-cooper !important;
+  }
+
+  .window-header {
+    min-height: 34px;
+    padding: 0 10px;
+    background: #17110c !important;
+    border-bottom: 1px solid #79572f !important;
+    color: #f7e7bd !important;
+    font-family: $font-cooper !important;
+    font-size: 17px;
+    letter-spacing: 0.04em;
+  }
+
+  .window-content {
+    padding: 12px !important;
+    background:
+      linear-gradient(rgba(231, 214, 169, 0.94), rgba(190, 157, 101, 0.96)),
+      url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp') center / cover !important;
+    color: #2e2013;
+    font-family: $font-cooper !important;
+  }
+
+  .dialog-content {
+    padding: 11px 12px 9px;
+    border: 1px solid rgba(69, 47, 27, 0.4);
+    border-radius: 7px;
+    background: linear-gradient(145deg, rgba(255, 248, 220, 0.68), rgba(207, 176, 121, 0.46));
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.42), 0 2px 5px rgba(58, 38, 20, 0.12);
+  }
+
+  .cs-dialog-row > label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    letter-spacing: 0.025em;
+  }
+
+  .cs-dialog-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px 16px;
+  }
+
+  .cs-dialog-column {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cs-dialog-label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 32px;
+    min-height: 32px;
+    gap: 7px;
+    padding: 0 7px;
+    border: 1px solid rgba(91, 62, 31, 0.22);
+    border-radius: 5px;
+    background: rgba(255, 248, 220, 0.32);
+    font-size: 15px;
+  }
+
+  .cs-dialog-label > span {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    width: auto;
+    line-height: 1;
+    transform: translateY(2px);
+  }
+
+  .cs-dialog-label > input[type='checkbox'] {
+    position: static;
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
+  .cs-dialog-label:has(.cs-custom-input) {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  input[type='checkbox'] { accent-color: #65492c; }
+
+  .cs-custom-input {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    height: 30px;
+    padding-block: 0 !important;
+    line-height: 30px !important;
+    text-align: left;
+    text-indent: 2px;
+    transform: translateY(2px);
+    border: 0 !important;
+    border-bottom: 1px solid rgba(69, 47, 27, 0.5) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #2e2013 !important;
+    font-family: $font-cooper !important;
+  }
+
+  .dialog-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      border: 1px solid #8c6737 !important;
+      border-radius: 6px;
+      background: linear-gradient(#65492c, #3b291b) !important;
+      color: #fff0c8 !important;
+      font-family: $font-cooper !important;
+      font-size: 15px;
+      line-height: 1;
+      padding: 3px 8px 0;
+      letter-spacing: 0.035em;
+      box-shadow: inset 0 1px rgba(255, 255, 255, 0.16), 0 2px 4px rgba(36, 23, 12, 0.2);
+    }
+
+    button:hover,
+    button:focus {
+      border-color: #d4a853 !important;
+      background: linear-gradient(#795a35, #49321f) !important;
+      box-shadow: 0 0 0 1px rgba(212, 168, 83, 0.35), 0 2px 5px rgba(36, 23, 12, 0.24);
+    }
+  }
+}
+
 /* Position field mixin - DRY pattern for positioning variables */
 @mixin position-field($left, $top, $width, $height, $z: 15) {
   --left: #{$left};
@@ -379,10 +532,46 @@ $cs-ability-height: 79px !default;
   }
 }
 
+/* Generated skill targets: the circle, shading, and curved Cooper labels are
+   drawn at runtime from the active class/race skill list. */
+.tab[data-tab="skills"] {
+  background-image: none !important;
+}
+
+.cs-generated-skill-halo {
+  fill: rgba(91, 61, 31, 0.13);
+}
+
+.cs-generated-skill-ring {
+  fill: url('#cs-skill-parchment');
+  stroke: rgba(69, 47, 27, 0.72);
+  stroke-width: 2;
+  filter: url('#cs-skill-shadow');
+}
+
+.cs-generated-skill-inner {
+  fill: rgba(255, 248, 220, 0.22);
+  stroke: rgba(255, 248, 220, 0.52);
+  stroke-width: 1;
+}
+
+.cs-generated-skill-label {
+  fill: #25180d;
+  font-family: $font-cooper !important;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.15px;
+}
+
 .skill-abilities-section {
   position: relative;
   z-index: 1;
-  margin: 20px 30px 10px;
+  margin: 18px 30px 10px;
+  padding: 12px;
+  border: 1px solid rgba(69, 47, 27, 0.34);
+  border-radius: 9px;
+  background: linear-gradient(145deg, rgba(255, 248, 220, 0.35), rgba(190, 157, 101, 0.2));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.35), 0 3px 8px rgba(58, 38, 20, 0.12);
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -405,10 +594,11 @@ $cs-ability-height: 79px !default;
   margin-bottom: 10px;
 }
 .skill-abilities-content {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding-left: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 10px;
+  padding: 2px;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -418,6 +608,12 @@ $cs-ability-height: 79px !default;
 }
 .skill-ability-entry {
   break-inside: avoid;
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid rgba(69, 47, 27, 0.34);
+  border-radius: 7px;
+  background: linear-gradient(145deg, rgba(255, 248, 220, 0.62), rgba(207, 176, 121, 0.38));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.42), 0 2px 5px rgba(58, 38, 20, 0.1);
 }
 .skill-ability-collapsed .skill-ability-effect {
   display: none;
@@ -435,29 +631,33 @@ $cs-ability-height: 79px !default;
   vertical-align: middle;
 }
 .skill-ability-name {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
   font-family: $font-cooper;
-  font-size: 30px;
+  font-size: 20px;
   font-weight: bold;
-  color: #1a1a1a;
+  color: #2e2013;
 }
 .skill-ability-tag {
   display: inline-block;
-  font-size: 18px;
+  flex: 0 0 auto;
+  font-size: 12px;
   font-weight: normal;
-  padding: 1px 6px;
-  margin-left: 6px;
-  border-radius: 3px;
+  padding: 3px 7px;
+  margin-left: auto;
+  border-radius: 999px;
   vertical-align: middle;
 }
 .skill-ability-tag--race {
-  background: rgba(80, 40, 0, 0.10);
-  border: 1px solid rgba(80, 40, 0, 0.25);
-  color: #5a3a1a;
+  background: rgba(101, 73, 44, 0.15);
+  border: 1px solid rgba(80, 40, 0, 0.3);
+  color: #4e3219;
 }
 .skill-ability-tag--class {
-  background: rgba(0, 40, 80, 0.10);
-  border: 1px solid rgba(0, 40, 80, 0.25);
-  color: #1a3a5a;
+  background: rgba(121, 90, 53, 0.22);
+  border: 1px solid rgba(80, 40, 0, 0.34);
+  color: #3e2815;
 }
 .skill-ability-trigger {
   font-style: italic;
@@ -466,10 +666,10 @@ $cs-ability-height: 79px !default;
 }
 .skill-ability-effect {
   font-family: $font-cooper;
-  font-size: 30px;
-  color: #555555;
-  padding-left: 12px;
-  line-height: 0.8 !important;
+  font-size: 16px;
+  color: #4a3825;
+  padding: 8px 3px 2px 20px;
+  line-height: 1.25 !important;
 }
 
 /* Generic fallback layout (default positioning when no other conditions are met) */
@@ -502,7 +702,9 @@ form.osp.sheet.actor.character {
 }
 
 form.osp.sheet.actor.character.theme-parchment {
-  background-image: url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp');
+  background:
+    linear-gradient(rgba(231, 214, 169, 0.91), rgba(190, 157, 101, 0.93)),
+    url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp') center / cover;
 }
 
 /* Parchment theme - transparent gear backgrounds so parchment shows through */
@@ -592,7 +794,8 @@ form.osp.sheet.actor.character .static-header,
   z-index: var(--z-sheet, 10);
 }
 
-/* Header frame image as pseudo-element with higher z-index */
+/* Header frame layer. The former `basics.webp` artwork has been removed; the
+   Bio layout now draws its individual controls in CSS. */
 form.osp.sheet.actor.character .static-header::before,
 .static-header::before,
 .cs-static-header::before {
@@ -600,11 +803,9 @@ form.osp.sheet.actor.character .static-header::before,
   position: absolute;
   top: 5px;
   left: 0;
-  right: 0;
+  width: 800px;
   bottom: 0;
-  background: url('/systems/osp-houserules/assets/character-sheet/basics.webp') no-repeat !important;
-  background-position: left top !important;
-  background-size: contain !important;
+  background: none !important;
   z-index: 15 !important; /* Higher than portrait (z-index 5) to overlay it */
   pointer-events: none; /* Allow clicks to pass through */
 }
@@ -858,7 +1059,8 @@ form.osp.sheet.actor.character .static-header::before,
   user-select: none;
 }
 
-.cs-ability-select {
+.cs-ability-select,
+.cs-ability-input {
   @include center-flex-field;
   font-variant-numeric: tabular-nums;
   
@@ -873,7 +1075,10 @@ form.osp.sheet.actor.character .static-header::before,
   z-index: var(--z-labels, 15); /* Ensure tooltips work properly */
   pointer-events: auto; /* Ensure mouse events work */
   line-height: 1;
-  transform: translateY(-0.1em); /* Vertical centering adjustment for select elements */
+  padding: 0;
+  text-align: center;
+  box-shadow: none !important;
+  outline: none;
 }
 
 /* NOTE: Old .cs-ability positioning removed - now uses simplified system at bottom of file */
@@ -951,11 +1156,8 @@ form.osp.sheet.actor.character .static-header::before,
   
   width: 70px;
   height: 70px;
-  font-size: 100px;
-  /* Compressed line-height (0.5) centers large font visually within the 72px box */
-  /* At 100px font-size with line-height 0.5, the line box shrinks to 50px, */
-  /* allowing proper vertical centering of the glyph within the container */
-  line-height: 0.5;
+  font-size: 68px;
+  line-height: 70px;
   background-color: transparent !important;  /* Override browser defaults */
 
   margin: 0;
@@ -966,8 +1168,10 @@ form.osp.sheet.actor.character .static-header::before,
   
   /* Force horizontal centering - remove browser defaults */
   text-indent: 0;
-  padding-left: 4px;
+  padding-left: 0;
   padding-right: 0;
+  text-align: center;
+  text-align-last: center;
   box-sizing: border-box;
   
   /* Remove dropdown arrow to prevent offset */
@@ -1013,6 +1217,48 @@ form.osp.sheet.actor.character .static-header::before,
 .cs-tab-item:hover {
   z-index: var(--z-tab-hover, 225);
   background: rgba(139, 123, 101, 0.6) !important; /* Slightly more opaque on hover */
+}
+
+/* Parchment bookmark treatment for the character sheet's vertical tabs. */
+.osp.sheet.actor.character .sheet-tabs.cs-tabs a.item {
+  box-sizing: border-box;
+  width: 32px;
+  padding: 8px 5px 8px 3px;
+  color: #4a2f17 !important;
+  background: linear-gradient(90deg, #d7b675 0%, #f0ddb0 68%, #e5c98f 100%) !important;
+  border: 1px solid rgba(91, 57, 25, 0.62) !important;
+  border-left: 0 !important;
+  border-radius: 0 11px 0 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 250, 224, 0.7),
+    inset -2px 0 3px rgba(91, 57, 25, 0.12),
+    2px 2px 4px rgba(50, 28, 10, 0.2);
+  font-family: $font-cooper !important;
+  font-size: 11px;
+  letter-spacing: 0.1px;
+  text-shadow: 0 1px 0 rgba(255, 245, 212, 0.55) !important;
+  transition: filter 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.osp.sheet.actor.character .sheet-tabs.cs-tabs a.item:hover {
+  color: #321e0d !important;
+  background: linear-gradient(90deg, #e0c080 0%, #f7e8bf 68%, #edd6a2 100%) !important;
+  border-color: rgba(72, 42, 18, 0.72) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 252, 232, 0.85),
+    3px 2px 6px rgba(50, 28, 10, 0.25);
+}
+
+.osp.sheet.actor.character .sheet-tabs.cs-tabs a.item.active {
+  color: #fff1c9 !important;
+  background: linear-gradient(90deg, #5a381c 0%, #75502d 68%, #8b6436 100%) !important;
+  border-color: #40250f !important;
+  border-left: 0 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 232, 180, 0.28),
+    inset -3px 0 4px rgba(30, 16, 6, 0.25),
+    3px 2px 6px rgba(45, 25, 9, 0.3);
+  text-shadow: 0 1px 1px rgba(28, 14, 4, 0.75) !important;
 }
 .cs-force-pointer { pointer-events: auto !important; }
 
@@ -1061,52 +1307,91 @@ form.osp.sheet.actor.character .static-header::before,
   overflow: hidden;
 }
 
+/* The illustrated sheet artwork was authored on an 800px canvas with roughly 50px
+   of decorative paper at each side. The window is intentionally narrower now: the
+   fixed-art tabs retain that canvas and crop 25px from each edge, while fluid writing
+   tabs (Spells, Background, and Notes) reflow within the new 750px page. */
+.tab[data-tab="bio"],
+.tab[data-tab="skills"],
+.tab[data-tab="combat"],
+.tab[data-tab="gear"] {
+  width: 800px;
+  left: -25px;
+}
+
+.tab[data-tab="attributes"],
+.tab[data-tab="background"],
+.tab[data-tab="notes"] {
+  width: 750px;
+  left: 0;
+  box-sizing: border-box;
+}
+
 .spell-tab-header {
   text-align: center;
-  margin-top: 10px;
+  margin: 12px 30px 0;
   margin-bottom: 0;
+  padding: 10px 14px 5px;
   flex-shrink: 0;
+  border: 1px solid rgba(69, 47, 27, 0.38);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(145deg, rgba(255, 246, 215, 0.56), rgba(205, 174, 119, 0.38));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.45);
 }
 .spell-tab-title {
   font-family: $font-cooper !important;
-  font-size: 16px;
+  font-size: 22px;
   font-weight: bold;
-  color: #1a1a1a;
+  color: #3d280f;
+  letter-spacing: 0.04em;
+  line-height: 1;
 }
 .spell-tab-subtitle {
   font-family: $font-cooper !important;
-  font-size: 10px;
-  color: #1a1a1a;
-  margin-bottom: 6px;
+  font-size: 11px;
+  color: #725331;
+  margin: 5px 0 0;
 }
 
 /* Slot tracker */
 .spell-slots-section {
   flex-shrink: 0;
-  padding: 10px 30px 8px;
+  margin: 0 30px 8px;
+  padding: 7px 12px 10px;
+  border: 1px solid rgba(69, 47, 27, 0.38);
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(145deg, rgba(255, 246, 215, 0.56), rgba(205, 174, 119, 0.38));
+  box-shadow: 0 3px 8px rgba(58, 38, 20, 0.12);
 }
 .spell-slots-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px 28px;
+  gap: 8px;
   align-items: flex-start;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .spell-slot-group {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  min-width: 112px;
+  padding: 5px 10px 7px;
+  border: 1px solid rgba(85, 58, 31, 0.24);
+  border-radius: 6px;
+  background: rgba(255, 249, 226, 0.45);
 }
 .spell-slot-label {
   font-family: $font-cooper !important;
   font-size: 12px;
   font-weight: bold;
-  color: #1a1a1a;
+  color: #4b321a;
   text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.1em;
 }
 .spell-slot-pips {
   display: flex;
@@ -1117,19 +1402,21 @@ form.osp.sheet.actor.character .static-header::before,
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 2px solid #444;
-  background: transparent;
+  border: 2px solid #634a31;
+  background: rgba(255, 250, 230, 0.55);
+  box-shadow: inset 0 1px 2px rgba(55, 35, 18, 0.18);
   cursor: pointer;
   padding: 0;
   transition: background 0.1s;
 
   &.memorized {
-    background: #31e71d;
-    border-color: #31e71d;
+    background: linear-gradient(145deg, #79b65a, #3f7d35);
+    border-color: #315f2a;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.35), 0 0 0 1px rgba(89, 132, 61, 0.2);
   }
   &.memorized:hover {
-    background: rgba(49, 231, 29, 0.75);
-    border-color: #31e71d;
+    background: linear-gradient(145deg, #8bc76b, #4b8d3e);
+    border-color: #315f2a;
   }
   &.used {
     background: #2c1810;
@@ -1163,23 +1450,25 @@ form.osp.sheet.actor.character .static-header::before,
 }
 .spell-formula {
   font-family: $font-cooper !important;
-  margin: 6px 0 2px;
-  padding: 5px 12px;
-  background: rgba(44,24,16,0.05);
-  border-radius: 4px;
+  margin: 6px 0 0;
+  padding: 7px 12px;
+  color: #f7e8c5;
+  background: linear-gradient(145deg, #65492c, #3b291b);
+  border: 1px solid #745333;
+  border-radius: 5px;
   text-align: center;
 }
 .spell-formula-header {
   font-family: $font-cooper !important;
   font-size: 10px;
-  color: #6b4a2a;
+  color: #dfc792;
   margin-bottom: 2px;
 }
 .spell-formula-slots {
   font-family: $font-cooper !important;
   font-size: 10px;
-  color: #444;
-  b { color: #2c1810; }
+  color: #f4e5c1;
+  b { color: #f6cf72; }
 }
 .spell-no-slots {
   font-family: $font-cooper;
@@ -1202,26 +1491,37 @@ form.osp.sheet.actor.character .static-header::before,
 .spell-subtab-nav {
   flex-shrink: 0;
   display: flex;
-  gap: 0;
-  padding: 4px 30px 0;
-  border-bottom: 2px solid rgba(44,24,16,0.3);
+  gap: 5px;
+  margin: 4px 30px 8px;
+  padding: 5px;
+  border: 1px solid rgba(69, 47, 27, 0.35);
+  border-radius: 6px;
+  background: rgba(255, 246, 215, 0.28);
 }
 .spell-subtab-btn {
   font-family: $font-cooper !important;
-  font-size: 16px;
+  flex: 1 1 0;
+  font-size: 14px;
   font-weight: bold;
-  color: #888;
-  padding: 5px 22px 6px;
+  color: #5f4b35;
+  padding: 7px 12px;
+  text-align: center;
   cursor: pointer;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
+  border: 1px solid rgba(69, 47, 27, 0.24);
+  border-radius: 4px;
+  background: rgba(255, 248, 220, 0.42);
   user-select: none;
-  transition: color 0.1s;
+  transition: color 0.1s, background 0.1s, border-color 0.1s;
 
-  &:hover { color: #2c1810; }
-  &.active {
+  &:hover {
     color: #2c1810;
-    border-bottom-color: #704214;
+    border-color: rgba(69, 47, 27, 0.45);
+    background: rgba(255, 248, 220, 0.7);
+  }
+  &.active {
+    color: #fff0c6;
+    border-color: #4a321e;
+    background: linear-gradient(#72502c, #3d2b1a);
   }
 }
 
@@ -1442,6 +1742,210 @@ form.osp.sheet.actor.character .static-header::before,
     display: block;
     border: none;
   }
+}
+
+/* Generated combat dashboard — replaces the precomposed saving-throw and HP/AC art. */
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-generated-panel {
+  box-sizing: border-box;
+  width: auto !important;
+  margin: 18px 24px 20px !important;
+  padding: 14px 14px 16px;
+  border: 1px solid rgba(91, 57, 25, 0.48);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 224, 0.42), rgba(126, 82, 34, 0.12)),
+    rgba(225, 198, 139, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 3px 8px rgba(67, 39, 17, 0.16);
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-saving-throws-image {
+  width: 100%;
+  margin: 0 0 18px;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-save-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 38px;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .cs-save-group {
+  --field-left: auto;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  position: relative;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-save-label-arc {
+  position: absolute;
+  z-index: 2;
+  top: -13px;
+  left: 50%;
+  width: 130px;
+  height: 74px;
+  overflow: visible;
+  transform: translateX(-50%);
+  pointer-events: none;
+
+  path {
+    fill: none;
+  }
+
+  text {
+    fill: #2c1810;
+    font-family: $font-cooper !important;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15px;
+  }
+
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .cs-save {
+  position: relative !important;
+  inset: auto !important;
+  width: 92px !important;
+  height: 92px !important;
+  flex: 0 0 92px;
+  border: 2px solid rgba(91, 57, 25, 0.58);
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 28%, #fff3c9 0, #ead09a 62%, #c39a5d 100%);
+  box-shadow:
+    inset 0 0 0 5px rgba(255, 249, 220, 0.42),
+    inset 0 -5px 9px rgba(99, 59, 23, 0.12),
+    0 3px 5px rgba(66, 39, 18, 0.24);
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .cs-save-badge {
+  border-radius: 50% !important;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .cs-save-value {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 0 0;
+  font-family: handwritten !important;
+  font-size: 76px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  color: #4b4b4b;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-title {
+  width: 100%;
+  margin: 0 0 8px;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image {
+  width: 100%;
+  margin: 0;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image .combat-stats {
+  position: static;
+  transform: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) repeat(3, minmax(0, 1.155fr)) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 9px;
+  margin: 0;
+  pointer-events: auto;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image .combat-stat {
+  box-sizing: border-box;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 5px 3px 4px;
+  border: 1px solid rgba(91, 57, 25, 0.48);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(255, 247, 213, 0.82), rgba(211, 176, 111, 0.54));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 2px 4px rgba(66, 39, 18, 0.18);
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image .combat-stat-hp {
+  border-color: rgba(112, 66, 20, 0.72);
+  background: linear-gradient(145deg, rgba(255, 244, 205, 0.96), rgba(203, 153, 84, 0.66));
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image .combat-stat-movement {
+  position: relative;
+  isolation: isolate;
+  align-self: center;
+  height: auto;
+  aspect-ratio: 2 / 1.732;
+  border: 0;
+  border-radius: 0;
+  background: rgba(91, 57, 25, 0.52);
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  box-shadow: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 2px;
+    background: linear-gradient(145deg, rgba(255, 247, 213, 0.96), rgba(211, 176, 111, 0.68));
+    clip-path: inherit;
+  }
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image .combat-stat-defense {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  border-radius: 0;
+  padding-bottom: 14px;
+  background: rgba(91, 57, 25, 0.52);
+  clip-path: polygon(8% 0, 92% 0, 96% 8%, 92% 62%, 78% 80%, 50% 100%, 22% 80%, 8% 62%, 4% 8%);
+  box-shadow: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 2px;
+    background: linear-gradient(145deg, rgba(255, 247, 213, 0.96), rgba(211, 176, 111, 0.68));
+    clip-path: inherit;
+  }
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image :is(.cs-unarmored-box, .cs-combat-input) {
+  width: 100%;
+  height: 55px;
+  margin: 0;
+  padding: 5px 0 0;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-family: handwritten !important;
+  font-size: 54px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  text-align: center;
+  color: #4b4b4b;
+}
+
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image .cs-field-label {
+  margin: 0;
+  font-family: $font-cooper !important;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.05;
+  text-align: center;
+  color: #2c1810;
 }
 
 /* Overlay anchored to tab; top=218px keeps stats at same position on hpac
@@ -2668,6 +3172,266 @@ input[type="number"] {
   top: 35px;
 }
 
+/* ── Parchment Bio card experiment ──────────────────────────────────────────
+   Replaces the raster-drawn form boxes with the same generated warm panels used
+   by the Spells, Bank, and Storehouse views. Kept in one scoped block so the
+   original illustrated Bio treatment remains straightforward to restore. */
+.theme-parchment .tab[data-tab="bio"] {
+  /* `basics.webp` is assigned with the `background` shorthand above, so clear
+     the whole shorthand here rather than only its image component. */
+  .static-header::before { background: none !important; }
+
+  .cs-portrait-container {
+    padding: 5px;
+    border: 1px solid rgba(69, 47, 27, 0.45);
+    border-radius: 8px;
+    background: linear-gradient(145deg, rgba(255, 246, 215, 0.68), rgba(190, 157, 101, 0.5));
+    box-shadow: 0 3px 8px rgba(58, 38, 20, 0.18);
+  }
+
+  .cs-portrait-display { border-radius: 5px; }
+
+  .static-header > .cs-abs:not(.character-name-section),
+  > .cs-abs:not(.cs-portrait-container) {
+    border: 1px solid rgba(69, 47, 27, 0.4);
+    border-radius: 6px;
+    background: linear-gradient(145deg, rgba(255, 248, 220, 0.68), rgba(207, 176, 121, 0.46));
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.42), 0 2px 5px rgba(58, 38, 20, 0.1);
+  }
+
+  .static-header > .cs-abs:not(.character-name-section)::after,
+  > .cs-abs:not(.cs-portrait-container)::after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -15px;
+    color: #25180d;
+    font-family: $font-cooper !important;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .character-name-group::after { content: 'Character Name'; }
+  .level-progress-bar-container::after { content: 'Level'; }
+  .xp-mod-group::after { content: 'XP Mod'; }
+  .race-group::after { content: 'Race'; }
+  .class-group::after { content: 'Class'; }
+  .xp-group::after { content: 'XP'; }
+  .age-group::after { content: 'Age'; }
+  .sex-group::after { content: 'Sex'; }
+  .alignment-group::after { content: 'Alignment'; }
+  .background-group::after { content: 'Background'; }
+  .height-group::after { content: 'Height'; }
+  .weight-group::after { content: 'Weight'; }
+  .languages-group::after { content: 'Languages'; }
+
+  /* These two containers have a legacy `border: none !important` reset. */
+  .height-group,
+  .weight-group {
+    border: 1px solid rgba(69, 47, 27, 0.4) !important;
+    border-radius: 6px !important;
+    background: linear-gradient(145deg, rgba(255, 248, 220, 0.68), rgba(207, 176, 121, 0.46)) !important;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.42), 0 2px 5px rgba(58, 38, 20, 0.1) !important;
+  }
+
+  /* Opened native select menus retain browser mechanics, but use the same
+     parchment-and-walnut palette as the generated Bio fields. */
+  .cs-class-select,
+  .cs-race-select,
+  .cs-alignment-select,
+  .cs-background-select,
+  .cs-sex-field {
+    color: #2e2013 !important;
+    font-family: inherit !important;
+    color-scheme: light;
+
+    &:focus {
+      outline: 1px solid rgba(101, 73, 44, 0.72) !important;
+      outline-offset: -2px;
+      box-shadow: inset 0 0 0 1px rgba(255, 240, 200, 0.45);
+    }
+
+    option {
+      padding: 7px 10px;
+      background-color: #ead7aa !important;
+      color: #2e2013 !important;
+      font-family: inherit !important;
+      font-size: 36px;
+      text-align: left;
+    }
+
+    option:checked {
+      background-color: #65492c !important;
+      color: #fff0c8 !important;
+    }
+
+    option:hover,
+    option:focus {
+      background-color: #795a35 !important;
+      box-shadow: 0 0 0 100vmax #795a35 inset !important;
+      color: #fff0c8 !important;
+    }
+  }
+
+  .cs-char-field-group {
+    position: relative;
+    overflow: visible !important;
+  }
+
+  .class-group,
+  .race-group,
+  .alignment-group,
+  .background-group,
+  .sex-group {
+    overflow: visible !important;
+  }
+
+  .class-group:has(.cs-themed-select.is-open),
+  .race-group:has(.cs-themed-select.is-open),
+  .alignment-group:has(.cs-themed-select.is-open),
+  .background-group:has(.cs-themed-select.is-open),
+  .sex-group:has(.cs-themed-select.is-open) {
+    z-index: 10000 !important;
+  }
+
+  .static-header:has(.cs-themed-select.is-open) {
+    z-index: 10000 !important;
+  }
+
+  .cs-themed-select-native {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .cs-themed-select {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 30;
+  }
+
+  .cs-themed-select-trigger {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0 5px;
+    border: 0 !important;
+    background: transparent !important;
+    color: #2e2013 !important;
+    font-family: inherit !important;
+    font-size: 36px !important;
+    font-weight: normal !important;
+    line-height: 1;
+    box-shadow: none !important;
+  }
+
+  .cs-themed-select-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 3px);
+    left: 0;
+    min-width: 100%;
+    max-height: 330px;
+    overflow-y: auto;
+    padding: 4px;
+    border: 1px solid rgba(69, 47, 27, 0.72);
+    border-radius: 5px;
+    background: #ead7aa !important;
+    opacity: 1;
+    box-shadow: 0 8px 18px rgba(36, 23, 12, 0.35);
+    isolation: isolate;
+  }
+
+  .cs-themed-select.is-open {
+    z-index: 1000;
+
+    .cs-themed-select-menu { display: flex; flex-direction: column; }
+  }
+
+  .cs-themed-select-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    min-height: 43px;
+    margin: 0;
+    padding: 5px 12px 2px;
+    border: 0 !important;
+    border-radius: 3px;
+    background: #ead7aa !important;
+    color: #2e2013 !important;
+    font-family: inherit !important;
+    font-size: 36px !important;
+    font-weight: normal !important;
+    line-height: 1;
+    text-align: left;
+    white-space: nowrap;
+    box-shadow: none !important;
+  }
+
+  .cs-themed-select-option:hover,
+  .cs-themed-select-option:focus {
+    background: #8c6737 !important;
+    color: #fff0c8 !important;
+    outline: none;
+  }
+
+  .cs-themed-select-option.is-selected {
+    background: #65492c !important;
+    color: #fff0c8 !important;
+  }
+
+  .bio-abilities-image-wrap {
+    height: 112px;
+
+    > img { display: none; }
+  }
+
+  .ability-scores-section { overflow: visible; }
+
+  .ability.cs-ability {
+    border: 1px solid rgba(69, 47, 27, 0.42);
+    border-radius: 7px;
+    background: linear-gradient(145deg, rgba(255, 248, 220, 0.72), rgba(201, 169, 113, 0.5));
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.45), 0 2px 5px rgba(58, 38, 20, 0.12);
+  }
+
+  .ability.cs-ability::after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -38px;
+    color: #25180d;
+    font-family: $font-cooper !important;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ability:has(.attr-str)::after { content: 'STR'; }
+  .ability:has(.attr-int)::after { content: 'INT'; }
+  .ability:has(.attr-wis)::after { content: 'WIS'; }
+  .ability:has(.attr-dex)::after { content: 'DEX'; }
+  .ability:has(.attr-con)::after { content: 'CON'; }
+  .ability:has(.attr-cha)::after { content: 'CHA'; }
+
+  .bio-text-field {
+    background-image: none;
+    border: 1px solid rgba(69, 47, 27, 0.42);
+    border-radius: 7px;
+    background-color: rgba(255, 248, 220, 0.36);
+    box-shadow: inset 0 1px 4px rgba(58, 38, 20, 0.12), 0 2px 5px rgba(58, 38, 20, 0.08);
+  }
+}
+
 /* ============================
    GEAR TAB BACKGROUND
    ============================ */
@@ -2823,34 +3587,16 @@ input[type="number"] {
   height: 100%;
 }
 
-// ── Redesigned Background Tab ────────────────────────────────────────────────
-.tab[data-tab="background"] {
+// ── Background and Notes writing layouts ────────────────────────────────────
+.tab[data-tab="background"],
+.tab[data-tab="notes"] {
   .bg-tab-content {
     position: absolute;
-    inset: 8px 30px 10px;
+    inset: 18px 30px 10px;
     display: flex;
     flex-direction: column;
     gap: 6px;
     min-height: 0;
-  }
-
-  .bg-career-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 5px;
-
-    .bg-career-label {
-      font-family: $font-cooper !important;
-      font-size: 12px;
-      color: rgba(61, 40, 0, 0.45);
-    }
-
-    .bg-career-value {
-      font-family: $font-cooper !important;
-      font-size: 12px;
-      color: rgba(61, 40, 0, 0.45);
-    }
   }
 
   .bg-tab-header {
@@ -2926,6 +3672,232 @@ input[type="number"] {
       font-family: unset;
       font-weight: unset;
     }
+  }
+}
+
+.tab[data-tab="notes"] .bg-tab-content {
+  top: 28px;
+}
+
+// Shared parchment treatment for the two writing tabs; stored content is unchanged.
+.tab[data-tab="background"],
+.tab[data-tab="notes"] {
+  .bg-tab-content {
+    inset: 18px 18px 18px;
+    gap: 10px;
+  }
+
+  .bg-tab-header {
+    padding: 10px 16px 12px;
+    border: 1px solid rgba(91, 57, 25, 0.36);
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(255, 247, 218, 0.72), rgba(211, 176, 111, 0.36));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 5px rgba(66, 39, 18, 0.12);
+  }
+
+  .bg-tab-title {
+    font-size: 22px;
+  }
+
+  .bg-tab-subtitle {
+    font-size: 12px;
+  }
+
+  .bg-panels {
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .bg-panel {
+    position: relative;
+    padding: 10px;
+    border: 2px solid rgba(91, 57, 25, 0.48);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(255, 247, 218, 0.64), rgba(205, 169, 103, 0.3));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52), 0 3px 8px rgba(66, 39, 18, 0.14);
+
+    & + .bg-panel {
+      border-left: 2px solid rgba(91, 57, 25, 0.48);
+    }
+  }
+
+  .bg-panel-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(91, 57, 25, 0.2);
+  }
+
+  .bg-panel-icon {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    place-items: center;
+    border: 1px solid rgba(91, 57, 25, 0.42);
+    border-radius: 50%;
+    background: rgba(226, 192, 128, 0.42);
+    color: #5b3919;
+    font-size: 18px;
+  }
+
+  .bg-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 19px;
+    margin: 0 0 3px;
+
+    &::before {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border: 1px solid rgba(91, 57, 25, 0.42);
+      border-radius: 50%;
+      background: rgba(226, 192, 128, 0.42);
+      color: #5b3919;
+      font-family: sans-serif !important;
+      font-size: 14px;
+      font-weight: 900;
+    }
+  }
+
+  .bg-panel:first-child .bg-panel-title::before { content: '🧭'; }
+  .bg-panel:nth-child(2) .bg-panel-title::before { content: '📜'; }
+
+  .bg-panel-hint {
+    font-size: 11px;
+    margin: 0 0 9px 39px;
+  }
+
+  .bg-prompt-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 10px 0 8px;
+
+    span {
+      padding: 3px 7px;
+      border: 1px solid rgba(91, 57, 25, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 248, 220, 0.34);
+      color: rgba(61, 40, 0, 0.62);
+      font-family: $font-cooper !important;
+      font-size: 9px;
+      font-style: italic;
+    }
+  }
+
+  .bg-panel-editor {
+    border: 1px solid rgba(91, 57, 25, 0.24);
+    border-radius: 10px;
+    background: rgba(255, 250, 229, 0.28) !important;
+    overflow: hidden;
+
+    &:focus-within {
+      overflow: visible;
+    }
+
+    &::before {
+      display: block;
+      padding: 7px 10px;
+      border-bottom: 1px solid rgba(91, 57, 25, 0.18);
+      color: rgba(61, 40, 0, 0.58);
+      font-family: $font-cooper !important;
+      font-size: 9px;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .editor {
+      align-items: stretch;
+    }
+
+    .menu-container {
+      position: relative !important;
+      flex: 0 0 auto !important;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+
+    menu {
+      box-sizing: border-box;
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 4px !important;
+      overflow: visible;
+      flex-wrap: wrap !important;
+      justify-content: flex-start !important;
+      gap: 2px !important;
+      zoom: 1;
+      transform: none !important;
+    }
+
+    &:not(:focus-within) .menu-container {
+      display: none !important;
+    }
+
+    &:focus-within menu {
+      display: flex !important;
+    }
+
+    .editor-container {
+      margin-top: 0 !important;
+    }
+
+    .editor-content,
+    .ProseMirror {
+      padding: 12px 14px !important;
+      font-family: handwritten !important;
+      font-size: 20px !important;
+      line-height: 1.35;
+      color: #4b4b4b;
+
+      > :first-child {
+        margin-top: 0 !important;
+      }
+    }
+
+    .editor-content:empty::before,
+    .ProseMirror:empty::before {
+      content: 'Click here to begin writing…';
+      color: rgba(75, 75, 75, 0.42);
+      font-style: italic;
+    }
+  }
+
+  .bg-panel:first-child .bg-panel-editor::before {
+    content: 'Home · Family · Upbringing · Formative relationships';
+  }
+
+  .bg-panel:nth-child(2) .bg-panel-editor::before {
+    content: 'Turning points · Allies · Enemies · Reason for adventuring';
+  }
+}
+
+.tab[data-tab="notes"] {
+  .bg-panel:first-child .bg-panel-title::before { content: '✎'; }
+
+  .bg-panel:first-child .bg-panel-editor::before {
+    content: 'Discoveries · People · Places · Reminders';
+  }
+
+  .bg-panel-editor .editor-container {
+    margin-top: -8px !important;
+  }
+
+  .bg-panel-editor .editor-content,
+  .bg-panel-editor .ProseMirror {
+    padding-top: 6px !important;
   }
 }
 

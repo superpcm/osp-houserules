@@ -22,6 +22,7 @@ pnpm-debug.log*
 # IDE / editor settings
 .vscode/
 .idea/
+.claude/
 *.suo
 *.ntvs*
 *.njsproj
@@ -29,8 +30,17 @@ pnpm-debug.log*
 
 # macOS
 .DS_Store
+._*
 .AppleDouble
 .LSOverride
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Local scratch material and generated releases
+scratch/
+release/
 
 # Windows
 Thumbs.db
@@ -64,7 +74,6 @@ CLAUDE.md
 
 # Diagnostic files and helpers
 build-and-restart.sh
-docs/
 TESTING_CHARACTER_NAME.md
 click-coordinates.html
 debug-coordinates.js

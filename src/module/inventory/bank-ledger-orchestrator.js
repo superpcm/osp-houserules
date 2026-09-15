@@ -247,3 +247,17 @@ export async function dmRemoveItem(targetActor, entryId, quantity) {
     return flagError ?? plan;
   });
 }
+
+/** GM-only: copy a catalog coin or treasure item directly into a personal ledger. */
+export async function dmDepositCatalogItem(targetActor, itemData, quantity, denomination = null) {
+  return withActorLock(targetActor.id, async () => {
+    const ledger = getLedger(targetActor);
+    const meta = { actorType: 'dm', actorId: game.user.id, characterId: targetActor.id, characterName: targetActor.name, action: 'gm_deposit' };
+    const plan = denomination
+      ? planDepositCurrency(ledger, denomination, quantity, meta)
+      : planDepositItem(ledger, itemData, quantity, meta);
+    if (!plan.success) return plan;
+    const flagError = await commitLedger(targetActor, plan.ledger, 'Failed to save the GM deposit — try again.');
+    return flagError ?? plan;
+  });
+}

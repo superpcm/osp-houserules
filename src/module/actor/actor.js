@@ -1,4 +1,5 @@
 import { calculateXPModifier, getLevelFromXP, getNextLevelXP, getPrimeRequisites } from "../../config/classes.js";
+import { deriveExplorationSkills } from "./exploration-skills.js";
 
 export class OspActor extends Actor {
   constructor(data, context) {
@@ -338,6 +339,9 @@ export class OspActor extends Actor {
 
     // Calculate XP modifier
     this._calculateXPModifier();
+
+    // Derive read-only racial/class exploration values without page-global DOM scripts.
+    Object.assign(this.system, deriveExplorationSkills(this.system));
 
     // Calculate Armor Class
     this._calculateArmorClass();

@@ -65,6 +65,8 @@ function buildLogEntry(meta, defaultAction, fields) {
     timestamp: Date.now(),
     actor: meta.actorType ?? 'player',
     actorId: meta.actorId ?? null,
+    characterId: meta.characterId ?? null,
+    characterName: meta.characterName ?? null,
     action: meta.action ?? defaultAction,
     payloadType: fields.payloadType,
     itemId: fields.itemId ?? null,

@@ -24,7 +24,7 @@ export class XPProgressHandler {
 
     this.bindEvents();
 
-    setTimeout(() => {
+    this.refreshTimer = setTimeout(() => {
       this.refreshElements();
       this.updateProgressBar();
     }, 250);
@@ -44,12 +44,12 @@ export class XPProgressHandler {
   }
 
   bindEvents() {
-    this.html.on('xpChanged', () => {
+    this.html.on('xpChanged.ospXpProgress', () => {
       this.updateProgressBar();
     });
 
-    this.html.on('change', '.char-xp', () => {
-      setTimeout(() => this.updateProgressBar(), 50);
+    this.html.on('change.ospXpProgress', '.char-xp', () => {
+      this.scheduleUpdate(50);
     });
 
     if (this.actor) {
@@ -68,13 +68,18 @@ export class XPProgressHandler {
           skipXPUpdate = true;
         }
 
-        setTimeout(() => this.updateProgressBar(skipXPUpdate), 10);
+        this.scheduleUpdate(10, skipXPUpdate);
       });
     }
 
-    this.html.on('change', 'input[name="system.xp"]', () => {
-      setTimeout(() => this.updateProgressBar(), 50);
+    this.html.on('change.ospXpProgress', 'input[name="system.xp"]', () => {
+      this.scheduleUpdate(50);
     });
+  }
+
+  scheduleUpdate(delay, skipXPDisplayUpdate = false) {
+    clearTimeout(this.updateTimer);
+    this.updateTimer = setTimeout(() => this.updateProgressBar(skipXPDisplayUpdate), delay);
   }
 
   getXPModifier() {
@@ -181,8 +186,12 @@ export class XPProgressHandler {
   }
 
   destroy() {
+    clearTimeout(this.refreshTimer);
+    clearTimeout(this.updateTimer);
+    this.refreshTimer = null;
+    this.updateTimer = null;
     if (this.html) {
-      this.html.off('xpChanged');
+      this.html.off('.ospXpProgress');
     }
   }
 }

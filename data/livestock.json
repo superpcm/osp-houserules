@@ -207,7 +207,8 @@
         "draft animal",
         "no-vehicle-store",
         "horse",
-        "no-store"
+        "no-store",
+        "rideable"
       ],
       "movement": 90,
       "carrying": 120,
@@ -407,7 +408,8 @@
         "mount",
         "rideable",
         "pack animal",
-        "no-vehicle-store"
+        "no-vehicle-store",
+        "pack-only"
       ],
       "movement": 180,
       "carrying": 40,

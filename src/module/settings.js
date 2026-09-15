@@ -2,6 +2,25 @@
  * @file Registers all OSP game settings
  */
 
+const BANK_FONT_FAMILIES = {
+  council: "Council",
+  futura: "Futura",
+  minionPro: "Minion Pro",
+  mrsEavesSmallCaps: "Mrs Eaves Small Caps",
+  deadhand: "Deadhand",
+  gloryHallelujah: "Glory Hallelujah",
+  handwritten: "Handwritten",
+  cooperStd: "Cooper Std",
+};
+
+/** Apply the world-selected font to every Westford Bank window. */
+export const applyBankFontSetting = () => {
+  const selected = game.settings.get(game.system.id, "bankFont");
+  const family = BANK_FONT_FAMILIES[selected] ?? BANK_FONT_FAMILIES.handwritten;
+  document.documentElement.style.setProperty("--osp-bank-font", family);
+  document.documentElement.dataset.ospBankFont = selected in BANK_FONT_FAMILIES ? selected : "handwritten";
+};
+
 export const registerSettings = () => {
   game.settings.register(game.system.id, "initiative", {
     name: game.i18n.localize("OSE.Setting.Initiative"),
@@ -136,6 +155,49 @@ export const registerSettings = () => {
       manual: "Manual Physical Dice",
       ask: "Ask Every Time"
     }
+  });
+
+  game.settings.register(game.system.id, "autoUnpause", {
+    name: "Unpause World on Startup",
+    hint: "When enabled, the active GM unpauses the world after startup. Disabled by default.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register(game.system.id, "bankFont", {
+    name: "Westford Bank Font",
+    hint: "Select the typeface used in all Westford Bank windows. These choices use the shared Foundry font library, so every player sees the same selection.",
+    scope: "world",
+    config: true,
+    type: String,
+    default: "handwritten",
+    choices: {
+      council: "Council",
+      futura: "Futura",
+      minionPro: "Minion Pro",
+      mrsEavesSmallCaps: "Mrs. Eaves Small Caps",
+      deadhand: "Deadhand",
+      gloryHallelujah: "Glory Hallelujah",
+      handwritten: "Handwritten",
+      cooperStd: "Cooper Std",
+    },
+    onChange: applyBankFontSetting,
+  });
+
+  game.settings.register(game.system.id, "partyTreasury", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: { currency: { gold: 0, silver: 0, copper: 0 }, items: [], log: [] },
+  });
+
+  game.settings.register(game.system.id, "partyStorehouse", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: { items: [], log: [] },
   });
 
 };

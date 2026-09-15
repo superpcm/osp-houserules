@@ -8,14 +8,14 @@ export class LanguageHandler {
     this.tags = html.find('.languages-tags');
     this.hidden = html.find('.char-languages');
     this.openDialog = html.find('.open-language-dialog');
-    this.standardLanguages = ["Dwarvish", "Elvish", "Gnomish", "Hobbitish", "Humanish", "Orcish"];
+    this.standardLanguages = ["Dwarvish", "Elvish", "Gnomish", "Hobbiton", "Orcish"];
     
     // Guard to prevent infinite loops during font adjustment
     this._adjustingFont = false;
     
     // Initialize languages with Common as default
     this.languages = (this.hidden.val() || "").split(",")
-      .map(l => l.trim())
+      .map(l => l.trim() === "Hobbitish" ? "Hobbiton" : l.trim())
       .filter(l => l && l !== "Common");
     this.languages.unshift("Common");
   }
@@ -181,6 +181,8 @@ export class LanguageHandler {
       },
       default: "ok",
       render: (html) => {
+        html.closest('.window-app').addClass('osp-language-dialog theme-parchment');
+
         // Add event listener for custom checkbox
         const customCheck = html.find('#customCheck');
         const customInput = html.find('#customInput');
@@ -193,6 +195,8 @@ export class LanguageHandler {
           }
         });
       }
+    }, {
+      classes: ['osp-language-dialog', 'theme-parchment']
     }).render(true);
   }
 
@@ -200,9 +204,10 @@ export class LanguageHandler {
    * Build dialog content HTML
    */
   buildDialogContent() {
-    // Split standard languages into two columns: 3 in first column, 3 in second
+    // Keep the standard choices balanced, with the custom entry in the final
+    // position of the second column.
     const firstColumn = this.standardLanguages.slice(0, 3);
-    const secondColumn = this.standardLanguages.slice(3, 6);
+    const secondColumn = this.standardLanguages.slice(3);
     
     return `<form>
       <div class="cs-dialog-row">
@@ -215,10 +220,6 @@ export class LanguageHandler {
                 <span>${lang}</span>
               </label>`
             ).join("")}
-            <label class="cs-dialog-label">
-              <input type="checkbox" name="customCheck" id="customCheck"/>
-              <input type="text" name="custom" id="customInput" class="cs-custom-input" placeholder="Enter custom language" disabled/>
-            </label>
           </div>
           <div class="cs-dialog-column">
             ${secondColumn.map(lang =>
@@ -227,6 +228,10 @@ export class LanguageHandler {
                 <span>${lang}</span>
               </label>`
             ).join("")}
+            <label class="cs-dialog-label">
+              <input type="checkbox" name="customCheck" id="customCheck"/>
+              <input type="text" name="custom" id="customInput" class="cs-custom-input" placeholder="Custom" disabled/>
+            </label>
           </div>
         </div>
       </div>

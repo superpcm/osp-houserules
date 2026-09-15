@@ -1,1063 +1,4 @@
 <form class="osp sheet actor character" autocomplete="off">
-  <script>
-    /* Styles moved to src/styles/_character-sheet.scss */
-    function updateXPModifier() {
-      const xpModField = document.getElementById('xp-mod-display');
-      if (!xpModField) return;
-
-      // Get current character data from form fields
-      const characterClass = document.querySelector('.char-class')?.value || '';
-      const attributes = {
-        str: { value: parseInt(document.querySelector('.attr-str')?.value) || 10 },
-        dex: { value: parseInt(document.querySelector('.attr-dex')?.value) || 10 },
-        con: { value: parseInt(document.querySelector('.attr-con')?.value) || 10 },
-        int: { value: parseInt(document.querySelector('.attr-int')?.value) || 10 },
-        wis: { value: parseInt(document.querySelector('.attr-wis')?.value) || 10 },
-        cha: { value: parseInt(document.querySelector('.attr-cha')?.value) || 10 }
-      };
-
-      // Calculate XP modifier using the same logic as the system
-      const xpMod = calculateXPModifier(characterClass, attributes);
-
-      // Format and display the modifier using utility
-      const sign = xpMod >= 0 ? '+' : '';
-      const formattedMod = window.OSPLegacy?.NumberFormatter?.formatXPModifier(xpMod) ?? `${sign}${xpMod}%`;
-      xpModField.value = formattedMod;
-    }
-
-    // Function to format numbers with commas (uses simplified utility)
-    function formatNumberWithCommas(num) {
-      return window.OSP?.NumberFormatter?.formatWithCommas(num) || num.toString();
-    }
-
-    // Function to update XP display
-    function updateXPDisplay() {
-      const xpField = document.getElementById('xp-display');
-      if (!xpField) return;
-
-      // Check if we're in the middle of an XP update by our handler
-      // If so, don't interfere with the display
-      if (window.xpHandlerUpdating) return;
-
-      // Only format if not currently focused (to avoid interfering with user input)
-      if (document.activeElement !== xpField) {
-        const currentXP = parseInt(xpField.value.replace(/,/g, '')) || 0;
-        xpField.value = formatNumberWithCommas(currentXP);
-      }
-    }
-
-    // Function to handle XP field formatting
-    function setupXPFieldFormatting() {
-      const xpField = document.getElementById('xp-display');
-      if (!xpField) return;
-
-      // Create a function to clean XP field value before any form operation
-      function cleanXPFieldForSubmission() {
-        if (xpField && xpField.value) {
-          const cleanValue = xpField.value.replace(/,/g, '');
-          if (cleanValue !== xpField.value) {
-
-            xpField.value = cleanValue;
-          } else {
-
-          }
-        } else {
-
-        }
-      }
-
-      // Function to restore XP formatting after form operations
-      function restoreXPFormatting() {
-        if (xpField && xpField.value && !xpField.value.includes(',')) {
-          const numericValue = parseInt(xpField.value) || 0;
-          if (numericValue >= 1000) { // Only format numbers 1000 and above
-            const formattedValue = numericValue.toLocaleString();
-
-            xpField.value = formattedValue;
-          }
-        }
-      }
-
-      // Add comprehensive debugging for XP field changes
-      const logXPFieldState = (context) => {
-        if (xpField) {
-
-        }
-      };
-
-      // Add form submission handler to remove commas from XP field
-      const form = xpField.closest('form');
-      if (form) {
-
-
-        // Handle form submit events
-        form.addEventListener('submit', function(e) {
-
-          isFormSubmitting = true;
-          logXPFieldState('form submit');
-          cleanXPFieldForSubmission();
-          // Re-enable formatting after submission completes
-          setTimeout(() => {
-            isFormSubmitting = false;
-            restoreXPFormatting();
-          }, 100);
-        });
-
-        // Handle change events that might trigger auto-save
-        form.addEventListener('change', function(e) {
-
-          isFormSubmitting = true;
-          logXPFieldState('form change');
-          cleanXPFieldForSubmission();
-          // Re-enable formatting after change completes
-          setTimeout(() => {
-            isFormSubmitting = false;
-            restoreXPFormatting();
-          }, 100);
-        });
-
-        // Also handle input events that might trigger form processing
-        form.addEventListener('input', function(e) {
-          if (e.target !== xpField) { // Don't interfere with XP field's own input handling
-
-            isFormSubmitting = true;
-            logXPFieldState('form input');
-            cleanXPFieldForSubmission();
-            // Re-enable formatting after input completes
-            setTimeout(() => {
-              isFormSubmitting = false;
-              restoreXPFormatting();
-            }, 100);
-          }
-        });
-
-        // Set up a mutation observer to catch any form data collection
-        const observer = new MutationObserver(function(mutations) {
-          mutations.forEach(function(mutation) {
-            if (mutation.type === 'attributes' && (
-                mutation.attributeName === 'data-submitting' ||
-                mutation.attributeName === 'data-processing'
-            )) {
-
-              cleanXPFieldForSubmission();
-            }
-          });
-        });
-
-        observer.observe(form, {
-          attributes: true,
-          attributeFilter: ['data-submitting', 'data-processing']
-        });
-
-        // Intercept any attempts to collect form data
-        const originalFormData = window.FormData;
-        let isIntercepting = false;
-
-        function FormDataInterceptor(formElement) {
-          if (!isIntercepting && formElement === form) {
-            isIntercepting = true;
-
-            cleanXPFieldForSubmission();
-            setTimeout(() => { isIntercepting = false; }, 100);
-          }
-          return new originalFormData(...arguments);
-        }
-
-        // Copy prototype and properties
-        FormDataInterceptor.prototype = originalFormData.prototype;
-        Object.setPrototypeOf(FormDataInterceptor, originalFormData);
-
-        // Temporarily replace FormData during critical operations
-        const interceptFormData = () => {
-          const originalFD = window.FormData;
-          window.FormData = FormDataInterceptor;
-          setTimeout(() => {
-            if (window.FormData === FormDataInterceptor) {
-              window.FormData = originalFD;
-            }
-          }, 1000);
-        };
-
-        // Set up interception on key events
-        form.addEventListener('submit', interceptFormData);
-        form.addEventListener('change', interceptFormData);
-      }
-
-      // Input validation - only allow numbers and commas - DISABLED for readonly field
-      // xpField.addEventListener('input', function(e) {
-      //   // Remove any non-digit characters except commas
-      //   let value = this.value.replace(/[^\d,]/g, '');
-      //
-      //   // Remove commas, parse as number, then reformat with commas
-      //   const numericValue = parseInt(value.replace(/,/g, '')) || 0;
-      //
-      //   // Only update if the field is focused (user is typing)
-      //   if (document.activeElement === this) {
-      //     // Just show the raw number while typing
-      //     this.value = numericValue.toString();
-      //   }
-      // });
-
-      // Format on blur (when user leaves the field) - DISABLED for readonly field
-      // xpField.addEventListener('blur', function() {
-      //   const value = parseInt(this.value.replace(/,/g, '')) || 0;
-      //   this.value = formatNumberWithCommas(value);
-      // });
-
-      // Remove commas before change events (for auto-save) - DISABLED for readonly field
-      // xpField.addEventListener('change', function() {
-      //   const rawValue = this.value.replace(/,/g, '');
-      //
-      //   // Temporarily store raw value for form processing
-      //   this.dataset.rawValue = rawValue;
-      //
-      //   // Temporarily clean for any immediate form processing
-      //   this.value = rawValue;
-      //
-      //   // Restore formatting after a brief delay (unless we're in a form submission)
-      //   setTimeout(() => {
-      //     if (!isFormSubmitting && document.activeElement !== this) {
-      //       const numericValue = parseInt(rawValue) || 0;
-      //       if (numericValue >= 1000) {
-      //         this.value = numericValue.toLocaleString();
-      //
-      //       }
-      //     }
-      //   }, 200);
-      // });
-
-      // Remove commas on focus (for easier editing) - DISABLED for readonly field
-      // xpField.addEventListener('focus', function() {
-      //   const value = parseInt(this.value.replace(/,/g, '')) || 0;
-      //   this.value = value.toString();
-      // });
-
-      // Add a smart monitoring system that preserves display formatting but ensures clean form submissions
-      let cleanupInterval;
-      let monitoringPaused = false;
-      let isFormSubmitting = false;
-
-      const startXPMonitoring = () => {
-        if (cleanupInterval) return; // Already running
-
-        // DO NOT continuously clean the display - only during actual form submissions
-        cleanupInterval = setInterval(() => {
-          if (monitoringPaused) return; // Skip if paused
-
-          // Only check if we're in the middle of a form submission
-          if (isFormSubmitting && xpField && xpField.value && xpField.value.includes(',')) {
-            const cleanValue = xpField.value.replace(/,/g, '');
-
-            xpField.value = cleanValue;
-          }
-        }, 50); // Check frequently during form submissions
-      };
-
-      const stopXPMonitoring = () => {
-        if (cleanupInterval) {
-          clearInterval(cleanupInterval);
-          cleanupInterval = null;
-        }
-      };
-
-      const pauseXPMonitoring = () => {
-        monitoringPaused = true;
-
-      };
-
-      const resumeXPMonitoring = () => {
-        monitoringPaused = false;
-
-      };
-
-      // Export functions for portrait system
-      window.pauseXPMonitoring = pauseXPMonitoring;
-      window.resumeXPMonitoring = resumeXPMonitoring;
-
-      // Start monitoring when document is ready
-      startXPMonitoring();
-
-      // Clean up interval when form is removed
-      const formObserver = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          mutation.removedNodes.forEach((node) => {
-            if (node.contains && node.contains(xpField)) {
-              stopXPMonitoring();
-            }
-          });
-        });
-      });
-
-      formObserver.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-    }
-
-    // Function to override XP Progress Handler formatting
-    function formatExistingFields() {
-      // Format XP display if it exists
-      const xpField = document.getElementById('xp-display');
-      if (xpField && xpField.value) {
-        const currentXP = parseInt(xpField.value.replace(/,/g, '')) || 0;
-        if (document.activeElement !== xpField) {
-          xpField.value = formatNumberWithCommas(currentXP);
-        }
-      }
-    }
-
-    // Function to calculate next level XP (uses centralized config)
-    function calculateNextLevelXP(level, characterClass) {
-      // Use the centralized config function made available globally
-      if (window.OSP && window.OSP.getNextLevelXP) {
-        return window.OSP.getNextLevelXP(characterClass, level);
-      }
-      
-      // Fallback for development/testing (should not be needed in production)
-      console.warn('OSP global config not available, using fallback XP calculation');
-      return 2000; // Basic fallback
-    }
-
-    // XP Modifier calculation function (uses centralized config)
-    function calculateXPModifier(characterClass, attributes) {
-      // Use the centralized config function made available globally
-      if (window.OSPLegacy?.calculateXPModifier) {
-        return window.OSPLegacy.calculateXPModifier(characterClass, attributes);
-      }
-      
-      // Fallback for development/testing (should not be needed in production)
-      console.warn('OSP global config not available, using fallback XP modifier calculation');
-      return 0; // Basic fallback
-    }
-
-    // Function to run when DOM is ready
-    function initializeCharacterSheet() {
-
-
-      // Set encumbrance bar width after rendering
-      const bar = document.querySelector('.encumbrance-bar[data-encumbrance]');
-      if (bar) {
-        const percent = bar.getAttribute('data-encumbrance');
-        bar.style.width = percent + '%';
-      }
-
-      // Update XP Modifier display
-      updateXPModifier();
-
-      // Setup XP field formatting
-      setupXPFieldFormatting();
-
-      // Update XP display with comma formatting
-      updateXPDisplay();
-
-      // Set up periodic formatting to override XP progress handler
-      setInterval(formatExistingFields, 500); // Run every 500ms to catch updates from XP progress handler
-
-      // Add event listeners to update XP modifier when class or attributes change
-      const classField = document.querySelector('select[name="system.class"]');
-      const levelField = document.querySelector('input[name="system.level"]');
-      const attributeFields = document.querySelectorAll('.attr-str, .attr-dex, .attr-con, .attr-int, .attr-wis, .attr-cha');
-
-      if (classField) {
-        classField.addEventListener('change', updateXPModifier);
-      }
-
-      attributeFields.forEach(field => {
-        field.addEventListener('change', updateXPModifier);
-
-        // Shrink font while the OS-native dropdown is open (option styling via CSS is unreliable in Electron)
-        field.addEventListener('mousedown', () => { field.style.fontSize = '14px'; });
-        field.addEventListener('change',    () => { field.style.fontSize = ''; });
-        field.addEventListener('blur',      () => { field.style.fontSize = ''; });
-      });
-
-      // Add event listener to update XP display when XP changes - DISABLED for readonly field
-      const xpInput = document.querySelector('#xp-display');
-      if (xpInput) {
-        // xpInput.addEventListener('change', updateXPDisplay);
-        // xpInput.addEventListener('input', updateXPDisplay);
-      }
-
-      // Ability Score Tooltips System
-      const TOOLTIP_DELAY = 900; // Reduced delay for testing - was 800ms
-
-      // Safe tooltip content setter: defaults to textContent, optionally allows HTML when explicitly requested
-      function setTooltipContent(el, content, opts = { allowHtml: false }) {
-        if (!el) return;
-        const allowHtml = !!(opts && opts.allowHtml);
-        if (allowHtml && window.DOMPurify) {
-          try {
-            el.innerHTML = window.DOMPurify.sanitize(String(content));
-          } catch (err) {
-            el.textContent = String(content);
-          }
-        } else if (allowHtml && !window.DOMPurify) {
-          // Fallback: don't allow raw HTML if sanitizer is unavailable
-          el.textContent = String(content);
-        } else {
-          el.textContent = String(content);
-        }
-      }
-
-      const abilityScoreData = {
-        "Strength": [
-          { "score_range": "3", "melee": -3, "open_doors": "1-in-6" },
-          { "score_range": "4-5", "melee": -2, "open_doors": "1-in-6" },
-          { "score_range": "6-8", "melee": -1, "open_doors": "1-in-6" },
-          { "score_range": "9-12", "melee": 0, "open_doors": "2-in-6" },
-          { "score_range": "13-15", "melee": 1, "open_doors": "3-in-6" },
-          { "score_range": "16-17", "melee": 2, "open_doors": "4-in-6" },
-          { "score_range": "18", "melee": 3, "open_doors": "5-in-6" }
-        ],
-        "Intelligence": [
-          { "score_range": "3", "languages": "Native (broken speech)", "literacy": "Illiterate" },
-          { "score_range": "4-5", "languages": "Native", "literacy": "Illiterate" },
-          { "score_range": "6-8", "languages": "Native", "literacy": "Basic" },
-          { "score_range": "9-12", "languages": "Native", "literacy": "Literate" },
-          { "score_range": "13-15", "languages": "Native +1 additional", "literacy": "Literate" },
-          { "score_range": "16-17", "languages": "Native +2 additional", "literacy": "Literate" },
-          { "score_range": "18", "languages": "Native +3 additional", "literacy": "Literate" }
-        ],
-        "Wisdom": [
-          { "score_range": "3", "magic_saves": -3 },
-          { "score_range": "4-5", "magic_saves": -2 },
-          { "score_range": "6-8", "magic_saves": -1 },
-          { "score_range": "9-12", "magic_saves": 0 },
-          { "score_range": "13-15", "magic_saves": 1 },
-          { "score_range": "16-17", "magic_saves": 2 },
-          { "score_range": "18", "magic_saves": 3 }
-        ],
-        "Dexterity": [
-          { "score_range": "3", "ac": -3, "missile": -3, "initiative": -2 },
-          { "score_range": "4-5", "ac": -2, "missile": -2, "initiative": -1 },
-          { "score_range": "6-8", "ac": -1, "missile": -1, "initiative": -1 },
-          { "score_range": "9-12", "ac": 0, "missile": 0, "initiative": 0 },
-          { "score_range": "13-15", "ac": 1, "missile": 1, "initiative": 1 },
-          { "score_range": "16-17", "ac": 2, "missile": 2, "initiative": 1 },
-          { "score_range": "18", "ac": 3, "missile": 3, "initiative": 2 }
-        ],
-        "Constitution": [
-          { "score_range": "3", "hit_points": -3 },
-          { "score_range": "4-5", "hit_points": -2 },
-          { "score_range": "6-8", "hit_points": -1 },
-          { "score_range": "9-12", "hit_points": 0 },
-          { "score_range": "13-15", "hit_points": 1 },
-          { "score_range": "16-17", "hit_points": 2 },
-          { "score_range": "18", "hit_points": 3 }
-        ],
-        "Charisma": [
-          { "score_range": "3", "npc_reactions": -2, "max_retainers": 1, "loyalty": 4 },
-          { "score_range": "4-5", "npc_reactions": -1, "max_retainers": 2, "loyalty": 5 },
-          { "score_range": "6-8", "npc_reactions": -1, "max_retainers": 3, "loyalty": 6 },
-          { "score_range": "9-12", "npc_reactions": 0, "max_retainers": 4, "loyalty": 7 },
-          { "score_range": "13-15", "npc_reactions": 1, "max_retainers": 5, "loyalty": 8 },
-          { "score_range": "16-17", "npc_reactions": 1, "max_retainers": 6, "loyalty": 9 },
-          { "score_range": "18", "npc_reactions": 2, "max_retainers": 7, "loyalty": 10 }
-        ]
-      };
-
-      // Helper function to format modifier values
-      function formatModifier(value) {
-        if (typeof value === 'number') {
-          return value > 0 ? `+${value}` : value.toString();
-        }
-        return value;
-      }
-
-      // Helper function to find score data based on ability score
-      function getScoreData(abilityName, score) {
-        const data = abilityScoreData[abilityName];
-        if (!data) return null;
-
-        for (const entry of data) {
-          const range = entry.score_range;
-          if (range.includes('-')) {
-            const [min, max] = range.split('-').map(Number);
-            if (score >= min && score <= max) return entry;
-          } else {
-            if (score === parseInt(range)) return entry;
-          }
-        }
-        return null;
-      }
-
-      // Helper function to create tooltip content
-      function createTooltipContent(abilityName, scoreData) {
-        if (!scoreData) return '';
-
-        const lines = [];
-
-        if (abilityName === 'Strength') {
-          lines.push(`Melee: ${formatModifier(scoreData.melee)}`);
-          lines.push(`Open Doors: ${scoreData.open_doors}`);
-        } else if (abilityName === 'Intelligence') {
-          lines.push(`Languages: ${scoreData.languages}`);
-          lines.push(`Literacy: ${scoreData.literacy}`);
-        } else if (abilityName === 'Wisdom') {
-          lines.push(`Magic Saves: ${formatModifier(scoreData.magic_saves)}`);
-        } else if (abilityName === 'Dexterity') {
-          lines.push(`AC: ${formatModifier(scoreData.ac)}`);
-          lines.push(`Missile: ${formatModifier(scoreData.missile)}`);
-          lines.push(`Initiative: ${formatModifier(scoreData.initiative)}`);
-        } else if (abilityName === 'Constitution') {
-          lines.push(`HP: ${formatModifier(scoreData.hit_points)}`);
-        } else if (abilityName === 'Charisma') {
-          lines.push(`NPC Reactions: ${formatModifier(scoreData.npc_reactions)}`);
-          lines.push(`Max Retainers: ${scoreData.max_retainers}`);
-          lines.push(`Loyalty: ${scoreData.loyalty}`);
-        }
-
-        return lines.join('<br>');
-      }
-
-      // Create tooltip element — reuse one left over from a prior render instead of always
-      // creating a new one. Every sheet re-render (item drop, stat change, etc.) re-runs this
-      // script block; without the reuse check, each pass appended a fresh #ability-tooltip to
-      // document.body while the previous one(s) were orphaned — their trigger elements were
-      // replaced by the re-render, so no future mouseleave could ever fire to fade them out,
-      // leaving any tooltip that happened to be visible at render time stuck on screen forever.
-      let tooltip = document.getElementById('ability-tooltip');
-      if (!tooltip) {
-        tooltip = document.createElement('div');
-        tooltip.id = 'ability-tooltip';
-        // Use CSS class for visual styling; styles live in src/styles/_character-sheet.scss
-        tooltip.className = 'cs-tooltip';
-        document.body.appendChild(tooltip);
-      }
-      tooltip.style.opacity = '0';
-
-      let tooltipTimeout;
-
-      // Setup tooltips for ability scores
-      const abilityMappings = [
-        { selector: '.attr-str', name: 'Strength' },
-        { selector: '.attr-dex', name: 'Dexterity' },
-        { selector: '.attr-con', name: 'Constitution' },
-        { selector: '.attr-int', name: 'Intelligence' },
-        { selector: '.attr-wis', name: 'Wisdom' },
-        { selector: '.attr-cha', name: 'Charisma' }
-      ];
-
-      abilityMappings.forEach(({ selector, name }) => {
-        const element = document.querySelector(selector);
-        if (element) {
-          element.addEventListener('mouseenter', (e) => {
-            clearTimeout(tooltipTimeout);
-            tooltipTimeout = setTimeout(() => {
-              const score = parseInt(element.value);
-              const scoreData = getScoreData(name, score);
-              const content = createTooltipContent(name, scoreData);
-
-              if (content) {
-                setTooltipContent(tooltip, content, { allowHtml: true });
-
-                // Position tooltip above the element
-                const rect = element.getBoundingClientRect();
-                const tooltipRect = tooltip.getBoundingClientRect();
-
-                tooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
-                tooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-                tooltip.style.opacity = '1';
-              }
-            }, TOOLTIP_DELAY);
-          });
-
-          element.addEventListener('mouseleave', () => {
-            clearTimeout(tooltipTimeout);
-            tooltip.style.opacity = '0';
-          });
-
-          // Update tooltip when value changes
-          element.addEventListener('change', () => {
-            if (tooltip.style.opacity === '1') {
-              const score = parseInt(element.value);
-              const scoreData = getScoreData(name, score);
-              const content = createTooltipContent(name, scoreData);
-              if (content) {
-                setTooltipContent(tooltip, content, { allowHtml: true });
-              }
-            }
-          });
-        }
-      });
-
-      // Language Tooltip System
-      setTimeout(() => {
-        const languageElement = document.querySelector('.open-language-dialog');
-        if (languageElement) {
-          // Create dedicated language tooltip
-          let languageTooltip = document.getElementById('language-tooltip');
-          if (!languageTooltip) {
-            languageTooltip = document.createElement('div');
-            languageTooltip.id = 'language-tooltip';
-            // Apply tooltip classes to match XP style
-            languageTooltip.className = 'cs-tooltip cs-tooltip--xp';
-            document.body.appendChild(languageTooltip);
-          }
-          let languageTooltipTimeout;
-
-          // Remove any existing event listeners and add new ones
-          languageElement.removeEventListener('mouseenter', languageElement._tooltipMouseEnter);
-          languageElement.removeEventListener('mouseleave', languageElement._tooltipMouseLeave);
-          languageElement.removeEventListener('mouseover', languageElement._tooltipMouseOver);
-          languageElement.removeEventListener('mouseout', languageElement._tooltipMouseOut);
-
-          languageElement._tooltipMouseEnter = (e) => {
-            clearTimeout(languageTooltipTimeout);
-            languageTooltipTimeout = setTimeout(() => {
-              setTooltipContent(languageTooltip, 'Double-click to add languages');
-
-              // Position tooltip above the element
-              const rect = languageElement.getBoundingClientRect();
-              const tooltipRect = languageTooltip.getBoundingClientRect();
-
-              languageTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
-              languageTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-              languageTooltip.style.opacity = '1';
-
-            }, TOOLTIP_DELAY);
-          };
-
-          languageElement._tooltipMouseLeave = () => {
-            clearTimeout(languageTooltipTimeout);
-            languageTooltip.style.opacity = '0';
-          };
-
-          // Try both mouseenter/mouseleave and mouseover/mouseout
-          languageElement._tooltipMouseOver = languageElement._tooltipMouseEnter;
-          languageElement._tooltipMouseOut = languageElement._tooltipMouseLeave;
-
-          languageElement.addEventListener('mouseenter', languageElement._tooltipMouseEnter);
-          languageElement.addEventListener('mouseleave', languageElement._tooltipMouseLeave);
-          languageElement.addEventListener('mouseover', languageElement._tooltipMouseOver);
-          languageElement.addEventListener('mouseout', languageElement._tooltipMouseOut);
-        }
-      }, 100);
-
-      // Saving Throw Tooltips System
-      function initializeSavingThrowTooltips() {
-
-
-        // Get character data
-        const race = (document.querySelector('#char-race')?.value || '').toLowerCase().trim();
-        const characterClass = (document.querySelector('#char-class')?.value || '').toLowerCase().trim();
-        const conScore = parseInt(document.querySelector('[name="system.abilities.con.value"]')?.value) || 10;
-
-
-
-        // Check if character is an elf (race or class)
-        const isElf = race === 'elf' || characterClass === 'elf';
-
-        // Only show CON-based racial tooltips if race is different from class (race+class combo, not race-as-class)
-        const showRacialBonuses = race && race !== characterClass;
-
-        if (!showRacialBonuses && !isElf) {
-
-          return;
-        }
-
-        // Calculate racial bonuses and special abilities
-        function getRacialBonus(race, characterClass, saveType, conScore) {
-          let bonus = 0;
-          let description = '';
-
-          // Elf paralysis immunity (works for race or class)
-          const isElf = race === 'elf' || characterClass === 'elf';
-          if (isElf && saveType === 'paralysis') {
-            description = 'Unaffected by the paralysis that ghouls can inflict.';
-            return { bonus, description };
-          }
-
-          // CON-based racial bonuses (only for race+class combinations, not race-as-class)
-          if (!race || race === characterClass) {
-            return { bonus, description };
-          }
-
-          if (race === 'dwarf') {
-            if (saveType === 'death') { // Death Ray/Poison - only poison part
-              if (conScore <= 6) bonus = 0;
-              else if (conScore >= 7 && conScore <= 10) bonus = 2;
-              else if (conScore >= 11 && conScore <= 14) bonus = 3;
-              else if (conScore >= 15 && conScore <= 17) bonus = 4;
-              else if (conScore >= 18) bonus = 5;
-              description = '+' + bonus + ' vs Poison';
-            } else if (saveType === 'wands' || saveType === 'spells') {
-              if (conScore <= 6) bonus = 0;
-              else if (conScore >= 7 && conScore <= 10) bonus = 2;
-              else if (conScore >= 11 && conScore <= 14) bonus = 3;
-              else if (conScore >= 15 && conScore <= 17) bonus = 4;
-              else if (conScore >= 18) bonus = 5;
-              description = '+' + bonus + ' vs Magic';
-            }
-          } else if (race === 'gnome') {
-            if (saveType === 'wands' || saveType === 'spells') {
-              if (conScore <= 6) bonus = 0;
-              else if (conScore >= 7 && conScore <= 10) bonus = 2;
-              else if (conScore >= 11 && conScore <= 14) bonus = 3;
-              else if (conScore >= 15 && conScore <= 17) bonus = 4;
-              else if (conScore >= 18) bonus = 5;
-              description = '+' + bonus + ' vs Magic';
-            }
-          } else if (race === 'hobbit') {
-            if (saveType === 'death') { // Death Ray/Poison - only poison part
-              if (conScore <= 6) bonus = 0;
-              else if (conScore >= 7 && conScore <= 10) bonus = 2;
-              else if (conScore >= 11 && conScore <= 14) bonus = 3;
-              else if (conScore >= 15 && conScore <= 17) bonus = 4;
-              else if (conScore >= 18) bonus = 5;
-              description = '+' + bonus + ' vs Poison';
-            } else if (saveType === 'wands' || saveType === 'spells') {
-              if (conScore <= 6) bonus = 0;
-              else if (conScore >= 7 && conScore <= 10) bonus = 2;
-              else if (conScore >= 11 && conScore <= 14) bonus = 3;
-              else if (conScore >= 15 && conScore <= 17) bonus = 4;
-              else if (conScore >= 18) bonus = 5;
-              description = '+' + bonus + ' vs Magic';
-            }
-          }
-
-          return { bonus, description };
-        }
-
-        // Create tooltip element for saving throws
-        let saveTooltip = document.getElementById('save-tooltip');
-        if (!saveTooltip) {
-          saveTooltip = document.createElement('div');
-          saveTooltip.id = 'save-tooltip';
-          saveTooltip.style.cssText = `
-            position: absolute;
-            background: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            line-height: 1.4;
-            z-index: var(--z-overlay, 1000);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            white-space: nowrap;
-          `;
-          document.body.appendChild(saveTooltip);
-        }
-
-        let saveTooltipTimeout;
-
-        // Setup tooltips for each saving throw
-        const saveTypes = ['death', 'wands', 'paralysis', 'breath', 'spells'];
-
-        saveTypes.forEach(saveType => {
-          const saveElement = document.querySelector(`.save-group-${saveType} .save span`);
-          if (!saveElement) return;
-
-          const racialData = getRacialBonus(race, characterClass, saveType, conScore);
-
-          // Show tooltip if there's a racial bonus OR if it's elf paralysis immunity
-          if (racialData.bonus > 0 || racialData.description) {
-
-
-            saveElement.addEventListener('mouseenter', () => {
-              clearTimeout(saveTooltipTimeout);
-              saveTooltipTimeout = setTimeout(() => {
-                setTooltipContent(saveTooltip, racialData.description);
-                saveTooltip.style.opacity = '1';
-
-                // Position tooltip above the saving throw circle
-                const rect = saveElement.getBoundingClientRect();
-                const tooltipRect = saveTooltip.getBoundingClientRect();
-
-                saveTooltip.style.left = (rect.left + rect.width / 2 - tooltipRect.width / 2) + 'px';
-                saveTooltip.style.top = (rect.top - tooltipRect.height - 8) + 'px';
-              }, TOOLTIP_DELAY);
-            });
-
-            saveElement.addEventListener('mouseleave', () => {
-              clearTimeout(saveTooltipTimeout);
-              saveTooltip.style.opacity = '0';
-            });
-          }
-        });
-      }
-
-      // Initialize saving throw tooltips after ability tooltips
-      setTimeout(initializeSavingThrowTooltips, 100);
-
-
-
-      // Portrait handling managed by PortraitTool (portrait-tool.js)
-
-      // Listening at Doors Management
-      function updateListeningAtDoors() {
-        const listeningField = document.getElementById('listening-doors');
-        const raceField = document.getElementById('char-race');
-        const classField = document.querySelector('select[name="system.class"]');
-        
-        if (!listeningField || !raceField || !classField) return;
-
-        const race = raceField.value.toLowerCase();
-        const characterClass = classField.value.toLowerCase();
-        
-        // Check if class is Thief or Assassin (editable)
-        const isThiefAssassin = characterClass === 'thief' || characterClass === 'assassin';
-        
-        if (isThiefAssassin) {
-          // Thief/Assassin: editable field, default to 1 if not set
-          listeningField.disabled = false;
-          if (!listeningField.value || listeningField.value === '') {
-            listeningField.value = '1';
-          }
-        } else {
-          // Other classes: read-only, set by race
-          listeningField.disabled = true;
-          
-          // Set value based on race per OSE rules
-          switch (race) {
-            case 'human':
-            case 'half-elf':
-            case 'half-orc':
-              listeningField.value = '1';
-              break;
-            case 'dwarf':
-            case 'elf':
-            case 'hobbit':
-            case 'gnome':
-              listeningField.value = '2';
-              break;
-            default:
-              listeningField.value = '1';
-              break;
-          }
-        }
-      }
-
-      function updateOpenStuckDoors() {
-        const openStuckDoorsField = document.getElementById('open-stuck-doors');
-        const strField = document.getElementById('attr-str');
-        
-        if (!openStuckDoorsField || !strField) return;
-        
-        const strValue = parseInt(strField.value) || 10;
-        let doorValue = '1';
-        
-        // OSE Open Doors chances based on STR
-        if (strValue >= 3 && strValue <= 8) {
-          doorValue = '1';
-        } else if (strValue >= 9 && strValue <= 12) {
-          doorValue = '2';
-        } else if (strValue >= 13 && strValue <= 15) {
-          doorValue = '3';
-        } else if (strValue >= 16 && strValue <= 17) {
-          doorValue = '4';
-        } else if (strValue >= 18) {
-          doorValue = '5';
-        }
-        
-        openStuckDoorsField.value = doorValue;
-        openStuckDoorsField.disabled = true; // Always read-only
-      }
-
-      function updateFindSecretDoor() {
-        const findSecretDoorField = document.getElementById('find-secret-door');
-        const raceField = document.getElementById('char-race');
-        const classField = document.querySelector('select[name="system.class"]');
-        
-        if (!findSecretDoorField || !raceField || !classField) return;
-
-        const race = raceField.value.toLowerCase();
-        const characterClass = classField.value.toLowerCase();
-        
-        // Check if class is Thief, Assassin, or Barbarian (editable)
-        const isEditableClass = characterClass === 'thief' || characterClass === 'assassin' || characterClass === 'barbarian';
-        
-        if (isEditableClass) {
-          // Thief/Assassin/Barbarian: editable field, set default based on race if not set
-          findSecretDoorField.disabled = false;
-          if (!findSecretDoorField.value || findSecretDoorField.value === '') {
-            // Set racial default for editable classes
-            switch (race) {
-              case 'elf':
-              case 'half-elf':
-                findSecretDoorField.value = '2';
-                break;
-              default:
-                findSecretDoorField.value = '1';
-                break;
-            }
-          }
-        } else {
-          // Other classes: read-only, set by race
-          findSecretDoorField.disabled = true;
-          
-          // Set value based on race per OSE rules
-          switch (race) {
-            case 'elf':
-            case 'half-elf':
-              findSecretDoorField.value = '2';
-              break;
-            default:
-              findSecretDoorField.value = '1';
-              break;
-          }
-        }
-      }
-
-      function updateDetectConstruction() {
-        const detectConstructionField = document.getElementById('detect-construction');
-        const raceField = document.getElementById('char-race');
-        
-        if (!detectConstructionField || !raceField) return;
-
-        const race = raceField.value.toLowerCase();
-        
-        // Only Dwarf and Gnome can use this ability - but field is read-only
-        if (race === 'dwarf' || race === 'gnome') {
-          detectConstructionField.disabled = true; // Always read-only
-          detectConstructionField.value = '2'; // 2-in-6 for Dwarf/Gnome
-        } else {
-          // All other races cannot use this ability
-          detectConstructionField.disabled = true;
-          detectConstructionField.value = ''; // No number shown
-        }
-      }
-
-      function updateDetectRoomTraps() {
-        const detectRoomTrapsField = document.getElementById('detect-room-traps');
-        const raceField = document.getElementById('char-race');
-        
-        if (!detectRoomTrapsField || !raceField) return;
-
-        const race = raceField.value.toLowerCase();
-        
-        // Only Dwarf can use this ability - but field is read-only
-        if (race === 'dwarf') {
-          detectRoomTrapsField.disabled = true; // Always read-only
-          detectRoomTrapsField.value = '2'; // 2-in-6 for Dwarf
-        } else {
-          // All other races cannot use this ability
-          detectRoomTrapsField.disabled = true;
-          detectRoomTrapsField.value = ''; // No number shown
-        }
-      }
-
-      function updateBarbarianSkills() {
-        const barbarianClimbField = document.getElementById('barbarian-climb');
-        const barbarianHideField = document.getElementById('barbarian-hide');
-        const barbarianMoveField = document.getElementById('barbarian-move');
-        const classField = document.querySelector('select[name="system.class"]');
-        const levelField = document.querySelector('input[name="system.level"]');
-        
-        if (!barbarianClimbField || !barbarianHideField || !barbarianMoveField || !classField || !levelField) return;
-
-        // Get the parent divs to control visibility
-        const barbarianClimbDiv = barbarianClimbField.closest('.listening-group');
-        const barbarianHideDiv = barbarianHideField.closest('.listening-group');
-        const barbarianMoveDiv = barbarianMoveField.closest('.listening-group');
-
-        const characterClass = classField.value.toLowerCase();
-        const level = parseInt(levelField.value) || 1;
-        
-        if (characterClass === 'barbarian') {
-          // Show and configure Barbarian fields
-          if (barbarianClimbDiv) barbarianClimbDiv.style.display = 'block';
-          if (barbarianHideDiv) barbarianHideDiv.style.display = 'block';
-          if (barbarianMoveDiv) barbarianMoveDiv.style.display = 'block';
-          
-          // Barbarian: read-only fields with level-based progression
-          barbarianClimbField.disabled = true;
-          barbarianHideField.disabled = true;
-          barbarianMoveField.disabled = true;
-          
-          // Set values based on level progression
-          // CS: Always 5-in-6
-          barbarianClimbField.value = '5';
-          
-          // HD: 1-in-6 (levels 1-5), 2-in-6 (levels 6-10), 3-in-6 (levels 11-13), 4-in-6 (level 14)
-          if (level <= 5) {
-            barbarianHideField.value = '1';
-          } else if (level <= 10) {
-            barbarianHideField.value = '2';
-          } else if (level <= 13) {
-            barbarianHideField.value = '3';
-          } else {
-            barbarianHideField.value = '4';
-          }
-          
-          // MS: 1-in-6 (levels 1-3), 2-in-6 (levels 4-10), 3-in-6 (levels 11+)
-          if (level <= 3) {
-            barbarianMoveField.value = '1';
-          } else if (level <= 10) {
-            barbarianMoveField.value = '2';
-          } else {
-            barbarianMoveField.value = '3';
-          }
-        } else {
-          // Non-Barbarian: hide fields completely
-          if (barbarianClimbDiv) barbarianClimbDiv.style.display = 'none';
-          if (barbarianHideDiv) barbarianHideDiv.style.display = 'none';
-          if (barbarianMoveDiv) barbarianMoveDiv.style.display = 'none';
-          
-          barbarianClimbField.disabled = true;
-          barbarianHideField.disabled = true;
-          barbarianMoveField.disabled = true;
-          barbarianClimbField.value = '';
-          barbarianHideField.value = '';
-          barbarianMoveField.value = '';
-        }
-      }
-
-      // Initialize listening at doors
-      updateListeningAtDoors();
-      
-      // Initialize open stuck doors
-      updateOpenStuckDoors();
-      
-      // Initialize find secret door
-      updateFindSecretDoor();
-      
-      // Initialize detect construction
-      updateDetectConstruction();
-      
-      // Initialize detect room traps
-      updateDetectRoomTraps();
-      
-      // Initialize barbarian skills
-      updateBarbarianSkills();
-
-      // Add event listeners for race and class changes
-      const raceField = document.getElementById('char-race');
-      const strField = document.getElementById('attr-str');
-      
-      if (raceField) {
-        raceField.addEventListener('change', updateListeningAtDoors);
-        raceField.addEventListener('change', updateFindSecretDoor);
-        raceField.addEventListener('change', updateDetectConstruction);
-        raceField.addEventListener('change', updateDetectRoomTraps);
-      }
-      if (classField) {
-        classField.addEventListener('change', updateListeningAtDoors);
-        classField.addEventListener('change', updateFindSecretDoor);
-        classField.addEventListener('change', updateBarbarianSkills);
-      }
-      if (strField) {
-        strField.addEventListener('change', updateOpenStuckDoors);
-      }
-      
-      // Add level change listener for Barbarian skills
-      if (levelField) {
-        levelField.addEventListener('change', updateBarbarianSkills);
-      }
-    }
-
-  // Check if DOM is already ready or wait for it
-    if (document.readyState === 'loading') {
-
-      document.addEventListener('DOMContentLoaded', initializeCharacterSheet);
-    } else {
-
-    // DOM is already ready, run immediately
-    setTimeout(initializeCharacterSheet, 0);
-  }
-  </script>
 
 
 
@@ -1313,13 +254,13 @@
         <div class="listening-group cs-abs cs-pos-open-stuck-doors">
           <div class="cs-char-field-group">
             <label class="cs-field-label">Open Stuck Doors</label>
-            <select class="open-stuck-doors cs-listening-select" id="open-stuck-doors" name="system.openStuckDoors" data-dtype="String">
-              <option value="1" {{#if (eq system.openStuckDoors "1")}}selected{{/if}}>1</option>
-              <option value="2" {{#if (eq system.openStuckDoors "2")}}selected{{/if}}>2</option>
-              <option value="3" {{#if (eq system.openStuckDoors "3")}}selected{{/if}}>3</option>
-              <option value="4" {{#if (eq system.openStuckDoors "4")}}selected{{/if}}>4</option>
-              <option value="5" {{#if (eq system.openStuckDoors "5")}}selected{{/if}}>5</option>
-              <option value="6" {{#if (eq system.openStuckDoors "6")}}selected{{/if}}>6</option>
+            <select class="open-stuck-doors cs-listening-select" id="open-stuck-doors" name="system.openStuckDoors" data-dtype="String" disabled>
+              <option value="1" {{#if (eq openStuckDoorsTarget "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq openStuckDoorsTarget "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq openStuckDoorsTarget "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq openStuckDoorsTarget "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq openStuckDoorsTarget "5")}}selected{{/if}}>5</option>
+              <option value="6" {{#if (eq openStuckDoorsTarget "6")}}selected{{/if}}>6</option>
             </select>
           </div>
         </div>
@@ -1388,120 +329,31 @@
       
       <!-- Combat Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
+        <section class="combat-generated-panel">
         <div class="combat-saving-throws-image">
           <div class="combat-saving-throws-title">Saving Throws</div>
           <div class="combat-saving-throws-subtitle">Roll over or equal to score on 1d20 + modifiers</div>
-          <img src="/systems/osp-houserules/assets/character-sheet/saving-throws.webp" alt="" draggable="false" />
+          <div class="combat-save-grid">
+            <div class="save-group-death cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-death" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-death" startOffset="50%" text-anchor="middle">Death · Poison</textPath></text></svg><div class="save death-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.death.value}}</span></div></div></div>
+            <div class="save-group-wands cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-wands" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-wands" startOffset="50%" text-anchor="middle">Wands</textPath></text></svg><div class="save wands-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.wands.value}}</span></div></div></div>
+            <div class="save-group-paralysis cs-save-group"><svg class="combat-save-label-arc combat-save-label-arc--small" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-paralysis" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-paralysis" startOffset="50%" text-anchor="middle">Paralysis · Petrification</textPath></text></svg><div class="save paralysis-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.paralysis.value}}</span></div></div></div>
+            <div class="save-group-breath cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-breath" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-breath" startOffset="50%" text-anchor="middle">Breath Attacks</textPath></text></svg><div class="save breath-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.breath.value}}</span></div></div></div>
+            <div class="save-group-spells cs-save-group"><svg class="combat-save-label-arc combat-save-label-arc--small" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-spells" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-spells" startOffset="50%" text-anchor="middle">Spells · Rods · Staves</textPath></text></svg><div class="save spells-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.spells.value}}</span></div></div></div>
+          </div>
         </div>
         <div class="combat-hpac-title">Combat &amp; Movement</div>
         <div class="combat-hpac-image">
-          <img src="/systems/osp-houserules/assets/character-sheet/hpac.webp" alt="" draggable="false" />
-        </div>
-        <div class="combat-stats-overlay">
-          <!-- Combat Stats Section — positioned over hpac background -->
           <div class="combat-stats cs-combat-stats">
-            <div class="combat-stat cs-combat-stat cs-pos-combat-ac-label">
-              <label for="char-ac" class="cs-field-label">AC</label>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-ac-value">
-              <div class="cs-unarmored-box">
-                {{system.ac}}
-              </div>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-uac-label">
-              <label class="cs-field-label">uAC</label>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-uac-value">
-              <div class="cs-unarmored-box">
-                {{unarmoredAC system.attributes.dex.value}}
-              </div>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-hp-label">
-              <label for="char-hp" class="cs-field-label">HP</label>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-hp-value">
-              <input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="text" inputmode="numeric" value="{{system.hitpoints}}" />
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-mhp-label">
-              <label class="cs-field-label">maxHP</label>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-mhp-value">
-              <div class="cs-unarmored-box">
-                {{system.maxhitpoints}}
-              </div>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-tactical-label">
-              <label class="cs-field-label">Tactical</label>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-tactical-value">
-              <div class="cs-unarmored-box">
-                {{system.movement.tactical}}
-              </div>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-overland-label">
-              <label class="cs-field-label">Travel</label>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-overland-value">
-              <div class="cs-unarmored-box">
-                {{system.movement.overland}}
-              </div>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-dash-label">
-              <label class="cs-field-label">Explore</label>
-            </div>
-            <div class="combat-stat cs-combat-stat cs-pos-combat-dash-value">
-              <div class="cs-unarmored-box">
-                {{system.movement.dash}}
-              </div>
-            </div>
+            <div class="combat-stat cs-combat-stat combat-stat-hp"><input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="text" inputmode="numeric" value="{{system.hitpoints}}" /><label for="char-hp" class="cs-field-label">HP</label></div>
+            <div class="combat-stat cs-combat-stat"><div class="cs-unarmored-box">{{system.maxhitpoints}}</div><label class="cs-field-label">Max HP</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.tactical}}</div><label class="cs-field-label">Tactical</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.dash}}</div><label class="cs-field-label">Explore</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.overland}}</div><label class="cs-field-label">Travel</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-defense"><div class="cs-unarmored-box">{{system.ac}}</div><label for="char-ac" class="cs-field-label">AC</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-defense"><div class="cs-unarmored-box">{{unarmoredAC system.attributes.dex.value}}</div><label class="cs-field-label">uAC</label></div>
           </div>
-
-          <!-- Saving Throw Groups - Positioned relative to combat section -->
-        </div><!-- /.combat-stats-overlay -->
-          <!-- Death Ray/Poison Group -->
-          <div class="save-group-death cs-save-group">
-            <div class="save death-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.death.value}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Wands Group -->
-          <div class="save-group-wands cs-save-group">
-            <div class="save wands-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.wands.value}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Paralysis Group -->
-          <div class="save-group-paralysis cs-save-group">
-            <div class="save paralysis-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.paralysis.value}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Breath Attacks Group -->
-          <div class="save-group-breath cs-save-group">
-            <div class="save breath-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.breath.value}}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Spells/Rods/Staves Group -->
-          <div class="save-group-spells cs-save-group">
-            <div class="save spells-save cs-save cs-abs">
-              <div class="cs-save-badge">
-                <span class="cs-save-value">{{saves.spells.value}}</span>
-              </div>
-            </div>
-          </div>
+        </div>
+        </section>
 
 
         <section class="combat-tab">
@@ -3009,7 +1861,6 @@
     <div class="cs-char-field-group">
       {{#if isGM}}
         <select class="char-class cs-class-select" id="char-class" name="system.class">
-          <option value="" {{#unless system.class}}selected{{/unless}}></option>
           <option value="Assassin" {{#if (eq system.class "Assassin")}}selected{{/if}}>Assassin</option>
           <option value="Barbarian" {{#if (eq system.class "Barbarian")}}selected{{/if}}>Barbarian</option>
           <option value="Bard" {{#if (eq system.class "Bard")}}selected{{/if}}>Bard</option>
@@ -3046,7 +1897,6 @@
     <div class="cs-char-field-group">
       {{#if isGM}}
         <select class="char-align cs-alignment-select" id="char-align" name="system.alignment">
-          <option value="" {{#unless system.alignment}}selected{{/unless}}></option>
           <option value="Chaotic" {{#if (eq system.alignment "Chaotic")}}selected{{/if}}>Chaotic</option>
           <option value="Lawful" {{#if (eq system.alignment "Lawful")}}selected{{/if}}>Lawful</option>
           <option value="Neutral" {{#if (eq system.alignment "Neutral")}}selected{{/if}}>Neutral</option>
@@ -3062,7 +1912,6 @@
     <div class="cs-char-field-group">
       {{#if isGM}}
         <select class="char-race cs-race-select" id="char-race" name="system.race">
-          <option value="" {{#unless system.race}}selected{{/unless}}></option>
           <option value="Dwarf" {{#if (eq system.race "Dwarf")}}selected{{/if}}>Dwarf</option>
           <option value="Elf" {{#if (eq system.race "Elf")}}selected{{/if}}>Elf</option>
           <option value="Gnome" {{#if (eq system.race "Gnome")}}selected{{/if}}>Gnome</option>
@@ -3087,7 +1936,6 @@
   <div class="sex-group cs-abs cs-pos-sex" id="sex-container">
     <div class="cs-char-field-group">
       <select class="char-sex cs-sex-field" id="char-sex" name="system.sex">
-        <option value="" {{#unless system.sex}}selected{{/unless}}></option>
         <option value="Male" {{#if (eq system.sex "Male")}}selected{{/if}}>M</option>
         <option value="Female" {{#if (eq system.sex "Female")}}selected{{/if}}>F</option>
         <option value="Other" {{#if (eq system.sex "Other")}}selected{{/if}}>O</option>
@@ -3114,7 +1962,6 @@
     <div class="char-field-group cs-char-field-group">
       {{#if isGM}}
       <select class="char-background cs-background-select" id="char-background" name="system.background">
- <option value="" {{#unless system.background}}selected{{/unless}}>-- Select Background --</option>
                   <option value="Actor" {{#if (eq system.background "Actor")}}selected{{/if}}>Actor</option>
                   <option value="Armorer" {{#if (eq system.background "Armorer")}}selected{{/if}}>Armorer</option>
                   <option value="Artisan" {{#if (eq system.background "Artisan")}}selected{{/if}}>Artisan</option>
@@ -3262,11 +2109,7 @@
               <!-- STR Ability Score -->
               <div class="ability cs-ability cs-abs">
                 {{#if isGM}}
-                  <select class="attr-str cs-ability-select" id="attr-str" name="system.attributes.str.value">
-                    {{#each (range 3 18) as |val|}}
-                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.str.value) val)}}selected{{/if}}>{{val}}</option>
-                    {{/each}}
-                  </select>
+                  <input class="attr-str cs-ability-input" id="attr-str" name="system.attributes.str.value" type="number" min="3" max="18" step="1" value="{{system.attributes.str.value}}" data-dtype="Number" />
                 {{else}}
                   <span class="cs-ability-static attr-str">{{system.attributes.str.value}}</span>
                 {{/if}}
@@ -3275,11 +2118,7 @@
               <!-- DEX Ability Score -->
               <div class="ability cs-ability cs-abs">
                 {{#if isGM}}
-                  <select class="attr-dex cs-ability-select" id="attr-dex" name="system.attributes.dex.value">
-                    {{#each (range 3 18) as |val|}}
-                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.dex.value) val)}}selected{{/if}}>{{val}}</option>
-                    {{/each}}
-                  </select>
+                  <input class="attr-dex cs-ability-input" id="attr-dex" name="system.attributes.dex.value" type="number" min="3" max="18" step="1" value="{{system.attributes.dex.value}}" data-dtype="Number" />
                 {{else}}
                   <span class="cs-ability-static attr-dex">{{system.attributes.dex.value}}</span>
                 {{/if}}
@@ -3288,11 +2127,7 @@
               <!-- CON Ability Score -->
               <div class="ability cs-ability cs-abs">
                 {{#if isGM}}
-                  <select class="attr-con cs-ability-select" id="attr-con" name="system.attributes.con.value">
-                    {{#each (range 3 18) as |val|}}
-                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.con.value) val)}}selected{{/if}}>{{val}}</option>
-                    {{/each}}
-                  </select>
+                  <input class="attr-con cs-ability-input" id="attr-con" name="system.attributes.con.value" type="number" min="3" max="18" step="1" value="{{system.attributes.con.value}}" data-dtype="Number" />
                 {{else}}
                   <span class="cs-ability-static attr-con">{{system.attributes.con.value}}</span>
                 {{/if}}
@@ -3301,11 +2136,7 @@
               <!-- INT Ability Score -->
               <div class="ability cs-ability cs-abs">
                 {{#if isGM}}
-                  <select class="attr-int cs-ability-select" id="attr-int" name="system.attributes.int.value">
-                    {{#each (range 3 18) as |val|}}
-                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.int.value) val)}}selected{{/if}}>{{val}}</option>
-                    {{/each}}
-                  </select>
+                  <input class="attr-int cs-ability-input" id="attr-int" name="system.attributes.int.value" type="number" min="3" max="18" step="1" value="{{system.attributes.int.value}}" data-dtype="Number" />
                 {{else}}
                   <span class="cs-ability-static attr-int">{{system.attributes.int.value}}</span>
                 {{/if}}
@@ -3314,11 +2145,7 @@
               <!-- WIS Ability Score -->
               <div class="ability cs-ability cs-abs">
                 {{#if isGM}}
-                  <select class="attr-wis cs-ability-select" id="attr-wis" name="system.attributes.wis.value">
-                    {{#each (range 3 18) as |val|}}
-                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.wis.value) val)}}selected{{/if}}>{{val}}</option>
-                    {{/each}}
-                  </select>
+                  <input class="attr-wis cs-ability-input" id="attr-wis" name="system.attributes.wis.value" type="number" min="3" max="18" step="1" value="{{system.attributes.wis.value}}" data-dtype="Number" />
                 {{else}}
                   <span class="cs-ability-static attr-wis">{{system.attributes.wis.value}}</span>
                 {{/if}}
@@ -3327,11 +2154,7 @@
               <!-- CHA Ability Score -->
               <div class="ability cs-ability cs-abs">
                 {{#if isGM}}
-                  <select class="attr-cha cs-ability-select" id="attr-cha" name="system.attributes.cha.value">
-                    {{#each (range 3 18) as |val|}}
-                      <option value="{{val}}" {{#if (eq (parseInt ../system.attributes.cha.value) val)}}selected{{/if}}>{{val}}</option>
-                    {{/each}}
-                  </select>
+                  <input class="attr-cha cs-ability-input" id="attr-cha" name="system.attributes.cha.value" type="number" min="3" max="18" step="1" value="{{system.attributes.cha.value}}" data-dtype="Number" />
                 {{else}}
                   <span class="cs-ability-static attr-cha">{{system.attributes.cha.value}}</span>
                 {{/if}}
@@ -3354,21 +2177,11 @@
       <div class="tab" data-group="primary" data-tab="background">
         <div class="bg-tab-content">
 
-          <!-- Suggestion 3: Career background badge -->
-          {{#if system.background}}
-          <div class="bg-career-badge">
-            <span class="bg-career-label">Former Occupation:</span>
-            <span class="bg-career-value">{{system.background}}</span>
-          </div>
-          {{/if}}
-
-          <!-- Suggestion 1: Section header with prompt -->
           <div class="bg-tab-header">
             <div class="bg-tab-title">Character Background</div>
             <div class="bg-tab-subtitle">Where did this character come from? What shaped them?</div>
           </div>
 
-          <!-- Suggestion 2: Two labelled panels side by side -->
           <div class="bg-panels">
             <div class="bg-panel">
               <div class="bg-panel-title">Origins</div>
@@ -3391,8 +2204,19 @@
 
       <!-- Notes Tab -->
       <div class="tab" data-group="primary" data-tab="notes">
-        <div class="notes-tab-content">
-          {{editor enrichedNotes target="system.tabNotes" editable=editable button=false engine="prosemirror"}}
+        <div class="bg-tab-content">
+          <div class="bg-tab-header">
+            <div class="bg-tab-title">Character Notes</div>
+            <div class="bg-tab-subtitle">Keep important details, reminders, and discoveries here.</div>
+          </div>
+
+          <div class="bg-panels">
+            <div class="bg-panel">
+              <div class="notes-tab-content bg-panel-editor">
+                {{editor enrichedNotes target="system.tabNotes" editable=editable button=false engine="prosemirror"}}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

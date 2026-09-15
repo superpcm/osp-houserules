@@ -47,7 +47,7 @@
                 {{#each log}}
                   <tr class="osp-bank-log-row" data-ledger-actor="{{../actorId}}" data-log-actor="{{actor}}">
                     <td>{{timeLabel}}</td>
-                    <td>{{actor}}</td>
+                    <td>{{#if actorLabel}}{{actorLabel}}{{else}}{{actor}}{{/if}}</td>
                     <td>{{action}}</td>
                     <td>{{#if itemName}}{{itemName}}{{else}}{{denomination}}{{/if}}</td>
                     <td>{{quantity}}</td>

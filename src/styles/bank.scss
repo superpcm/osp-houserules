@@ -20,6 +20,59 @@
   }
 }
 
+// ── Westford Storehouse ─────────────────────────────────────────────────
+.application.osp-storehouse-view .window-content,
+.application.osp-storehouse-withdraw .window-content {
+  color: #34271b;
+  background: linear-gradient(rgba(231, 214, 169, 0.91), rgba(190, 157, 101, 0.93)),
+    url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp') center / cover;
+}
+
+.application.osp-storehouse-view .window-content { overflow: hidden; }
+
+.osp-storehouse { height: 100%; min-height: 0; overflow: hidden; padding: 12px; gap: 10px; }
+.osp-storehouse-header {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+  color: #f8e8bf; border-radius: 7px; border: 1px solid #80603b;
+  background: linear-gradient(145deg, #584126, #2e2116);
+  .osp-storehouse-mark { display: grid; place-items: center; width: 45px; height: 45px; border-radius: 6px; color: #e8bd62; background: #211710; font-size: 1.35rem; }
+  > div:last-child { display: flex; flex-direction: column; }
+  span { color: #d0ad6c; font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; }
+  strong { font-size: 1.45rem; }
+  small { opacity: .7; }
+}
+.osp-storehouse-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.osp-storehouse-tabs span, .osp-storehouse-filters span {
+  cursor: pointer; padding: 7px; text-align: center; border-radius: 5px; border: 1px solid rgba(69,47,27,.35); background: rgba(255,246,215,.38);
+  &.is-active { color: #fff0c6; background: linear-gradient(#72502c, #3d2b1a); }
+}
+.osp-storehouse-filters { display: flex; gap: 4px; flex-wrap: wrap; }
+.osp-storehouse-filters span { flex: 1 1 auto; padding: 4px 7px; font-size: .78rem; }
+.osp-storehouse-shelves {
+  flex: 1 1 0; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 10px; border: 2px dashed rgba(71,50,29,.45); border-radius: 7px;
+  background: repeating-linear-gradient(0deg, rgba(63,42,24,.08) 0 2px, transparent 2px 54px), rgba(255,248,220,.25);
+  &.is-valid { border-color: #397d35; background-color: rgba(70,145,63,.23); }
+  &.is-invalid { border-color: #a23e32; background-color: rgba(170,59,48,.2); }
+}
+.osp-storehouse-item { display: flex; align-items: center; gap: 8px; min-height: 44px; margin-bottom: 6px; padding: 6px 8px; border: 1px solid rgba(67,45,25,.4); border-radius: 5px; background: linear-gradient(90deg, rgba(255,248,221,.78), rgba(210,181,127,.55)); }
+.osp-storehouse-item img { width: 34px; height: 34px; object-fit: contain; border: 0; }
+.osp-storehouse-item-name { display: flex; flex: 1; min-width: 0; flex-direction: column; }
+.osp-storehouse-item-name strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1rem; }
+.osp-storehouse-item-name small { opacity: .65; font-size: .72rem; }
+.osp-storehouse-weight, .osp-storehouse-qty { flex: 0 0 auto; font-size: .82rem; }
+.osp-storehouse-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: rgba(64,43,25,.65); }
+.osp-storehouse-empty i { margin-bottom: 8px; font-size: 2rem; color: #8b6837; }
+.osp-storehouse-empty strong { font-size: 1.2rem; }
+.osp-storehouse-withdraw { cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; border-radius: 6px; color: #f8e6b8; background: linear-gradient(#654729, #352417); border: 1px solid #79552d; }
+.osp-storehouse-withdraw > span { display: flex; flex-direction: column; }
+.osp-storehouse-withdraw small { opacity: .72; }
+.osp-storehouse-withdraw-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; height: 100%; padding: 12px; }
+.osp-storehouse-withdraw-layout > section { overflow-y: auto; padding: 9px; border-radius: 7px; background: rgba(255,246,214,.36); border: 1px solid rgba(67,45,25,.3); }
+.osp-storehouse-drag { cursor: grab; }
+.osp-storehouse-container { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; padding: 9px; border: 2px dashed rgba(72,48,26,.38); border-radius: 6px; }
+.osp-storehouse-container > span { display: flex; flex-direction: column; }
+.osp-storehouse-container.is-valid { border-color: #397d35; background: rgba(70,145,63,.2); }
+
 // Parchment texture (same asset as the character sheet's "theme-parchment" background) instead
 // of the flat $color-parchment fill the generic `.osp .window-content` rule
 // (character-sheet-main.scss) would otherwise give every window carrying the shared "osp" class.
@@ -31,17 +84,43 @@
 .application.osp-bank-withdraw-dialog .window-content,
 .application.osp-bank-dm-ledgers-view .window-content,
 .application.osp-bank-dm-edit-dialog .window-content {
-  background-color: $color-parchment;
-  background-image: url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  background: linear-gradient(rgba(231, 214, 169, 0.91), rgba(190, 157, 101, 0.93)),
+    url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp') center / cover;
   color: #4B4B4B;
+}
+
+// The selected family is supplied at runtime by the world setting. The broad selectors and
+// !important are intentional: the system's global handwritten rule otherwise wins inside
+// these applications.
+.application.osp.osp-bank-ledger-view,
+.application.osp.osp-bank-ledger-view *,
+.application.osp.osp-bank-deposit-dialog,
+.application.osp.osp-bank-deposit-dialog *,
+.application.osp.osp-bank-withdraw-dialog,
+.application.osp.osp-bank-withdraw-dialog *,
+.application.osp.osp-bank-dm-ledgers-view,
+.application.osp.osp-bank-dm-ledgers-view *,
+.application.osp.osp-bank-dm-edit-dialog,
+.application.osp.osp-bank-dm-edit-dialog * {
+  font-family: var(--osp-bank-font, Handwritten), Georgia, serif !important;
+}
+
+// The Bank can use a decorative typeface, but Foundry's controls and our action
+// icons must retain the Font Awesome glyph font rather than inheriting it.
+:is(
+  .application.osp.osp-bank-ledger-view,
+  .application.osp.osp-bank-deposit-dialog,
+  .application.osp.osp-bank-withdraw-dialog,
+  .application.osp.osp-bank-dm-ledgers-view,
+  .application.osp.osp-bank-dm-edit-dialog
+) :is(.fa, .fas, .far, .fal, .fat, .fad, .fab, .fa-solid, .fa-regular, .fa-light, .fa-thin, .fa-brands, .fa-classic) {
+  font-family: var(--font-awesome, "Font Awesome 7 Pro") !important;
+  letter-spacing: normal;
 }
 
 // Shared building blocks used across all Bank windows/panels.
 .osp-bank-section-header {
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: bold;
   border-bottom: 1px solid rgba(0, 0, 0, 0.25);
   padding-bottom: 4px;
@@ -51,14 +130,14 @@
 }
 
 .osp-bank-empty-note {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   opacity: 0.65;
   font-style: italic;
   margin: 4px 0;
 }
 
 .osp-bank-drop-hint {
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   opacity: 0.65;
   margin: 0 0 6px;
 }
@@ -66,8 +145,8 @@
 .osp-bank-currency-row {
   display: flex;
   flex-direction: row;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 7px;
+  margin-bottom: 12px;
 }
 
 .osp-bank-currency-tile {
@@ -75,13 +154,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  background: rgba(0, 0, 0, 0.10);
-  border: 1px solid rgba(0, 0, 0, 0.18);
-  border-radius: 4px;
-  padding: 6px 4px;
+  gap: 1px;
+  background: linear-gradient(180deg, rgba(255, 252, 230, 0.58), rgba(74, 48, 23, 0.09));
+  border: 1px solid rgba(83, 54, 25, 0.28);
+  border-radius: 7px;
+  padding: 8px 4px 7px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(50, 28, 10, 0.12);
 
-  i { font-size: 1rem; margin-bottom: 2px; }
+  i { font-size: 0.9rem; margin-bottom: 1px; }
+}
+
+// Give each denomination its own recognizable metal finish without competing
+// with the ledger's parchment background.
+.osp-bank-currency-tile:nth-child(1) {
+  background: linear-gradient(180deg, rgba(255, 242, 182, 0.94), rgba(196, 139, 31, 0.42));
+  border-color: rgba(143, 94, 8, 0.52);
+}
+
+.osp-bank-currency-tile:nth-child(2) {
+  background: linear-gradient(180deg, rgba(247, 248, 249, 0.94), rgba(139, 148, 157, 0.42));
+  border-color: rgba(95, 105, 115, 0.48);
+}
+
+.osp-bank-currency-tile:nth-child(3) {
+  background: linear-gradient(180deg, rgba(248, 206, 169, 0.94), rgba(166, 82, 43, 0.44));
+  border-color: rgba(119, 54, 26, 0.52);
 }
 
 .osp-bank-coin-gold { color: #b8860b; }
@@ -90,11 +187,12 @@
 
 .osp-bank-currency-value {
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.55rem;
+  line-height: 1.1;
 }
 
 .osp-bank-currency-label {
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   opacity: 0.7;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -134,7 +232,7 @@
 .osp-bank-item-name {
   flex: 1 1 auto;
   min-width: 0;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -142,8 +240,18 @@
 
 .osp-bank-item-qty {
   flex: 0 0 auto;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   opacity: 0.75;
+}
+
+.osp-bank-item-value {
+  flex: 0 0 auto;
+  min-width: 68px;
+  color: #e8c56e;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .osp-bank-unique-star {
@@ -154,10 +262,12 @@
 .osp-bank-actions-row {
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 7px;
   margin-top: auto;
   padding-top: 8px;
 }
+
+.osp-bank-actions-row--single .osp-bank-action-btn { flex-basis: 100%; }
 
 .osp-bank-action-btn {
   cursor: pointer;
@@ -165,23 +275,282 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 9px;
+  min-height: 44px;
   padding: 6px 10px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  background: rgba(0, 0, 0, 0.12);
-  font-size: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid rgba(70, 43, 19, 0.55);
+  background: linear-gradient(180deg, rgba(89, 61, 30, 0.82), rgba(51, 32, 16, 0.92));
+  color: #f5e8c8;
+  font-size: 0.95rem;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.14), 0 2px 4px rgba(42, 24, 8, 0.2);
+
+  > i { font-size: 1rem; color: #dfbd65; }
+  > span { display: flex; flex-direction: column; line-height: 1.15; }
+  strong { font-size: 0.98rem; }
+  small { margin-top: 2px; font-size: 0.76rem; opacity: 0.8; }
 
   &:hover {
-    background: rgba(0, 0, 0, 0.22);
-    border-color: rgba(0, 0, 0, 0.45);
+    background: linear-gradient(180deg, #765326, #432a14);
+    border-color: #9c783b;
+    color: #fff7df;
   }
 }
 
 // ── Ledger view ──────────────────────────────────────────────────────────
 .osp-bank-ledger-view {
-  padding: 10px;
+  padding: 12px;
   height: 100%;
+  gap: 0;
+}
+
+.osp-bank-ledger-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin: -2px -2px 11px;
+  padding: 3px 2px 10px;
+  border-bottom: 1px solid rgba(76, 49, 22, 0.28);
+
+  strong { color: #382514; font-size: 1.25rem; line-height: 1.15; }
+}
+
+.osp-bank-account-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin: -3px 0 11px;
+  padding: 4px;
+  border-radius: 7px;
+  background: rgba(72, 47, 23, 0.13);
+  border: 1px solid rgba(83, 54, 25, 0.25);
+}
+
+.osp-bank-account-tab {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 33px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  color: #6b4a27;
+  font-size: 0.92rem;
+  font-weight: 700;
+
+  &:hover { background: rgba(255, 248, 218, 0.45); }
+  &.is-active {
+    color: #fff0bd;
+    background: linear-gradient(180deg, #795629, #493018);
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.16), 0 1px 3px rgba(45, 27, 10, 0.25);
+  }
+  &.osp-bank-transfer-target {
+    color: #efffdf;
+    background: linear-gradient(180deg, #568247, #31572d);
+    box-shadow: inset 0 0 0 2px rgba(213, 255, 196, 0.65), 0 1px 4px rgba(31, 69, 29, 0.35);
+  }
+}
+
+[data-bank-transfer-source] { cursor: grab; }
+[data-bank-transfer-source]:active { cursor: grabbing; }
+
+.osp-bank-masthead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  .osp-bank-kicker { line-height: 1; }
+}
+
+.osp-bank-ledger-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+
+  strong { color: #382514; font-size: 1.25rem; line-height: 1.15; }
+}
+
+.osp-bank-seal {
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: #f2d77e;
+  background: radial-gradient(circle at 35% 30%, #76572b, #32200f 72%);
+  border: 2px solid rgba(176, 130, 49, 0.7);
+  box-shadow: 0 2px 5px rgba(45, 27, 10, 0.3);
+}
+
+.osp-bank-kicker {
+  color: #7b5728;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.osp-bank-status {
+  margin-top: 2px;
+  color: #50603b;
+  font-size: 0.76rem;
+
+  i { margin-right: 3px; }
+}
+
+.osp-bank-items-section {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.osp-bank-vault-drop-zone {
+  flex: 1 1 auto;
+  min-height: 115px;
+  overflow-y: auto;
+  border: 2px dashed rgba(91, 61, 29, 0.32);
+  border-radius: 7px;
+  background: rgba(255, 250, 225, 0.18);
+  transition: background-color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+
+  .osp-bank-empty-state {
+    min-height: 100%;
+    border: 0;
+    background: transparent;
+  }
+}
+
+.osp-bank-safe-deposit-box {
+  min-height: 100%;
+  padding: 9px;
+  border-radius: 6px;
+  background: linear-gradient(155deg, rgba(80, 60, 37, 0.9), rgba(40, 29, 19, 0.92));
+  border: 1px solid rgba(119, 86, 39, 0.78);
+  box-shadow: inset 0 1px rgba(255, 235, 171, 0.16), 0 2px 5px rgba(44, 27, 12, 0.25);
+}
+
+.osp-bank-safe-deposit-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  color: #f7e5b5;
+
+  > i:first-child {
+    display: grid;
+    place-items: center;
+    flex: 0 0 31px;
+    width: 31px;
+    height: 31px;
+    border-radius: 4px;
+    color: #e8c56e;
+    background: rgba(22, 15, 8, 0.52);
+    border: 1px solid rgba(224, 182, 86, 0.42);
+  }
+
+  > span {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  strong { font-size: 1.05rem; letter-spacing: 0.04em; }
+  small { margin-top: 1px; color: rgba(247, 229, 181, 0.76); font-size: 0.78rem; }
+}
+
+.osp-bank-safe-deposit-chevron { flex: 0 0 auto; color: #e8c56e; font-size: 0.84rem; }
+
+.osp-bank-safe-deposit-box.is-open .osp-bank-item-list {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(232, 197, 110, 0.32);
+}
+
+.osp-bank-safe-deposit-box .osp-bank-item-row {
+  color: #f8ebc8;
+  background: rgba(255, 244, 214, 0.09);
+  border-color: rgba(235, 207, 143, 0.22);
+}
+
+.osp-bank-vault-drop-zone.osp-bank-drag-valid {
+  background: rgba(77, 142, 72, 0.28) !important;
+  border-color: rgba(39, 115, 47, 0.9) !important;
+  box-shadow: inset 0 0 0 1px rgba(218, 255, 204, 0.5);
+}
+
+.osp-bank-vault-drop-zone.osp-bank-drag-invalid {
+  background: rgba(168, 60, 48, 0.24) !important;
+  border-color: rgba(148, 40, 32, 0.9) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 212, 205, 0.5);
+}
+
+.osp-bank-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 115px;
+  padding: 16px;
+  color: rgba(67, 45, 23, 0.62);
+  text-align: center;
+  border: 1px dashed rgba(91, 61, 29, 0.32);
+  border-radius: 7px;
+  background: rgba(255, 250, 225, 0.18);
+
+  > i { margin-bottom: 7px; color: #a68142; font-size: 1.4rem; opacity: 0.72; }
+  strong { color: #59401f; font-size: 1rem; }
+  span { margin-top: 3px; font-size: 0.82rem; }
+}
+
+// Council is intentionally narrow and ornamental. Give it extra room and a larger reading
+// scale inside the bank so it remains comfortable to use rather than looking compressed.
+:root[data-osp-bank-font="council"] {
+  .application.osp.osp-bank-ledger-view,
+  .application.osp.osp-bank-deposit-dialog,
+  .application.osp.osp-bank-withdraw-dialog,
+  .application.osp.osp-bank-dm-ledgers-view,
+  .application.osp.osp-bank-dm-edit-dialog {
+    letter-spacing: 0.035em;
+    line-height: 1.35;
+  }
+
+  .osp-bank-ledger-summary {
+    padding-top: 3px;
+  }
+
+  .osp-bank-kicker {
+    color: #59401f;
+    font-size: 1.9rem;
+    letter-spacing: 0.16em;
+    line-height: 1;
+  }
+
+  .osp-bank-ledger-identity strong { font-size: 1.35rem; letter-spacing: 0.04em; }
+  .osp-bank-account-tab { font-size: 1.05rem; letter-spacing: 0.04em; }
+  .osp-bank-status { font-size: 1rem; }
+  .osp-bank-section-header {
+    color: #59401f;
+    font-size: 1.35rem;
+    letter-spacing: 0.045em;
+  }
+  .osp-bank-currency-value { font-size: 1.9rem; letter-spacing: 0.045em; }
+  .osp-bank-currency-label { font-size: 0.9rem; letter-spacing: 0.07em; }
+  .osp-bank-item-name { font-size: 1.08rem; }
+  .osp-bank-item-value { font-size: 0.98rem; }
+  .osp-bank-item-qty { font-size: 0.95rem; }
+  .osp-bank-empty-state strong { font-size: 1.16rem; letter-spacing: 0.04em; }
+  .osp-bank-empty-state span { font-size: 0.95rem; }
+  .osp-bank-action-btn { min-height: 52px; }
+  .osp-bank-action-btn strong { font-size: 1.32rem; letter-spacing: 0.045em; }
+  .osp-bank-action-btn small { font-size: 0.94rem; letter-spacing: 0.03em; }
 }
 
 // ── Deposit / Withdraw two-pane layout ──────────────────────────────────

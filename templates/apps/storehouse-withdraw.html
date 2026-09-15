@@ -1,0 +1,12 @@
+<div class="osp-storehouse-withdraw-layout">
+  <section><h3>Stored Goods</h3>
+    {{#if hasItems}}
+      {{#each items}}<div class="osp-storehouse-item osp-storehouse-drag" draggable="true" data-entry-id="{{entryId}}"><img src="{{img}}" alt="{{name}}"><span class="osp-storehouse-item-name"><strong>{{name}}</strong></span><span class="osp-storehouse-qty">×{{quantity}}</span></div>{{/each}}
+    {{else}}<p>Nothing is stored here.</p>{{/if}}
+  </section>
+  <section><h3>Your Containers</h3><p>Drag goods into a container.</p>
+    {{#if hasContainers}}
+      {{#each containers}}<div class="osp-storehouse-container" data-container-id="{{id}}" data-container-name="{{name}}"><i class="fas fa-box"></i><span><strong>{{name}}</strong><small>{{used}} / {{max}} capacity</small></span></div>{{/each}}
+    {{else}}<p>You have no storage containers.</p>{{/if}}
+  </section>
+</div>

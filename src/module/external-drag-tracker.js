@@ -1,5 +1,5 @@
 /**
- * Tracks the world Item currently being dragged from Foundry's Items sidebar directory.
+ * Tracks the Item currently being dragged from Foundry's Items sidebar or an actor sheet.
  * dataTransfer payloads set by Foundry's own drag handlers aren't readable until the drop
  * event fires (browser security), so sheet dragenter/dragover handlers can't synchronously
  * validate a cross-window drag by reading dataTransfer. Capturing the source element's

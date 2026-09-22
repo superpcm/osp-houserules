@@ -64,7 +64,7 @@ export class XPProgressHandler {
 
         let skipXPUpdate = false;
         if (xpChanged && this.xpDisplay.length) {
-          this.xpDisplay.val(updateData.system.xp);
+          this.updateXPFields(updateData.system.xp);
           skipXPUpdate = true;
         }
 
@@ -86,6 +86,16 @@ export class XPProgressHandler {
     const characterClass = this.actor.system.class || '';
     const attributes = this.actor.system.attributes || {};
     return calculateXPModifier(characterClass, attributes);
+  }
+
+  formatXP(value) {
+    const numeric = parseInt(String(value ?? 0).replace(/,/g, ''), 10) || 0;
+    return numeric.toLocaleString('en-US');
+  }
+
+  updateXPFields(value) {
+    const numeric = parseInt(String(value ?? 0).replace(/,/g, ''), 10) || 0;
+    if (this.xpDisplay.length) this.xpDisplay.val(this.formatXP(numeric));
   }
 
   updateProgressBar(skipXPDisplayUpdate = false) {
@@ -127,7 +137,7 @@ export class XPProgressHandler {
     }
 
     if (this.xpDisplay.length && !skipXPDisplayUpdate) {
-      this.xpDisplay.val(currentXP);
+      this.updateXPFields(currentXP);
     }
 
     if (this.skillsLevelProgressRing.length) {

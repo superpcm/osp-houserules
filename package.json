@@ -25,6 +25,8 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "classic-level": "^3.0.0",
     "glob": "^11.0.3",
+    "jquery": "^3.7.1",
+    "jsdom": "^27.4.0",
     "rollup": "^4.49.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.9.2",

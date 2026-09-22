@@ -1,0 +1,344 @@
+@use 'sass:math';
+
+// Continuous Background page. Removing ej-sheet--continuous-background from
+// the form restores the earlier component-based Background treatment.
+@mixin ej-background-box($x, $y, $width, $height) {
+  position: absolute !important;
+  inset: auto !important;
+  left: math.div($x, 1185) * 100% !important;
+  top: math.div($y, 1327) * 100% !important;
+  width: math.div($width, 1185) * 100% !important;
+  height: math.div($height, 1327) * 100% !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal {
+  form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-background:has(.tab[data-tab='background'].active) {
+    --ej-background-page-width: min(100cqw, calc(100cqh * 1185 / 1327));
+    --ej-background-page-height: calc(var(--ej-background-page-width) * 1327 / 1185);
+    background: #1d281f url('#{$ej-root}/background-crisp-v1.png') top center / contain no-repeat !important;
+
+    .cs-sheet-body {
+      inset: auto !important;
+      left: calc((100% - var(--ej-background-page-width)) / 2) !important;
+      top: 0 !important;
+      width: var(--ej-background-page-width) !important;
+      height: var(--ej-background-page-height) !important;
+      overflow: visible;
+    }
+
+    .sheet-body > .tab[data-tab='background'] {
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: none !important;
+      padding: 0;
+      margin: 0;
+      overflow: visible;
+      container-type: inline-size;
+      background: none !important;
+    }
+
+    .sheet-tabs.cs-tabs {
+      left: calc((100% - var(--ej-background-page-width)) / 2 + var(--ej-background-page-width) * .942) !important;
+      top: calc(var(--ej-background-page-height) * .068) !important;
+      width: calc(var(--ej-background-page-width) * .049);
+      height: calc(var(--ej-background-page-height) * .849);
+      gap: calc(var(--ej-background-page-width) * .006) !important;
+
+      a.item {
+        min-height: 0;
+        max-height: none;
+        font-size: clamp(9px, calc(var(--ej-background-page-width) * .018), 19px);
+      }
+    }
+
+    .tab[data-tab='background'] > .ej-running-head {
+      @include ej-background-box(194, 70, 250, 92);
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: #30291f;
+      font-family: handwritten, 'Comic Sans MS', cursive !important;
+      font-size: 5.2cqw;
+      font-weight: normal;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      z-index: 3;
+    }
+
+    .tab[data-tab='background'] .bg-tab-content,
+    .tab[data-tab='background'] .bg-panels,
+    .tab[data-tab='background'] .bg-panel {
+      position: static !important;
+      display: block !important;
+      width: auto !important;
+      height: auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      overflow: visible !important;
+    }
+
+    // Titles, panel frames, and artwork remain in the foundation. Subtitle
+    // copy is live so every tab shares one exact typography treatment.
+    .tab[data-tab='background'] .bg-panel-title,
+    .tab[data-tab='background'] .bg-panel::before,
+    .tab[data-tab='background'] .bg-panel::after,
+    .tab[data-tab='background'] .bg-panel-editor::before {
+      display: none !important;
+      content: none !important;
+    }
+
+    .tab[data-tab='background'] .bg-tab-header { display: contents !important; }
+    // Reposition only the compass region; preserve the original page artwork.
+    .tab[data-tab='background']::before,
+    .tab[data-tab='background']::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+    .tab[data-tab='background']::before {
+      background-image: url('#{$ej-root}/background-crisp-v1.png');
+      background-position: center -10px;
+      clip-path: inset(6.5% 83.7% 80% 6.2%);
+    }
+    .tab[data-tab='background']::after {
+      background-image: url('#{$ej-root}/background-layer-crisp-v1.png');
+      background-position: center -18px;
+      clip-path: inset(11.5% 8.5% calc(78.8% + 10px) 82.8%);
+    }
+    .tab[data-tab='background'] .bg-tab-header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('#{$ej-root}/background-layer-crisp-v1.png') 100px 0 / 100% 100% no-repeat;
+      clip-path: inset(calc(21.2% - 10px) 8.5% 78.8% 82.8%);
+      pointer-events: none;
+    }
+    // Re-render the columns 19px taller, anchored at the bottom.
+    // Reuse the original texture so the page header and outer frame stay unchanged.
+    .tab[data-tab='background'] .bg-panels::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: calc(100% * 278 / 1327 - 19px);
+      width: 100%;
+      height: calc(100% * 932 / 1327 + 19px);
+      background-image: url('#{$ej-root}/background-layer-crisp-v1.png');
+      background-repeat: no-repeat;
+      background-size: 100% calc(var(--ej-background-page-height) + 19px * 1327 / 932);
+      background-position: center calc(var(--ej-background-page-height) * -278 / 1327 - 19px * 278 / 932);
+      clip-path: inset(0 6.8%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .tab[data-tab='background'] .bg-tab-title {
+      @include ej-background-box(200, 169, 800, 64);
+      display: flex !important;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 0; padding: 0;
+      font-size: 30px !important; line-height: 1;
+      transform: translateY(-50px);
+    }
+    .tab[data-tab='background'] .bg-tab-subtitle {
+      // Optical glyph-to-glyph gap: 20px at the standard sheet size.
+      @include ej-background-box(200, 233, 825, 48);
+      transform: translateY(-54.96px);
+      display: flex !important;
+      align-items: flex-start;
+      justify-content: flex-start;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .tab[data-tab='background'] .bg-panel-hint {
+      transform: translateY(calc(-19px * 860 / 932));
+      z-index: 3;
+      display: flex !important;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .tab[data-tab='background'] .bg-panel:nth-child(1) .bg-panel-hint {
+      @include ej-background-box(125, 350, 420, 45);
+    }
+    .tab[data-tab='background'] .bg-panel:nth-child(2) .bg-panel-hint {
+      @include ej-background-box(625, 350, 430, 45);
+    }
+
+    .tab[data-tab='background'] .bg-panel:nth-child(1) .notes-tab-content.bg-panel-editor {
+      @include ej-background-box(118, 457, 433, 740);
+    }
+
+    .tab[data-tab='background'] .bg-panel:nth-child(2) .notes-tab-content.bg-panel-editor {
+      @include ej-background-box(611, 457, 458, 740);
+    }
+
+    .tab[data-tab='background'] .notes-tab-content.bg-panel-editor {
+      transform: translateY(calc(-19px * 753 / 932));
+      height: calc(100% * 740 / 1327 + 19px * 753 / 932) !important;
+      display: block !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+      z-index: 3;
+    }
+
+    .tab[data-tab='background'] .notes-tab-content > .editor {
+      display: flex !important;
+      flex-direction: column;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+    }
+
+    .tab[data-tab='background'] .editor > .menu-container {
+      position: relative !important;
+      inset: auto !important;
+      flex: 0 0 6.4cqw;
+      display: flex !important;
+      align-items: center;
+      width: 100% !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: .6cqw .5cqw !important;
+      border: 0 !important;
+      border-bottom: 1px solid rgba(82, 65, 42, .45) !important;
+      background: rgba(244, 232, 200, .12) !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+    }
+
+    .tab[data-tab='background'] .editor-menu {
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+      align-items: center;
+      column-gap: 0 !important;
+      row-gap: .12cqw !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .tab[data-tab='background'] .editor-menu > li {
+      flex: 0 0 calc(82% / 6);
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      min-width: 0 !important;
+      width: auto !important;
+      height: 2.6cqw !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: none !important;
+    }
+
+    .tab[data-tab='background'] .editor-menu > li:first-child {
+      flex-basis: 18%;
+    }
+
+    // Foundry collapses controls into Format when the editor starts in a hidden tab.
+    // Restore only top-level toolbar controls; nested dropdown visibility stays native.
+    .tab[data-tab='background'] .editor.prosemirror .editor-menu > li[hidden],
+    .tab[data-tab='background'] .editor.prosemirror .editor-menu > li > button[hidden] {
+      display: flex !important;
+    }
+
+    .tab[data-tab='background'] .editor-menu > li > button {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.8cqw !important;
+      width: 2.8cqw !important;
+      height: 2.6cqw !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: .25cqw !important;
+      background: transparent !important;
+      color: #2b1d13 !important;
+      box-shadow: none !important;
+      font-size: 1.55cqw !important;
+      line-height: 1 !important;
+    }
+
+    .tab[data-tab='background'] .editor-menu > li > button.format {
+      min-width: 0 !important;
+      width: 100% !important;
+      padding: 0 .25cqw !important;
+      font-size: 1.1cqw !important;
+    }
+
+    .tab[data-tab='background'] .editor-menu > li.concurrent-users { display: none !important; }
+
+    .tab[data-tab='background'] .editor-container,
+    .tab[data-tab='background'] .editor-content {
+      position: relative !important;
+      inset: auto !important;
+      flex: 1 1 auto;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: #30291f !important;
+      font-family: handwritten, 'Comic Sans MS', cursive !important;
+      font-size: 2.75cqw !important;
+      line-height: 1.35 !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      scrollbar-width: thin;
+      scrollbar-color: #294c39 transparent;
+    }
+
+    .tab[data-tab='background'] .editor-content {
+      padding: .8cqw 1cqw !important;
+    }
+
+    .tab[data-tab='background'] .editor-container::-webkit-scrollbar,
+    .tab[data-tab='background'] .editor-content::-webkit-scrollbar { width: 6px; }
+    .tab[data-tab='background'] .editor-container::-webkit-scrollbar-thumb,
+    .tab[data-tab='background'] .editor-content::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background: #294c39;
+    }
+  }
+}

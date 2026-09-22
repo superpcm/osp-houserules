@@ -525,7 +525,7 @@ $cs-ability-height: 79px !default;
   pointer-events: none;
   z-index: 0;
 
-  svg {
+  > svg {
     display: block;
     width: 100%;
     height: auto;
@@ -2494,7 +2494,7 @@ $racial-skill-top: 65px !default;  /* Master Y position for all racial skills */
   height: auto;
   display: block; 
   /* Player can resize and reposition from this starting size */
-  transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px));
+  transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px)) rotate(var(--user-portrait-rotation, 0deg));
   transform-origin: center center;
   transition: transform 0.2s ease;
 }

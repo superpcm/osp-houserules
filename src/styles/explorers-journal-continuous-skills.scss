@@ -1,0 +1,321 @@
+@use 'sass:math';
+
+// Continuous Skills page. Removing ej-sheet--continuous-skills from the form
+// restores the earlier component-based Skills treatment.
+@mixin ej-skills-box($x, $y, $width, $height) {
+  position: absolute !important;
+  inset: auto !important;
+  left: math.div($x, 1185) * 100% !important;
+  top: math.div($y, 1327) * 100% !important;
+  width: math.div($width, 1185) * 100% !important;
+  height: math.div($height, 1327) * 100% !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal {
+  form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-skills:has(.tab[data-tab='skills'].active) {
+    --ej-skills-page-width: min(100cqw, calc(100cqh * 1185 / 1327));
+    --ej-skills-page-height: calc(var(--ej-skills-page-width) * 1327 / 1185);
+    background: #1d281f url('#{$ej-root}/skills-crisp-v1.png') top center / contain no-repeat !important;
+
+    .cs-sheet-body {
+      inset: auto !important;
+      left: calc((100% - var(--ej-skills-page-width)) / 2) !important;
+      top: 0 !important;
+      width: var(--ej-skills-page-width) !important;
+      height: var(--ej-skills-page-height) !important;
+      overflow: visible;
+    }
+
+    .sheet-body > .tab[data-tab='skills'] {
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: none !important;
+      padding: 0;
+      margin: 0;
+      overflow: visible;
+      container-type: inline-size;
+      background: none !important;
+    }
+
+    .sheet-tabs.cs-tabs {
+      left: calc((100% - var(--ej-skills-page-width)) / 2 + var(--ej-skills-page-width) * .942) !important;
+      top: calc(var(--ej-skills-page-height) * .068) !important;
+      width: calc(var(--ej-skills-page-width) * .049);
+      height: calc(var(--ej-skills-page-height) * .849);
+      gap: calc(var(--ej-skills-page-width) * .006) !important;
+      a.item {
+        min-height: 0;
+        max-height: none;
+        font-size: clamp(9px, calc(var(--ej-skills-page-width) * .018), 19px);
+      }
+    }
+
+    .tab[data-tab='skills'] > .ej-running-head {
+      @include ej-skills-box(245, 72, 270, 92);
+      display: none;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: #30291f;
+      font-family: handwritten, 'Comic Sans MS', cursive !important;
+      font-size: 5.4cqw;
+      font-weight: normal;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      z-index: 3;
+    }
+
+    .skill-tab-header {
+      display: contents !important;
+    }
+    .skill-tab-title {
+      @include ej-skills-box(95, 74, 990, 82);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      z-index: 3;
+    }
+    .skill-tab-title {
+      color: #21140e;
+      font-family: $font-cooper !important;
+      font-size: 30px !important;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .skill-tab-subtitle {
+      transform: translateY(-1px);
+        @include ej-skills-box(230, 137.66, 725, 48);
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .cs-skill-svg-container {
+      @include ej-skills-box(95, 210, 990, 270);
+      margin: 0;
+      padding: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      z-index: 2;
+
+      > svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+    }
+
+    .cs-generated-skill-label {
+      fill: #21180f;
+      font-family: $font-cooper !important;
+      font-size: 14px !important;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .tab[data-tab='skills'] .listening-group {
+      z-index: 4;
+      border: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+    }
+
+    .tab[data-tab='skills'] .listening-group .cs-char-field-group {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tab[data-tab='skills'] .cs-listening-select {
+      width: 100% !important;
+      height: 100% !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      color: #30291f !important;
+      font-family: handwritten, 'Comic Sans MS', cursive !important;
+      font-size: var(--ej-skill-value-size, 72px) !important;
+      line-height: 1 !important;
+      text-align: center;
+      text-align-last: center;
+    }
+
+    .tab[data-tab='skills'] .cs-skill-value-display {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      text {
+        fill: #30291f;
+        stroke: none;
+        transform: translateY(3px);
+      }
+    }
+    .tab[data-tab='skills'] .cs-listening-select.cs-skill-value-enhanced {
+      color: transparent !important;
+      -webkit-text-fill-color: transparent;
+      border-radius: 50%;
+      option {
+        color: #30291f !important;
+        -webkit-text-fill-color: #30291f;
+      }
+    }
+
+    .skill-abilities-section {
+      @include ej-skills-box(104, 605, 970, 605);
+      display: block;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      overflow: visible;
+      z-index: 2;
+    }
+
+    .skill-abilities-header {
+      font-size: 30px !important;
+      position: absolute;
+      left: 0;
+      top: -10cqw;
+      width: 100%;
+      margin: 0;
+      color: #21140e;
+      font-family: $font-cooper !important;
+      font-size: 4.15cqw;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .skill-abilities-subtitle {
+      transform: translateY(-1px);
+      position: absolute !important;
+      left: 0 !important;
+        top: -5.76cqw !important;
+      width: 100% !important;
+      height: 3.2cqw !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .skill-abilities-content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start;
+      gap: 0;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(71, 58, 39, .62) transparent;
+    }
+    .skill-abilities-content::-webkit-scrollbar { width: 6px; }
+    .skill-abilities-content::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background: rgba(71, 58, 39, .62);
+    }
+
+    .skill-ability-entry {
+      position: relative;
+      min-width: 0;
+      min-height: 7.7cqw;
+      padding: .8cqw 1.4cqw .7cqw 1.8cqw;
+      border: 0;
+      border-bottom: 1px solid rgba(86, 68, 42, .48);
+      border-radius: 0;
+      background: linear-gradient(90deg, rgba(255, 250, 226, .18), rgba(255, 250, 226, .03) 74%, transparent);
+      box-shadow: none;
+    }
+    .skill-ability-entry::before {
+      content: '';
+      position: absolute;
+      left: .45cqw;
+      top: 1.45cqw;
+      bottom: 1.45cqw;
+      width: .22cqw;
+      border-radius: 1px;
+      background: rgba(74, 94, 62, .72);
+    }
+    .skill-ability-entry:first-child {
+      border-top: 1px solid rgba(86, 68, 42, .34);
+    }
+    .skill-ability-entry:not(.skill-ability-collapsed) {
+      min-height: 13cqw;
+      background: linear-gradient(90deg, rgba(255, 250, 226, .3), rgba(255, 250, 226, .08) 74%, transparent);
+    }
+    .skill-ability-name {
+      min-height: 6.1cqw;
+      display: flex;
+      align-items: center;
+      gap: 1cqw;
+      color: #271a10;
+      font-family: $font-cooper !important;
+      font-size: 2.45cqw;
+      line-height: 1.05;
+    }
+    .skill-ability-caret {
+      flex: 0 0 auto;
+      color: #566447;
+      font-size: 2.35cqw;
+      line-height: 1;
+    }
+    .skill-ability-tag {
+      flex: 0 0 auto;
+      margin-left: auto;
+      width: auto;
+      min-width: 8.8cqw;
+      height: 3.25cqw;
+      // Optically center Cooper capitals and compensate for trailing tracking.
+      box-sizing: border-box;
+      padding: .28em 1.15cqw 0 calc(1.15cqw + .08em);
+      border: 1px solid rgba(69, 82, 56, .72);
+      border-radius: .35cqw;
+      background: rgba(110, 123, 88, .1);
+      box-shadow: none;
+      color: #3d4934;
+      font-family: $font-cooper !important;
+      font-size: 1.35cqw;
+      letter-spacing: .08em;
+      line-height: 1;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .skill-ability-effect {
+      padding: .45cqw 1cqw .7cqw 3.35cqw;
+      color: #30291f;
+      font-family: handwritten, 'Comic Sans MS', cursive !important;
+      font-size: 2.35cqw;
+      line-height: 1.3;
+    }
+  }
+}

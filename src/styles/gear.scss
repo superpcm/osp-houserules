@@ -1523,7 +1523,7 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 
 /* Portrait transform: read user variables set by the portrait adjustment script */
 .portrait-img {
-  transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px));
+  transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px)) rotate(var(--user-portrait-rotation, 0deg));
   transform-origin: center center;
   /* Make updates immediate to match user adjustments */
   transition: transform 0s ease;
@@ -2509,7 +2509,9 @@ li.livestock-entry .lashed-stored-item {
 // Section header — same grid as top-level container rows
 .slung-section-header {
   grid-template-columns: $col-caret $gear-containers-col-image $gear-containers-col-name $gear-containers-col-capacity $gear-containers-col-storedsize $gear-containers-col-twt $gear-containers-col-weight $gear-containers-col-controls !important;
-  max-width: 638px;
+  // This is a top-level Gear row, so its shading and right edge must align with
+  // the full-width category header. The 638px cap belongs only to nested rows.
+  max-width: none;
 }
 
 // Placeholder image slot in section header (no actual image)

@@ -15,6 +15,7 @@ export class PortraitTool {
     this.scale = 1;
     this.x = 0;
     this.y = 0;
+    this.rotation = 0;
   }
 
   /**
@@ -65,7 +66,7 @@ export class PortraitTool {
     portraitDisplay.addEventListener('mouseenter', () => {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
-        tooltip.textContent = 'Double-click to select portrait • Ctrl+Right-click to adjust position';
+        tooltip.textContent = 'Double-click to select portrait • Ctrl+Right-click to zoom, move, or rotate';
         tooltip.style.opacity = '1';
         const rect = portraitDisplay.getBoundingClientRect();
         const tipRect = tooltip.getBoundingClientRect();
@@ -147,8 +148,9 @@ export class PortraitTool {
       event.preventDefault();
       event.stopPropagation();
 
-      const controls = document.getElementById('portrait-controls');
-      const container = document.getElementById('portrait-container');
+      const sheet = this._sheetElement();
+      const controls = sheet.querySelector('#portrait-controls');
+      const container = sheet.querySelector('#portrait-container');
 
       if (controls) {
         controls.style.display = 'block';
@@ -166,8 +168,9 @@ export class PortraitTool {
    * Setup portrait adjustment functionality (zoom/move/reset button panel)
    */
   setupPortraitAdjustment() {
-    const controls = document.getElementById('portrait-controls');
-    const container = document.getElementById('portrait-container');
+    const sheet = this._sheetElement();
+    const controls = sheet.querySelector('#portrait-controls');
+    const container = sheet.querySelector('#portrait-container');
 
     if (!controls || !container) return;
 
@@ -175,6 +178,7 @@ export class PortraitTool {
     this.scale = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-scale')) || 1;
     this.x = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-x')) || 0;
     this.y = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-y')) || 0;
+    this.rotation = parseFloat(getComputedStyle(container).getPropertyValue('--user-portrait-rotation')) || 0;
 
     const buttons = controls.querySelectorAll('button');
     buttons.forEach((button) => {
@@ -233,10 +237,19 @@ export class PortraitTool {
         this.x += moveStep;
         this.updatePortrait(container);
         break;
+      case 'rotate-left':
+        this.rotation -= 1;
+        this.updatePortrait(container);
+        break;
+      case 'rotate-right':
+        this.rotation += 1;
+        this.updatePortrait(container);
+        break;
       case 'reset':
         this.scale = 1;
         this.x = 0;
         this.y = 0;
+        this.rotation = 0;
         this.updatePortrait(container);
         break;
       case 'done':
@@ -252,13 +265,16 @@ export class PortraitTool {
     container.style.setProperty('--user-portrait-scale', this.scale);
     container.style.setProperty('--user-portrait-x', this.x + 'px');
     container.style.setProperty('--user-portrait-y', this.y + 'px');
+    container.style.setProperty('--user-portrait-rotation', this.rotation + 'deg');
 
-    const scaleInput = document.querySelector('input[name="system.userPortrait.scale"]');
-    const xInput = document.querySelector('input[name="system.userPortrait.x"]');
-    const yInput = document.querySelector('input[name="system.userPortrait.y"]');
+    const scaleInput = container.querySelector('input[name="system.userPortrait.scale"]');
+    const xInput = container.querySelector('input[name="system.userPortrait.x"]');
+    const yInput = container.querySelector('input[name="system.userPortrait.y"]');
+    const rotationInput = container.querySelector('input[name="system.userPortrait.rotation"]');
     if (scaleInput) scaleInput.value = this.scale;
     if (xInput) xInput.value = this.x;
     if (yInput) yInput.value = this.y;
+    if (rotationInput) rotationInput.value = this.rotation;
   }
 
   /**
@@ -268,7 +284,7 @@ export class PortraitTool {
     if (window.pauseXPMonitoring) window.pauseXPMonitoring();
     window.isFormSubmitting = true;
 
-    this.savePortraitData();
+    this.savePortraitData(container);
 
     setTimeout(() => {
       window.isFormSubmitting = false;
@@ -288,7 +304,7 @@ export class PortraitTool {
   /**
    * Save portrait position data to the actor
    */
-  savePortraitData() {
+  savePortraitData(container) {
     // Clean XP field before save
     const xpField = document.getElementById('xp-display');
     if (xpField?.value) xpField.value = xpField.value.replace(/,/g, '');
@@ -296,16 +312,19 @@ export class PortraitTool {
     const updateData = {
       'system.userPortrait.scale': this.scale,
       'system.userPortrait.x': this.x,
-      'system.userPortrait.y': this.y
+      'system.userPortrait.y': this.y,
+      'system.userPortrait.rotation': this.rotation
     };
 
     const syncHiddenInputs = () => {
-      const s = document.querySelector('input[name="system.userPortrait.scale"]');
-      const x = document.querySelector('input[name="system.userPortrait.x"]');
-      const y = document.querySelector('input[name="system.userPortrait.y"]');
+      const s = container.querySelector('input[name="system.userPortrait.scale"]');
+      const x = container.querySelector('input[name="system.userPortrait.x"]');
+      const y = container.querySelector('input[name="system.userPortrait.y"]');
+      const rotation = container.querySelector('input[name="system.userPortrait.rotation"]');
       if (s) { s.value = this.scale; s.setAttribute('value', this.scale); }
       if (x) { x.value = this.x; x.setAttribute('value', this.x); }
       if (y) { y.value = this.y; y.setAttribute('value', this.y); }
+      if (rotation) { rotation.value = this.rotation; rotation.setAttribute('value', this.rotation); }
     };
 
     const actor = this.actorSheet?.actor;

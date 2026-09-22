@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill target sizing checks</title>
+<style>
+  @font-face { font-family: handwritten; src: url('/assets/additional-assets/fonts/Handwritten.ttf'); }
+  @font-face { font-family: Cooper; src: url('/assets/additional-assets/fonts/Cooper_Std_Black.ttf'); }
+  * { box-sizing: border-box; }
+  body { margin: 24px; background: #e9ddc5; color: #30291f; font: 16px system-ui; }
+  main { max-width: 720px; margin: auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p { margin: 0 0 16px; font-size: 13px; }
+  h2 { font-size: 15px; margin: 10px 0 0; }
+  .diagram { position: relative; width: 100%; height: 210px; }
+  .art { position: absolute; inset: 0; pointer-events: none; }
+  .art > svg { width: 100%; height: 100%; overflow: visible; }
+  .cs-generated-skill-label { font: 14px Cooper; fill: #21180f; }
+  .field { position: absolute; }
+  .cs-char-field-group { position: relative; width: 100%; height: 100%; }
+  select { width: 100%; height: 100%; border: 0; padding: 0; appearance: none; background: transparent; font: 90px/1 handwritten; text-align: center; }
+  .cs-skill-value-display { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .cs-skill-value-display text { fill: #30291f; stroke: none; }
+  .cs-skill-value-enhanced { color: transparent; -webkit-text-fill-color: transparent; }
+  option { color: #30291f; -webkit-text-fill-color: #30291f; font: 20px system-ui; }
+  output { display: block; font-size: 12px; }
+</style>
+<main>
+  <h1>Skill target sizing checks</h1>
+  <p>Isolated examples using the production artwork and number renderer. No actor data is read or saved. Values can be changed to test the controls.</p>
+  <div id="examples"></div>
+</main>
+<script type="module">
+  import { JOURNAL_SKILL_LABELS, journalSkillSvg } from '../../src/module/actor/journal-skill-diagram.js';
+  import { renderSkillNumeral } from '../../src/module/actor/sheets/skill-target-values.js';
+  const examples = document.querySelector('#examples');
+  const all = Object.keys(JOURNAL_SKILL_LABELS);
+  const thief = ['listening', 'find-secret-door', 'open-stuck-doors', 'climb-sheer', 'hide-shadows', 'move-silently', 'find-traps', 'open-locks', 'pick-pockets', 'detect-construction'];
+  for (const [title, skills] of [['4 targets', all.slice(0, 4)], ['10 targets · gnome thief', thief], ['18 targets · maximum density', all]]) {
+    const section = document.createElement('section');
+    const heading = document.createElement('h2');
+    heading.textContent = title;
+    const diagram = document.createElement('div');
+    diagram.className = 'diagram';
+    const art = document.createElement('div');
+    art.className = 'art';
+    art.innerHTML = journalSkillSvg(skills, title).markup;
+    diagram.append(art);
+    const fields = skills.map((skill, index) => {
+      const field = document.createElement('div');
+      field.className = 'field';
+      const group = document.createElement('div');
+      group.className = 'cs-char-field-group';
+      const select = document.createElement('select');
+      select.setAttribute('aria-label', title + ': ' + JOURNAL_SKILL_LABELS[skill]);
+      for (const value of ['', '1', '2', '3', '4', '5', '6', '12']) select.add(new Option(value, value));
+      select.value = String(index % 6 + 1);
+      group.append(select);
+      field.append(group);
+      diagram.append(field);
+      return { field, select, circle: art.querySelector('circle[id="' + skill + '"]') };
+    });
+    const output = document.createElement('output');
+    section.append(heading, diagram, output);
+    examples.append(section);
+    const position = () => {
+      const parent = diagram.getBoundingClientRect();
+      fields.forEach(({ field, select, circle }) => {
+        const box = circle.getBoundingClientRect();
+        const diameter = Math.min(box.width, box.height);
+        field.style.width = diameter + 'px';
+        field.style.height = diameter + 'px';
+        field.style.left = box.x - parent.x + (box.width - diameter) / 2 + 'px';
+        field.style.top = box.y - parent.y + (box.height - diameter) / 2 + 'px';
+        renderSkillNumeral(select);
+      });
+      output.textContent = fields.length + ' targets · ' + fields[0].circle.getBoundingClientRect().width.toFixed(1) + 'px diameter';
+    };
+    new ResizeObserver(position).observe(diagram);
+    document.fonts.ready.then(position);
+  }
+</script>
+</html>

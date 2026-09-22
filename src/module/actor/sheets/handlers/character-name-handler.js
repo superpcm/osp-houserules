@@ -6,9 +6,7 @@ export class CharacterNameHandler {
     this.html = html;
     this.actor = actor;
     this.nameInput = null;
-    this.minWidth = 150; // minimum width in pixels
-    this.maxWidth = 400; // maximum width in pixels
-    this.padding = 20; // extra padding for comfortable typing
+    this.minimumScale = 0.55;
   }
 
   /**
@@ -17,9 +15,9 @@ export class CharacterNameHandler {
   initialize() {
     this.nameInput = this.html.find('#char-name');
     if (this.nameInput.length) {
-      this.setupDynamicWidth();
+      this.setupDynamicFontSize();
       this.bindEvents();
-      this.adjustWidth(); // Initial adjustment
+      this.adjustFontSize();
 
       // Remove any drag handle from character name container
       this.ensureDragHandle();
@@ -50,7 +48,7 @@ export class CharacterNameHandler {
   /**
    * Setup dynamic width functionality
    */
-  setupDynamicWidth() {
+  setupDynamicFontSize() {
     // Create a hidden span to measure text width (native DOM)
   this.measureSpan = document.createElement('span');
   // Use direct DOM style assignment for measurement span
@@ -72,14 +70,14 @@ export class CharacterNameHandler {
     ms.style.letterSpacing = '';
   }
 
-  // Add to DOM for measurement
-  document.body.appendChild(this.measureSpan);
-
-    // Set initial CSS properties for the input via DOM styles
-    const ni = this.nameInput[0];
-    if (ni) {
-      ni.style.width = 'auto';
-      ni.style.boxSizing = 'border-box';
+    document.body.appendChild(this.measureSpan);
+    const input = this.nameInput[0];
+    const computed = window.getComputedStyle(input);
+    this.defaultFontSize = parseFloat(computed.fontSize) || 48;
+    this.horizontalInset = (parseFloat(computed.paddingLeft) || 0) + (parseFloat(computed.paddingRight) || 0);
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => this.adjustFontSize());
+      this.resizeObserver.observe(input);
     }
   }
 
@@ -89,22 +87,9 @@ export class CharacterNameHandler {
   bindEvents() {
     // Adjust width on input, keyup, paste, and focus
     this.nameInput.on('input keyup paste focus blur', () => {
-      setTimeout(() => this.adjustWidth(), 0);
+      setTimeout(() => this.adjustFontSize(), 0);
     });
 
-    // Also adjust when font properties change (from Council font handler)
-    const observer = new MutationObserver(() => {
-      this.updateMeasureSpanFont();
-      this.adjustWidth();
-    });
-
-    observer.observe(this.nameInput[0], {
-      attributes: true,
-      attributeFilter: ['style']
-    });
-
-    // Store observer for cleanup
-    this.fontObserver = observer;
   }
 
   /**
@@ -133,7 +118,7 @@ export class CharacterNameHandler {
   /**
    * Adjust the width of the input based on content
    */
-  adjustWidth() {
+  adjustFontSize() {
     if (!this.nameInput || !this.measureSpan) return;
 
     const text = this.nameInput.val() || this.nameInput.attr('placeholder') || '';
@@ -146,45 +131,14 @@ export class CharacterNameHandler {
   let textWidth = 0;
   if (this.measureSpan) textWidth = this.measureSpan.offsetWidth || this.measureSpan.getBoundingClientRect().width || 0;
 
-    // Add padding and constrain to min/max
-    let newWidth = Math.max(textWidth + this.padding, this.minWidth);
-    newWidth = Math.min(newWidth, this.maxWidth);
-
-  // Apply the new width via DOM style
-  const ni2 = this.nameInput[0];
-  if (ni2) ni2.style.width = `${newWidth}px`;
+    const input = this.nameInput[0];
+    const availableWidth = Math.max(1, input.clientWidth - this.horizontalInset);
+    const scale = textWidth > 0 ? Math.min(1, availableWidth / textWidth) : 1;
+    const fontSize = Math.max(this.defaultFontSize * this.minimumScale, this.defaultFontSize * scale);
+    input.style.setProperty('--ej-character-name-font-size', `${fontSize}px`);
 
     // Trigger a custom event for other handlers that might need to know about size changes
-    this.nameInput.trigger('characterNameResize', { width: newWidth, textWidth: textWidth });
-  }
-
-  /**
-   * Set minimum and maximum width constraints
-   */
-  setWidthConstraints(minWidth, maxWidth) {
-    this.minWidth = minWidth;
-    this.maxWidth = maxWidth;
-
-  // No inline styles to update here; width constraints applied via DOM in adjustWidth
-
-    this.adjustWidth();
-  }
-
-  /**
-   * Get current width information
-   */
-  getWidthInfo() {
-    const currentWidth = (this.nameInput && this.nameInput[0]) ? (this.nameInput[0].getBoundingClientRect().width || this.nameInput[0].offsetWidth || 0) : 0;
-    const text = this.nameInput.val() || '';
-
-    return {
-      currentWidth: currentWidth,
-      textLength: text.length,
-      minWidth: this.minWidth,
-      maxWidth: this.maxWidth,
-      isAtMin: currentWidth <= this.minWidth,
-      isAtMax: currentWidth >= this.maxWidth
-    };
+    this.nameInput.trigger('characterNameResize', { fontSize, textWidth, availableWidth });
   }
 
   /**
@@ -192,7 +146,8 @@ export class CharacterNameHandler {
    */
   refresh() {
     this.updateMeasureSpanFont();
-    this.adjustWidth();
+    this.defaultFontSize = parseFloat(window.getComputedStyle(this.nameInput[0]).fontSize) || this.defaultFontSize;
+    this.adjustFontSize();
   }
 
   /**
@@ -209,6 +164,9 @@ export class CharacterNameHandler {
 
     if (this.fontObserver) {
       this.fontObserver.disconnect();
+    }
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
     }
   }
 }

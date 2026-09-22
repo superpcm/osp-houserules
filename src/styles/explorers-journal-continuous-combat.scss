@@ -1,0 +1,262 @@
+@use 'sass:math';
+
+// Keep the existing fields and item actions, registered to the full-page artwork.
+@mixin ej-combat-box($x, $y, $width, $height) {
+  position: absolute !important;
+  inset: auto !important;
+  left: math.div($x, 1185) * 100% !important;
+  top: math.div($y, 1327) * 100% !important;
+  width: math.div($width, 1185) * 100% !important;
+  height: math.div($height, 1327) * 100% !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal {
+  form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab='combat'].active) {
+    --ej-combat-page-width: min(100cqw, calc(100cqh * 1185 / 1327));
+    --ej-combat-page-height: calc(var(--ej-combat-page-width) * 1327 / 1185);
+    background: #1d281f url('#{$ej-root}/combat-crisp-v1.png') top center / contain no-repeat !important;
+
+    .cs-sheet-body {
+      inset: auto !important;
+      left: calc((100% - var(--ej-combat-page-width)) / 2) !important;
+      top: 0 !important;
+      width: var(--ej-combat-page-width) !important;
+      height: var(--ej-combat-page-height) !important;
+      overflow: visible;
+    }
+    .sheet-tabs.cs-tabs {
+      left: calc((100% - var(--ej-combat-page-width)) / 2 + var(--ej-combat-page-width) * .942) !important;
+      top: calc(var(--ej-combat-page-height) * .068) !important;
+      width: calc(var(--ej-combat-page-width) * .049);
+      height: calc(var(--ej-combat-page-height) * .849);
+      gap: calc(var(--ej-combat-page-width) * .006) !important;
+      a.item { min-height: 0; max-height: none; font-size: clamp(9px, calc(var(--ej-combat-page-width) * .018), 19px); }
+    }
+    .sheet-body > .tab[data-tab='combat'] {
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: none !important;
+      margin: 0; padding: 0; overflow: visible;
+      background: none !important;
+      container-type: inline-size;
+
+      > .ej-running-head {
+        display: none !important;
+      }
+      :is(.combat-generated-panel, .combat-saving-throws-image, .combat-save-grid, .cs-save-group, .combat-hpac-image, .combat-stats) {
+        display: contents !important;
+      }
+      :is(.combat-save-label-arc, .cs-field-label) { display: none !important; }
+      .combat-saving-throws-title {
+        @include ej-combat-box(95, 74, 990, 82);
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        font-size: 30px !important;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      .combat-saving-throws-subtitle {
+        @include ej-combat-box(245, 137, 695, 48);
+        transform: translateY(-0.56px);
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .combat-hpac-title {
+        @include ej-combat-box(95, 466, 990, 70);
+        transform: translateY(-3px);
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        font-size: 30px !important;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      .cs-save {
+        margin: 0 !important; padding: 0 !important; border: 0 !important;
+        background: none !important; box-shadow: none !important;
+        &::before, &::after { display: none !important; }
+      }
+      .death-save { @include ej-combat-box(130, 215, 176, 176); }
+      .wands-save { @include ej-combat-box(320, 215, 176, 176); }
+      .paralysis-save { @include ej-combat-box(505, 215, 176, 176); }
+      .breath-save { @include ej-combat-box(695, 215, 176, 176); }
+      .spells-save { @include ej-combat-box(883, 215, 176, 176); }
+      .cs-save-badge {
+        position: static !important; width: 100% !important; height: 100% !important;
+        display: flex !important; align-items: center; justify-content: center;
+        background: none !important; border: 0 !important; box-shadow: none !important;
+      }
+      .cs-save-value {
+        position: static !important; transform: translateY(calc(-.35cqw + 8px)) !important;
+        padding: 0 !important; margin: 0 !important;
+        font: 100px/1 handwritten, cursive !important;
+      }
+      // Concentric with the brass medallion, including the ends of the label.
+      .save-group-spells .combat-save-label-arc {
+        @include ej-combat-box(873, 210, 196, 111.57);
+        display: block !important;
+        margin: 0 !important;
+        transform: none !important;
+        overflow: visible;
+        pointer-events: none;
+        path { fill: none; stroke: none; }
+        text { font-family: $font-cooper; font-size: 11.5px; letter-spacing: 0; fill: #21180e; }
+      }
+      .combat-hpac-image .combat-stat {
+        margin: 0 !important; padding: 0 !important; border: 0 !important;
+        background: none !important; box-shadow: none !important;
+        clip-path: none !important; aspect-ratio: auto !important;
+        &::before, &::after { display: none !important; }
+        &:nth-child(1) { @include ej-combat-box(105, 570, 124, 88); }
+        &:nth-child(2) { @include ej-combat-box(246, 570, 125, 88); }
+        &:nth-child(3) { @include ej-combat-box(401, 569, 112, 61); }
+        &:nth-child(4) { @include ej-combat-box(543, 569, 113, 61); }
+        &:nth-child(5) { @include ej-combat-box(688, 569, 112, 61); }
+        &:nth-child(6) { @include ej-combat-box(831, 560, 112, 66); }
+        &:nth-child(7) { @include ej-combat-box(967, 560, 112, 66); }
+        :is(.cs-unarmored-box, .cs-combat-input) {
+          position: static !important; width: 100% !important; height: 100% !important;
+          margin: 0 !important; padding: 0 !important; border: 0 !important;
+          background: none !important; box-shadow: none !important;
+          display: flex; align-items: center; justify-content: center;
+          font: 60px/1 handwritten, cursive !important; text-align: center;
+        }
+        &:nth-child(-n + 2) {
+          transform: translateY(1px);
+          :is(.cs-unarmored-box, .cs-combat-input) { font-size: 86px !important; }
+        }
+        &:nth-child(n + 6) {
+          transform: translateY(2px);
+          :is(.cs-unarmored-box, .cs-combat-input) {
+            font-size: 80px !important;
+            transform: translateY(2px) !important;
+          }
+        }
+      }
+      .combat-tab {
+        transform: translateY(10px);
+        @include ej-combat-box(89, 680, 998, 478);
+        margin: 0; padding: 0 .4cqw 1cqw 0;
+        overflow-x: hidden !important; overflow-y: auto !important;
+        scrollbar-width: thin; scrollbar-color: #40523a transparent;
+      }
+      .combat-equipped-section {
+        &:first-child { margin-top: 10px; }
+        width: 100%; min-width: 0; margin: 0 0 1.4cqw;
+        border: .25cqw solid #8e7946; border-radius: .5cqw;
+        background: #f1e7cd47;
+        &::before {
+          content: ''; display: block; height: 28px; padding: 0;
+          background: #2c3a27; color: #f4e6bd;
+          font: 14px/1.2 $font-cooper;
+        }
+        &:nth-child(2)::before { content: ''; }
+      }
+      .item-list { margin: 0; padding: 0; }
+      :is(.item-header, .item-category-title) {
+        display: grid !important; width: 100% !important; gap: .25cqw !important;
+        height: auto !important; min-height: 3.6cqw;
+        padding: .35cqw !important; align-items: center;
+      }
+      .weapon-header { grid-template-columns: 2.5cqw 3cqw minmax(0, 1fr) 6cqw repeat(4, 4cqw) 10cqw 3cqw 8cqw !important; }
+      .weapons-title {
+        grid-template-columns: 2.5cqw 3cqw minmax(0, 1fr) 6cqw repeat(4, 4cqw) 10cqw 3cqw 8cqw !important;
+        > :nth-child(1) { grid-column: 1 / 4; }
+        > :nth-child(2) { grid-column: 4; }
+        > :nth-child(3) { grid-column: 5; }
+        > :nth-child(4) { grid-column: 6; }
+        > :nth-child(5) { grid-column: 7; }
+        > :nth-child(6) { grid-column: 8; }
+        > :nth-child(7) { grid-column: 9; }
+        > :nth-child(8) { grid-column: 10; }
+        > :nth-child(9) { grid-column: 11; }
+      }
+      :is(.armor-header, .armor-title) {
+        grid-template-columns: 3cqw minmax(0, 1fr) 7cqw 4.5cqw repeat(2, 7cqw) repeat(2, 8.5cqw) 4.5cqw 8cqw !important;
+        column-gap: .5cqw !important;
+      }
+      .armor-title {
+        > :nth-child(1) { grid-column: 1; }
+        > :nth-child(2) { grid-column: 2; }
+        > :nth-child(3) { grid-column: 3; }
+        > :nth-child(4) { grid-column: 4; }
+        > :nth-child(5) { grid-column: 5; }
+        > :nth-child(6) { grid-column: 6; }
+        > :nth-child(7) { grid-column: 7; }
+        > :nth-child(8) { grid-column: 8; }
+        > :nth-child(9) { grid-column: 9; }
+      }
+      .item-category-title {
+        height: 28px !important;
+        min-height: 28px;
+        margin-top: -28px;
+        padding: 0 !important;
+        align-items: center;
+        background: transparent !important;
+        color: #f4e6bd !important;
+        border: 0;
+        font-size: 14px;
+        position: relative;
+        z-index: 1;
+      }
+      .item-category-title > div {
+        position: static !important;
+        inset: auto !important;
+        transform: none !important;
+        width: auto !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+        text-align: center;
+      }
+      .item-entry { width: 100% !important; height: auto !important; min-height: 0; }
+      .item-header :is(.item-name, .field-short) { width: auto !important; min-width: 0; margin: 0; font: 2.7cqw/1.2 handwritten, cursive !important; }
+      .item-name { white-space: normal !important; overflow-wrap: anywhere; }
+      .item-image { width: 3cqw !important; min-width: 0 !important; height: 3cqw !important; min-height: 0 !important; background-size: contain; }
+      .item-roll-icon img { width: 2.4cqw !important; height: 2.4cqw !important; }
+      .item-controls { width: auto !important; display: flex; flex-wrap: wrap; justify-content: center; gap: .5cqw; font-size: 1.4cqw; }
+      .item-controls img { width: 1.6cqw !important; height: 1.6cqw !important; }
+      .item-controls a { width: 1.6cqw !important; height: 1.8cqw !important; font-size: 1.4cqw !important; line-height: 1.8cqw; }
+      .item-roll-icon { width: 2.5cqw !important; height: 3cqw !important; }
+      :is(.armor-header, .armor-title) > * {
+        min-width: 0 !important;
+        justify-self: stretch;
+      }
+      :is(.armor-header, .armor-title) > .field-short {
+        display: flex !important;
+        align-items: center;
+        justify-content: center !important;
+        text-align: center !important;
+        padding: 0 !important;
+        white-space: nowrap;
+      }
+      .item-category-title.armor-title > .category-name {
+        display: flex !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        padding-left: 5px;
+      }
+      .item-category-title.weapons-title > .category-name {
+        display: flex !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        padding-left: calc(3.5cqw + 5px) !important;
+      }
+    }
+  }
+}

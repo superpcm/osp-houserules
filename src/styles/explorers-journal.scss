@@ -1,0 +1,530 @@
+@use 'sass:math';
+
+// A self-contained skin on the experimental character-sheet class. All game
+// controls retain their original selectors and document bindings.
+$ej-root: '/systems/osp-houserules/assets/character-sheet/explorers-journal';
+$ej-ink: #30291f;
+$ej-green: #29392b;
+$ej-paper: #eee3c8;
+$ej-brass: #a88b51;
+
+// Only the continuous Bio skin uses the separate foreground frame image.
+.ej-portrait-frame-overlay { display: none; }
+
+// Crops of the cleaned 1185 × 1327 approved Bio artwork. These contain only
+// decoration: character values, labels and editing controls remain live HTML.
+@mixin ej-bio-art($x, $y, $width, $height) {
+  background-image: url('#{$ej-root}/bio-artwork-atlas.png');
+  background-size: math.div(1185, $width) * 100% math.div(1327, $height) * 100%;
+  background-position: math.div($x, 1185 - $width) * 100% math.div($y, 1327 - $height) * 100%;
+  background-repeat: no-repeat;
+}
+
+@mixin ej-paper-card {
+  border: 1px solid #a79772;
+  border-radius: 3px;
+  background: linear-gradient(115deg, #f8efd98c, #e8dbbc42);
+  box-shadow: inset 0 0 0 3px #f7efd46b, 0 2px 3px #34261730;
+}
+
+@mixin ej-heading {
+  font-family: $font-cooper !important;
+  color: #201b12;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal {
+  min-width: 680px;
+  min-height: 580px;
+  max-height: calc(100vh - 20px);
+  border: 1px solid #665534;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px #0009;
+
+  > .window-header {
+    background: linear-gradient(#26352a, #18251e) !important;
+    border-bottom: 1px solid $ej-brass !important;
+    color: #eee2ba;
+    height: 28px;
+    flex: 0 0 28px;
+  }
+
+  > .window-content { min-height: 0; border-radius: 0 0 8px 8px; }
+
+  form.osp.sheet.actor.character.ej-sheet {
+    --ej-ink: #{$ej-ink};
+    --ej-paper: #{$ej-paper};
+    --ej-green: #{$ej-green};
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    container-type: size;
+    color: $ej-ink !important;
+    background: #223026 url('#{$ej-root}/journal-page.png') center / 100% 100% no-repeat !important;
+    border-radius: 0 0 8px 8px;
+    overflow: visible;
+
+    .cs-sheet-body {
+      position: absolute !important;
+      inset: 4% 6.2% 5.2% 7.5%;
+      width: auto;
+      height: auto;
+      min-height: 0;
+      overflow: visible;
+    }
+
+    .sheet-body > .tab {
+      box-sizing: border-box;
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
+      margin: 0 !important;
+      padding: 8px 9px 24px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #87744999 transparent;
+      background: transparent !important;
+    }
+
+    .sheet-body > .tab.active { display: block !important; }
+
+    .sheet-tabs.cs-tabs {
+      position: absolute !important;
+      left: 94% !important;
+      top: 5% !important;
+      width: 5.3%;
+      height: 90%;
+      gap: 5px !important;
+      align-items: stretch;
+      justify-content: flex-start !important;
+    }
+
+    .sheet-tabs.cs-tabs a.item {
+      @include ej-heading;
+      flex: 1 1 0 !important;
+      min-height: 45px;
+      max-height: 112px;
+      width: 100%;
+      margin: 0 !important;
+      padding: 6px 4px;
+      border: 1px solid #a78d5c !important;
+      border-left: 0 !important;
+      border-radius: 0 9px 0 0;
+      background: linear-gradient(90deg, #b3a07c, #ecdfbc 25%, #dfcca5 85%, #b49a68) !important;
+      color: #302317 !important;
+      font-size: clamp(9px, 1.55cqh, 14px);
+      box-shadow: inset 0 0 0 3px #f5e5bf66, 2px 2px 3px #0007;
+      text-shadow: none !important;
+    }
+
+    .sheet-tabs.cs-tabs a.item.active {
+      background: linear-gradient(90deg, #17281e, #405638 50%, #293c28) !important;
+      color: #f6e9bd !important;
+      border-color: #d0aa58 !important;
+      box-shadow: inset 0 0 0 2px #74623a, inset 0 0 0 3px #d8ba7377, 2px 2px 3px #0007;
+    }
+
+    .sheet-tabs.cs-tabs a.item:hover { filter: brightness(1.1); }
+    .sheet-tabs.cs-tabs a.item:focus-visible { outline: 2px solid #ebca77 !important; outline-offset: 2px; }
+
+    .ej-running-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-height: 55px;
+      padding: 0 8px 6px 58px;
+      margin: 0 0 6px;
+      border-bottom: 1px solid #8e7d53;
+      background: url('#{$ej-root}/compass.svg') left center / 50px 50px no-repeat;
+      font-family: handwritten !important;
+      font-size: 44px;
+      line-height: 1;
+      color: #332d24;
+      > span { @include ej-heading; margin-left: auto; font-size: 34px; }
+    }
+
+    :is(.skill-tab-title, .skill-abilities-header, .combat-saving-throws-title, .combat-hpac-title, .spell-tab-title, .bg-tab-title, .bio-abilities-title, .bio-field-label, .bg-panel-title) {
+      @include ej-heading;
+    }
+
+    :is(.skill-tab-subtitle, .skill-abilities-subtitle, .combat-saving-throws-subtitle, .bio-abilities-subtitle, .spell-tab-subtitle) {
+      @include ej-heading;
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    // BIO: real grid cells replace the old 800px illustration coordinates.
+    .sheet-body > .tab[data-tab='bio'] {
+      container-type: inline-size;
+      padding: 3px 0 8px;
+    }
+    .ej-bio-header {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-rows: 9.15cqw 7.925cqw 7.925cqw 7.925cqw 5.05cqw;
+      padding: 4px 12px 0;
+      border-bottom: 0;
+      margin-bottom: 2px;
+      position: relative;
+    }
+    .ej-bio-header .static-header { display: contents; }
+    .ej-bio-header .static-header::before,
+    .ej-bio-header .character-name-section,
+    .ej-bio-header .cs-pos-sep { display: none; }
+    .ej-bio-header .cs-abs {
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 0;
+      padding: 17px 6px 0;
+      border: 0 !important;
+      border-bottom: 1px solid #8b79558a !important;
+      border-right: 1px solid #8b795566 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      overflow: visible;
+      &::after {
+        @include ej-heading;
+        position: absolute;
+        inset: 5px auto auto 8px;
+        font-size: 13px;
+        line-height: 1;
+        text-align: left;
+        pointer-events: none;
+      }
+    }
+    .ej-bio-header .cs-portrait-container {
+      grid-column: 1 / 5;
+      grid-row: 1 / 6;
+      align-self: start;
+      width: calc(100% - 9px) !important;
+      height: auto !important;
+      aspect-ratio: 360 / 438;
+      padding: 0;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+      &::before {
+        @include ej-bio-art(80, 60, 360, 438);
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        // Leave all four original metal corners visible above the photograph.
+        z-index: 2;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0,
+          9.5% 8%, 9.5% 86.5%, 91.5% 84.3%, 89% 7%, 9.5% 8%);
+      }
+      &::after { display: none; }
+    }
+    .ej-bio-header .cs-portrait-display {
+      position: absolute;
+      inset: 7% 8.5% 13.5% 9.5%;
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      clip-path: polygon(0 1.3%, 97.5% 0, 100% 97.3%, 0 100%);
+      img {
+        width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover;
+        // Keep saved positioning intact, but do not reveal empty frame space
+        // when a zoomed portrait is displayed in a narrower sheet.
+        --ej-portrait-pan-limit: max(0%, calc(50% - 50% / var(--user-portrait-scale, 1)));
+        transform: scale(var(--user-portrait-scale, 1)) translate(
+          clamp(calc(-1 * var(--ej-portrait-pan-limit)), var(--user-portrait-x, 0px), var(--ej-portrait-pan-limit)),
+          clamp(calc(-1 * var(--ej-portrait-pan-limit)), var(--user-portrait-y, 0px), var(--ej-portrait-pan-limit))
+        ) rotate(var(--user-portrait-rotation, 0deg));
+      }
+    }
+    .ej-bio-header .portrait-controls { z-index: 30; }
+    .ej-bio-header .ej-bio-motto {
+      grid-area: 5 / 5 / 6 / 13;
+      align-self: center;
+      position: relative;
+      padding: 5px 23% 0 8px;
+      margin: 0;
+      font-family: handwritten !important;
+      font-size: clamp(16px, 3cqw, 24px);
+      line-height: 1;
+      color: #83785f;
+      text-align: center;
+      &::after {
+        @include ej-bio-art(925, 441, 175, 64);
+        content: '';
+        position: absolute;
+        width: 23%;
+        aspect-ratio: 175 / 64;
+        right: 0;
+        bottom: -5px;
+        mix-blend-mode: multiply;
+      }
+    }
+    .ej-bio-header .character-name-group { grid-area: 1 / 5 / 2 / 10; padding-top: 0; &::after { display: none; } }
+    .ej-bio-header .level-progress-bar-container { grid-area: 1 / 10 / 2 / 11; &::after { content: 'Level'; } }
+    .ej-bio-header .xp-mod-group { grid-area: 1 / 11 / 2 / 13; &::after { content: 'XP Mod'; } }
+    .ej-bio-header .race-group { grid-area: 2 / 5 / 3 / 7; }
+    .ej-bio-header .class-group { grid-area: 2 / 7 / 3 / 10; }
+    .ej-bio-header .xp-group { grid-area: 2 / 10 / 3 / 13; }
+    .ej-bio-header .age-group { grid-area: 3 / 5 / 4 / 6; }
+    .ej-bio-header .sex-group { grid-area: 3 / 6 / 4 / 7; }
+    .ej-bio-header .alignment-group { grid-area: 3 / 7 / 4 / 9; }
+    .ej-bio-header .background-group { grid-area: 3 / 9 / 4 / 13; }
+    .ej-bio-header .background-group .cs-themed-select-trigger { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ej-bio-header .height-group { grid-area: 4 / 5 / 5 / 7; }
+    .ej-bio-header .weight-group { grid-area: 4 / 7 / 5 / 9; }
+    .ej-bio-header .languages-group { grid-area: 4 / 9 / 5 / 13; }
+    .ej-bio-header :is(.cs-char-field-group, .cs-level-container > div, .cs-level-display, .cs-field, .cs-languages-field) {
+      width: 100% !important; height: 100% !important; min-width: 0; min-height: 0; margin: 0; padding: 0; position: relative; inset: auto;
+    }
+    .ej-bio-header :is(input:not([type='hidden']), select, .cs-level-display, .cs-themed-select-trigger, .cs-themed-select-option, .cs-char-class-static, .cs-char-race-static) {
+      width: 100%; height: 100%; padding: 0 4px; font-family: handwritten !important; font-size: clamp(28px, 5.2cqw, 46px) !important; line-height: 1 !important; text-align: left; color: $ej-ink !important;
+    }
+    .ej-bio-header .character-name-group input.cs-char-name { font-size: clamp(42px, 8.2cqw, 72px) !important; }
+    .ej-bio-header .cs-level-container .cs-level-shadow { display: none; }
+    .ej-bio-header .cs-themed-select-option { min-height: 36px; }
+    .ej-bio-header .cs-themed-select-menu { background: #eee3c8 !important; border-color: #89764a; }
+    .ej-bio-header .cs-themed-select-option { background: #eee3c8 !important; }
+    .ej-bio-header .cs-themed-select-option:is(:hover, :focus, .is-selected) { background: $ej-green !important; color: #fff2cc !important; }
+    .ej-bio-header .languages-tags {
+      font-size: 25px !important; line-height: .85; padding: 0; text-align: left; justify-content: flex-start;
+      white-space: normal !important; overflow-wrap: anywhere !important; max-height: 100%; overflow-y: auto;
+    }
+    .ej-bio-header .cs-level-container .cs-level-display { font-size: 42px !important; }
+    .ej-bio-header .level-xp-progress { opacity: .18; }
+
+    .bio-abilities-image {
+      @include ej-bio-art(57, 503, 1060, 316);
+      position: relative;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1060 / 316;
+      margin: 0;
+      padding: 0;
+    }
+    .bio-abilities-header {
+      position: absolute;
+      inset: 6.5% 16% auto;
+      margin: 0;
+      gap: 3px;
+    }
+    .bio-abilities-title {
+      @include ej-bio-art(470, 552, 235, 40);
+      align-self: center;
+      padding: 0 16px;
+      font-size: clamp(24px, 3.8cqw, 36px);
+      line-height: 1.15;
+    }
+    .bio-abilities-subtitle { font-size: clamp(9px, 1.55cqw, 13px); }
+    .bio-abilities-image-wrap {
+      position: absolute;
+      inset: 31.3% 4.7% 21.5% 5.65%;
+      height: auto;
+      padding: 0;
+    }
+    .bio-abilities-image-wrap .ability-scores-section {
+      position: relative; inset: auto; width: 100%; height: 100%;
+      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0;
+      transform: none; margin: 0;
+    }
+    .ability.cs-ability {
+      position: relative !important; inset: auto !important; width: 100% !important; height: 100% !important;
+      min-width: 0;
+      border: 0; border-radius: 0;
+      background: none;
+      box-shadow: none;
+      &::after {
+        @include ej-heading;
+        position: absolute;
+        inset: 100% 0 auto;
+        height: 22%;
+        display: grid;
+        place-items: center;
+        font-size: clamp(14px, 2.5cqw, 23px);
+        line-height: 1;
+        border: 0; border-radius: 0; background: none; box-shadow: none;
+      }
+    }
+    .ability:has(.attr-str) { order: 1; }
+    .ability:has(.attr-int) { order: 2; }
+    .ability:has(.attr-wis) { order: 3; }
+    .ability:has(.attr-dex) { order: 4; }
+    .ability:has(.attr-con) { order: 5; }
+    .ability:has(.attr-cha) { order: 6; }
+    :is(.cs-ability-input, .cs-ability-static) {
+      font-size: clamp(55px, 10.3cqw, 98px) !important;
+      height: 100%; padding: 0 5% 20%; color: $ej-ink !important;
+    }
+    .bio-content-area { display: grid; gap: 1px; margin: 1px 0 0; }
+    .ej-writing-card {
+      @include ej-bio-art(70, 824, 1036, 225);
+      position: relative;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 1.8% 4.1% 2% 10.6%;
+      margin: 0 1.2%;
+      min-height: 0;
+    }
+    .ej-writing-card + .ej-writing-card { @include ej-bio-art(70, 1054, 1036, 221); }
+    .bio-field-label {
+      @include ej-bio-art(450, 839, 300, 18);
+      position: relative;
+      inset: auto;
+      display: table;
+      width: auto;
+      padding: 0 10px 0 0;
+      text-align: left;
+      font-size: clamp(18px, 3cqw, 28px) !important;
+      line-height: 1.15;
+      margin: 0 0 6px;
+    }
+    .bio-text-field {
+      position: static; width: 100%; height: 13.5cqw; min-height: 75px;
+      padding: 7px 8px; border: 0; border-radius: 0;
+      background: transparent !important; font-size: 25px; line-height: 1.1;
+      resize: vertical; box-shadow: none;
+    }
+
+    // SKILLS: generated SVG medallions remain driven by race/class rules.
+    .skill-tab-header { margin: 3px 0 0; }
+    .skill-tab-title { font-size: 36px; }
+    .cs-skill-svg-container { margin-top: 14px; flex: 0 0 auto; }
+    .cs-generated-skill-label { fill: #211b13; font-size: 13px !important; letter-spacing: 0; }
+    .tab[data-tab='skills'] .cs-listening-select {
+      width: 100% !important; height: 100% !important;
+      font-size: var(--ej-skill-value-size, 72px) !important;
+      line-height: 1 !important; padding: 0 0 calc(var(--ej-skill-value-size, 72px) * .26) !important; color: $ej-ink !important;
+    }
+    .skill-abilities-section { background: none; border: 0; border-top: 1px solid #93815b; border-radius: 0; box-shadow: none; padding: 16px 0 8px; margin: 6px 0 0; }
+    .skill-abilities-header { font-size: 31px; }
+    .skill-abilities-content { max-height: none; overflow: visible; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+    .skill-ability-entry { @include ej-paper-card; padding: 5px 9px; margin: 0; }
+    .skill-ability-entry:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .skill-ability-name { @include ej-heading; font-size: 16px; min-height: 40px; display: flex; align-items: center; gap: 6px; }
+    .skill-ability-tag { @include ej-heading; margin-left: auto; padding: 3px 7px; border-radius: 4px; border: 1px solid #826332; background: linear-gradient(#e8d79e, #a5894e); font-size: 10px; flex: 0 0 auto; }
+    .skill-ability-effect { font-size: 20px; line-height: 1.3; padding: 4px; }
+
+    // COMBAT: brass medallions, regular hexagons, and heraldic shields.
+    .tab[data-tab='combat'] .combat-generated-panel { background: none; border: 0; border-radius: 0; box-shadow: none; margin: 0; padding: 0; width: 100%; }
+    .combat-saving-throws-image { width: 100%; padding: 0; margin: 0; background: none; }
+    .combat-saving-throws-title { font-size: 28px; }
+    .combat-save-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding: 0; margin: 35px 0 17px; }
+    .tab[data-tab='combat'] .cs-save { width: 102px !important; height: 102px !important; flex: 0 0 102px; border: 0; background: url('#{$ej-root}/medallion.svg') center / contain no-repeat; box-shadow: none; }
+    .tab[data-tab='combat'] .cs-save-value { font-size: 74px !important; padding: 6px 0 0; color: $ej-ink; }
+    .tab[data-tab='combat'] .combat-save-label-arc { top: -11px; width: 130px; height: 74px; text { font-size: 12px; letter-spacing: 0; } }
+    .tab[data-tab='combat'] .combat-hpac-title { font-size: 27px; margin: 4px 0 12px; }
+    .tab[data-tab='combat'] .combat-hpac-image .combat-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) repeat(3, minmax(0, 1.13fr)) repeat(2, minmax(0, 1fr)); gap: 7px; }
+    .tab[data-tab='combat'] .combat-hpac-image .combat-stat {
+      height: 105px; border: 2px solid #9c7e44; border-radius: 3px;
+      padding: 6px 3px; background: linear-gradient(120deg, #f8edd1b0, #e3d3aa99);
+      box-shadow: inset 0 0 0 2px #f9e8b3, inset 0 0 0 3px #9a814d, 0 2px 3px #4a382b4d;
+      .cs-field-label { order: -1; font-size: 12px; line-height: 1.1; }
+    }
+    .tab[data-tab='combat'] .combat-hpac-image .combat-stat-movement {
+      height: auto; aspect-ratio: 1 / 1.1547;
+      clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+      border: 0; border-radius: 0; background: #977b40; padding: 13px 3px 10px;
+      &::before { inset: 3px; background: linear-gradient(120deg,#f7edd4,#dbc89b); }
+    }
+    .tab[data-tab='combat'] .combat-hpac-image .combat-stat-defense {
+      background: #94743b; border: 0; border-radius: 0; padding: 9px 3px 18px;
+      &::before { inset: 3px; background: linear-gradient(120deg,#f7edd4,#dbc89b); }
+    }
+    .tab[data-tab='combat'] .combat-hpac-image :is(.cs-unarmored-box, .cs-combat-input) { font-size: 57px !important; height: 58px; padding-top: 3px; color: $ej-ink !important; }
+
+    // Existing inventory rows/actions stay intact; only their finish changes.
+    .combat-tab, .gear-tab { width: 100%; margin: 14px 0 0; }
+    .combat-tab { overflow-x: auto !important; overflow-y: hidden !important; }
+    .combat-equipped-section { min-width: 690px; }
+    .combat-equipped-section { border: 1px solid #8d7b51; border-radius: 3px; margin-bottom: 15px; background: #f1e7cdbd; box-shadow: 0 2px 4px #57432340; }
+    .item-category { background: transparent; }
+    .item-category-title { @include ej-heading; background: #34432c !important; color: #f4e6bd !important; border: 1px solid #9b8959; border-radius: 0; min-height: 28px; line-height: 1.2; }
+    .item-category-title > div { color: inherit !important; }
+    .item-header { border-bottom: 1px solid #8f7a4d55; }
+    .item-entry:nth-child(even), .combat-tab .item-entry:nth-child(even) { background: #7966380e !important; }
+    .item-header.item-rollable:hover { background: #8d79352e !important; }
+    .item-header .item-name, .field-short, .field-range { font-size: 20px; }
+    .item-controls { flex-shrink: 0; }
+    .item-controls .item-control { color: #3e3827; }
+    .item-controls .item-control:hover { color: #95732f; }
+    .tab[data-tab='gear'].active { display: flex !important; flex-direction: column; }
+    // The Gear parchment already contains its compass rose. Do not layer the
+    // shared running-head compass over the baked artwork.
+    .tab[data-tab='gear'] > .ej-running-head { flex: 0 0 auto; background: none; font-size: 30px !important; }
+    .encumbrance-bar-wrapper { width: 698px; max-width: 100%; margin: 10px 0 6px; padding: 0; flex: 0 0 auto; }
+    .encumbrance-bar-wrapper::before { display: none; }
+    .encumbrance-bar-container { height: 25px; border: 2px solid #977b47; border-radius: 4px; background: #e7dbbf52; box-shadow: 0 0 0 1px #57462a, inset 0 0 0 2px #c5b177; }
+    .encumbrance-text { color: #25261c; font-size: 18px; }
+    .encumbrance-bar-light { background: #455f3866; }
+    .encumbrance-bar-normal { background: #e0781466; }
+    .encumbrance-bar-heavy { background: #b2222266; }
+    .tab[data-tab='gear'] .gear-tab { min-height: 0; flex: 1 1 auto; overflow: hidden !important; }
+    // Let the illustrated parchment remain visible through the inventory rows.
+    .gear-scrollable-content { height: 100%; margin: 0; padding: 0 0 25px; overflow: auto; background: #f1e7cd47; }
+    .gear-scrollable-content > * { min-width: 690px; }
+    .container-header, .slung-section-header { background: #95825112 !important; border: 1px solid #a59771; }
+
+    // SPELLS: all learned/prepared/cast actions and slot state remain live.
+    .tab[data-tab='attributes'].active { display: flex !important; flex-direction: column; }
+    .tab[data-tab='attributes'] > .ej-running-head { flex: 0 0 auto; }
+    .spell-tab-header { padding: 0 0 9px; margin: 0; border: 0; background: none; box-shadow: none; }
+    .spell-tab-title { font-size: 36px; }
+    .spell-slots-section { @include ej-paper-card; margin: 0 0 12px; padding: 8px; }
+    .spell-slot-group { border: 0; background: none; padding: 2px 10px; border-right: 1px solid #ac9670; border-radius: 0; }
+    .spell-slot-label { @include ej-heading; }
+    .spell-subtabs { margin: 0; flex: 1 1 auto; min-height: 0; }
+    .spell-subtab-nav { padding: 0 6px; gap: 6px; }
+    .spell-subtab-btn { @include ej-heading; border: 1px solid #a28b50; border-radius: 9px 9px 0 0; background: #e9dab6; padding: 8px 18px; }
+    .spell-subtab-btn.active { background: $ej-green; color: #f4e6bd; }
+    .spell-subtab-panel { @include ej-paper-card; padding: 9px; min-height: 0; overflow-y: auto; }
+    .spell-level-header { @include ej-heading; font-size: 21px; background: #a88f5b29 !important; border: 1px solid #af9d71; border-radius: 2px; }
+    .spell-entry { border-bottom: 1px solid #8f7e5366; }
+    .spell-entry-header { background: none !important; border-radius: 0 !important; min-height: 37px; }
+    .spell-entry-name { font-size: 23px !important; font-weight: 400 !important; }
+
+    // Writing tabs retain native ProseMirror, including all formatting menus.
+    .tab:is([data-tab='background'], [data-tab='notes']).active { display: flex !important; flex-direction: column; }
+    .bg-tab-content { position: relative; inset: auto; width: 100%; flex: 1 1 auto; min-height: 0; gap: 15px; }
+    .bg-tab-header { background: none; padding: 0 0 7px; border: 0; box-shadow: none; }
+    .bg-tab-title { font-size: 30px; }
+    .bg-tab-subtitle { font-family: handwritten !important; font-size: 23px; font-style: normal; color: #78694d; }
+    .bg-panels { gap: 10px; padding: 0 2px 4px; }
+    .bg-panel {
+      @include ej-paper-card;
+      border: 1px solid #a8966d; border-radius: 2px; padding: 12px 10px;
+      & + .bg-panel { border-left: 1px solid #a8966d; }
+      &::before, &::after {
+        content: ''; position: absolute; inset: -4px auto auto -4px; width: 26px; height: 26px;
+        background: url('#{$ej-root}/corner.svg') center / contain no-repeat; z-index: 3; pointer-events: none;
+      }
+      &::after { inset: auto -4px -4px auto; transform: rotate(180deg); }
+    }
+    .bg-panel-title { font-size: 26px; padding: 3px 8px 0; &::before { display: none; } }
+    .bg-panel-hint { font-family: handwritten !important; font-size: 21px; margin: 0 8px 10px; font-style: normal; }
+    .bg-panel-editor {
+      border: 1px solid #ab9b7544; border-radius: 2px; background: #fbf3df33 !important;
+      &::before { font-family: handwritten !important; font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.15; background: #b09a6222; padding: 6px; }
+      .editor { align-items: stretch; gap: 0; }
+      .editor-container { margin: 0 !important; }
+      .editor-content, .ProseMirror { padding: 3px 9px 7px !important; font-size: 22px !important; line-height: 1.25; color: $ej-ink; }
+      .menu-container { flex: 0 0 auto !important; min-height: 0 !important; height: auto !important; }
+      menu { justify-content: flex-start !important; flex-wrap: wrap !important; gap: 2px !important; padding: 4px !important; margin: 0 !important; border-bottom: 1px solid #9d8e674d; }
+      menu > li { flex: 0 0 auto; margin: 0; }
+      menu button { width: auto; min-width: 25px; min-height: 27px; padding: 3px 5px; color: $ej-ink !important; font-size: 13px; }
+      menu i { font-size: 12px; }
+      menu button:hover { background: #c9b57a55 !important; }
+    }
+
+    input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #7e8c4a !important; outline-offset: 1px; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explorers-journal .ej-sheet * { transition: none !important; }
+}

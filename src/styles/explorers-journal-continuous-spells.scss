@@ -1,0 +1,182 @@
+@use 'sass:math';
+
+@mixin ej-spells-box($x, $y, $w, $h) {
+  position: absolute !important;
+  inset: auto !important;
+  left: math.div($x, 1185) * 100% !important;
+  top: math.div($y, 1327) * 100% !important;
+  width: math.div($w, 1185) * 100% !important;
+  height: math.div($h, 1327) * 100% !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal {
+  form.osp.sheet.actor.character.ej-sheet:has(.tab[data-tab='attributes'].active) {
+    --ej-spells-page-width: min(100cqw, calc(100cqh * 1185 / 1327));
+    --ej-spells-page-height: calc(var(--ej-spells-page-width) * 1327 / 1185);
+    background: #1d281f url('#{$ej-root}/spells-crisp-v1.png') top center / contain no-repeat !important;
+    .cs-sheet-body {
+      inset: auto !important;
+      left: calc((100% - var(--ej-spells-page-width)) / 2) !important;
+      top: 0 !important;
+      width: var(--ej-spells-page-width) !important;
+      height: var(--ej-spells-page-height) !important;
+      overflow: visible;
+    }
+    .sheet-tabs.cs-tabs {
+      left: calc((100% - var(--ej-spells-page-width)) / 2 + var(--ej-spells-page-width) * .942) !important;
+      top: calc(var(--ej-spells-page-height) * .068) !important;
+      width: calc(var(--ej-spells-page-width) * .049);
+      height: calc(var(--ej-spells-page-height) * .849);
+      gap: calc(var(--ej-spells-page-width) * .006) !important;
+      a.item { min-height: 0; max-height: none; font-size: clamp(9px, calc(var(--ej-spells-page-width) * .018), 19px); }
+    }
+    .sheet-body > .tab[data-tab='attributes'] {
+      position: relative !important; inset: auto !important;
+      width: 100% !important; height: 100% !important; max-height: none !important;
+      margin: 0; padding: 0; overflow: visible; background: none !important;
+      container-type: inline-size;
+      > .ej-running-head {
+        display: none !important;
+      }
+      .spell-tab-header, .spell-slots-section { display: contents !important; }
+      .spell-tab-title {
+        @include ej-spells-box(482.5, 107, 220, 52);
+        display: flex; align-items: center; justify-content: center;
+        overflow: visible; clip-path: none;
+        font-size: 30px !important; line-height: 1; margin: 0; padding: 0;
+        transform: translateY(-11px);
+      }
+      .spell-tab-subtitle {
+        // Align with the visible left edge of Spells in its centered title box.
+        @include ej-spells-box(214, 145, 791, 48);
+        transform: translateY(-4.84px);
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+        text-align: left;
+        white-space: nowrap;
+      }
+      .spell-slots-grid {
+        @include ej-spells-box(190, 222, 805, 78);
+        transform: translateY(-2px);
+        display: flex; flex-wrap: nowrap; align-items: center !important; justify-content: center !important;
+        margin: 0; padding: 0 1.4cqw; gap: .8cqw; overflow-x: auto; overflow-y: hidden;
+        scrollbar-width: none;
+        &::-webkit-scrollbar { display: none; }
+      }
+      // Move the embedded slot frame by the same 2px as its live controls.
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url('#{$ej-root}/spells-crisp-v1.png') center -2px / 100% 100% no-repeat;
+        clip-path: inset(15.5% 20% 76.3% 15.7%);
+        pointer-events: none;
+      }
+      .spell-slot-group {
+        flex: 0 0 auto; display: flex; flex-direction: row; align-items: center;
+        min-width: 0; height: 100%; padding: 0 .8cqw 0 0; gap: .55cqw;
+        justify-content: center;
+        border: 0; background: none; box-shadow: none;
+        &:last-child { padding-right: 0; }
+      }
+      .spell-slot-label { font-size: 2.05cqw; line-height: 1; letter-spacing: 0; text-transform: none; }
+      .spell-slot-pips { gap: .4cqw; align-items: center; transform: translateY(-1px); }
+      .spell-slot-pip { width: 2.55cqw; height: 2.55cqw; border: .24cqw solid #625238; background: transparent; }
+      .spell-slot-pip.memorized { background: #657351; }
+      .spell-slot-pip.used { background: #3d3327; }
+      .spell-formula {
+        @include ej-spells-box(430, 174, 565, 64);
+        margin: 0; padding: 0; border: 0; background: none; box-shadow: none;
+        text-align: center; color: #29261e; overflow-y: auto;
+      }
+      .spell-formula-header { font-size: 2.65cqw; line-height: 1; margin: 0; color: #29261e !important; }
+      .spell-formula-slots { font-size: 2.1cqw; line-height: 1.05; color: #29261e !important; b { color: inherit; } }
+      .spell-no-slots { @include ej-spells-box(190, 222, 805, 78); font-size: 2cqw; text-align: center; }
+      .spell-subtabs {
+        @include ej-spells-box(105, 336, 970, 873);
+        display: flex; flex-direction: column; margin: 0; padding: 0; overflow: visible;
+        transform: translateY(20px);
+      }
+      .spell-subtab-nav {
+        display: flex; flex: 0 0 3.65cqw; align-items: stretch; gap: .65cqw;
+        margin: 0 0 0 1.5cqw; padding: 0; border: 0; background: none; box-shadow: none;
+        transform: translate(3px, 6px);
+      }
+      .spell-subtab-btn {
+        display: flex; align-items: center; justify-content: center; flex: 0 1 17cqw;
+        position: relative; padding: .55cqw 1cqw .05cqw; margin: 0;
+        border: .3cqw double #8c6935; border-bottom: 0; border-radius: 1cqw 1cqw 0 0;
+        background: linear-gradient(120deg, #e3d0a8, #f0e5ca 48%, #c4ab7c);
+        box-shadow: inset 0 0 0 .3cqw #4c3826, 0 -.15cqw .6cqw #30251a80;
+        font-size: 2cqw; line-height: 1; cursor: pointer;
+        &.active { background: radial-gradient(ellipse at top, #46503a, #253529); color: #f5e9c9; }
+        &:hover { filter: brightness(1.08); }
+      }
+      .spell-subtab-panel {
+        flex: 1 1 auto; min-height: 0; margin: .7cqw 0 0; padding: 0 1.6cqw 1cqw;
+        border: 0; border-radius: 0; background: #f1e7cd47; box-shadow: none; overflow-y: auto;
+        scrollbar-width: thin; scrollbar-color: #82714f transparent;
+      }
+      // Divine casters have no sub-tabs, but keep their list inside the lower page.
+      .spell-subtab-nav[style*='display: none'] + .spell-subtab-panel { margin-top: 7.3cqw; }
+      .spell-subtabs:has(.spell-subtab-nav[style*='display: none']) .spell-subtab-panel.active { margin-top: 7.3cqw; }
+      .spell-level-group { margin: 0 0 2.4cqw; }
+      .spell-level-heading {
+        position: relative;
+        justify-content: flex-start;
+        align-items: center !important;
+        text-align: left;
+        padding: .85cqw 1.8cqw .15cqw 6cqw !important;
+        min-height: 5cqw; gap: 2cqw !important;
+        margin: 0; border: 1px solid #9b8959; border-radius: 0;
+        background: #34432c;
+        box-shadow: none;
+        font-family: $font-cooper !important; font-size: 20px !important; line-height: 1.1; color: #f4e6bd;
+      }
+      .spell-level-caret { position: absolute; left: 1.8cqw; font-size: 2.3cqw !important; color: #f4e6bd !important; }
+      .spell-level-slots { position: absolute; right: 1.8cqw; margin-left: 0; font-size: 1.7cqw; font-weight: normal; }
+      .spell-entry {
+        width: calc(100% - 3cqw) !important;
+        margin: 0 1.5cqw;
+        border-bottom: 1px solid #8f7a4d55;
+        background: transparent;
+      }
+      .spell-entry:nth-child(even) { background: #7966380e; }
+      .spell-entry-header {
+        min-height: 5.05cqw; gap: .65cqw !important; padding: .35cqw .4cqw !important;
+        background: none !important;
+        &:hover { background: #8d79352e !important; }
+      }
+      .spell-entry-name {
+        flex: 1 1 auto !important;
+        min-width: 0;
+        font: italic 2.8cqw/1.15 handwritten, cursive !important;
+        color: #29261e !important;
+      }
+      .spell-entry-meta {
+        flex: 0 1 auto !important;
+        min-width: 0;
+        max-width: 64%;
+        overflow: visible;
+        text-overflow: clip;
+        font: italic clamp(9px, 1.65cqw, 15px)/1.15 handwritten, cursive !important;
+        color: #29261e !important;
+        white-space: nowrap !important;
+        text-align: right;
+        margin-left: auto;
+        margin-right: .8cqw;
+        transform: none;
+      }
+      .spell-entry-chevron { font-size: 1.1cqw !important; color: #82714f !important; }
+      .spell-entry-header img { width: 3.6cqw !important; height: 3.6cqw !important; object-fit: contain; }
+      .spell-entry-body { padding: .8cqw 1.2cqw 1.5cqw; background: #f3e8d04d; }
+      .spell-description, .spell-entry-body p { font: 2.4cqw/1.35 handwritten, cursive !important; color: #30291f; }
+      .spell-no-spells { padding: 2cqw; font: 2.8cqw/1.3 handwritten, cursive !important; }
+      .spell-pip-mini { width: .7cqw; height: .7cqw; }
+    }
+  }
+}

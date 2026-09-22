@@ -1,4 +1,4 @@
-<form class="osp sheet actor character" autocomplete="off">
+<form class="osp sheet actor character ej-sheet ej-sheet--continuous-bio ej-sheet--continuous-skills ej-sheet--continuous-background ej-sheet--continuous-notes ej-sheet--continuous-combat" autocomplete="off">
 
 
 
@@ -19,6 +19,7 @@
       {{#if showSpellsTab}}
       <!-- Spells Tab -->
       <div class="tab" data-group="primary" data-tab="attributes">
+        <div class="ej-running-head">{{actor.name}}</div>
         <div class="spell-tab-header">
           <div class="spell-tab-title">Spells</div>
           <div class="spell-tab-subtitle">Wild Magic: roll to-hit when casting &bull; Natural 20: Boon &bull; Natural 1: Bane</div>
@@ -43,6 +44,7 @@
       {{/if}}
       <!-- Skills Tab -->
   <div class="tab" data-group="primary" data-tab="skills">
+        <div class="ej-running-head">{{actor.name}}</div>
         <div class="skill-tab-header">
           <div class="skill-tab-title">Skill Targets</div>
           <div class="skill-tab-subtitle">Roll over or equal to # on d6 + modifiers</div>
@@ -329,16 +331,17 @@
       
       <!-- Combat Tab -->
       <div class="tab" data-group="primary" data-tab="combat">
+        <div class="ej-running-head">{{actor.name}}</div>
         <section class="combat-generated-panel">
         <div class="combat-saving-throws-image">
           <div class="combat-saving-throws-title">Saving Throws</div>
           <div class="combat-saving-throws-subtitle">Roll over or equal to score on 1d20 + modifiers</div>
           <div class="combat-save-grid">
-            <div class="save-group-death cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-death" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-death" startOffset="50%" text-anchor="middle">Death · Poison</textPath></text></svg><div class="save death-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.death.value}}</span></div></div></div>
-            <div class="save-group-wands cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-wands" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-wands" startOffset="50%" text-anchor="middle">Wands</textPath></text></svg><div class="save wands-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.wands.value}}</span></div></div></div>
-            <div class="save-group-paralysis cs-save-group"><svg class="combat-save-label-arc combat-save-label-arc--small" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-paralysis" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-paralysis" startOffset="50%" text-anchor="middle">Paralysis · Petrification</textPath></text></svg><div class="save paralysis-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.paralysis.value}}</span></div></div></div>
-            <div class="save-group-breath cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-breath" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-breath" startOffset="50%" text-anchor="middle">Breath Attacks</textPath></text></svg><div class="save breath-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.breath.value}}</span></div></div></div>
-            <div class="save-group-spells cs-save-group"><svg class="combat-save-label-arc combat-save-label-arc--small" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-spells" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-spells" startOffset="50%" text-anchor="middle">Spells · Rods · Staves</textPath></text></svg><div class="save spells-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.spells.value}}</span></div></div></div>
+            <div class="save-group-death cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-{{actor.id}}-label-death" d="M 7 62 A 58 58 0 0 1 123 62"/><text><textPath href="#save-{{actor.id}}-label-death" startOffset="50%" text-anchor="middle">Death · Poison</textPath></text></svg><div class="save death-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.death.value}}</span></div></div></div>
+            <div class="save-group-wands cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-{{actor.id}}-label-wands" d="M 7 62 A 58 58 0 0 1 123 62"/><text><textPath href="#save-{{actor.id}}-label-wands" startOffset="50%" text-anchor="middle">Wands</textPath></text></svg><div class="save wands-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.wands.value}}</span></div></div></div>
+            <div class="save-group-paralysis cs-save-group"><svg class="combat-save-label-arc combat-save-label-arc--small" viewBox="0 0 130 74" aria-hidden="true"><path id="save-{{actor.id}}-label-paralysis" d="M 7 62 A 58 58 0 0 1 123 62"/><text><textPath href="#save-{{actor.id}}-label-paralysis" startOffset="50%" text-anchor="middle">Paralysis · Petrification</textPath></text></svg><div class="save paralysis-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.paralysis.value}}</span></div></div></div>
+            <div class="save-group-breath cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-{{actor.id}}-label-breath" d="M 7 62 A 58 58 0 0 1 123 62"/><text><textPath href="#save-{{actor.id}}-label-breath" startOffset="50%" text-anchor="middle">Breath Attacks</textPath></text></svg><div class="save breath-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.breath.value}}</span></div></div></div>
+            <div class="save-group-spells cs-save-group"><svg class="combat-save-label-arc combat-save-label-arc--small" viewBox="0 0 130 74" aria-hidden="true"><path id="save-{{actor.id}}-label-spells" d="M 7 62 A 58 58 0 0 1 123 62"/><text><textPath href="#save-{{actor.id}}-label-spells" startOffset="50%" text-anchor="middle">Spells · Rods · Staves</textPath></text></svg><div class="save spells-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.spells.value}}</span></div></div></div>
           </div>
         </div>
         <div class="combat-hpac-title">Combat &amp; Movement</div>
@@ -535,6 +538,8 @@
 
       <!-- Gear Tab -->
       <div class="tab" data-group="primary" data-tab="gear">
+        <div class="ej-running-head"><span>Gear</span></div>
+        <div class="gear-tab-subtitle">Everything you carry, counted and close at hand.</div>
         {{!-- Encumbrance Bar - outside gear-tab so sticky works within the scroll container --}}
         <div class="encumbrance-bar-wrapper">
           <div class="encumbrance-bar-container">
@@ -1786,6 +1791,7 @@
 
       <!-- Bio Tab -->
       <div class="tab" data-group="primary" data-tab="bio">
+        <div class="ej-bio-header">
   <!-- Character Level - Positioned behind everything -->
   <div class="level-progress-bar-container cs-level-container cs-abs cs-pos-level" id="level-container">
     <!-- Shadow overlay for Level field -->
@@ -1803,17 +1809,20 @@
       </div>
 
   <!-- Character Portrait - Positioned behind everything -->
-  <div class="portrait-container cs-portrait-container cs-abs cs-pos-portrait" id="portrait-container" style="--portrait-size:138px; --portrait-height:183px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}};">
+  <div class="portrait-container cs-portrait-container cs-abs cs-pos-portrait" id="portrait-container" style="--portrait-size:138px; --portrait-height:183px; --user-portrait-scale: {{#if system.userPortrait.scale}}{{system.userPortrait.scale}}{{else}}1{{/if}}; --user-portrait-x: {{#if system.userPortrait.x}}{{system.userPortrait.x}}px{{else}}0px{{/if}}; --user-portrait-y: {{#if system.userPortrait.y}}{{system.userPortrait.y}}px{{else}}0px{{/if}}; --user-portrait-rotation: {{#if system.userPortrait.rotation}}{{system.userPortrait.rotation}}{{else}}0{{/if}}deg;">
     <!-- Hidden inputs for portrait data -->
     <input type="hidden" name="system.portrait" value="{{system.portrait}}" />
     <input type="hidden" name="system.userPortrait.scale" value="{{system.userPortrait.scale}}" />
     <input type="hidden" name="system.userPortrait.x" value="{{system.userPortrait.x}}" />
     <input type="hidden" name="system.userPortrait.y" value="{{system.userPortrait.y}}" />
+    <input type="hidden" name="system.userPortrait.rotation" value="{{system.userPortrait.rotation}}" />
 
     <!-- Portrait display area -->
-    <div class="portrait-display cs-portrait-display" title="Double-click: Change portrait&#10;Right-click: Position tool&#10;Ctrl+Right-click: Portrait adjustment controls">
+    <div class="portrait-display cs-portrait-display" title="Double-click: Change portrait&#10;Right-click: Position tool&#10;Ctrl+Right-click: Portrait adjustment controls (zoom, move, rotate)">
       <img class="portrait-img cs-portrait-img" src="{{#if system.portrait}}{{system.portrait}}{{else}}systems/osp-houserules/assets/images/icons/generic-portrait.webp{{/if}}" alt="{{actor.name}}" draggable="false" />
     </div>
+
+    <img class="ej-portrait-frame-overlay" src="systems/osp-houserules/assets/character-sheet/explorers-journal/portrait-frame-alpha-v3.png" alt="" aria-hidden="true" draggable="false" />
 
     <!-- Portrait adjustment controls -->
     <div class="portrait-controls" id="portrait-controls">
@@ -1826,6 +1835,10 @@
         <button type="button" data-action="move-down" title="Move Down&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">↓</button>
         <button type="button" data-action="move-left" title="Move Left&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">←</button>
         <button type="button" data-action="move-right" title="Move Right&#10;Hold Shift for fine movement (1px)&#10;Hold Ctrl for coarse movement (10px)&#10;Hold Shift+Ctrl for very fine movement (0.5px)">→</button>
+      </div>
+      <div class="btn-group portrait-rotation-controls">
+        <button type="button" data-action="rotate-left" title="Rotate Left 1°" aria-label="Rotate portrait left one degree"><i class="fas fa-rotate-left" aria-hidden="true"></i></button>
+        <button type="button" data-action="rotate-right" title="Rotate Right 1°" aria-label="Rotate portrait right one degree"><i class="fas fa-rotate-right" aria-hidden="true"></i></button>
       </div>
       <div class="btn-group">
         <button type="button" data-action="reset" title="Reset">↻</button>
@@ -2088,7 +2101,7 @@
   <div class="xp-group cs-abs cs-pos-xp" id="xp-container">
   <!-- XP Progress Bar -->
   <div class="level-xp-progress"></div>
-  <input type="text" class="xp-display cs-field cs-xp-display" id="xp-display" name="system.xp" value="{{system.xp}}" readonly />
+  <input type="text" class="xp-display cs-field cs-xp-display" id="xp-display" value="{{system.xp}}" readonly aria-label="Experience points" />
   </div>
 
       <!-- Horizontal separator line at bottom of static header -->
@@ -2096,13 +2109,14 @@
 
     </div>
 
+          <p class="ej-bio-motto" aria-hidden="true">“Not all those who wander are lost”</p>
+        </div>
         <div class="bio-abilities-image">
           <div class="bio-abilities-header">
             <span class="bio-abilities-title">Abilities</span>
             <span class="bio-abilities-subtitle">Roll under or equal to ability score on 1d20 + modifier</span>
           </div>
           <div class="bio-abilities-image-wrap">
-            <img src="/systems/osp-houserules/assets/character-sheet/abilities-scores.webp" alt="" draggable="false" />
             <!-- Ability Scores Section - overlaid on image -->
             <div class="ability-scores-section cs-combat-stats">
 
@@ -2165,11 +2179,14 @@
         </div>
 
         <div class="bio-content-area">
+        <section class="ej-writing-card">
         <label class="bio-field-label">Appearance & Personality</label>
         <textarea class="bio-text-field bio-text-field-appearance" name="system.details.appearance" data-dtype="String" placeholder="Enter character appearance & personality...">{{system.details.appearance}}</textarea>
-
+        </section>
+        <section class="ej-writing-card">
         <label class="bio-field-label bio-field-label-4">Goals & Motivations</label>
         <textarea class="bio-text-field bio-text-field-4 bio-text-field-goals" name="system.details.goals" data-dtype="String" placeholder="Enter character goals & motivations...">{{system.details.goals}}</textarea>
+        </section>
         </div>
       </div>
 
@@ -2208,6 +2225,7 @@
           <div class="bg-tab-header">
             <div class="bg-tab-title">Character Notes</div>
             <div class="bg-tab-subtitle">Keep important details, reminders, and discoveries here.</div>
+            <div class="notes-banner-subtitle">Discoveries · People · Places · Reminders</div>
           </div>
 
           <div class="bg-panels">

@@ -14,6 +14,13 @@ $font-cooper: 'Cooper Std', 'Cooper Standard', Georgia, serif;  // Cooper Std wi
 @import 'monster-sheet';
 @import 'morale';
 @import 'character-creation';
+@import 'explorers-journal';
+@import 'explorers-journal-continuous-bio';
+@import 'explorers-journal-continuous-skills';
+@import 'explorers-journal-continuous-background';
+@import 'explorers-journal-continuous-notes';
+@import 'explorers-journal-continuous-combat';
+@import 'explorers-journal-continuous-spells';
 
 /* ================================================================
    OSP House Rules Font Configuration
@@ -117,6 +124,18 @@ form.osp button {
   font-family: $font-cooper !important;
 }
 
+/* One shared subtitle treatment across the character sheet. Individual
+   continuous-page skins may bake a subtitle into their parchment artwork, but
+   every live subtitle uses this same handwritten ink styling. */
+.window-app.osp.sheet.actor.character.explorers-journal form.osp.sheet.actor.character.ej-sheet
+  :is(.skill-tab-subtitle, .skill-abilities-subtitle, .combat-saving-throws-subtitle, .bio-abilities-subtitle, .spell-tab-subtitle, .bg-tab-subtitle, .bg-panel-hint) {
+  color: #78694D !important;
+  font-family: handwritten, 'Comic Sans MS', cursive !important;
+  font-size: 23px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+}
+
 /* Spell cast chat card */
 .osp-spell-cast-card {
   border: 1px solid #704214;
@@ -179,6 +198,135 @@ form.osp button {
 }
 
 /* Grid overlay animation */
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet .tab[data-tab='gear'] > .ej-running-head > span {
+  position: relative;
+  overflow: visible;
+  font-size: 30px !important;
+  transform: none !important;
+  margin-left: 0 !important;
+}
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet .tab[data-tab='gear'] > .ej-running-head {
+  justify-content: center;
+  height: 38px !important;
+  min-height: 38px !important;
+  margin-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  border-bottom: 0 !important;
+  overflow: visible;
+}
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet .tab[data-tab='gear'] > .gear-tab-subtitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet .combat-hpac-image .combat-stat:nth-child(n + 3):nth-child(-n + 5) {
+  transform: translateY(5px);
+}
+
+/* Final subtitle rule: outrank heading rules on every character-sheet tab. */
+.window-app.osp.sheet.actor.character.explorers-journal form.osp.sheet.actor.character.ej-sheet .sheet-body .tab
+  :is(.skill-tab-subtitle, .skill-abilities-subtitle, .combat-saving-throws-subtitle, .bio-abilities-subtitle, .spell-tab-subtitle, .gear-tab-subtitle, .bg-tab-subtitle, .bg-panel-hint, .notes-banner-subtitle) {
+  font-family: handwritten, cursive !important;
+  font-size: 23px !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  font-synthesis: none !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+  color: #78694D !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Reuse the Character Background header rule between every true title/subtitle pair. */
+.window-app.osp.sheet.actor.character.explorers-journal
+  :is(
+    form.ej-sheet--continuous-bio .bio-abilities-title,
+    form.ej-sheet--continuous-skills .skill-tab-title,
+    form.ej-sheet--continuous-skills .skill-abilities-header,
+    form.ej-sheet--continuous-combat .combat-saving-throws-title,
+    form.ej-sheet .tab[data-tab='gear'] > .ej-running-head > span,
+    form.ej-sheet .spell-tab-title,
+    form.ej-sheet--continuous-notes .tab[data-tab='notes'] .bg-tab-title
+  ) {
+  overflow: visible !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal
+  :is(
+    form.ej-sheet--continuous-bio .bio-abilities-title,
+    form.ej-sheet--continuous-skills .skill-tab-title,
+    form.ej-sheet--continuous-skills .skill-abilities-header,
+    form.ej-sheet--continuous-combat .combat-saving-throws-title,
+    form.ej-sheet .tab[data-tab='gear'] > .ej-running-head > span,
+    form.ej-sheet .spell-tab-title,
+    form.ej-sheet--continuous-notes .tab[data-tab='notes'] .bg-tab-title
+  )::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 10px);
+  width: 52.827cqw;
+  height: 1.8565cqw;
+  transform: translateX(-50%);
+  background: url('#{$ej-root}/header-subtitle-divider.png') center / 100% 100% no-repeat;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Keep inventory column headers on one shared vertical rhythm. */
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet
+  .tab[data-tab='gear'] .gear-scrollable-content
+  .item-category-title:is(.containers-title, .livestock-title) {
+  height: 28px !important;
+  min-height: 28px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  align-items: center !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet
+  .tab[data-tab='gear'] .gear-scrollable-content
+  .item-category-title:is(.containers-title, .livestock-title) > * {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  transform: translateY(2px) !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet--continuous-combat
+  .tab[data-tab='combat'] .combat-equipped-section {
+  background: #f1e7cd47 !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet--continuous-combat
+  .tab[data-tab='combat']
+  .item-category-title:is(.weapons-title, .armor-title) {
+  height: 28px !important;
+  min-height: 28px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  align-items: center !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal form.ej-sheet--continuous-combat
+  .tab[data-tab='combat']
+  .item-category-title:is(.weapons-title, .armor-title) > * {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
 .grid-overlay {
   animation: fadeIn 0.3s ease;
 }

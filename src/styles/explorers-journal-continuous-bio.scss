@@ -1,0 +1,347 @@
+@use 'sass:math';
+
+// Reversible Bio-only experiment. Removing ej-sheet--continuous-bio from the
+// form restores the component-based treatment in explorers-journal.scss.
+// One intact 1185 × 1327 image supplies ALL decorative Bio surfaces. The live
+// controls share its reference coordinates. A separate alpha-transparent
+// portrait frame sits above the photograph; it is not baked into the page.
+@mixin ej-continuous-box($x, $y, $width, $height) {
+  position: absolute !important;
+  inset: auto !important;
+  left: math.div($x, 1185) * 100% !important;
+  top: math.div($y, 1327) * 100% !important;
+  width: math.div($width, 1185) * 100% !important;
+  height: math.div($height, 1327) * 100% !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal {
+  form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab='bio'].active) {
+    // The whole book fits without stretching. The neutral leather surround
+    // only becomes visible when the window has a different aspect ratio.
+    --ej-bio-page-width: min(100cqw, calc(100cqh * 1185 / 1327));
+    --ej-bio-page-height: calc(var(--ej-bio-page-width) * 1327 / 1185);
+    background: #1d281f url('#{$ej-root}/bio-crisp-v1.png') top center / contain no-repeat !important;
+
+    .cs-sheet-body {
+      inset: auto !important;
+      left: calc((100% - var(--ej-bio-page-width)) / 2) !important;
+      top: 0 !important;
+      width: var(--ej-bio-page-width) !important;
+      height: var(--ej-bio-page-height) !important;
+      overflow: visible;
+    }
+
+    .sheet-body > .tab[data-tab='bio'] {
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: none !important;
+      padding: 0;
+      margin: 0;
+      overflow: visible;
+      container-type: inline-size;
+      background: none !important;
+    }
+
+    // Keep the existing Foundry navigation and conditional Spells tab. These
+    // buttons are live controls, not part of the underlying image.
+    .sheet-tabs.cs-tabs {
+      left: calc((100% - var(--ej-bio-page-width)) / 2 + var(--ej-bio-page-width) * .942) !important;
+      top: calc(var(--ej-bio-page-height) * .068) !important;
+      width: calc(var(--ej-bio-page-width) * .049);
+      height: calc(var(--ej-bio-page-height) * .849);
+      gap: calc(var(--ej-bio-page-width) * .006) !important;
+      a.item {
+        min-height: 0;
+        max-height: none;
+        font-size: clamp(9px, calc(var(--ej-bio-page-width) * .018), 19px);
+      }
+    }
+
+    .ej-bio-header,
+    .ej-bio-header .static-header,
+    .bio-abilities-image,
+    .bio-abilities-image-wrap,
+    .bio-abilities-image-wrap .ability-scores-section,
+    .bio-content-area,
+    .ej-writing-card {
+      display: contents;
+      position: static;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .ej-bio-header .cs-abs {
+      grid-area: auto;
+      min-width: 0;
+      padding: 1.9cqw .65cqw .35cqw;
+      border: 0 !important;
+      border-bottom: 1px solid #75664b80 !important;
+      border-right: 1px solid #75664b55 !important;
+      background: none !important;
+      &::after {
+        inset: .65cqw auto auto .8cqw;
+        font-size: 1.7cqw;
+        line-height: 1;
+      }
+    }
+
+    .ej-bio-header .character-name-group {
+      @include ej-continuous-box(440, 80, 400, 108);
+      padding: 0 .65cqw;
+    }
+    .ej-bio-header .level-progress-bar-container { @include ej-continuous-box(840, 80, 116, 108); }
+    .ej-bio-header .xp-mod-group { @include ej-continuous-box(956, 80, 124, 108); }
+    // Share the same 400-unit span, giving longer race names more breathing room.
+    .ej-bio-header .race-group { @include ej-continuous-box(440, 196, 180, 74); }
+    .ej-bio-header .class-group { @include ej-continuous-box(620, 196, 220, 74); }
+    .ej-bio-header .xp-group { @include ej-continuous-box(840, 196, 240, 74); }
+    .ej-bio-header .age-group { @include ej-continuous-box(440, 274, 80, 78); }
+    .ej-bio-header .sex-group { @include ej-continuous-box(520, 274, 80, 78); }
+    .ej-bio-header .alignment-group { @include ej-continuous-box(600, 274, 160, 78); }
+    .ej-bio-header .background-group { @include ej-continuous-box(760, 274, 320, 78); }
+    .ej-bio-header .height-group { @include ej-continuous-box(440, 356, 140, 81); }
+    .ej-bio-header .weight-group { @include ej-continuous-box(580, 356, 140, 81); }
+    .ej-bio-header .languages-group { @include ej-continuous-box(720, 356, 360, 81); }
+
+    .ej-bio-header :is(input:not([type='hidden']), select, .cs-level-display, .cs-themed-select-trigger, .cs-themed-select-option, .cs-char-class-static, .cs-char-race-static) {
+      font-size: 5cqw !important;
+      padding: 0 .3cqw;
+    }
+    .ej-bio-header .character-name-group input.cs-char-name {
+      width: 100% !important;
+      font-size: var(--ej-character-name-font-size, 9cqw) !important;
+    }
+    .ej-bio-header :is(.age-group, .height-group, .weight-group) input {
+      transform: translateY(3px);
+    }
+    .ej-bio-header :is(.race-group, .class-group) .cs-themed-select-trigger {
+      transform: translateY(-2px);
+    }
+    .ej-bio-header .cs-level-container .cs-level-display { font-size: 5.7cqw !important; }
+    .ej-bio-header .languages-tags {
+      font-size: 3cqw !important;
+      line-height: 1;
+      align-content: flex-start;
+      overflow-y: auto;
+    }
+    .ej-bio-header .cs-themed-select-option { min-height: 3.7cqw; }
+    .ej-bio-header .cs-themed-select-menu {
+      z-index: 100;
+      scrollbar-width: thin;
+      scrollbar-color: #294c39 #d8c9a6;
+    }
+    .ej-bio-header .cs-themed-select-menu::-webkit-scrollbar { width: 7px; }
+    .ej-bio-header .cs-themed-select-menu::-webkit-scrollbar-track {
+      border-radius: 4px;
+      background: #d8c9a6;
+    }
+    .ej-bio-header .cs-themed-select-menu::-webkit-scrollbar-thumb {
+      border: 1px solid #b4a47d;
+      border-radius: 4px;
+      background: #294c39;
+    }
+    .ej-bio-header .cs-themed-select-menu::-webkit-scrollbar-thumb:hover { background: #203d2e; }
+
+    .ej-bio-header .cs-portrait-container {
+      @include ej-continuous-box(80, 60, 360, 438);
+      padding: 0;
+      border: 0 !important;
+      aspect-ratio: auto;
+      background: none !important;
+      box-shadow: none !important;
+      &::before, &::after { display: none; }
+    }
+    .ej-bio-header .ej-portrait-frame-overlay {
+      display: block;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      object-fit: fill;
+      border: 0;
+      border-radius: 0;
+      z-index: 21;
+      pointer-events: none;
+    }
+    .ej-bio-header .cs-portrait-display {
+      // Overscan beneath the frame, preserving the saved image zoom and pan.
+      inset: 8% 8% 13% 10%;
+      z-index: 20 !important;
+      clip-path: none;
+      transform: translateY(.85cqw);
+    }
+    .ej-bio-header .portrait-controls {
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: .7cqw;
+      padding: .55cqw .65cqw;
+      border: .18cqw solid #765827;
+      border-radius: .65cqw;
+      background:
+        linear-gradient(180deg, rgba(255, 249, 220, .97), rgba(205, 180, 124, .97));
+      box-shadow: 0 .45cqw .85cqw rgba(31, 20, 8, .48), inset 0 0 0 .12cqw rgba(255, 245, 202, .75);
+      color: #291d0e;
+      font-family: $font-cooper !important;
+    }
+    .ej-bio-header .portrait-controls .btn-group {
+      margin: 0 .2cqw;
+    }
+    .ej-bio-header .portrait-controls .btn-group:not(:last-child) {
+      padding-right: .45cqw;
+      border-right: .14cqw solid rgba(87, 61, 25, .45);
+    }
+    .ej-bio-header .portrait-controls button {
+      width: 2.7cqw;
+      height: 2.7cqw;
+      min-width: 20px;
+      min-height: 20px;
+      margin: .1cqw;
+      padding: 0;
+      border: .14cqw solid #59401d;
+      border-radius: .45cqw;
+      background: linear-gradient(145deg, #d8b968, #8f6a2f 68%, #60451f);
+      box-shadow: inset 0 .16cqw .15cqw rgba(255, 239, 175, .72), 0 .14cqw .2cqw rgba(38, 24, 7, .42);
+      color: #21170b;
+      font-family: $font-cooper !important;
+      font-size: 1.75cqw;
+      font-weight: 700;
+      line-height: 1;
+      text-shadow: 0 1px rgba(255, 230, 157, .55);
+    }
+    .ej-bio-header .portrait-controls button:hover {
+      border-color: #36250f;
+      background: linear-gradient(145deg, #f0d887, #ad8238 68%, #735325);
+      color: #120d07;
+    }
+    .ej-bio-header .portrait-controls button:active {
+      background: linear-gradient(145deg, #876128, #c9a653);
+      box-shadow: inset 0 .2cqw .35cqw rgba(40, 25, 7, .45);
+    }
+    .ej-bio-header .portrait-controls button[data-action='done'] {
+      background: linear-gradient(145deg, #55714d, #29452f 72%);
+      color: #f6e8bd;
+      text-shadow: 0 1px #142018;
+    }
+    .ej-bio-header .ej-bio-motto {
+      @include ej-continuous-box(460, 450, 475, 44);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5cqw;
+      line-height: 1;
+      background: none;
+      &::after { display: none; }
+    }
+
+    .bio-abilities-header {
+      @include ej-continuous-box(210, 532, 760, 69);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .3cqw;
+      margin: 0;
+      padding: 0;
+      background: none;
+    }
+    .bio-abilities-title { background: none; padding: 0; font-size: 30px !important; line-height: 1.08; transform: translateY(5px); }
+    .bio-abilities-subtitle {
+      transform: translateY(-1px);
+      position: absolute !important;
+      left: 0 !important;
+      top: 4.98cqw !important;
+      width: 100% !important;
+      height: 3.2cqw !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .ability.cs-ability {
+      border: 0;
+      padding: 0;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &::after {
+        inset: 100% 0 auto;
+        height: 22.3%;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.35cqw;
+        line-height: 1;
+        transform: translateY(calc(.85cqw + 2px));
+        background: none;
+        border: 0;
+        box-shadow: none;
+      }
+    }
+    // Keep every live value and its label locked to the medallion artwork.
+    // Five source-image units render as three pixels at the sheet's design size.
+    .ability:has(.attr-str) { @include ej-continuous-box(114, 617, 152, 148); }
+    .ability:has(.attr-int) { @include ej-continuous-box(274, 617, 152, 148); }
+    .ability:has(.attr-wis) { @include ej-continuous-box(434, 617, 152, 148); }
+    .ability:has(.attr-dex) { @include ej-continuous-box(594, 617, 152, 148); }
+    .ability:has(.attr-con) { @include ej-continuous-box(754, 617, 152, 148); }
+    .ability:has(.attr-cha) { @include ej-continuous-box(914, 617, 152, 148); }
+    :is(.cs-ability-input, .cs-ability-static) {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 90px !important;
+      transform: translateY(8px);
+      line-height: 1;
+      text-align: center;
+      padding: 0;
+    }
+
+    .bio-field-label {
+      @include ej-continuous-box(170, 836, 465, 43);
+      display: flex;
+      align-items: center;
+      padding: 0;
+      margin: 0;
+      font-size: 2.7cqw !important;
+      line-height: 1;
+      background: none;
+      transform: translateY(5px);
+    }
+    .bio-field-label-4 { @include ej-continuous-box(170, 1059, 440, 43); }
+    .bio-text-field {
+      @include ej-continuous-box(175, 891, 890, 137);
+      min-height: 0;
+      padding: .55cqw;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      background: none !important;
+      box-shadow: none;
+      font-size: 3.1cqw;
+      line-height: 1.12;
+      resize: none;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #84775888 transparent;
+    }
+    .bio-text-field-goals { @include ej-continuous-box(175, 1114, 890, 124); }
+    .bio-text-field::-webkit-scrollbar { display: initial; width: 5px; }
+    .bio-text-field::-webkit-scrollbar-thumb { background: #84775888; border-radius: 3px; }
+  }
+}

@@ -3,6 +3,7 @@ import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
 import { XPProgressHandler } from './handlers/xp-progress-handler.js';
+import { CharacterNameHandler } from './handlers/character-name-handler.js';
 import { BackgroundHandler } from './handlers/background-handler.js';
 import { PositionToolHandler } from './handlers/position-tool-handler.js';
 import { PortraitTool } from './portrait-tool.js';
@@ -12,6 +13,9 @@ import { isConsumableWeapon } from '../../combat/ammo-logic.js';
 import { checkAllowedContainers } from '../../inventory/container-allowlist.js';
 import { chargeItemCost } from '../../inventory/treasure-cost.js';
 import { TreasureValueDialog } from '../../dialog/treasure-value-dialog.js';
+import { journalSkillSvg } from '../journal-skill-diagram.js';
+import { activateThemedBioSelects } from './themed-bio-selects.js';
+import { renderSkillNumeral } from './skill-target-values.js';
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -173,11 +177,11 @@ export class OspActorSheetCharacter extends ActorSheet {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["osp", "sheet", "actor", "character"],
+      classes: ["osp", "sheet", "actor", "character", "explorers-journal"],
       template: "systems/osp-houserules/templates/actors/character-sheet.html",
-      width: 750,
-      height: 835, // 800px content area + ~35px title bar
-      resizable: false,
+      width: 850,
+      height: 920,
+      resizable: true,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }],
       submitOnClose: true,
       // Foundry's core Application#_render saves/restores scroll position for these selectors
@@ -240,7 +244,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       context.system.levelPosition = { x: 0, y: 0, zIndex: 0 };
     }
     if (!context.system.userPortrait) {
-      context.system.userPortrait = { scale: 1, x: 0, y: 0 };
+      context.system.userPortrait = { scale: 1, x: 0, y: 0, rotation: 0 };
     }
     if (!context.system.namePosition) {
       context.system.namePosition = { x: 0, y: 0, zIndex: 0 };
@@ -1073,6 +1077,25 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.initializeHandlers(html);
     this._activateThemedBioSelects(html);
 
+    // These narrow editors initialize while their tab is hidden. Foundry's
+    // responsive menu then hides top-level tools; the journal layout fits them
+    // explicitly, so keep those controls available without exposing submenus.
+    this._backgroundToolbarObserver?.disconnect();
+    const backgroundTab = html[0]?.querySelector('.ej-sheet--continuous-background .tab[data-tab="background"]')
+      ?? (html[0]?.matches('.ej-sheet--continuous-background')
+        ? html[0].querySelector('.tab[data-tab="background"]') : null);
+    if (backgroundTab) {
+      const revealTools = () => {
+        backgroundTab.querySelectorAll('.editor-menu > li[hidden]:not(.concurrent-users), .editor-menu > li > button[hidden]')
+          .forEach(control => control.removeAttribute('hidden'));
+      };
+      this._backgroundToolbarObserver = new MutationObserver(revealTools);
+      this._backgroundToolbarObserver.observe(backgroundTab, {
+        subtree: true, childList: true, attributes: true, attributeFilter: ['hidden'],
+      });
+      revealTools();
+    }
+
     // Update skill layout based on character class and race
     this.updateSkillLayout(html);
 
@@ -1287,6 +1310,16 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.sheet-tabs a[data-tab="attributes"]').on('click', () => {
       requestAnimationFrame(() => this.renderSpellTab(html));
     });
+
+    // Keep live skill controls registered to their illustrated circles when the
+    // journal is resized. Disconnect the previous observer after every render.
+    this._journalResizeObserver?.disconnect();
+    const skillDiagram = this.getElement(html, '.cs-skill-svg-container');
+    const diagram = skillDiagram?.[0] || skillDiagram;
+    if (diagram && typeof ResizeObserver !== 'undefined') {
+      this._journalResizeObserver = new ResizeObserver(() => this.applySkillPositionsFromSVG(html));
+      this._journalResizeObserver.observe(diagram);
+    }
   }
 
   /**
@@ -1390,83 +1423,8 @@ export class OspActorSheetCharacter extends ActorSheet {
    * events, so existing handlers and Foundry form persistence keep working.
    */
   _activateThemedBioSelects(html) {
-    const selector = [
-      '.cs-class-select',
-      '.cs-race-select',
-      '.cs-alignment-select',
-      '.cs-background-select',
-      '.cs-sex-field'
-    ].join(',');
-
-    const closeMenus = (except = null) => {
-      html[0].querySelectorAll('.cs-themed-select.is-open').forEach((menu) => {
-        if (menu !== except) menu.classList.remove('is-open');
-      });
-    };
-
-    html[0].querySelectorAll(`.tab[data-tab="bio"] ${selector}`).forEach((select) => {
-      if (select.dataset.themedSelect === 'true' || select.disabled) return;
-      select.dataset.themedSelect = 'true';
-      select.classList.add('cs-themed-select-native');
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'cs-themed-select';
-
-      const trigger = document.createElement('button');
-      trigger.type = 'button';
-      trigger.className = 'cs-themed-select-trigger';
-      trigger.setAttribute('aria-haspopup', 'listbox');
-
-      const menu = document.createElement('div');
-      menu.className = 'cs-themed-select-menu';
-      menu.setAttribute('role', 'listbox');
-
-      const update = () => {
-        trigger.textContent = select.selectedOptions[0]?.textContent ?? '';
-        menu.querySelectorAll('.cs-themed-select-option').forEach((option) => {
-          const selected = option.dataset.value === select.value;
-          option.classList.toggle('is-selected', selected);
-          option.setAttribute('aria-selected', String(selected));
-        });
-      };
-
-      Array.from(select.options).forEach((nativeOption) => {
-        const option = document.createElement('button');
-        option.type = 'button';
-        option.className = 'cs-themed-select-option';
-        option.dataset.value = nativeOption.value;
-        option.textContent = nativeOption.textContent;
-        option.setAttribute('role', 'option');
-        option.addEventListener('click', () => {
-          select.value = nativeOption.value;
-          select.dispatchEvent(new Event('input', { bubbles: true }));
-          select.dispatchEvent(new Event('change', { bubbles: true }));
-          update();
-          wrapper.classList.remove('is-open');
-          trigger.focus();
-        });
-        menu.appendChild(option);
-      });
-
-      trigger.addEventListener('click', (event) => {
-        event.stopPropagation();
-        const opening = !wrapper.classList.contains('is-open');
-        closeMenus(wrapper);
-        wrapper.classList.toggle('is-open', opening);
-      });
-      trigger.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') wrapper.classList.remove('is-open');
-      });
-      select.addEventListener('change', update);
-
-      select.parentElement.appendChild(wrapper);
-      wrapper.append(trigger, menu);
-      update();
-    });
-
-    html[0].addEventListener('click', (event) => {
-      if (!event.target.closest('.cs-themed-select')) closeMenus();
-    });
+    this._themedBioSelectCleanup?.();
+    this._themedBioSelectCleanup = activateThemedBioSelects(html[0]);
   }
 
   /**
@@ -1482,6 +1440,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       { name: 'item', Handler: ItemHandler },
       { name: 'ui', Handler: UIHandler },
       { name: 'xpProgress', Handler: XPProgressHandler },
+      { name: 'characterName', Handler: CharacterNameHandler },
       { name: 'background', Handler: BackgroundHandler },
       { name: 'portrait', Handler: PortraitTool }
     ];
@@ -1574,6 +1533,11 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Override close to clean up handlers
    */
   async close(options = {}) {
+    this._backgroundToolbarObserver?.disconnect();
+    this._themedBioSelectCleanup?.();
+    this._themedBioSelectCleanup = null;
+    this._journalResizeObserver?.disconnect();
+    this._journalResizeObserver = null;
     // Set flag to prevent rendering during close
     this._isClosing = true;
     
@@ -1731,68 +1695,11 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (!container) return;
     const el = container[0] || container;
 
-    const labels = {
-      listening: 'Listen at Doors',
-      'find-secret-door': 'Find Secret Doors',
-      'open-stuck-doors': 'Open Stuck Doors',
-      'detect-construction': 'Detect Construction Tricks',
-      'detect-room-traps': 'Detect Room Traps',
-      assassination: 'Assassination',
-      'climb-sheer': 'Climb Sheer Surfaces',
-      'hide-shadows': 'Hide in Shadows',
-      'move-silently': 'Move Silently',
-      'find-traps': 'Find Traps',
-      'open-locks': 'Open Locks',
-      'pick-pockets': 'Pick Pockets',
-      'hide-undergrowth': 'Hide in Undergrowth',
-      'hide-dungeons': 'Hide in Dungeons',
-      'foraging-hunting': 'Forage & Hunt',
-      stealth: 'Stealth',
-      'wilderness-surprise-attack': 'Surprise Attack',
-      hiding: 'Hiding'
-    };
-    const skills = [...new Set(requiredSkills)].filter(skill => labels[skill]);
-    const columns = Math.min(6, Math.max(1, skills.length));
-    const cellWidth = 800 / columns;
-    const rowHeight = 142;
-    const rows = Math.ceil(skills.length / columns);
-    const height = Math.max(142, rows * rowHeight);
-    const escape = (value) => String(value).replace(/[&<>"']/g, char => (
-      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]
-    ));
-
-    const circles = skills.map((skill, index) => {
-      const row = Math.floor(index / columns);
-      const column = index % columns;
-      const itemsInRow = Math.min(columns, skills.length - row * columns);
-      const rowOffset = (800 - itemsInRow * cellWidth) / 2;
-      const cx = rowOffset + column * cellWidth + cellWidth / 2;
-      const cy = row * rowHeight + 72;
-      const pathId = `skill-label-path-${skill}`;
-      const label = labels[skill];
-      const labelSize = 12;
-      return `
-        <g class="cs-generated-skill" data-skill="${skill}">
-          <path id="${pathId}" d="M ${cx - 57} ${cy - 4} A 57 57 0 0 1 ${cx + 57} ${cy - 4}" fill="none" />
-          <circle class="cs-generated-skill-halo" cx="${cx}" cy="${cy}" r="53" />
-          <circle class="cs-generated-skill-ring" id="${skill}" cx="${cx}" cy="${cy}" r="48" />
-          <circle class="cs-generated-skill-inner" cx="${cx}" cy="${cy}" r="41" />
-          <text class="cs-generated-skill-label" style="font-size:${labelSize}px"><textPath href="#${pathId}" startOffset="50%" text-anchor="middle">${escape(label)}</textPath></text>
-        </g>`;
-    }).join('');
-
-    el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 ${height}" width="800" height="${height}" data-skill-svg="true" aria-hidden="true">
-      <defs>
-        <linearGradient id="cs-skill-parchment" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#fff4cf" />
-          <stop offset="1" stop-color="#caa66b" />
-        </linearGradient>
-        <filter id="cs-skill-shadow" x="-25%" y="-25%" width="150%" height="150%">
-          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#3a2614" flood-opacity=".24" />
-        </filter>
-      </defs>${circles}
-    </svg>`;
+    const { skills, markup } = journalSkillSvg(requiredSkills, this.appId);
+    el.innerHTML = markup;
     el.dataset.skillSet = skills.join(',');
+    el.dataset.skillCount = String(skills.length);
+    el.dataset.skillRows = String(Math.max(1, Math.ceil(skills.length / 6)));
     // Defer to next frame so layout is computed before measuring.
     requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
   }
@@ -1877,13 +1784,14 @@ export class OspActorSheetCharacter extends ActorSheet {
     const listEl = listContent[0] || listContent;
     const root = html[0] || html;
     const subtabNavEl  = root.querySelector('.spell-subtab-nav');
+    const journalSpells = root.matches?.('.ej-sheet') || !!root.querySelector('.ej-sheet');
     const spellbookEl  = root.querySelector('.spell-subtab-panel[data-subtab="spellbook"]');
     const allSpellsEl  = root.querySelector('.spell-subtab-panel[data-subtab="all"]');
 
     // Force Cooper Std on static template elements — CSS !important is overridden by Foundry's layer system
     const cooperFont = `'Cooper Std', 'Cooper Standard', Georgia, serif`;
     const $root = html.find ? html : $(html);
-    $root.find('.spell-tab-title, .spell-tab-subtitle').each((_, el) => {
+    $root.find('.spell-tab-title').each((_, el) => {
       el.style.setProperty('font-family', cooperFont, 'important');
     });
 
@@ -1968,39 +1876,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       slotEl.innerHTML = '<div class="spell-no-slots">No spell slots available at this level.</div>';
     } else {
       const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
-      let slotHTML = '<div class="spell-slots-grid">';
-      for (const lv of spellLevels) {
-        const max = maxSlots[lv] || 0;
-        const used = Math.min(parseInt((usedSlots[lv] || {}).used) || 0, max);
-        const memCount = memorizedCountByLevel[lv] || 0;
-        const label = levelLabels[+lv - 1] || `L${lv}`;
-        slotHTML += `<div class="spell-slot-group" data-spell-level="${lv}">`;
-        slotHTML += `<div class="spell-slot-label" style="font-family:${cooperFont};">${label}</div>`;
-        slotHTML += `<div class="spell-slot-pips">`;
-        for (let i = 0; i < max; i++) {
-          const isUsed = i < used;
-          const isMem  = !isUsed && i < used + memCount;
-          const cls    = isUsed ? ' used' : (isMem ? ' memorized' : '');
-          const title  = isUsed ? 'Click to restore' : (isMem ? 'Memorized — click to mark used' : 'Click to mark used');
-          slotHTML += `<span role="button" tabindex="0" class="spell-slot-pip${cls}" data-level="${lv}" data-pip="${i}" title="${title}"></span>`;
-        }
-        slotHTML += `</div></div>`;
-      }
-      slotHTML += '</div>';
-
-      // Formula breakdown
       const charClass = esc(system.class || '?');
       const charLevel = parseInt(system.level) || 1;
-      const levelLabelsOrd = ['1st','2nd','3rd','4th','5th','6th'];
-      let formulaLines = [];
-      for (const lv of spellLevels) {
-        const base = baseSlots[lv] || 0;
-        const bonus = bonusApplied[lv] || 0;
-        const total = maxSlots[lv] || 0;
-        const label = levelLabelsOrd[+lv - 1] || `L${lv}`;
-        const bonusPart = bonus > 0 ? ` + ${bonus} bonus` : '';
-        formulaLines.push(`${label}: ${base}${bonusPart} = <b>${total}</b>`);
-      }
       let formulaStatLine = '';
       if (formulaMeta) {
         const { stat, statValue, bracket, isExcluded } = formulaMeta;
@@ -2013,15 +1890,36 @@ export class OspActorSheetCharacter extends ActorSheet {
           formulaStatLine = `${eStat} ${eVal} — no bonus bracket matched`;
         }
       }
-      slotHTML += `<div class="spell-formula">`;
-      slotHTML += `<div class="spell-formula-header">Lv ${charLevel} ${charClass} &nbsp;·&nbsp; ${formulaStatLine}</div>`;
-      slotHTML += `<div class="spell-formula-slots">${formulaLines.join(' &nbsp;|&nbsp; ')}</div>`;
-      slotHTML += `</div>`;
+      let slotHTML = '<div class="spell-slots-grid">';
+      for (const lv of spellLevels) {
+        const max = maxSlots[lv] || 0;
+        const used = Math.min(parseInt((usedSlots[lv] || {}).used) || 0, max);
+        const memCount = memorizedCountByLevel[lv] || 0;
+        const label = levelLabels[+lv - 1] || `L${lv}`;
+        const base = baseSlots[lv] || 0;
+        const bonus = bonusApplied[lv] || 0;
+        const bonusPart = bonus > 0 ? ` + ${bonus} bonus` : '';
+        const calculation = `${label}: ${base}${bonusPart} = ${max}`;
+        const pipDetails = `Lv ${charLevel} ${charClass} · ${formulaStatLine}\n${calculation}`;
+        slotHTML += `<div class="spell-slot-group" data-spell-level="${lv}">`;
+        slotHTML += `<div class="spell-slot-label" style="font-family:${cooperFont};">${label}</div>`;
+        slotHTML += `<div class="spell-slot-pips">`;
+        for (let i = 0; i < max; i++) {
+          const isUsed = i < used;
+          const isMem  = !isUsed && i < used + memCount;
+          const cls    = isUsed ? ' used' : (isMem ? ' memorized' : '');
+          const action = isUsed ? 'Click to restore' : (isMem ? 'Memorized — click to mark used' : 'Click to mark used');
+          const title = `${pipDetails}\n${action}`;
+          slotHTML += `<span role="button" tabindex="0" class="spell-slot-pip${cls}" data-level="${lv}" data-pip="${i}" data-tooltip="${title}" aria-label="${title}"></span>`;
+        }
+        slotHTML += `</div></div>`;
+      }
+      slotHTML += '</div>';
 
       slotEl.innerHTML = slotHTML;
 
-      // Force Cooper Std on slot labels and formula panel — inline style= loses to Foundry's button layer rules
-      slotEl.querySelectorAll('.spell-slot-label, .spell-formula, .spell-formula-header, .spell-formula-slots').forEach(el => {
+      // Force Cooper Std on slot labels — inline style= loses to Foundry's button layer rules
+      slotEl.querySelectorAll('.spell-slot-label').forEach(el => {
         el.style.setProperty('font-family', cooperFont, 'important');
       });
 
@@ -2043,6 +1941,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (isArcane) {
       if (!this._activeSpellSubtab) this._activeSpellSubtab = 'spellbook';
       if (subtabNavEl) {
+        subtabNavEl.style.removeProperty('display');
         subtabNavEl.innerHTML =
           `<span class="spell-subtab-btn${this._activeSpellSubtab === 'spellbook' ? ' active' : ''}" data-subtab="spellbook">Spellbook</span>` +
           `<span class="spell-subtab-btn${this._activeSpellSubtab === 'all'       ? ' active' : ''}" data-subtab="all">All Spells</span>`;
@@ -2073,7 +1972,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (!this._collapsedSpellLevels) this._collapsedSpellLevels = new Set();
     if (!this._collapsedSpellbookLevels) this._collapsedSpellbookLevels = new Set();
 
-    const imgMem            = '/systems/osp-houserules/assets/images/icons/spell-memorized.webp';
+    const imgMem            = '/systems/osp-houserules/assets/images/icons/spell-memorized-olive.png';
     const imgNo             = '/systems/osp-houserules/assets/images/icons/spell_no_memory.webp';
     const imgLearn          = '/systems/osp-houserules/assets/images/icons/learn-spell.webp';
     const imgCast           = '/systems/osp-houserules/assets/images/icons/cast.webp';
@@ -2134,7 +2033,9 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
       h += `<span class="spell-entry-chevron" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;margin-left:4px;">&#9654;</span>`;
       h += `<span class="spell-entry-name" style="flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:24px;font-weight:bold;color:#1a1a1a;">${esc(sp.name)}${hasReversed ? ' <span class="spell-reversible-tag">R</span>' : ''}</span>`;
-      h += `<span class="spell-entry-meta" style="flex:0 0 auto;font-size:20px;color:#666;white-space:nowrap;">${esc(sp.duration || '')}${sp.duration && sp.range ? ' &bull; ' : ''}${esc(sp.range || '')}</span>`;
+      const durationMeta = sp.duration ? `Duration: ${esc(sp.duration)}` : '';
+      const rangeMeta = sp.range ? `Range: ${esc(sp.range)}` : '';
+      h += `<span class="spell-entry-meta" style="flex:0 0 auto;font-size:20px;color:#666;white-space:nowrap;">${durationMeta}${durationMeta && rangeMeta ? ' &bull; ' : ''}${rangeMeta}</span>`;
       h += `</div><div class="spell-entry-body"><p class="spell-description">${esc(sp.description || '')}</p>`;
       if (hasReversed) h += `<div class="spell-reversed-block"><div class="spell-reversed-name">Reversed: ${esc(sp.reversed.name || '')}</div><p class="spell-description">${esc(sp.reversed.description || '')}</p></div>`;
       h += `</div></div>`;
@@ -2150,7 +2051,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       let h = `<div class="spell-level-group${isCollapsed ? ' collapsed' : ''}" data-level="${lv}">`;
       h += `<div class="spell-level-heading" style="display:flex;align-items:center;gap:8px;padding:3px 4px 4px;cursor:pointer;user-select:none;">`;
       h += `<span class="spell-level-caret" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;">${isCollapsed ? '&#9654;' : '&#9660;'}</span>`;
-      h += `Level ${lv}${max ? ` <span class="spell-level-slots">(${max} slot${max !== 1 ? 's' : ''})</span>` : ''}`;
+      const levelTitle = journalSpells ? `${['1st', '2nd', '3rd', '4th', '5th', '6th'][+lv - 1] || lv} Level` : `Level ${lv}`;
+      h += `${levelTitle}${max ? ` <span class="spell-level-slots">(${max} slot${max !== 1 ? 's' : ''})</span>` : ''}`;
       h += `</div>`;
       for (const sp of filtered) h += buildEntry(sp, lv, context);
       h += `</div>`;
@@ -2471,15 +2373,32 @@ export class OspActorSheetCharacter extends ActorSheet {
         `</div>`;
     }).join('');
 
-    // Toggle expand/collapse on name click
-    el.addEventListener('click', (event) => {
-      const toggle = event.target.closest('.skill-ability-toggle');
+    // Replace the delegated handler on every render. Race/class changes render
+    // this list repeatedly; stacking listeners makes an even number of handlers
+    // open and immediately re-close the same ability.
+    el.onclick = (event) => {
+      const toggle = event.target instanceof Element
+        ? event.target.closest('.skill-ability-toggle')
+        : null;
       if (!toggle) return;
       const entry = toggle.closest('.skill-ability-entry');
       const caret = toggle.querySelector('.skill-ability-caret');
+      const effect = entry.querySelector('.skill-ability-effect');
       const collapsed = entry.classList.toggle('skill-ability-collapsed');
       caret.innerHTML = collapsed ? '&#9654;' : '&#9660;';
-    });
+      if (collapsed) {
+        entry.style.removeProperty('min-height');
+        return;
+      }
+
+      // Description length varies substantially. Measure the live wrapped text
+      // after opening so the parchment card always contains its full contents.
+      const styles = getComputedStyle(entry);
+      const verticalChrome = ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth']
+        .reduce((sum, property) => sum + (Number.parseFloat(styles[property]) || 0), 0);
+      const requiredHeight = toggle.scrollHeight + effect.scrollHeight + verticalChrome;
+      entry.style.minHeight = `${Math.ceil(requiredHeight)}px`;
+    };
   }
 
   /**
@@ -2505,12 +2424,9 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Tab hidden / not laid out yet — bail; we'll retry on tab activation.
     if (!svgRect.width || !tabRect.width) return;
 
-    const scale = svgRect.width / viewBox.width;
-    const svgOffsetX = svgRect.left - tabRect.left;
-    const svgOffsetY = svgRect.top - tabRect.top;
-
     const aliases = OspActorSheetCharacter.SKILL_SVG_ID_ALIASES;
     const positionedSlugs = new Set();
+    const continuousSkills = tab.closest('form')?.classList.contains('ej-sheet--continuous-skills');
 
     svg.querySelectorAll('circle[id]').forEach(circle => {
       const id = circle.id;
@@ -2518,18 +2434,30 @@ export class OspActorSheetCharacter extends ActorSheet {
       const targetEl = tab.querySelector(`.cs-pos-${slug}`);
       if (!targetEl) return;
 
-      const cx = parseFloat(circle.getAttribute('cx'));
-      const cy = parseFloat(circle.getAttribute('cy'));
-      if (Number.isNaN(cx) || Number.isNaN(cy)) return;
+      // Use the circle's rendered bounds rather than deriving a scale from the
+      // SVG width. Multi-row diagrams are height-constrained and centered by
+      // preserveAspectRatio, so width-only scaling misplaces their values.
+      const circleRect = circle.getBoundingClientRect();
+      if (!circleRect.width || !circleRect.height) return;
+
+      const diameter = Math.min(circleRect.width, circleRect.height);
+      const fieldSize = diameter * (continuousSkills ? 1 : .76);
+      targetEl.style.setProperty('--width', `${fieldSize}px`);
+      targetEl.style.setProperty('--height', `${fieldSize}px`);
+      // The enhanced value scales with this circle's actual rendered bounds.
+      // Keep an uncapped, proportional native-select fallback if needed.
+      const fallbackFontSize = continuousSkills ? diameter * 1.15 : Math.min(90, diameter * .70);
+      targetEl.style.setProperty('--ej-skill-value-size', `${fallbackFontSize}px`);
 
       const w = targetEl.offsetWidth;
       const h = targetEl.offsetHeight;
 
-      const left = svgOffsetX + cx * scale - w / 2;
-      const top = svgOffsetY + cy * scale - h / 2;
+      const left = circleRect.left - tabRect.left + tab.scrollLeft + circleRect.width / 2 - w / 2;
+      const top = circleRect.top - tabRect.top + tab.scrollTop + circleRect.height / 2 - h / 2;
 
       targetEl.style.setProperty('--left', `${left}px`);
       targetEl.style.setProperty('--top', `${top}px`);
+      if (continuousSkills) renderSkillNumeral(targetEl.querySelector('.cs-listening-select'));
       positionedSlugs.add(slug);
     });
 

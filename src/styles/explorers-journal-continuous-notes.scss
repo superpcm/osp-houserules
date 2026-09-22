@@ -1,0 +1,271 @@
+@use 'sass:math';
+
+// Continuous Notes page. Removing ej-sheet--continuous-notes from the form
+// restores the earlier component-based Notes treatment.
+@mixin ej-notes-box($x, $y, $width, $height) {
+  position: absolute !important;
+  inset: auto !important;
+  left: math.div($x, 1185) * 100% !important;
+  top: math.div($y, 1327) * 100% !important;
+  width: math.div($width, 1185) * 100% !important;
+  height: math.div($height, 1327) * 100% !important;
+}
+
+.window-app.osp.sheet.actor.character.explorers-journal {
+  form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-notes:has(.tab[data-tab='notes'].active) {
+    --ej-notes-page-width: min(100cqw, calc(100cqh * 1185 / 1327));
+    --ej-notes-page-height: calc(var(--ej-notes-page-width) * 1327 / 1185);
+    background: #1d281f url('#{$ej-root}/notes-crisp-v1.png') top center / contain no-repeat !important;
+
+    .cs-sheet-body {
+      inset: auto !important;
+      left: calc((100% - var(--ej-notes-page-width)) / 2) !important;
+      top: 0 !important;
+      width: var(--ej-notes-page-width) !important;
+      height: var(--ej-notes-page-height) !important;
+      overflow: visible;
+    }
+
+    .sheet-body > .tab[data-tab='notes'] {
+      position: relative !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: none !important;
+      padding: 0;
+      margin: 0;
+      overflow: visible;
+      container-type: inline-size;
+      background: none !important;
+    }
+
+    .sheet-tabs.cs-tabs {
+      left: calc((100% - var(--ej-notes-page-width)) / 2 + var(--ej-notes-page-width) * .942) !important;
+      top: calc(var(--ej-notes-page-height) * .068) !important;
+      width: calc(var(--ej-notes-page-width) * .049);
+      height: calc(var(--ej-notes-page-height) * .849);
+      gap: calc(var(--ej-notes-page-width) * .006) !important;
+
+      a.item {
+        min-height: 0;
+        max-height: none;
+        font-size: clamp(9px, calc(var(--ej-notes-page-width) * .018), 19px);
+      }
+    }
+
+    .tab[data-tab='notes'] > .ej-running-head {
+      @include ej-notes-box(112, 58, 210, 96);
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: #30291f;
+      font-family: handwritten, 'Comic Sans MS', cursive !important;
+      font-size: 4.6cqw;
+      font-weight: normal;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      z-index: 3;
+    }
+
+    .tab[data-tab='notes'] .bg-tab-content,
+    .tab[data-tab='notes'] .bg-panels,
+    .tab[data-tab='notes'] .bg-panel {
+      position: static !important;
+      display: block !important;
+      width: auto !important;
+      height: auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      overflow: visible !important;
+    }
+
+    .tab[data-tab='notes'] .bg-tab-subtitle {
+      @include ej-notes-box(160, 140, 865, 45);
+      transform: translateY(-10.27px);
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      margin: 0 !important;
+      padding: 0 !important;
+      white-space: nowrap;
+    }
+
+    .tab[data-tab='notes'] .bg-tab-header {
+      display: contents !important;
+    }
+
+    .tab[data-tab='notes'] .notes-banner-subtitle {
+      @include ej-notes-box(340, 225, 500, 53);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .tab[data-tab='notes'] .bg-tab-title {
+      @include ej-notes-box(200, 70, 800, 64);
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      font-size: 30px !important;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    // The Discoveries banner decorations are baked into the clean foundation.
+    .tab[data-tab='notes'] .bg-panel::before,
+    .tab[data-tab='notes'] .bg-panel::after,
+    .tab[data-tab='notes'] .bg-panel-editor::before {
+      display: none !important;
+      content: none !important;
+    }
+
+    .tab[data-tab='notes'] .notes-tab-content.bg-panel-editor {
+      @include ej-notes-box(111, 292, 960, 795);
+      display: block !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+      z-index: 3;
+    }
+
+    .tab[data-tab='notes'] .notes-tab-content > .editor {
+      display: flex !important;
+      flex-direction: column;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+    }
+
+    .tab[data-tab='notes'] .editor > .menu-container {
+      position: relative !important;
+      inset: auto !important;
+      flex: 0 0 6.4cqw;
+      display: flex !important;
+      align-items: center;
+      width: 100% !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: .5cqw .8cqw !important;
+      border: 0 !important;
+      border-bottom: 1px solid rgba(82, 65, 42, .45) !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+    }
+
+    .tab[data-tab='notes'] .editor-menu {
+      background: transparent !important;
+      // Foundry supplies a rounded bottom border even when its container is borderless.
+      border: 0 !important;
+      border-radius: 0 !important;
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      align-items: center;
+      justify-content: center !important;
+      gap: .45cqw !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .tab[data-tab='notes'] .editor-menu > li {
+      flex: 0 0 auto;
+      display: flex !important;
+      align-items: center;
+      min-width: 0 !important;
+      width: auto !important;
+      height: 5.1cqw !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: none !important;
+    }
+
+    .tab[data-tab='notes'] .editor-menu > li[hidden] {
+      display: flex !important;
+    }
+
+    .tab[data-tab='notes'] .editor-menu > li > button {
+      min-width: 4.2cqw !important;
+      width: 4.2cqw !important;
+      height: 4.8cqw !important;
+      margin: 0 !important;
+      padding: 0 .3cqw !important;
+      border: 0 !important;
+      border-radius: .35cqw !important;
+      background: transparent !important;
+      color: #2b1d13 !important;
+      box-shadow: none !important;
+      font-size: 1.8cqw !important;
+      line-height: 1 !important;
+    }
+
+    .tab[data-tab='notes'] .editor-menu > li > button.format {
+      min-width: 9.2cqw !important;
+      width: 9.2cqw !important;
+    }
+
+    .tab[data-tab='notes'] .editor-menu > li.concurrent-users {
+      display: none !important;
+    }
+
+    .tab[data-tab='notes'] .editor-container,
+    .tab[data-tab='notes'] .editor-content {
+      position: relative !important;
+      inset: auto !important;
+      flex: 1 1 auto;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: #30291f !important;
+      font-family: handwritten, 'Comic Sans MS', cursive !important;
+      font-size: 3.15cqw !important;
+      line-height: 1.35 !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      scrollbar-width: thin;
+      scrollbar-color: #294c39 transparent;
+    }
+
+    .tab[data-tab='notes'] .editor-content {
+      padding: .8cqw 1cqw !important;
+    }
+
+    .tab[data-tab='notes'] .editor-container::-webkit-scrollbar,
+    .tab[data-tab='notes'] .editor-content::-webkit-scrollbar { width: 6px; }
+    .tab[data-tab='notes'] .editor-container::-webkit-scrollbar-thumb,
+    .tab[data-tab='notes'] .editor-content::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background: #294c39;
+    }
+  }
+}

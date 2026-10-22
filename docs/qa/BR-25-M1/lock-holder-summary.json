@@ -1,0 +1,22 @@
+{
+  "observedAt": "2026-10-03T04:42:40.596550+00:00",
+  "host": "the-citadel (192.168.163.59)",
+  "transport": "existing authenticated SSH; read-only scoped metadata inspection",
+  "filesystem": "NFS 192.168.163.59:/home/superpcm/foundry",
+  "holderPid": 3035,
+  "processName": "MainThread",
+  "container": "foundryvtt_narlington",
+  "containerId": "d8e3fbf34b41bbd287e6d2237324aa520c9920ea260a79c2b4ba9fe7d98db94c",
+  "containerImage": "ghcr.io/felddy/foundryvtt:14",
+  "containerInitPid": 2597,
+  "evidence": "Exact device/inode matches in /proc/locks for all three declared LOCK paths; container name/image/init PID read through targeted docker inspect.",
+  "inspectionLimits": "Local lsof returned no owner. Unprivileged host lsof warned about inaccessible Docker overlay/nsfs and was incomplete. Exact running Foundry version not verified.",
+  "minimumSafeAction": "After approval and a quiet maintenance window, gracefully shut down this Foundry instance, verify all pack locks release, capture before restarting; alternatively supply a verified backup captured while closed. Never delete LOCK or kill the holder to force a capture.",
+  "actionsNotTaken": [
+    "No shutdown",
+    "No kill",
+    "No container/config/data change",
+    "No source DB open"
+  ],
+  "projectSpace": "Existing local OSP Houserules folder; no separate ChatGPT Space"
+}

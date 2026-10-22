@@ -1,0 +1,33 @@
+{
+  "errors": [],
+  "packs": {
+    "qa-fixture": {
+      "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+      "invalidJsonValues": 0,
+      "items": [
+        {
+          "id": "QAItem0000000001",
+          "image": "icons/svg/item-bag.svg",
+          "key": "!items!QAItem0000000001",
+          "name": "Synthetic QA item 1",
+          "type": "item"
+        },
+        {
+          "id": "QAItem0000000002",
+          "image": "icons/svg/item-bag.svg",
+          "key": "!items!QAItem0000000002",
+          "name": "Synthetic QA item 2",
+          "type": "item"
+        }
+      ],
+      "nonDocumentValues": 0,
+      "records": 2,
+      "types": {
+        "item": 2
+      }
+    }
+  },
+  "snapshot": "/private/tmp/osp-br25-m1-qa-20261003-b",
+  "sourceCompared": "/private/var/folders/pc/ts104dqj2dgdfg5s9d1d85c00000gn/T/osp-br25-m1-fixture-W2hjAh",
+  "validation": "implementer-reported read-only audit; catalog/Foundry acceptance pending"
+}

@@ -1,0 +1,59 @@
+/* Measured combat weapon layout. The runtime supplies --ej-combat-weapon-columns. */
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title,
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .item-header.weapon-header {
+  grid-template-columns: var(--ej-combat-weapon-columns) !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  gap: var(--ej-combat-weapon-gap, 5px) !important;
+}
+
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .item-header.weapon-header > * {
+  min-width: 0 !important;
+  max-width: none !important;
+  transform: none !important;
+  translate: none !important;
+}
+
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .item-header.weapon-header > :is(.item-name, .field-short, .item-controls) {
+  width: auto !important;
+}
+
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .item-header.weapon-header > .item-name {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title {
+  position: relative !important;
+}
+
+/* Align the label with the weapon name, after the roll and artwork tracks. */
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > .category-name {
+  grid-column: 3 !important;
+  left: auto !important;
+  transform: none !important;
+  text-align: left !important;
+  padding-left: 5px !important;
+}
+
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :is(.field-short, .item-controls) {
+  position: static !important;
+  left: auto !important;
+  transform: none !important;
+  translate: none !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :nth-child(2) { grid-column: 4 !important; }
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :nth-child(3) { grid-column: 5 !important; }
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :nth-child(4) { grid-column: 6 !important; }
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :nth-child(5) { grid-column: 7 !important; }
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :nth-child(6) { grid-column: 8 !important; }
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :nth-child(7) { grid-column: 9 !important; }
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :nth-child(8) { grid-column: 10 !important; }
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab="combat"].active) .sheet-body > .tab[data-tab="combat"] .combat-equipped-section .weapons-title > :nth-child(9) { grid-column: 11 !important; }
+

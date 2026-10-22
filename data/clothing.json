@@ -60,7 +60,7 @@
     "type": "clothing",
     "img": "systems/osp-houserules/assets/thumbs/images/clothing/bracers_thumb.webp",
     "system": {
-      "description": "These leather bracers are shaped to protect the forearms, with reinforced stitching and a simple lace-up closure that allows for a snug, secure fit. Adventurers wear them for light protection against scrapes, bowstring snap, and glancing blows without the weight of metal armor.",
+      "description": "Leather forearm guards with reinforced stitching and a lace-up closure protect against scrapes, bowstring snap, and glancing blows without the weight of metal armor.",
       "cost": 3,
       "unitWeight": 0.2,
       "storedSize": 0.5,
@@ -94,7 +94,7 @@
     "type": "clothing",
     "img": "systems/osp-houserules/assets/thumbs/images/clothing/wizards-robes_thumb.webp",
     "system": {
-      "description": "Wizard's robes are long, flowing garments tailored for ease of movement and often inscribed subtly or boldly with symbols of arcane study. Though they offer little physical protection, they feature numerous hidden pockets for storing spell components and serve as a mark of training, tradition, and mystical authority.",
+      "description": "Long, flowing wizard's robes allow easy movement and may bear symbols of arcane study. They offer little physical protection but include hidden pockets for spell components.",
       "cost": 9,
       "unitWeight": 3,
       "storedSize": 4,
@@ -111,7 +111,7 @@
     "type": "clothing",
     "img": "systems/osp-houserules/assets/thumbs/images/clothing/clothes-commoners_thumb.webp",
     "system": {
-      "description": "This set of commoner’s clothes consists of simple, durable garments made from coarse linen and wool, designed for everyday labor and travel. Such clothing is typically worn by peasants and townsfolk, offering basic comfort and protection while remaining inexpensive and easy to replace.",
+      "description": "Simple, durable linen and wool garments for everyday labor and travel. Commoner's clothes provide basic comfort and protection while remaining inexpensive and easy to replace.",
       "cost": 1,
       "unitWeight": 0.5,
       "storedSize": 4,
@@ -130,7 +130,7 @@
     "type": "clothing",
     "img": "systems/osp-houserules/assets/thumbs/images/clothing/clothes-merchants_thumb.webp",
     "system": {
-      "description": "This set of merchant’s clothes consists of well-made but practical garments designed to present a respectable appearance while enduring long days of travel and trade. Such clothing is typically worn by traders and shopkeepers, balancing comfort, durability, and subtle displays of prosperity when conducting business.",
+      "description": "Well-made, practical garments for travel and trade, balancing comfort and durability with a respectable display of prosperity. Merchant's clothes suit traders and shopkeepers.",
       "cost": 5,
       "unitWeight": 1,
       "storedSize": 4,
@@ -149,7 +149,7 @@
     "type": "clothing",
     "img": "systems/osp-houserules/assets/thumbs/images/clothing/clothes-adventurers_thumb.webp",
     "system": {
-      "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field.",
+      "description": "Sturdy, well-fitted garments reinforced with leather for long travel. Adventurer's clothes provide durability, freedom of movement, and basic protection in the field.",
       "cost": 7,
       "unitWeight": 2,
       "storedSize": 5,
@@ -168,7 +168,7 @@
     "type": "clothing",
     "img": "systems/osp-houserules/assets/thumbs/images/clothing/clothes-noblemans_thumb.webp",
     "system": {
-      "description": "This set of noble’s clothes is composed of finely tailored garments made from quality fabrics, accented with decorative trim and refined details. Such attire is typically worn at court, formal gatherings, or official functions to display status, wealth, and social standing.",
+      "description": "Finely tailored garments of quality fabric with decorative trim and refined details. Nobleman's clothes are worn at court and formal functions to display status and wealth.",
       "cost": 12,
       "unitWeight": 2,
       "storedSize": 4,

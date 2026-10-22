@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-03T06:14:00.023469+00:00",
+  "evidenceSha256": "512abf7c61c8c3e8cf7d5caa1933ec1b8ddc8058c90e6e05d8b0055f382f21f1",
+  "priorSourceSha256": "a7f0865b292bf353eb2771aabb1ea40c183c919b9fda5eaefd92dfa53663b3cd",
+  "priorQaSha256": "ea6732720891baef66cecfcbf88ac003f48d04756f1c000e60f0d6c52f550e5f",
+  "WAL": "independent PASS for bounded R1 correction",
+  "SST": "independent FAIL: stale CRC after equal-length sentinel substitution accepted",
+  "fullBR25": "unaccepted"
+}

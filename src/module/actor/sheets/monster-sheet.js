@@ -1,4 +1,7 @@
+import { healthSnapshot, conditionEffects } from '../../health/health-rules.js';
+import { rollCritical } from '../../health/critical-authority.js';
 import { ospRoll, buildManualChatContent } from "../../dice.js";
+import { changeHealth } from "../../health/health-authority.js";
 
 const critDamageFormula = (formula) =>
   formula.replace(/(\d+)d(\d+)/gi, (_, n, d) => `${parseInt(n) * 2}d${d}`);
@@ -19,7 +22,8 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
   }
 
   _getHeaderButtons() {
-    return super._getHeaderButtons();
+    const buttons = super._getHeaderButtons();
+    return buttons;
   }
 
   async getData(options) {
@@ -68,6 +72,8 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
       const weapon = this.actor.items.get(itemId);
       if (!weapon) return;
+      const healthEffects = conditionEffects(healthSnapshot(this.actor));
+      if (healthEffects.cannotAct) { ui.notifications.warn('Dead, unconscious or Incapacitated creatures cannot attack.'); return; }
 
       // Require a targeted token (T key in canvas)
       const targets = [...game.user.targets];
@@ -89,7 +95,8 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
       // Attacker stats
       const bba        = this.actor.system.thac0?.bba ?? 0;
       const atkBonus   = weapon.system.bonus ?? 0;
-      const totalBonus = bba + atkBonus;
+      const targetEffects = conditionEffects(healthSnapshot(targetActor));
+      const totalBonus = bba + atkBonus + healthEffects.outgoingAttack + targetEffects.incomingAttack;
       const dmgFormula = weapon.system.damage || "1d6";
 
       // Capture names for the async closure (sheet may close before damage fires)
@@ -134,21 +141,21 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
           const whisperData = ChatMessage.applyRollMode({}, game.settings.get('core', 'rollMode'));
           await ChatMessage.create({ ...whisperData, speaker, flavor: atkFlavor, content: buildManualChatContent(atkResult, { formula: "1d20", label: `${esc(weaponName)} Attack` }), flags: atkFlags });
         }
+        if (natural === 20 || natural === 1) {
+          const critical = await rollCritical(this.actor, natural === 20 ? 'hit' : 'miss');
+          if (!critical.success) { ui.notifications.warn('Recover the critical result in XP History, then resolve outstanding damage manually; do not repeat attacks.'); return; }
+          if (isHit) hitResults[hitResults.length - 1].rerollOnes = critical.rerollOnes;
+        }
       }
 
       if (!hitResults.length) return;
 
       // ── Damage rolls for each hit, 3 s later ──────────────────────────────
-      // HP path resolved once; subsequent reads use the live actor data which
-      // Foundry updates after each await actor.update().
-      const hpObj   = targetActor.system.hp;
-      const isHPObj = hpObj !== null && typeof hpObj === "object";
-      const hpPath  = isHPObj ? "system.hp.value" : "system.hitpoints";
-
       setTimeout(async () => {
         try {
-          for (const [h, { isCrit }] of hitResults.entries()) {
-            const formula    = isCrit ? critDamageFormula(fullDmgFormula) : fullDmgFormula;
+          for (const [h, { isCrit, rerollOnes }] of hitResults.entries()) {
+            let formula = isCrit ? critDamageFormula(fullDmgFormula) : fullDmgFormula;
+            if (rerollOnes) formula = formula.replace(/(\d+d\d+)/gi, '$1rr1');
             const hitLabel   = hitResults.length > 1 ? ` [hit ${h + 1}/${hitResults.length}]` : "";
             const critSuffix = isCrit ? " (Critical Hit!)" : "";
             const dmgResult  = await ospRoll(formula, { label: `${weaponName}${hitLabel}${critSuffix} Damage` });
@@ -156,14 +163,16 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
 
             const dmg = Math.max(1, dmgResult.total);
 
-            const currentHP = isHPObj
-              ? (targetActor.system.hp?.value ?? 0)
-              : (targetActor.system.hitpoints ?? 0);
-            const newHP = Math.max(0, currentHP - dmg);
-            await targetActor.update({ [hpPath]: newHP });
+            const healthResult = await changeHealth(targetActor, { action: 'damage', amount: dmg }, `monster-${globalThis.foundry?.utils?.randomID?.() ?? crypto.randomUUID()}`);
+            if (!healthResult?.success) {
+              ui.notifications.warn(`${targetName}: ${healthResult?.reason ?? 'Damage needs GM recovery in XP History.'} Do not repeat the attack.`);
+              continue;
+            }
+            const currentHP = healthResult.beforeHP;
+            const newHP = healthResult.afterHP;
 
             const dmgFlavor  = `<em>${weaponName}</em>${hitLabel}${isCrit ? " <em>(Critical Hit!)</em>" : ""} → <strong>${targetName}</strong>: <strong>${dmg}</strong> damage — HP: ${currentHP} → ${newHP}`;
-            const dmgFlags   = { "osp-houserules": { combatDamage: true, manualRoll: dmgResult.manual, manualDamageTotal: dmgResult.manual ? dmgResult.total : undefined } };
+            const dmgFlags   = { "osp-houserules": { combatDamage: true, healthApplied: true, manualRoll: dmgResult.manual, manualDamageTotal: dmgResult.manual ? dmgResult.total : undefined } };
 
             if (dmgResult.foundryRoll) {
               await dmgResult.foundryRoll.toMessage({

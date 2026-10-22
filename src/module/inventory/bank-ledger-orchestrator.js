@@ -1,14 +1,10 @@
+import { canStackItems } from './stack-identity.js';
 /**
  * @file Foundry-facing orchestrator for Westford Bank. Resolves live actor flags/items into
- * plain data, calls the pure planners in bank-ledger.js, and only on a successful plan touches
- * any document. Foundry gives no way to write the ledger flag and mutate an embedded item as one
- * atomic transaction, so each function deliberately mutates the *real* inventory item first
- * (delete/update on deposit, create/update on withdrawal) and only commits the ledger flag
- * (actor.setFlag, via commitLedger()) once that has confirmed succeeded — if either step throws,
- * it's caught and turned into an ordinary {success:false, reason} result instead of an unhandled
- * rejection. This ordering picks the safer failure mode: a failure between the two steps leaves
- * the tangible item where it already was rather than crediting/debiting the ledger for something
- * that never actually moved.
+ * plain data and calls the pure planners in bank-ledger.js. Inventory/ledger transfers persist
+ * a recovery record before either write. Failed writes are reconciled against recorded states;
+ * compensation is verified before reporting restoration. Unresolved records block further
+ * operations and remain available in the GM ledgers view, including after a restart.
  *
  * Every exported function here returns the same {success, reason?, reasonType?, ...} shape the
  * pure planners return — it does NOT call ui.notifications itself (same convention as
@@ -25,18 +21,17 @@ import {
 } from "./bank-ledger.js";
 import { checkWithdrawTarget } from "./container-capacity.js";
 import { COIN_TEMPLATES } from "./treasure-cost.js";
+import { validateDepositSource } from "./deposit-source.js";
+import { runTransaction, itemChange, createdItemChange, flagChange, transactionBlock } from "./transaction-journal.js";
+import { requestInventoryMutation, registerInventoryAuthority, inventoryRequester, inventoryActorReference, resolveInventoryActor, inventoryWithdrawalAllowed } from "./inventory-authority.js";
 
 const FLAG_SCOPE = "osp-houserules";
 const FLAG_KEY = "bankLedger";
 
 const DENOMINATION_TO_COIN_NAME = { gold: "Gold Coins", silver: "Silver Coins", copper: "Copper Coins" };
+const DM_ACTIONS = new Set(["personalBankDmCurrency", "personalBankDmAddItem", "personalBankDmRemoveItem", "personalBankDmCatalogDeposit"]);
 
-// Serializes calls against the same actor within one client — correctly guards against
-// double-click/double-drop races from a single browser tab. It does NOT coordinate across two
-// different clients (e.g. the DM's browser and a player's editing the same ledger at the same
-// instant): Foundry has no cross-client transaction primitive and this repo has no socket layer
-// to add one. Given this is a small-group tabletop app, that collision is rare and low-severity
-// (last-write-wins on the bankLedger flag, identical to any other concurrent actor.update).
+// Authority queue serializes planning; this lock also protects direct journal callers.
 const actorLocks = new Map();
 function withActorLock(actorId, fn) {
   const prior = actorLocks.get(actorId) ?? Promise.resolve();
@@ -51,21 +46,18 @@ export function getLedger(actor) {
 }
 
 function currentUserMeta(actorType, containerId = null) {
-  return { actorType, actorId: game.user.id, containerId };
+  return { actorType, actorId: inventoryRequester().id, containerId };
 }
 
 // Every mutating function below funnels its final flag write through here so a failure at this
 // last step (same risk as any other write — a permission hiccup, a dropped connection to the
 // GM client that relays the update, etc.) also comes back as an ordinary {success:false} result
 // instead of an unhandled rejection the UI layer never sees.
-async function commitLedger(actor, ledger, failureReason) {
-  try {
-    await actor.setFlag(FLAG_SCOPE, FLAG_KEY, ledger);
-    return null;
-  } catch (err) {
-    console.error('[Westford Bank] failed to save the ledger', err);
-    return { success: false, reason: failureReason };
-  }
+async function commitLedger(actor, ledger) {
+  const blocked = transactionBlock(actor);
+  if (blocked) return blocked;
+  const result = await runTransaction(actor, { authority: true, label: "Edit personal bank ledger", changes: [flagChange(actor, FLAG_KEY, ledger)] });
+  return result.success ? null : result;
 }
 
 /**
@@ -74,28 +66,23 @@ async function commitLedger(actor, ledger, failureReason) {
  * @param {Item} item - the live embedded item being deposited (owned by `actor`)
  * @param {number} quantity
  */
-export async function depositItem(actor, item, quantity) {
+async function depositItemCore(actor, item, quantity) {
   return withActorLock(actor.id, async () => {
-    const itemData = item.toObject();
+    const blocked = transactionBlock(actor);
+    if (blocked) return blocked;
+    const source = validateDepositSource(actor, item, quantity);
+    if (!source.success) return source;
+    const { item: liveItem, itemData } = source;
     const ledger = getLedger(actor);
-    const meta = currentUserMeta('player', item.system.containerId ?? null);
+    const meta = currentUserMeta('player', liveItem.system.containerId ?? null);
     const plan = planDepositItem(ledger, itemData, quantity, meta);
     if (!plan.success) return plan;
 
-    // Mutate the real inventory item before committing the ledger flag — if this throws, the
-    // ledger is never touched, so a failure here can't credit the bank with treasure that never
-    // actually left the player's inventory.
-    try {
-      const remaining = (itemData.system.quantity || 1) - quantity;
-      if (remaining <= 0) await item.delete();
-      else await item.update({ 'system.quantity': remaining });
-    } catch (err) {
-      console.error('[Westford Bank] depositItem: failed to update the source item', err);
-      return { success: false, reason: `Failed to remove ${itemData.name} from your inventory — deposit cancelled.` };
-    }
-
-    const flagError = await commitLedger(actor, plan.ledger, `${itemData.name} was removed from your inventory but the ledger failed to save — tell your DM.`);
-    return flagError ?? plan;
+    const result = await runTransaction(actor, { authority: true, label: `Deposit ${quantity}× ${itemData.name} into Westford Bank`, changes: [
+      itemChange(actor, liveItem, liveItem.system.quantity - quantity),
+      flagChange(actor, FLAG_KEY, plan.ledger),
+    ] });
+    return result.success ? plan : result;
   });
 }
 
@@ -104,8 +91,11 @@ export async function depositItem(actor, item, quantity) {
  * container already owned by `actor`. Runs the type/capacity gate (checkWithdrawTarget) before
  * mutating anything — on failure, nothing changes and the caller gets {success:false, reasonType}.
  */
-export async function withdrawItem(actor, entryId, quantity, targetContainer) {
+async function withdrawItemCore(actor, entryId, quantity, targetContainer) {
   return withActorLock(actor.id, async () => {
+    const blocked = transactionBlock(actor);
+    if (blocked) return blocked;
+    if (!targetContainer || targetContainer.type !== "container") return { success: false, reason: "Destination container is unavailable." };
     const ledger = getLedger(actor);
     const entry = ledger.items.find((e) => e.entryId === entryId);
     if (!entry) return { success: false, reason: 'That ledger entry no longer exists.' };
@@ -120,32 +110,15 @@ export async function withdrawItem(actor, entryId, quantity, targetContainer) {
     if (!plan.success) return plan;
 
     // Merge into an existing matching stack in the target container — mirrors
-    // character-sheet.js's _handleStackedItemDrop matching-stack lookup (name+type+containerId+
-    // storedSize). Unique entries are never merged, even on a name match.
+    // character-sheet.js's shared full-identity check. Unique entries are never merged.
     const matching = !plan.unique && actor.items.find((i) =>
-      i.name === entry.name && i.type === reconstructed.type &&
-      i.system.containerId === targetContainer.id && i.system.storedSize === reconstructed.system.storedSize);
+      i.system.containerId === targetContainer.id && !i.system.equipped && !i.system.lashed && canStackItems(i, reconstructed));
 
-    // Create/update the real destination item before committing the ledger flag — if this
-    // throws, the ledger is never touched, so a failure here can't make banked treasure vanish
-    // without it actually reaching the player's inventory (the bug this fixes: previously the
-    // flag was written first, so a failure here silently left the bank debited with nothing to
-    // show for it and no error surfaced, since the rejection was never caught by the caller).
-    try {
-      if (matching) {
-        await matching.update({ 'system.quantity': (matching.system.quantity || 1) + quantity });
-      } else {
-        await actor.createEmbeddedDocuments('Item', [
-          { ...plan.itemDataToCreate, system: { ...plan.itemDataToCreate.system, quantity, containerId: targetContainer.id } },
-        ]);
-      }
-    } catch (err) {
-      console.error('[Westford Bank] withdrawItem: failed to create/update the destination item', err);
-      return { success: false, reason: `Failed to place ${entry.name} into ${targetContainer.name} — withdrawal cancelled.` };
-    }
-
-    const flagError = await commitLedger(actor, plan.ledger, `${entry.name} was placed into ${targetContainer.name} but the ledger failed to save — tell your DM.`);
-    return flagError ?? plan;
+    const inventoryChange = matching
+      ? itemChange(actor, matching, (matching.system.quantity || 0) + quantity)
+      : createdItemChange(actor, { ...plan.itemDataToCreate, system: { ...plan.itemDataToCreate.system, quantity, containerId: targetContainer.id } });
+    const result = await runTransaction(actor, { authority: true, label: `Withdraw ${quantity}× ${entry.name} from Westford Bank`, changes: [inventoryChange, flagChange(actor, FLAG_KEY, plan.ledger)] });
+    return result.success ? plan : result;
   });
 }
 
@@ -154,30 +127,31 @@ export async function withdrawItem(actor, entryId, quantity, targetContainer) {
  * actor's containers.
  * @param {Item} sourceCoinItem - the live 'coin' item being dragged (owned by `actor`)
  */
-export async function depositCurrency(actor, denomination, quantity, sourceCoinItem) {
+async function depositCurrencyCore(actor, denomination, quantity, sourceCoinItem) {
   return withActorLock(actor.id, async () => {
+    const blocked = transactionBlock(actor);
+    if (blocked) return blocked;
+    const source = validateDepositSource(actor, sourceCoinItem, quantity, { currency: true, denomination });
+    if (!source.success) return source;
+    const { item: liveItem, denomination: actualDenomination } = source;
     const ledger = getLedger(actor);
-    const meta = currentUserMeta('player', sourceCoinItem.system.containerId ?? null);
-    const plan = planDepositCurrency(ledger, denomination, quantity, meta);
+    const meta = currentUserMeta('player', liveItem.system.containerId ?? null);
+    const plan = planDepositCurrency(ledger, actualDenomination, quantity, meta);
     if (!plan.success) return plan;
 
-    try {
-      const remaining = (sourceCoinItem.system.quantity || 0) - quantity;
-      if (remaining <= 0) await sourceCoinItem.delete();
-      else await sourceCoinItem.update({ 'system.quantity': remaining });
-    } catch (err) {
-      console.error('[Westford Bank] depositCurrency: failed to update the source coin item', err);
-      return { success: false, reason: `Failed to remove ${denomination} coins from your inventory — deposit cancelled.` };
-    }
-
-    const flagError = await commitLedger(actor, plan.ledger, `${denomination} coins were removed from your inventory but the ledger failed to save — tell your DM.`);
-    return flagError ?? plan;
+    const result = await runTransaction(actor, { authority: true, label: `Deposit ${quantity} ${actualDenomination} into Westford Bank`, changes: [
+      itemChange(actor, liveItem, liveItem.system.quantity - quantity), flagChange(actor, FLAG_KEY, plan.ledger),
+    ] });
+    return result.success ? plan : result;
   });
 }
 
 /** Withdraw `quantity` coins of a denomination into `targetContainer`. */
-export async function withdrawCurrency(actor, denomination, quantity, targetContainer) {
+async function withdrawCurrencyCore(actor, denomination, quantity, targetContainer) {
   return withActorLock(actor.id, async () => {
+    const blocked = transactionBlock(actor);
+    if (blocked) return blocked;
+    if (!targetContainer || targetContainer.type !== "container") return { success: false, reason: "Destination container is unavailable." };
     const ledger = getLedger(actor);
     const template = COIN_TEMPLATES[DENOMINATION_TO_COIN_NAME[denomination]];
     if (!template) return { success: false, reason: `Unknown currency denomination: ${denomination}.` };
@@ -188,40 +162,28 @@ export async function withdrawCurrency(actor, denomination, quantity, targetCont
     const plan = planWithdrawCurrency(ledger, denomination, quantity, containerCheck, meta);
     if (!plan.success) return plan;
 
-    // Create/update the real destination coin item before committing the ledger flag — see the
-    // identical comment in withdrawItem above for why this ordering matters.
-    try {
-      const existing = actor.items.find((i) => i.type === 'coin' && i.name === template.name && i.system.containerId === targetContainer.id);
-      if (existing) {
-        await existing.update({ 'system.quantity': (existing.system.quantity || 0) + quantity });
-      } else {
-        await actor.createEmbeddedDocuments('Item', [
-          { ...template, system: { ...template.system, quantity, containerId: targetContainer.id } },
-        ]);
-      }
-    } catch (err) {
-      console.error('[Westford Bank] withdrawCurrency: failed to create/update the destination coin item', err);
-      return { success: false, reason: `Failed to place ${denomination} coins into ${targetContainer.name} — withdrawal cancelled.` };
-    }
-
-    const flagError = await commitLedger(actor, plan.ledger, `${denomination} coins were placed into ${targetContainer.name} but the ledger failed to save — tell your DM.`);
-    return flagError ?? plan;
+    const existing = actor.items.find((i) => i.system.containerId === targetContainer.id && !i.system.equipped && !i.system.lashed && canStackItems(i, { ...template, type: 'coin' }));
+    const inventoryChange = existing
+      ? itemChange(actor, existing, (existing.system.quantity || 0) + quantity)
+      : createdItemChange(actor, { ...template, system: { ...template.system, quantity, containerId: targetContainer.id } });
+    const result = await runTransaction(actor, { authority: true, label: `Withdraw ${quantity} ${denomination} from Westford Bank`, changes: [inventoryChange, flagChange(actor, FLAG_KEY, plan.ledger)] });
+    return result.success ? plan : result;
   });
 }
 
 /** DM-only: set a target actor's ledger currency to an absolute value. No container involved. */
-export async function dmEditCurrency(targetActor, denomination, newValue) {
+async function dmEditCurrencyCore(targetActor, denomination, newValue) {
   return withActorLock(targetActor.id, async () => {
     const ledger = getLedger(targetActor);
-    const plan = planSetCurrency(ledger, denomination, newValue, { actorType: 'dm', actorId: game.user.id });
+    const plan = planSetCurrency(ledger, denomination, newValue, { actorType: 'dm', actorId: inventoryRequester().id });
     if (!plan.success) return plan;
-    const flagError = await commitLedger(targetActor, plan.ledger, 'Failed to save the ledger — try again.');
+    const flagError = await commitLedger(targetActor, plan.ledger);
     return flagError ?? plan;
   });
 }
 
 /** DM-only: add a ledger item entry with no backing catalog item (name/qty/unique only). */
-export async function dmAddItem(targetActor, { name, img, quantity, unique }) {
+async function dmAddItemCore(targetActor, { name, img, quantity, unique }) {
   return withActorLock(targetActor.id, async () => {
     const ledger = getLedger(targetActor);
     const itemData = {
@@ -230,34 +192,87 @@ export async function dmAddItem(targetActor, { name, img, quantity, unique }) {
       img: img || 'icons/svg/item-bag.svg',
       system: { treasure: true, tags: unique ? ['unique'] : [], cost: 0, unitWeight: 0, storedSize: 0 },
     };
-    const plan = planDepositItem(ledger, itemData, quantity, { actorType: 'dm', actorId: game.user.id });
+    const plan = planDepositItem(ledger, itemData, quantity, { actorType: 'dm', actorId: inventoryRequester().id });
     if (!plan.success) return plan;
-    const flagError = await commitLedger(targetActor, plan.ledger, 'Failed to save the ledger — try again.');
+    const flagError = await commitLedger(targetActor, plan.ledger);
     return flagError ?? plan;
   });
 }
 
 /** DM-only: remove `quantity` of an existing ledger item entry, no container check. */
-export async function dmRemoveItem(targetActor, entryId, quantity) {
+async function dmRemoveItemCore(targetActor, entryId, quantity) {
   return withActorLock(targetActor.id, async () => {
     const ledger = getLedger(targetActor);
-    const plan = planWithdrawItem(ledger, entryId, quantity, { allowed: true }, { actorType: 'dm', actorId: game.user.id });
+    const plan = planWithdrawItem(ledger, entryId, quantity, { allowed: true }, { actorType: 'dm', actorId: inventoryRequester().id });
     if (!plan.success) return plan;
-    const flagError = await commitLedger(targetActor, plan.ledger, 'Failed to save the ledger — try again.');
+    const flagError = await commitLedger(targetActor, plan.ledger);
     return flagError ?? plan;
   });
 }
 
 /** GM-only: copy a catalog coin or treasure item directly into a personal ledger. */
-export async function dmDepositCatalogItem(targetActor, itemData, quantity, denomination = null) {
+async function dmDepositCatalogItemCore(targetActor, itemData, quantity, denomination = null) {
   return withActorLock(targetActor.id, async () => {
     const ledger = getLedger(targetActor);
-    const meta = { actorType: 'dm', actorId: game.user.id, characterId: targetActor.id, characterName: targetActor.name, action: 'gm_deposit' };
+    const meta = { actorType: 'dm', actorId: inventoryRequester().id, characterId: targetActor.id, characterName: targetActor.name, action: 'gm_deposit' };
     const plan = denomination
       ? planDepositCurrency(ledger, denomination, quantity, meta)
       : planDepositItem(ledger, itemData, quantity, meta);
     if (!plan.success) return plan;
-    const flagError = await commitLedger(targetActor, plan.ledger, 'Failed to save the GM deposit — try again.');
+    const flagError = await commitLedger(targetActor, plan.ledger);
     return flagError ?? plan;
+  });
+}
+
+export function depositItem(actor, item, quantity, operationId = null) {
+  return requestInventoryMutation("personalBankDepositItem", { ...inventoryActorReference(actor), itemId: item.id, quantity }, null, operationId);
+}
+export function withdrawItem(actor, entryId, quantity, container, operationId = null) {
+  return requestInventoryMutation("personalBankWithdrawItem", { ...inventoryActorReference(actor), entryId, quantity, containerId: container.id }, null, operationId);
+}
+export function depositCurrency(actor, denomination, quantity, item, operationId = null) {
+  return requestInventoryMutation("personalBankDepositCurrency", { ...inventoryActorReference(actor), denomination, quantity, itemId: item.id }, null, operationId);
+}
+export function withdrawCurrency(actor, denomination, quantity, container, operationId = null) {
+  return requestInventoryMutation("personalBankWithdrawCurrency", { ...inventoryActorReference(actor), denomination, quantity, containerId: container.id }, null, operationId);
+}
+export function dmEditCurrency(actor, denomination, newValue, operationId = null) {
+  return requestInventoryMutation("personalBankDmCurrency", { ...inventoryActorReference(actor), denomination, newValue }, null, operationId);
+}
+export function dmAddItem(actor, data, operationId = null) {
+  return requestInventoryMutation("personalBankDmAddItem", { ...data, ...inventoryActorReference(actor) }, null, operationId);
+}
+export function dmRemoveItem(actor, entryId, quantity, operationId = null) {
+  return requestInventoryMutation("personalBankDmRemoveItem", { ...inventoryActorReference(actor), entryId, quantity }, null, operationId);
+}
+export function dmDepositCatalogItem(actor, itemData, quantity, denomination = null, operationId = null) {
+  const itemId = itemData?._id ?? itemData?.id;
+  return requestInventoryMutation("personalBankDmCatalogDeposit", { ...inventoryActorReference(actor), itemId, cost: itemData?.system?.cost, quantity, denomination }, null, operationId);
+}
+
+export function initBankLedgerAuthority() {
+  const actions = {
+    personalBankDepositItem: (actor, details) => depositItemCore(actor, find(actor, details.itemId), details.quantity),
+    personalBankWithdrawItem: (actor, details) => withdrawItemCore(actor, details.entryId, details.quantity, find(actor, details.containerId)),
+    personalBankDepositCurrency: (actor, details) => depositCurrencyCore(actor, details.denomination, details.quantity, find(actor, details.itemId)),
+    personalBankWithdrawCurrency: (actor, details) => withdrawCurrencyCore(actor, details.denomination, details.quantity, find(actor, details.containerId)),
+    personalBankDmCurrency: (actor, details) => dmEditCurrencyCore(actor, details.denomination, details.newValue),
+    personalBankDmAddItem: (actor, details) => dmAddItemCore(actor, details),
+    personalBankDmRemoveItem: (actor, details) => dmRemoveItemCore(actor, details.entryId, details.quantity),
+    personalBankDmCatalogDeposit: (actor, details) => {
+      const item = game.items?.get?.(details.itemId);
+      if (!item) return { success: false, reason: "That catalog item is no longer available." };
+      const itemData = item.toObject();
+      if (details.cost !== undefined) itemData.system.cost = details.cost;
+      return dmDepositCatalogItemCore(actor, itemData, details.quantity, details.denomination);
+    },
+  };
+  const find = (actor, id) => actor.items.get?.(id) ?? actor.items.find(item => item.id === id);
+  for (const [action, execute] of Object.entries(actions)) registerInventoryAuthority(action, async (details, message) => {
+    const actor = await resolveInventoryActor(details), user = game.users.get(message.userId);
+    const owner = globalThis.CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3;
+    if (!actor || actor.type !== "character" || !user || (!user.isGM && (DM_ACTIONS.has(action) || (actor.ownership?.[user.id] ?? actor.ownership?.default ?? 0) < owner))) return { success: false, reason: "That character is not authorized to use this bank." };
+    if ((action === "personalBankWithdrawItem" || action === "personalBankWithdrawCurrency") && !inventoryWithdrawalAllowed(user)) return { success: false, reason: "Store withdrawals are currently locked by the GM." };
+    return execute(actor, details);
   });
 }

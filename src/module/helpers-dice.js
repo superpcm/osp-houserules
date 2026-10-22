@@ -2,6 +2,7 @@
  * @file Helpful methods for dealing with OSP-specific dice logic
  */
 import { OSP } from "./config";
+import { ospDialogOptions } from "./dialog/dialog-theme.js";
 
 const OspDice = {
   async sendRoll({
@@ -307,13 +308,13 @@ const OspDice = {
     const html = await foundry.applications.handlebars.renderTemplate(template, dialogData);
 
     return new Promise((resolve) => {
-      new foundry.applications.api.DialogV2({
+      new foundry.applications.api.DialogV2(ospDialogOptions({
         window: { title },
         content: html,
         buttons,
         default: "ok",
         submit: () => { resolve(rolled ? roll : false); },
-      }).render(true);
+      })).render(true);
     });
   },
 
@@ -369,12 +370,12 @@ const OspDice = {
     const html = await foundry.applications.handlebars.renderTemplate(template, dialogData);
 
     return new Promise((resolve) => {
-      new foundry.applications.api.DialogV2({
+      new foundry.applications.api.DialogV2(ospDialogOptions({
         window: { title },
         content: html,
         buttons,
         submit: () => { resolve(rolled ? roll : false); },
-      }).render(true);
+      })).render(true);
     });
   },
 };

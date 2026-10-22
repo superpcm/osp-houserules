@@ -1,0 +1,31 @@
+{
+  "dirtyWorkspace": true,
+  "exactSourceArtifactValidation": "artifact-validation.json",
+  "generatedAt": "2026-10-04T00:47:03.212452+00:00",
+  "previousQaBundles": [
+    {
+      "builtAt": "2026-10-04T00:45:08.048824+00:00",
+      "bytes": 179161,
+      "entries": 59,
+      "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br23-m1-qa-233e75d3d5ab7b612d1373be45b021dbb4f03c5daf3533d8df970374cfab217d.zip",
+      "sha256": "233e75d3d5ab7b612d1373be45b021dbb4f03c5daf3533d8df970374cfab217d"
+    }
+  ],
+  "qaBundle": {
+    "builtAt": "2026-10-04T00:47:03.212452+00:00",
+    "bytes": 184960,
+    "entries": 67,
+    "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br23-m1-qa-eb4c578fd44cfdd6d0da08f6ece0b0ef9454371b26925fb4133d7461de9d354b.zip",
+    "sha256": "eb4c578fd44cfdd6d0da08f6ece0b0ef9454371b26925fb4133d7461de9d354b"
+  },
+  "revision": "327fbc73048223b9875045e6468fc53beca3de4a",
+  "sourceIdentity": "3ca5211d5717366e93698be2d4c37575fe4877625556c72e87d701252fcc76df",
+  "sourceSnapshot": {
+    "builtAt": "2026-10-04T00:45:08.048824+00:00",
+    "bytes": 150896,
+    "entries": 28,
+    "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br23-m1-source-02360ee6c9a508c02fd1bfa476e013f9bfc0be9a9db6e72570cdbff4809c641a.zip",
+    "sha256": "02360ee6c9a508c02fd1bfa476e013f9bfc0be9a9db6e72570cdbff4809c641a"
+  },
+  "status": "ready for independent QA; full BR23 remains open"
+}

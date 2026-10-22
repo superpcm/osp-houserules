@@ -1,0 +1,8 @@
+{
+  "status": "published",
+  "output": "/private/tmp/osp-br25-r2-retest-qjcey5vq/sst-clean-output",
+  "packs": [
+    "qa-fixture"
+  ],
+  "canonicalIdentity": "c73ca09885e3c5f852fa1f9301665efeabb2e9b9ad0b77d967d520bfeda8602c"
+}

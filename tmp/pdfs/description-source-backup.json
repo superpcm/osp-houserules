@@ -1,0 +1,4335 @@
+{
+  "data/armor.json": [
+    {
+      "name": "Banded mail",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/banded-mail_thumb.webp",
+      "system": {
+        "description": "Banded mail is made of broad horizontal metal bands fitted over a backing of leather or chain, creating a rigid yet reliable defensive shell. Though heavy and somewhat restrictive, it offers strong protection for frontline warriors who can bear its weight.",
+        "cost": 200,
+        "unitWeight": 30,
+        "storedSize": 24,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 15
+        },
+        "type": "medium",
+        "donTime": "5 minutes",
+        "doffTime": "1 minute",
+        "maxDex": 2,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Body Shield",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/body-shield_thumb.webp",
+      "system": {
+        "description": "This tall, kite-shaped body shield is built from stout wooden planks banded with dark iron and anchored by a heavy central boss, broad enough to cover a warrior from shoulder to knee. Designed for shield-wall fighting and holding ground, it trades agility for tremendous frontal protection.",
+        "cost": 10,
+        "unitWeight": 12,
+        "storedSize": 60,
+        "containerSizeRequired": "large",
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 2
+        },
+        "type": "shield",
+        "donTime": "1 round",
+        "doffTime": "1 round",
+        "maxDex": null,
+        "minStr": null,
+        "material": "metal"
+      }
+    },
+    {
+      "name": "Brigandine",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/brigandine_thumb.webp",
+      "system": {
+        "description": "Brigandine is a flexible armor made of small overlapping steel plates riveted between layers of sturdy fabric or leather, creating a protective yet maneuverable defense. Its distinctive grid of visible rivets gives it a rugged, utilitarian appearance favored by soldiers and mercenaries.",
+        "cost": 120,
+        "unitWeight": 20,
+        "storedSize": 16,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 13
+        },
+        "type": "medium",
+        "donTime": "5 minutes",
+        "doffTime": "1 minute",
+        "maxDex": 2,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Bronze plate",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/bronze-plate_thumb.webp",
+      "system": {
+        "description": "Bronze plate mail features solid, fitted plates of hammered bronze forged into a rigid cuirass and limb guards. Though heavier and less advanced than steel plate, it offers superior defense and a distinctive ancient-warrior aesthetic.",
+        "cost": 400,
+        "unitWeight": 50,
+        "storedSize": 36,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 17
+        },
+        "type": "heavy",
+        "donTime": "10 minutes",
+        "doffTime": "5 minutes",
+        "maxDex": 0,
+        "minStr": 13
+      }
+    },
+    {
+      "name": "Chain mail",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/chain-mail_thumb.webp",
+      "system": {
+        "description": "Chain mail consists of thousands of interlinked metal rings forming a flexible mesh that protects against cuts and thrusts. It is one of the most reliable and widely used armors among seasoned soldiers and adventurers.",
+        "cost": 75,
+        "unitWeight": 25,
+        "storedSize": 16,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 14
+        },
+        "type": "medium",
+        "donTime": "5 minutes",
+        "doffTime": "1 minute",
+        "maxDex": 2,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Field plate",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/field-plate_thumb.webp",
+      "system": {
+        "description": "Field plate is a well-crafted suit of articulated steel plates that balances protection with mobility, making it ideal for mounted knights. It is less refined than full plate but still represents elite craftsmanship and reliability.",
+        "cost": 5000,
+        "unitWeight": 45,
+        "storedSize": 36,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 18
+        },
+        "type": "heavy",
+        "donTime": "10 minutes",
+        "doffTime": "5 minutes",
+        "maxDex": 0,
+        "minStr": 15
+      }
+    },
+    {
+      "name": "Full plate",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/full-plate_thumb.webp",
+      "system": {
+        "description": "Full plate is the pinnacle of personal armor, a custom-fitted suit of interlocking steel plates that maximizes both protection and freedom of movement. Reserved for nobility and elite champions, it is incredibly expensive but unmatched in defense.",
+        "cost": 10000,
+        "unitWeight": 50,
+        "storedSize": 50,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 19
+        },
+        "type": "heavy",
+        "donTime": "10 minutes",
+        "doffTime": "5 minutes",
+        "maxDex": 0,
+        "minStr": 16
+      }
+    },
+    {
+      "name": "Plate mail",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/plate-mail_thumb.webp",
+      "system": {
+        "description": "Plate mail is a heavy suit of armor made from shaped, overlapping steel plates worn over padding. It provides excellent protection against blades and crushing blows, though its weight, cost, and rigid construction can limit the wearer’s endurance and agility.",
+        "cost": 2000,
+        "unitWeight": 40,
+        "storedSize": 30,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 17
+        },
+        "type": "heavy",
+        "donTime": "10 minutes",
+        "doffTime": "5 minutes",
+        "maxDex": 0,
+        "minStr": 14
+      }
+    },
+    {
+      "name": "Great helm",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/helm-great_thumb.webp",
+      "system": {
+        "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head—though at the cost of limited vision and airflow.",
+        "cost": 30,
+        "unitWeight": 5,
+        "storedSize": 12,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 0
+        },
+        "type": "helmet",
+        "donTime": "1 round",
+        "doffTime": "1 round",
+        "maxDex": null,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Helmet",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/helm_thumb.webp",
+      "system": {
+        "description": "This standard helmet is a sturdy steel cap with a reinforced brow and a simple nasal guard, offering balanced protection without restricting vision. Common among soldiers and adventurers, it provides reliable head defense while remaining light enough for extended wear.",
+        "cost": 6,
+        "unitWeight": 2,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 0
+        },
+        "type": "helmet",
+        "donTime": "1 round",
+        "doffTime": "1 round",
+        "maxDex": null,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Hide",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/hide_thumb.webp",
+      "system": {
+        "description": "Hide armor is made from thick animal pelts and furs, often crudely stitched together to create a rugged, heavy garment. While bulky, it provides solid protection for tribal warriors, druids, and creatures of the wild.",
+        "cost": 15,
+        "unitWeight": 25,
+        "storedSize": 16,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 13
+        },
+        "type": "light",
+        "donTime": "1 minute",
+        "doffTime": "1 minute",
+        "maxDex": 3,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Leather",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/leather_thumb.webp",
+      "system": {
+        "description": "Leather armor is crafted from hardened animal hide, molded and stitched into a flexible protective vest. It is lightweight, durable, and favored by characters who rely on stealth and mobility.",
+        "cost": 20,
+        "unitWeight": 10,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 12
+        },
+        "type": "light",
+        "donTime": "1 minute",
+        "doffTime": "1 minute",
+        "maxDex": 3,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Padded",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/padded_thumb.webp",
+      "system": {
+        "description": "Padded armor is a thick, quilted garment made from layered cloth and batting, offering basic protection against glancing blows. It is inexpensive, quiet to move in, and commonly worn by scouts, thieves, and novice adventurers.",
+        "cost": 4,
+        "unitWeight": 8,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 11
+        },
+        "type": "light",
+        "donTime": "1 minute",
+        "doffTime": "1 minute",
+        "maxDex": 3,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Ring mail",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/ring-mail_thumb.webp",
+      "system": {
+        "description": "Ring mail consists of a leather or cloth garment reinforced with metal rings sewn directly onto its surface, providing basic protection without the full weight of true chain mail. It is typically worn by low-status soldiers or adventurers needing inexpensive armor that offers better defense than padded or leather options, though it remains less effective than more advanced mail types.",
+        "cost": 75,
+        "unitWeight": 22,
+        "storedSize": 16,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 13
+        },
+        "type": "light",
+        "donTime": "1 minute",
+        "doffTime": "1 minute",
+        "maxDex": 3,
+        "minStr": null
+      }
+    },
+    {
+      "name": "Gambeson",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/gambeson_thumb.webp",
+      "system": {
+        "description": "A gambeson is a thick, quilted garment worn as lightweight armor or as padding beneath mail and plate. Its layered fabric cushions blows, reduces chafing, and offers dependable protection without greatly restricting movement.",
+        "cost": 12,
+        "unitWeight": 10,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "underarmor"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "aac": {
+          "value": 11
+        },
+        "pairedBonus": 1,
+        "allowedArmors": [
+          "Chain mail",
+          "Banded mail",
+          "Brigandine",
+          "Bronze plate",
+          "Field plate",
+          "Full plate"
+        ],
+        "type": "light",
+        "donTime": "1",
+        "doffTime": "1",
+        "maxDex": 3,
+        "minStr": 0,
+        "material": "",
+        "allowedContainers": [
+          "Backpack",
+          "Cart",
+          "Chest, Large",
+          "Panniers",
+          "Sack, Large",
+          "Saddlebags, Large",
+          "Wagon"
+        ]
+      },
+      "folder": "CzfbCiZiPUb664YA"
+    },
+    {
+      "name": "Shield",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/shield_thumb.webp",
+      "system": {
+        "description": "This stout, wood-and-iron shield is built from vertical hardwood planks bound by a riveted steel rim and reinforced with a domed central boss. It offers solid, reliable protection for the front-line adventurer without being so large as to hinder mobility.",
+        "cost": 7,
+        "unitWeight": 7,
+        "storedSize": 20,
+        "containerSizeRequired": "large",
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "aac": {
+          "value": 1
+        },
+        "type": "shield",
+        "donTime": "1 round",
+        "doffTime": "1 round",
+        "maxDex": null,
+        "minStr": null,
+        "material": "wood"
+      }
+    },
+    {
+      "name": "Studded Leather",
+      "type": "armor",
+      "img": "systems/osp-houserules/assets/thumbs/images/armor/studded-leather_thumb.webp",
+      "system": {
+        "description": "Studded leather armor reinforces hardened leather with rows of metal rivets or studs, improving its ability to deflect or absorb strikes. It is a popular midpoint between flexibility and protection for rogues, rangers, and mercenaries.",
+        "cost": 25,
+        "unitWeight": 15,
+        "storedSize": 10,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "aac": {
+          "value": 13
+        },
+        "type": "light",
+        "donTime": "1 minute",
+        "doffTime": "1 minute",
+        "maxDex": 3,
+        "minStr": null
+      }
+    }
+  ],
+  "data/clothing.json": [
+    {
+      "name": "Belt",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/belt_thumb.webp",
+      "system": {
+        "description": "This sturdy leather belt features a worn brass buckle and reinforced stitching, showing the marks of long travel and hard use. Adventurers typically use it to secure pouches, sheaths, and other gear, keeping essential items within easy reach on the road.",
+        "cost": 1,
+        "unitWeight": 0.25,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "lashSlots": 6,
+        "lashAllowedSizes": [
+          "S",
+          "M"
+        ],
+        "tags": [
+          "clothing"
+        ]
+      }
+    },
+    {
+      "name": "Boots",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/boots_thumb.webp",
+      "system": {
+        "description": "These rugged leather boots are built for long travel, with thick soles and reinforced stitching to withstand miles of harsh terrain. Adventurers rely on them for protection and stability, whether crossing wilderness trails, dungeon floors, or city streets.",
+        "cost": 3,
+        "unitWeight": 1,
+        "storedSize": 3,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "clothing"
+        ]
+      }
+    },
+    {
+      "name": "Cloak",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/cloak_thumb.webp",
+      "system": {
+        "description": "A loose, draping garment fastened at the neck or shoulder, providing warmth and protection from wind and rain. Adventurers favor it for its practicality, concealment, and the ease with which it can be thrown over armor or travel gear.",
+        "cost": 8,
+        "unitWeight": 3,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "capacity": 2,
+        "lashSlots": 0,
+        "maxItemSize": 0.5
+      }
+    },
+    {
+      "name": "Bracers",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/bracers_thumb.webp",
+      "system": {
+        "description": "These leather bracers are shaped to protect the forearms, with reinforced stitching and a simple lace-up closure that allows for a snug, secure fit. Adventurers wear them for light protection against scrapes, bowstring snap, and glancing blows without the weight of metal armor.",
+        "cost": 3,
+        "unitWeight": 0.2,
+        "storedSize": 0.5,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "clothing"
+        ]
+      }
+    },
+    {
+      "name": "Gloves",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/gloves_thumb.webp",
+      "system": {
+        "description": "These rugged leather gloves are well-worn and creased, offering protection from rope burn, rough surfaces, and cold weather. Adventurers rely on them for climbing, handling gear, and general travel without sacrificing dexterity.",
+        "cost": 2,
+        "unitWeight": 0.2,
+        "storedSize": 0.25,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "clothing"
+        ]
+      }
+    },
+    {
+      "name": "Robes",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/wizards-robes_thumb.webp",
+      "system": {
+        "description": "Wizard's robes are long, flowing garments tailored for ease of movement and often inscribed subtly or boldly with symbols of arcane study. Though they offer little physical protection, they feature numerous hidden pockets for storing spell components and serve as a mark of training, tradition, and mystical authority.",
+        "cost": 9,
+        "unitWeight": 3,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "capacity": 2,
+        "lashSlots": 0,
+        "maxItemSize": 0.5
+      }
+    },
+    {
+      "name": "Clothes, Commoner's",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/clothes-commoners_thumb.webp",
+      "system": {
+        "description": "This set of commoner’s clothes consists of simple, durable garments made from coarse linen and wool, designed for everyday labor and travel. Such clothing is typically worn by peasants and townsfolk, offering basic comfort and protection while remaining inexpensive and easy to replace.",
+        "cost": 1,
+        "unitWeight": 0.5,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "capacity": 2,
+        "tags": [
+          "clothing"
+        ],
+        "maxItemSize": 0.5
+      }
+    },
+    {
+      "name": "Clothes, Merchant's",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/clothes-merchants_thumb.webp",
+      "system": {
+        "description": "This set of merchant’s clothes consists of well-made but practical garments designed to present a respectable appearance while enduring long days of travel and trade. Such clothing is typically worn by traders and shopkeepers, balancing comfort, durability, and subtle displays of prosperity when conducting business.",
+        "cost": 5,
+        "unitWeight": 1,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "capacity": 2,
+        "tags": [
+          "clothing"
+        ],
+        "maxItemSize": 0.5
+      }
+    },
+    {
+      "name": "Clothes, Adventurer's",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/clothes-adventurers_thumb.webp",
+      "system": {
+        "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field.",
+        "cost": 7,
+        "unitWeight": 2,
+        "storedSize": 5,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "capacity": 3,
+        "tags": [
+          "clothing"
+        ],
+        "maxItemSize": 0.5
+      }
+    },
+    {
+      "name": "Clothes, Nobleman's",
+      "type": "clothing",
+      "img": "systems/osp-houserules/assets/thumbs/images/clothing/clothes-noblemans_thumb.webp",
+      "system": {
+        "description": "This set of noble’s clothes is composed of finely tailored garments made from quality fabrics, accented with decorative trim and refined details. Such attire is typically worn at court, formal gatherings, or official functions to display status, wealth, and social standing.",
+        "cost": 12,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "capacity": 2,
+        "tags": [
+          "clothing"
+        ],
+        "maxItemSize": 0.5
+      }
+    }
+  ],
+  "data/gear.json": [
+    {
+      "name": "Backpack",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/backpack_thumb.webp",
+      "system": {
+        "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing.",
+        "cost": 5,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "container"
+        ],
+        "capacity": 20,
+        "containerSize": "medium",
+        "lashSlots": 4,
+        "blockedTypes": [
+          "slungable",
+          "sword"
+        ]
+      }
+    },
+    {
+      "name": "Bedroll",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/bedroll_thumb.webp",
+      "system": {
+        "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone.",
+        "cost": 2,
+        "unitWeight": 4,
+        "storedSize": 6,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "sleep"
+        ]
+      }
+    },
+    {
+      "name": "Belt Pouch (L)",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-large_thumb.webp",
+      "system": {
+        "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt.",
+        "cost": 4,
+        "unitWeight": 1,
+        "storedSize": 2,
+        "slotCost": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "bulky"
+        ],
+        "capacity": 4,
+        "containerSize": "small",
+        "blockedTypes": [
+          "armor",
+          "container",
+          "clothing",
+          "sword",
+          "dagger",
+          "arrows",
+          "bolts"
+        ]
+      }
+    },
+    {
+      "name": "Belt Pouch (S)",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-small_thumb.webp",
+      "system": {
+        "description": "A small leather pouch that attaches to a belt. 2 pouches can be attached to a single belt.",
+        "cost": 2,
+        "unitWeight": 0.5,
+        "storedSize": 1,
+        "slotCost": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [],
+        "capacity": 2,
+        "containerSize": "small",
+        "blockedTypes": [
+          "armor",
+          "container",
+          "clothing",
+          "sword",
+          "dagger",
+          "arrows",
+          "bolts"
+        ]
+      }
+    },
+    {
+      "name": "Bolt Case",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/bolt-case_thumb.webp",
+      "system": {
+        "description": "This is a compact, square leather bolt case designed to attach securely to a belt. It is typically used by crossbowmen to carry and protect up to thirty bolts, keeping them accessible and organized during travel or battle.",
+        "cost": 5,
+        "unitWeight": 1,
+        "storedSize": 4,
+        "slotCost": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "capacity": 6,
+        "tags": [
+          "container"
+        ],
+        "allowedTypes": [
+          "bolts"
+        ],
+        "containerSize": "small"
+      }
+    },
+    {
+      "name": "Coin Purse",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/coin-purse_thumb.webp",
+      "system": {
+        "description": "A small, soft leather pouch worn from the belt by a short loop or thong. Its round body is gathered shut with a braided drawstring, leaving the top puckered into folds. It can hold 100 coins.",
+        "cost": 1,
+        "unitWeight": 0.25,
+        "storedSize": 1,
+        "slotCost": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "capacity": 4,
+        "tags": [
+          "container"
+        ],
+        "allowedTypes": [
+          "coins",
+          "gems",
+          "jewelry"
+        ],
+        "containerSize": "small"
+      }
+    },
+    {
+      "name": "Crowbar",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/crowbar_thumb.webp",
+      "system": {
+        "description": "An iron bar, 2' long. Used for prying open doors, chest lids, etc.",
+        "cost": 10,
+        "unitWeight": 3,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "tool"
+        ]
+      }
+    },
+    {
+      "name": "Garlic",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/garlic_thumb.webp",
+      "system": {
+        "description": "A bunch of garlic, sometimes used to repel undead creatures.",
+        "cost": 5,
+        "unitWeight": 0,
+        "storedSize": 0.25,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "herb"
+        ]
+      }
+    },
+    {
+      "name": "Grappling Hook",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/grappling-hook_thumb.webp",
+      "system": {
+        "description": "Made of iron, with 3-4 hooks and a ring to attach a rope. Designed to be thrown by hand and attached to 50 ft. of rope (~6 lbs if hemp rope). The combined 'grappling hook + rope' kit typically weighs about 9 lbs total.",
+        "cost": 25,
+        "unitWeight": 2,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "tool",
+          "climbing"
+        ]
+      }
+    },
+    {
+      "name": "Hammer, Small",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/hammer-small_thumb.webp",
+      "system": {
+        "description": "Comparable to a carpenter's or small blacksmith's hammer light enough for one-handed use, but heavy enough to drive spikes or nails. Besides hammering in iron spikes, it is also useful for tapping stonework.",
+        "cost": 2,
+        "unitWeight": 2,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "tool"
+        ]
+      }
+    },
+    {
+      "name": "Holy Symbol",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/holy-symbol_thumb.webp",
+      "system": {
+        "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
+        "cost": 25,
+        "unitWeight": 0.3,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "religious",
+          "focus"
+        ]
+      }
+    },
+    {
+      "name": "Holy Water",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/holy-water_thumb.webp",
+      "system": {
+        "description": "Water blessed by a holy person, stored in a special vial for use in rituals. Inflicts damage on undead when used as a weapon. A vial is easily held in one hand or stored in a pouch.",
+        "cost": 25,
+        "unitWeight": 0.75,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "consumable",
+          "religious",
+          "missile",
+          "splash-weapon"
+        ],
+        "damage": "1d6",
+        "damageL": "1d6",
+        "damageType": "B",
+        "size": "S",
+        "speedFactor": 2,
+        "rof": 1,
+        "bonus": 0,
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 10,
+          "medium": 30,
+          "long": 50
+        }
+      }
+    },
+    {
+      "name": "Iron Spike",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/iron-spike_thumb.webp",
+      "system": {
+        "description": "Used for wedging doors open or shut, anchoring ropes, and various dungeon uses. 6-8 inches long, about ½ inch thick. Typically carried in a small leather pouch or tool roll.",
+        "cost": 0.1,
+        "unitWeight": 0.25,
+        "storedSize": 0.3,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool",
+          "dungeon"
+        ]
+      }
+    },
+    {
+      "name": "Lantern, Bullseye",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/lantern-bullseye_thumb.webp",
+      "system": {
+        "description": "A bullseye lantern is a metal-cased lamp with a shuttered housing and a single, thick glass lens that focuses its light into a narrow, far-reaching beam. Adventurers typically use it when they need to see a long distance down corridors or roads while keeping surrounding areas in comparative shadow. It burns one flask of oil per 4 hours (24 turns) and casts light in a 60' cone.",
+        "cost": 12,
+        "unitWeight": 3,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "light-source"
+        ]
+      }
+    },
+    {
+      "name": "Lantern, Hooded",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/lantern-hooded_thumb.webp",
+      "system": {
+        "description": "A hooded lantern is a metal-framed light source with a directional hood that shields the flame and focuses its beam forward. It is commonly used by travelers and adventurers who need controlled, wind-resistant illumination in dark or hazardous environments. Burns one flask of oil per 4 hours (24 turns). Casts light in a 30' radius.",
+        "cost": 10,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "light-source"
+        ]
+      }
+    },
+    {
+      "name": "Mallet, Wooden",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/mallet_thumb.webp",
+      "system": {
+        "description": "Durable and unbreakable compared to glass. Commonly used for signaling, checking around corners, or personal grooming. Often stored in a thin leather sleeve or wooden case.",
+        "cost": 3,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool"
+        ]
+      }
+    },
+    {
+      "name": "Mirror, Handheld",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/mirror_thumb.webp",
+      "system": {
+        "description": "Durable and unbreakable compared to glass. Commonly used for signaling, checking around corners, or personal grooming. Often stored in a thin leather sleeve or wooden case.",
+        "cost": 5,
+        "unitWeight": 0.5,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool"
+        ]
+      }
+    },
+    {
+      "name": "Oil Flask",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/oil-flask_thumb.webp",
+      "system": {
+        "description": "Used to fuel lanterns or as a weapon when ignited. Burns for 4 hours in a lantern or 1 turn when used to create a pool of fire. Often carried in a padded or leather-lined pouch to prevent breakage.",
+        "cost": 2,
+        "unitWeight": 1,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "consumable",
+          "flammable",
+          "missile",
+          "splash-weapon"
+        ],
+        "damage": "2d6",
+        "damageL": "2d6",
+        "damageType": "B",
+        "size": "S",
+        "speedFactor": 2,
+        "rof": 1,
+        "bonus": 0,
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 10,
+          "medium": 20,
+          "long": 30
+        }
+      }
+    },
+    {
+      "name": "Piton",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/piton_thumb.webp",
+      "system": {
+        "description": "This metal piton is a tapered spike with a forged eyelet for threading rope, its surface worn and scuffed from repeated climbing use. Adventurers hammer it into cracks or seams in stone to create secure anchor points for climbing, rappelling, and traversing dangerous terrain.",
+        "cost": 0.1,
+        "unitWeight": 0.25,
+        "storedSize": 0.25,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool",
+          "dungeon"
+        ]
+      }
+    },
+    {
+      "name": "Pole, Ten Foot",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/ten-foot-pole_thumb.webp",
+      "system": {
+        "description": "A 10-foot wooden pole used for prodding suspicious areas or measuring distances in a dungeon. Carried with difficulty indoors or underground; too long to strap to a pack, usually dragged or carried in hand. May be split into two 5-ft. sections for easier transport.",
+        "cost": 1,
+        "unitWeight": 5,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "tool",
+          "dungeon"
+        ]
+      }
+    },
+    {
+      "name": "Quiver",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/quiver_thumb.webp",
+      "system": {
+        "description": "Worn on the back, an arrow quiver is a cylindrical leather container designed to carry and protect up to 20 arrows while keeping them easily accessible during travel or combat.",
+        "cost": 5,
+        "unitWeight": 1,
+        "storedSize": 6,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "sling",
+          "slungable"
+        ],
+        "capacity": 5,
+        "lashSlots": 0,
+        "allowedTypes": [
+          "arrows"
+        ],
+        "containerSize": "small"
+      }
+    },
+    {
+      "name": "Quiver, Hip",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/quiver-hip_thumb.webp",
+      "system": {
+        "description": "A compact quiver worn on the hip and meant to hang from the belt. It holds 12 or fewer arrows.",
+        "cost": 5,
+        "unitWeight": 0.5,
+        "storedSize": 4,
+        "slotCost": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "capacity": 3,
+        "lashSlots": 0,
+        "allowedTypes": [
+          "arrows"
+        ],
+        "containerSize": "small"
+      }
+    },
+    {
+      "name": "Rations, Iron",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/rations-iron_thumb.webp",
+      "system": {
+        "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact but heavy and bland. Often divided into daily pouches for easy rationing.",
+        "cost": 15,
+        "unitWeight": 1,
+        "storedSize": 4,
+        "quantity": 7,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "consumable",
+          "food"
+        ]
+      }
+    },
+    {
+      "name": "Rations, Standard",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/rations-standard_thumb.webp",
+      "system": {
+        "description": "Fresh, unpreserved food suitable for shorter trips. Tastier but bulkier than iron rations. Cannot be carried indefinitely without spoilage unless kept cool or magically preserved. Common among caravan travelers or short expeditions.",
+        "cost": 5,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 7,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "consumable",
+          "food"
+        ]
+      }
+    },
+    {
+      "name": "Rope, Hempen (50')",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/rope-hempen_thumb.webp",
+      "system": {
+        "description": "Hempen rope is a thick, coarse rope made from natural plant fibers, valued for its strength and reliability. A 50-foot length is commonly used for climbing, hauling gear, binding objects, or securing camps and equipment in the field.",
+        "cost": 1,
+        "unitWeight": 7,
+        "storedSize": 6,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "tool",
+          "climbing"
+        ]
+      }
+    },
+    {
+      "name": "Rope, Silken (50')",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/rope-silken_thumb.webp",
+      "system": {
+        "description": "Silken rope is a finely woven, lightweight yet strong cordage prized for its smooth texture and durability. Adventurers commonly use a 50-foot length for climbing, securing loads, setting traps, or safely descending into pits and ruins.",
+        "cost": 1,
+        "unitWeight": 3,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "tool",
+          "climbing"
+        ]
+      }
+    },
+    {
+      "name": "Sack, Large",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/sack-large_thumb.webp",
+      "system": {
+        "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins).",
+        "cost": 2,
+        "unitWeight": 0.5,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [],
+        "capacity": 24,
+        "containerSize": "medium",
+        "blockedTypes": [
+          "slungable"
+        ]
+      }
+    },
+    {
+      "name": "Sack, Small",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/sack-small_thumb.webp",
+      "system": {
+        "description": "This small sack is a soft burlap pouch cinched tight with a simple cord, its rough fibers worn from frequent handling. Adventurers typically use it to store rations, coins, or loose gear that needs to be kept separate inside a pack. Capacity: 8 slots (200 coins).",
+        "cost": 1,
+        "unitWeight": 0.25,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [],
+        "capacity": 8,
+        "containerSize": "medium",
+        "blockedTypes": [
+          "slungable"
+        ]
+      }
+    },
+    {
+      "name": "Scabbard, Dagger",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/scabbard-small_thumb.webp",
+      "system": {
+        "description": "A compact leather sheath worn on the belt designed to carry a single dagger or narrow-bladed weapon. Keeps the weapon protected and ready to draw in combat.",
+        "cost": 3,
+        "unitWeight": 0.5,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "slotCost": 1,
+        "tags": [
+          "weapon-storage",
+          "scabbard"
+        ],
+        "capacity": 4,
+        "containerSize": "small",
+        "hideCapacity": true,
+        "maxItems": 1,
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [
+          "Dagger",
+          "Misericorde"
+        ]
+      }
+    },
+    {
+      "name": "Scabbard, Sword",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/scabbard-sword_thumb.webp",
+      "system": {
+        "description": "A rigid leather sheath for a standard sword, designed to sit within a sword frog attached to the belt.",
+        "cost": 3,
+        "unitWeight": 0.5,
+        "storedSize": 30,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "slotCost": 0,
+        "tags": [
+          "weapon-storage",
+          "scabbard"
+        ],
+        "capacity": 4,
+        "containerSize": "small",
+        "hideCapacity": true,
+        "maxItems": 1,
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [
+          "Longsword",
+          "Broadsword",
+          "Bastard Sword",
+          "Khopesh",
+          "Shortsword",
+          "Rapier"
+        ]
+      }
+    },
+    {
+      "name": "Baldric",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/baldric_thumb.webp",
+      "system": {
+        "description": "A broad leather strap worn diagonally across the chest and shoulder, designed to carry a large two-handed sword across the back with the hilt accessible over the shoulder. Frees the hands while keeping the weapon secure and ready during travel. The only practical way to carry a Zweihander or Greatsword.",
+        "cost": 10,
+        "unitWeight": 2,
+        "storedSize": 6,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "weapon-storage",
+          "sling",
+          "slungable"
+        ],
+        "capacity": 8,
+        "containerSize": "small",
+        "hideCapacity": true,
+        "maxItems": 1,
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [
+          "Zweihander",
+          "Greatsword"
+        ]
+      }
+    },
+    {
+      "name": "Scroll Case",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/scroll-case_thumb.webp",
+      "system": {
+        "description": "A protective tube designed to store and transport parchment scrolls, maps, or important documents. Crafted from sturdy materials like wood, leather, and metal, it shields its contents from weather and wear while allowing adventurers or scholars to carry their writings safely on the road.",
+        "cost": 5,
+        "unitWeight": 1,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "capacity": 3,
+        "lashSlots": 0,
+        "allowedTypes": [
+          "scroll"
+        ],
+        "maxItems": 3,
+        "containerSize": "small"
+      }
+    },
+    {
+      "name": "Thieves' Tools",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/thieves-tools_thumb.webp",
+      "system": {
+        "description": "Picks, tension wrench(s), small pliers, razor file, awl, miniature mirror on a stick, small oiler, spare springs/pins, leather roll or wooden/metal case. Used by thieves to open locks and disable traps.",
+        "cost": 25,
+        "unitWeight": 1.5,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool",
+          "thief"
+        ]
+      }
+    },
+    {
+      "name": "Tinder Box",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/flint-steel_thumb.webp",
+      "system": {
+        "description": "This flint and tinder kit includes a sharp-edged flint stone, a curved steel striker, and a bundled nest of dry fibers for catching sparks. Adventurers use it to start campfires, ignite torches, and light oil in situations where magical fire is unavailable.",
+        "cost": 3,
+        "unitWeight": 0.5,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool",
+          "fire"
+        ]
+      }
+    },
+    {
+      "name": "Torch",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/torch_thumb.webp",
+      "system": {
+        "description": "Wooden shafts wrapped with oil-soaked rags. Each torch burns for 1 hour (6 turns) and casts light in a 30' radius. An individual torch can also serve as an improvised melee weapon.",
+        "cost": 0.2,
+        "unitWeight": 0.5,
+        "storedSize": 0.75,
+        "quantity": 6,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "light-source",
+          "melee"
+        ],
+        "damage": "1d4",
+        "damageL": "1d3",
+        "damageType": "B",
+        "size": "S",
+        "speedFactor": 4,
+        "rof": 1,
+        "bonus": 0,
+        "melee": true,
+        "missile": false,
+        "range": {}
+      }
+    },
+    {
+      "name": "Vial or Bottle",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/bottle_thumb.webp",
+      "system": {
+        "description": "This small glass vial is a sturdy, cork-sealed container used to hold potions, holy water, alchemical mixtures, or other valuable liquids. Adventurers and scholars alike rely on such vials to store and transport substances safely while keeping them readily accessible in the field.",
+        "cost": 1,
+        "unitWeight": 0.5,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false
+      }
+    },
+    {
+      "name": "Waterskin",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/waterskin_thumb.webp",
+      "system": {
+        "description": "A waterskin is a durable leather container used to carry drinking water while traveling or adventuring. It is lightweight, easy to strap to a belt or pack, and essential for surviving long journeys where fresh water is scarce.",
+        "cost": 1,
+        "unitWeight": 5,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "container"
+        ]
+      }
+    },
+    {
+      "name": "Wineskin",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/wineskin_thumb.webp",
+      "system": {
+        "description": "Stoppered glass bottle, clay jug, or wineskin containing two pints of table or fortified wine.",
+        "cost": 1,
+        "unitWeight": 3,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "consumable",
+          "drink"
+        ]
+      }
+    },
+    {
+      "name": "Wolfsbane",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/wolfsbane_thumb.webp",
+      "system": {
+        "description": "A flowering herb that is highly toxic if ingested or absorbed through open skin. Used in alchemy, rituals, or to repel lycanthropes. Loses potency after a few weeks unless kept dried and sealed. Must be struck in melee to be effective.",
+        "cost": 10,
+        "unitWeight": 0.5,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "herb",
+          "religious"
+        ]
+      }
+    },
+    {
+      "name": "Wooden Stake",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/stake-wooden_thumb.webp",
+      "system": {
+        "description": "This wooden spike is a rough-hewn stake with one end whittled to a sharp point and the other left blunt for hammering. It's typically used to secure tents and ropes, mark trails, or improvise simple traps and defenses in the field.",
+        "cost": 0.1,
+        "unitWeight": 0.25,
+        "storedSize": 0.5,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "religious"
+        ]
+      }
+    },
+    {
+      "name": "Axe Sling",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/axe-sling_thumb.webp",
+      "system": {
+        "description": "A broad leather sling worn across the back and chest, designed to carry a large axe with the head resting behind the shoulder and the haft accessible for a quick draw. Frees the hands while keeping a battle axe or two-handed axe secure during travel.",
+        "cost": 5,
+        "unitWeight": 1,
+        "storedSize": 6,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "weapon-storage",
+          "sling",
+          "slungable"
+        ],
+        "capacity": 8,
+        "containerSize": "small",
+        "hideCapacity": true,
+        "maxItems": 1,
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [
+          "Battle Axe",
+          "Battle Axe, 2-Handed"
+        ]
+      }
+    },
+    {
+      "name": "Belt Loop",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/belt-loop_thumb.webp",
+      "system": {
+        "description": "A sturdy leather loop and strap assembly designed to hang a tool, weapon, or waterskin from a belt. Accommodates a hand axe, light hammer, warhammer, or waterskin. Keeps bulky items accessible without requiring a bag or pack.",
+        "cost": 2,
+        "unitWeight": 0.25,
+        "storedSize": 2,
+        "slotCost": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "bulky"
+        ],
+        "capacity": 4,
+        "containerSize": "small",
+        "hideCapacity": true,
+        "maxItems": 1,
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [
+          "Hand Axe",
+          "Light Hammer",
+          "Warhammer",
+          "Waterskin",
+          "Mace",
+          "Morning Star",
+          "Flail"
+        ]
+      }
+    },
+    {
+      "name": "Flask/Potion Holder",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/potion-loop_thumb.webp",
+      "system": {
+        "description": "A small leather holder or ring-mount designed to secure a single flask, bottle, or potion vial to a belt. Keeps liquids accessible and protects fragile containers from jostling during travel.",
+        "cost": 1,
+        "unitWeight": 0.1,
+        "storedSize": 1,
+        "slotCost": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [],
+        "capacity": 2,
+        "containerSize": "small",
+        "hideCapacity": true,
+        "maxItems": 1,
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [
+          "Vial or Bottle",
+          "Oil Flask",
+          "Holy Water"
+        ]
+      }
+    },
+    {
+      "name": "Sword Frog",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/sword-frog_thumb.webp",
+      "system": {
+        "description": "A leather suspension mount that attaches to a belt and holds a scabbarded sword in place using rings and loops rather than a fixed sheath. Accommodates a wider variety of blade shapes than a rigid scabbard, including curved blades such as the khopesh.",
+        "cost": 4,
+        "unitWeight": 0.5,
+        "storedSize": 2,
+        "slotCost": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "weapon-storage",
+          "scabbard",
+          "bulky"
+        ],
+        "capacity": 4,
+        "containerSize": "small",
+        "hideCapacity": true,
+        "maxItems": 1,
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [
+          "Scabbard, Sword"
+        ]
+      }
+    },
+    {
+      "name": "Sidesack",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/sidesack_thumb.webp",
+      "system": {
+        "description": "A sidesack is a lightweight pack worn diagonally across the front of the body. Slimmer and less cumbersome than a traditional backpack, it leaves the wearer free to move while keeping essential gear close at hand. Its many pouches, pockets, and loops provide secure storage for tools, supplies, and other adventuring necessities.",
+        "cost": 6,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "container"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "capacity": 12,
+        "containerSize": "medium",
+        "lashSlots": 1,
+        "hideCapacity": false,
+        "maxItems": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [],
+        "blockedTypes": [
+          "Slungable",
+          "Sword"
+        ]
+      }
+    },
+    {
+      "name": "Ink Vial",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/ink-vial_thumb.webp",
+      "system": {
+        "description": "Ink is a dark liquid used with a quill to write, illustrate, or record information on parchment and paper. It is typically stored in a small, stoppered vial to prevent spills and keep it from drying out.",
+        "cost": 20,
+        "unitWeight": 0.5,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "allowedContainers": [
+          "Backpack",
+          "Belt Pouch (L)",
+          "Belt Pouch (S)",
+          "Cart",
+          "Chest, Large",
+          "Chest, Small",
+          "Panniers",
+          "Sack, Large",
+          "Sack, Small",
+          "Saddlebags, Large",
+          "Saddlebags, Small",
+          "Sidesack",
+          "Wagon"
+        ]
+      },
+      "folder": "s6Thb2TUd0YuN0tG"
+    },
+    {
+      "name": "Healer's Kit",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/healer-s-kit_thumb.webp",
+      "system": {
+        "description": "A compact leather case containing bandages, clean cloth, salves, needles, thread, splints, and basic surgical instruments. It provides supplies for treating wounds and stabilizing the injured, and typically contains enough materials for several uses.",
+        "cost": 20,
+        "unitWeight": 3,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool",
+          "medical"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "allowedContainers": [
+          "Backpack",
+          "Belt Pouch (L)",
+          "Belt Pouch (S)",
+          "Cart",
+          "Chest, Large",
+          "Chest, Small",
+          "Panniers",
+          "Sack, Large",
+          "Sack, Small",
+          "Saddlebags, Large",
+          "Saddlebags, Small",
+          "Sidesack",
+          "Wagon"
+        ]
+      },
+      "folder": "s6Thb2TUd0YuN0tG"
+    },
+    {
+      "name": "Manacles",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/manacles_thumb.webp",
+      "system": {
+        "description": "A small glass vial sealed with a cork and filled with writing ink. Used with a quill for recording notes, copying texts, drawing maps, or inscribing messages.",
+        "cost": 2,
+        "unitWeight": 1,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool",
+          "restraint"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "allowedContainers": [
+          "Backpack",
+          "Belt Pouch (L)",
+          "Belt Pouch (S)",
+          "Cart",
+          "Chest, Large",
+          "Chest, Small",
+          "Panniers",
+          "Sack, Large",
+          "Sack, Small",
+          "Saddlebags, Large",
+          "Saddlebags, Small",
+          "Sidesack",
+          "Wagon"
+        ]
+      },
+      "folder": "s6Thb2TUd0YuN0tG"
+    },
+    {
+      "name": "Signal Horn",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/signal-horn_thumb.webp",
+      "system": {
+        "description": "A signal horn is a hollow animal horn used to produce loud, carrying notes over great distances. Its distinct calls can warn of danger, rally companions, announce an arrival, or convey simple messages across the wilderness or battlefield.",
+        "cost": 10,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "tool",
+          "restraint",
+          "slungable"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "allowedContainers": [
+          "Backpack",
+          "Belt Pouch (L)",
+          "Cart",
+          "Chest, Large",
+          "Panniers",
+          "Sack, Large",
+          "Sack, Small",
+          "Saddlebags, Large",
+          "Saddlebags, Small",
+          "Sidesack",
+          "Wagon"
+        ]
+      },
+      "folder": "s6Thb2TUd0YuN0tG"
+    },
+    {
+      "name": "Spellbook",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/spellbook_thumb.webp",
+      "system": {
+        "description": "A spellbook is a carefully kept volume containing magical formulas, arcane symbols, rituals, and notes. Spellcasters use it to study, prepare, and preserve their spells. Contains 100 pages with each spell taking up a page per level.",
+        "cost": 50,
+        "unitWeight": 3,
+        "storedSize": 5,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "magic"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "allowedContainers": [
+          "Backpack",
+          "Cart",
+          "Chest, Large",
+          "Panniers",
+          "Sack, Large",
+          "Sack, Small",
+          "Saddlebags, Large",
+          "Saddlebags, Small",
+          "Sidesack",
+          "Wagon"
+        ]
+      },
+      "folder": "s6Thb2TUd0YuN0tG"
+    },
+    {
+      "name": "Mess Kit",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/mess-kit_thumb.webp",
+      "system": {
+        "description": "A mess kit is a compact set of utensils and cookware used to prepare and eat meals while traveling or camping. Its pieces typically nest together for convenient storage and may include a small pot, pan, plate, cup, and cutlery.",
+        "cost": 10,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tool"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "allowedContainers": [
+          "Backpack",
+          "Cart",
+          "Chest, Large",
+          "Panniers",
+          "Sack, Large",
+          "Sack, Small",
+          "Saddlebags, Large",
+          "Saddlebags, Small",
+          "Sidesack",
+          "Wagon"
+        ]
+      },
+      "folder": "s6Thb2TUd0YuN0tG"
+    },
+    {
+      "name": "Skin Sling",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/waterskin-sling_thumb.webp",
+      "system": {
+        "description": "A simple leather strap and cradle designed to carry a waterskin slung across the shoulder, keeping it accessible without occupying belt space. A common sight among travelers and soldiers on the march.",
+        "cost": 1,
+        "unitWeight": 0.25,
+        "storedSize": 2,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "sling",
+          "slungable"
+        ],
+        "capacity": 4,
+        "containerSize": "small",
+        "hideCapacity": true,
+        "maxItems": 1,
+        "lashSlots": 0,
+        "allowedTypes": [],
+        "allowedSizes": [],
+        "allowedNames": [
+          "Waterskin",
+          "Wineskin"
+        ]
+      }
+    },
+    {
+      "name": "Animal Totem",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/ranger-focus-fox_thumb.webp",
+      "system": {
+        "description": "A wooden animal totem personally carved by the Ranger from a special tree's dead wood, never cut from a living tree, with a plain leather thong. It must depict a forest animal native to their range and be held or displayed while casting.",
+        "cost": 0,
+        "unitWeight": 0.1,
+        "storedSize": 0.25,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "focus",
+          "ranger",
+          "wooden"
+        ]
+      }
+    },
+    {
+      "name": "Mistletoe",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/druid-focus-mistletoe_thumb.webp",
+      "system": {
+        "description": "A small, forked sprig of mistletoe with leathery green leaves and clusters of ivory-white berries along its woody stems. It serves as a Druid's spell focus and must be held or displayed while casting.",
+        "cost": 0,
+        "unitWeight": 0.05,
+        "storedSize": 0.25,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "focus",
+          "druid",
+          "herb"
+        ]
+      }
+    },
+    {
+      "name": "Instrument",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/bard-focus-lute_thumb.webp",
+      "system": {
+        "description": "A well-used musical instrument, its worn surfaces and careful repairs reflecting a life of travel and performance. It serves as a Bard's instrument and spell focus and must be held or displayed while casting.",
+        "cost": 3.5,
+        "unitWeight": 2,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "instrument",
+          "focus",
+          "bard",
+          "wooden"
+        ]
+      }
+    },
+    {
+      "name": "Wand",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/wand_thumb.webp",
+      "system": {
+        "description": "A wooden wand shaped and finished to suit its owner, from a plain tapered length to a crooked, carved, or wrapped design. It serves as a spell focus held or displayed when casting and contains no stored spells or charges of its own.",
+        "cost": 1,
+        "unitWeight": 0.1,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "focus",
+          "wand",
+          "wooden"
+        ]
+      }
+    }
+  ],
+  "data/livestock.json": [
+    {
+      "name": "Chicken",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/chicken.webp",
+      "system": {
+        "description": "This chicken is a plump farm hen with mottled brown feathers, a bright red comb, and sturdy yellow legs, rendered in warm, earthy tones. It is typically kept by villagers and homesteaders for eggs and meat, scratching around yards and barnyards in search of grain and insects.",
+        "cost": 0.2,
+        "unitWeight": 5,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "food source"
+        ],
+        "movement": 30,
+        "carrying": 0,
+        "feedCost": 0.1,
+        "hp": 1,
+        "ac": 10,
+        "temperament": "docile",
+        "hd": "1hp",
+        "numAttacks": 0,
+        "dmgPerAttack": "—",
+        "morale": 5,
+        "xpValue": 0,
+        "animalSize": "small"
+      }
+    },
+    {
+      "name": "Dog, Guard",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/dog-guard.webp",
+      "system": {
+        "description": "This guard dog is a muscular, broad-chested hound with a cropped tail, thick neck, and heavy leather collar, its stance braced and expression wary. It is typically used by nobles, merchants, and watchmen to protect homes, caravans, and strongholds, barking warnings and attacking intruders on command.",
+        "cost": 25,
+        "unitWeight": 80,
+        "storedSize": 60,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "guard",
+          "companion"
+        ],
+        "movement": 180,
+        "carrying": 10,
+        "feedCost": 0.5,
+        "hp": 6,
+        "ac": 13,
+        "temperament": "loyal",
+        "attacks": "1 bite for 1d4 damage",
+        "hd": "1+1",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d4",
+        "morale": 7,
+        "xpValue": 13,
+        "animalSize": "small"
+      }
+    },
+    {
+      "name": "Dog, Hunting",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/dog-hunting.webp",
+      "system": {
+        "description": "This hunting dog is a lean, alert hound with a short, tawny coat and a simple leather collar, standing poised as if ready to track a scent. It is typically used by rangers, hunters, and gamekeepers to help locate prey, follow trails, and warn of approaching danger in the wilds.",
+        "cost": 17,
+        "unitWeight": 50,
+        "storedSize": 50,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "tracking",
+          "companion"
+        ],
+        "movement": 180,
+        "carrying": 5,
+        "feedCost": 0.5,
+        "hp": 4,
+        "ac": 12,
+        "temperament": "loyal",
+        "attacks": "1 bite for 1d3 damage",
+        "special": "Can track by scent",
+        "hd": "1+1",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d3",
+        "morale": 6,
+        "xpValue": 10,
+        "animalSize": "small"
+      }
+    },
+    {
+      "name": "Donkey",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/donkey.webp",
+      "system": {
+        "description": "This donkey is a small, sturdy beast with long ears, a rough coat, and a patient expression, rendered in muted browns and greys. It is typically used by farmers and travelers to carry packs or pull small carts, prized for its endurance and surefootedness more than for speed.",
+        "cost": 8,
+        "unitWeight": 400,
+        "storedSize": 99,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "pack animal",
+          "no-vehicle-store",
+          "no-store",
+          "pack-only"
+        ],
+        "movement": 120,
+        "carrying": 40,
+        "feedCost": 1,
+        "hp": 8,
+        "ac": 12,
+        "temperament": "stubborn",
+        "hd": "2",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d4",
+        "morale": 8,
+        "xpValue": 20,
+        "animalSize": "medium"
+      }
+    },
+    {
+      "name": "Goat",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/goat.webp",
+      "system": {
+        "description": "This goat is a surefooted, bearded animal with curved horns and a rough, shaggy coat rendered in muted browns. It is typically kept by rural folk for its milk, meat, and hide, and it can also serve as a hardy pack animal in rugged, rocky terrain.",
+        "cost": 1,
+        "unitWeight": 150,
+        "storedSize": 50,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "food source"
+        ],
+        "movement": 90,
+        "carrying": 5,
+        "feedCost": 0.3,
+        "hp": 4,
+        "ac": 12,
+        "temperament": "ornery",
+        "hd": "1-2",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d4",
+        "morale": 5,
+        "xpValue": 10,
+        "animalSize": "small"
+      }
+    },
+    {
+      "name": "Hawk, Trained",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/hawk.webp",
+      "system": {
+        "description": "This hawk is a sharp-eyed raptor with mottled brown plumage, curved talons, and a hooked beak, rendered in earthy tones with careful feather detail. It is typically used by hunters, scouts, and rangers as a trained companion for scouting, tracking, or delivering swift, deadly strikes from above.",
+        "cost": 1000,
+        "unitWeight": 3,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "hunting",
+          "scout"
+        ],
+        "movement": 480,
+        "carrying": 0,
+        "feedCost": 0.2,
+        "hp": 2,
+        "ac": 14,
+        "temperament": "wild",
+        "attacks": "1 claw for 1d2 damage",
+        "special": "Can scout from above, hunting small game",
+        "hd": "1",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d2",
+        "morale": 7,
+        "xpValue": 13,
+        "animalSize": "small"
+      }
+    },
+    {
+      "name": "Horse, Draft",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/horse-draft.webp",
+      "system": {
+        "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world.",
+        "cost": 200,
+        "unitWeight": 1800,
+        "storedSize": 99,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "draft animal",
+          "no-vehicle-store",
+          "horse",
+          "no-store",
+          "rideable"
+        ],
+        "movement": 90,
+        "carrying": 120,
+        "feedCost": 2,
+        "hp": 15,
+        "ac": 12,
+        "temperament": "docile",
+        "hd": "3",
+        "numAttacks": 0,
+        "dmgPerAttack": "—",
+        "morale": 6,
+        "xpValue": 35,
+        "animalSize": "large"
+      }
+    },
+    {
+      "name": "Horse, Riding",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/horse-riding.webp",
+      "system": {
+        "description": "This riding horse is a lean, well-muscled bay with a worn leather saddle and bridle, built for speed and endurance rather than brute strength. It is typically used by messengers, travelers, and light cavalry to cover long distances quickly across roads, fields, and open country.",
+        "cost": 75,
+        "unitWeight": 1000,
+        "storedSize": 99,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "mount",
+          "rideable",
+          "no-vehicle-store",
+          "horse",
+          "no-store"
+        ],
+        "movement": 240,
+        "carrying": 60,
+        "feedCost": 1.5,
+        "hp": 12,
+        "ac": 12,
+        "temperament": "skittish",
+        "special": "Usable as mount",
+        "hd": "2",
+        "numAttacks": 2,
+        "dmgPerAttack": "1d4/1d4",
+        "morale": 7,
+        "xpValue": 20,
+        "animalSize": "large"
+      }
+    },
+    {
+      "name": "Horse, War",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/horse-war.webp",
+      "system": {
+        "description": "This war horse is a powerful, broad-chested steed with sturdy legs and a worn leather war saddle, built to carry an armored rider into the thick of battle. Trained not to panic at blood, noise, or steel, it is typically used by knights and heavy cavalry to charge enemy lines and break formations.",
+        "cost": 250,
+        "unitWeight": 1200,
+        "storedSize": 99,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "mount",
+          "rideable",
+          "combat",
+          "no-vehicle-store",
+          "horse",
+          "no-store"
+        ],
+        "movement": 240,
+        "carrying": 80,
+        "feedCost": 2,
+        "hp": 18,
+        "ac": 13,
+        "temperament": "aggressive",
+        "attacks": "2 hooves for 1d6 each",
+        "special": "Usable as mount, does not flee in combat",
+        "hd": "3",
+        "numAttacks": 2,
+        "dmgPerAttack": "1d6/1d6",
+        "morale": 9,
+        "xpValue": 35,
+        "animalSize": "large"
+      }
+    },
+    {
+      "name": "Mule",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/mule.webp",
+      "system": {
+        "description": "This mule is a sturdy, surefooted beast of burden with simple tack and bulging saddlebags, built more for endurance than for speed or glamour. It is typically used by merchants and adventurers to haul gear, supplies, and treasure across rough terrain where wagons and fine horses would struggle.",
+        "cost": 8,
+        "unitWeight": 900,
+        "storedSize": 99,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "pack animal",
+          "no-vehicle-store",
+          "no-store",
+          "pack-only"
+        ],
+        "movement": 120,
+        "carrying": 80,
+        "feedCost": 1.5,
+        "hp": 10,
+        "ac": 12,
+        "temperament": "stubborn",
+        "hd": "2",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d4 kick or 1d3 bite",
+        "morale": 8,
+        "xpValue": 20,
+        "animalSize": "medium"
+      }
+    },
+    {
+      "name": "Ox",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/ox.webp",
+      "system": {
+        "description": "This ox is a broad-shouldered, thick-necked beast with curved horns and a heavy frame, built more for endurance than speed. It is typically used to pull plows and wagons, serving as a reliable draft animal for farmers, caravans, and frontier settlers.",
+        "cost": 15,
+        "unitWeight": 1500,
+        "storedSize": 99,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "draft animal",
+          "no-vehicle-store",
+          "no-store"
+        ],
+        "movement": 60,
+        "carrying": 140,
+        "feedCost": 2,
+        "hp": 15,
+        "ac": 12,
+        "temperament": "docile",
+        "hd": "3",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d6",
+        "morale": 5,
+        "xpValue": 35,
+        "animalSize": "large"
+      }
+    },
+    {
+      "name": "Pig",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/pig.webp",
+      "system": {
+        "description": "This pig is a stout, bristly farm animal with a rounded body, pointed ears, and a curled tail, rendered in warm, earthy tones. It is typically raised by villagers and farmers for meat, fat, and sometimes trade, rooting around pens and farmyards in search of scraps and forage.",
+        "cost": 3,
+        "unitWeight": 200,
+        "storedSize": 75,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "food source"
+        ],
+        "movement": 60,
+        "carrying": 0,
+        "feedCost": 0.5,
+        "hp": 5,
+        "ac": 11,
+        "temperament": "docile",
+        "hd": "1-2",
+        "numAttacks": 0,
+        "dmgPerAttack": "—",
+        "morale": 5,
+        "xpValue": 10,
+        "animalSize": "small"
+      }
+    },
+    {
+      "name": "Pony",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/pony.webp",
+      "system": {
+        "description": "This pony is a sturdy, short-legged mount with a shaggy mane and thick coat, built for surefooted travel rather than great speed. It is typically used by children, small folk, and lightly equipped riders, as well as for pulling small carts or carrying loads in rough terrain.",
+        "cost": 30,
+        "unitWeight": 600,
+        "storedSize": 100,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "mount",
+          "rideable",
+          "pack animal",
+          "no-vehicle-store",
+          "pack-only"
+        ],
+        "movement": 180,
+        "carrying": 40,
+        "feedCost": 1,
+        "hp": 8,
+        "ac": 12,
+        "temperament": "docile",
+        "special": "Usable as mount by small characters",
+        "hd": "2",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d4",
+        "morale": 8,
+        "xpValue": 20,
+        "animalSize": "medium"
+      }
+    },
+    {
+      "name": "Sheep",
+      "type": "livestock",
+      "img": "systems/osp-houserules/assets/images/livestock/sheep.webp",
+      "system": {
+        "description": "This sheep is a woolly, thick-fleeced animal with a calm expression and sturdy legs, rendered in soft, earthy tones. It is typically raised by villagers and herders for its wool, milk, and meat, grazing in flocks across hillsides and pastures around rural settlements.",
+        "cost": 2,
+        "unitWeight": 150,
+        "storedSize": 50,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "livestock",
+          "food source"
+        ],
+        "movement": 60,
+        "carrying": 0,
+        "feedCost": 0.3,
+        "hp": 3,
+        "ac": 11,
+        "temperament": "timid",
+        "hd": "1-2",
+        "numAttacks": 1,
+        "dmgPerAttack": "1d4",
+        "morale": 5,
+        "xpValue": 10,
+        "animalSize": "small"
+      }
+    }
+  ],
+  "data/misc.json": [
+    {
+      "name": "Barrel",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/misc/barrel.webp",
+      "system": {
+        "description": "A wooden barrel is a stout, reinforced container made from curved wooden staves bound by metal hoops. It is typically used for storing and transporting liquids or dry goods such as ale, wine, grain, or salted provisions.",
+        "cost": 5,
+        "unitWeight": 30,
+        "storedSize": 200,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "liquid-storage"
+        ]
+      }
+    },
+    {
+      "name": "Chest, Large",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/misc/chest-large.webp",
+      "system": {
+        "description": "This large ('24\" × 16\" × 16\"') wooden chest, reinforced with iron bands and secured by a heavy lock, is built to store valuables, equipment, or important supplies. Adventurers and merchants alike rely on such chests to keep their belongings safe from theft, weather, and the dangers of travel.",
+        "cost": 50,
+        "unitWeight": 20,
+        "storedSize": 150,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "capacity": 150,
+        "tags": [
+          "container"
+        ]
+      }
+    },
+    {
+      "name": "Chest, Small",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/misc/chest-small.webp",
+      "system": {
+        "description": "This small ('12\" × 8\" × 8\"') wooden chest is a sturdy, lockable container used to safeguard valuables, coins, documents, or precious keepsakes. Its compact size makes it ideal for travelers or adventurers who need secure storage without added bulk.",
+        "cost": 15,
+        "unitWeight": 5,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "capacity": 20,
+        "tags": [
+          "container"
+        ]
+      }
+    },
+    {
+      "name": "Lantern, Mount",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/tack/lantern-saddle.webp",
+      "system": {
+        "description": "A specialized lantern designed to hang from a saddle or harness, illuminating the path ahead without requiring a hand to hold it. Features protective guards to keep it from swinging wildly or spooking the mount.",
+        "cost": 15,
+        "unitWeight": 3,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "tack",
+          "light source"
+        ],
+        "lightRadius": 30,
+        "burnTime": 4
+      }
+    },
+    {
+      "name": "Tent, 1-person",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/misc/tent-one-person.webp",
+      "system": {
+        "description": "This one-person tent is a compact canvas shelter supported by simple poles and stakes, designed to protect a lone traveler from wind and weather. It is typically used for overnight camps, providing basic cover and privacy while remaining light enough to carry on long journeys.",
+        "cost": 5,
+        "unitWeight": 10,
+        "storedSize": 10,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "shelter"
+        ]
+      }
+    },
+    {
+      "name": "Tent, 2-person",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/misc/tent-two-person.webp",
+      "system": {
+        "description": "This two-person tent is a sturdy canvas shelter supported by simple poles and stakes, offering enough space for two travelers to rest and store basic gear. It is typically used for shared camps, providing protection from the elements while remaining practical for overland travel.",
+        "cost": 10,
+        "unitWeight": 20,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "tags": [
+          "shelter"
+        ]
+      }
+    },
+    {
+      "name": "Tent, 4-person",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/misc/tent-two-person.webp",
+      "system": {
+        "description": "This four-person tent is a large canvas shelter supported by multiple poles and stakes, offering ample space for several travelers and their gear. It is typically used by small groups to establish a shared campsite, providing protection from the elements during extended journeys or expeditions.",
+        "cost": 20,
+        "unitWeight": 40,
+        "storedSize": 40,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "shelter"
+        ]
+      }
+    }
+  ],
+  "data/tack.json": [
+    {
+      "name": "Barding, Chain mail",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/tack/barding-chain.webp",
+      "system": {
+        "description": "Chain mail barding is a flexible suit of interlocking metal rings designed to protect a horse from cuts and punctures while maintaining mobility. It is typically used for light and medium cavalry, offering a balance of protection and movement without the restrictive weight of full plate barding.",
+        "cost": 500,
+        "unitWeight": 60,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "armor",
+          "horse"
+        ],
+        "armorBonus": 4,
+        "movementPenalty": -60,
+        "animalType": "horse",
+        "tackSlot": "barding"
+      }
+    },
+    {
+      "name": "Barding, Leather",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/tack/barding-leather.webp",
+      "system": {
+        "description": "This leather barding set consists of layered, hardened-leather plates shaped for a horse’s head, neck, chest, and flanks, reinforced with rivets and fitted with thick straps and buckles for secure mounting. It is typically used by light and medium cavalry to give their mounts flexible, reliable protection while avoiding the heavy weight and cost of metal barding.",
+        "cost": 150,
+        "unitWeight": 40,
+        "storedSize": 90,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "armor",
+          "horse"
+        ],
+        "armorBonus": 2,
+        "movementPenalty": -30,
+        "animalType": "horse",
+        "tackSlot": "barding"
+      }
+    },
+    {
+      "name": "Barding, Plate",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/tack/barding-plate.webp",
+      "system": {
+        "description": "Plate barding is a full set of articulated metal armor designed to protect a warhorse in battle, covering the head, neck, chest, and flanks with shaped steel plates. It is typically used by heavily armed cavalry, allowing a mounted warrior to charge into combat with both rider and horse protected from blades, arrows, and other battlefield dangers.",
+        "cost": 2000,
+        "unitWeight": 80,
+        "storedSize": 120,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "armor",
+          "horse"
+        ],
+        "armorBonus": 6,
+        "movementPenalty": -90,
+        "animalType": "horse",
+        "tackSlot": "barding"
+      }
+    },
+    {
+      "name": "Barding, Scale",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/tack/barding-scale.webp",
+      "system": {
+        "description": "Scale barding is a full set of articulated metal armor designed to protect a warhorse in battle, covering the head, neck, chest, and flanks with shaped steel plates. It is typically used by heavily armed cavalry, allowing a mounted warrior to charge into combat with both rider and horse protected from blades, arrows, and other battlefield dangers.",
+        "cost": 1000,
+        "unitWeight": 75,
+        "storedSize": 100,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "armor",
+          "horse"
+        ],
+        "armorBonus": 6,
+        "movementPenalty": -90,
+        "animalType": "horse",
+        "tackSlot": "barding"
+      }
+    },
+    {
+      "name": "Bit & Bridle",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/tack/bit-bridle.webp",
+      "system": {
+        "description": "This bit and bridle set is made of worn brown leather straps fitted with a simple steel bit and rings, shaped to sit comfortably on a horse’s head. It is typically used to guide and control a mount, transmitting the rider’s cues through the reins and bit for steering, stopping, and managing pace.",
+        "cost": 15,
+        "unitWeight": 3,
+        "storedSize": 6,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "rideable"
+        ],
+        "tackSlot": "control"
+      }
+    },
+    {
+      "name": "Saddle",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/tack/saddle.webp",
+      "system": {
+        "description": "A leather riding saddle with stirrups, pommel, and cantle, designed for comfort on long journeys. Well-crafted and essential for any serious rider, it provides security in the saddle and reduces fatigue for both horse and rider.",
+        "cost": 25,
+        "unitWeight": 10,
+        "storedSize": 30,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "rideable"
+        ],
+        "capacity": 0,
+        "hideCapacity": true,
+        "lashSlots": 3,
+        "tackSlot": "saddle",
+        "saddleType": "riding"
+      }
+    },
+    {
+      "name": "Panniers",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/tack/panniers.webp",
+      "system": {
+        "description": "A matched pair of mule saddle packs, with one rugged leather-and-canvas pannier hanging on the left and one on the right, joined by a central over-the-back yoke so they clearly balance across a pack animal.",
+        "cost": 12,
+        "unitWeight": 10,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "container",
+          "pack animal"
+        ],
+        "capacity": 40,
+        "requiresMounted": true,
+        "tackSlot": "bags",
+        "requiresSaddleType": "pack"
+      }
+    },
+    {
+      "name": "Saddle, Pack",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/tack/pack-frame.webp",
+      "system": {
+        "description": "A sturdy wooden frame with leather straps designed to secure cargo on a pack animal's back. It distributes weight evenly and includes attachment points for bundled goods, making it essential for mules and donkeys carrying supplies.",
+        "cost": 5,
+        "unitWeight": 15,
+        "storedSize": 24,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "container",
+          "pack animal"
+        ],
+        "capacity": 0,
+        "hideCapacity": true,
+        "lashSlots": 4,
+        "tackSlot": "saddle",
+        "saddleType": "pack",
+        "animalType": "pack-only"
+      }
+    },
+    {
+      "name": "Saddlebags, Large",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/tack/saddlebags-large.webp",
+      "system": {
+        "description": "These large over-the-saddle bags are a hefty pair of deep leather pouches joined by a wide strap, built to drape securely across a horse’s back. They are typically used by caravans, couriers, and long-range adventuring parties to carry bulk supplies, trade goods, or treasure while keeping the load balanced and off the rider’s body.",
+        "cost": 10,
+        "unitWeight": 7,
+        "storedSize": 12,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "container",
+          "rideable"
+        ],
+        "capacity": 24,
+        "requiresMounted": true,
+        "tackSlot": "bags",
+        "minAnimalSize": "large"
+      }
+    },
+    {
+      "name": "Saddlebags, Small",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/tack/saddlebags-small.webp",
+      "system": {
+        "description": "A pair of sturdy leather pouches that drape across a saddle or pack frame, secured with buckled straps. Each side offers storage for personal gear and supplies without interfering with riding, making them popular with travelers and scouts.",
+        "cost": 5,
+        "unitWeight": 4,
+        "storedSize": 6,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "container",
+          "rideable"
+        ],
+        "capacity": 12,
+        "requiresMounted": true,
+        "tackSlot": "bags"
+      }
+    }
+  ],
+  "data/treasure.json": [
+    {
+      "name": "Copper Coins",
+      "type": "coin",
+      "img": "systems/osp-houserules/assets/images/treasure/copper-coins.webp",
+      "system": {
+        "description": "The Penny is the smallest denomination of currency, used for common transactions such as food, lodging, or simple goods. Though individually modest in worth, Pennies are essential to daily trade and circulate widely among all classes. 10 Pennies match the worth of 1 Sovereign, and one 100 Pennies weigh approximately 2 pounds.",
+        "cost": 0.1,
+        "unitWeight": 0.02,
+        "storedSize": 0.04,
+        "quantity": 0,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "coins"
+        ]
+      }
+    },
+    {
+      "name": "Gold Coins",
+      "type": "coin",
+      "img": "systems/osp-houserules/assets/images/treasure/gold-coins.webp",
+      "system": {
+        "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds.",
+        "cost": 10,
+        "unitWeight": 0.04,
+        "storedSize": 0.04,
+        "quantity": 0,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "coins"
+        ]
+      }
+    },
+    {
+      "name": "Silver Coins",
+      "type": "coin",
+      "img": "systems/osp-houserules/assets/images/treasure/silver-coins.webp",
+      "system": {
+        "description": "The Sovereign is the standard coin of the realm and the foundation of everyday commerce. Trusted in every market and kingdom hall, 10 Sovereigns equal 1 Gold Crown in value. 10 Sovereigns match the worth of 1 Crown and 100 weigh roughly 2 pounds.",
+        "cost": 1,
+        "unitWeight": 0.02,
+        "storedSize": 0.04,
+        "quantity": 0,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "coins"
+        ]
+      }
+    },
+    {
+      "name": "Diamond",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/diamond.webp",
+      "system": {
+        "description": "A brilliant, colorless diamond cut into a precise round form, its many facets catching even the faintest light and scattering it in cold, prismatic fire. Entirely natural and unenchanted, it is prized for its exceptional clarity, enduring hardness, and the costly skill required to reveal such radiance.",
+        "cost": 1000,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Ruby Necklace",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/ruby-necklace.webp",
+      "system": {
+        "description": "A finely wrought gold necklace set with a procession of deep crimson rubies, each carefully cut to kindle with ember-red light as it moves. Though entirely unenchanted, the richness of its gems and the delicacy of its workmanship mark it as a jewel fit for a noble court.",
+        "cost": 1000,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "jewelry",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Agate",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/agate.webp",
+      "system": {
+        "description": "A smooth, semi-translucent piece of quartz crossed by warm bands of cream, rust, and charcoal. Its concentric markings form a watchful eye at the stone's heart, a natural pattern prized by lapidaries despite the gem's modest worth.",
+        "cost": 10,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Azurite",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/azurite.webp",
+      "system": {
+        "description": "A soft cluster of deep blue copper mineral, its craggy surfaces ranging from midnight cobalt to brilliant azure. Beautiful but easily scratched, azurite is often ground for pigment when it is not kept as an ornamental stone.",
+        "cost": 10,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "mineral",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Malachite",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/malachite.webp",
+      "system": {
+        "description": "An opaque green stone polished to reveal striking rings and rippling bands. Forest-dark whorls flow through brighter emerald layers, giving every piece of malachite a pattern unlike any other.",
+        "cost": 25,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Quartz",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/quartz.webp",
+      "system": {
+        "description": "A compact spray of angular quartz crystals, some milky white and others dimmed by smoky grey veils. Cool blue tones gather in the clearer facets when the cluster is held to the light.",
+        "cost": 10,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "crystal",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Bloodstone",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/bloodstone.webp",
+      "system": {
+        "description": "A dark green variety of jasper scattered with irregular crimson flecks. The red inclusions resemble fresh drops of blood against mossy stone, lending the gem its ominous name without any enchantment of its own.",
+        "cost": 50,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Moonstone",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/moonstone.webp",
+      "system": {
+        "description": "A pearly feldspar whose milky depths carry a soft blue-white sheen. As the stone turns, its opalescent light seems to drift beneath the surface like moonlight passing through thin cloud.",
+        "cost": 50,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Onyx",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/onyx.webp",
+      "system": {
+        "description": "A polished, opaque stone of lustrous black divided by a clean ivory band. Its austere coloring makes it popular for seals, mourning jewelry, and the material components of certain necromantic rites, though the stone itself is wholly mundane.",
+        "cost": 25,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "spell-component",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Amber",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/amber.webp",
+      "system": {
+        "description": "A warm piece of fossilized tree resin, polished until its honey-gold depths shine. A tiny ancient insect lies perfectly preserved within, caught in a vanished forest's sunlight countless ages ago.",
+        "cost": 100,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "organic",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Amethyst",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/amethyst.webp",
+      "system": {
+        "description": "A finely cut variety of quartz saturated with royal violet. Lavender highlights flicker across its facets, while darker purple gathers near the stone's heart with the richness of old wine.",
+        "cost": 250,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Carnelian",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/carnelian.webp",
+      "system": {
+        "description": "A smooth chalcedony gem glowing with reddish-orange warmth. Translucent bands of ember, rust, and flame seem layered within it, especially when sunlight passes through its polished surface.",
+        "cost": 100,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Citrine",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/citrine.webp",
+      "system": {
+        "description": "A transparent quartz gem cut to gather every scrap of light. Its facets range from clear golden yellow to the warm orange of late autumn sun, giving the stone a bright and cheerful fire.",
+        "cost": 250,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Jade",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/jade.webp",
+      "system": {
+        "description": "A remarkably tough ornamental stone polished to a quiet, waxen luster. Clouded layers of moss, celadon, and deep green drift through its body, prized as much for endurance as for beauty.",
+        "cost": 500,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Pearl",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/pearl.webp",
+      "system": {
+        "description": "A large, naturally rounded pearl harvested from a mollusk and polished only by the patient work of the sea. Its creamy surface carries subtle blush, silver, and blue iridescence beneath a luminous sheen.",
+        "cost": 500,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "organic",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Sapphire",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/sapphire.webp",
+      "system": {
+        "description": "A rare, deep-blue corundum cut to reveal a natural six-rayed star across its face. The pale lines glide over midnight facets as the gem turns, an optical wonder born from minute inclusions rather than magic.",
+        "cost": 1000,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "precious",
+          "treasure"
+        ]
+      }
+    },
+    {
+      "name": "Emerald",
+      "type": "item",
+      "img": "systems/osp-houserules/assets/images/treasure/emerald.webp",
+      "system": {
+        "description": "A brilliant green beryl shaped in a precise rectangular step cut. Fine natural inclusions lie beneath its vivid facets like a hidden garden; diviners and ward-makers value such stones as costly components, though this emerald bears no enchantment itself.",
+        "cost": 5000,
+        "unitWeight": 0.01,
+        "storedSize": 0.02,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "treasure": true,
+        "tags": [
+          "gem",
+          "precious",
+          "spell-component",
+          "treasure"
+        ]
+      }
+    }
+  ],
+  "data/vehicles.json": [
+    {
+      "name": "Cart",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/misc/cart.webp",
+      "system": {
+        "description": "This sturdy two-wheeled wooden cart has iron-banded wheels, a slatted cargo bed, and long shafts ready to be hitched to a beast of burden. It is typically used by farmers, merchants, and traveling parties to haul goods, supplies, and sometimes passengers along rough roads and village lanes.",
+        "cost": 115,
+        "unitWeight": 200,
+        "storedSize": 99,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "vehicle",
+          "container",
+          "no-store"
+        ],
+        "capacity": 80,
+        "requiresAnimal": "draft"
+      }
+    },
+    {
+      "name": "Wagon",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/images/misc/wagon-covered.webp",
+      "system": {
+        "description": "A large four-wheeled covered wagon with a canvas top and reinforced axles, capable of transporting huge loads across country. Requires multiple draft animals to pull and is the primary means of moving goods, supplies, and even entire households overland.",
+        "cost": 200,
+        "unitWeight": 500,
+        "storedSize": 99,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "tack",
+          "vehicle",
+          "container",
+          "no-store"
+        ],
+        "capacity": 200,
+        "requiresAnimal": "draft (2+)"
+      }
+    }
+  ],
+  "data/weapons.json": [
+    {
+      "name": "Bastard Sword",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/bastardsword_thumb.webp",
+      "system": {
+        "description": "This bastard sword features a long, double-edged blade with a simple yet elegant crossguard and an extended leather-wrapped grip suited for either one- or two-handed use. It is typically favored by versatile knights and adventurers who want the option to strike with the speed of a longsword or the heavier blows of a greatsword as the situation demands.",
+        "cost": 25,
+        "unitWeight": 6,
+        "storedSize": 12,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": {
+          "oneHanded": {
+            "normal": "1d8",
+            "large": "1d12"
+          },
+          "twoHanded": {
+            "normal": "2d4",
+            "large": "2d8"
+          }
+        },
+        "damageType": "S",
+        "size": "M",
+        "speedFactor": 5,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "versatile",
+          "sword"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Battle Axe",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/battle-axe_thumb.webp",
+      "system": {
+        "description": "The battle axe features a heavy, crescent-shaped steel blade mounted on a sturdy wooden haft wrapped for improved grip. Designed for both cleaving and crushing, it is a brutal but reliable weapon favored by soldiers, raiders, and front-line adventurers.",
+        "cost": 5,
+        "unitWeight": 5,
+        "storedSize": 10,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d8",
+        "damageL": "1d8",
+        "damageType": "S",
+        "size": "M",
+        "speedFactor": 7,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "two-handed"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Battle Axe, 2-Handed",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/axe-two-handed_thumb.webp",
+      "system": {
+        "description": "A two-headed, two-handed battle axe is a brutal heavy weapon featuring twin crescent blades mounted on a long reinforced haft, designed to deliver devastating cleaving strikes. It is typically used by powerful warriors capable of wielding its weight to split shields, armor, and even large creatures with overwhelming force.",
+        "cost": 15,
+        "unitWeight": 8,
+        "storedSize": 24,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d10",
+        "damageL": "1d12",
+        "damageType": "S",
+        "size": "L",
+        "speedFactor": 8,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "two-handed"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Broadsword",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/broadsword_thumb.webp",
+      "system": {
+        "description": "This broadsword has a wide, double-edged steel blade with a simple crossguard and a leather-wrapped grip ending in a solid pommel for balance. It is typically used by heavily armed warriors as a primary melee weapon, delivering powerful chopping and slashing blows in close combat.",
+        "cost": 10,
+        "unitWeight": 3,
+        "storedSize": 10,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "2d4",
+        "damageL": "1d6+1",
+        "damageType": "S",
+        "size": "M",
+        "speedFactor": 5,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "sword"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Club",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/club_thumb.webp",
+      "system": {
+        "description": "This simple wooden club is carved from a single solid branch, its head slightly thickened and scarred from repeated use. Favored by commoners and seasoned warriors alike, it delivers brutal, crushing blows despite its humble construction.",
+        "cost": 3,
+        "unitWeight": 3,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d6",
+        "damageL": "1d3",
+        "damageType": "B",
+        "size": "M",
+        "speedFactor": 4,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "melee"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Crossbow, Heavy",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/crossbow-heavy_thumb.webp",
+      "system": {
+        "description": "This heavy crossbow features a thick wooden tiller reinforced with iron bands and a powerful steel bow, its cord drawn taut for immense penetrating force. It is typically used by soldiers and siege troops to deliver slow but devastating bolts that can punch through armor or pin targets at long range.",
+        "cost": 50,
+        "unitWeight": 12,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d6",
+        "damageL": "1d8+1",
+        "damageType": "P",
+        "size": "M",
+        "speedFactor": 10,
+        "rof": 0.5,
+        "bonus": 0,
+        "tags": [
+          "missile",
+          "reload",
+          "two-handed",
+          "slungable"
+        ],
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 80,
+          "medium": 160,
+          "long": 240
+        },
+        "slungSlots": 2
+      }
+    },
+    {
+      "name": "Crossbow, Light",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/crossbow_thumb.webp",
+      "system": {
+        "description": "This sturdy crossbow features a polished wooden tiller paired with a reinforced steel bow, built for power and reliability. Its simple winding stirrup and taut string make it a favored weapon for soldiers and hunters who rely on precision and punch from afar.",
+        "cost": 35,
+        "unitWeight": 6,
+        "storedSize": 12,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d4",
+        "damageL": "1d4",
+        "damageType": "P",
+        "size": "S",
+        "speedFactor": 7,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "missile",
+          "reload",
+          "two-handed",
+          "slungable"
+        ],
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 60,
+          "medium": 120,
+          "long": 180
+        }
+      }
+    },
+    {
+      "name": "Dagger",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/dagger_thumb.webp",
+      "system": {
+        "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike.",
+        "cost": 2,
+        "unitWeight": 1,
+        "storedSize": 3,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d4",
+        "damageL": "1d3",
+        "damageType": "P",
+        "size": "S",
+        "speedFactor": 2,
+        "rof": 2,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "missile",
+          "dagger"
+        ],
+        "melee": true,
+        "missile": true,
+        "range": {
+          "short": 10,
+          "medium": 20,
+          "long": 30
+        }
+      }
+    },
+    {
+      "name": "Dart",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/dart_thumb.webp",
+      "system": {
+        "description": "This dart is a small throwing missile with a slim wooden shaft, a leaf-shaped steel head, and feather fletching at the tail for stability in flight. It is typically used by rogues, hunters, and lightly armed warriors to deliver quick, accurate ranged attacks or poisoned strikes at short distances.",
+        "cost": 5,
+        "unitWeight": 0.5,
+        "storedSize": 1,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d3",
+        "damageL": "1d2",
+        "damageType": "P",
+        "size": "S",
+        "speedFactor": 2,
+        "rof": 3,
+        "bonus": 0,
+        "tags": [
+          "missile",
+          "reload",
+          "two-handed"
+        ],
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 10,
+          "medium": 20,
+          "long": 40
+        }
+      }
+    },
+    {
+      "name": "Flail",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/flail_thumb.webp",
+      "system": {
+        "description": "This flail consists of a sturdy wooden haft attached by a length of chain to a heavy spiked iron ball. It is typically used by warriors to swing in wide, crushing arcs that can bypass shields and batter armored foes with brutal, momentum-driven blows.",
+        "cost": 15,
+        "unitWeight": 4,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d6+1",
+        "damageL": "2d4",
+        "damageType": "B",
+        "size": "M",
+        "speedFactor": 7,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Great Club",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/club-great_thumb.webp",
+      "system": {
+        "description": "This great club is a massive, two-handed cudgel carved from a single length of hardwood, its head thick and knotted with age while the lower grip is wrapped in worn leather. It is typically used by barbarians, ogres, and other brute warriors to deliver bone-crushing blows that rely more on raw strength than finesse.",
+        "cost": 5,
+        "unitWeight": 6,
+        "storedSize": 22,
+        "allowedContainers": [
+          "Cart",
+          "Wagon"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d8",
+        "damageL": "1d10",
+        "damageType": "B",
+        "size": "L",
+        "speedFactor": 8,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "melee",
+          "two-handed"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Greatsword",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/greatsword_thumb.webp",
+      "system": {
+        "description": "This greatsword is a long heavy two-handed blade with a straight double-edged steel edge, a broad crossguard, and an extended leather-wrapped grip. A standard military great sword carried by elite soldiers and powerful adventurers who rely on reach and devastating cleaving strikes.",
+        "cost": 30,
+        "unitWeight": 6,
+        "storedSize": 22,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Baldric"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d10",
+        "damageL": "2d6",
+        "damageType": "S",
+        "size": "L",
+        "speedFactor": 9,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "two-handed",
+          "sword"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Hand Axe",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/hand-axe_thumb.webp",
+      "system": {
+        "description": "This compact hand axe has a single crescent-shaped steel blade set into a sturdy wooden haft, its grip wrapped in leather for better control. Balanced for both chopping and throwing, it’s a favorite sidearm of woodsmen, skirmishers, and lightly armored adventurers.",
+        "cost": 1,
+        "unitWeight": 3,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d6",
+        "damageL": "1d4",
+        "damageType": "S",
+        "size": "S",
+        "speedFactor": 4,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "missile"
+        ],
+        "melee": true,
+        "missile": true,
+        "range": {
+          "short": 10,
+          "medium": 20,
+          "long": 30
+        }
+      }
+    },
+    {
+      "name": "Javelin",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/javelin_thumb.webp",
+      "system": {
+        "description": "This slim throwing spear has a straight ash-wood shaft tipped with a narrow, leaf-shaped steel head bound in place with dark wire. Light and well-balanced, it’s made to fly true over distance, ideal for skirmishers and warriors who soften their foes before closing to melee.",
+        "cost": 5,
+        "unitWeight": 3,
+        "storedSize": 15,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d6",
+        "damageL": "1d6",
+        "damageType": "P",
+        "size": "M",
+        "speedFactor": 4,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "missile"
+        ],
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 20,
+          "medium": 40,
+          "long": 60
+        }
+      }
+    },
+    {
+      "name": "Khopesh",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/khopesh_thumb.webp",
+      "system": {
+        "description": "This khopesh is a single-edged bronze or steel blade that curves forward into a sickle-like hook, mounted on a simple hilt with a wrapped grip. It is typically used to deliver powerful chopping blows and to hook shields or limbs, making it a brutal and versatile weapon favored by warriors of ancient, desert-born cultures.",
+        "cost": 10,
+        "unitWeight": 4,
+        "storedSize": 10,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "2d4",
+        "damageL": "1d6",
+        "damageType": "S",
+        "size": "M",
+        "speedFactor": 9,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "sword"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Lance",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/lance_thumb.webp",
+      "system": {
+        "description": "A lance is a long, heavy spear designed for mounted warriors, optimized for delivering powerful charges at high speed. Its length allows a rider to strike opponents before they can close in, making it a devastating weapon in cavalry combat.",
+        "cost": 10,
+        "unitWeight": 8,
+        "storedSize": 30,
+        "allowedContainers": [
+          "Cart",
+          "Wagon"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d6+1",
+        "damageL": "2d6",
+        "damageType": "P",
+        "size": "L",
+        "speedFactor": 7,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "charge"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Light Hammer",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/hammer-light_thumb.webp",
+      "system": {
+        "description": "This light hammer is a compact one-handed striking weapon with a small iron head and a short wooden haft wrapped in leather. Balanced for both melee combat and throwing, it is favored by dwarves, smiths, and warriors who want a reliable blunt weapon that doubles as a ranged tool.",
+        "cost": 1,
+        "unitWeight": 2,
+        "storedSize": 4,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d4",
+        "damageL": "1d3",
+        "damageType": "B",
+        "size": "S",
+        "speedFactor": 3,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "melee",
+          "missile"
+        ],
+        "melee": true,
+        "missile": true,
+        "range": {
+          "short": 10,
+          "medium": 20,
+          "long": 30
+        }
+      }
+    },
+    {
+      "name": "Longbow",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/longbow_thumb.webp",
+      "system": {
+        "description": "This longbow is a tall, recurved wooden bow with a leather-wrapped grip and a taut dark string, built for power and accuracy at great distances. It is typically used by hunters and archers who rely on strong draw weight and long-range volleys to strike foes before they can close to melee.",
+        "cost": 75,
+        "unitWeight": 2,
+        "storedSize": 20,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d6",
+        "damageL": "1d8",
+        "damageType": "P",
+        "size": "L",
+        "speedFactor": 8,
+        "rof": 2,
+        "bonus": 0,
+        "tags": [
+          "missile",
+          "two-handed",
+          "slungable"
+        ],
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 70,
+          "medium": 140,
+          "long": 210
+        }
+      }
+    },
+    {
+      "name": "Longsword",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/long-sword_thumb.webp",
+      "system": {
+        "description": "This finely forged longsword features a straight, double-edged blade with a broad fuller running down its center, balanced for both cutting and thrusting. A simple steel crossguard, leather-wrapped grip, and brass-capped pommel give it a practical yet noble look, befitting the standard weapon of knights and seasoned adventurers.",
+        "cost": 15,
+        "unitWeight": 3,
+        "storedSize": 10,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d8",
+        "damageL": "1d12",
+        "damageType": "S",
+        "size": "M",
+        "speedFactor": 5,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "sword"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Mace",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/mace_thumb.webp",
+      "system": {
+        "description": "This mace features a flanged steel head mounted on a sturdy wooden haft, its grip wrapped in worn leather for a secure hold. Designed to crush armor and bone alike, it is typically used by clerics and heavy infantry who favor blunt, bone-shattering blows over cutting edges.",
+        "cost": 8,
+        "unitWeight": 4,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d6+1",
+        "damageL": "1d6",
+        "damageType": "B",
+        "size": "M",
+        "speedFactor": 7,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "melee"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Misericorde",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/misericorde_thumb.webp",
+      "system": {
+        "description": "This misericorde is a long narrow stiletto-like blade designed to pierce the gaps in plate armor and deliver a precise killing thrust to a downed or immobilized opponent. Its needle-thin profile and stiff spine make it useless as a throwing weapon but devastatingly effective at close range where armor offers little protection.",
+        "cost": 5,
+        "unitWeight": 0.75,
+        "storedSize": 3,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d4",
+        "damageL": "1d3",
+        "damageType": "P",
+        "size": "S",
+        "speedFactor": 2,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "dagger"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Morning Star",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/morningstar_thumb.webp",
+      "system": {
+        "description": "This morning star is a stout wooden haft topped with a heavy iron sphere bristling with sharp spikes, built to deliver crushing, armor-piercing blows. It is typically used by warriors and temple knights who favor blunt weapons, swinging it in powerful arcs to smash shields and batter foes into submission.",
+        "cost": 10,
+        "unitWeight": 5,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "2d4",
+        "damageL": "1d6+1",
+        "damageType": "P",
+        "size": "M",
+        "speedFactor": 7,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Pole Arm",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/pole-arm_thumb.webp",
+      "system": {
+        "description": "This pole arm combines a spear point, an axe-like blade, and a back hook mounted on a long wooden shaft with a leather-wrapped grip. It is typically used by infantry to keep foes at reach, pierce armor, hook riders from the saddle, or strike over the front ranks in formation.",
+        "cost": 10,
+        "unitWeight": 7,
+        "storedSize": 30,
+        "allowedContainers": [
+          "Cart",
+          "Wagon"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d10",
+        "damageL": "1d10",
+        "damageType": "P",
+        "size": "L",
+        "speedFactor": 9,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "brace",
+          "melee",
+          "two-handed"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Rapier",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/rapier_thumb.webp",
+      "system": {
+        "description": "A rapier is a slender, finely balanced sword designed for swift, precise thrusts. Its long blade and elaborate guard favor agility and finesse, making it a weapon prized by duelists and skilled swordsmen.",
+        "cost": 18,
+        "unitWeight": 2,
+        "storedSize": 10,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "melee",
+          "sword"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "damage": "1d8",
+        "damageL": "1d10",
+        "damageType": "P",
+        "size": "M",
+        "speedFactor": 3,
+        "rof": 1,
+        "bonus": 0,
+        "melee": true,
+        "missile": false,
+        "slungSlots": 0
+      }
+    },
+    {
+      "name": "Scimitar",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/scimitar_thumb.webp",
+      "system": {
+        "description": "A scimitar is a swift, single-edged sword distinguished by its broad, curved blade. Designed for powerful slashing attacks, it is especially effective when wielded from horseback or in fast-moving combat.",
+        "cost": 15,
+        "unitWeight": 4,
+        "storedSize": 10,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "tags": [
+          "melee",
+          "swords"
+        ],
+        "containerSizeRequired": "",
+        "slotCost": 0,
+        "damage": "1d8",
+        "damageL": "1d8",
+        "damageType": "S",
+        "size": "M",
+        "speedFactor": 5,
+        "rof": 1,
+        "bonus": 0,
+        "melee": true,
+        "missile": false,
+        "attacksPerRound": 1,
+        "slungSlots": 0
+      }
+    },
+    {
+      "name": "Shortbow",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/shortbow_thumb.webp",
+      "system": {
+        "description": "This short bow is a compact, lightly recurved wooden bow with a leather-wrapped grip and a taut bowstring suited for quick shots. It is typically used by scouts, hunters, and light skirmishers who value mobility and close-to-mid range accuracy over extreme distance.",
+        "cost": 30,
+        "unitWeight": 2,
+        "storedSize": 16,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Sack, Large",
+          "Panniers"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d6",
+        "damageL": "1d6",
+        "damageType": "P",
+        "size": "M",
+        "speedFactor": 7,
+        "rof": 2,
+        "bonus": 0,
+        "tags": [
+          "missile",
+          "two-handed",
+          "slungable"
+        ],
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 50,
+          "medium": 100,
+          "long": 150
+        }
+      }
+    },
+    {
+      "name": "Shortsword",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/short-sword_thumb.webp",
+      "system": {
+        "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers.",
+        "cost": 10,
+        "unitWeight": 2,
+        "storedSize": 5,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d6",
+        "damageL": "1d8",
+        "damageType": "P",
+        "size": "S",
+        "speedFactor": 3,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "sword"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Sickle",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/sickle_thumb.webp",
+      "system": {
+        "description": "This sickle has a crescent-shaped steel blade fixed to a short wooden haft, its grip bound in worn leather for a firmer hold. Originally a farming tool for cutting grain and brush, it is also used in battle by druids, cultists, and opportunistic fighters who favor quick, hooking slashes at close range.",
+        "cost": 6,
+        "unitWeight": 1,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d4+1",
+        "damageL": "1d4",
+        "damageType": "S",
+        "size": "S",
+        "speedFactor": 4,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Sling",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/sling_thumb.webp",
+      "system": {
+        "description": "This sling consists of a leather pouch attached to two braided cords, often with a smooth stone or lead bullet nestled in the cradle. It is typically whirled overhead or to the side and then released at just the right moment, hurling its projectile at surprising speed and range for such a simple weapon.",
+        "cost": 1,
+        "unitWeight": 0.25,
+        "storedSize": 0.25,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d4",
+        "damageL": "1d4",
+        "damageType": "B",
+        "size": "S",
+        "speedFactor": 4,
+        "rof": 2,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "missile"
+        ],
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 30,
+          "medium": 60,
+          "long": 90
+        }
+      }
+    },
+    {
+      "name": "Sling, Staff",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/sling-staff_thumb.webp",
+      "system": {
+        "description": "A sling staff is a wooden pole fitted with a sling at one end, allowing the user to hurl stones or similar projectiles with far greater force than a hand sling. It is typically used for long-range attacks or hunting, leveraging the staff’s length to generate powerful, whip-like acceleration.",
+        "cost": 2,
+        "unitWeight": 2,
+        "storedSize": 20,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d6",
+        "damageL": "1d6",
+        "damageType": "B",
+        "size": "M",
+        "speedFactor": 6,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "missile",
+          "two-handed"
+        ],
+        "melee": false,
+        "missile": true,
+        "range": {
+          "short": 30,
+          "medium": 60,
+          "long": 120
+        }
+      }
+    },
+    {
+      "name": "Spear",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/spear_thumb.webp",
+      "system": {
+        "description": "This spear has a straight wooden shaft tipped with a leaf-shaped steel head, the joint bound in place with a wrapped leather grip. It is typically used by infantry and hunters alike, ideal for thrusting in close combat or bracing against charging foes.",
+        "cost": 8,
+        "unitWeight": 4,
+        "storedSize": 15,
+        "allowedContainers": [
+          "Cart",
+          "Wagon"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d6",
+        "damageL": "1d8",
+        "damageType": "P",
+        "size": "M",
+        "speedFactor": 6,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "brace",
+          "melee",
+          "missile"
+        ],
+        "melee": true,
+        "missile": true,
+        "range": {
+          "short": 10,
+          "medium": 20,
+          "long": 30
+        }
+      }
+    },
+    {
+      "name": "Staff",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/quarterstaff_thumb.webp",
+      "system": {
+        "description": "A quarterstaff is a long, sturdy wooden staff, often reinforced at the ends, used both as a walking aid and as a weapon. It is typically wielded with two hands to deliver swift jabs, sweeping strikes, and defensive parries, favored by monks, peasants, and wanderers who travel light.",
+        "cost": 1,
+        "unitWeight": 4,
+        "storedSize": 15,
+        "allowedContainers": [
+          "Cart",
+          "Wagon"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d6",
+        "damageL": "1d6",
+        "damageType": "B",
+        "size": "L",
+        "speedFactor": 4,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "melee",
+          "two-handed"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Warhammer",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/warhammer_thumb.webp",
+      "system": {
+        "description": "This war hammer features a heavy steel head with a flat striking face on one side and a tapered beak on the other, mounted on a stout wooden haft wrapped in leather. It is typically used by warriors and clerics to smash armor, shatter shields, and deliver crushing blows that bypass conventional defenses.",
+        "cost": 2,
+        "unitWeight": 4,
+        "storedSize": 8,
+        "quantity": 1,
+        "equipped": false,
+        "lashable": true,
+        "damage": "1d4+1",
+        "damageL": "1d4",
+        "damageType": "B",
+        "size": "M",
+        "speedFactor": 4,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "melee"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Zweihander",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/zweihander_thumb.webp",
+      "system": {
+        "description": "This zweihander is a massive two-handed sword with a long, straight double-edged blade, parrying hooks above the crossguard, and a leather-wrapped grip ending in a heavy pommel. It is typically wielded by elite infantry to break pike formations, sweep aside enemy weapons, and deliver devastating cleaving blows on the battlefield.",
+        "cost": 50,
+        "unitWeight": 6,
+        "storedSize": 24,
+        "allowedContainers": [
+          "Cart",
+          "Wagon",
+          "Baldric"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d10",
+        "damageL": "3d6",
+        "damageType": "S",
+        "size": "L",
+        "speedFactor": 10,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "melee",
+          "two-handed",
+          "sword"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    },
+    {
+      "name": "Staff",
+      "type": "weapon",
+      "img": "systems/osp-houserules/assets/thumbs/images/weapons/mage-staff_thumb.webp",
+      "system": {
+        "description": "A sturdy wooden staff shaped and finished to suit its owner, from a plain walking stick to a gnarled or carved length of hardwood. It can serve as a two-handed weapon or spell focus and must be held or displayed when used for casting.",
+        "cost": 1,
+        "unitWeight": 4,
+        "storedSize": 15,
+        "allowedContainers": [
+          "Cart",
+          "Wagon"
+        ],
+        "quantity": 1,
+        "equipped": false,
+        "lashable": false,
+        "damage": "1d6",
+        "damageL": "1d6",
+        "damageType": "B",
+        "size": "L",
+        "speedFactor": 4,
+        "rof": 1,
+        "bonus": 0,
+        "tags": [
+          "blunt",
+          "melee",
+          "two-handed",
+          "focus",
+          "mage"
+        ],
+        "melee": true,
+        "missile": false
+      }
+    }
+  ],
+  "data/items/mage-staff.json": {
+    "name": "Staff",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/thumbs/images/weapons/mage-staff_thumb.webp",
+    "system": {
+      "description": "A sturdy wooden staff shaped and finished to suit its owner, from a plain walking stick to a gnarled or carved length of hardwood. It can serve as a two-handed weapon or spell focus and must be held or displayed when used for casting.",
+      "cost": 1,
+      "unitWeight": 4,
+      "storedSize": 15,
+      "allowedContainers": [
+        "Cart",
+        "Wagon"
+      ],
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "damage": "1d6",
+      "damageL": "1d6",
+      "damageType": "B",
+      "size": "L",
+      "speedFactor": 4,
+      "rof": 1,
+      "bonus": 0,
+      "tags": [
+        "blunt",
+        "melee",
+        "two-handed",
+        "focus",
+        "mage"
+      ],
+      "melee": true,
+      "missile": false
+    }
+  }
+}

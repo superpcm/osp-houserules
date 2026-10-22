@@ -1,0 +1,37 @@
+{
+  "name": "osp-houserules",
+  "version": "1.0.12",
+  "type": "module",
+  "description": "OSP House Rules Game System",
+  "scripts": {
+    "build:css": "node ./scripts/build-css.js",
+    "build:js": "rollup -c",
+    "clean:dist": "node ./scripts/clean-dist.js",
+    "build:prod": "npm run clean:dist && npm run build:css && NODE_ENV=production npm run build:js",
+    "build": "npm run clean:dist && npm run build:css && npm run build:js",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run validate:release",
+    "lint": "node ./scripts/quality-lint.js",
+    "typecheck": "tsc --project tsconfig.quality.json --noEmit",
+    "validate:release": "node ./scripts/validate-release.js",
+    "package:release": "npm run build:prod && node ./scripts/package-release.js",
+    "watch": "rollup -c -w",
+    "watch:all": "bash ./scripts/watch-all.sh",
+    "foundry:dev": "bash ./scripts/start-foundry-dev.sh",
+    "test-upgrades": "node ./scripts/test-upgrade.js",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "classic-level": "^3.0.0",
+    "glob": "^11.0.3",
+    "rollup": "^4.49.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "dompurify": "^3.0.0",
+    "sass": "^1.91.0"
+  }
+}

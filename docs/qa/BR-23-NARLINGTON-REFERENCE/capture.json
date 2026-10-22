@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-05",
+  "authorizedSource": "narlington.the-citadel.us",
+  "container": "foundryvtt_narlington",
+  "worldId": "westford",
+  "runtime": "Foundry 14.365",
+  "installedSystemVersion": "1.0.12",
+  "capturedWorldSystemVersion": "2.1.0",
+  "capture": {
+    "archiveBytes": 633559040,
+    "archiveSha256": "a9d96b367f0c56639c98d78db741d7635e99699abe6b1b8cbdd769ec92984870",
+    "entries": 9002,
+    "closedSourceUnchanged": true,
+    "stoppedAtUtc": "2026-10-05T16:31:09.695368+00:00",
+    "restartVerifiedAtUtc": "2026-10-05T16:31:25.272142+00:00",
+    "productionFinalState": "true healthy"
+  },
+  "sharedAssets": {
+    "archiveBytes": 12981196800,
+    "archiveSha256": "16d1fb96ce45b57cc8641be71d8c41512fbf7d24696193572fb97b969400e9e9",
+    "filesVerified": 360872,
+    "roots": ["additional-assets", "forgotten-adventures", "portraits"],
+    "physicalLocalCopies": true,
+    "productionStayedOnlineDuringAssetCopy": true
+  },
+  "legacyDependency": {
+    "path": "systems/ose/assets/default/item.png",
+    "sourceAndLocalSha256": "132cc00bcf655c9407b489102562a58f48acaf9747c01fd9d0fad7a749f5a246"
+  },
+  "worldInventory": {
+    "actorRows": 2795,
+    "settingsRows": 183,
+    "topLevelScenes": 2,
+    "enabledModules": 8,
+    "activeScene": "Testing Grounds",
+    "documentAssetReferencesChecked": 1110,
+    "referencesResolved": 928,
+    "unresolvedPathsAlsoAbsentInProduction": 182
+  },
+  "originalWestfordCapture": {
+    "preserved": true,
+    "archiveSha256": "9164c29161cd4da8b54c4abb8710bb8bd648a217b9833933a53af54c10858ed1"
+  },
+  "referenceUrl": "http://127.0.0.1:30023/join",
+  "referenceStartup": "Launching World | Complete",
+  "visualQA": "Pending existing Paul account sign-in; no password changed",
+  "updatedBuild": "Isolated build and release validation passed; JavaScript/CSS hashes match captured production build; not yet installed in separate updated world",
+  "acceptanceBoundary": "Capture/data/assets verification does not establish authenticated visual parity or BR-23 offline migration/rollback acceptance"
+}

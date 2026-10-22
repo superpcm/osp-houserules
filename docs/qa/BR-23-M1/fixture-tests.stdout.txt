@@ -1,0 +1,14 @@
+
+> osp-houserules@1.0.12 test
+> vitest run scripts/br23-world-migrate.test.js
+
+
+ RUN  v3.2.7 /private/tmp/osp-br23-evidence-0vyex89w
+
+ ✓ scripts/br23-world-migrate.test.js (21 tests) 473ms
+
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Start at  20:42:21
+   Duration  635ms (transform 25ms, setup 0ms, collect 31ms, tests 473ms, environment 0ms, prepare 24ms)
+

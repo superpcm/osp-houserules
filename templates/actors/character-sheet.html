@@ -45,7 +45,7 @@
   <div class="tab" data-group="primary" data-tab="skills">
         <div class="skill-tab-header">
           <div class="skill-tab-title">Skill Targets</div>
-          <div class="skill-tab-subtitle">Roll over or equal to # on d6 + modifiers</div>
+          <div class="skill-tab-subtitle">Roll ≤ chance on d6.</div>
         </div>
         <div class="cs-skill-svg-container" aria-hidden="true"></div>
         <div class="skill-abilities-section">
@@ -59,7 +59,7 @@
         <div class="listening-group cs-abs cs-pos-assassination">
           <div class="cs-char-field-group">
             <label class="cs-field-label">Assassination</label>
-            <select class="assassination cs-listening-select" id="assassination" name="system.assassination" data-dtype="String">
+            <select class="assassination cs-listening-select" id="assassination" disabled title="Legacy value; Assassination uses an attack and death save" data-dtype="String">
               <option value="" {{#if (eq system.assassination "")}}selected{{/if}}></option>
               <option value="1" {{#if (eq system.assassination "1")}}selected{{/if}}>1</option>
               <option value="2" {{#if (eq system.assassination "2")}}selected{{/if}}>2</option>
@@ -226,12 +226,12 @@
         <div class="listening-group cs-abs cs-pos-listening">
           <div class="cs-char-field-group">
             <label class="cs-field-label">Listen at Doors</label>
-            <select class="listening-doors cs-listening-select" id="listening-doors" name="system.listeningAtDoors" data-dtype="String">
-              <option value="1" {{#if (eq system.listeningAtDoors "1")}}selected{{/if}}>1</option>
-              <option value="2" {{#if (eq system.listeningAtDoors "2")}}selected{{/if}}>2</option>
-              <option value="3" {{#if (eq system.listeningAtDoors "3")}}selected{{/if}}>3</option>
-              <option value="4" {{#if (eq system.listeningAtDoors "4")}}selected{{/if}}>4</option>
-              <option value="5" {{#if (eq system.listeningAtDoors "5")}}selected{{/if}}>5</option>
+            <select class="listening-doors cs-listening-select" id="listening-doors" disabled title="Better of racial hearing and trained Hear Noise; improve training with Skill Points" data-dtype="String">
+              <option value="1" {{#if (eq system.effectiveListeningAtDoors "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.effectiveListeningAtDoors "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.effectiveListeningAtDoors "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.effectiveListeningAtDoors "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.effectiveListeningAtDoors "5")}}selected{{/if}}>5</option>
             </select>
           </div>
         </div>
@@ -240,12 +240,12 @@
         <div class="listening-group cs-abs cs-pos-find-secret-door">
           <div class="cs-char-field-group">
             <label class="cs-field-label">Find Secret Door</label>
-            <select class="find-secret-door cs-listening-select" id="find-secret-door" name="system.findSecretDoor" data-dtype="String">
-              <option value="1" {{#if (eq system.findSecretDoor "1")}}selected{{/if}}>1</option>
-              <option value="2" {{#if (eq system.findSecretDoor "2")}}selected{{/if}}>2</option>
-              <option value="3" {{#if (eq system.findSecretDoor "3")}}selected{{/if}}>3</option>
-              <option value="4" {{#if (eq system.findSecretDoor "4")}}selected{{/if}}>4</option>
-              <option value="5" {{#if (eq system.findSecretDoor "5")}}selected{{/if}}>5</option>
+            <select class="find-secret-door cs-listening-select" id="find-secret-door" disabled title="Racial search chance; resolved privately by the GM" data-dtype="String">
+              <option value="1" {{#if (eq system.effectiveFindSecretDoor "1")}}selected{{/if}}>1</option>
+              <option value="2" {{#if (eq system.effectiveFindSecretDoor "2")}}selected{{/if}}>2</option>
+              <option value="3" {{#if (eq system.effectiveFindSecretDoor "3")}}selected{{/if}}>3</option>
+              <option value="4" {{#if (eq system.effectiveFindSecretDoor "4")}}selected{{/if}}>4</option>
+              <option value="5" {{#if (eq system.effectiveFindSecretDoor "5")}}selected{{/if}}>5</option>
             </select>
           </div>
         </div>
@@ -332,7 +332,7 @@
         <section class="combat-generated-panel">
         <div class="combat-saving-throws-image">
           <div class="combat-saving-throws-title">Saving Throws</div>
-          <div class="combat-saving-throws-subtitle">Roll over or equal to score on 1d20 + modifiers</div>
+          <div class="combat-saving-throws-subtitle">Roll 1d20 equal to or over the adjusted target</div>
           <div class="combat-save-grid">
             <div class="save-group-death cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-death" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-death" startOffset="50%" text-anchor="middle">Death · Poison</textPath></text></svg><div class="save death-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.death.value}}</span></div></div></div>
             <div class="save-group-wands cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-wands" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-wands" startOffset="50%" text-anchor="middle">Wands</textPath></text></svg><div class="save wands-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.wands.value}}</span></div></div></div>
@@ -340,15 +340,16 @@
             <div class="save-group-breath cs-save-group"><svg class="combat-save-label-arc" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-breath" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-breath" startOffset="50%" text-anchor="middle">Breath Attacks</textPath></text></svg><div class="save breath-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.breath.value}}</span></div></div></div>
             <div class="save-group-spells cs-save-group"><svg class="combat-save-label-arc combat-save-label-arc--small" viewBox="0 0 130 74" aria-hidden="true"><path id="save-label-spells" d="M 15 58 A 50 50 0 0 1 115 58"/><text><textPath href="#save-label-spells" startOffset="50%" text-anchor="middle">Spells · Rods · Staves</textPath></text></svg><div class="save spells-save cs-save"><div class="cs-save-badge"><span class="cs-save-value">{{saves.spells.value}}</span></div></div></div>
           </div>
+          <p class="combat-save-notes">Poison target: {{saves.death.poisonValue}}. Wands and Spells targets include WIS and racial resistance. For magical Death or Paralysis, reduce the target by your WIS modifier ({{saves.magicModifier}}). For spells, wands, rods, or staves using another category, also reduce it by racial resistance ({{saves.resilienceBonus}}). Gnomes receive no poison resistance; breath normally receives no WIS modifier. Apply magic-item and situational modifiers to the target once (positive bonuses lower it; penalties raise it), keep the final target at least 2, then compare an unmodified d20.</p>
         </div>
         <div class="combat-hpac-title">Combat &amp; Movement</div>
         <div class="combat-hpac-image">
           <div class="combat-stats cs-combat-stats">
-            <div class="combat-stat cs-combat-stat combat-stat-hp"><input class="char-hp cs-combat-input" id="char-hp" name="system.hitpoints" type="text" inputmode="numeric" value="{{system.hitpoints}}" /><label for="char-hp" class="cs-field-label">HP</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-hp"><input class="char-hp cs-combat-input" id="char-hp" {{#unless canEditHP}}readonly title="Manage health through the DM’s Toolkit"{{/unless}} type="text" inputmode="numeric" value="{{healthSnapshot.hp}}" /><label for="char-hp" class="cs-field-label">HP</label></div>
             <div class="combat-stat cs-combat-stat"><div class="cs-unarmored-box">{{system.maxhitpoints}}</div><label class="cs-field-label">Max HP</label></div>
-            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.tactical}}</div><label class="cs-field-label">Tactical</label></div>
-            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.dash}}</div><label class="cs-field-label">Explore</label></div>
-            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.overland}}</div><label class="cs-field-label">Travel</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.tactical}}</div><label class="cs-field-label">Encounter</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.dash}}</div><label class="cs-field-label">Run</label></div>
+            <div class="combat-stat cs-combat-stat combat-stat-movement"><div class="cs-unarmored-box">{{system.movement.overland}}</div><label class="cs-field-label">Explore</label></div>
             <div class="combat-stat cs-combat-stat combat-stat-defense"><div class="cs-unarmored-box">{{system.ac}}</div><label for="char-ac" class="cs-field-label">AC</label></div>
             <div class="combat-stat cs-combat-stat combat-stat-defense"><div class="cs-unarmored-box">{{unarmoredAC system.attributes.dex.value}}</div><label class="cs-field-label">uAC</label></div>
           </div>
@@ -535,15 +536,32 @@
 
       <!-- Gear Tab -->
       <div class="tab" data-group="primary" data-tab="gear">
-        {{!-- Encumbrance Bar - outside gear-tab so sticky works within the scroll container --}}
+        {{!-- Brass encumbrance gauge remains above the scrolling inventory. --}}
         <div class="encumbrance-bar-wrapper">
-          <div class="encumbrance-bar-container">
-            <div class="encumbrance-bar encumbrance-bar-light" data-encumbrance="{{encumbrancePercentage}}"></div>
-            <div class="encumbrance-bar encumbrance-bar-normal" data-encumbrance="{{encumbrancePercentage}}"></div>
-            <div class="encumbrance-bar encumbrance-bar-heavy" data-encumbrance="{{encumbrancePercentage}}"></div>
-            <div class="encumbrance-threshold-line" style="left: 33%;"></div>
-            <div class="encumbrance-threshold-line" style="left: 66%;"></div>
-            <span class="encumbrance-text">{{totalWeight}} / {{maxWeight}} lbs</span>
+          <div class="encumbrance-brass" data-burden-level="{{system.encumbrance.level}}" role="meter" aria-valuemin="0" aria-valuemax="100"
+               aria-valuenow="{{encumbrancePercentage}}"
+               aria-label="Encumbrance: {{totalWeight}} of {{maxWeight}} pounds"
+               title="Encumbrance: {{totalWeight}} / {{maxWeight}} lbs"
+               style="--encumbrance-position: {{encumbrancePercentage}}%; {{#each encumbranceThresholds}}--encumbrance-tick-{{@index}}: {{percentage}}%; {{/each}}">
+            <div class="encumbrance-brass-track" aria-hidden="true">
+              <span class="encumbrance-brass-weight">{{totalWeight}} lbs</span>
+              <span class="encumbrance-brass-endpoint encumbrance-brass-zero">0</span>
+              <span class="encumbrance-brass-endpoint encumbrance-brass-max">{{maxWeight}}</span>
+              <div class="encumbrance-brass-fill">
+                <span class="encumbrance-brass-band encumbrance-brass-band-green"></span>
+                <span class="encumbrance-brass-band encumbrance-brass-band-yellow"></span>
+                <span class="encumbrance-brass-band encumbrance-brass-band-red"></span>
+              </div>
+              {{#each encumbranceThresholds}}
+              <span class="encumbrance-brass-tick" style="left: {{percentage}}%;" title="{{label}} {{weight}} lbs"></span>
+              {{/each}}
+              <svg class="encumbrance-brass-pointer" viewBox="0 0 20 32" focusable="false">
+                <path d="M10 1 19 16 10 31 1 16Z" fill="#9a5b18" stroke="#724311" stroke-width="1.3"/>
+                <path d="M10 3 17 16H10Z" fill="#e7b961"/><path d="M10 3 3 16H10Z" fill="#c28a38"/>
+                <path d="M3 16 10 29V16Z" fill="#a5651e"/><path d="M10 16h7l-7 13Z" fill="#754316"/>
+                <path d="M10 2 18 16 10 30 2 16Z" fill="none" stroke="#f0cb83" stroke-width=".8"/>
+              </svg>
+            </div>
           </div>
         </div>
         <section class="gear-tab">
@@ -751,9 +769,15 @@
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
+                    {{#if item.isSpellFocus}}
+                    <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="{{#if item.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{item.id}}">
+                      <i class="fas fa-hand"></i>
+                    </a>
+                    {{else}}
                     <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Equip/Unequip">
                       <i class="fas fa-tshirt"></i>
                     </a>
+                    {{/if}}
                     <a class="item-control item-edit" title="Edit Item">
                       <i class="fas fa-eye"></i>
                     </a>
@@ -801,7 +825,11 @@
                         <div class="field-short">{{nestedItem.unitWeight}}</div>
                         <div class="item-controls">
                           {{#if @root.owner}}
-                          {{#if (hasTag nestedItem.system.tags "sword")}}
+                          {{#if nestedItem.isSpellFocus}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{else if (hasTag nestedItem.system.tags "sword")}}
                           <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{nestedItem.id}}">
                             <i class="fas fa-hand"></i>
                           </a>
@@ -856,7 +884,11 @@
                         <div class="field-short">{{subItem.unitWeight}}</div>
                         <div class="item-controls">
                           {{#if @root.owner}}
-                          {{#if subItem.isConsumableWeapon}}
+                          {{#if subItem.isSpellFocus}}
+                          <a class="item-control item-toggle {{#unless subItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if subItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{subItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{else if subItem.isConsumableWeapon}}
                           <a class="item-control item-toggle {{#unless subItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if subItem.system.equipped}}Stow{{else}}Ready{{/if}}" data-item-id="{{subItem.id}}">
                             <i class="fas fa-hand"></i>
                           </a>
@@ -1121,7 +1153,11 @@
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
-                    {{#if (eq item.type "armor")}}
+                    {{#if item.isSpellFocus}}
+                    <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="{{#if item.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{item.id}}">
+                      <i class="fas fa-hand"></i>
+                    </a>
+                    {{else if (eq item.type "armor")}}
                     <a class="item-control item-lash-toggle {{#if item.system.lashed}}item-lashed{{/if}}" title="Lash to Backpack" data-item-id="{{item.id}}">
                       <img src="systems/osp-houserules/assets/thumbs/images/icons/lash-icon_thumb.webp" alt="Lash">
                     </a>
@@ -1154,7 +1190,11 @@
                   <div class="field-short">{{item.displayWeight}}</div>
                   <div class="item-controls">
                     {{#if @root.owner}}
-                    {{#if item.isSack}}
+                    {{#if item.isSpellFocus}}
+                    <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="{{#if item.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{item.id}}">
+                      <i class="fas fa-hand"></i>
+                    </a>
+                    {{else if item.isSack}}
                     <a class="item-control item-toggle {{#unless item.system.equipped}}item-unequipped{{/unless}}" title="Carry/Put Down">
                       <i class="fas fa-hand"></i>
                     </a>
@@ -1213,7 +1253,11 @@
                         <div class="field-short">{{nestedItem.unitWeight}}</div>
                         <div class="item-controls">
                           {{#if @root.owner}}
-                          {{#if (hasTag nestedItem.system.tags "sword")}}
+                          {{#if nestedItem.isSpellFocus}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{else if (hasTag nestedItem.system.tags "sword")}}
                           <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{nestedItem.id}}">
                             <i class="fas fa-hand"></i>
                           </a>
@@ -1268,7 +1312,11 @@
                         <div class="field-short">{{subItem.unitWeight}}</div>
                         <div class="item-controls">
                           {{#if @root.owner}}
-                          {{#if subItem.isConsumableWeapon}}
+                          {{#if subItem.isSpellFocus}}
+                          <a class="item-control item-toggle {{#unless subItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if subItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{subItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{else if subItem.isConsumableWeapon}}
                           <a class="item-control item-toggle {{#unless subItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if subItem.system.equipped}}Stow{{else}}Ready{{/if}}" data-item-id="{{subItem.id}}">
                             <i class="fas fa-hand"></i>
                           </a>
@@ -1478,7 +1526,11 @@
                         <div class="field-short">{{nestedItem.unitWeight}}</div>
                         <div class="item-controls">
                           {{#if @root.owner}}
-                          {{#if (hasTag nestedItem.system.tags "sword")}}
+                          {{#if nestedItem.isSpellFocus}}
+                          <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{nestedItem.id}}">
+                            <i class="fas fa-hand"></i>
+                          </a>
+                          {{else if (hasTag nestedItem.system.tags "sword")}}
                           <a class="item-control item-toggle {{#unless nestedItem.system.equipped}}item-unequipped{{/unless}}" title="{{#if nestedItem.system.equipped}}Unequip{{else}}Equip{{/if}}" data-item-id="{{nestedItem.id}}">
                             <i class="fas fa-hand"></i>
                           </a>
@@ -2185,16 +2237,16 @@
           <div class="bg-panels">
             <div class="bg-panel">
               <div class="bg-panel-title">Origins</div>
-              <div class="bg-panel-hint">Homeland, family, and early life.</div>
+              
               <div class="notes-tab-content bg-panel-editor">
-                {{editor enrichedBackground target="system.details.background" editable=editable button=false engine="prosemirror"}}
+                <prose-mirror name="system.details.background" value="{{system.details.background}}" data-document-uuid="{{actor.uuid}}" {{#unless editable}}disabled{{/unless}}>{{{enrichedBackground}}}</prose-mirror>
               </div>
             </div>
             <div class="bg-panel">
               <div class="bg-panel-title">History</div>
-              <div class="bg-panel-hint">Key events that led to adventuring.</div>
+              
               <div class="notes-tab-content bg-panel-editor">
-                {{editor enrichedHistory target="system.details.notes" editable=editable button=false engine="prosemirror"}}
+                <prose-mirror name="system.details.notes" value="{{system.details.notes}}" data-document-uuid="{{actor.uuid}}" {{#unless editable}}disabled{{/unless}}>{{{enrichedHistory}}}</prose-mirror>
               </div>
             </div>
           </div>
@@ -2213,7 +2265,7 @@
           <div class="bg-panels">
             <div class="bg-panel">
               <div class="notes-tab-content bg-panel-editor">
-                {{editor enrichedNotes target="system.tabNotes" editable=editable button=false engine="prosemirror"}}
+                <prose-mirror name="system.tabNotes" value="{{system.tabNotes}}" data-document-uuid="{{actor.uuid}}" {{#unless editable}}disabled{{/unless}}>{{{enrichedNotes}}}</prose-mirror>
               </div>
             </div>
           </div>

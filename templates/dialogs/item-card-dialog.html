@@ -2,6 +2,9 @@
   <div class="card-preview-container">
     <!-- Canvas will be inserted here -->
   </div>
+  <div class="item-card-actions" aria-label="Item actions">
+    <button type="button" data-cast-item-spell hidden><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Cast</button>
+  </div>
 </div>
 
 <style>
@@ -43,5 +46,30 @@
     padding: 0 !important;
     border: none;
     cursor: move;
+  }
+
+  .item-card-actions {
+    min-height: 34px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0 0;
+  }
+
+  .item-card-actions:has(button[hidden]) { display: none; }
+
+  .item-card-actions button {
+    border: 1px solid #5d3d1e;
+    border-radius: 3px;
+    padding: 4px 12px;
+    color: #fff7e6;
+    background: #34432c;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .item-card-actions button:disabled {
+    opacity: .55;
+    cursor: default;
   }
 </style>

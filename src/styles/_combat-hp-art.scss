@@ -1,0 +1,7 @@
+// HP uses parchment-only texture, with clearance around the full divider diamond.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab="combat"] .combat-b-dashboard::after {
+  background-image: url("../assets/character-sheet/explorers-journal/hp-ring-interior.svg");
+}
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab="combat"] .combat-hp-divider {
+  clip-path: inset(49% 67% 35% 14%);
+}

@@ -1,0 +1,256 @@
+[
+  {
+    "case": "build-a",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/qa/BR25-M1-R1-QA/fixture",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/build-a"
+    ],
+    "timestamp": "2026-10-03T05:53:53.522396+00:00",
+    "exit": 0,
+    "expected": "publish",
+    "outputExists": true,
+    "sourceUnchanged": true,
+    "stdout": "{\n  \"status\": \"published\",\n  \"output\": \"/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/build-a\",\n  \"packs\": [\n    \"qa-fixture\"\n  ],\n  \"canonicalIdentity\": \"cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97\"\n}\n",
+    "stderr": "",
+    "identity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+    "diagnostics": {
+      "qa-fixture": {
+        "records": 2,
+        "itemDocuments": 2,
+        "types": {
+          "item": 2
+        },
+        "invalidJsonValues": 0,
+        "otherRecords": 0,
+        "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+        "roundTripVerified": true,
+        "walIntegrityVerified": true,
+        "nativeRecoveryVerified": true,
+        "integrity": {
+          "physicalRecords": 4,
+          "logicalRecords": 4,
+          "files": 2
+        },
+        "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+        "warnings": []
+      }
+    }
+  },
+  {
+    "case": "build-b",
+    "command": [
+      "/opt/homebrew/opt/node@24/bin/node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/qa/BR25-M1-R1-QA/fixture",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/build-b"
+    ],
+    "timestamp": "2026-10-03T05:53:53.712618+00:00",
+    "exit": 0,
+    "expected": "publish",
+    "outputExists": true,
+    "sourceUnchanged": true,
+    "stdout": "{\n  \"status\": \"published\",\n  \"output\": \"/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/build-b\",\n  \"packs\": [\n    \"qa-fixture\"\n  ],\n  \"canonicalIdentity\": \"cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97\"\n}\n",
+    "stderr": "",
+    "identity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+    "diagnostics": {
+      "qa-fixture": {
+        "records": 2,
+        "itemDocuments": 2,
+        "types": {
+          "item": 2
+        },
+        "invalidJsonValues": 0,
+        "otherRecords": 0,
+        "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+        "roundTripVerified": true,
+        "walIntegrityVerified": true,
+        "nativeRecoveryVerified": true,
+        "integrity": {
+          "physicalRecords": 4,
+          "logicalRecords": 4,
+          "files": 2
+        },
+        "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+        "warnings": []
+      }
+    }
+  },
+  {
+    "case": "saved-input-rebuild",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/build-a",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/saved-input-rebuild"
+    ],
+    "timestamp": "2026-10-03T05:53:54.064210+00:00",
+    "exit": 0,
+    "expected": "publish",
+    "outputExists": true,
+    "sourceUnchanged": true,
+    "stdout": "{\n  \"status\": \"published\",\n  \"output\": \"/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/saved-input-rebuild\",\n  \"packs\": [\n    \"qa-fixture\"\n  ],\n  \"canonicalIdentity\": \"cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97\"\n}\n",
+    "stderr": "",
+    "identity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+    "diagnostics": {
+      "qa-fixture": {
+        "records": 2,
+        "itemDocuments": 2,
+        "types": {
+          "item": 2
+        },
+        "invalidJsonValues": 0,
+        "otherRecords": 0,
+        "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+        "roundTripVerified": true,
+        "walIntegrityVerified": true,
+        "nativeRecoveryVerified": true,
+        "integrity": {
+          "physicalRecords": 4,
+          "logicalRecords": 4,
+          "files": 2
+        },
+        "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+        "warnings": []
+      }
+    }
+  },
+  {
+    "case": "missing",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/missing-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/missing"
+    ],
+    "timestamp": "2026-10-03T05:53:54.259757+00:00",
+    "exit": 1,
+    "expected": "reject without output",
+    "outputExists": false,
+    "sourceUnchanged": true,
+    "stdout": "",
+    "stderr": "Error: raw snapshot failed (2): {\"error\": \"SnapshotError\", \"message\": \"missing input: /Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/missing-input/template.json\"}\n\n    at ChildProcess.<anonymous> (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:39:81)\n    at ChildProcess.emit (node:events:519:28)\n    at maybeClose (node:internal/child_process:1101:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:304:5)\n"
+  },
+  {
+    "case": "corrupt",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/corrupt-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/corrupt"
+    ],
+    "timestamp": "2026-10-03T05:53:54.357777+00:00",
+    "exit": 1,
+    "expected": "reject without output",
+    "outputExists": false,
+    "sourceUnchanged": true,
+    "stdout": "",
+    "stderr": "Error: Database failed to open\n    at /Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/node_modules/abstract-level/abstract-level.js:174:17\n    at async ClassicLevel.open (/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/node_modules/abstract-level/abstract-level.js:222:9)\n    at async canonicalPack (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:55:5)\n    at async main (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:120:22)\n"
+  },
+  {
+    "case": "no-packs",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/no-packs-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/no-packs"
+    ],
+    "timestamp": "2026-10-03T05:53:54.517065+00:00",
+    "exit": 1,
+    "expected": "reject without output",
+    "outputExists": false,
+    "sourceUnchanged": true,
+    "stdout": "",
+    "stderr": "Error: raw snapshot failed (2): {\"error\": \"SnapshotError\", \"message\": \"system.json must declare at least one pack\"}\n\n    at ChildProcess.<anonymous> (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:39:81)\n    at ChildProcess.emit (node:events:519:28)\n    at maybeClose (node:internal/child_process:1101:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:304:5)\n"
+  },
+  {
+    "case": "bad-json",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/bad-json-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/bad-json"
+    ],
+    "timestamp": "2026-10-03T05:53:54.619972+00:00",
+    "exit": 1,
+    "expected": "reject without output",
+    "outputExists": false,
+    "sourceUnchanged": true,
+    "stdout": "",
+    "stderr": "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n    at JSON.parse (<anonymous>)\n    at main (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:131:28)\n"
+  },
+  {
+    "case": "symlink",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/symlink-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/symlink"
+    ],
+    "timestamp": "2026-10-03T05:53:54.790667+00:00",
+    "exit": 1,
+    "expected": "reject without output",
+    "outputExists": false,
+    "sourceUnchanged": true,
+    "stdout": "",
+    "stderr": "Error: raw snapshot failed (2): {\"error\": \"SnapshotError\", \"message\": \"unsafe symlink path: /Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/symlink-input/template.json\"}\n\n    at ChildProcess.<anonymous> (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:39:81)\n    at ChildProcess.emit (node:events:519:28)\n    at maybeClose (node:internal/child_process:1101:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:304:5)\n"
+  },
+  {
+    "case": "changed-catalog",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/changed-catalog-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/changed-catalog"
+    ],
+    "timestamp": "2026-10-03T05:53:54.890656+00:00",
+    "exit": 0,
+    "expected": "publish",
+    "outputExists": true,
+    "sourceUnchanged": true,
+    "stdout": "{\n  \"status\": \"published\",\n  \"output\": \"/Users/paul/Documents/Codex/2026-10-03/task-2/r1/runs/changed-catalog\",\n  \"packs\": [\n    \"qa-fixture\"\n  ],\n  \"canonicalIdentity\": \"12f33148b611eab38aef2b1212250420b60c26cd46afa2c2151e37cf7b9be94a\"\n}\n",
+    "stderr": "",
+    "identity": "12f33148b611eab38aef2b1212250420b60c26cd46afa2c2151e37cf7b9be94a",
+    "diagnostics": {
+      "qa-fixture": {
+        "records": 2,
+        "itemDocuments": 2,
+        "types": {
+          "item": 2
+        },
+        "invalidJsonValues": 0,
+        "otherRecords": 0,
+        "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+        "roundTripVerified": true,
+        "walIntegrityVerified": true,
+        "nativeRecoveryVerified": true,
+        "integrity": {
+          "physicalRecords": 4,
+          "logicalRecords": 4,
+          "files": 2
+        },
+        "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+        "warnings": []
+      }
+    }
+  }
+]

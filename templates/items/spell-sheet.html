@@ -27,6 +27,7 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="details">
+      <p>Memorization and casting are managed by the actor’s Spellcasting controls. The legacy checkboxes below are preserved for reference.</p>
       <div class="form-group">
         <label>{{localize "OSE.item.SpellLevel"}}</label>
         <input type="number" name="system.lvl" value="{{system.lvl}}" min="1" max="9" />
@@ -58,11 +59,11 @@
       </div>
       <div class="form-group checkbox">
         <label>{{localize "OSE.item.Memorized"}}</label>
-        <input type="checkbox" name="system.memorized" {{#if system.memorized}}checked{{/if}} />
+        <input type="checkbox" disabled title="Legacy value; use actor Spellcasting controls" {{#if system.memorized}}checked{{/if}} />
       </div>
       <div class="form-group checkbox">
         <label>{{localize "OSE.item.Cast"}}</label>
-        <input type="checkbox" name="system.cast" {{#if system.cast}}checked{{/if}} />
+        <input type="checkbox" disabled title="Legacy value; use actor Spellcasting controls" {{#if system.cast}}checked{{/if}} />
       </div>
     </div>
   </section>

@@ -1,0 +1,121 @@
+[
+  {
+    "header": "Skill Targets",
+    "tab": "skills",
+    "textRect": {
+      "bottom": 119.07484436035156,
+      "height": 18.800003051757812,
+      "left": 570.4046630859375,
+      "right": 706.1959228515625,
+      "top": 100.27484130859376,
+      "width": 135.791259765625,
+      "x": 570.4046630859375,
+      "y": 100.27484130859376
+    },
+    "top": "45.0467px",
+    "windowTop": 10,
+    "screenshot": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/output/qa/chapter-header-skills-20261020.png"
+  },
+  {
+    "header": "Combat & Movement",
+    "tab": "combat",
+    "textRect": {
+      "bottom": 119.31937408447266,
+      "height": 18.79999542236328,
+      "left": 528.19580078125,
+      "right": 748.4048461914062,
+      "top": 100.51937866210938,
+      "width": 220.20904541015625,
+      "x": 528.19580078125,
+      "y": 100.51937866210938
+    },
+    "top": "53.3981px",
+    "windowTop": 10,
+    "screenshot": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/output/qa/chapter-header-combat-20261020.png"
+  },
+  {
+    "header": "Gear",
+    "tab": "gear",
+    "textRect": {
+      "bottom": 119.0770263671875,
+      "height": 18.79999542236328,
+      "left": 615.0176391601562,
+      "right": 664.9822998046875,
+      "top": 100.27703094482422,
+      "width": 49.96466064453125,
+      "x": 615.0176391601562,
+      "y": 100.27703094482422
+    },
+    "top": "3.27872px",
+    "windowTop": 10,
+    "screenshot": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/output/qa/chapter-header-gear-20261020.png"
+  },
+  {
+    "header": "Spells",
+    "tab": "attributes",
+    "textRect": {
+      "bottom": 119.08029174804688,
+      "height": 18.800003051757812,
+      "left": 608.6016845703125,
+      "right": 671.3829345703125,
+      "top": 100.28028869628906,
+      "width": 62.78125,
+      "x": 608.6016845703125,
+      "y": 100.28028869628906
+    },
+    "top": "44.619px",
+    "windowTop": 10,
+    "screenshot": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/output/qa/chapter-header-spells-20261020.png"
+  },
+  {
+    "header": "Details",
+    "tab": "character",
+    "textRect": {
+      "bottom": 118.9449462890625,
+      "height": 18.800003051757812,
+      "left": 611.350341796875,
+      "right": 684.7201538085938,
+      "top": 100.14494323730467,
+      "width": 73.36981201171875,
+      "x": 611.350341796875,
+      "y": 100.14494323730467
+    },
+    "top": "81.1699px",
+    "windowTop": 10,
+    "screenshot": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/output/qa/chapter-header-details-20261020.png"
+  },
+  {
+    "header": "Character Background",
+    "tab": "background",
+    "textRect": {
+      "bottom": 119.07691192626952,
+      "height": 18.79999542236328,
+      "left": 527.7593994140625,
+      "right": 768.31103515625,
+      "top": 100.27691650390624,
+      "width": 240.5516357421875,
+      "x": 527.7593994140625,
+      "y": 100.27691650390624
+    },
+    "top": "83.9585px",
+    "windowTop": 10,
+    "screenshot": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/output/qa/chapter-header-background-20261020.png"
+  },
+  {
+    "header": "Character Notes",
+    "tab": "notes",
+    "textRect": {
+      "bottom": 119.11492919921876,
+      "height": 18.800003051757812,
+      "left": 554.2576293945312,
+      "right": 725.7193603515625,
+      "top": 100.31492614746094,
+      "width": 171.46173095703125,
+      "x": 554.2576293945312,
+      "y": 100.31492614746094
+    },
+    "top": "29.1925px",
+    "windowTop": 10,
+    "screenshot": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/output/qa/chapter-header-notes-20261020.png"
+  }
+]

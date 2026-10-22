@@ -1,3 +1,5 @@
+import { getMaximumLevel, isClassAvailableForRace, getRaceClassPolicy } from '../../../../config/progression.js';
+
 /**
  * Handles race and class synchronization logic
  */
@@ -9,29 +11,6 @@ export class RaceClassHandler {
     this.raceClasses = ["Elf", "Dwarf", "Gnome", "Hobbit", "Half-Elf", "Half-Orc"];
     this.classSelect = html.find('select[name="system.class"]');
     this.raceSelect = html.find('select[name="system.race"]');
-    
-    // Define class restrictions for each race
-    this.raceClassRestrictions = {
-      'Dwarf': ['Assassin', 'Cleric', 'Dwarf', 'Fighter', 'Thief'], // Added Dwarf class
-      'Elf': ['Assassin', 'Cleric', 'Druid', 'Elf', 'Fighter', 'Knight', 'Magic-User', 'Ranger', 'Thief'], // Added Elf class
-      'Gnome': ['Assassin', 'Cleric', 'Fighter', 'Gnome', 'Illusionist', 'Thief'], // Added Gnome class
-      'Hobbit': ['Druid', 'Fighter', 'Hobbit', 'Thief'], // Added Hobbit class
-      'Half-Orc': ['Assassin', 'Cleric', 'Fighter', 'Half-Orc', 'Thief'], // Added Half-Orc class
-      'Half-Elf': ['Assassin', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Half-Elf', 'Knight', 'Magic-User', 'Paladin', 'Ranger', 'Thief'], // Added Half-Elf class
-      'Human': [] // Human gets all classes except race-as-class options, handled by exclusion logic
-      // Add other race restrictions here as needed
-      // Note: Acrobat class not available in current system
-    };
-    
-    // Define level restrictions for race-as-class combinations
-    this.raceLevelRestrictions = {
-      'Elf': { 'Elf': 10 },
-      'Dwarf': { 'Dwarf': 12 },
-      'Gnome': { 'Gnome': 8 },
-      'Half-Elf': { 'Half-Elf': 12 },
-      'Hobbit': { 'Hobbit': 8 },
-      'Half-Orc': { 'Half-Orc': 8 }
-    };
     
     // Store original class options for restoration
     this.originalClassOptions = this.classSelect.find('option').clone();
@@ -49,7 +28,7 @@ export class RaceClassHandler {
     levelInput.on("change input", this.handleLevelChange.bind(this));
     
     // Only sync race field if no race restrictions exist
-    if (Object.keys(this.raceClassRestrictions).length === 0) {
+    if (!this.raceSelect.val()) {
       this.syncRaceField();
     }
     this.filterClassOptions(); // Apply initial filtering
@@ -64,7 +43,7 @@ export class RaceClassHandler {
     if (this._handlingRaceChange) return;
     
     // Only sync race field if no race restrictions exist (avoids conflicts)
-    if (Object.keys(this.raceClassRestrictions).length === 0) {
+    if (!this.raceSelect.val()) {
       this.syncRaceField();
     }
     
@@ -102,8 +81,8 @@ export class RaceClassHandler {
     const levelInput = $(event.target);
     const enteredLevel = parseInt(levelInput.val()) || 1;
     
-    if (selectedRace && selectedClass && this.raceLevelRestrictions[selectedRace] && this.raceLevelRestrictions[selectedRace][selectedClass]) {
-      const maxLevel = this.raceLevelRestrictions[selectedRace][selectedClass];
+    if (selectedRace && selectedClass) {
+      const maxLevel = getMaximumLevel(selectedClass, selectedRace);
       
       if (enteredLevel > maxLevel) {
         levelInput.val(maxLevel);
@@ -126,7 +105,7 @@ export class RaceClassHandler {
     // Only sync race field if the selected class is a race-class AND 
     // the current race doesn't have restrictions (to avoid conflicts)
     if (this.raceClasses.includes(selectedClass) && 
-        (!selectedRace || !this.raceClassRestrictions[selectedRace])) {
+        !selectedRace) {
       this.raceSelect.val(selectedClass);
       this.raceSelect.prop("disabled", true);
     } else {
@@ -144,33 +123,19 @@ export class RaceClassHandler {
     // Clear current options
     this.classSelect.empty();
     
-    if (selectedRace === 'Human') {
-      // Special case for Human: exclude race-as-class options
-      this.originalClassOptions.each((index, option) => {
-        const $option = $(option);
-        const classValue = $option.val();
-        
-        // Exclude race-as-class options for humans
-        if (!this.raceClasses.includes(classValue)) {
-          this.classSelect.append($option.clone());
-        }
-      });
-    } else if (selectedRace && this.raceClassRestrictions[selectedRace] && this.raceClassRestrictions[selectedRace].length > 0) {
-      // Other races with specific restrictions - only show allowed classes
-      const allowedClasses = this.raceClassRestrictions[selectedRace];
-      
-      this.originalClassOptions.each((index, option) => {
-        const $option = $(option);
-        const classValue = $option.val();
-        
-        if (allowedClasses.includes(classValue)) {
-          this.classSelect.append($option.clone());
-        }
-      });
-    } else {
-      // No restrictions - show all classes
-      this.classSelect.append(this.originalClassOptions.clone());
-    }
+    this.originalClassOptions.each((_index, option) => {
+      const $option = $(option);
+      const className = $option.val();
+      const isPersistedChoice = className === this.actor.system.class && selectedRace === this.actor.system.race;
+      if (isClassAvailableForRace(className, selectedRace) || isPersistedChoice) {
+        const copy = $option.clone();
+        const policy = getRaceClassPolicy(className, selectedRace);
+        if (!policy.playerAllowed) copy.attr('title', policy.npcOnlyAtRefereeOption
+          ? 'Referee-only NPC class; preserved existing character choice.'
+          : 'Unavailable race/class pairing; preserved for manual correction.');
+        this.classSelect.append(copy);
+      }
+    });
     
     // Try to maintain current selection if it's still valid
     if (this.classSelect.find(`option[value="${currentClass}"]`).length > 0) {
@@ -180,8 +145,8 @@ export class RaceClassHandler {
       if (selectedRace === 'Human') {
         // For humans, default to Fighter (which is always available and not a race-class)
         this.classSelect.val('Fighter');
-      } else if (selectedRace && this.raceClassRestrictions[selectedRace] && this.raceClassRestrictions[selectedRace].length > 0) {
-        const allowedClasses = this.raceClassRestrictions[selectedRace];
+      } else if (selectedRace) {
+        const allowedClasses = this.originalClassOptions.map((_i, option) => $(option).val()).get().filter(value => isClassAvailableForRace(value, selectedRace));
         if (allowedClasses.includes('Fighter')) {
           this.classSelect.val('Fighter');
         } else {
@@ -215,8 +180,8 @@ export class RaceClassHandler {
     const selectedClass = this.classSelect.val();
     const levelInput = this.html.find('input[name="system.level"]');
     
-    if (selectedRace && selectedClass && this.raceLevelRestrictions[selectedRace] && this.raceLevelRestrictions[selectedRace][selectedClass]) {
-      const maxLevel = this.raceLevelRestrictions[selectedRace][selectedClass];
+    if (selectedRace && selectedClass) {
+      const maxLevel = getMaximumLevel(selectedClass, selectedRace);
       const currentLevel = parseInt(levelInput.val()) || 1;
       
       // Set max attribute on level input

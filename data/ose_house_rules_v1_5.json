@@ -1323,8 +1323,25 @@
       "natural_1": "Spell results in a Bane: wild, unpredictable, or possibly harmful result.",
       "scope": "Affects all forms of magic across all character classes."
     },
-    "spellcasting_focus": "Spellcasters require an object that helps create and focus mystical energies, such as staff, wand, crystal, instrument, or holy symbol. Without it, they cannot guide energies to create the spell.",
-    "spellbooks": "All arcane spells must be stored in a spellbook. Each spell requires one page per level. If a spellbook is lost or destroyed, the caster can no longer memorize spells."
+    "spellcasting_focus": {
+      "rule": "A required physical focus must be equipped in inventory and held or displayed when casting. An unequipped focus cannot be used to cast spells.",
+      "class_focuses": {
+        "Magic-User": "A Wand or Staff held or displayed when casting. Spellbooks are still required for recording and preparing spells, but cannot serve as the casting focus.",
+        "Illusionist": "A Wand or Staff held or displayed when casting. Spellbooks are still required for recording and preparing spells, but cannot serve as the casting focus.",
+        "Mage": "A Wand or Staff held or displayed when casting.",
+        "Cleric": "A Holy Symbol.",
+        "Paladin": "A Holy Symbol.",
+        "Druid": "A sprig of mistletoe.",
+        "Bard": "The Bard's instrument.",
+        "Ranger": "A small wooden token personally carved by the Ranger as a forest animal native to the area they range, from dead wood taken from a special tree; it is never cut from a living tree."
+      },
+      "exemptions": {
+        "race_as_class": ["Elf", "Gnome", "Half-Elf", "Drow"],
+        "racial_abilities": "Racially granted spells are innate; genetics is the focus.",
+        "external_sources": "A scroll, wand, staff, or generic magic item is its own focus."
+      }
+    },
+    "spellbooks": "All arcane spells must be stored completely within a Spellbook volume of 100 pages. Each spell requires one page per level; a spell cannot be split between volumes. Duplicate copies are not recorded within a volume. Lost books prevent new memorization from that volume, but already memorized copies remain until cast; casting then requires an available containing volume for Magic-Users and Illusionists."
   },
   "conditions": {
     "prone": [

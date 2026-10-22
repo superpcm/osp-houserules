@@ -126,7 +126,7 @@ export class BankDepositDialog extends HandlebarsApplicationMixin(ApplicationV2)
       ui.notifications.info(`Deposited ${chosen}× ${item.name} into Westford Bank.`);
     } catch (err) {
       console.error('[Westford Bank] item deposit failed unexpectedly', err);
-      ui.notifications.error("Deposit failed unexpectedly — nothing was changed. Check the console for details.");
+      ui.notifications.error("Deposit failed unexpectedly. Check pending recovery in DM Toolkit → Bank Ledgers and verify the account before retrying.");
     } finally {
       this.render();
     }
@@ -150,7 +150,7 @@ export class BankDepositDialog extends HandlebarsApplicationMixin(ApplicationV2)
       ui.notifications.info(`Deposited ${chosen} ${item.name} into Westford Bank.`);
     } catch (err) {
       console.error('[Westford Bank] currency deposit failed unexpectedly', err);
-      ui.notifications.error("Deposit failed unexpectedly — nothing was changed. Check the console for details.");
+      ui.notifications.error("Deposit failed unexpectedly. Check pending recovery in DM Toolkit → Bank Ledgers and verify the account before retrying.");
     } finally {
       this.render();
     }

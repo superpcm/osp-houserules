@@ -1,0 +1,18 @@
+{
+  "format": "osp-houserules-br25-canonical-v1",
+  "pack": "qa-fixture",
+  "entries": [
+    {
+      "key": "IWl0ZW1zIVFBSXRlbTAwMDAwMDAwMDE=",
+      "value": "eyJfaWQiOiJRQUl0ZW0wMDAwMDAwMDAxIiwibmFtZSI6IlN5bnRoZXRpYyBRQSBpdGVtIDEiLCJ0eXBlIjoiaXRlbSIsImltZyI6Imljb25zL3N2Zy9pdGVtLWJhZy5zdmciLCJzeXN0ZW0iOnsicXVhbnRpdHkiOjEsImNvc3QiOjEsInVuaXRXZWlnaHQiOjEsInN0b3JlZFNpemUiOjEsInRhZ3MiOlsic3ludGhldGljLXFhIl19fQ=="
+    },
+    {
+      "key": "IWl0ZW1zIVFBSXRlbTAwMDAwMDAwMDI=",
+      "value": "eyJfaWQiOiJRQUl0ZW0wMDAwMDAwMDAyIiwibmFtZSI6IlN5bnRoZXRpYyBRQSBpdGVtIDIiLCJ0eXBlIjoiaXRlbSIsImltZyI6Imljb25zL3N2Zy9pdGVtLWJhZy5zdmciLCJzeXN0ZW0iOnsicXVhbnRpdHkiOjEsImNvc3QiOjIsInVuaXRXZWlnaHQiOjIsInN0b3JlZFNpemUiOjIsInRhZ3MiOlsic3ludGhldGljLXFhIl19fQ=="
+    },
+    {
+      "key": "aW5kZXBlbmRlbnQtc3N0LWtleQ==",
+      "value": "eyJuYW1lIjoiU1NUIG1vZGlmaWVkIHNlbnRpbmVsIiwidHlwZSI6Iml0ZW0ifQ=="
+    }
+  ]
+}

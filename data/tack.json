@@ -4,7 +4,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/tack/barding-chain.webp",
     "system": {
-      "description": "Chain mail barding is a flexible suit of interlocking metal rings designed to protect a horse from cuts and punctures while maintaining mobility. It is typically used for light and medium cavalry, offering a balance of protection and movement without the restrictive weight of full plate barding.",
+      "description": "A flexible suit of interlocking metal rings protecting a horse from cuts and punctures while preserving mobility. Light and medium cavalry use it as a balance of protection and movement.",
       "cost": 500,
       "unitWeight": 60,
       "storedSize": 20,
@@ -27,11 +27,16 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/tack/barding-leather.webp",
     "system": {
-      "description": "This leather barding set consists of layered, hardened-leather plates shaped for a horse’s head, neck, chest, and flanks, reinforced with rivets and fitted with thick straps and buckles for secure mounting. It is typically used by light and medium cavalry to give their mounts flexible, reliable protection while avoiding the heavy weight and cost of metal barding.",
+      "description": "Hardened-leather plates cover a horse’s head, neck, chest, and flanks, with rivets, straps, and buckles. Light and medium cavalry use it for flexible protection without metal’s weight and cost.",
       "cost": 150,
       "unitWeight": 40,
       "storedSize": 90,
-      "allowedContainers": ["Cart", "Wagon", "Sack, Large", "Panniers"],
+      "allowedContainers": [
+        "Cart",
+        "Wagon",
+        "Sack, Large",
+        "Panniers"
+      ],
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -51,11 +56,16 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/tack/barding-plate.webp",
     "system": {
-      "description": "Plate barding is a full set of articulated metal armor designed to protect a warhorse in battle, covering the head, neck, chest, and flanks with shaped steel plates. It is typically used by heavily armed cavalry, allowing a mounted warrior to charge into combat with both rider and horse protected from blades, arrows, and other battlefield dangers.",
+      "description": "A full suit of articulated steel plates covers a warhorse’s head, neck, chest, and flanks. Heavily armed cavalry use it to protect horse and rider from blades, arrows, and other battlefield dangers.",
       "cost": 2000,
       "unitWeight": 80,
       "storedSize": 120,
-      "allowedContainers": ["Cart", "Wagon", "Sack, Large", "Panniers"],
+      "allowedContainers": [
+        "Cart",
+        "Wagon",
+        "Sack, Large",
+        "Panniers"
+      ],
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -75,11 +85,16 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/tack/barding-scale.webp",
     "system": {
-      "description": "Scale barding is a full set of articulated metal armor designed to protect a warhorse in battle, covering the head, neck, chest, and flanks with shaped steel plates. It is typically used by heavily armed cavalry, allowing a mounted warrior to charge into combat with both rider and horse protected from blades, arrows, and other battlefield dangers.",
+      "description": "Articulated metal armor covers a warhorse's head, neck, chest, and flanks. Heavy cavalry use it to protect horse and rider from blades, arrows, and other battlefield dangers.",
       "cost": 1000,
       "unitWeight": 75,
       "storedSize": 100,
-      "allowedContainers": ["Cart", "Wagon", "Sack, Large", "Panniers"],
+      "allowedContainers": [
+        "Cart",
+        "Wagon",
+        "Sack, Large",
+        "Panniers"
+      ],
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -99,7 +114,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/tack/bit-bridle.webp",
     "system": {
-      "description": "This bit and bridle set is made of worn brown leather straps fitted with a simple steel bit and rings, shaped to sit comfortably on a horse’s head. It is typically used to guide and control a mount, transmitting the rider’s cues through the reins and bit for steering, stopping, and managing pace.",
+      "description": "Worn brown leather straps with a simple steel bit and rings fit a horse’s head. The reins and bit transmit a rider’s cues for steering, stopping, and managing pace.",
       "cost": 15,
       "unitWeight": 3,
       "storedSize": 6,
@@ -189,7 +204,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/images/tack/saddlebags-large.webp",
     "system": {
-      "description": "These large over-the-saddle bags are a hefty pair of deep leather pouches joined by a wide strap, built to drape securely across a horse’s back. They are typically used by caravans, couriers, and long-range adventuring parties to carry bulk supplies, trade goods, or treasure while keeping the load balanced and off the rider’s body.",
+      "description": "Deep leather pouches joined by a wide strap drape across a horse’s back. Caravans, couriers, and adventurers carry bulk supplies, trade goods, or treasure in them, balanced off the rider.",
       "cost": 10,
       "unitWeight": 7,
       "storedSize": 12,

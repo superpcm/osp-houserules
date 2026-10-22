@@ -1,0 +1,8 @@
+{
+  "status": "published",
+  "output": "/private/tmp/osp-br25-r2-retest-qjcey5vq/valid22-output",
+  "packs": [
+    "qa-fixture"
+  ],
+  "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97"
+}

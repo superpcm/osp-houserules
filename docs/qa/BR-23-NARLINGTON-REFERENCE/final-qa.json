@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-05",
+  "verifier": "narlington_reference_qa",
+  "verdict": "TECHNICAL_COPY_PASS_VISUAL_ACCEPTANCE_FAILED",
+  "visualRegression": {
+    "reported": "2026-10-05",
+    "expected": "User-provided original Fung Telt illustrated parchment combat sheet",
+    "observed": "Current test sheet uses generated circles and combat frames, gradient parchment, and changed table styling",
+    "causeEvidence": "Current character-sheet-main.scss explicitly replaces precomposed combat art; captured source already contains these changes. Git revision 656792a retains saving-throws.webp and hpac.webp markup and original parchment background treatment.",
+    "boundary": "Copy integrity and unchanged document payload evidence remain valid; matching the user's original sheet design was not established by the earlier smoke check.",
+    "screenshot": "/private/tmp/osp-sheet-appearance-regression.jpg",
+    "restorationStatus": "Not yet restored; production has not been changed during this investigation"
+  },
+  "reference": {
+    "url": "http://127.0.0.1:30023/game",
+    "authenticatedSmoke": "PASS",
+    "observed": ["grass scene background", "FA Nexus and module controls", "production actor directory", "Edvin Thue customized Bio sheet", "Skills panel", "Gear panel"],
+    "clientErrorsObserved": 0,
+    "visualBoundary": "Authenticated reference smoke and preserved source data/assets; not a pixel-by-pixel comparison with an authenticated production browser"
+  },
+  "updated": {
+    "url": "http://127.0.0.1:30024/game",
+    "authenticatedSmoke": "PASS",
+    "authenticatedSmokeCheckedBy": "primary agent after user sign-in",
+    "observed": ["production player directory", "Edvin Thue customized Bio sheet", "Skills panel", "Gear containers and lashed items"],
+    "clientErrorsObserved": 0,
+    "screenshot": "/private/tmp/osp-narlington-updated-verified.jpg",
+    "core": "14.365",
+    "system": "1.0.12",
+    "runtimeFilesIndependentlyVerified": 1351,
+    "runtimeMismatches": 0,
+    "assetFilesIndependentlyVerified": 360872,
+    "assetMismatches": 0,
+    "temporaryDatabaseCollectionsCompared": 25,
+    "documentRowsCompared": 3356,
+    "documentDifferences": 0,
+    "actorRows": 2795,
+    "sceneRowsIncludingEmbedded": 17,
+    "settingRows": 183,
+    "startup": "Launching World | Complete",
+    "normalAccountSignInRequired": true,
+    "gameplayBoundary": "Authenticated sheet smoke passed; full gameplay and offline migration/rollback acceptance have not been exercised; no new behavior changes were introduced by this correction"
+  },
+  "preservation": {
+    "originalCaptureUnchanged": true,
+    "newBaselinePreserved": true,
+    "referenceUnaffectedByUpdatedBuildInstall": true,
+    "productionCompendiumsRetained": true,
+    "network": "Separate loopback-only ports and Unix sockets",
+    "assets": "Independent files with separate inodes; APFS copy-on-write storage; no production symlinks or hardlinks"
+  },
+  "knownSourceDefects": "182 legacy asset paths absent in production remain absent in the copies",
+  "buildIdentity": "Fresh staged production build matches the captured production JavaScript and CSS hashes; latest workspace updates already existed on Narlington",
+  "milestoneBoundary": "This completes production-reference correction and separate test-copy deployment; it does not complete BR-23 offline migration/rollback acceptance"
+}

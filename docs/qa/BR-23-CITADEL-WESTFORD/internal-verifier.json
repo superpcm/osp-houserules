@@ -1,0 +1,21 @@
+{
+  "verifiedAt": "2026-10-04T03:55:08.951337+00:00",
+  "verdict": "PASS \u2014 closed capture and copy integrity only",
+  "archiveBytes": 446054400,
+  "archiveSha256": "9164c29161cd4da8b54c4abb8710bb8bd648a217b9833933a53af54c10858ed1",
+  "archiveMembers": 3208,
+  "filesVerified": 2908,
+  "manifestDirectoriesVerified": 297,
+  "hashMismatches": 0,
+  "missingFiles": 0,
+  "extraPayloadFiles": 0,
+  "unsafeArchivePaths": 0,
+  "symlinks": 0,
+  "hardlinks": 0,
+  "sharedFileInodesBetweenCopies": 0,
+  "baselineArchiveMode": "0400",
+  "sourceUnchanged": true,
+  "lifecycle": "healthy initial state; stop, closed capture, restart; healthy final state",
+  "method": "Independent read-only verifier hashed archive, baseline and working files, checked members, modes and inodes; no native database or production reads",
+  "remaining": "Application build/assets, native export, migration and rollback acceptance pending"
+}

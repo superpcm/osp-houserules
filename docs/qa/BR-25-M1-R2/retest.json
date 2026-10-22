@@ -1,0 +1,188 @@
+{
+  "work": "/private/tmp/osp-br25-r2-retest-qjcey5vq",
+  "results": [
+    {
+      "case": "valid22",
+      "command": [
+        "node",
+        "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/valid22-input",
+        "--output",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/valid22-output"
+      ],
+      "exit": 0,
+      "published": true,
+      "sourceUnchanged": true,
+      "capturedAt": "2026-10-03T23:19:42.735339+00:00",
+      "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+      "packDiagnostics": {
+        "qa-fixture": {
+          "records": 2,
+          "itemDocuments": 2,
+          "types": {
+            "item": 2
+          },
+          "invalidJsonValues": 0,
+          "otherRecords": 0,
+          "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+          "roundTripVerified": true,
+          "walIntegrityVerified": true,
+          "nativeRecoveryVerified": true,
+          "integrity": {
+            "physicalRecords": 4,
+            "logicalRecords": 4,
+            "files": 2
+          },
+          "tableIntegrityVerified": true,
+          "tableIntegrity": {},
+          "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "case": "valid24",
+      "command": [
+        "/opt/homebrew/opt/node@24/bin/node",
+        "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/valid24-input",
+        "--output",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/valid24-output"
+      ],
+      "exit": 0,
+      "published": true,
+      "sourceUnchanged": true,
+      "capturedAt": "2026-10-03T23:19:47.885903+00:00",
+      "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+      "packDiagnostics": {
+        "qa-fixture": {
+          "records": 2,
+          "itemDocuments": 2,
+          "types": {
+            "item": 2
+          },
+          "invalidJsonValues": 0,
+          "otherRecords": 0,
+          "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+          "roundTripVerified": true,
+          "walIntegrityVerified": true,
+          "nativeRecoveryVerified": true,
+          "integrity": {
+            "physicalRecords": 4,
+            "logicalRecords": 4,
+            "files": 2
+          },
+          "tableIntegrityVerified": true,
+          "tableIntegrity": {},
+          "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "case": "corrupt",
+      "command": [
+        "node",
+        "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/corrupt-input",
+        "--output",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/corrupt-output"
+      ],
+      "exit": 1,
+      "published": false,
+      "sourceUnchanged": true,
+      "capturedAt": "2026-10-03T23:19:51.918711+00:00"
+    },
+    {
+      "case": "sst-clean",
+      "command": [
+        "node",
+        "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/sst-clean-input",
+        "--output",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/sst-clean-output"
+      ],
+      "exit": 0,
+      "published": true,
+      "sourceUnchanged": true,
+      "capturedAt": "2026-10-03T23:19:56.269279+00:00",
+      "canonicalIdentity": "c73ca09885e3c5f852fa1f9301665efeabb2e9b9ad0b77d967d520bfeda8602c",
+      "packDiagnostics": {
+        "qa-fixture": {
+          "records": 3,
+          "itemDocuments": 3,
+          "types": {
+            "item": 3
+          },
+          "invalidJsonValues": 0,
+          "otherRecords": 0,
+          "canonicalFileSha256": "f9e058abcfef143264420bbd7786733ceb9e1b969cd9bb1515f3401a7359e9bf",
+          "roundTripVerified": true,
+          "walIntegrityVerified": true,
+          "nativeRecoveryVerified": true,
+          "integrity": {
+            "physicalRecords": 4,
+            "logicalRecords": 4,
+            "files": 2
+          },
+          "tableIntegrityVerified": true,
+          "tableIntegrity": {
+            "packs/qa-fixture/000008.ldb": {
+              "bytes": 239,
+              "blocks": 4,
+              "dataBlocks": 1,
+              "metadataBlocks": 1,
+              "filterBlocks": 1,
+              "compressedBlocks": 0,
+              "tableIntegrityVerified": true
+            },
+            "packs/qa-fixture/000009.ldb": {
+              "bytes": 587,
+              "blocks": 4,
+              "dataBlocks": 1,
+              "metadataBlocks": 1,
+              "filterBlocks": 1,
+              "compressedBlocks": 0,
+              "tableIntegrityVerified": true
+            }
+          },
+          "rawTreeSha256": "db4ba58c3b7008177e9444cb3b6410d29c51ecdbd641562d6666ae83e94c3f5e",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "case": "sst-corrupt",
+      "command": [
+        "node",
+        "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/sst-corrupt-input",
+        "--output",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/sst-corrupt-output"
+      ],
+      "exit": 1,
+      "published": false,
+      "sourceUnchanged": true,
+      "capturedAt": "2026-10-03T23:20:00.861614+00:00"
+    },
+    {
+      "case": "saved-input",
+      "command": [
+        "node",
+        "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/saved-input",
+        "--output",
+        "/private/tmp/osp-br25-r2-retest-qjcey5vq/saved-output"
+      ],
+      "exit": 0,
+      "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97"
+    }
+  ],
+  "status": "implementer checks passed; independent retest pending"
+}

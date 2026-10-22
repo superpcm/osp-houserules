@@ -1,0 +1,27 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/br23-world-migrate.test.js > BR23 pure contract > reports null capacity without committing migration markers
+AssertionError: expected 0 to be greater than 0
+ ❯ scripts/br23-world-migrate.test.js:62:41
+     60|   ])("reports %s without committing migration markers", (_, mutate) =>…
+     61|     const input = fixture(); mutate(input); const result = migrateWorl…
+     62|     expect(result.report.errors.length).toBeGreaterThan(0);
+       |                                         ^
+     63|     expect(result.world.migrationVersion).toBe(input.migrationVersion);
+     64|     expect(result.report.changes.some(change => change.path === "migra…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  scripts/br23-world-migrate.test.js > BR23 pure contract > is repeat safe and rejects malformed units, ledgers, references and journals
+AssertionError: expected 0 to be greater than 0
+ ❯ scripts/br23-world-migrate.test.js:103:74
+    101|     ]) {
+    102|       const value = fixture(); mutate(value);
+    103|       expect(migrateWorld(value, { catalogs: [] }).report.errors.lengt…
+       |                                                                          ^
+    104|     }
+    105|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

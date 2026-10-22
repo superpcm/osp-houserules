@@ -1,0 +1,5 @@
+Error: packs/qa-fixture/000003.log: checksum mismatch at byte 233
+    at fail (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/leveldb-log-integrity.js:34:9)
+    at validateLog (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/leveldb-log-integrity.js:109:46)
+    at validateCapturedLogs (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js:95:22)
+    at async main (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js:129:23)

@@ -64,7 +64,7 @@ export class BankDmEditDialog extends HandlebarsApplicationMixin(ApplicationV2) 
       ui.notifications.info(`Set ${this.party ? "Party Treasury" : this.actor.name}'s banked ${denomination} to ${value}.`);
     } catch (err) {
       console.error('[Westford Bank] DM currency edit failed unexpectedly', err);
-      ui.notifications.error("Edit failed unexpectedly — nothing was changed. Check the console for details.");
+      ui.notifications.error("Edit failed unexpectedly. Check pending recovery in DM Toolkit → Bank Ledgers and verify the account before retrying.");
     } finally {
       this.render();
     }
@@ -84,7 +84,7 @@ export class BankDmEditDialog extends HandlebarsApplicationMixin(ApplicationV2) 
       ui.notifications.info(`Added ${quantity}× ${name} to ${this.party ? "Party Treasury" : `${this.actor.name}'s ledger`}.`);
     } catch (err) {
       console.error('[Westford Bank] DM add item failed unexpectedly', err);
-      ui.notifications.error("Add item failed unexpectedly — nothing was changed. Check the console for details.");
+      ui.notifications.error("Add item failed unexpectedly. Check pending recovery in DM Toolkit → Bank Ledgers and verify the account before retrying.");
     } finally {
       this.render();
     }
@@ -103,7 +103,7 @@ export class BankDmEditDialog extends HandlebarsApplicationMixin(ApplicationV2) 
       ui.notifications.info(`Removed ${quantity}× from ${this.party ? "Party Treasury" : `${this.actor.name}'s ledger`}.`);
     } catch (err) {
       console.error('[Westford Bank] DM remove item failed unexpectedly', err);
-      ui.notifications.error("Remove item failed unexpectedly — nothing was changed. Check the console for details.");
+      ui.notifications.error("Remove item failed unexpectedly. Check pending recovery in DM Toolkit → Bank Ledgers and verify the account before retrying.");
     } finally {
       this.render();
     }

@@ -1,0 +1,19 @@
+{
+  "name": "Mistletoe",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/druid-focus-mistletoe_thumb.webp",
+  "system": {
+    "description": "A small, forked sprig of mistletoe with leathery green leaves and clusters of ivory-white berries along its woody stems. It serves as a Druid's spell focus and must be held or displayed while casting.",
+    "cost": 0,
+    "unitWeight": 0.05,
+    "storedSize": 0.25,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "tags": [
+      "focus",
+      "druid",
+      "herb"
+    ]
+  }
+}

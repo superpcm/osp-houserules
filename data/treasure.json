@@ -4,7 +4,7 @@
     "type": "coin",
     "img": "systems/osp-houserules/assets/images/treasure/copper-coins.webp",
     "system": {
-      "description": "The Penny is the smallest denomination of currency, used for common transactions such as food, lodging, or simple goods. Though individually modest in worth, Pennies are essential to daily trade and circulate widely among all classes. 10 Pennies match the worth of 1 Sovereign, and one 100 Pennies weigh approximately 2 pounds.",
+      "description": "The Penny is the smallest denomination, used for food, lodging, and simple goods. 10 Pennies equal 1 Sovereign, and 100 Pennies weigh approximately 2 pounds.",
       "cost": 0.1,
       "unitWeight": 0.02,
       "storedSize": 0.04,
@@ -21,7 +21,7 @@
     "type": "coin",
     "img": "systems/osp-houserules/assets/images/treasure/gold-coins.webp",
     "system": {
-      "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds.",
+      "description": "The Crown is a rare, prestigious gold coin valued above all other denominations. 1 Crown equals 10 Sovereigns, and 100 Crowns weigh approximately 4 pounds.",
       "cost": 10,
       "unitWeight": 0.04,
       "storedSize": 0.04,
@@ -55,7 +55,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/treasure/diamond.webp",
     "system": {
-      "description": "A brilliant, colorless diamond cut into a precise round form, its many facets catching even the faintest light and scattering it in cold, prismatic fire. Entirely natural and unenchanted, it is prized for its exceptional clarity, enduring hardness, and the costly skill required to reveal such radiance.",
+      "description": "A natural, unenchanted, colorless diamond cut round, prized for exceptional clarity, hardness, and the costly skill needed to reveal its prismatic brilliance.",
       "cost": 1000,
       "unitWeight": 0.01,
       "storedSize": 0.02,
@@ -74,7 +74,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/treasure/ruby-necklace.webp",
     "system": {
-      "description": "A finely wrought gold necklace set with a procession of deep crimson rubies, each carefully cut to kindle with ember-red light as it moves. Though entirely unenchanted, the richness of its gems and the delicacy of its workmanship mark it as a jewel fit for a noble court.",
+      "description": "A finely wrought gold necklace set with deep crimson rubies, each cut to catch ember-red light. Entirely unenchanted, its rich gems and delicate workmanship suit a noble court.",
       "cost": 1000,
       "unitWeight": 0.01,
       "storedSize": 0.02,
@@ -102,7 +102,10 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "treasure"]
+      "tags": [
+        "gem",
+        "treasure"
+      ]
     }
   },
   {
@@ -118,7 +121,11 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "mineral", "treasure"]
+      "tags": [
+        "gem",
+        "mineral",
+        "treasure"
+      ]
     }
   },
   {
@@ -134,7 +141,10 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "treasure"]
+      "tags": [
+        "gem",
+        "treasure"
+      ]
     }
   },
   {
@@ -150,7 +160,11 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "crystal", "treasure"]
+      "tags": [
+        "gem",
+        "crystal",
+        "treasure"
+      ]
     }
   },
   {
@@ -166,7 +180,10 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "treasure"]
+      "tags": [
+        "gem",
+        "treasure"
+      ]
     }
   },
   {
@@ -182,7 +199,10 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "treasure"]
+      "tags": [
+        "gem",
+        "treasure"
+      ]
     }
   },
   {
@@ -198,7 +218,11 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "spell-component", "treasure"]
+      "tags": [
+        "gem",
+        "spell-component",
+        "treasure"
+      ]
     }
   },
   {
@@ -214,7 +238,11 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "organic", "treasure"]
+      "tags": [
+        "gem",
+        "organic",
+        "treasure"
+      ]
     }
   },
   {
@@ -230,7 +258,10 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "treasure"]
+      "tags": [
+        "gem",
+        "treasure"
+      ]
     }
   },
   {
@@ -246,7 +277,10 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "treasure"]
+      "tags": [
+        "gem",
+        "treasure"
+      ]
     }
   },
   {
@@ -262,7 +296,10 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "treasure"]
+      "tags": [
+        "gem",
+        "treasure"
+      ]
     }
   },
   {
@@ -278,7 +315,10 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "treasure"]
+      "tags": [
+        "gem",
+        "treasure"
+      ]
     }
   },
   {
@@ -294,7 +334,11 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "organic", "treasure"]
+      "tags": [
+        "gem",
+        "organic",
+        "treasure"
+      ]
     }
   },
   {
@@ -310,7 +354,11 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "precious", "treasure"]
+      "tags": [
+        "gem",
+        "precious",
+        "treasure"
+      ]
     }
   },
   {
@@ -326,7 +374,12 @@
       "equipped": false,
       "lashable": false,
       "treasure": true,
-      "tags": ["gem", "precious", "spell-component", "treasure"]
+      "tags": [
+        "gem",
+        "precious",
+        "spell-component",
+        "treasure"
+      ]
     }
   }
 ]

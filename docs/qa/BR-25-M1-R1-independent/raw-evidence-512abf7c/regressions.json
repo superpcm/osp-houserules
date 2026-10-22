@@ -1,0 +1,190 @@
+[
+  {
+    "case": "original-wal-bitflip",
+    "timestamp": "2026-10-03T05:54:48.345065+00:00",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/original-wal-bitflip-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/original-wal-bitflip-output"
+    ],
+    "expected": "reject without output",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Error: packs/qa-fixture/000003.log: checksum mismatch at byte 233\n    at fail (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:34:9)\n    at validateLog (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:109:46)\n    at validateCapturedLogs (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:94:22)\n    at async main (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:116:23)\n",
+    "sourceUnchanged": true,
+    "outputExists": false
+  },
+  {
+    "case": "wal-truncate-one",
+    "timestamp": "2026-10-03T05:54:48.480815+00:00",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/wal-truncate-one-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/wal-truncate-one-output"
+    ],
+    "expected": "reject without output",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Error: packs/qa-fixture/000003.log: record payload exceeds block boundary\n    at fail (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:34:9)\n    at validateLog (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:105:51)\n    at validateCapturedLogs (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:94:22)\n    at async main (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:116:23)\n",
+    "sourceUnchanged": true,
+    "outputExists": false
+  },
+  {
+    "case": "wal-invalid-type",
+    "timestamp": "2026-10-03T05:54:48.614186+00:00",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/wal-invalid-type-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/wal-invalid-type-output"
+    ],
+    "expected": "reject without output",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Error: packs/qa-fixture/000003.log: invalid record type 9 at byte 0\n    at fail (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:34:9)\n    at validateLog (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:104:74)\n    at validateCapturedLogs (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:94:22)\n    at async main (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:116:23)\n",
+    "sourceUnchanged": true,
+    "outputExists": false
+  },
+  {
+    "case": "wal-short-header",
+    "timestamp": "2026-10-03T05:54:48.744456+00:00",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/wal-short-header-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/wal-short-header-output"
+    ],
+    "expected": "reject without output",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Error: packs/qa-fixture/000003.log: non-zero truncated block trailer\n    at fail (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:34:9)\n    at validateLog (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:91:71)\n    at validateCapturedLogs (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:94:22)\n    at async main (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:116:23)\n",
+    "sourceUnchanged": true,
+    "outputExists": false
+  },
+  {
+    "case": "manifest-bitflip",
+    "timestamp": "2026-10-03T05:54:48.877484+00:00",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/manifest-bitflip-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/manifest-bitflip-output"
+    ],
+    "expected": "reject without output",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Error: packs/qa-fixture/MANIFEST-000002: checksum mismatch at byte 35\n    at fail (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:34:9)\n    at validateLog (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/leveldb-log-integrity.js:109:46)\n    at validateCapturedLogs (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:94:22)\n    at async main (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:116:23)\n",
+    "sourceUnchanged": true,
+    "outputExists": false
+  },
+  {
+    "case": "locked",
+    "timestamp": "2026-10-03T05:54:49.037922+00:00",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/locked-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/locked-output"
+    ],
+    "expected": "reject without output",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Error: raw snapshot failed (2): {\"error\": \"SnapshotError\", \"message\": \"active or contested pack database: packs/qa-fixture\"}\n\n    at ChildProcess.<anonymous> (file:///Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js:39:81)\n    at ChildProcess.emit (node:events:519:28)\n    at maybeClose (node:internal/child_process:1101:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:304:5)\n",
+    "sourceUnchanged": true,
+    "outputExists": false
+  },
+  {
+    "case": "sst-clean",
+    "timestamp": "2026-10-03T05:54:49.254554+00:00",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/sst-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/sst-clean-output"
+    ],
+    "expected": "publish",
+    "exit": 0,
+    "stdout": "{\n  \"status\": \"published\",\n  \"output\": \"/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/sst-clean-output\",\n  \"packs\": [\n    \"qa-fixture\"\n  ],\n  \"canonicalIdentity\": \"c73ca09885e3c5f852fa1f9301665efeabb2e9b9ad0b77d967d520bfeda8602c\"\n}\n",
+    "stderr": "",
+    "sourceUnchanged": true,
+    "outputExists": true,
+    "diagnostics": {
+      "qa-fixture": {
+        "records": 3,
+        "itemDocuments": 3,
+        "types": {
+          "item": 3
+        },
+        "invalidJsonValues": 0,
+        "otherRecords": 0,
+        "canonicalFileSha256": "f9e058abcfef143264420bbd7786733ceb9e1b969cd9bb1515f3401a7359e9bf",
+        "roundTripVerified": true,
+        "walIntegrityVerified": true,
+        "nativeRecoveryVerified": true,
+        "integrity": {
+          "physicalRecords": 4,
+          "logicalRecords": 4,
+          "files": 2
+        },
+        "rawTreeSha256": "db4ba58c3b7008177e9444cb3b6410d29c51ecdbd641562d6666ae83e94c3f5e",
+        "warnings": []
+      }
+    }
+  },
+  {
+    "case": "sst-payload-corruption",
+    "timestamp": "2026-10-03T05:54:49.421813+00:00",
+    "command": [
+      "node",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE/scripts/pack-snapshot.js",
+      "--root",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/sst-input",
+      "--output",
+      "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/sst-payload-corruption-output"
+    ],
+    "expected": "full AC-25-1 would reject; R1 explicitly excludes SST validation",
+    "exit": 0,
+    "stdout": "{\n  \"status\": \"published\",\n  \"output\": \"/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/sst-payload-corruption-output\",\n  \"packs\": [\n    \"qa-fixture\"\n  ],\n  \"canonicalIdentity\": \"cc25b53173b06a4091a3d9905ef1b9ee8677a93db0af7d385deb9ec42fefb73a\"\n}\n",
+    "stderr": "",
+    "sourceUnchanged": true,
+    "outputExists": true,
+    "diagnostics": {
+      "qa-fixture": {
+        "records": 3,
+        "itemDocuments": 3,
+        "types": {
+          "item": 3
+        },
+        "invalidJsonValues": 0,
+        "otherRecords": 0,
+        "canonicalFileSha256": "dd73b47c67b2b25f6eabe1e2b03bd41533d51d475e413a09f706ebeae2e752b7",
+        "roundTripVerified": true,
+        "walIntegrityVerified": true,
+        "nativeRecoveryVerified": true,
+        "integrity": {
+          "physicalRecords": 4,
+          "logicalRecords": 4,
+          "files": 2
+        },
+        "rawTreeSha256": "2c8af0e8b0a7339df2328b275da4103313768680e9c4b9a67b4fe4f13d315624",
+        "warnings": []
+      }
+    }
+  }
+]

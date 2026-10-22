@@ -1,0 +1,11 @@
+// Offsets compensate for the existing journal body vertical scale of 0.94.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab.tab[data-tab="skills"] > :is(.cs-skill-svg-container, .skill-abilities-section, .cs-skill-scrollbar) {
+  margin-top: calc(-5px / 0.94) !important;
+}
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab.tab[data-tab="bio"] .bio-saving-throws-section .combat-saving-throws-title {
+  position: relative;
+  top: calc(2px / 0.94) !important;
+}
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab.tab[data-tab="bio"] .bio-saving-throws-section .combat-saving-throws-subtitle {
+  --osp-subtitle-ink-gap: 2;
+}

@@ -7,6 +7,7 @@
 
 import { CATALOG_CATEGORIES, TYPE_LABELS, renderTypeFields, renderCategoryExtras, renderAllowedContainersField, collectSystemData } from "./catalog-schema.js";
 import { uploadItemImages } from "./image-pipeline.js";
+import { ospDialogOptions } from '../dialog-theme.js';
 
 // The full-size image is never stored in item JSON — item-card-renderer.js and
 // magic-item-creator.js both derive it from the thumb path by string-replacing
@@ -141,7 +142,7 @@ export class AddItemDialog {
 
     return new Promise((resolve) => {
       let resolved = false;
-      const dialog = new foundry.applications.api.DialogV2({
+      const dialog = new foundry.applications.api.DialogV2(ospDialogOptions({
         window: { title: "Add Item" },
         position: { width: 640 },
         content,
@@ -150,7 +151,7 @@ export class AddItemDialog {
         ],
         close: () => { if (!resolved) resolve(); },
         rejectClose: false
-      });
+      }));
 
       dialog.render({ force: true }).then(() => {
         const el = dialog.element;

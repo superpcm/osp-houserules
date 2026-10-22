@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-03T23:19:58.564491+00:00",
+  "command": "rtk proxy node node_modules/vitest/vitest.mjs run scripts/pack-snapshot.test.js scripts/leveldb-log-integrity.test.js scripts/leveldb-table-integrity.test.js --maxWorkers=2 --hookTimeout=30000",
+  "cwd": "/private/tmp/osp-br25-r2-tests-jfhou_kd",
+  "exit": 0,
+  "files": 3,
+  "passed": 41,
+  "sourceBytesMatch": true,
+  "vitest": "3.2.7",
+  "dependencies": "copied existing independently installed locked dependencies; no reinstall",
+  "syntax": [
+    {
+      "file": "pack-snapshot.js",
+      "exit": 0
+    },
+    {
+      "file": "pack-snapshot.test.js",
+      "exit": 0
+    },
+    {
+      "file": "leveldb-log-integrity.js",
+      "exit": 0
+    },
+    {
+      "file": "leveldb-log-integrity.test.js",
+      "exit": 0
+    },
+    {
+      "file": "leveldb-table-integrity.js",
+      "exit": 0
+    },
+    {
+      "file": "leveldb-table-integrity.test.js",
+      "exit": 0
+    }
+  ],
+  "earlierFailure": "mounted Vitest produced no output within30seconds; local copy passed"
+}

@@ -2,6 +2,7 @@
  * @file Morale system — automatic 2d6 checks on first enemy casualty and 50% losses.
  */
 import { ospRoll } from "../dice.js";
+import { ospDialogOptions } from '../dialog/dialog-theme.js';
 
 const REACTIONS = [
   "Flee",
@@ -136,7 +137,7 @@ function showMoraleDialog(trigger, results, state) {
     content,
     buttons: { close: { label: "Close" } },
     default: "close"
-  }, { width: 560, classes: ["dialog", "osp-morale-popup"] }).render(true);
+  }, ospDialogOptions({ width: 560, classes: ["dialog", "osp-morale-popup"] })).render(true);
 }
 
 // ── Hook registration ─────────────────────────────────────────────────────────

@@ -1,0 +1,63 @@
+{
+  "at": "2026-10-03T23:22:57.271546+00:00",
+  "work": "/private/tmp/osp-br25-r2-exact-5xh_jzyt",
+  "hashesCRCAndSourceEntries": "passed",
+  "results": [
+    {
+      "case": "wal",
+      "command": [
+        "node",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-SOURCE/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-QA/fixture",
+        "--output",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/wal-output"
+      ],
+      "exit": 0,
+      "published": true,
+      "sourceUnchanged": true,
+      "stderr": "",
+      "identity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97"
+    },
+    {
+      "case": "sst-clean",
+      "command": [
+        "node",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-SOURCE/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-QA/sst-fixtures/sst-clean-output",
+        "--output",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/sst-clean-output"
+      ],
+      "exit": 0,
+      "published": true,
+      "sourceUnchanged": true,
+      "stderr": "",
+      "identity": "c73ca09885e3c5f852fa1f9301665efeabb2e9b9ad0b77d967d520bfeda8602c"
+    },
+    {
+      "case": "sst-corrupt",
+      "command": [
+        "node",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-SOURCE/scripts/pack-snapshot.js",
+        "--root",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-QA/sst-fixtures/sst-input",
+        "--output",
+        "/private/tmp/osp-br25-r2-exact-5xh_jzyt/sst-corrupt-output"
+      ],
+      "exit": 1,
+      "published": false,
+      "sourceUnchanged": true,
+      "stderr": "Error: packs/qa-fixture/000008.ldb: data checksum mismatch at 0\n    at fail (file:///private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-SOURCE/scripts/leveldb-table-integrity.js:9:39)\n    at readBlock (file:///private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-SOURCE/scripts/leveldb-table-integrity.js:166:83)\n    at validateTable (file:///private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-SOURCE/scripts/leveldb-table-integrity.js:207:19)\n    at validateCapturedTables (file:///private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-SOURCE/scripts/pack-snapshot.js:110:20)\n    at async main (file:///private/tmp/osp-br25-r2-exact-5xh_jzyt/BR25-M1-R2-SOURCE/scripts/pack-snapshot.js:128:28)\n"
+    }
+  ],
+  "status": "implementer exact-artifact checks; independent QA pending",
+  "extractedSourceFocusedTests": {
+    "exit": 0,
+    "passed": 41,
+    "files": 3,
+    "at": "2026-10-03T23:23:43.867456+00:00",
+    "dependencies": "existing copied locked dependencies; clean install not run"
+  },
+  "sourceEntriesUnchangedAfterExecution": true
+}

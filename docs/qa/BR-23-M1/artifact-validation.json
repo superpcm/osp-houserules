@@ -1,0 +1,40 @@
+{
+  "verifiedAt": "2026-10-04T00:46:29.798565+00:00",
+  "sourceArchiveSha256": "02360ee6c9a508c02fd1bfa476e013f9bfc0be9a9db6e72570cdbff4809c641a",
+  "sourceIdentity": "3ca5211d5717366e93698be2d4c37575fe4877625556c72e87d701252fcc76df",
+  "sourceEntriesVerified": 27,
+  "testsPassed": 21,
+  "localExtraction": "/private/tmp/osp-br23-exact-9ugkjcnh/BR23-M1-SOURCE",
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "node",
+        "scripts/br23-world-migrate.js",
+        "apply-copy",
+        "--input",
+        "/private/tmp/osp-br23-exact-9ugkjcnh/BR23-M1-SOURCE/migrations/fixtures/br23-legacy-world.json",
+        "--output",
+        "/private/tmp/osp-br23-exact-9ugkjcnh/applied"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "node",
+        "scripts/br23-world-migrate.js",
+        "restore",
+        "--backup",
+        "/private/tmp/osp-br23-exact-9ugkjcnh/applied",
+        "--output",
+        "/private/tmp/osp-br23-exact-9ugkjcnh/restored"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "originalBackupRestoreSha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+  "scope": "exact offline source artifact; synthetic only; copied existing locked dependencies"
+}

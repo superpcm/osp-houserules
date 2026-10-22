@@ -1,0 +1,1117 @@
+{
+  "created": "2026-10-16T17:52:42.245Z",
+  "world": [
+    {
+      "id": "tedZBSlWHSzgwKOs",
+      "name": "Backpack",
+      "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing."
+    },
+    {
+      "id": "hWs3UpUpJ9UbEbft",
+      "name": "Baldric",
+      "description": "A broad leather strap worn diagonally across the chest and shoulder, designed to carry a large two-handed sword across the back with the hilt accessible over the shoulder. Frees the hands while keeping the weapon secure and ready during travel. The only practical way to carry a Zweihander or Greatsword."
+    },
+    {
+      "id": "6Hk4IbKJ14vDPpec",
+      "name": "Barding, Chain mail",
+      "description": "Chain mail barding is a flexible suit of interlocking metal rings designed to protect a horse from cuts and punctures while maintaining mobility. It is typically used for light and medium cavalry, offering a balance of protection and movement without the restrictive weight of full plate barding."
+    },
+    {
+      "id": "wNTPyJ9hjPEM5fX7",
+      "name": "Barding, Leather",
+      "description": "This leather barding set consists of layered, hardened-leather plates shaped for a horse’s head, neck, chest, and flanks, reinforced with rivets and fitted with thick straps and buckles for secure mounting. It is typically used by light and medium cavalry to give their mounts flexible, reliable protection while avoiding the heavy weight and cost of metal barding."
+    },
+    {
+      "id": "s3B447ynpvMiSYLf",
+      "name": "Barding, Plate",
+      "description": "Plate barding is a full set of articulated metal armor designed to protect a warhorse in battle, covering the head, neck, chest, and flanks with shaped steel plates. It is typically used by heavily armed cavalry, allowing a mounted warrior to charge into combat with both rider and horse protected from blades, arrows, and other battlefield dangers."
+    },
+    {
+      "id": "srZL0Ay5uymiRFVu",
+      "name": "Barding, Scale",
+      "description": "Scale barding is a full set of articulated metal armor designed to protect a warhorse in battle, covering the head, neck, chest, and flanks with shaped steel plates. It is typically used by heavily armed cavalry, allowing a mounted warrior to charge into combat with both rider and horse protected from blades, arrows, and other battlefield dangers."
+    },
+    {
+      "id": "ZSTJpMur1TrrRXR1",
+      "name": "Bastard Sword",
+      "description": "This bastard sword features a long, double-edged blade with a simple yet elegant crossguard and an extended leather-wrapped grip suited for either one- or two-handed use. It is typically favored by versatile knights and adventurers who want the option to strike with the speed of a longsword or the heavier blows of a greatsword as the situation demands."
+    },
+    {
+      "id": "1iDVxXR2vK9aCysM",
+      "name": "Battle Axe, 2-Handed",
+      "description": "A two-headed, two-handed battle axe is a brutal heavy weapon featuring twin crescent blades mounted on a long reinforced haft, designed to deliver devastating cleaving strikes. It is typically used by powerful warriors capable of wielding its weight to split shields, armor, and even large creatures with overwhelming force."
+    },
+    {
+      "id": "Xh5EpOxt05BEmjAy",
+      "name": "Bedroll",
+      "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone."
+    },
+    {
+      "id": "irWqxfRtEuoLHPZt",
+      "name": "Belt Pouch (L)",
+      "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt."
+    },
+    {
+      "id": "cyHMaoqjRCP1E223",
+      "name": "Bit & Bridle",
+      "description": "This bit and bridle set is made of worn brown leather straps fitted with a simple steel bit and rings, shaped to sit comfortably on a horse’s head. It is typically used to guide and control a mount, transmitting the rider’s cues through the reins and bit for steering, stopping, and managing pace."
+    },
+    {
+      "id": "bbyJ4mgdApqQJ5Ep",
+      "name": "Body Shield",
+      "description": "This tall, kite-shaped body shield is built from stout wooden planks banded with dark iron and anchored by a heavy central boss, broad enough to cover a warrior from shoulder to knee. Designed for shield-wall fighting and holding ground, it trades agility for tremendous frontal protection."
+    },
+    {
+      "id": "iT3Loli8pFUFz5W3",
+      "name": "Bracers",
+      "description": "These leather bracers are shaped to protect the forearms, with reinforced stitching and a simple lace-up closure that allows for a snug, secure fit. Adventurers wear them for light protection against scrapes, bowstring snap, and glancing blows without the weight of metal armor."
+    },
+    {
+      "id": "7OItqfZvM1Nn1SZJ",
+      "name": "Brigandine",
+      "description": "Brigandine is a flexible armor made of small overlapping steel plates riveted between layers of sturdy fabric or leather, creating a protective yet maneuverable defense. Its distinctive grid of visible rivets gives it a rugged, utilitarian appearance favored by soldiers and mercenaries."
+    },
+    {
+      "id": "jmeSkUm1Ru96KXU4",
+      "name": "Broadsword",
+      "description": "This broadsword has a wide, double-edged steel blade with a simple crossguard and a leather-wrapped grip ending in a solid pommel for balance. It is typically used by heavily armed warriors as a primary melee weapon, delivering powerful chopping and slashing blows in close combat."
+    },
+    {
+      "id": "E5hjpjYfo9lBYJsw",
+      "name": "Cart",
+      "description": "This sturdy two-wheeled wooden cart has iron-banded wheels, a slatted cargo bed, and long shafts ready to be hitched to a beast of burden. It is typically used by farmers, merchants, and traveling parties to haul goods, supplies, and sometimes passengers along rough roads and village lanes."
+    },
+    {
+      "id": "JeXTPf7Ri6kyEt9V",
+      "name": "Chest, Large",
+      "description": "This large ('24\" × 16\" × 16\"') wooden chest, reinforced with iron bands and secured by a heavy lock, is built to store valuables, equipment, or important supplies. Adventurers and merchants alike rely on such chests to keep their belongings safe from theft, weather, and the dangers of travel."
+    },
+    {
+      "id": "1czWcJqguFqoZule",
+      "name": "Clothes, Adventurer's",
+      "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field."
+    },
+    {
+      "id": "XeROUhtbg5cPO6mJ",
+      "name": "Clothes, Commoner's",
+      "description": "This set of commoner’s clothes consists of simple, durable garments made from coarse linen and wool, designed for everyday labor and travel. Such clothing is typically worn by peasants and townsfolk, offering basic comfort and protection while remaining inexpensive and easy to replace."
+    },
+    {
+      "id": "OpYtbh7mwghhAKu0",
+      "name": "Clothes, Merchant's",
+      "description": "This set of merchant’s clothes consists of well-made but practical garments designed to present a respectable appearance while enduring long days of travel and trade. Such clothing is typically worn by traders and shopkeepers, balancing comfort, durability, and subtle displays of prosperity when conducting business."
+    },
+    {
+      "id": "N5XGB0tEIEITpwZb",
+      "name": "Clothes, Nobleman's",
+      "description": "This set of noble’s clothes is composed of finely tailored garments made from quality fabrics, accented with decorative trim and refined details. Such attire is typically worn at court, formal gatherings, or official functions to display status, wealth, and social standing."
+    },
+    {
+      "id": "zNMzQGnPMgWrqlMN",
+      "name": "Copper Coins",
+      "description": "The Penny is the smallest denomination of currency, used for common transactions such as food, lodging, or simple goods. Though individually modest in worth, Pennies are essential to daily trade and circulate widely among all classes. 10 Pennies match the worth of 1 Sovereign, and one 100 Pennies weigh approximately 2 pounds."
+    },
+    {
+      "id": "cHg8z4AOxyDsrDC5",
+      "name": "Crossbow, Heavy",
+      "description": "This heavy crossbow features a thick wooden tiller reinforced with iron bands and a powerful steel bow, its cord drawn taut for immense penetrating force. It is typically used by soldiers and siege troops to deliver slow but devastating bolts that can punch through armor or pin targets at long range."
+    },
+    {
+      "id": "5hTmhkSe9DcPSZ3o",
+      "name": "Dagger",
+      "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+    },
+    {
+      "id": "EW7p8nt0c1UYglhj",
+      "name": "Dart",
+      "description": "This dart is a small throwing missile with a slim wooden shaft, a leaf-shaped steel head, and feather fletching at the tail for stability in flight. It is typically used by rogues, hunters, and lightly armed warriors to deliver quick, accurate ranged attacks or poisoned strikes at short distances."
+    },
+    {
+      "id": "Fny6qqX7DKJ65PHL",
+      "name": "Diamond",
+      "description": "A brilliant, colorless diamond cut into a precise round form, its many facets catching even the faintest light and scattering it in cold, prismatic fire. Entirely natural and unenchanted, it is prized for its exceptional clarity, enduring hardness, and the costly skill required to reveal such radiance."
+    },
+    {
+      "id": "ECUSPJBfagJHrO9a",
+      "name": "Dog, Guard",
+      "description": "This guard dog is a muscular, broad-chested hound with a cropped tail, thick neck, and heavy leather collar, its stance braced and expression wary. It is typically used by nobles, merchants, and watchmen to protect homes, caravans, and strongholds, barking warnings and attacking intruders on command."
+    },
+    {
+      "id": "3fHrNZLgKFLmQYbV",
+      "name": "Donkey",
+      "description": "This donkey is a small, sturdy beast with long ears, a rough coat, and a patient expression, rendered in muted browns and greys. It is typically used by farmers and travelers to carry packs or pull small carts, prized for its endurance and surefootedness more than for speed."
+    },
+    {
+      "id": "aYMt9VaRaxHGBijD",
+      "name": "Gold Coins",
+      "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds."
+    },
+    {
+      "id": "E9blZXlUoR8hYaxn",
+      "name": "Great Club",
+      "description": "This great club is a massive, two-handed cudgel carved from a single length of hardwood, its head thick and knotted with age while the lower grip is wrapped in worn leather. It is typically used by barbarians, ogres, and other brute warriors to deliver bone-crushing blows that rely more on raw strength than finesse."
+    },
+    {
+      "id": "0eVwj7MpMU8akEX8",
+      "name": "Great helm",
+      "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head—though at the cost of limited vision and airflow."
+    },
+    {
+      "id": "rKDAo4N2oQmtLHFx",
+      "name": "Greatsword",
+      "description": "This greatsword is a long heavy two-handed blade with a straight double-edged steel edge, a broad crossguard, and an extended leather-wrapped grip. A standard military great sword carried by elite soldiers and powerful adventurers who rely on reach and devastating cleaving strikes."
+    },
+    {
+      "id": "3f5qMeJ9QSpSTR92",
+      "name": "Hand Axe",
+      "description": "This compact hand axe has a single crescent-shaped steel blade set into a sturdy wooden haft, its grip wrapped in leather for better control. Balanced for both chopping and throwing, it’s a favorite sidearm of woodsmen, skirmishers, and lightly armored adventurers."
+    },
+    {
+      "id": "VzRblbQDth2rwXca",
+      "name": "Hawk, Trained",
+      "description": "This hawk is a sharp-eyed raptor with mottled brown plumage, curved talons, and a hooked beak, rendered in earthy tones with careful feather detail. It is typically used by hunters, scouts, and rangers as a trained companion for scouting, tracking, or delivering swift, deadly strikes from above."
+    },
+    {
+      "id": "7gEOqe0baeCJ9oPu",
+      "name": "Helmet",
+      "description": "This standard helmet is a sturdy steel cap with a reinforced brow and a simple nasal guard, offering balanced protection without restricting vision. Common among soldiers and adventurers, it provides reliable head defense while remaining light enough for extended wear."
+    },
+    {
+      "id": "NZ3hLlKAM2SENzO1",
+      "name": "Holy Symbol",
+      "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable."
+    },
+    {
+      "id": "llYcPimzZVcGZsHE",
+      "name": "Horse, Draft",
+      "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world."
+    },
+    {
+      "id": "bKQtgWUsnhui3pQv",
+      "name": "Horse, Riding",
+      "description": "This riding horse is a lean, well-muscled bay with a worn leather saddle and bridle, built for speed and endurance rather than brute strength. It is typically used by messengers, travelers, and light cavalry to cover long distances quickly across roads, fields, and open country."
+    },
+    {
+      "id": "Tm4kvAXPJVevj0gG",
+      "name": "Horse, War",
+      "description": "This war horse is a powerful, broad-chested steed with sturdy legs and a worn leather war saddle, built to carry an armored rider into the thick of battle. Trained not to panic at blood, noise, or steel, it is typically used by knights and heavy cavalry to charge enemy lines and break formations."
+    },
+    {
+      "id": "3vFUNf0UDcpQ8mFz",
+      "name": "Javelin",
+      "description": "This slim throwing spear has a straight ash-wood shaft tipped with a narrow, leaf-shaped steel head bound in place with dark wire. Light and well-balanced, it’s made to fly true over distance, ideal for skirmishers and warriors who soften their foes before closing to melee."
+    },
+    {
+      "id": "tTqmAX82Sj6t1Xez",
+      "name": "Khopesh",
+      "description": "This khopesh is a single-edged bronze or steel blade that curves forward into a sickle-like hook, mounted on a simple hilt with a wrapped grip. It is typically used to deliver powerful chopping blows and to hook shields or limbs, making it a brutal and versatile weapon favored by warriors of ancient, desert-born cultures."
+    },
+    {
+      "id": "qXKojM8K0k8ushZt",
+      "name": "Lantern, Bullseye",
+      "description": "A bullseye lantern is a metal-cased lamp with a shuttered housing and a single, thick glass lens that focuses its light into a narrow, far-reaching beam. Adventurers typically use it when they need to see a long distance down corridors or roads while keeping surrounding areas in comparative shadow. It burns one flask of oil per 4 hours (24 turns) and casts light in a 60' cone."
+    },
+    {
+      "id": "FL7mPbcsMvVIrJzv",
+      "name": "Lantern, Hooded",
+      "description": "A hooded lantern is a metal-framed light source with a directional hood that shields the flame and focuses its beam forward. It is commonly used by travelers and adventurers who need controlled, wind-resistant illumination in dark or hazardous environments. Burns one flask of oil per 4 hours (24 turns). Casts light in a 30' radius."
+    },
+    {
+      "id": "CJ5ADgSH9fv47IfR",
+      "name": "Light Hammer",
+      "description": "This light hammer is a compact one-handed striking weapon with a small iron head and a short wooden haft wrapped in leather. Balanced for both melee combat and throwing, it is favored by dwarves, smiths, and warriors who want a reliable blunt weapon that doubles as a ranged tool."
+    },
+    {
+      "id": "Xvk4FJj1XNu52WxC",
+      "name": "Longbow",
+      "description": "This longbow is a tall, recurved wooden bow with a leather-wrapped grip and a taut dark string, built for power and accuracy at great distances. It is typically used by hunters and archers who rely on strong draw weight and long-range volleys to strike foes before they can close to melee."
+    },
+    {
+      "id": "pil5djVashOTG5pM",
+      "name": "Longsword",
+      "description": "This finely forged longsword features a straight, double-edged blade with a broad fuller running down its center, balanced for both cutting and thrusting. A simple steel crossguard, leather-wrapped grip, and brass-capped pommel give it a practical yet noble look, befitting the standard weapon of knights and seasoned adventurers."
+    },
+    {
+      "id": "VEZzHCE2KaV4BY3U",
+      "name": "Mace",
+      "description": "This mace features a flanged steel head mounted on a sturdy wooden haft, its grip wrapped in worn leather for a secure hold. Designed to crush armor and bone alike, it is typically used by clerics and heavy infantry who favor blunt, bone-shattering blows over cutting edges."
+    },
+    {
+      "id": "YTUyZFixffdttlJb",
+      "name": "Misericorde",
+      "description": "This misericorde is a long narrow stiletto-like blade designed to pierce the gaps in plate armor and deliver a precise killing thrust to a downed or immobilized opponent. Its needle-thin profile and stiff spine make it useless as a throwing weapon but devastatingly effective at close range where armor offers little protection."
+    },
+    {
+      "id": "KbhANNFzf5akCD3y",
+      "name": "Morning Star",
+      "description": "This morning star is a stout wooden haft topped with a heavy iron sphere bristling with sharp spikes, built to deliver crushing, armor-piercing blows. It is typically used by warriors and temple knights who favor blunt weapons, swinging it in powerful arcs to smash shields and batter foes into submission."
+    },
+    {
+      "id": "z1VJrFuGTBjyd4O1",
+      "name": "Mule",
+      "description": "This mule is a sturdy, surefooted beast of burden with simple tack and bulging saddlebags, built more for endurance than for speed or glamour. It is typically used by merchants and adventurers to haul gear, supplies, and treasure across rough terrain where wagons and fine horses would struggle."
+    },
+    {
+      "id": "94GGKjH2jLppiIWS",
+      "name": "Piton",
+      "description": "This metal piton is a tapered spike with a forged eyelet for threading rope, its surface worn and scuffed from repeated climbing use. Adventurers hammer it into cracks or seams in stone to create secure anchor points for climbing, rappelling, and traversing dangerous terrain."
+    },
+    {
+      "id": "BTlRThc0xHYy5LPg",
+      "name": "Pole Arm",
+      "description": "This pole arm combines a spear point, an axe-like blade, and a back hook mounted on a long wooden shaft with a leather-wrapped grip. It is typically used by infantry to keep foes at reach, pierce armor, hook riders from the saddle, or strike over the front ranks in formation."
+    },
+    {
+      "id": "ZdcjrWNsMbwn70Ln",
+      "name": "Pole, Ten Foot",
+      "description": "A 10-foot wooden pole used for prodding suspicious areas or measuring distances in a dungeon. Carried with difficulty indoors or underground; too long to strap to a pack, usually dragged or carried in hand. May be split into two 5-ft. sections for easier transport."
+    },
+    {
+      "id": "WZD8oQjTpGB1XMtI",
+      "name": "Ring mail",
+      "description": "Ring mail consists of a leather or cloth garment reinforced with metal rings sewn directly onto its surface, providing basic protection without the full weight of true chain mail. It is typically worn by low-status soldiers or adventurers needing inexpensive armor that offers better defense than padded or leather options, though it remains less effective than more advanced mail types."
+    },
+    {
+      "id": "2IRHnzrq0VO28643",
+      "name": "Robes",
+      "description": "Wizard's robes are long, flowing garments tailored for ease of movement and often inscribed subtly or boldly with symbols of arcane study. Though they offer little physical protection, they feature numerous hidden pockets for storing spell components and serve as a mark of training, tradition, and mystical authority."
+    },
+    {
+      "id": "kzAljjWSgS8G9OjE",
+      "name": "Ruby Necklace",
+      "description": "A finely wrought gold necklace set with a procession of deep crimson rubies, each carefully cut to kindle with ember-red light as it moves. Though entirely unenchanted, the richness of its gems and the delicacy of its workmanship mark it as a jewel fit for a noble court."
+    },
+    {
+      "id": "md02aY4ts2DfJk8y",
+      "name": "Sack, Large",
+      "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins)."
+    },
+    {
+      "id": "uYGvV1iVFkYDVqa5",
+      "name": "Saddlebags, Large",
+      "description": "These large over-the-saddle bags are a hefty pair of deep leather pouches joined by a wide strap, built to drape securely across a horse’s back. They are typically used by caravans, couriers, and long-range adventuring parties to carry bulk supplies, trade goods, or treasure while keeping the load balanced and off the rider’s body."
+    },
+    {
+      "id": "amty2nY1UISJqIzT",
+      "name": "Scroll Case",
+      "description": "A protective tube designed to store and transport parchment scrolls, maps, or important documents. Crafted from sturdy materials like wood, leather, and metal, it shields its contents from weather and wear while allowing adventurers or scholars to carry their writings safely on the road."
+    },
+    {
+      "id": "l88YeP6cgYp3zq9v",
+      "name": "Sheep",
+      "description": "This sheep is a woolly, thick-fleeced animal with a calm expression and sturdy legs, rendered in soft, earthy tones. It is typically raised by villagers and herders for its wool, milk, and meat, grazing in flocks across hillsides and pastures around rural settlements."
+    },
+    {
+      "id": "wjOEpBIN0ESdU54S",
+      "name": "Shortbow",
+      "description": "This short bow is a compact, lightly recurved wooden bow with a leather-wrapped grip and a taut bowstring suited for quick shots. It is typically used by scouts, hunters, and light skirmishers who value mobility and close-to-mid range accuracy over extreme distance."
+    },
+    {
+      "id": "642bizsChFO7cMIb",
+      "name": "Shortsword",
+      "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+    },
+    {
+      "id": "SctGObwrH4mwDis5",
+      "name": "Sickle",
+      "description": "This sickle has a crescent-shaped steel blade fixed to a short wooden haft, its grip bound in worn leather for a firmer hold. Originally a farming tool for cutting grain and brush, it is also used in battle by druids, cultists, and opportunistic fighters who favor quick, hooking slashes at close range."
+    },
+    {
+      "id": "r8P06tYYoBIjg1I4",
+      "name": "Sidesack",
+      "description": "A sidesack is a lightweight pack worn diagonally across the front of the body. Slimmer and less cumbersome than a traditional backpack, it leaves the wearer free to move while keeping essential gear close at hand. Its many pouches, pockets, and loops provide secure storage for tools, supplies, and other adventuring necessities."
+    },
+    {
+      "id": "TeALx7gmEz7qn84Y",
+      "name": "Sling",
+      "description": "This sling consists of a leather pouch attached to two braided cords, often with a smooth stone or lead bullet nestled in the cradle. It is typically whirled overhead or to the side and then released at just the right moment, hurling its projectile at surprising speed and range for such a simple weapon."
+    },
+    {
+      "id": "yifpeuttkrMekvug",
+      "name": "Sling, Staff",
+      "description": "A sling staff is a wooden pole fitted with a sling at one end, allowing the user to hurl stones or similar projectiles with far greater force than a hand sling. It is typically used for long-range attacks or hunting, leveraging the staff’s length to generate powerful, whip-like acceleration."
+    },
+    {
+      "id": "D5PsRcNsXfNidQUk",
+      "name": "Staff",
+      "description": "A quarterstaff is a long, sturdy wooden staff, often reinforced at the ends, used both as a walking aid and as a weapon. It is typically wielded with two hands to deliver swift jabs, sweeping strikes, and defensive parries, favored by monks, peasants, and wanderers who travel light."
+    },
+    {
+      "id": "hQuHQ92NUqkKn7ti",
+      "name": "Staff",
+      "description": "A sturdy wooden staff shaped and finished to suit its owner, from a plain walking stick to a gnarled or carved length of hardwood. It can serve as a two-handed weapon or spell focus and must be held or displayed when used for casting."
+    },
+    {
+      "id": "QFojMvvoJwAa9S1y",
+      "name": "Tent, 1-person",
+      "description": "This one-person tent is a compact canvas shelter supported by simple poles and stakes, designed to protect a lone traveler from wind and weather. It is typically used for overnight camps, providing basic cover and privacy while remaining light enough to carry on long journeys."
+    },
+    {
+      "id": "Y6ohlc1tUVhlwZQc",
+      "name": "Tent, 2-person",
+      "description": "This two-person tent is a sturdy canvas shelter supported by simple poles and stakes, offering enough space for two travelers to rest and store basic gear. It is typically used for shared camps, providing protection from the elements while remaining practical for overland travel."
+    },
+    {
+      "id": "4SY2kdWrzIilyQkU",
+      "name": "Tent, 4-person",
+      "description": "This four-person tent is a large canvas shelter supported by multiple poles and stakes, offering ample space for several travelers and their gear. It is typically used by small groups to establish a shared campsite, providing protection from the elements during extended journeys or expeditions."
+    },
+    {
+      "id": "kQzww9lTdHQ1bEWC",
+      "name": "Vial or Bottle",
+      "description": "This small glass vial is a sturdy, cork-sealed container used to hold potions, holy water, alchemical mixtures, or other valuable liquids. Adventurers and scholars alike rely on such vials to store and transport substances safely while keeping them readily accessible in the field."
+    },
+    {
+      "id": "LYIyLnIQRJFqUPAj",
+      "name": "Warhammer",
+      "description": "This war hammer features a heavy steel head with a flat striking face on one side and a tapered beak on the other, mounted on a stout wooden haft wrapped in leather. It is typically used by warriors and clerics to smash armor, shatter shields, and deliver crushing blows that bypass conventional defenses."
+    },
+    {
+      "id": "tzSAbjqH4SHlyVmI",
+      "name": "Zweihander",
+      "description": "This zweihander is a massive two-handed sword with a long, straight double-edged blade, parrying hooks above the crossguard, and a leather-wrapped grip ending in a heavy pommel. It is typically wielded by elite infantry to break pike formations, sweep aside enemy weapons, and deliver devastating cleaving blows on the battlefield."
+    }
+  ],
+  "actors": [
+    {
+      "actorId": "0QXUxoqthN7cf8eL",
+      "name": "Acolyte",
+      "items": [
+        {
+          "id": "mNTlurI5uDQF77tQ",
+          "name": "Mace",
+          "description": "This mace features a flanged steel head mounted on a sturdy wooden haft, its grip wrapped in worn leather for a secure hold. Designed to crush armor and bone alike, it is typically used by clerics and heavy infantry who favor blunt, bone-shattering blows over cutting edges."
+        }
+      ]
+    },
+    {
+      "actorId": "BPKQmKwUeA3Twpkg",
+      "name": "Bandit",
+      "items": [
+        {
+          "id": "R77yYMRw3zFQ3Gbr",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "0re49sO0SAyVRfio",
+      "name": "Blayne \"Slim\" Isembart",
+      "items": [
+        {
+          "id": "MVPto7tv7ZZVqtGz",
+          "name": "Sack, Large",
+          "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins)."
+        },
+        {
+          "id": "3jBIbWhfzPBuY5Qs",
+          "name": "Backpack",
+          "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing."
+        },
+        {
+          "id": "HnfDk47MN7pwhzoj",
+          "name": "Sack, Large",
+          "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins)."
+        },
+        {
+          "id": "q8W7CGsiOgQ4MFbj",
+          "name": "Sack, Large",
+          "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins)."
+        },
+        {
+          "id": "XOA5FzWYDdA2AJ4s",
+          "name": "Sack, Large",
+          "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins)."
+        },
+        {
+          "id": "ySotIgBywqKQp7Aq",
+          "name": "Brigandine",
+          "description": "Brigandine is a flexible armor made of small overlapping steel plates riveted between layers of sturdy fabric or leather, creating a protective yet maneuverable defense. Its distinctive grid of visible rivets gives it a rugged, utilitarian appearance favored by soldiers and mercenaries."
+        },
+        {
+          "id": "XdieJGOSKctnEn3e",
+          "name": "Body Shield",
+          "description": "This tall, kite-shaped body shield is built from stout wooden planks banded with dark iron and anchored by a heavy central boss, broad enough to cover a warrior from shoulder to knee. Designed for shield-wall fighting and holding ground, it trades agility for tremendous frontal protection."
+        },
+        {
+          "id": "mHCrtnpJyVc9nxFZ",
+          "name": "Backpack",
+          "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing."
+        },
+        {
+          "id": "db2e7JVXB07UFJtU",
+          "name": "Bedroll",
+          "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone."
+        },
+        {
+          "id": "Qge3qeK9KVYDAYDZ",
+          "name": "Morning Star",
+          "description": "This morning star is a stout wooden haft topped with a heavy iron sphere bristling with sharp spikes, built to deliver crushing, armor-piercing blows. It is typically used by warriors and temple knights who favor blunt weapons, swinging it in powerful arcs to smash shields and batter foes into submission."
+        }
+      ]
+    },
+    {
+      "actorId": "rIv5JDi38yoWHsg5",
+      "name": "Bone Golem",
+      "items": [
+        {
+          "id": "RS8t2QfNFSSYPkoU",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "ThfAOXEeAGifvWHu",
+      "name": "Brigand",
+      "items": [
+        {
+          "id": "nZbAS3Y5ZWjQrVID",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "X6KxNad066SlWOjm",
+      "name": "Buccaneer",
+      "items": [
+        {
+          "id": "PULXRh22EwuEnvX3",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "b417WXrhwD0p1jbu",
+      "name": "Dark Creeper",
+      "items": [
+        {
+          "id": "G8UrFTEWrBicf0Et",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "8LypGb0KjdxGC8ix",
+      "name": "Dark Stalker",
+      "items": [
+        {
+          "id": "j0cMJHbSpHaYBA4H",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "kPT51CHF5Kaq6q11",
+      "name": "Dervish",
+      "items": [
+        {
+          "id": "j7VKQfhFCIzgR24z",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "87qvaLINuAttbcIW",
+      "name": "Devil Swine",
+      "items": [
+        {
+          "id": "95gpPPSbYZRuxDCZ",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "9y1naf5bSSsqwd7M",
+      "name": "Edvin Thue",
+      "items": [
+        {
+          "id": "oQkLOuZ8pCAcTwB3",
+          "name": "Backpack",
+          "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing."
+        },
+        {
+          "id": "e8YYMMAsMy1lVRZW",
+          "name": "Helmet",
+          "description": "This standard helmet is a sturdy steel cap with a reinforced brow and a simple nasal guard, offering balanced protection without restricting vision. Common among soldiers and adventurers, it provides reliable head defense while remaining light enough for extended wear."
+        },
+        {
+          "id": "L4wCTITzatgLROAN",
+          "name": "Clothes, Adventurer's",
+          "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field."
+        },
+        {
+          "id": "bmK0vzj1wzwLuJH5",
+          "name": "Bracers",
+          "description": "These leather bracers are shaped to protect the forearms, with reinforced stitching and a simple lace-up closure that allows for a snug, secure fit. Adventurers wear them for light protection against scrapes, bowstring snap, and glancing blows without the weight of metal armor."
+        },
+        {
+          "id": "mKH5OpY3nLFpKPWz",
+          "name": "Horse, Draft",
+          "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world."
+        },
+        {
+          "id": "EelQF2FSuBxVMxuw",
+          "name": "Horse, Draft",
+          "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world."
+        },
+        {
+          "id": "HMVuX7XQwg71UUi5",
+          "name": "Belt Pouch (L)",
+          "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt."
+        },
+        {
+          "id": "6TbHsuXYZUXBHlAS",
+          "name": "Sack, Large",
+          "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins)."
+        },
+        {
+          "id": "sQltXEOc4FsT4ShF",
+          "name": "Crossbow, Heavy",
+          "description": "This heavy crossbow features a thick wooden tiller reinforced with iron bands and a powerful steel bow, its cord drawn taut for immense penetrating force. It is typically used by soldiers and siege troops to deliver slow but devastating bolts that can punch through armor or pin targets at long range."
+        },
+        {
+          "id": "d0HEvORlYjYUstuy",
+          "name": "Gold Coins",
+          "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds."
+        },
+        {
+          "id": "m1Zt8PKyTZMvcdjN",
+          "name": "Bastard Sword",
+          "description": "This bastard sword features a long, double-edged blade with a simple yet elegant crossguard and an extended leather-wrapped grip suited for either one- or two-handed use. It is typically favored by versatile knights and adventurers who want the option to strike with the speed of a longsword or the heavier blows of a greatsword as the situation demands."
+        },
+        {
+          "id": "u0OmQIwpkpduWtaX",
+          "name": "Bedroll",
+          "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone."
+        },
+        {
+          "id": "chs6LbxvwAJIRY7J",
+          "name": "Belt Pouch (L)",
+          "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt."
+        }
+      ]
+    },
+    {
+      "actorId": "ONIOMFLJ41TK7tmX",
+      "name": "Edvin Thue",
+      "items": [
+        {
+          "id": "ozqBH3sCkg8yA6pO",
+          "name": "Backpack",
+          "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing."
+        },
+        {
+          "id": "1vo3u1OoaNyCiKjQ",
+          "name": "Clothes, Adventurer's",
+          "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field."
+        },
+        {
+          "id": "rRKkS0FPPzNN8t2c",
+          "name": "Belt Pouch (L)",
+          "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt."
+        },
+        {
+          "id": "bPJJzMgok5mRHuXj",
+          "name": "Dog, Guard",
+          "description": "This guard dog is a muscular, broad-chested hound with a cropped tail, thick neck, and heavy leather collar, its stance braced and expression wary. It is typically used by nobles, merchants, and watchmen to protect homes, caravans, and strongholds, barking warnings and attacking intruders on command."
+        },
+        {
+          "id": "P56LFKU1GFP3Yb5h",
+          "name": "Vial or Bottle",
+          "description": "This small glass vial is a sturdy, cork-sealed container used to hold potions, holy water, alchemical mixtures, or other valuable liquids. Adventurers and scholars alike rely on such vials to store and transport substances safely while keeping them readily accessible in the field."
+        },
+        {
+          "id": "QjdyIZhgB6JYUj4Q",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        },
+        {
+          "id": "rVgRABuOX9tF3ika",
+          "name": "Shortbow",
+          "description": "This short bow is a compact, lightly recurved wooden bow with a leather-wrapped grip and a taut bowstring suited for quick shots. It is typically used by scouts, hunters, and light skirmishers who value mobility and close-to-mid range accuracy over extreme distance."
+        },
+        {
+          "id": "BSPs3NrN7bS9w2pi",
+          "name": "Belt Pouch (L)",
+          "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt."
+        },
+        {
+          "id": "FIsdE5NJTdNBAz4V",
+          "name": "Gold Coins",
+          "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds."
+        }
+      ]
+    },
+    {
+      "actorId": "5DB4sxL2CQdxgAHx",
+      "name": "Fung Telt",
+      "items": [
+        {
+          "id": "KB9Htmp5l5Ia4c54",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        },
+        {
+          "id": "CRQms6NgbyWHaW81",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        },
+        {
+          "id": "WevVf17q4Z3qnOVS",
+          "name": "Gold Coins",
+          "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds."
+        },
+        {
+          "id": "7Kj0dZwb609CbFIB",
+          "name": "Clothes, Adventurer's",
+          "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field."
+        },
+        {
+          "id": "a4H0txSIseFJT5qK",
+          "name": "Sidesack",
+          "description": "A sidesack is a lightweight pack worn diagonally across the front of the body. Slimmer and less cumbersome than a traditional backpack, it leaves the wearer free to move while keeping essential gear close at hand. Its many pouches, pockets, and loops provide secure storage for tools, supplies, and other adventuring necessities."
+        },
+        {
+          "id": "LRDxafY70bIsdseQ",
+          "name": "Bedroll",
+          "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone."
+        },
+        {
+          "id": "T4OCq8TEqoh0uPgw",
+          "name": "Copper Coins",
+          "description": "The Penny is the smallest denomination of currency, used for common transactions such as food, lodging, or simple goods. Though individually modest in worth, Pennies are essential to daily trade and circulate widely among all classes. 10 Pennies match the worth of 1 Sovereign, and one 100 Pennies weigh approximately 2 pounds."
+        },
+        {
+          "id": "WbLxF6ipOZxy2uv7",
+          "name": "Horse, Draft",
+          "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world."
+        },
+        {
+          "id": "RcRxtc7nBM40sZ9n",
+          "name": "Helmet",
+          "description": "This standard helmet is a sturdy steel cap with a reinforced brow and a simple nasal guard, offering balanced protection without restricting vision. Common among soldiers and adventurers, it provides reliable head defense while remaining light enough for extended wear."
+        }
+      ]
+    },
+    {
+      "actorId": "KvLzrIBqIW7SsLVZ",
+      "name": "Hobbit",
+      "items": [
+        {
+          "id": "N0SVi9impeBidG2r",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "YxWMDYdL6PlfdIgF",
+      "name": "Kobold",
+      "items": [
+        {
+          "id": "ymQi928e8qSjPQZH",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "RQdp40OuhuRxfiVd",
+      "name": "Kobold Bodyguard",
+      "items": [
+        {
+          "id": "33ci0LuXGUr2mVs8",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "0Gu7fXcUMrA7sMbd",
+      "name": "Kobold Chieftan",
+      "items": [
+        {
+          "id": "lm8pOFwMK7zuJvI5",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "cJSbsnSM0zGjdPK3",
+      "name": "Lareth",
+      "items": [
+        {
+          "id": "RJDt8FMi0q9xVGct",
+          "name": "Clothes, Adventurer's",
+          "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field."
+        },
+        {
+          "id": "mizi9tA1tXGwDxK7",
+          "name": "Belt Pouch (L)",
+          "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt."
+        }
+      ]
+    },
+    {
+      "actorId": "n9cJH1W9rvPhCWvI",
+      "name": "Lizard Man",
+      "items": [
+        {
+          "id": "KaUPYBXLVlriLWmA",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "RPUZSkXMqnPBaXgT",
+      "name": "Medium",
+      "items": [
+        {
+          "id": "ty2ACwJrrLXTqqtn",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "oTUJe0CraUWtKqgp",
+      "name": "Merchant",
+      "items": [
+        {
+          "id": "xB1BXZJNNihqxfmZ",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "zWV46kqT7GSbabC3",
+      "name": "Myr Ragmussen",
+      "items": [
+        {
+          "id": "MIgwYQKKOMYNWnVE",
+          "name": "Clothes, Adventurer's",
+          "description": "This set of adventurer’s clothes consists of sturdy, well-fitted garments reinforced with leather and designed for comfort during long days of travel. Such clothing is typically worn by explorers and mercenaries, providing durability, freedom of movement, and basic protection in the field."
+        },
+        {
+          "id": "5IfEEqBCBUerSkFP",
+          "name": "Warhammer",
+          "description": "This war hammer features a heavy steel head with a flat striking face on one side and a tapered beak on the other, mounted on a stout wooden haft wrapped in leather. It is typically used by warriors and clerics to smash armor, shatter shields, and deliver crushing blows that bypass conventional defenses."
+        },
+        {
+          "id": "3JwTKYmf0OL6Hw8P",
+          "name": "Warhammer",
+          "description": "This war hammer features a heavy steel head with a flat striking face on one side and a tapered beak on the other, mounted on a stout wooden haft wrapped in leather. It is typically used by warriors and clerics to smash armor, shatter shields, and deliver crushing blows that bypass conventional defenses."
+        },
+        {
+          "id": "KSIlm1YjRQcHCdzQ",
+          "name": "Backpack",
+          "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing."
+        },
+        {
+          "id": "1iZhNYO5AW5h8o4k",
+          "name": "Holy Symbol",
+          "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable."
+        },
+        {
+          "id": "33laY6ejxXCMQC0D",
+          "name": "Bedroll",
+          "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone."
+        },
+        {
+          "id": "9OyrBZddiPG0g4dw",
+          "name": "Sling",
+          "description": "This sling consists of a leather pouch attached to two braided cords, often with a smooth stone or lead bullet nestled in the cradle. It is typically whirled overhead or to the side and then released at just the right moment, hurling its projectile at surprising speed and range for such a simple weapon."
+        },
+        {
+          "id": "39LpaeCjymxOGFxH",
+          "name": "Copper Coins",
+          "description": "The Penny is the smallest denomination of currency, used for common transactions such as food, lodging, or simple goods. Though individually modest in worth, Pennies are essential to daily trade and circulate widely among all classes. 10 Pennies match the worth of 1 Sovereign, and one 100 Pennies weigh approximately 2 pounds."
+        },
+        {
+          "id": "shOdGWbML9ZR3Pr1",
+          "name": "Gold Coins",
+          "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds."
+        },
+        {
+          "id": "3pskw6aU2ZM304AJ",
+          "name": "Scroll Case",
+          "description": "A protective tube designed to store and transport parchment scrolls, maps, or important documents. Crafted from sturdy materials like wood, leather, and metal, it shields its contents from weather and wear while allowing adventurers or scholars to carry their writings safely on the road."
+        }
+      ]
+    },
+    {
+      "actorId": "vyvhgk4xciJiaIaz",
+      "name": "Nixie",
+      "items": [
+        {
+          "id": "WrcQXJ1pN7D4SbKT",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "nOJasP4k6Kqrfa9R",
+      "name": "Nomad",
+      "items": [
+        {
+          "id": "4sFYXN2AIE0y6Z8K",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "PcRti5OAmDwCUNNV",
+      "name": "Normal Human",
+      "items": [
+        {
+          "id": "cuE1S50TvvBkacUe",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "wV16fFg2kXyhkoNv",
+      "name": "Orc",
+      "items": [
+        {
+          "id": "F88zoDzvswitqlCJ",
+          "name": "Hand Axe",
+          "description": "This compact hand axe has a single crescent-shaped steel blade set into a sturdy wooden haft, its grip wrapped in leather for better control. Balanced for both chopping and throwing, it’s a favorite sidearm of woodsmen, skirmishers, and lightly armored adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "UVSOYGjfmkxE4Cku",
+      "name": "Orc Chieftain",
+      "items": [
+        {
+          "id": "HgDMPgos7LxqCmqX",
+          "name": "Hand Axe",
+          "description": "This compact hand axe has a single crescent-shaped steel blade set into a sturdy wooden haft, its grip wrapped in leather for better control. Balanced for both chopping and throwing, it’s a favorite sidearm of woodsmen, skirmishers, and lightly armored adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "sWtkWE3XW7HStBaz",
+      "name": "Orc Leader",
+      "items": [
+        {
+          "id": "rqGqwS7QLkNyfA5p",
+          "name": "Hand Axe",
+          "description": "This compact hand axe has a single crescent-shaped steel blade set into a sturdy wooden haft, its grip wrapped in leather for better control. Balanced for both chopping and throwing, it’s a favorite sidearm of woodsmen, skirmishers, and lightly armored adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "aW6BUKQqb0lMATzs",
+      "name": "Pirate",
+      "items": [
+        {
+          "id": "6KEORm1vFpku580K",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "LEIA4mF9GA0mBoSO",
+      "name": "Pixie",
+      "items": [
+        {
+          "id": "44NqePswpHQjE5Jn",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "icvblbt9dcFLLI5G",
+      "name": "Sea Hag",
+      "items": [
+        {
+          "id": "DvgZBVxWUwGDz4G5",
+          "name": "Dagger",
+          "description": "This compact dagger features a tapered, double-edged steel blade designed for quick thrusts and precise striking. Its leather-wrapped grip and simple guard give it a practical, utilitarian character favored by scouts, thieves, and seasoned adventurers alike."
+        }
+      ]
+    },
+    {
+      "actorId": "EbCZD8UsKM9oJBc3",
+      "name": "Skeleton",
+      "items": [
+        {
+          "id": "PHW2rqUQdbTyV48X",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "vPrVDuKCcT2pmm58",
+      "name": "Test Guy",
+      "items": [
+        {
+          "id": "WNhphGSW08tISI0a",
+          "name": "Backpack",
+          "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing."
+        },
+        {
+          "id": "frCx3HsktxEDw2wk",
+          "name": "Belt Pouch (L)",
+          "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt."
+        },
+        {
+          "id": "P7DTpywMiaM5DQvH",
+          "name": "Gold Coins",
+          "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds."
+        },
+        {
+          "id": "cNdNfOB5eir9Uy6i",
+          "name": "Horse, Draft",
+          "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world."
+        },
+        {
+          "id": "hJ9Y3zZV869YNph0",
+          "name": "Barding, Chain mail",
+          "description": "Chain mail barding is a flexible suit of interlocking metal rings designed to protect a horse from cuts and punctures while maintaining mobility. It is typically used for light and medium cavalry, offering a balance of protection and movement without the restrictive weight of full plate barding."
+        },
+        {
+          "id": "vMesUWdmDr9qtdrX",
+          "name": "Donkey",
+          "description": "This donkey is a small, sturdy beast with long ears, a rough coat, and a patient expression, rendered in muted browns and greys. It is typically used by farmers and travelers to carry packs or pull small carts, prized for its endurance and surefootedness more than for speed."
+        }
+      ]
+    },
+    {
+      "actorId": "rUAMS1kblbhKDBvZ",
+      "name": "Test Tickle",
+      "items": [
+        {
+          "id": "rocZLK57EwmwyI04",
+          "name": "Cart",
+          "description": "This sturdy two-wheeled wooden cart has iron-banded wheels, a slatted cargo bed, and long shafts ready to be hitched to a beast of burden. It is typically used by farmers, merchants, and traveling parties to haul goods, supplies, and sometimes passengers along rough roads and village lanes."
+        },
+        {
+          "id": "6qKCxjp3IQkLxsRd",
+          "name": "Copper Coins",
+          "description": "The Penny is the smallest denomination of currency, used for common transactions such as food, lodging, or simple goods. Though individually modest in worth, Pennies are essential to daily trade and circulate widely among all classes. 10 Pennies match the worth of 1 Sovereign, and one 100 Pennies weigh approximately 2 pounds."
+        },
+        {
+          "id": "BH9o25Zjf9raUie5",
+          "name": "Horse, Riding",
+          "description": "This riding horse is a lean, well-muscled bay with a worn leather saddle and bridle, built for speed and endurance rather than brute strength. It is typically used by messengers, travelers, and light cavalry to cover long distances quickly across roads, fields, and open country."
+        },
+        {
+          "id": "8MPOgl0ApfAKRaDO",
+          "name": "Horse, War",
+          "description": "This war horse is a powerful, broad-chested steed with sturdy legs and a worn leather war saddle, built to carry an armored rider into the thick of battle. Trained not to panic at blood, noise, or steel, it is typically used by knights and heavy cavalry to charge enemy lines and break formations."
+        },
+        {
+          "id": "iAmjL2pCHFyfAVbs",
+          "name": "Mule",
+          "description": "This mule is a sturdy, surefooted beast of burden with simple tack and bulging saddlebags, built more for endurance than for speed or glamour. It is typically used by merchants and adventurers to haul gear, supplies, and treasure across rough terrain where wagons and fine horses would struggle."
+        },
+        {
+          "id": "Dw6fjVjKSiADvBwK",
+          "name": "Pole, Ten Foot",
+          "description": "A 10-foot wooden pole used for prodding suspicious areas or measuring distances in a dungeon. Carried with difficulty indoors or underground; too long to strap to a pack, usually dragged or carried in hand. May be split into two 5-ft. sections for easier transport."
+        },
+        {
+          "id": "xpFazCvsXGjwfZV4",
+          "name": "Gold Coins",
+          "description": "The Crown is a rare and prestigious gold coin, valued far above all other denominations. Often hoarded by nobles, merchants, and adventurers alike, it represents true wealth and purchasing power within the realm. 1 Crown matches the worth of 10 Sovereigns and 100 Crowns weigh approximately 4 pounds."
+        },
+        {
+          "id": "rVmF0La8XTZG1cpf",
+          "name": "Copper Coins",
+          "description": "The Penny is the smallest denomination of currency, used for common transactions such as food, lodging, or simple goods. Though individually modest in worth, Pennies are essential to daily trade and circulate widely among all classes. 10 Pennies match the worth of 1 Sovereign, and one 100 Pennies weigh approximately 2 pounds."
+        },
+        {
+          "id": "krH0cxloLPA5hWmQ",
+          "name": "Tent, 1-person",
+          "description": "This one-person tent is a compact canvas shelter supported by simple poles and stakes, designed to protect a lone traveler from wind and weather. It is typically used for overnight camps, providing basic cover and privacy while remaining light enough to carry on long journeys."
+        },
+        {
+          "id": "l8JdVxp1CiQdFh95",
+          "name": "Longsword",
+          "description": "This finely forged longsword features a straight, double-edged blade with a broad fuller running down its center, balanced for both cutting and thrusting. A simple steel crossguard, leather-wrapped grip, and brass-capped pommel give it a practical yet noble look, befitting the standard weapon of knights and seasoned adventurers."
+        },
+        {
+          "id": "V3XjuLOjx1cGAINO",
+          "name": "Sidesack",
+          "description": "A sidesack is a lightweight pack worn diagonally across the front of the body. Slimmer and less cumbersome than a traditional backpack, it leaves the wearer free to move while keeping essential gear close at hand. Its many pouches, pockets, and loops provide secure storage for tools, supplies, and other adventuring necessities."
+        },
+        {
+          "id": "d7DDswz7Rv3Zekpc",
+          "name": "Crossbow, Heavy",
+          "description": "This heavy crossbow features a thick wooden tiller reinforced with iron bands and a powerful steel bow, its cord drawn taut for immense penetrating force. It is typically used by soldiers and siege troops to deliver slow but devastating bolts that can punch through armor or pin targets at long range."
+        }
+      ]
+    },
+    {
+      "actorId": "IdkgaBIipIiN7YyV",
+      "name": "Thoul",
+      "items": [
+        {
+          "id": "p2bMWL5pm8zA8tyU",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    },
+    {
+      "actorId": "sa8VYUuTy9a36dEG",
+      "name": "Trader",
+      "items": [
+        {
+          "id": "auNwTvK9Rmy3iwPk",
+          "name": "Shortsword",
+          "description": "This short sword features a straight, double-edged steel blade with a simple crossguard and a leather-wrapped grip capped by a rounded pommel. Compact and versatile, it is typically used as a primary weapon by lightly armored fighters or as a reliable sidearm and backup blade for knights and adventurers."
+        }
+      ]
+    }
+  ],
+  "packs": [
+    {
+      "id": "osp-houserules.weapons",
+      "locked": false,
+      "items": [
+        {
+          "id": "hQuHQ92NUqkKn7ti",
+          "name": "Staff",
+          "description": "A sturdy wooden staff shaped and finished to suit its owner, from a plain walking stick to a gnarled or carved length of hardwood. It can serve as a two-handed weapon or spell focus and must be held or displayed when used for casting."
+        }
+      ]
+    },
+    {
+      "id": "osp-houserules.gear",
+      "locked": true,
+      "items": [
+        {
+          "id": "49nYFlNx9o0kv44t",
+          "name": "Backpack",
+          "description": "A leather bag that can be strapped over the shoulders, requiring no hands. Internal capacity: 16 slots (400 coins). Can lash 4 items externally."
+        },
+        {
+          "id": "XhBl2GHbWdW5AemY",
+          "name": "Holy symbol",
+          "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable."
+        }
+      ]
+    }
+  ]
+}

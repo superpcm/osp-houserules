@@ -1,0 +1,471 @@
+/* Compact preparation controls belong to the recorded spell row. */
+$spell-row-scope: ".window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab.tab[data-tab='attributes'] .spell-list-pane";
+
+form.osp.sheet.actor.character .tab[data-tab='attributes'] {
+  .spell-option-body { display: grid; grid-template-columns: minmax(0, 42fr) minmax(0, 58fr); gap: 12px; }
+  .spell-list-pane, .spell-detail-pane { min-width: 0; }
+}
+
+form.osp.sheet.actor.character .tab[data-tab='attributes'] .spell-list-pane,
+#{$spell-row-scope} {
+  .spell-list-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center !important;
+    gap: 6px;
+    box-sizing: border-box;
+    min-height: 34px;
+    /* Balance the one-pixel bottom separator around the visual row center. */
+    padding: 4px 6px 3px !important;
+  }
+
+  .spell-list-select {
+    display: block;
+    min-width: 0;
+    width: 100%;
+    height: auto;
+    align-self: center;
+    margin: 0;
+    padding: 3px 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none;
+    text-align: left;
+    font-size: 18px !important;
+    line-height: 1.1;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .spell-row-preparation { display: flex; flex-direction: column; align-self: center; justify-content: center; gap: 3px; }
+
+  .spell-prepare-stepper--list {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 0 !important;
+
+    > span {
+      font-family: $font-cooper !important;
+      font-size: 12px !important;
+      font-weight: normal !important;
+      color: #78694D !important;
+      white-space: nowrap;
+      text-shadow: none;
+      /* Cooper's visible lettering sits above its line-box center. */
+      transform: translateY(1px);
+    }
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 0 !important;
+      height: 24px !important;
+      overflow: hidden;
+      border: 1px solid #b7a77d;
+      border-radius: 3px !important;
+      background: rgba(243, 232, 197, .5);
+    }
+
+    button {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 22px !important;
+      width: 22px !important;
+      height: 24px !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      font-family: Georgia, serif !important;
+      font-size: 18px !important;
+      line-height: 1 !important;
+      color: #30291d;
+      background: rgba(204, 188, 145, .25);
+    }
+
+    output {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px !important;
+      height: 24px !important;
+      padding: 0 2px;
+      font-family: Georgia, serif !important;
+      font-size: 14px !important;
+      line-height: 1 !important;
+      color: #30291d;
+    }
+
+    /* Optical corrections for Georgia glyphs; keep the button hit areas and
+       joined control frame in their existing centered positions. */
+    .spell-stepper-value, .spell-stepper-symbol {
+      font-family: Georgia, serif !important;
+      font-size: inherit !important;
+      font-weight: inherit;
+      line-height: 1;
+    }
+    .spell-stepper-value { display: block; transform: translateY(-1.5px); }
+    .spell-stepper-symbol { display: block; transform: translateY(-1px); }
+    button[data-delta='-1'] .spell-stepper-symbol { transform: translateY(-1.25px); }
+  }
+}
+
+/* The existing assignment action belongs beside the selected spell title. */
+form.osp.sheet.actor.character .tab[data-tab='attributes'] .spell-detail-card .spell-detail-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 2px 0 11px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #b7a77d;
+
+  h3 {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0 !important;
+    border: 0 !important;
+    line-height: 1.2;
+  }
+
+  button {
+    flex: 0 0 auto;
+    width: auto !important;
+    height: auto;
+    margin: 0;
+    padding: 4px 7px !important;
+    border: 1px solid #9b8959;
+    border-radius: 3px;
+    background: rgba(244, 231, 187, .62);
+    color: #34432c;
+    font-size: 16px !important;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .spell-detail-book-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 32px;
+    width: 32px !important;
+    height: 30px;
+    padding: 0 !important;
+    color: #78694D;
+    font-size: 18px !important;
+  }
+
+  .spell-book-icon {
+    display: block;
+    flex: 0 0 28px;
+    width: 28px !important;
+    height: 28px !important;
+    object-fit: contain;
+    border: 0 !important;
+    border-radius: 0;
+    margin: 0 !important;
+  }
+
+  .spell-assignment {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    max-width: 58%;
+    min-width: 0;
+    color: #78694D;
+    font-size: 16px;
+    line-height: 1.15;
+    text-align: right;
+  }
+
+  .spell-assignment-names {
+    font-size: inherit !important;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .spell-assignment-status {
+    font-size: .9em;
+    white-space: nowrap;
+  }
+}
+
+form.osp.sheet.actor.character .tab[data-tab='attributes'] .spell-detail-heading .spell-detail-cast-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 32px !important;
+  height: 30px;
+  padding: 0 !important;
+  color: #78694D;
+  font-size: 18px !important;
+  i { margin: 0 !important; }
+  .spell-cast-icon { width: 28px !important; height: 28px !important; object-fit: contain; border: 0 !important; margin: 0 !important; }
+  .spell-cast-reverse { position: absolute; right: 1px; bottom: 1px; font-size: 9px; }
+}
+
+/* Keep the spell controls inside the parchment's usable writing area. */
+$spell-page-scope: ".window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab='attributes'].active) .tab.tab[data-tab='attributes']";
+#{$spell-page-scope} {
+  .spell-slots-section {
+    inset: 12% 10% auto 7% !important;
+    min-width: 0;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .spell-slot-strip { display: flex; flex-wrap: wrap; gap: 14px; min-width: 0; }
+  .spell-slot-group {
+    display: flex; align-items: center; gap: 7px;
+    height: auto; padding: 3px 0; border: 0; border-radius: 0;
+    background: none; box-shadow: none;
+    b { font-size: 13px !important; white-space: nowrap; }
+    .spell-slot-marks { display: flex; align-items: center; gap: 4px; }
+    .spell-slot-mark { display: block; width: 8px; height: 8px; border: 1px solid #78694D; border-radius: 50%; background: #78694D; }
+    .spell-slot-mark.spent { background: transparent; opacity: .5; }
+    .spell-slot-remaining { font-family: Georgia, serif !important; font-size: 12px !important; color: #78694D; white-space: nowrap; }
+  }
+  .spell-quiet-actions { margin-left: auto; flex: 0 0 auto; }
+  .spell-detail-heading .spell-detail-book-action,
+  .spell-detail-heading .spell-detail-cast-action {
+    flex: 0 0 36px; width: 36px !important; height: 36px !important; padding: 0 !important;
+  }
+  .spell-detail-heading .spell-book-icon { width: 34px !important; height: 34px !important; flex-basis: 34px; }
+  .spell-detail-heading .spell-cast-icon { width: 36px !important; height: 36px !important; object-fit: cover; }
+}
+
+#{$spell-page-scope} .spell-detail-heading .spell-detail-cast-action {
+  box-sizing: border-box;
+  padding: 2px !important;
+  .spell-cast-icon { width: 30px !important; height: 30px !important; }
+}
+
+#{$spell-page-scope} {
+  .spell-list-pane .spell-prepare-stepper--list > span { font-size: 14px !important; }
+  .spell-option-b, .spell-option-body, .spell-option-toolbar,
+  .spell-list-pane, .spell-detail-pane, .spell-detail-card, .spell-detail-actions,
+  .spell-list-row, .spell-list-row.selected, .spell-option-toggle,
+  .spell-option-toolbar button, .spell-option-toolbar input {
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+  .spell-option-toggle button.active { background: transparent !important; background-image: none !important; border-color: #78694D !important; color: #34432c !important; text-decoration: underline; text-underline-offset: 4px; }
+  .spell-level-filter {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    flex: 0 0 32px; width: 32px; height: 32px; box-sizing: border-box;
+    border: 1px solid #b7a77d; border-radius: 3px; color: #78694D;
+    > i { margin: 0; font-size: 16px; line-height: 1; pointer-events: none; }
+    > select { position: absolute; inset: 0; width: 100% !important; height: 100% !important; margin: 0 !important; opacity: 0; cursor: pointer; }
+    &.is-filtered { border-color: #34432c; color: #34432c; }
+    &:focus-within { outline: 2px solid #78694D; outline-offset: 2px; }
+    .spell-filter-tooltip {
+      position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+      padding: 4px 8px; border-radius: 3px; background: #30291d; color: #fff5db;
+      font: 14px Georgia, serif !important; white-space: nowrap; pointer-events: none;
+      z-index: 20; visibility: hidden; opacity: 0;
+    }
+    &:hover .spell-filter-tooltip, &:focus-within .spell-filter-tooltip { visibility: visible; opacity: 1; transition: opacity 0s 2s, visibility 0s 2s; }
+  }
+}
+
+#{$spell-page-scope} {
+  .spell-detail-pane { border: 0 !important; }
+  .spell-detail-card {
+    border: 0 !important;
+    border-left: 1px solid #b7a77d !important;
+    border-radius: 0 !important;
+  }
+  .spell-list-pane .spell-list-select,
+  .spell-list-pane .spell-list-select > span {
+    font-family: $font-cooper !important;
+    font-weight: normal !important;
+  }
+  .spell-list-pane .spell-prepare-stepper--list > span {
+    font-family: 'Handwritten', cursive !important;
+    font-weight: normal !important;
+    transform: none;
+  }
+  .spell-list-pane .spell-list-row:hover,
+  .spell-list-pane .spell-list-row:focus-within {
+    background: rgba(120, 105, 77, .16) !important;
+  }
+}
+
+#{$spell-page-scope} {
+  .spell-list-pane .spell-list-select,
+  .spell-list-pane .spell-list-select > span { font-size: 16px !important; }
+  .spell-assignment {
+    position: relative; flex: 0 0 36px; max-width: none; width: 36px; height: 36px; justify-content: center;
+    .spell-assignment-names {
+      position: absolute; top: calc(100% + 6px); right: 0;
+      width: max-content; max-width: 230px; padding: 5px 8px;
+      background: #30291d; color: #fff5db; border-radius: 3px;
+      font: 14px Georgia, serif !important; text-align: left;
+      visibility: hidden; opacity: 0; pointer-events: none; z-index: 30;
+    }
+    &:hover .spell-assignment-names, &:focus .spell-assignment-names {
+      visibility: visible; opacity: 1; transition: opacity 0s 1s, visibility 0s 1s;
+    }
+  }
+  .spell-option-toggle button[data-spell-view] {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    width: 36px !important; height: 36px !important; padding: 1px !important;
+    .spell-toolbar-book { width: 32px !important; height: 32px !important; object-fit: contain; border: 0; margin: 0; }
+    .spell-library-plus {
+      position: absolute; right: -1px; bottom: 0; display: flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border: 1px solid #7f5b23; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff0b5, #b99143);
+      color: #4c3218; font: bold 20px/1 Georgia, serif !important;
+      text-shadow: 0 1px #ffe8a3; box-shadow: 0 1px 2px #78694D;
+    }
+    &.active { outline: none; background: rgba(120, 105, 77, .16); text-decoration: none; }
+  }
+}
+
+#{$spell-page-scope} {
+  .spell-list-pane .spell-list-select,
+  .spell-list-pane .spell-list-select > span { font-size: 12px !important; }
+  .spell-option-toggle button[data-spell-view] .spell-library-plus {
+    box-sizing: border-box; width: 14px; height: 14px; right: 0; bottom: 1px;
+    font-size: 0 !important; text-shadow: none;
+    &::before, &::after { content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #4c3218; border-radius: 1px; }
+    &::before { width: 8px; height: 2px; }
+    &::after { width: 2px; height: 8px; }
+  }
+  .spell-subtabs { inset: 23% 9% 9% 7% !important; }
+  .spell-subtabs, .spell-subtab-panel, .spell-list-content { background: transparent !important; background-image: none !important; }
+}
+
+// Inventory spellbook naming dialog shares the character sheet palette and type.
+.osp.osp-spellbook-rename {
+  border: 1px solid #a28c62;
+  border-radius: 4px;
+  overflow: hidden;
+  .window-header {
+    background: #24382d !important;
+    color: #fff5db;
+    border-bottom: 1px solid #a28c62;
+    padding: 8px 12px;
+    min-height: 38px;
+    align-items: center;
+  }
+  .window-header .window-title { font: 16px/1.3 'Cooper Std', Georgia, serif !important; margin: 0; padding-top: 3px; align-self: center; }
+  .window-header .header-button { align-self: center; line-height: 1.3; }
+  .window-header .header-button { color: #fff5db; }
+  .window-content {
+    background: linear-gradient(rgba(255,248,225,.65), rgba(255,248,225,.65)), url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp') center / cover;
+    color: #34271b;
+    font: 16px/1.5 'Handwritten', Georgia, serif;
+    padding: 18px !important;
+  }
+  .form-group { display: flex; flex-direction: column; align-items: stretch; gap: 6px; margin: 0 0 18px; }
+  label { font: 20px/1.3 'Cooper Std', Georgia, serif !important; }
+  input {
+    box-sizing: border-box; width: 100%; height: 44px; margin: 0; padding: 5px 10px;
+    background: #fff0c8; color: #34271b; border: 1px solid #8a642e; border-radius: 3px;
+    font: 24px/1.3 'Handwritten', Georgia, serif !important; box-shadow: none !important;
+  }
+  .dialog-buttons { display: flex !important; flex-direction: row !important; gap: 10px; }
+  .dialog-buttons button {
+    flex: 1; width: auto !important; min-height: 36px; margin: 0; padding: 5px 12px;
+    background: #34432c; color: #fff0c8; border: 1px solid #8a642e; border-radius: 3px;
+    font: 16px/1.5 'Handwritten', Georgia, serif; text-transform: none; box-shadow: none;
+  }
+  .dialog-buttons button[data-button="cancel"] { background: #fff0c8; color: #34271b; }
+  .dialog-buttons button:hover { filter: brightness(1.08); }
+  input:focus, button:focus-visible { outline: 2px solid #34432c; outline-offset: 2px; box-shadow: none !important; }
+  input::selection { background: #34432c; color: #fff0c8; }
+}
+
+// The short book picker uses the same materials as the character sheet.
+.osp.osp-choose-spellbook {
+  max-width: calc(100vw - 24px);
+  border: 1px solid #a28c62;
+  border-radius: 4px;
+  overflow: hidden;
+  .window-header {
+    min-height: 32px;
+    padding: 4px 10px;
+    align-items: center;
+    color: #fff5db;
+    background: #24382d !important;
+    border-bottom: 1px solid #a28c62;
+  }
+  .window-title { margin: 0; padding: 0; position: relative; top: 2px; font: 16px/1 'Cooper Std', Georgia, serif !important; }
+  .header-button { align-self: center; color: #fff5db; }
+  .window-content {
+    padding: 14px !important;
+    color: #34271b;
+    background: linear-gradient(rgba(255,248,225,.65), rgba(255,248,225,.65)), url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp') center / cover;
+    font-family: 'Handwritten', Georgia, serif;
+  }
+  .osp-choose-spellbook-field { display: grid; gap: 6px; margin-bottom: 14px; }
+  label { font: 14px/1.3 'Cooper Std', Georgia, serif !important; }
+  select {
+    box-sizing: border-box;
+    width: 100%;
+    height: 36px;
+    min-height: 36px;
+    padding: 0 10px;
+    color: #34271b;
+    background: #fff0c8;
+    border: 1px solid #8a642e;
+    border-radius: 3px;
+    font: 20px/36px 'Handwritten', Georgia, serif !important;
+  }
+  .dialog-buttons { display: flex !important; flex-direction: row !important; gap: 10px; }
+  .dialog-buttons button {
+    flex: 1;
+    width: auto !important;
+    min-height: 32px;
+    margin: 0;
+    padding: 5px 12px;
+    color: #fff0c8;
+    background: #34432c;
+    border: 1px solid #8a642e;
+    border-radius: 3px;
+    font: 16px/1.5 'Handwritten', Georgia, serif;
+    text-transform: none;
+    box-shadow: none;
+  }
+  .dialog-buttons button[data-button='cancel'] { color: #34271b; background: #fff0c8; }
+  .dialog-buttons button:hover { filter: brightness(1.08); }
+  select:focus-visible, button:focus-visible { outline: 2px solid #34432c; outline-offset: 2px; }
+}
+
+// Center spell level labels within their green dividers.
+#{$spell-page-scope} .spell-level-group > h4 {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  margin: 0;
+  padding: 2px 8px 0;
+  line-height: 1 !important;
+}
+
+.osp.osp-choose-spellbook .osp-item-spell-config {
+  display: grid; gap: 12px;
+  label { display: grid; gap: 5px; }
+  label:has(input[type='checkbox']) { display: flex; align-items: center; }
+  input { min-width: 0; max-width: 100%; color: #34271b; background: #fff0c8; border: 1px solid #8a642e; }
+}
+
+// Focus selection lives directly above the recorded spellbook list.
+#{$spell-page-scope} .osp-spellbook-focus {
+  flex: 0 0 auto; margin: 6px 0 10px; padding: 5px 0;
+  [hidden] { display: none !important; }
+  [data-book-focus-picker], [data-book-focus-summary] { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  label, [data-book-focus-summary] > span { font: 14px/1.3 'Cooper Std', Georgia, serif !important; color: #34432c; }
+  img { width: 36px; height: 36px; object-fit: contain; border: 0; }
+  strong { font: 14px/1.3 'Cooper Std', Georgia, serif; }
+  select { width: auto; max-width: 240px; min-height: 30px; font: 16px 'Handwritten', Georgia, serif; background: #fff0c8; color: #34271b; border: 1px solid #8a642e; }
+  button { width: auto; min-height: 28px; padding: 2px 8px; font: 14px 'Handwritten', Georgia, serif; border: 1px solid #8a642e; background: #fff0c8; color: #34271b; }
+}

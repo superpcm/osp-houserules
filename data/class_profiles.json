@@ -97,11 +97,11 @@
         {
           "name": "Assassination",
           "trigger": "Attack unaware humanoid from behind",
-          "effect": "+4 to hit; target saves vs death with level penalty or dies.",
+          "effect": "+4 to hit when attacking an unaware humanoid from behind; the target saves vs death with the Assassin level penalty or dies.",
           "limits": [
             "Humans/demihumans any level; humanoids up to 4+1 HD; nonliving immune"
           ],
-          "scaling": "Penalty improves from 0 to -6 by level."
+          "scaling": "Penalty is 0 at levels 1–3, then -1/-2/-3/-4/-5/-6 at levels 4–5/6–7/8–9/10–11/12–13/14; this is a special attack resolution, not an allocatable skill."
         },
         {
           "name": "Disguise",
@@ -124,12 +124,12 @@
       "skillSystems": [
         {
           "name": "Assassin Skills",
-          "rollType": "d%, d6 for Hear Noise",
+          "rollType": "d6 skills; d6 for Hear Noise",
           "skills": [
             {
               "code": "AS",
               "name": "Assassination",
-              "effect": "Death save penalty by level."
+              "effect": "+4 to hit from behind against an unaware humanoid, then a death save with the level-based penalty; not an allocatable d6 skill."
             },
             {
               "code": "CS",
@@ -153,7 +153,7 @@
             }
           ],
           "playerKnowledgeRule": "Referee rolls HN/HS/MS.",
-          "progression": "See OSE Advanced Fantasy Assassin skill table."
+          "progression": "All Assassin d6 skills begin at 1-in-6, with 3 points at 1st level and 1.5 points per level thereafter; points can be allocated among skills, cannot raise a skill above 5-in-6, and historical allocations are preserved for referee review. Pick Pockets is reduced by floor(victim level / 3), and a natural 6 is noticed."
         }
       ],
       "spellcasting": null,
@@ -330,26 +330,26 @@
       "skillSystems": [
         {
           "name": "Barbarian Wilderness Skills",
-          "rollType": "d%",
+          "rollType": "d6",
           "skills": [
             {
               "code": "CS",
               "name": "Climb Natural Surfaces",
-              "effect": "Climb natural sheer surfaces."
+              "effect": "Climb natural sheer surfaces; d6 skill begins at 1-in-6, has a 5-in-6 maximum, and follows the approved allocated-point progression."
             },
             {
               "code": "HD",
               "name": "Hide in Undergrowth",
-              "effect": "Hide motionless in wilderness."
+              "effect": "Hide motionless in wilderness; d6 skill begins at 1-in-6, has a 5-in-6 maximum, and follows the approved allocated-point progression."
             },
             {
               "code": "MS",
               "name": "Move Silently",
-              "effect": "Sneak in wilderness."
+              "effect": "Sneak in wilderness; d6 skill begins at 1-in-6, has a 5-in-6 maximum, and follows the approved allocated-point progression."
             }
           ],
           "playerKnowledgeRule": "Referee rolls stealth.",
-          "progression": "See OSE Advanced Fantasy Barbarian table."
+          "progression": "Barbarian d6 skills begin at 1-in-6 for each skill; points are allocated at the approved 2 at 1st level and 1/2 per level rate, with a 5-in-6 maximum. Historical allocations remain available for referee review."
         }
       ],
       "spellcasting": null,
@@ -488,12 +488,26 @@
           "effect": "Chance to know lore about legends, monsters, magic items, and historical events. Base chance 1-in-6 at 1st level, improving by level.",
           "limits": [],
           "scaling": null
+        },
+        {
+          "name": "Inspiring Words",
+          "trigger": "Assist an ally with a specific situational action",
+          "effect": "Grant a +1 bonus to an attack, save, or ability check.",
+          "limits": ["Once per day per 3 levels, starting at 1st level"],
+          "scaling": "1 + floor((level - 1) / 3) uses per day"
+        },
+        {
+          "name": "Vicious Mockery",
+          "trigger": "Target can hear and understand the Bard",
+          "effect": "Target saves vs spells; on a failure it takes -1 to attack rolls and saving throws while the Bard maintains the mockery.",
+          "limits": ["Starts at 3rd level", "Ends when the Bard attacks, is hit, ceases mocking, or uses Inspiring Words"],
+          "scaling": "1 use per day at level 3, 2 at level 6, 3 at level 9 and above"
         }
       ],
       "passiveAbilities": [
         {
           "name": "Language Learning",
-          "effect": "Learns one additional language per two levels gained.",
+          "effect": "Learns one additional language at each even level beginning at 4th (4, 6, 8, etc.), including the secret language of druids.",
           "conditions": [],
           "scaling": null
         }
@@ -3120,7 +3134,7 @@
         {
           "name": "Tracking",
           "trigger": "Examine tracks, wilderness or dungeon",
-          "effect": "1-in-6 base chance to track creatures over hard ground; 2-in-6 over soft ground; 3-in-6 over mud or snow. Chance improves with level.",
+          "effect": "Roll d% against the tracking table: 20% at level 1, increasing by 10 percentage points per level to 100% at level 9 and 110% at level 10+. Add the full WIS score. Apply ground +20% to -50%, +2% per additional creature, -50% for mingled tracks, -5% per 12 hours, -25% per hour of rain, and -25% for efforts to hide tracks.",
           "limits": [],
           "scaling": null
         }
@@ -3140,7 +3154,7 @@
         },
         {
           "name": "Pursuit",
-          "effect": "When tracking, may move at normal speed without penalty to tracking chance. Quarry moving at running speed imposes only a -1 penalty.",
+          "effect": "When pursuing, reduce the quarry's evasion chance by 10%.",
           "conditions": [],
           "scaling": null
         },
@@ -3151,7 +3165,32 @@
           "scaling": null
         }
       ],
-      "skillSystems": [],
+      "skillSystems": [
+        {
+          "name": "Ranger Tracking",
+          "rollType": "d%",
+          "skills": [
+            {
+              "code": "TRACK",
+              "name": "Tracking",
+              "effect": "Use the Warden tracking table: 20% at level 1, +10 percentage points per level to 100% at level 9 and 110% at level 10+. Add full WIS and apply ground, group, mingled-track, age, rainfall, and concealment modifiers."
+            }
+          ],
+          "playerKnowledgeRule": null,
+          "progression": {
+            "1": 20,
+            "2": 30,
+            "3": 40,
+            "4": 50,
+            "5": 60,
+            "6": 70,
+            "7": 80,
+            "8": 90,
+            "9": 100,
+            "10+": 110
+          }
+        }
+      ],
       "spellcasting": {
         "type": "class-specific",
         "summary": "divine druid spells from level 8",
@@ -3733,14 +3772,14 @@
         {
           "name": "Surprise Attack",
           "trigger": "Attack undetected opponent in wilderness",
-          "effect": "+4 to hit on the first attack when striking an opponent who is unaware of the Warden's presence in a wilderness setting.",
+          "effect": "In wilderness, a Warden has a 3-in-6 chance of going unnoticed when sneaking up on a target; an unnoticed target may be surprised.",
           "limits": [],
           "scaling": null
         },
         {
           "name": "Tracking",
           "trigger": "Examine tracks, wilderness",
-          "effect": "2-in-6 base chance to track creatures over hard ground; 3-in-6 over soft ground; 4-in-6 over mud or snow. Chance improves with level. May identify creature type, number, and direction from spoor.",
+          "effect": "Roll d% against the tracking table: 20% at level 1, increasing by 10 percentage points per level to 100% at level 9 and 110% at level 10+. Add the full WIS score. Apply ground +20% to -50%, +2% per additional creature, -50% for mingled tracks, -5% per 12 hours, -25% per hour of rain, and -25% for efforts to hide tracks. May identify creature type, number, and direction from spoor.",
           "limits": [],
           "scaling": null
         }
@@ -3760,7 +3799,7 @@
         },
         {
           "name": "Pursuit",
-          "effect": "When tracking, may move at normal speed without penalty to tracking chance. Quarry moving at running speed imposes only a -1 penalty to the tracking roll.",
+          "effect": "When pursuing, reduce the quarry's evasion chance by 10%.",
           "conditions": [],
           "scaling": null
         },
@@ -3967,9 +4006,9 @@
               "effect": "Opens or pushes closed unlocked door, portal, lid, etc. within 30 feet and holds it open/closed for 1 round per level; one attempt per portal."
             },
             {
-              "code": "RF",
+              "code": "RY",
               "name": "Rally/Fear",
-              "effect": "Rally counters magical fear; fear forces enemies to make morale check. Once per turn."
+              "effect": "Rally counters magical fear; fear forces enemies to make morale check. Once per turn. Add the full INT score to the Mage skill chance."
             },
             {
               "code": "RM",
@@ -3987,98 +4026,98 @@
             "1": {
               "DM": 75,
               "OC": 30,
-              "RF": 20,
+              "RY": 20,
               "RM": 50,
               "SU": 20
             },
             "2": {
               "DM": 80,
               "OC": 35,
-              "RF": 23,
+              "RY": 23,
               "RM": 55,
               "SU": 23
             },
             "3": {
               "DM": 83,
               "OC": 40,
-              "RF": 25,
+              "RY": 25,
               "RM": 60,
               "SU": 25
             },
             "4": {
               "DM": 85,
               "OC": 45,
-              "RF": 26,
+              "RY": 26,
               "RM": 65,
               "SU": 26
             },
             "5": {
               "DM": 87,
               "OC": 50,
-              "RF": 35,
+              "RY": 35,
               "RM": 70,
               "SU": 35
             },
             "6": {
               "DM": 90,
               "OC": 55,
-              "RF": 45,
+              "RY": 45,
               "RM": 75,
               "SU": 45
             },
             "7": {
               "DM": 92,
               "OC": 60,
-              "RF": 55,
+              "RY": 55,
               "RM": 80,
               "SU": 55
             },
             "8": {
               "DM": 93,
               "OC": 65,
-              "RF": 65,
+              "RY": 65,
               "RM": 83,
               "SU": 65
             },
             "9": {
               "DM": 94,
               "OC": 70,
-              "RF": 70,
+              "RY": 70,
               "RM": 86,
               "SU": 70
             },
             "10": {
               "DM": 95,
               "OC": 75,
-              "RF": 75,
+              "RY": 75,
               "RM": 90,
               "SU": 75
             },
             "11": {
               "DM": 96,
               "OC": 80,
-              "RF": 80,
+              "RY": 80,
               "RM": 92,
               "SU": 80
             },
             "12": {
               "DM": 97,
               "OC": 85,
-              "RF": 85,
+              "RY": 85,
               "RM": 95,
               "SU": 85
             },
             "13": {
               "DM": 98,
               "OC": 90,
-              "RF": 90,
+              "RY": 90,
               "RM": 98,
               "SU": 90
             },
             "14": {
               "DM": 99,
               "OC": 95,
-              "RF": 95,
+              "RY": 95,
               "RM": 99,
               "SU": 95
             }

@@ -1,0 +1,215 @@
+{
+  "fixture": "Production combat markup, built stylesheet and sizing helper; isolated Chrome, not live Foundry",
+  "rows": [
+    {
+      "text": "8",
+      "frameWidth": 110.90625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "50.1036px",
+      "variable": "50.10362491252624px",
+      "inkWidth": 19.447997331619263,
+      "inkHeight": 34.27251434326172
+    },
+    {
+      "text": "88",
+      "frameWidth": 110.921875,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "50.1036px",
+      "variable": "50.10362491252624px",
+      "inkWidth": 44.49798512458801,
+      "inkHeight": 34.27251434326172
+    },
+    {
+      "text": "40",
+      "frameWidth": 128.109375,
+      "frameHeight": 110.9375,
+      "font": "handwritten",
+      "fontSize": "60.4171px",
+      "variable": "60.417074877536734px",
+      "inkWidth": 57.40128690004349,
+      "inkHeight": 41.148414611816406
+    },
+    {
+      "text": "80",
+      "frameWidth": 128.109375,
+      "frameHeight": 110.9375,
+      "font": "handwritten",
+      "fontSize": "60.4171px",
+      "variable": "60.417074877536734px",
+      "inkWidth": 54.86453890800476,
+      "inkHeight": 41.325401306152344
+    },
+    {
+      "text": "120",
+      "frameWidth": 128.109375,
+      "frameHeight": 110.9375,
+      "font": "handwritten",
+      "fontSize": "60.4171px",
+      "variable": "60.417074877536734px",
+      "inkWidth": 81.58886337280273,
+      "inkHeight": 41.26640319824219
+    },
+    {
+      "text": "16",
+      "frameWidth": 110.921875,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "50.1036px",
+      "variable": "50.10362491252624px",
+      "inkWidth": 42.93235969543457,
+      "inkHeight": 34.78623580932617
+    },
+    {
+      "text": "12",
+      "frameWidth": 110.90625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "50.1036px",
+      "variable": "50.10362491252624px",
+      "inkWidth": 43.250375747680664,
+      "inkHeight": 33.7587890625
+    },
+    {
+      "text": "-12",
+      "frameWidth": 78.765625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "43.4803px",
+      "variable": "43.48032345013477px",
+      "inkWidth": 55.13550877571106,
+      "inkHeight": 29.298046112060547
+    },
+    {
+      "text": "999",
+      "frameWidth": 78.765625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "38.5387px",
+      "variable": "38.53870307167235px",
+      "inkWidth": 55.12348473072052,
+      "inkHeight": 26.846832275390625
+    },
+    {
+      "text": "0",
+      "frameWidth": 90.96875,
+      "frameHeight": 78.765625,
+      "font": "handwritten",
+      "fontSize": "42.8961px",
+      "variable": "42.89612316305108px",
+      "inkWidth": 19.413589239120483,
+      "inkHeight": 29.21462631225586
+    },
+    {
+      "text": "5",
+      "frameWidth": 90.984375,
+      "frameHeight": 78.78125,
+      "font": "handwritten",
+      "fontSize": "42.9046px",
+      "variable": "42.904632610216936px",
+      "inkWidth": 17.38623046875,
+      "inkHeight": 29.933645248413086
+    },
+    {
+      "text": "120",
+      "frameWidth": 90.96875,
+      "frameHeight": 78.765625,
+      "font": "handwritten",
+      "fontSize": "42.8961px",
+      "variable": "42.89612316305108px",
+      "inkWidth": 57.92661714553833,
+      "inkHeight": 29.29839515686035
+    },
+    {
+      "text": "10",
+      "frameWidth": 78.765625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "50.1036px",
+      "variable": "50.10362491252624px",
+      "inkWidth": 42.61434364318848,
+      "inkHeight": 34.125736236572266
+    },
+    {
+      "text": "9",
+      "frameWidth": 78.765625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "50.1036px",
+      "variable": "50.10362491252624px",
+      "inkWidth": 21.576268076896667,
+      "inkHeight": 34.908546447753906
+    },
+    {
+      "text": "-1",
+      "frameWidth": 54.640625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "50.1036px",
+      "variable": "50.10362491252624px",
+      "inkWidth": 34.419281005859375,
+      "inkHeight": 33.61201095581055
+    },
+    {
+      "text": "120",
+      "frameWidth": 54.65625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "28.328px",
+      "variable": "28.327982646420825px",
+      "inkWidth": 38.248573541641235,
+      "inkHeight": 19.34554672241211
+    },
+    {
+      "text": "40",
+      "frameWidth": 63.125,
+      "frameHeight": 75.6875,
+      "font": "handwritten",
+      "fontSize": "41.2198px",
+      "variable": "41.21976207137858px",
+      "inkWidth": 39.15754610300064,
+      "inkHeight": 28.070287704467773
+    },
+    {
+      "text": "80",
+      "frameWidth": 63.140625,
+      "frameHeight": 75.6875,
+      "font": "handwritten",
+      "fontSize": "41.2198px",
+      "variable": "41.21976207137858px",
+      "inkWidth": 37.42704796791077,
+      "inkHeight": 28.191022872924805
+    },
+    {
+      "text": "120",
+      "frameWidth": 63.125,
+      "frameHeight": 75.6875,
+      "font": "handwritten",
+      "fontSize": "32.7173px",
+      "variable": "32.717281272595805px",
+      "inkWidth": 44.177659034729004,
+      "inkHeight": 22.344379425048828
+    },
+    {
+      "text": "16",
+      "frameWidth": 54.65625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "44.6468px",
+      "variable": "44.6468376068376px",
+      "inkWidth": 38.25350999832153,
+      "inkHeight": 30.99515724182129
+    },
+    {
+      "text": "12",
+      "frameWidth": 54.640625,
+      "frameHeight": 92,
+      "font": "handwritten",
+      "fontSize": "44.3059px",
+      "variable": "44.30588235294117px",
+      "inkWidth": 38.24335193634033,
+      "inkHeight": 29.8505859375
+    }
+  ]
+}

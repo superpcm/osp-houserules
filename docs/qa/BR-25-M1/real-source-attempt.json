@@ -1,0 +1,27 @@
+{
+  "attemptStartedAt": "2026-10-03T04:18:53Z",
+  "runtime": "Node v24.21.0",
+  "command": "rtk proxy /opt/homebrew/opt/node@24/bin/node scripts/pack-snapshot.js --root . --output release/br25-m1-20261003-a",
+  "exitCode": 1,
+  "acceptedArtifact": false,
+  "artifactExists": false,
+  "error": "raw snapshot failed (2): {\"error\": \"SnapshotError\", \"message\": \"active or contested pack database: packs/armor\"}",
+  "lockProbe": [
+    {
+      "pack": "armor",
+      "errno": 35,
+      "error": "Resource temporarily unavailable"
+    },
+    {
+      "pack": "gear",
+      "errno": 35,
+      "error": "Resource temporarily unavailable"
+    },
+    {
+      "pack": "weapons",
+      "errno": 35,
+      "error": "Resource temporarily unavailable"
+    }
+  ],
+  "result": "Original databases remain closed to this tool; no lock bypass or server shutdown attempted."
+}

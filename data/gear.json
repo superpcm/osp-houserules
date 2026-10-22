@@ -4,7 +4,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/backpack_thumb.webp",
     "system": {
-      "description": "This rugged leather backpack is fitted with multiple buckled pockets and a rolled blanket strapped across the top, showing the scuffs and creases of long travel. It is typically used by adventurers to carry rations, tools, and gear on the road, keeping their hands free for weapons, torches, or climbing.",
+      "description": "A rugged leather backpack with buckled pockets and a rolled blanket strapped across the top. It carries rations, tools, and gear while leaving the wearer's hands free.",
       "cost": 5,
       "unitWeight": 2,
       "storedSize": 4,
@@ -28,7 +28,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/bedroll_thumb.webp",
     "system": {
-      "description": "This bedroll is a tightly rolled bundle of thick, worn canvas or wool, secured with a pair of cracked leather straps and brass buckles. It is typically used by travelers and adventurers as a simple portable sleeping mat, providing a little warmth and comfort when camping under the open sky or on dungeon stone.",
+      "description": "A tightly rolled bundle of worn canvas or wool secured by cracked leather straps and brass buckles. It serves as a portable sleeping mat, adding warmth and comfort while camping.",
       "cost": 2,
       "unitWeight": 4,
       "storedSize": 6,
@@ -45,7 +45,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-large_thumb.webp",
     "system": {
-      "description": "This large belt pouch is a rounded, roomy leather bag with a broad flap and brass-buckled strap, built to hang securely from a waistbelt. It is typically used by adventurers to carry bulkier essentials like rations, tools, or extra coin—when a small pouch simply won’t suffice. 1 pouch can be attached to a single belt.",
+      "description": "A roomy leather pouch with broad flap and brass-buckled strap, made to hang securely from a waistbelt. It holds bulkier essentials such as rations, tools, or extra coin; 1 pouch attaches to one belt.",
       "cost": 4,
       "unitWeight": 1,
       "storedSize": 2,
@@ -138,7 +138,7 @@
       ],
       "allowedTypes": [
         "coins",
-        "gems",
+        "gem",
         "jewelry"
       ],
       "containerSize": "small"
@@ -218,7 +218,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/holy-symbol_thumb.webp",
     "system": {
-      "description": "A religious emblem, amulet, or pendant (metal, wood, or stone)Usually worn on a chain or leather thong. Even ornate silver or gem-inlaid versions rarely exceed ½ lb. A large ceremonial one (altar piece) could weigh several pounds, but the adventuring version is light and portable.",
+      "description": "A religious emblem, amulet, or pendant of metal, wood, or stone, worn on a chain or leather thong. Adventuring versions rarely exceed ½ lb; a large ceremonial altar piece may weigh several pounds.",
       "cost": 25,
       "unitWeight": 0.3,
       "storedSize": 1,
@@ -288,7 +288,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/lantern-bullseye_thumb.webp",
     "system": {
-      "description": "A bullseye lantern is a metal-cased lamp with a shuttered housing and a single, thick glass lens that focuses its light into a narrow, far-reaching beam. Adventurers typically use it when they need to see a long distance down corridors or roads while keeping surrounding areas in comparative shadow. It burns one flask of oil per 4 hours (24 turns) and casts light in a 60' cone.",
+      "description": "A metal-cased lantern with shuttered housing and a thick glass lens focuses light into a narrow beam. It burns 1 flask of oil per 4 hours (24 turns) and casts light in a 60' cone.",
       "cost": 12,
       "unitWeight": 3,
       "storedSize": 4,
@@ -305,7 +305,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/lantern-hooded_thumb.webp",
     "system": {
-      "description": "A hooded lantern is a metal-framed light source with a directional hood that shields the flame and focuses its beam forward. It is commonly used by travelers and adventurers who need controlled, wind-resistant illumination in dark or hazardous environments. Burns one flask of oil per 4 hours (24 turns). Casts light in a 30' radius.",
+      "description": "A metal-framed lantern with a directional hood shields the flame and focuses light forward. It burns 1 flask of oil per 4 hours (24 turns) and casts light in a 30' radius.",
       "cost": 10,
       "unitWeight": 2,
       "storedSize": 4,
@@ -390,7 +390,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/piton_thumb.webp",
     "system": {
-      "description": "This metal piton is a tapered spike with a forged eyelet for threading rope, its surface worn and scuffed from repeated climbing use. Adventurers hammer it into cracks or seams in stone to create secure anchor points for climbing, rappelling, and traversing dangerous terrain.",
+      "description": "A tapered metal spike with a forged eyelet for threading rope. Hammered into cracks or seams in stone, it creates anchor points for climbing, rappelling, and dangerous traverses.",
       "cost": 0.1,
       "unitWeight": 0.25,
       "storedSize": 0.25,
@@ -408,7 +408,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/ten-foot-pole_thumb.webp",
     "system": {
-      "description": "A 10-foot wooden pole used for prodding suspicious areas or measuring distances in a dungeon. Carried with difficulty indoors or underground; too long to strap to a pack, usually dragged or carried in hand. May be split into two 5-ft. sections for easier transport.",
+      "description": "A 10-foot wooden pole for probing hazards and measuring dungeon distances. Too long to strap to a pack, it must be held or dragged; it may split into two 5-ft. sections for transport.",
       "cost": 1,
       "unitWeight": 5,
       "storedSize": 4,
@@ -543,7 +543,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/sack-large_thumb.webp",
     "system": {
-      "description": "This large sack is a coarse burlap bag tied shut with a thick rope, its fabric worn from heavy use and bulging with whatever has been stuffed inside. Adventurers typically use it to haul bulky loot, provisions, or miscellaneous gear that won't fit neatly into a pack. Capacity: 24 slots (600 coins).",
+      "description": "A coarse burlap sack tied with thick rope for bulky loot, provisions, or gear. Capacity: 24 slots (600 coins).",
       "cost": 2,
       "unitWeight": 0.5,
       "storedSize": 2,
@@ -621,7 +621,8 @@
         "Cart",
         "Wagon",
         "Sack, Large",
-        "Panniers"
+        "Panniers",
+        "Sword Frog"
       ],
       "quantity": 1,
       "equipped": false,
@@ -653,7 +654,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/baldric_thumb.webp",
     "system": {
-      "description": "A broad leather strap worn diagonally across the chest and shoulder, designed to carry a large two-handed sword across the back with the hilt accessible over the shoulder. Frees the hands while keeping the weapon secure and ready during travel. The only practical way to carry a Zweihander or Greatsword.",
+      "description": "A broad leather strap carries a two-handed sword across the back, hilt over the shoulder, leaving hands free. The only practical way to carry a Zweihander or Greatsword.",
       "cost": 10,
       "unitWeight": 2,
       "storedSize": 6,
@@ -683,7 +684,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/scroll-case_thumb.webp",
     "system": {
-      "description": "A protective tube designed to store and transport parchment scrolls, maps, or important documents. Crafted from sturdy materials like wood, leather, and metal, it shields its contents from weather and wear while allowing adventurers or scholars to carry their writings safely on the road.",
+      "description": "A sturdy wood, leather, or metal tube that protects parchment scrolls, maps, and documents from weather and wear while they are carried on the road.",
       "cost": 5,
       "unitWeight": 1,
       "storedSize": 4,
@@ -692,7 +693,9 @@
       "lashable": true,
       "capacity": 3,
       "lashSlots": 0,
-      "allowedTypes": ["scroll"],
+      "allowedTypes": [
+        "scroll"
+      ],
       "maxItems": 3,
       "containerSize": "small"
     }
@@ -766,7 +769,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/bottle_thumb.webp",
     "system": {
-      "description": "This small glass vial is a sturdy, cork-sealed container used to hold potions, holy water, alchemical mixtures, or other valuable liquids. Adventurers and scholars alike rely on such vials to store and transport substances safely while keeping them readily accessible in the field.",
+      "description": "A small, sturdy glass container sealed with a cork for potions, holy water, alchemical mixtures, or other valuable liquids. It keeps contents safe and accessible in the field.",
       "cost": 1,
       "unitWeight": 0.5,
       "storedSize": 2,
@@ -972,7 +975,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/sidesack_thumb.webp",
     "system": {
-      "description": "A sidesack is a lightweight pack worn diagonally across the front of the body. Slimmer and less cumbersome than a traditional backpack, it leaves the wearer free to move while keeping essential gear close at hand. Its many pouches, pockets, and loops provide secure storage for tools, supplies, and other adventuring necessities.",
+      "description": "A lightweight pack worn diagonally across the front, slimmer than a backpack and easy to move in. Pouches, pockets, and loops keep tools, supplies, and other essentials close at hand.",
       "cost": 6,
       "unitWeight": 2,
       "storedSize": 4,
@@ -993,215 +996,223 @@
       "allowedSizes": [],
       "allowedNames": [],
       "blockedTypes": [
-        "Slungable",
-        "Sword"
+        "slungable",
+        "sword"
       ]
     }
-},
-{
-  "name": "Ink Vial",
-  "type": "item",
-  "img": "systems/osp-houserules/assets/thumbs/images/gear/ink-vial_thumb.webp",
-  "system": {
-    "description": "Ink is a dark liquid used with a quill to write, illustrate, or record information on parchment and paper. It is typically stored in a small, stoppered vial to prevent spills and keep it from drying out.",
-    "cost": 20,
-    "unitWeight": 0.5,
-    "storedSize": 1,
-    "quantity": 1,
-    "equipped": false,
-    "lashable": false,
-    "tags": [],
-    "containerSizeRequired": "",
-    "slotCost": 0,
-    "allowedContainers": [
-      "Backpack",
-      "Belt Pouch (L)",
-      "Belt Pouch (S)",
-      "Cart",
-      "Chest, Large",
-      "Chest, Small",
-      "Panniers",
-      "Sack, Large",
-      "Sack, Small",
-      "Saddlebags, Large",
-      "Saddlebags, Small",
-      "Sidesack",
-      "Wagon"
-    ]
   },
-  "folder": "s6Thb2TUd0YuN0tG"
-},
-{
-  "name": "Healer's Kit",
-  "type": "item",
-  "img": "systems/osp-houserules/assets/thumbs/images/gear/healer-s-kit_thumb.webp",
-  "system": {
-    "description": "A compact leather case containing bandages, clean cloth, salves, needles, thread, splints, and basic surgical instruments. It provides supplies for treating wounds and stabilizing the injured, and typically contains enough materials for several uses.",
-    "cost": 20,
-    "unitWeight": 3,
-    "storedSize": 4,
-    "quantity": 1,
-    "equipped": false,
-    "lashable": false,
-    "tags": [
-      "tool",
-      "medical"
-    ],
-    "containerSizeRequired": "",
-    "slotCost": 0,
-    "allowedContainers": [
-      "Backpack",
-      "Belt Pouch (L)",
-      "Belt Pouch (S)",
-      "Cart",
-      "Chest, Large",
-      "Chest, Small",
-      "Panniers",
-      "Sack, Large",
-      "Sack, Small",
-      "Saddlebags, Large",
-      "Saddlebags, Small",
-      "Sidesack",
-      "Wagon"
-    ]
+  {
+    "name": "Ink Vial",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/ink-vial_thumb.webp",
+    "system": {
+      "description": "Ink is a dark liquid used with a quill to write, illustrate, or record information on parchment and paper. It is typically stored in a small, stoppered vial to prevent spills and keep it from drying out.",
+      "cost": 20,
+      "unitWeight": 0.5,
+      "storedSize": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [],
+      "containerSizeRequired": "",
+      "slotCost": 0,
+      "allowedContainers": [
+        "Backpack",
+        "Belt Pouch (L)",
+        "Belt Pouch (S)",
+        "Cart",
+        "Chest, Large",
+        "Chest, Small",
+        "Cloak",
+        "Clothes, Adventurer's",
+        "Clothes, Commoner's",
+        "Clothes, Merchant's",
+        "Clothes, Nobleman's",
+        "Panniers",
+        "Robes",
+        "Sack, Large",
+        "Sack, Small",
+        "Saddlebags, Large",
+        "Saddlebags, Small",
+        "Sidesack",
+        "Wagon"
+      ]
+    },
+    "folder": "s6Thb2TUd0YuN0tG"
   },
-  "folder": "s6Thb2TUd0YuN0tG"
-},
-{
-  "name": "Manacles",
-  "type": "item",
-  "img": "systems/osp-houserules/assets/thumbs/images/gear/manacles_thumb.webp",
-  "system": {
-    "description": "A small glass vial sealed with a cork and filled with writing ink. Used with a quill for recording notes, copying texts, drawing maps, or inscribing messages.",
-    "cost": 2,
-    "unitWeight": 1,
-    "storedSize": 2,
-    "quantity": 1,
-    "equipped": false,
-    "lashable": false,
-    "tags": [
-      "tool",
-      "restraint"
-    ],
-    "containerSizeRequired": "",
-    "slotCost": 0,
-    "allowedContainers": [
-      "Backpack",
-      "Belt Pouch (L)",
-      "Belt Pouch (S)",
-      "Cart",
-      "Chest, Large",
-      "Chest, Small",
-      "Panniers",
-      "Sack, Large",
-      "Sack, Small",
-      "Saddlebags, Large",
-      "Saddlebags, Small",
-      "Sidesack",
-      "Wagon"
-    ]
+  {
+    "name": "Healer's Kit",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/healer-s-kit_thumb.webp",
+    "system": {
+      "description": "A compact leather case containing bandages, clean cloth, salves, needles, thread, splints, and basic surgical instruments. It provides supplies for treating wounds and stabilizing the injured, and typically contains enough materials for several uses.",
+      "cost": 20,
+      "unitWeight": 3,
+      "storedSize": 4,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tool",
+        "medical"
+      ],
+      "containerSizeRequired": "",
+      "slotCost": 0,
+      "allowedContainers": [
+        "Backpack",
+        "Belt Pouch (L)",
+        "Belt Pouch (S)",
+        "Cart",
+        "Chest, Large",
+        "Chest, Small",
+        "Panniers",
+        "Sack, Large",
+        "Sack, Small",
+        "Saddlebags, Large",
+        "Saddlebags, Small",
+        "Sidesack",
+        "Wagon"
+      ]
+    },
+    "folder": "s6Thb2TUd0YuN0tG"
   },
-  "folder": "s6Thb2TUd0YuN0tG"
-},
-{
-  "name": "Signal Horn",
-  "type": "item",
-  "img": "systems/osp-houserules/assets/thumbs/images/gear/signal-horn_thumb.webp",
-  "system": {
-    "description": "A signal horn is a hollow animal horn used to produce loud, carrying notes over great distances. Its distinct calls can warn of danger, rally companions, announce an arrival, or convey simple messages across the wilderness or battlefield.",
-    "cost": 10,
-    "unitWeight": 2,
-    "storedSize": 4,
-    "quantity": 1,
-    "equipped": false,
-    "lashable": true,
-    "tags": [
-      "tool",
-      "restraint",
-      "slungable"
-    ],
-    "containerSizeRequired": "",
-    "slotCost": 0,
-    "allowedContainers": [
-      "Backpack",
-      "Belt Pouch (L)",
-      "Cart",
-      "Chest, Large",
-      "Panniers",
-      "Sack, Large",
-      "Sack, Small",
-      "Saddlebags, Large",
-      "Saddlebags, Small",
-      "Sidesack",
-      "Wagon"
-    ]
+  {
+    "name": "Manacles",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/manacles_thumb.webp",
+    "system": {
+      "description": "A small glass vial sealed with a cork and filled with writing ink. Used with a quill for recording notes, copying texts, drawing maps, or inscribing messages.",
+      "cost": 2,
+      "unitWeight": 1,
+      "storedSize": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tool",
+        "restraint"
+      ],
+      "containerSizeRequired": "",
+      "slotCost": 0,
+      "allowedContainers": [
+        "Backpack",
+        "Belt Pouch (L)",
+        "Belt Pouch (S)",
+        "Cart",
+        "Chest, Large",
+        "Chest, Small",
+        "Cloak",
+        "Clothes, Adventurer's",
+        "Clothes, Commoner's",
+        "Clothes, Merchant's",
+        "Clothes, Nobleman's",
+        "Panniers",
+        "Robes",
+        "Sack, Large",
+        "Sack, Small",
+        "Saddlebags, Large",
+        "Saddlebags, Small",
+        "Sidesack",
+        "Wagon"
+      ]
+    },
+    "folder": "s6Thb2TUd0YuN0tG"
   },
-  "folder": "s6Thb2TUd0YuN0tG"
-},
-{
-  "name": "Spellbook",
-  "type": "item",
-  "img": "systems/osp-houserules/assets/thumbs/images/gear/spellbook_thumb.webp",
-  "system": {
-    "description": "A spellbook is a carefully kept volume containing magical formulas, arcane symbols, rituals, and notes. Spellcasters use it to study, prepare, and preserve their spells. Contains 100 pages with each spell taking up a page per level.",
-    "cost": 50,
-    "unitWeight": 3,
-    "storedSize": 5,
-    "quantity": 1,
-    "equipped": false,
-    "lashable": true,
-    "tags": [
-      "magic"
-    ],
-    "containerSizeRequired": "",
-    "slotCost": 0,
-    "allowedContainers": [
-      "Backpack",
-      "Cart",
-      "Chest, Large",
-      "Panniers",
-      "Sack, Large",
-      "Sack, Small",
-      "Saddlebags, Large",
-      "Saddlebags, Small",
-      "Sidesack",
-      "Wagon"
-    ]
+  {
+    "name": "Signal Horn",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/signal-horn_thumb.webp",
+    "system": {
+      "description": "A signal horn is a hollow animal horn used to produce loud, carrying notes over great distances. Its distinct calls can warn of danger, rally companions, announce an arrival, or convey simple messages across the wilderness or battlefield.",
+      "cost": 10,
+      "unitWeight": 2,
+      "storedSize": 4,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "tags": [
+        "tool",
+        "restraint",
+        "slungable"
+      ],
+      "containerSizeRequired": "",
+      "slotCost": 0,
+      "allowedContainers": [
+        "Belt Pouch (L)",
+        "Cart",
+        "Chest, Large",
+        "Panniers",
+        "Saddlebags, Large",
+        "Saddlebags, Small",
+        "Wagon"
+      ]
+    },
+    "folder": "s6Thb2TUd0YuN0tG"
   },
-  "folder": "s6Thb2TUd0YuN0tG"
-},
-{
-  "name": "Mess Kit",
-  "type": "item",
-  "img": "systems/osp-houserules/assets/thumbs/images/gear/mess-kit_thumb.webp",
-  "system": {
-    "description": "A mess kit is a compact set of utensils and cookware used to prepare and eat meals while traveling or camping. Its pieces typically nest together for convenient storage and may include a small pot, pan, plate, cup, and cutlery.",
-    "cost": 10,
-    "unitWeight": 2,
-    "storedSize": 4,
-    "quantity": 1,
-    "equipped": false,
-    "lashable": false,
-    "tags": [
-      "tool"
-    ],
-    "containerSizeRequired": "",
-    "slotCost": 0,
-    "allowedContainers": [
-      "Backpack",
-      "Cart",
-      "Chest, Large",
-      "Panniers",
-      "Sack, Large",
-      "Sack, Small",
-      "Saddlebags, Large",
-      "Saddlebags, Small",
-      "Sidesack",
-      "Wagon"
-    ]
+  {
+    "name": "Spellbook",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/spellbook_thumb.webp",
+    "system": {
+      "description": "A spellbook is a carefully kept volume containing magical formulas, arcane symbols, rituals, and notes. Spellcasters use it to study, prepare, and preserve their spells. Contains 100 pages with each spell taking up a page per level.",
+      "cost": 50,
+      "unitWeight": 3,
+      "storedSize": 5,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "tags": [
+        "magic"
+      ],
+      "containerSizeRequired": "",
+      "slotCost": 0,
+      "allowedContainers": [
+        "Backpack",
+        "Cart",
+        "Chest, Large",
+        "Panniers",
+        "Sack, Large",
+        "Sack, Small",
+        "Saddlebags, Large",
+        "Saddlebags, Small",
+        "Sidesack",
+        "Wagon"
+      ]
+    },
+    "folder": "s6Thb2TUd0YuN0tG"
   },
-  "folder": "s6Thb2TUd0YuN0tG"
-},
+  {
+    "name": "Mess Kit",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/mess-kit_thumb.webp",
+    "system": {
+      "description": "A mess kit is a compact set of utensils and cookware used to prepare and eat meals while traveling or camping. Its pieces typically nest together for convenient storage and may include a small pot, pan, plate, cup, and cutlery.",
+      "cost": 10,
+      "unitWeight": 2,
+      "storedSize": 4,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tool"
+      ],
+      "containerSizeRequired": "",
+      "slotCost": 0,
+      "allowedContainers": [
+        "Backpack",
+        "Cart",
+        "Chest, Large",
+        "Panniers",
+        "Sack, Large",
+        "Sack, Small",
+        "Saddlebags, Large",
+        "Saddlebags, Small",
+        "Sidesack",
+        "Wagon"
+      ]
+    },
+    "folder": "s6Thb2TUd0YuN0tG"
+  },
   {
     "name": "Skin Sling",
     "type": "container",
@@ -1228,6 +1239,83 @@
       "allowedNames": [
         "Waterskin",
         "Wineskin"
+      ]
+    }
+  },
+  {
+    "name": "Animal Totem",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/ranger-focus-fox_thumb.webp",
+    "system": {
+      "description": "A wooden animal totem personally carved by the Ranger from a special tree's dead wood, never cut from a living tree, with a plain leather thong. It must depict a forest animal native to their range and be held or displayed while casting.",
+      "cost": 0,
+      "unitWeight": 0.1,
+      "storedSize": 0.25,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "focus",
+        "ranger",
+        "wooden"
+      ]
+    }
+  },
+  {
+    "name": "Mistletoe",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/druid-focus-mistletoe_thumb.webp",
+    "system": {
+      "description": "A small, forked sprig of mistletoe with leathery green leaves and clusters of ivory-white berries along its woody stems. It serves as a Druid's spell focus and must be held or displayed while casting.",
+      "cost": 0,
+      "unitWeight": 0.05,
+      "storedSize": 0.25,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "focus",
+        "druid",
+        "herb"
+      ]
+    }
+  },
+  {
+    "name": "Instrument",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/bard-focus-lute_thumb.webp",
+    "system": {
+      "description": "A well-used musical instrument, its worn surfaces and careful repairs reflecting a life of travel and performance. It serves as a Bard's instrument and spell focus and must be held or displayed while casting.",
+      "cost": 3.5,
+      "unitWeight": 2,
+      "storedSize": 8,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "tags": [
+        "instrument",
+        "focus",
+        "bard",
+        "wooden"
+      ]
+    }
+  },
+  {
+    "name": "Wand",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/wand_thumb.webp",
+    "system": {
+      "description": "A wooden wand shaped and finished to suit its owner, from a plain tapered length to a crooked, carved, or wrapped design. It serves as a spell focus held or displayed when casting and contains no stored spells or charges of its own.",
+      "cost": 1,
+      "unitWeight": 0.1,
+      "storedSize": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "focus",
+        "wand",
+        "wooden"
       ]
     }
   }

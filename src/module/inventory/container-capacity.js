@@ -1,23 +1,7 @@
-/**
- * @file Pure withdraw-target validation for Westford Bank. No Foundry globals — every function
- * takes an explicit `items` array instead of reaching into `actor.items`, so it can run against
- * plain fixtures in tests and against a live actor's EmbeddedCollection identically.
- *
- * This is a narrow, purpose-built port of the equivalent instance methods already living in
- * character-sheet.js (_isItemAllowedInContainer, _getUsedCapacity, _getEffectiveDropSize,
- * _getTotalNestedSize, _getNoStoreRejection, _skipCapacityCheck), not a refactor of that file.
- * character-sheet.js is the largest, most load-bearing file in the codebase, with ~15 existing
- * call sites into these methods intertwined with live drop-preview/lash/slung/tack special-
- * casing that a bank withdrawal never needs (a Bank withdraw target is always an ordinary
- * storage container the player already owns — never a sling mount, lash-only tack host, or
- * belt attachment). Duplicating the well-understood parts here avoids risking a regression in
- * that file's working drag-and-drop paths for a feature that's the only current beneficiary of
- * extracting them. The functions below are written as drop-in equivalents (same logic, same
- * order of checks, explicit `items` param) so a future refactor can point both call sites at
- * this module with no behavior change once this is proven out.
- */
-
-import { checkAllowedContainers } from "./container-allowlist.js";
+/** Shared storage validation: parent capacity counts immediate child bulk only (BR-13). */
+import { storedBulk, usedBulk, capacityValue } from './bulk.js';
+import { containedSubtree } from './containment.js';
+import { checkAllowedContainers, matchesContainerAllowedNames, matchesContainerType } from "./container-allowlist.js";
 
 // Verbatim copy of OspActorSheetCharacter.BUILT_IN_BLOCKED_TYPES (character-sheet.js) — the
 // fallback blocked-types table for well-known containers that pre-date the refresh macro.
@@ -35,45 +19,22 @@ export function skipCapacityCheck(container) {
 
 /** Recursively sums storedSize of all items inside a container (by id), including deep descendants. */
 export function getTotalNestedSize(containerId, items) {
-  return items
-    .filter((i) => i.system.containerId === containerId)
-    .reduce((sum, child) => {
-      const childSize = (parseFloat(child.system.storedSize) || 0) * (child.system.quantity || 1);
-      return sum + childSize + (child.type === 'container' ? getTotalNestedSize(child.id, items) : 0);
-    }, 0);
+  return containedSubtree(items, containerId).reduce((sum, child) => sum + storedBulk(child), 0);
 }
 
 /** Effective size for an item being dropped in (may be a plain data object, not a live item). */
-export function getEffectiveDropSize(itemData, items) {
-  const ss = parseFloat(itemData.system?.storedSize);
-  if (isNaN(ss) || ss < 0) {
-    return (itemData.type === 'weapon' || itemData.type === 'armor') ? 9999 : 0;
-  }
-  const ownSize = ss * (parseFloat(itemData.system.quantity) || 1);
-  if (itemData.type === 'container' && itemData._id) {
-    return ownSize + getTotalNestedSize(itemData._id, items);
-  }
-  return ownSize;
-}
+export function getEffectiveDropSize(itemData, _items) { return storedBulk(itemData, { invalidPenalty: true }); }
 
-/** Used capacity in a container, including nested contents of any sub-containers. */
-export function getUsedCapacity(container, items) {
-  return items
-    .filter((item) => item.system.containerId === container.id && !item.system.lashed)
-    .reduce((total, item) => {
-      const ownSize = (parseFloat(item.system.storedSize) || 0) * (item.system.quantity || 1);
-      const nestedSize = item.type === 'container' ? getTotalNestedSize(item.id, items) : 0;
-      return total + ownSize + nestedSize;
-    }, 0);
-}
+/** Only the immediate child's own bulk consumes this container's capacity. */
+export function getUsedCapacity(container, items) { return usedBulk(container, items); }
 
 export function getAvailableSpace(container, items) {
-  const maxCapacity = container.system?.capacity || 0;
+  const maxCapacity = capacityValue(container.system?.capacity);
   return maxCapacity - getUsedCapacity(container, items);
 }
 
 export function hasContainerSpace(container, itemData, items) {
-  const capacity = parseFloat(container.system?.capacity);
+  const capacity = capacityValue(container.system?.capacity);
   if (isNaN(capacity) || capacity <= 0) return false;
   return (getUsedCapacity(container, items) + getEffectiveDropSize(itemData, items)) <= capacity;
 }
@@ -81,6 +42,7 @@ export function hasContainerSpace(container, itemData, items) {
 // Items tagged no-store can never go in any container; no-vehicle-store items additionally
 // can't go in a vehicle-tagged container even though they could store elsewhere.
 export function getNoStoreRejection(itemData, targetContainer) {
+  if (targetContainer && ['ability', 'spell'].includes(itemData.type)) return 'Abilities and spells are not physical container contents.';
   const isStorageTarget = targetContainer && (targetContainer.type === "container" ||
     (targetContainer.type === "clothing" && targetContainer.system.capacity));
   if (isStorageTarget && (itemData.system?.tags || []).includes('no-store')) {
@@ -131,30 +93,30 @@ function blockedItemReason(itemData, container) {
  * @returns {{allowed:boolean, reason:(string|null)}}
  */
 export function isItemAllowedInContainer(itemData, container, items) {
+  if (['ability', 'spell'].includes(itemData.type)) return { allowed: false, reason: 'Abilities and spells are not physical container contents.' };
+  if (!(container?.type === 'container' || container?.type === 'clothing' && capacityValue(container.system?.capacity) > 0)) return { allowed: false, reason: 'Choose a storage container.' };
+  if (itemData.type === 'container' && (itemData.system?.tags || []).includes('tack')) return { allowed: false, reason: `${itemData.name} must be attached directly to a compatible animal.` };
+  if (itemData.type === 'container' && (itemData.system?.tags || []).includes('sling')) return { allowed: false, reason: `${itemData.name} cannot be stored in a container.` };
+  if ((Number(container.system?.lashSlots) || 0) > 0 && ['Saddle', 'Saddle, Pack'].includes(container.name)) return { allowed: false, reason: `${container.name} holds lashed items only.` };
   const allowlistCheck = checkAllowedContainers(itemData, container);
   if (!allowlistCheck.allowed) return allowlistCheck;
 
   const allowedNames = container.system?.allowedNames;
   if (allowedNames?.length > 0) {
-    const baseName = itemData.name.replace(/\s*[+-]\d+$/, '');
-    if (!allowedNames.includes(baseName)) {
+    if (!matchesContainerAllowedNames(itemData, container)) {
       return { allowed: false, reason: `${container.name} only accepts: ${allowedNames.join(', ')}.` };
     }
   }
 
   const allowedTypes = container.system?.allowedTypes;
   if (allowedTypes?.length > 0) {
-    const itemTags = itemData.system?.tags || [];
-    const weaponType = itemData.system?.weaponType || '';
-    const matches = allowedTypes.some((t) => itemTags.includes(t) || weaponType === t || itemData.type === t);
+    const matches = allowedTypes.some((t) => matchesContainerType(itemData, t));
     if (!matches) return { allowed: false, reason: `${container.name} only accepts: ${allowedTypes.join(', ')}.` };
   }
 
   const blockedTypes = container.system?.blockedTypes ?? BUILT_IN_BLOCKED_TYPES[container.name];
   if (blockedTypes?.length > 0) {
-    const itemTags = itemData.system?.tags || [];
-    const weaponType = itemData.system?.weaponType || '';
-    const matchedBlock = blockedTypes.find((t) => itemTags.includes(t) || weaponType === t || itemData.type === t);
+    const matchedBlock = blockedTypes.find((t) => matchesContainerType(itemData, t));
     if (matchedBlock) return { allowed: false, reason: blockedItemReason(itemData, container) };
   }
 
@@ -166,7 +128,8 @@ export function isItemAllowedInContainer(itemData, container, items) {
   const required = itemData.system?.containerSizeRequired || '';
   if (required) {
     const sizeRank = { small: 1, medium: 2, large: 3 };
-    const containerSize = container.system?.containerSize || 'medium';
+    const containerSize = container.system?.containerSize
+      || ((container.system?.tags || []).includes('vehicle') ? 'large' : 'medium');
     if ((sizeRank[containerSize] || 2) < (sizeRank[required] || 1)) {
       return { allowed: false, reason: `${itemData.name} is too large to fit inside ${container.name}.` };
     }

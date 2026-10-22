@@ -1,3 +1,12 @@
+import { migrateCauseFearScroll } from './module/spells/item-spell-migration.js';
+import { internalChatDocumentClass } from './module/internal-chat.js';
+import { registerItemRemovalAuthority } from './module/inventory/item-removal.js';
+import { registerHealthAuthority, registerHealthRoundHook } from './module/health/health-authority.js';
+import { registerCriticalAuthority } from './module/health/critical-authority.js';
+import { registerNoncombatAuthority } from './module/actor/noncombat.js';
+import { registerSpellcastingAuthority } from './module/spells/spellcasting.js';
+import { registerCombatSupportAuthority } from './module/combat/combat-support-ui.js';
+import { ospDialogOptions } from './module/dialog/dialog-theme.js';
 // ose.js - Main system entry point
 
 // Import system styles so the build produces dist/ose.css
@@ -9,7 +18,7 @@ window.DOMPurify = DOMPurify;
 
 // Import centralized configuration
 import { getNextLevelXP, calculateXPModifier, getLevelFromXP } from "./config/classes.js";
-import { SKILL_POINT_CONFIG, calcSkillPoints, showSkillPointDialog } from "./module/dialog/skill-point-dialog.js";
+
 import { NumberFormatter } from "./module/ui/number-formatter.js";
 import { OSP } from "./module/config.js";
 
@@ -19,7 +28,11 @@ import { OspActorSheetMonster } from "./module/actor/sheets/monster-sheet.js";
 import { PositionToolHandler } from "./module/actor/sheets/handlers/position-tool-handler.js";
 import { registerPositionSettings, applyStoredPositionOverrides } from "./module/actor/sheets/handlers/position-file-writer.js";
 import { OspActor } from "./module/actor/actor.js";
-import { handleLevelUp } from "./module/actor/level-up.js";
+import { processLevelUp, registerLevelUpAuthority, migrateLevelUpState } from './module/actor/level-up.js';
+import { registerCatalogReconciliationAuthority } from './module/inventory/catalog-reconciliation.js';
+import { registerCatalogReconciliationUI } from './module/inventory/catalog-reconciliation-ui.js';
+import { initProgressionAuthority } from './module/progression/progression-authority.js';
+import { registerXPAwardAuthority } from './module/progression/xp-awards.js';
 import { OspItem } from "./module/item/item.js";
 import { OspItemSheet } from "./module/item/item-sheet.js";
 
@@ -33,7 +46,7 @@ import { applyBankFontSetting, registerSettings } from "./module/settings.js";
 // Helper modules
 import { registerHelpers } from "./module/helpers-handlebars.js";
 import { preloadHandlebarsTemplates } from "./module/preloadTemplates.js";
-import { addChatMessageContextOptions, addChatMessageButtons } from "./module/helpers-chat.js";
+import { addChatMessageContextOptions, addChatMessageButtons, getChatDamageTotal } from "./module/helpers-chat.js";
 import { augmentTable } from "./module/helpers-treasure.js";
 import { createOspMacro, rollItemMacro, rollTableMacro } from "./module/helpers-macros.js";
 import { addControl as addPartyControl, update as updatePartySheet } from "./module/helpers-party.js";
@@ -43,7 +56,8 @@ import OspDice from "./module/helpers-dice.js";
 import { MagicItemCreator } from "./module/dialog/magic-item-creator.js";
 
 // Combat system
-import OspCombat from "./module/combat/combat.js";
+import OspCombat, { registerCombatInitiativeAuthority } from "./module/combat/combat.js";
+import { migrateInitiativeDefaults } from "./module/combat/initiative-migration.js";
 import OspCombatant from "./module/combat/combatant.js";
 import OspCombatTracker from "./module/combat/combat-tracker.js";
 import { registerMoraleHooks } from "./module/combat/morale.js";
@@ -55,7 +69,7 @@ import DmToolkitTab from "./module/sidebar/dm-toolkit.js";
 import PlayerToolkitTab from "./module/sidebar/player-toolkit.js";
 
 // Character creation dialog (4d6 drop lowest ability rolls)
-import { CharacterCreationDialog } from "./module/actor/character-creation-dialog.js";
+import { createCharacterFromPrompt } from "./module/actor/character-creation-dialog.js";
 
 // Token ruler
 import { TokenRulerOSP } from "./module/actor/token-ruler.js";
@@ -64,6 +78,8 @@ import { TokenRulerOSP } from "./module/actor/token-ruler.js";
 import { initExternalDragTracker } from "./module/external-drag-tracker.js";
 import { initPartyTreasury } from "./module/inventory/party-treasury.js";
 import { initStorehouse } from "./module/inventory/storehouse.js";
+import { initInventoryAuthority } from "./module/inventory/inventory-authority.js";
+import { initBankLedgerAuthority } from "./module/inventory/bank-ledger-orchestrator.js";
 
 Hooks.once("init", () => {
   initExternalDragTracker();
@@ -94,10 +110,11 @@ Hooks.once("init", () => {
   registerHelpers();
 
   // ── Document Classes ──────────────────────────────────────────────────────
+  CONFIG.ChatMessage.documentClass = internalChatDocumentClass(CONFIG.ChatMessage.documentClass);
   CONFIG.Actor.documentClass = OspActor;
   CONFIG.Actor.label = game.i18n.localize("ose.Actor.documentLabel");
   CONFIG.Item.documentClass = OspItem;
-  CONFIG.Item.defaultOwnership = { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER };
+  CONFIG.Item.defaultOwnership = { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE };
 
   // ── Combat ────────────────────────────────────────────────────────────────
   CONFIG.Combat.documentClass = OspCombat;
@@ -198,27 +215,10 @@ Hooks.once("init", () => {
     const sourceData = document.toObject();
     delete sourceData._id;
 
-    (async () => {
-      const result = await CharacterCreationDialog.prompt();
-      if (!result) return;
-      const DEFAULT_PORTRAIT = 'systems/osp-houserules/assets/images/icons/generic-portrait.webp';
-      const newData = foundry.utils.mergeObject(
-        sourceData,
-        {
-          img: DEFAULT_PORTRAIT,
-          prototypeToken: { texture: { src: DEFAULT_PORTRAIT } },
-          system: {
-            attributes: result.attributes,
-            race:        result.race        || '',
-            class:       result.class       || '',
-            alignment:   result.alignment   || '',
-            background:  result.background  || ''
-          }
-        },
-        { inplace: false }
-      );
-      await Actor.create(newData, { osprSkipDialog: true, renderSheet: true });
-    })();
+    createCharacterFromPrompt(sourceData).catch(error => {
+      console.error('OSP | Character creation failed', error);
+      ui.notifications.error('Character creation failed. Please try again.');
+    });
 
     return false;
   });
@@ -226,10 +226,34 @@ Hooks.once("init", () => {
 });
 
 // ── Position overrides ────────────────────────────────────────────────────
-Hooks.once("ready", () => {
+Hooks.once("ready", async () => {
   applyBankFontSetting();
   initPartyTreasury();
   initStorehouse();
+  initInventoryAuthority();
+  registerItemRemovalAuthority();
+  initBankLedgerAuthority();
+  registerXPAwardAuthority();
+  registerCatalogReconciliationAuthority();
+  registerCatalogReconciliationUI();
+  registerLevelUpAuthority();
+  registerCombatInitiativeAuthority();
+  registerCombatSupportAuthority();
+  registerSpellcastingAuthority();
+  void migrateCauseFearScroll().catch(error => console.error('[osp-houserules] Cause Fear scroll repair failed', error));
+  registerNoncombatAuthority();
+  registerHealthAuthority();
+  registerCriticalAuthority();
+  registerHealthRoundHook();
+  initProgressionAuthority();
+  if (game.user.id === game.users.activeGM?.id) {
+    try { await migrateInitiativeDefaults(); }
+    catch (error) { console.warn('OSP | Initiative defaults migration requires retry:', error); }
+    for (const actor of game.actors.filter(actor => actor.type === 'character')) {
+      try { await migrateLevelUpState(actor); }
+      catch (error) { console.warn('OSP | Progression baseline migration requires recovery:', error); }
+    }
+  }
   applyStoredPositionOverrides().catch(err => console.warn('OSP | applyStoredPositionOverrides failed:', err));
 
 });
@@ -242,38 +266,13 @@ Hooks.on("renderActorDirectory", (app, html) => addPartyControl(app, html));
 Hooks.on("updateActor", async (actor, data, options) => {
   updatePartySheet(actor, data);
 
-  // ── Level-up detection (skill points + Hit Die roll) ─────────────────────
-  // Only trigger when XP actually changed, on the owning player's client.
-  // If a non-GM owner is active, skip on GM to avoid duplicate dialogs.
-  // Hoisted out of the skill-point class check (previously this whole block only ran for
-  // SKILL_POINT_CONFIG classes) since Hit Die rolling applies to every class, not just the
-  // ones with skill points — lastKnownLevel is shared as the single source of truth for
-  // "this actor's level as of the last time we processed an XP change" for both features.
+  // The elected owner prompts; the active GM commits durable level/skill progress.
+  // Do not await a new authority request inside an XP award's document-update hook.
   if (data.system?.xp !== undefined && actor.type === 'character') {
-    const isRelevantClient = actor.isOwner && (game.user.isGM
-      ? !game.users.some(u => !u.isGM && u.active && (actor.ownership[u.id] ?? 0) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
-      : true);
-
-    if (isRelevantClient) {
-      const newLevel      = parseInt(actor.system.level) || 1;
-      const lastKnownLevel = actor.getFlag('osp-houserules', 'lastKnownLevel') ?? 0;
-
-      if (newLevel > lastKnownLevel) {
-        const config = SKILL_POINT_CONFIG[(actor.system.class || '').trim()];
-        const newPoints    = config ? calcSkillPoints(config, lastKnownLevel, newLevel) : 0;
-        const prevPending  = actor.getFlag('osp-houserules', 'pendingSkillPoints') || 0;
-        const totalPending = prevPending + newPoints;
-
-        // Persist updated tracking in one update (avoids double hook)
-        await actor.update({
-          'flags.osp-houserules.lastKnownLevel':    newLevel,
-          'flags.osp-houserules.pendingSkillPoints': totalPending,
-        });
-
-        if (config) showSkillPointDialog(actor, totalPending);
-        await handleLevelUp(actor, lastKnownLevel, newLevel);
-      }
-    }
+    void processLevelUp(actor, { sourceAwardId: options?.ospXPAwardId }).catch(error => {
+      console.warn('OSP | Level-up paused:', error);
+      if (actor.isOwner) ui.notifications.warn('Level-up is pending. Use Resume Level-up on the character sheet.');
+    });
   }
 
   // XP award popup — fires on every client; only show for actors owned by this user
@@ -328,8 +327,8 @@ Hooks.on("createChatMessage", (message) => {
 
   if (flags.combatDamage) {
     // For manual rolls the total is stored in the flag (no rolls[] on the message)
-    const total = isManual ? flags.manualDamageTotal : message.rolls?.[0]?.total;
-    if (total !== undefined) {
+    const total = getChatDamageTotal(message);
+    if (total !== null) {
       if (!isManual && dsnActive) _pendingDamageResults.set(message.id, total);
       else updateHitPopupWithDamage(total);
     }
@@ -694,8 +693,8 @@ Handlebars.registerHelper('getSavingThrow', function(saveType, characterClass, l
 */
 
 // Register a Handlebars helper for next level XP calculation
-Handlebars.registerHelper('getNextLevelXP', function(characterClass, level) {
-  return getNextLevelXP(characterClass, parseInt(level) || 1);
+Handlebars.registerHelper('getNextLevelXP', function(characterClass, level, race) {
+  return getNextLevelXP(characterClass, parseInt(level) || 1, race || '');
 });
 
 // Register a Handlebars helper for XP modifier calculation
@@ -760,7 +759,7 @@ Hooks.once("ready", () => {
     let resetCount = 0;
 
     // Find all open character sheets
-    Object.values(ui.windows).forEach(window => {
+    Array.from(foundry.applications.instances.values()).forEach(window => {
       if (window instanceof OspActorSheetCharacter) {
         try {
           window.resetAllFieldsToVisible();
@@ -938,7 +937,7 @@ Hooks.on("targetToken", async (user, token, targeted) => {
       </form>
     `;
 
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: `Pick up ${itemData.name}`,
       content: content,
       buttons: {
@@ -1032,10 +1031,10 @@ Hooks.on("targetToken", async (user, token, targeted) => {
         }
       },
       default: "pickSpecific"
-    }).render(true);
+    })).render(true);
   } else {
     // Single item, simple pickup dialog
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: `Pick up ${itemData.name}?`,
       content: `<p>Pick up <strong>${itemData.name}</strong>?</p>`,
       buttons: {
@@ -1078,7 +1077,7 @@ Hooks.on("targetToken", async (user, token, targeted) => {
         }
       },
       default: "yes"
-    }).render(true);
+    })).render(true);
   }
 });
 

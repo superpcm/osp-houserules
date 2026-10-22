@@ -1,0 +1,21 @@
+{
+  "name": "Scroll of Cure Light Wounds",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/magic/scroll-cure-light-wounds_thumb.webp",
+  "system": {
+    "description": "Restores 1d6+1 hit points to a touched creature. The scroll is consumed when cast.",
+    "quantity": 1,
+    "cost": 0,
+    "unitWeight": 0.1,
+    "storedSize": 1,
+    "tags": [
+      "magic",
+      "scroll",
+      "consumable"
+    ],
+    "spellKey": "cure_light_wounds",
+    "spellClass": "cleric",
+    "spellReversed": false,
+    "spellSourceKind": "scroll"
+  }
+}

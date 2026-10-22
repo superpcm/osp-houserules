@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-03T05:38:27.484116+00:00",
+  "commands": [
+    "rtk proxy node --check scripts/pack-snapshot.js",
+    "rtk proxy node --check scripts/leveldb-log-integrity.js"
+  ],
+  "exits": [
+    0,
+    0
+  ]
+}

@@ -1,3 +1,4 @@
+import { getMaximumLevel } from '../../../../config/progression.js';
 import { calculateXPModifier, getNextLevelXP } from "../../../../config/classes.js";
 
 /**
@@ -93,7 +94,8 @@ export class XPProgressHandler {
     const nextLevelXP = this.getNextLevelXP();
     const currentLevelXP = this.getCurrentLevelXP();
 
-    let progressPercentage = 0;
+    const atMaximum = Number(this.actor.system.level || 1) >= getMaximumLevel(this.actor.system.class, this.actor.system.race || '');
+    let progressPercentage = atMaximum ? 100 : 0;
     if (nextLevelXP > currentLevelXP && nextLevelXP > 0 && currentLevelXP >= 0) {
       const xpInCurrentLevel = currentXP - currentLevelXP;
       const xpNeededForNextLevel = nextLevelXP - currentLevelXP;
@@ -111,7 +113,7 @@ export class XPProgressHandler {
     }
 
     if (this.nextLevelDisplay.length) {
-      this.nextLevelDisplay.text(nextLevelXP);
+      this.nextLevelDisplay.text(atMaximum ? 'Maximum level' : nextLevelXP);
     }
 
     if (this.nextLevelFormDisplay.length) {
@@ -160,13 +162,13 @@ export class XPProgressHandler {
   getNextLevelXP() {
     const characterClass = this.actor.system.class;
     const currentLevel = parseInt(this.actor.system.level) || 1;
-    return getNextLevelXP(characterClass, currentLevel);
+    return getNextLevelXP(characterClass, currentLevel, this.actor.system.race || '');
   }
 
   getCurrentLevelXP() {
     const characterClass = this.actor.system.class;
     const currentLevel = parseInt(this.actor.system.level) || 1;
-    return currentLevel > 1 ? getNextLevelXP(characterClass, currentLevel - 1) : 0;
+    return currentLevel > 1 ? getNextLevelXP(characterClass, currentLevel - 1, this.actor.system.race || '') : 0;
   }
 
   getProgressInfo() {

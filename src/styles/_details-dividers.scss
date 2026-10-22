@@ -1,0 +1,43 @@
+// Match the writing-panel dividers on Background and Notes.
+.osp.sheet.actor.character .tab[data-tab="character"] .bg-panel-editor :is(.editor-content, .ProseMirror):empty::before {
+  content: none !important;
+}
+.osp.sheet.actor.character .tab[data-tab="character"] .bg-panel-title {
+  position: relative;
+}
+.osp.sheet.actor.character .tab[data-tab="character"] .bg-panel-title::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  border-top: 1px solid rgba(82, 65, 42, 0.45);
+  pointer-events: none;
+}
+
+// The native sheet helper converts the requested viewport bottom into scaled panel height.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab].active) .tab.tab:is([data-tab="background"], [data-tab="character"]) .bg-panel[style*="--osp-writing-panel-height"]::before {
+  height: var(--osp-writing-panel-height) !important;
+  top: var(--osp-writing-panel-top) !important;
+  bottom: auto !important;
+}
+
+// Center the Notes formatting controls within their full-width divider.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab].active) .tab.tab[data-tab="notes"] .bg-panel-editor .editor-menu {
+  justify-content: center !important;
+}
+.osp.sheet.actor.character .tab[data-tab="character"] .bg-panel:has(prose-mirror) .bg-panel-title::after {
+  content: none !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab].active) .tab.tab[data-tab="notes"][style*="--osp-writing-panel-height"]::before {
+  height: var(--osp-writing-panel-height) !important;
+  top: var(--osp-writing-panel-top) !important;
+  bottom: auto !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab].active) .tab.tab:is([data-tab="background"], [data-tab="character"]) .bg-panel .bg-panel-title {
+  text-align: center !important;
+  justify-content: center !important;
+}

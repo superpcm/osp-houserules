@@ -1,0 +1,21 @@
+.osp-native-character form.osp.sheet.actor.character {
+  :is(#char-age, #char-height, #char-weight) {
+    text-align: center !important;
+  }
+
+  .tab[data-tab="bio"] .bio-abilities-title {
+    position: relative;
+    top: 2px;
+  }
+
+  .tab[data-tab="bio"] #background-container#background-container#background-container::before {
+    content: "";
+    display: block !important;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid rgba(161, 133, 72, 0.65);
+    pointer-events: none;
+  }
+}

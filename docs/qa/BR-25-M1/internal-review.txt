@@ -1,0 +1,17 @@
+Internal verifier source review (implementer-team evidence; independent release acceptance pending):
+- Syntax checks passed for Python helper, Node orchestrator and test file.
+- Reviewed all-pack lock acquisition, descriptor reuse, manifest-selected inputs, inventory/hash checks, path rejection, copied-only database inspection, staging cleanup, canonical round trip and provenance.
+- Initial review was conditional because no artifact existed.
+- Focused validation subsequently exposed an empty-round-trip initialization defect; root added explicit fresh.open(). Verifier reviewed that correction and the corrected lock fixtures.
+- Corrected fixtures avoid reading/closing another LOCK descriptor in the process holding ClassicLevel; separate POSIX probe checks lock lifetime through copying.
+- No further source defect was identified in the follow-up review. This is not proof of catalog fidelity, installation or Foundry acceptance.
+- Actual-source attempt failed closed on all three locks (errno 35); 26 baseline pack files remained unchanged.
+
+Artifact review of local synthetic snapshot A:
+- All 21 raw input file hashes and all snapshot output hashes match.
+- Two canonical Item records; roundTripVerified=true.
+- Canonical export SHA256: aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325.
+- Canonical pack/catalog identity: cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97.
+- No .inspect/.roundtrip directories remain; all required inputs are present.
+- Git provenance correctly unavailable for synthetic source outside Git.
+- Synthetic fixture evidence only; campaign/catalog/Foundry/install/release acceptance pending.

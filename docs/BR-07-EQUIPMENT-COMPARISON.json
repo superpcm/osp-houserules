@@ -1,0 +1,5651 @@
+{
+  "status": "DRAFT; no rule approvals",
+  "source": "data/ose_house_rules_v1_5.json equipment",
+  "comparison": {
+    "generatedAt": "2026-09-30T18:50:57.101Z",
+    "source": "data/ose_house_rules_v1_5.json equipment.*",
+    "runtimeCostEvidence": {
+      "file": "src/module/inventory/treasure-cost.js",
+      "lines": [
+        1,
+        9,
+        34
+      ],
+      "summary": "comments and stageItemCost use item system.cost as sp-equivalent costSp; Silver Coins=1, Copper=0.1, Gold=10"
+    },
+    "notes": [
+      "Only exact normalized names are treated as catalog matches. Non-identical names are catalogCandidates for user review, not equivalence.",
+      "House costs ending in sp are normalized to numeric silver and compared directly to catalog system.cost.",
+      "House cp/gp cost strings are marked exchange-decision-pending; 4x and other formula prices are manual.",
+      "House cw is recorded beside catalog unitWeight with unit-conversion-pending status; raw numeric difference alone is not a semantic conflict.",
+      "All other defined source fields are recorded with current catalog values where present."
+    ],
+    "rows": [
+      {
+        "category": "armor",
+        "sourceIndex": 0,
+        "sourceName": "Padded",
+        "source": {
+          "name": "Padded",
+          "category": "Light Armor",
+          "cost": "5sp",
+          "cw": 80,
+          "ac": 11,
+          "dex_modifier": 3,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/armor.json",
+          "line": 269,
+          "index": 12,
+          "name": "Padded",
+          "type": "armor"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "5sp",
+            "normalizedSourceSp": 5,
+            "catalog": 4,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 80,
+            "catalog": 8,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "ac": {
+            "source": 11,
+            "catalog": 11,
+            "field": "aac.value",
+            "status": "match"
+          },
+          "dex_modifier": {
+            "source": 3,
+            "catalog": 3,
+            "field": "maxDex",
+            "status": "match"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Light Armor",
+            "catalog": "light",
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 1,
+        "sourceName": "Leather",
+        "source": {
+          "name": "Leather",
+          "category": "Light Armor",
+          "cost": "10sp",
+          "cw": 100,
+          "ac": 11,
+          "dex_modifier": 3,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/armor.json",
+          "line": 247,
+          "index": 11,
+          "name": "Leather",
+          "type": "armor"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "10sp",
+            "normalizedSourceSp": 10,
+            "catalog": 20,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 100,
+            "catalog": 10,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "ac": {
+            "source": 11,
+            "catalog": 12,
+            "field": "aac.value",
+            "status": "mismatch"
+          },
+          "dex_modifier": {
+            "source": 3,
+            "catalog": 3,
+            "field": "maxDex",
+            "status": "match"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Light Armor",
+            "catalog": "light",
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 2,
+        "sourceName": "Studded Leather",
+        "source": {
+          "name": "Studded Leather",
+          "category": "Light Armor",
+          "cost": "45sp",
+          "cw": 130,
+          "ac": 12,
+          "dex_modifier": 3,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/armor.json",
+          "line": 382,
+          "index": 16,
+          "name": "Studded Leather",
+          "type": "armor"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "45sp",
+            "normalizedSourceSp": 45,
+            "catalog": 25,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 130,
+            "catalog": 15,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "ac": {
+            "source": 12,
+            "catalog": 13,
+            "field": "aac.value",
+            "status": "mismatch"
+          },
+          "dex_modifier": {
+            "source": 3,
+            "catalog": 3,
+            "field": "maxDex",
+            "status": "match"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Light Armor",
+            "catalog": "light",
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 3,
+        "sourceName": "Furs/Hide",
+        "source": {
+          "name": "Furs/Hide",
+          "category": "Medium Armor",
+          "cost": "10sp",
+          "cw": 120,
+          "ac": 13,
+          "dex_modifier": 2,
+          "properties": []
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/armor.json",
+            "line": 225,
+            "index": 10,
+            "name": "Hide",
+            "type": "armor",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 4,
+        "sourceName": "Scale",
+        "source": {
+          "name": "Scale",
+          "category": "Medium Armor",
+          "cost": "50sp",
+          "cw": 450,
+          "ac": 14,
+          "dex_modifier": 2,
+          "properties": []
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 5,
+        "sourceName": "Brigandine",
+        "source": {
+          "name": "Brigandine",
+          "category": "Medium Armor",
+          "cost": "100sp",
+          "cw": 300,
+          "ac": 14,
+          "dex_modifier": 2,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/armor.json",
+          "line": 49,
+          "index": 2,
+          "name": "Brigandine",
+          "type": "armor"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "100sp",
+            "normalizedSourceSp": 100,
+            "catalog": 120,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 300,
+            "catalog": 20,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "ac": {
+            "source": 14,
+            "catalog": 13,
+            "field": "aac.value",
+            "status": "mismatch"
+          },
+          "dex_modifier": {
+            "source": 2,
+            "catalog": 2,
+            "field": "maxDex",
+            "status": "match"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Medium Armor",
+            "catalog": "medium",
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 6,
+        "sourceName": "Half Plate",
+        "source": {
+          "name": "Half Plate",
+          "category": "Medium Armor",
+          "cost": "250sp",
+          "cw": 400,
+          "ac": 15,
+          "dex_modifier": 2,
+          "properties": []
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 7,
+        "sourceName": "Chain Mail",
+        "source": {
+          "name": "Chain Mail",
+          "category": "Heavy Armor",
+          "cost": "75sp",
+          "cw": 400,
+          "ac": 16,
+          "dex_modifier": 0,
+          "properties": [
+            "STR13"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/armor.json",
+          "line": 93,
+          "index": 4,
+          "name": "Chain mail",
+          "type": "armor"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "75sp",
+            "normalizedSourceSp": 75,
+            "catalog": 75,
+            "status": "match",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 400,
+            "catalog": 25,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "ac": {
+            "source": 16,
+            "catalog": 14,
+            "field": "aac.value",
+            "status": "mismatch"
+          },
+          "dex_modifier": {
+            "source": 0,
+            "catalog": 2,
+            "field": "maxDex",
+            "status": "mismatch"
+          },
+          "properties": {
+            "source": [
+              "STR13"
+            ],
+            "catalog": [],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Heavy Armor",
+            "catalog": "medium",
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 8,
+        "sourceName": "Splint/Banded",
+        "source": {
+          "name": "Splint/Banded",
+          "category": "Heavy Armor",
+          "cost": "200sp",
+          "cw": 600,
+          "ac": 17,
+          "dex_modifier": 0,
+          "properties": [
+            "STR15"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/armor.json",
+            "line": 3,
+            "index": 0,
+            "name": "Banded mail",
+            "type": "armor",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 9,
+        "sourceName": "Full Plate",
+        "source": {
+          "name": "Full Plate",
+          "category": "Heavy Armor",
+          "cost": "500sp",
+          "cw": 650,
+          "ac": 18,
+          "dex_modifier": 0,
+          "properties": [
+            "STR15"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/armor.json",
+          "line": 137,
+          "index": 6,
+          "name": "Full plate",
+          "type": "armor"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "500sp",
+            "normalizedSourceSp": 500,
+            "catalog": 10000,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 650,
+            "catalog": 50,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "ac": {
+            "source": 18,
+            "catalog": 19,
+            "field": "aac.value",
+            "status": "mismatch"
+          },
+          "dex_modifier": {
+            "source": 0,
+            "catalog": 0,
+            "field": "maxDex",
+            "status": "match"
+          },
+          "properties": {
+            "source": [
+              "STR15"
+            ],
+            "catalog": [],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Heavy Armor",
+            "catalog": "heavy",
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 10,
+        "sourceName": "Small Shield",
+        "source": {
+          "name": "Small Shield",
+          "category": "Shield",
+          "cost": "10sp",
+          "cw": 60,
+          "ac_bonus": 1,
+          "dex_modifier": 3,
+          "properties": []
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/armor.json",
+            "line": 358,
+            "index": 15,
+            "name": "Shield",
+            "type": "armor",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "armor",
+        "sourceIndex": 11,
+        "sourceName": "Large Shield",
+        "source": {
+          "name": "Large Shield",
+          "category": "Shield",
+          "cost": "30sp",
+          "cw": 80,
+          "ac_bonus": 2,
+          "dex_modifier": 1,
+          "properties": [
+            "!GH"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/armor.json",
+            "line": 25,
+            "index": 1,
+            "name": "Body Shield",
+            "type": "armor",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 0,
+        "sourceName": "Bastard Sword",
+        "source": {
+          "name": "Bastard Sword",
+          "category": "Melee",
+          "cost": "8sp",
+          "cw": 30,
+          "damage": "1d6*",
+          "range": null,
+          "properties": [
+            "2GH"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 3,
+          "index": 0,
+          "name": "Bastard Sword",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "8sp",
+            "normalizedSourceSp": 8,
+            "catalog": 25,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 30,
+            "catalog": 6,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6*",
+            "catalog": {
+              "oneHanded": {
+                "normal": "1d8",
+                "large": "1d12"
+              },
+              "twoHanded": {
+                "normal": "2d4",
+                "large": "2d8"
+              }
+            },
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "2GH"
+            ],
+            "catalog": [
+              "melee",
+              "versatile",
+              "sword"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 1,
+        "sourceName": "Battleaxe",
+        "source": {
+          "name": "Battleaxe",
+          "category": "Melee",
+          "cost": "10sp",
+          "cw": 40,
+          "damage": "1d8",
+          "range": null,
+          "properties": [
+            "2GH"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 45,
+            "index": 1,
+            "name": "Battle Axe",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 2,
+        "sourceName": "Brass Knuckles",
+        "source": {
+          "name": "Brass Knuckles",
+          "category": "Melee",
+          "cost": "5cp",
+          "cw": 5,
+          "damage": "1d4",
+          "range": null,
+          "properties": []
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 3,
+        "sourceName": "Club",
+        "source": {
+          "name": "Club",
+          "category": "Melee",
+          "cost": "5cp",
+          "cw": 20,
+          "damage": "1d4",
+          "range": null,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 144,
+          "index": 4,
+          "name": "Club",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "5cp",
+            "parsed": {
+              "kind": "cp",
+              "numeric": 5
+            },
+            "catalog": 3,
+            "status": "exchange-decision-pending",
+            "basis": "house currency exchange/notation must be approved before comparing cp/gp to runtime sp cost"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 3,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d4",
+            "catalog": "1d6",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [
+              "blunt",
+              "melee"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 4,
+        "sourceName": "Dagger",
+        "source": {
+          "name": "Dagger",
+          "category": "Melee",
+          "cost": "3sp",
+          "cw": 10,
+          "damage": "1d4",
+          "range": "10/20/30",
+          "properties": [
+            "T"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 240,
+          "index": 7,
+          "name": "Dagger",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "3sp",
+            "normalizedSourceSp": 3,
+            "catalog": 2,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 10,
+            "catalog": 1,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d4",
+            "catalog": "1d4",
+            "field": "damage",
+            "status": "match"
+          },
+          "range": {
+            "source": "10/20/30",
+            "catalog": {
+              "short": 10,
+              "medium": 20,
+              "long": 30
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "T"
+            ],
+            "catalog": [
+              "melee",
+              "missile",
+              "dagger"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 5,
+        "sourceName": "Flail",
+        "source": {
+          "name": "Flail",
+          "category": "Melee",
+          "cost": "10sp",
+          "cw": 20,
+          "damage": "1d8",
+          "range": null,
+          "properties": [
+            "2GH"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 306,
+          "index": 9,
+          "name": "Flail",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "10sp",
+            "normalizedSourceSp": 10,
+            "catalog": 15,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 4,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d8",
+            "catalog": "1d6+1",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "2GH"
+            ],
+            "catalog": [
+              "melee"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 6,
+        "sourceName": "Glaive",
+        "source": {
+          "name": "Glaive",
+          "category": "Melee",
+          "cost": "10sp",
+          "cw": 60,
+          "damage": "1d8",
+          "range": null,
+          "properties": [
+            "!GH",
+            "R",
+            "2"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 715,
+            "index": 22,
+            "name": "Pole Arm",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 7,
+        "sourceName": "Greataxe",
+        "source": {
+          "name": "Greataxe",
+          "category": "Melee",
+          "cost": "30sp",
+          "cw": 70,
+          "damage": "1d10",
+          "range": null,
+          "properties": [
+            "!GH",
+            "2",
+            "STR13"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 8,
+        "sourceName": "Greatclub",
+        "source": {
+          "name": "Greatclub",
+          "category": "Melee",
+          "cost": "1sp",
+          "cw": 100,
+          "damage": "1d10",
+          "range": null,
+          "properties": [
+            "!GH",
+            "2",
+            "STR15"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 332,
+            "index": 10,
+            "name": "Great Club",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 9,
+        "sourceName": "Greatsword",
+        "source": {
+          "name": "Greatsword",
+          "category": "Melee",
+          "cost": "50sp",
+          "cw": 75,
+          "damage": "2d6",
+          "range": null,
+          "properties": [
+            "!GH",
+            "2",
+            "STR13"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 364,
+          "index": 11,
+          "name": "Greatsword",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "50sp",
+            "normalizedSourceSp": 50,
+            "catalog": 30,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 75,
+            "catalog": 6,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "2d6",
+            "catalog": "1d10",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "!GH",
+              "2",
+              "STR13"
+            ],
+            "catalog": [
+              "melee",
+              "two-handed",
+              "sword"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 10,
+        "sourceName": "Halberd",
+        "source": {
+          "name": "Halberd",
+          "category": "Melee",
+          "cost": "20sp",
+          "cw": 60,
+          "damage": "1d8*",
+          "range": null,
+          "properties": [
+            "!GH",
+            "R",
+            "2"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 715,
+            "index": 22,
+            "name": "Pole Arm",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 11,
+        "sourceName": "Hand Axe",
+        "source": {
+          "name": "Hand Axe",
+          "category": "Melee",
+          "cost": "4sp",
+          "cw": 20,
+          "damage": "1d4",
+          "range": "10/20/30",
+          "properties": [
+            "T"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 397,
+          "index": 12,
+          "name": "Hand Axe",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "4sp",
+            "normalizedSourceSp": 4,
+            "catalog": 1,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 3,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d4",
+            "catalog": "1d6",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": "10/20/30",
+            "catalog": {
+              "short": 10,
+              "medium": 20,
+              "long": 30
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "T"
+            ],
+            "catalog": [
+              "melee",
+              "missile"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 12,
+        "sourceName": "Hammer",
+        "source": {
+          "name": "Hammer",
+          "category": "Melee",
+          "cost": "2sp",
+          "cw": 20,
+          "damage": "1d4",
+          "range": "10/20/30",
+          "properties": [
+            "T"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 530,
+            "index": 16,
+            "name": "Light Hammer",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 13,
+        "sourceName": "Javelin",
+        "source": {
+          "name": "Javelin",
+          "category": "Melee",
+          "cost": "7sp",
+          "cw": 20,
+          "damage": "1d6",
+          "range": "30/60/90",
+          "properties": [
+            "T"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 429,
+          "index": 13,
+          "name": "Javelin",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "7sp",
+            "normalizedSourceSp": 7,
+            "catalog": 5,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 3,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6",
+            "catalog": "1d6",
+            "field": "damage",
+            "status": "match"
+          },
+          "range": {
+            "source": "30/60/90",
+            "catalog": {
+              "short": 20,
+              "medium": 40,
+              "long": 60
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "T"
+            ],
+            "catalog": [
+              "missile"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 14,
+        "sourceName": "Lance",
+        "source": {
+          "name": "Lance",
+          "category": "Melee",
+          "cost": "20sp",
+          "cw": 80,
+          "damage": "1d10",
+          "range": null,
+          "properties": [
+            "!GH",
+            "R",
+            "STR13"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 499,
+          "index": 15,
+          "name": "Lance",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "20sp",
+            "normalizedSourceSp": 20,
+            "catalog": 10,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 80,
+            "catalog": 8,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d10",
+            "catalog": "1d6+1",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "!GH",
+              "R",
+              "STR13"
+            ],
+            "catalog": [
+              "melee",
+              "charge"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 15,
+        "sourceName": "Longsword",
+        "source": {
+          "name": "Longsword",
+          "category": "Melee",
+          "cost": "15sp",
+          "cw": 40,
+          "damage": "1d8",
+          "range": null,
+          "properties": [
+            "2GH"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 602,
+          "index": 18,
+          "name": "Longsword",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "15sp",
+            "normalizedSourceSp": 15,
+            "catalog": 15,
+            "status": "match",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 40,
+            "catalog": 3,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d8",
+            "catalog": "1d8",
+            "field": "damage",
+            "status": "match"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "2GH"
+            ],
+            "catalog": [
+              "melee",
+              "sword"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 16,
+        "sourceName": "Mace",
+        "source": {
+          "name": "Mace",
+          "category": "Melee",
+          "cost": "5sp",
+          "cw": 40,
+          "damage": "1d6",
+          "range": null,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 635,
+          "index": 19,
+          "name": "Mace",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "5sp",
+            "normalizedSourceSp": 5,
+            "catalog": 8,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 40,
+            "catalog": 4,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6",
+            "catalog": "1d6+1",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [
+              "blunt",
+              "melee"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 17,
+        "sourceName": "Maul",
+        "source": {
+          "name": "Maul",
+          "category": "Melee",
+          "cost": "10sp",
+          "cw": 100,
+          "damage": "2d6",
+          "range": null,
+          "properties": [
+            "!GH",
+            "2",
+            "STR15"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 18,
+        "sourceName": "Morningstar",
+        "source": {
+          "name": "Morningstar",
+          "category": "Melee",
+          "cost": "15sp",
+          "cw": 40,
+          "damage": "1d8",
+          "range": null,
+          "properties": [
+            "2GH"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 19,
+        "sourceName": "Pike",
+        "source": {
+          "name": "Pike",
+          "category": "Melee",
+          "cost": "7sp",
+          "cw": 100,
+          "damage": "1d12",
+          "range": null,
+          "properties": [
+            "!GH",
+            "R",
+            "2",
+            "STR15"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 715,
+            "index": 22,
+            "name": "Pole Arm",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 20,
+        "sourceName": "Quarterstaff",
+        "source": {
+          "name": "Quarterstaff",
+          "category": "Melee",
+          "cost": "1sp",
+          "cw": 40,
+          "damage": "1d4",
+          "range": null,
+          "properties": [
+            "2"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 1008,
+            "index": 31,
+            "name": "Staff",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 21,
+        "sourceName": "Rapier",
+        "source": {
+          "name": "Rapier",
+          "category": "Melee",
+          "cost": "25sp",
+          "cw": 20,
+          "damage": "1d6",
+          "range": null,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 747,
+          "index": 23,
+          "name": "Rapier",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "25sp",
+            "normalizedSourceSp": 25,
+            "catalog": 18,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6",
+            "catalog": "1d8",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [
+              "melee",
+              "sword"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 22,
+        "sourceName": "Scimitar",
+        "source": {
+          "name": "Scimitar",
+          "category": "Melee",
+          "cost": "25sp",
+          "cw": 30,
+          "damage": "1d6",
+          "range": null,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 777,
+          "index": 24,
+          "name": "Scimitar",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "25sp",
+            "normalizedSourceSp": 25,
+            "catalog": 15,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 30,
+            "catalog": 4,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6",
+            "catalog": "1d8",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [
+              "melee",
+              "swords"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 23,
+        "sourceName": "Scythe",
+        "source": {
+          "name": "Scythe",
+          "category": "Melee",
+          "cost": "2sp",
+          "cw": 40,
+          "damage": "2d4",
+          "range": null,
+          "properties": [
+            "!GH",
+            "2"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 24,
+        "sourceName": "Shortsword",
+        "source": {
+          "name": "Shortsword",
+          "category": "Melee",
+          "cost": "10sp",
+          "cw": 20,
+          "damage": "1d6",
+          "range": null,
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 853,
+          "index": 26,
+          "name": "Shortsword",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "10sp",
+            "normalizedSourceSp": 10,
+            "catalog": 10,
+            "status": "match",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6",
+            "catalog": "1d6",
+            "field": "damage",
+            "status": "match"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [
+              "melee",
+              "sword"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 25,
+        "sourceName": "Spear",
+        "source": {
+          "name": "Spear",
+          "category": "Melee",
+          "cost": "2sp",
+          "cw": 30,
+          "damage": "1d6",
+          "range": "20/40/60",
+          "properties": [
+            "T"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 971,
+          "index": 30,
+          "name": "Spear",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2sp",
+            "normalizedSourceSp": 2,
+            "catalog": 8,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 30,
+            "catalog": 4,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6",
+            "catalog": "1d6",
+            "field": "damage",
+            "status": "match"
+          },
+          "range": {
+            "source": "20/40/60",
+            "catalog": {
+              "short": 10,
+              "medium": 20,
+              "long": 30
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "T"
+            ],
+            "catalog": [
+              "brace",
+              "melee",
+              "missile"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 26,
+        "sourceName": "Trident",
+        "source": {
+          "name": "Trident",
+          "category": "Melee",
+          "cost": "5sp",
+          "cw": 40,
+          "damage": "1d6",
+          "range": "20/40/60",
+          "properties": [
+            "T"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 971,
+            "index": 30,
+            "name": "Spear",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 27,
+        "sourceName": "Warhammer",
+        "source": {
+          "name": "Warhammer",
+          "category": "Melee",
+          "cost": "15sp",
+          "cw": 20,
+          "damage": "1d8",
+          "range": null,
+          "properties": [
+            "2GH"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 1040,
+          "index": 32,
+          "name": "Warhammer",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "15sp",
+            "normalizedSourceSp": 15,
+            "catalog": 2,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 4,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d8",
+            "catalog": "1d4+1",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": null,
+            "catalog": {},
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "2GH"
+            ],
+            "catalog": [
+              "blunt",
+              "melee"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Melee",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 28,
+        "sourceName": "Whip",
+        "source": {
+          "name": "Whip",
+          "category": "Melee",
+          "cost": "10sp",
+          "cw": 30,
+          "damage": "1d4",
+          "range": null,
+          "properties": [
+            "R"
+          ]
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 29,
+        "sourceName": "Blowgun",
+        "source": {
+          "name": "Blowgun",
+          "category": "Ranged",
+          "cost": "3sp",
+          "cw": 5,
+          "damage": "0",
+          "range": "25/50",
+          "properties": []
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 30,
+        "sourceName": "Crossbow, Hand",
+        "source": {
+          "name": "Crossbow, Hand",
+          "category": "Ranged",
+          "cost": "75sp",
+          "cw": 30,
+          "damage": "1d4",
+          "range": "30/60/120",
+          "properties": []
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/weapons.json",
+            "line": 206,
+            "index": 6,
+            "name": "Crossbow, Light",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 31,
+        "sourceName": "Crossbow, Heavy",
+        "source": {
+          "name": "Crossbow, Heavy",
+          "category": "Ranged",
+          "cost": "50sp",
+          "cw": 180,
+          "damage": "1d10",
+          "range": "100/250/400",
+          "properties": [
+            "!GH",
+            "2",
+            "R2"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 171,
+          "index": 5,
+          "name": "Crossbow, Heavy",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "50sp",
+            "normalizedSourceSp": 50,
+            "catalog": 50,
+            "status": "match",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 180,
+            "catalog": 12,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d10",
+            "catalog": "1d6",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": "100/250/400",
+            "catalog": {
+              "short": 80,
+              "medium": 160,
+              "long": 240
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "!GH",
+              "2",
+              "R2"
+            ],
+            "catalog": [
+              "missile",
+              "reload",
+              "two-handed",
+              "slungable"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Ranged",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 32,
+        "sourceName": "Crossbow, Light",
+        "source": {
+          "name": "Crossbow, Light",
+          "category": "Ranged",
+          "cost": "25sp",
+          "cw": 50,
+          "damage": "1d6",
+          "range": "80/160/240",
+          "properties": [
+            "2",
+            "R1"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 206,
+          "index": 6,
+          "name": "Crossbow, Light",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "25sp",
+            "normalizedSourceSp": 25,
+            "catalog": 35,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 50,
+            "catalog": 6,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6",
+            "catalog": "1d4",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": "80/160/240",
+            "catalog": {
+              "short": 60,
+              "medium": 120,
+              "long": 180
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "2",
+              "R1"
+            ],
+            "catalog": [
+              "missile",
+              "reload",
+              "two-handed",
+              "slungable"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Ranged",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 33,
+        "sourceName": "Dart",
+        "source": {
+          "name": "Dart",
+          "category": "Ranged",
+          "cost": "3sp",
+          "cw": 5,
+          "damage": "1d4",
+          "range": "10/20/60",
+          "properties": [
+            "T"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 273,
+          "index": 8,
+          "name": "Dart",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "3sp",
+            "normalizedSourceSp": 3,
+            "catalog": 5,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 5,
+            "catalog": 0.5,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d4",
+            "catalog": "1d3",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": "10/20/60",
+            "catalog": {
+              "short": 10,
+              "medium": 20,
+              "long": 40
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "T"
+            ],
+            "catalog": [
+              "missile",
+              "reload",
+              "two-handed"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Ranged",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 34,
+        "sourceName": "Shortbow",
+        "source": {
+          "name": "Shortbow",
+          "category": "Ranged",
+          "cost": "25sp",
+          "cw": 15,
+          "damage": "1d6",
+          "range": "50/100/150",
+          "properties": [
+            "2"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 814,
+          "index": 25,
+          "name": "Shortbow",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "25sp",
+            "normalizedSourceSp": 25,
+            "catalog": 30,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 15,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d6",
+            "catalog": "1d6",
+            "field": "damage",
+            "status": "match"
+          },
+          "range": {
+            "source": "50/100/150",
+            "catalog": {
+              "short": 50,
+              "medium": 100,
+              "long": 150
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "2"
+            ],
+            "catalog": [
+              "missile",
+              "two-handed",
+              "slungable"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Ranged",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 35,
+        "sourceName": "Sling",
+        "source": {
+          "name": "Sling",
+          "category": "Ranged",
+          "cost": "5sp",
+          "cw": 1,
+          "damage": "1d4",
+          "range": "40/80/160",
+          "properties": []
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 906,
+          "index": 28,
+          "name": "Sling",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "5sp",
+            "normalizedSourceSp": 5,
+            "catalog": 1,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 1,
+            "catalog": 0.25,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d4",
+            "catalog": "1d4",
+            "field": "damage",
+            "status": "match"
+          },
+          "range": {
+            "source": "40/80/160",
+            "catalog": {
+              "short": 30,
+              "medium": 60,
+              "long": 90
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [],
+            "catalog": [
+              "blunt",
+              "missile"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Ranged",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "weapons",
+        "sourceIndex": 36,
+        "sourceName": "Longbow",
+        "source": {
+          "name": "Longbow",
+          "category": "Ranged",
+          "cost": "50sp",
+          "cw": 20,
+          "damage": "1d8",
+          "range": "70/140/210",
+          "properties": [
+            "!GH",
+            "2"
+          ]
+        },
+        "catalogMatch": {
+          "file": "data/weapons.json",
+          "line": 563,
+          "index": 17,
+          "name": "Longbow",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "50sp",
+            "normalizedSourceSp": 50,
+            "catalog": 75,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          },
+          "damage": {
+            "source": "1d8",
+            "catalog": "1d6",
+            "field": "damage",
+            "status": "mismatch"
+          },
+          "range": {
+            "source": "70/140/210",
+            "catalog": {
+              "short": 70,
+              "medium": 140,
+              "long": 210
+            },
+            "field": "range/rangeShort/rangeMedium/rangeLong",
+            "status": "recorded"
+          },
+          "properties": {
+            "source": [
+              "!GH",
+              "2"
+            ],
+            "catalog": [
+              "missile",
+              "two-handed",
+              "slungable"
+            ],
+            "field": "tags/properties",
+            "status": "recorded"
+          },
+          "category": {
+            "source": "Ranged",
+            "catalog": null,
+            "field": "system.type/category",
+            "status": "recorded"
+          }
+        }
+      },
+      {
+        "category": "ammunition",
+        "sourceIndex": 0,
+        "sourceName": "Arrows (20)",
+        "source": {
+          "name": "Arrows (20)",
+          "cost": "5sp",
+          "cw": 10
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/ammunition.json",
+            "line": 3,
+            "index": 0,
+            "name": "Arrow",
+            "type": "ammunition",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "ammunition",
+        "sourceIndex": 1,
+        "sourceName": "Needles (50)",
+        "source": {
+          "name": "Needles (50)",
+          "cost": "1sp",
+          "cw": 10
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "ammunition",
+        "sourceIndex": 2,
+        "sourceName": "Bolts, Hand (30)",
+        "source": {
+          "name": "Bolts, Hand (30)",
+          "cost": "7sp",
+          "cw": 10
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/ammunition.json",
+            "line": 21,
+            "index": 1,
+            "name": "Crossbow Bolt, Light",
+            "type": "ammunition",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "ammunition",
+        "sourceIndex": 3,
+        "sourceName": "Bolts, Light (30)",
+        "source": {
+          "name": "Bolts, Light (30)",
+          "cost": "10sp",
+          "cw": 15
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/ammunition.json",
+            "line": 21,
+            "index": 1,
+            "name": "Crossbow Bolt, Light",
+            "type": "ammunition",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "ammunition",
+        "sourceIndex": 4,
+        "sourceName": "Bolts, Heavy (30)",
+        "source": {
+          "name": "Bolts, Heavy (30)",
+          "cost": "15sp",
+          "cw": 20
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/ammunition.json",
+            "line": 39,
+            "index": 2,
+            "name": "Crossbow Bolt, Heavy",
+            "type": "ammunition",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "ammunition",
+        "sourceIndex": 5,
+        "sourceName": "Sling Bullets (20)",
+        "source": {
+          "name": "Sling Bullets (20)",
+          "cost": "1sp",
+          "cw": 15
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/ammunition.json",
+            "line": 76,
+            "index": 4,
+            "name": "Sling Stone",
+            "type": "ammunition",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 0,
+        "sourceName": "Acid",
+        "source": {
+          "name": "Acid",
+          "cost": "25sp",
+          "cw": 10,
+          "details": "Glass vial. 2d6 damage when thrown."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 1,
+        "sourceName": "Backpack",
+        "source": {
+          "name": "Backpack",
+          "cost": "2sp",
+          "cw": 50,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 3,
+          "index": 0,
+          "name": "Backpack",
+          "type": "container"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2sp",
+            "normalizedSourceSp": 2,
+            "catalog": 5,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 50,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 2,
+        "sourceName": "Ball Bearings",
+        "source": {
+          "name": "Ball Bearings",
+          "cost": "1sp",
+          "cw": 20,
+          "details": "Bag of 1,000."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 3,
+        "sourceName": "Bedroll",
+        "source": {
+          "name": "Bedroll",
+          "cost": "1sp",
+          "cw": 70,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 27,
+          "index": 1,
+          "name": "Bedroll",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "1sp",
+            "normalizedSourceSp": 1,
+            "catalog": 2,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 70,
+            "catalog": 4,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 4,
+        "sourceName": "Bell",
+        "source": {
+          "name": "Bell",
+          "cost": "5cp",
+          "cw": 1,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 5,
+        "sourceName": "Block & Tackle",
+        "source": {
+          "name": "Block & Tackle",
+          "cost": "11sp",
+          "cw": 50,
+          "details": "2 pulleys and 50' rope."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 6,
+        "sourceName": "Book, Spell",
+        "source": {
+          "name": "Book, Spell",
+          "cost": "50sp",
+          "cw": 30,
+          "details": "100 pages."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 1142,
+            "index": 49,
+            "name": "Spellbook",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 7,
+        "sourceName": "Bucket",
+        "source": {
+          "name": "Bucket",
+          "cost": "5cp",
+          "cw": 20,
+          "details": "Holds 2 gallons of liquid."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 8,
+        "sourceName": "Caltrops",
+        "source": {
+          "name": "Caltrops",
+          "cost": "1sp",
+          "cw": 20,
+          "details": "Quantity of 20."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 9,
+        "sourceName": "Candles",
+        "source": {
+          "name": "Candles",
+          "cost": "1cp",
+          "cw": 1,
+          "details": "Bundle of 3."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 10,
+        "sourceName": "Case, Crossbow Bolt",
+        "source": {
+          "name": "Case, Crossbow Bolt",
+          "cost": "1sp",
+          "cw": 10,
+          "details": "Holds 30 bolts."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 100,
+            "index": 4,
+            "name": "Bolt Case",
+            "type": "container",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 11,
+        "sourceName": "Chain",
+        "source": {
+          "name": "Chain",
+          "cost": "5sp",
+          "cw": 100,
+          "details": "10' length."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 12,
+        "sourceName": "Chalk",
+        "source": {
+          "name": "Chalk",
+          "cost": "3cp",
+          "cw": 1,
+          "details": "3 pieces."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 13,
+        "sourceName": "Climber's Kit",
+        "source": {
+          "name": "Climber's Kit",
+          "cost": "25sp",
+          "cw": 120,
+          "details": "Boot tips, hammer, 10 pitons, harness."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 14,
+        "sourceName": "Clothes, Cloak",
+        "source": {
+          "name": "Clothes, Cloak",
+          "cost": "2sp",
+          "cw": 30,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/clothing.json",
+            "line": 42,
+            "index": 2,
+            "name": "Cloak",
+            "type": "clothing",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 15,
+        "sourceName": "Clothes, Lined Cloak",
+        "source": {
+          "name": "Clothes, Lined Cloak",
+          "cost": "4sp",
+          "cw": 50,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 16,
+        "sourceName": "Clothes, Common",
+        "source": {
+          "name": "Clothes, Common",
+          "cost": "5cp",
+          "cw": 20,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 17,
+        "sourceName": "Clothes, Fine",
+        "source": {
+          "name": "Clothes, Fine",
+          "cost": "15sp",
+          "cw": 25,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 18,
+        "sourceName": "Clothes, Traveler's",
+        "source": {
+          "name": "Clothes, Traveler's",
+          "cost": "2sp",
+          "cw": 30,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 19,
+        "sourceName": "Clothes, Robes",
+        "source": {
+          "name": "Clothes, Robes",
+          "cost": "1sp",
+          "cw": 30,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 20,
+        "sourceName": "Clothes, Fine Robes",
+        "source": {
+          "name": "Clothes, Fine Robes",
+          "cost": "25sp",
+          "cw": 35,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 21,
+        "sourceName": "Crowbar",
+        "source": {
+          "name": "Crowbar",
+          "cost": "2sp",
+          "cw": 50,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 148,
+          "index": 6,
+          "name": "Crowbar",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2sp",
+            "normalizedSourceSp": 2,
+            "catalog": 10,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 50,
+            "catalog": 3,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 22,
+        "sourceName": "Disguise Kit",
+        "source": {
+          "name": "Disguise Kit",
+          "cost": "25sp",
+          "cw": 30,
+          "details": "Wig, beard, mustache, spirit gum, etc."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 23,
+        "sourceName": "Fishing Tackle",
+        "source": {
+          "name": "Fishing Tackle",
+          "cost": "1sp",
+          "cw": 40,
+          "details": "Pole, line, hooks."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 24,
+        "sourceName": "Flask or Tankard",
+        "source": {
+          "name": "Flask or Tankard",
+          "cost": "2cp",
+          "cw": 10,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 765,
+            "index": 35,
+            "name": "Vial or Bottle",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 25,
+        "sourceName": "Grappling Hook",
+        "source": {
+          "name": "Grappling Hook",
+          "cost": "2sp",
+          "cw": 40,
+          "details": "3 prongs."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 182,
+          "index": 8,
+          "name": "Grappling Hook",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2sp",
+            "normalizedSourceSp": 2,
+            "catalog": 25,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 40,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 26,
+        "sourceName": "Healer's Kit",
+        "source": {
+          "name": "Healer's Kit",
+          "cost": "5sp",
+          "cw": 30,
+          "details": "Enough healing supplies for 2 uses."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 1035,
+          "index": 46,
+          "name": "Healer's Kit",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "5sp",
+            "normalizedSourceSp": 5,
+            "catalog": 20,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 30,
+            "catalog": 3,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 27,
+        "sourceName": "Holy Symbol",
+        "source": {
+          "name": "Holy Symbol",
+          "cost": "10sp",
+          "cw": 10,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 217,
+          "index": 10,
+          "name": "Holy Symbol",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "10sp",
+            "normalizedSourceSp": 10,
+            "catalog": 25,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 10,
+            "catalog": 0.3,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 28,
+        "sourceName": "Holy Water",
+        "source": {
+          "name": "Holy Water",
+          "cost": "5sp",
+          "cw": 10,
+          "details": "Glass flask."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 235,
+          "index": 11,
+          "name": "Holy Water",
+          "type": "weapon"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "5sp",
+            "normalizedSourceSp": 5,
+            "catalog": 25,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 10,
+            "catalog": 0.75,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 29,
+        "sourceName": "Hourglass",
+        "source": {
+          "name": "Hourglass",
+          "cost": "25sp",
+          "cw": 10,
+          "details": "Sand counts down 1 hour."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 30,
+        "sourceName": "Incense",
+        "source": {
+          "name": "Incense",
+          "cost": "1cp",
+          "cw": 1,
+          "details": "Per 1 inch cube."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 31,
+        "sourceName": "Ink",
+        "source": {
+          "name": "Ink",
+          "cost": "10sp",
+          "cw": 1,
+          "details": "Per ounce."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 32,
+        "sourceName": "Ink Pen",
+        "source": {
+          "name": "Ink Pen",
+          "cost": "3sp",
+          "cw": 1,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 33,
+        "sourceName": "Journal",
+        "source": {
+          "name": "Journal",
+          "cost": "7sp",
+          "cw": 50,
+          "details": "Contains 25 sheets."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 34,
+        "sourceName": "Lantern, Bullseye",
+        "source": {
+          "name": "Lantern, Bullseye",
+          "cost": "10sp",
+          "cw": 20,
+          "details": "Can be closed to block light."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 287,
+          "index": 13,
+          "name": "Lantern, Bullseye",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "10sp",
+            "normalizedSourceSp": 10,
+            "catalog": 12,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 3,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 35,
+        "sourceName": "Lantern, Hooded",
+        "source": {
+          "name": "Lantern, Hooded",
+          "cost": "7sp",
+          "cw": 20,
+          "details": "Can be closed to block light."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 304,
+          "index": 14,
+          "name": "Lantern, Hooded",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "7sp",
+            "normalizedSourceSp": 7,
+            "catalog": 10,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 36,
+        "sourceName": "Lock",
+        "source": {
+          "name": "Lock",
+          "cost": "10sp",
+          "cw": 10,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 37,
+        "sourceName": "Manacles",
+        "source": {
+          "name": "Manacles",
+          "cost": "2sp",
+          "cw": 60,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 1071,
+          "index": 47,
+          "name": "Manacles",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2sp",
+            "normalizedSourceSp": 2,
+            "catalog": 2,
+            "status": "match",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 60,
+            "catalog": 1,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 38,
+        "sourceName": "Mess Kit",
+        "source": {
+          "name": "Mess Kit",
+          "cost": "2cp",
+          "cw": 10,
+          "details": "Tin box with cup and cutlery."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 1174,
+          "index": 50,
+          "name": "Mess Kit",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2cp",
+            "parsed": {
+              "kind": "cp",
+              "numeric": 2
+            },
+            "catalog": 10,
+            "status": "exchange-decision-pending",
+            "basis": "house currency exchange/notation must be approved before comparing cp/gp to runtime sp cost"
+          },
+          "cw": {
+            "source": 10,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 39,
+        "sourceName": "Mirror, Steel",
+        "source": {
+          "name": "Mirror, Steel",
+          "cost": "5sp",
+          "cw": 5,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 338,
+            "index": 16,
+            "name": "Mirror, Handheld",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 40,
+        "sourceName": "Oil",
+        "source": {
+          "name": "Oil",
+          "cost": "1cp",
+          "cw": 10,
+          "details": "Glass flask."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 355,
+            "index": 17,
+            "name": "Oil Flask",
+            "type": "weapon",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 41,
+        "sourceName": "Paper",
+        "source": {
+          "name": "Paper",
+          "cost": "2cp",
+          "cw": 0,
+          "details": "Per sheet."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 42,
+        "sourceName": "Parchment",
+        "source": {
+          "name": "Parchment",
+          "cost": "1cp",
+          "cw": 0,
+          "details": "Per sheet."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 43,
+        "sourceName": "Pick, Miner's",
+        "source": {
+          "name": "Pick, Miner's",
+          "cost": "2sp",
+          "cw": 10,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 44,
+        "sourceName": "Piton",
+        "source": {
+          "name": "Piton",
+          "cost": "5cp",
+          "cw": 2,
+          "details": "Quantity 20."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 389,
+          "index": 18,
+          "name": "Piton",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "5cp",
+            "parsed": {
+              "kind": "cp",
+              "numeric": 5
+            },
+            "catalog": 0.1,
+            "status": "exchange-decision-pending",
+            "basis": "house currency exchange/notation must be approved before comparing cp/gp to runtime sp cost"
+          },
+          "cw": {
+            "source": 2,
+            "catalog": 0.25,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 45,
+        "sourceName": "Perfume",
+        "source": {
+          "name": "Perfume",
+          "cost": "5sp",
+          "cw": 1,
+          "details": "Glass vial."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 46,
+        "sourceName": "Poison, Basic",
+        "source": {
+          "name": "Poison, Basic",
+          "cost": "100sp",
+          "cw": 1,
+          "details": "Glass vial."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 47,
+        "sourceName": "Pole",
+        "source": {
+          "name": "Pole",
+          "cost": "5cp",
+          "cw": 70,
+          "details": "10'"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 407,
+            "index": 19,
+            "name": "Pole, Ten Foot",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 48,
+        "sourceName": "Pouch",
+        "source": {
+          "name": "Pouch",
+          "cost": "5cp",
+          "cw": 1,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 73,
+            "index": 3,
+            "name": "Belt Pouch (S)",
+            "type": "container",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          },
+          {
+            "file": "data/gear.json",
+            "line": 44,
+            "index": 2,
+            "name": "Belt Pouch (L)",
+            "type": "container",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 49,
+        "sourceName": "Pot, Iron",
+        "source": {
+          "name": "Pot, Iron",
+          "cost": "2sp",
+          "cw": 100,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 50,
+        "sourceName": "Quiver",
+        "source": {
+          "name": "Quiver",
+          "cost": "1sp",
+          "cw": 10,
+          "details": "Holds 20 arrows."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 425,
+          "index": 20,
+          "name": "Quiver",
+          "type": "container"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "1sp",
+            "normalizedSourceSp": 1,
+            "catalog": 5,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 10,
+            "catalog": 1,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 51,
+        "sourceName": "Rations, Iron",
+        "source": {
+          "name": "Rations, Iron",
+          "cost": "1sp",
+          "cw": 10,
+          "details": "7 day supply of dry, preserved foods."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 470,
+          "index": 22,
+          "name": "Rations, Iron",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "1sp",
+            "normalizedSourceSp": 1,
+            "catalog": 15,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 10,
+            "catalog": 1,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 52,
+        "sourceName": "Rations, Standard",
+        "source": {
+          "name": "Rations, Standard",
+          "cost": "3sp",
+          "cw": 20,
+          "details": "7 day supply of fresh foods."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 488,
+          "index": 23,
+          "name": "Rations, Standard",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "3sp",
+            "normalizedSourceSp": 3,
+            "catalog": 5,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 20,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 53,
+        "sourceName": "Rope, Hempen",
+        "source": {
+          "name": "Rope, Hempen",
+          "cost": "1sp",
+          "cw": 100,
+          "details": "50' length."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 54,
+        "sourceName": "Rope, Silk",
+        "source": {
+          "name": "Rope, Silk",
+          "cost": "10sp",
+          "cw": 50,
+          "details": "50' length."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 524,
+            "index": 25,
+            "name": "Rope, Silken (50')",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 55,
+        "sourceName": "Sack, Large",
+        "source": {
+          "name": "Sack, Large",
+          "cost": "2cp",
+          "cw": 5,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 542,
+          "index": 26,
+          "name": "Sack, Large",
+          "type": "container"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2cp",
+            "parsed": {
+              "kind": "cp",
+              "numeric": 2
+            },
+            "catalog": 2,
+            "status": "exchange-decision-pending",
+            "basis": "house currency exchange/notation must be approved before comparing cp/gp to runtime sp cost"
+          },
+          "cw": {
+            "source": 5,
+            "catalog": 0.5,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 56,
+        "sourceName": "Sack, Small",
+        "source": {
+          "name": "Sack, Small",
+          "cost": "1cp",
+          "cw": 2,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 562,
+          "index": 27,
+          "name": "Sack, Small",
+          "type": "container"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "1cp",
+            "parsed": {
+              "kind": "cp",
+              "numeric": 1
+            },
+            "catalog": 1,
+            "status": "exchange-decision-pending",
+            "basis": "house currency exchange/notation must be approved before comparing cp/gp to runtime sp cost"
+          },
+          "cw": {
+            "source": 2,
+            "catalog": 0.25,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 57,
+        "sourceName": "Shovel",
+        "source": {
+          "name": "Shovel",
+          "cost": "1sp",
+          "cw": 50,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 58,
+        "sourceName": "Sidesack",
+        "source": {
+          "name": "Sidesack",
+          "cost": "1sp",
+          "cw": 30,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 971,
+          "index": 44,
+          "name": "Sidesack",
+          "type": "container"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "1sp",
+            "normalizedSourceSp": 1,
+            "catalog": 6,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 30,
+            "catalog": 2,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 59,
+        "sourceName": "Spikes, Iron",
+        "source": {
+          "name": "Spikes, Iron",
+          "cost": "1sp",
+          "cw": 50,
+          "details": "Quantity 10."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 269,
+            "index": 12,
+            "name": "Iron Spike",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 60,
+        "sourceName": "Spyglass",
+        "source": {
+          "name": "Spyglass",
+          "cost": "1,000sp",
+          "cw": 10,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 61,
+        "sourceName": "Tent 1-person",
+        "source": {
+          "name": "Tent 1-person",
+          "cost": "1sp",
+          "cw": 200,
+          "details": null
+        },
+        "catalogMatch": {
+          "file": "data/misc.json",
+          "line": 76,
+          "index": 4,
+          "name": "Tent, 1-person",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "1sp",
+            "normalizedSourceSp": 1,
+            "catalog": 5,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 200,
+            "catalog": 10,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 62,
+        "sourceName": "Thieve's Tools",
+        "source": {
+          "name": "Thieve's Tools",
+          "cost": "25sp",
+          "cw": 10,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 701,
+            "index": 32,
+            "name": "Thieves' Tools",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 63,
+        "sourceName": "Tinderbox",
+        "source": {
+          "name": "Tinderbox",
+          "cost": "1cp",
+          "cw": 10,
+          "details": null
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 719,
+            "index": 33,
+            "name": "Tinder Box",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 64,
+        "sourceName": "Torch",
+        "source": {
+          "name": "Torch",
+          "cost": "1cp",
+          "cw": 10,
+          "details": "Quantity 3. Burns for 1 hour (6 turns)."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 737,
+          "index": 34,
+          "name": "Torch",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "1cp",
+            "parsed": {
+              "kind": "cp",
+              "numeric": 1
+            },
+            "catalog": 0.2,
+            "status": "exchange-decision-pending",
+            "basis": "house currency exchange/notation must be approved before comparing cp/gp to runtime sp cost"
+          },
+          "cw": {
+            "source": 10,
+            "catalog": 0.5,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "gear",
+        "sourceIndex": 65,
+        "sourceName": "Waterskin",
+        "source": {
+          "name": "Waterskin",
+          "cost": "2cp",
+          "cw": 50,
+          "details": "Holds 4 pints (half gallon)."
+        },
+        "catalogMatch": {
+          "file": "data/gear.json",
+          "line": 779,
+          "index": 36,
+          "name": "Waterskin",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2cp",
+            "parsed": {
+              "kind": "cp",
+              "numeric": 2
+            },
+            "catalog": 1,
+            "status": "exchange-decision-pending",
+            "basis": "house currency exchange/notation must be approved before comparing cp/gp to runtime sp cost"
+          },
+          "cw": {
+            "source": 50,
+            "catalog": 5,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "instruments",
+        "sourceIndex": 0,
+        "sourceName": "Drum",
+        "source": {
+          "name": "Drum",
+          "cost": "6sp",
+          "cw": 30
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "instruments",
+        "sourceIndex": 1,
+        "sourceName": "Dulcimer",
+        "source": {
+          "name": "Dulcimer",
+          "cost": "25sp",
+          "cw": 100,
+          "details": "A trapezoidal, string instrument."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "instruments",
+        "sourceIndex": 2,
+        "sourceName": "Flute",
+        "source": {
+          "name": "Flute",
+          "cost": "2sp",
+          "cw": 10
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "instruments",
+        "sourceIndex": 3,
+        "sourceName": "Horn",
+        "source": {
+          "name": "Horn",
+          "cost": "3sp",
+          "cw": 20
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/gear.json",
+            "line": 1107,
+            "index": 48,
+            "name": "Signal Horn",
+            "type": "item",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "instruments",
+        "sourceIndex": 4,
+        "sourceName": "Lute",
+        "source": {
+          "name": "Lute",
+          "cost": "35sp",
+          "cw": 20,
+          "details": "A plucked, string instrument."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "instruments",
+        "sourceIndex": 5,
+        "sourceName": "Lyre",
+        "source": {
+          "name": "Lyre",
+          "cost": "30sp",
+          "cw": 20,
+          "details": "A small, harp-like string instrument."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "instruments",
+        "sourceIndex": 6,
+        "sourceName": "Pan Flute",
+        "source": {
+          "name": "Pan Flute",
+          "cost": "12sp",
+          "cw": 20
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "instruments",
+        "sourceIndex": 7,
+        "sourceName": "Shawm",
+        "source": {
+          "name": "Shawm",
+          "cost": "3sp",
+          "cw": 10,
+          "details": "A double-reed wind instrument."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "mounts_and_animals",
+        "sourceIndex": 0,
+        "sourceName": "Donkey/Mule",
+        "source": {
+          "name": "Donkey/Mule",
+          "cost": "8sp",
+          "details": "40' Tactical speed. 420 lb. capacity."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/livestock.json",
+            "line": 300,
+            "index": 9,
+            "name": "Mule",
+            "type": "livestock",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "mounts_and_animals",
+        "sourceIndex": 1,
+        "sourceName": "Horse, Draft",
+        "source": {
+          "name": "Horse, Draft",
+          "cost": "50sp",
+          "details": "40' Tactical speed. 540 lb. capacity."
+        },
+        "catalogMatch": {
+          "file": "data/livestock.json",
+          "line": 194,
+          "index": 6,
+          "name": "Horse, Draft",
+          "type": "livestock"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "50sp",
+            "normalizedSourceSp": 50,
+            "catalog": 200,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          }
+        }
+      },
+      {
+        "category": "mounts_and_animals",
+        "sourceIndex": 2,
+        "sourceName": "Horse, Riding",
+        "source": {
+          "name": "Horse, Riding",
+          "cost": "75sp",
+          "details": "60' Tactical speed. 480 lb. capacity."
+        },
+        "catalogMatch": {
+          "file": "data/livestock.json",
+          "line": 228,
+          "index": 7,
+          "name": "Horse, Riding",
+          "type": "livestock"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "75sp",
+            "normalizedSourceSp": 75,
+            "catalog": 75,
+            "status": "match",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          }
+        }
+      },
+      {
+        "category": "mounts_and_animals",
+        "sourceIndex": 3,
+        "sourceName": "Horse, War",
+        "source": {
+          "name": "Horse, War",
+          "cost": "400sp",
+          "details": "60' Tactical speed. 540 lb. capacity."
+        },
+        "catalogMatch": {
+          "file": "data/livestock.json",
+          "line": 263,
+          "index": 8,
+          "name": "Horse, War",
+          "type": "livestock"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "400sp",
+            "normalizedSourceSp": 400,
+            "catalog": 250,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          }
+        }
+      },
+      {
+        "category": "mounts_and_animals",
+        "sourceIndex": 4,
+        "sourceName": "Pony",
+        "source": {
+          "name": "Pony",
+          "cost": "30sp",
+          "details": "40' Tactical speed. 225 lb. capacity."
+        },
+        "catalogMatch": {
+          "file": "data/livestock.json",
+          "line": 395,
+          "index": 12,
+          "name": "Pony",
+          "type": "livestock"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "30sp",
+            "normalizedSourceSp": 30,
+            "catalog": 30,
+            "status": "match",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          }
+        }
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 0,
+        "sourceName": "Barding",
+        "source": {
+          "name": "Barding",
+          "cost": "4x",
+          "details": "Cost is 4x humanoid armor cost."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 1,
+        "sourceName": "Bit & Bridle",
+        "source": {
+          "name": "Bit & Bridle",
+          "cost": "2sp"
+        },
+        "catalogMatch": {
+          "file": "data/tack.json",
+          "line": 98,
+          "index": 4,
+          "name": "Bit & Bridle",
+          "type": "item"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "2sp",
+            "normalizedSourceSp": 2,
+            "catalog": 15,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          }
+        }
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 2,
+        "sourceName": "Carriage",
+        "source": {
+          "name": "Carriage",
+          "cost": "100sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 3,
+        "sourceName": "Cart",
+        "source": {
+          "name": "Cart",
+          "cost": "15sp"
+        },
+        "catalogMatch": {
+          "file": "data/vehicles.json",
+          "line": 3,
+          "index": 0,
+          "name": "Cart",
+          "type": "container"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "15sp",
+            "normalizedSourceSp": 15,
+            "catalog": 115,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          }
+        }
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 4,
+        "sourceName": "Chariot",
+        "source": {
+          "name": "Chariot",
+          "cost": "250sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 5,
+        "sourceName": "Feed",
+        "source": {
+          "name": "Feed",
+          "cost": "5cp",
+          "details": "Enough to feed one animal per day."
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 6,
+        "sourceName": "Saddle",
+        "source": {
+          "name": "Saddle",
+          "cost": "10sp",
+          "cw": 250
+        },
+        "catalogMatch": {
+          "file": "data/tack.json",
+          "line": 117,
+          "index": 5,
+          "name": "Saddle",
+          "type": "container"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "10sp",
+            "normalizedSourceSp": 10,
+            "catalog": 25,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          },
+          "cw": {
+            "source": 250,
+            "catalog": 10,
+            "field": "unitWeight",
+            "status": "unit-conversion-pending",
+            "basis": "house cw and catalog unitWeight may use different units; raw values recorded only"
+          }
+        }
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 7,
+        "sourceName": "Saddlebags",
+        "source": {
+          "name": "Saddlebags",
+          "cost": "4sp",
+          "cw": 80
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [
+          {
+            "file": "data/tack.json",
+            "line": 117,
+            "index": 5,
+            "name": "Saddle",
+            "type": "container",
+            "reason": "name differs; candidate only, not treated as equivalent"
+          }
+        ],
+        "comparisons": {},
+        "status": "candidate-review-required"
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 8,
+        "sourceName": "Sled",
+        "source": {
+          "name": "Sled",
+          "cost": "20sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "tack_and_drawn_vehicles",
+        "sourceIndex": 9,
+        "sourceName": "Wagon",
+        "source": {
+          "name": "Wagon",
+          "cost": "35sp"
+        },
+        "catalogMatch": {
+          "file": "data/vehicles.json",
+          "line": 25,
+          "index": 1,
+          "name": "Wagon",
+          "type": "container"
+        },
+        "catalogCandidates": [],
+        "comparisons": {
+          "cost": {
+            "source": "35sp",
+            "normalizedSourceSp": 35,
+            "catalog": 200,
+            "status": "mismatch",
+            "basis": "runtime cost is sp-equivalent per src/module/inventory/treasure-cost.js"
+          }
+        }
+      },
+      {
+        "category": "waterborne_vehicles",
+        "sourceIndex": 0,
+        "sourceName": "Canoe",
+        "source": {
+          "name": "Canoe",
+          "cost": "20sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "waterborne_vehicles",
+        "sourceIndex": 1,
+        "sourceName": "Galley",
+        "source": {
+          "name": "Galley",
+          "cost": "30,000sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "waterborne_vehicles",
+        "sourceIndex": 2,
+        "sourceName": "Keelboat",
+        "source": {
+          "name": "Keelboat",
+          "cost": "3,000sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "waterborne_vehicles",
+        "sourceIndex": 3,
+        "sourceName": "Longship",
+        "source": {
+          "name": "Longship",
+          "cost": "10,000sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "waterborne_vehicles",
+        "sourceIndex": 4,
+        "sourceName": "Rowboat",
+        "source": {
+          "name": "Rowboat",
+          "cost": "50sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "waterborne_vehicles",
+        "sourceIndex": 5,
+        "sourceName": "Sailing Ship",
+        "source": {
+          "name": "Sailing Ship",
+          "cost": "10,000sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      },
+      {
+        "category": "waterborne_vehicles",
+        "sourceIndex": 6,
+        "sourceName": "Warship",
+        "source": {
+          "name": "Warship",
+          "cost": "25,000sp"
+        },
+        "catalogMatch": null,
+        "catalogCandidates": [],
+        "comparisons": {},
+        "status": "no-current-catalog-match"
+      }
+    ],
+    "summary": {
+      "rows": 151,
+      "exactMatches": 56,
+      "candidateReview": 33,
+      "noMatch": 62,
+      "spPriceMatches": 7,
+      "spPriceMismatches": 42,
+      "exchangePending": 7,
+      "manualFormula": 0
+    }
+  },
+  "progressionEvidence": {
+    "mage": {
+      "houseCustomProgression": {
+        "10": 460000,
+        "11": 620000,
+        "12": 880000,
+        "13": 1040000,
+        "14": 1200000
+      },
+      "classProfileProgression": {
+        "10": 560000,
+        "11": 720000,
+        "12": 980000,
+        "13": 1140000,
+        "14": 1300000
+      },
+      "runtimeConfigMapping": "mage -> magic-user XP table",
+      "runtimeMagicUserProgression": {
+        "10": 450000,
+        "11": 600000,
+        "12": 750000,
+        "13": 900000,
+        "14": 1050000
+      },
+      "note": "These are three distinct tables; do not collapse house custom progression and class profile progression."
+    }
+  },
+  "runtimeEvidence": {
+    "generatedAt": "2026-09-30T18:50:57.239Z",
+    "evidence": {
+      "xp": "src/config/classes.js getLevelFromXP/getNextLevelXP use CLASS_XP_MAPPING and XP_TABLES",
+      "hitDie": "src/config/classes.js getHitDieMax; src/module/actor/level-up.js uses getHitDieMax for level-up HP",
+      "attack": "src/config/classes.js getAttackBonus; helpers/item rolls import getAttackBonus",
+      "primes": "src/config/classes.js getPrimeRequisites/calculateXPModifier; actor and xp UI import these",
+      "saves": "src/module/actor/actor.js _calculateSavingThrows uses local savingThrowTables/classMapping",
+      "spellTabGate": "src/module/actor/sheets/character-sheet.js:909-929 automates WIS-adjusted tab availability for cleric, paladin, ranger"
+    },
+    "classes": [
+      {
+        "id": "assassin",
+        "name": "Assassin",
+        "profile": {
+          "hitDie": "1d4",
+          "primeRequisites": [
+            "DEX"
+          ],
+          "xpProgression": [
+            0,
+            1500,
+            3000,
+            6000,
+            12000,
+            25000,
+            50000,
+            100000,
+            200000,
+            300000,
+            425000,
+            575000,
+            750000,
+            900000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "thief",
+          "hitDieMax": 6,
+          "attackMapping": "thief",
+          "primeRequisites": [
+            "str",
+            "dex"
+          ],
+          "saveMapping": "assassin"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "barbarian",
+        "name": "Barbarian",
+        "profile": {
+          "hitDie": "1d8",
+          "primeRequisites": [
+            "STR",
+            "CON"
+          ],
+          "xpProgression": [
+            0,
+            2500,
+            5000,
+            10000,
+            18500,
+            37000,
+            85000,
+            140000,
+            270000,
+            400000,
+            530000,
+            660000,
+            790000,
+            920000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "fighter",
+          "hitDieMax": 8,
+          "attackMapping": "fighter",
+          "primeRequisites": [
+            "str",
+            "con"
+          ],
+          "saveMapping": "barbarian"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "bard",
+        "name": "Bard",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "CHA"
+          ],
+          "xpProgression": [
+            0,
+            2000,
+            4000,
+            8000,
+            16000,
+            32000,
+            64000,
+            120000,
+            240000,
+            360000,
+            480000,
+            600000,
+            720000,
+            840000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "thief",
+          "hitDieMax": 6,
+          "attackMapping": "thief",
+          "primeRequisites": [
+            "dex",
+            "cha"
+          ],
+          "saveMapping": "thief"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "cleric",
+        "name": "Cleric",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "WIS"
+          ],
+          "xpProgression": [
+            0,
+            1500,
+            3000,
+            6000,
+            12000,
+            25000,
+            50000,
+            100000,
+            200000,
+            300000,
+            400000,
+            500000,
+            600000,
+            700000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "cleric",
+          "hitDieMax": 6,
+          "attackMapping": "cleric",
+          "primeRequisites": [
+            "wis"
+          ],
+          "saveMapping": "cleric"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "drow",
+        "name": "Drow",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "STR",
+            "WIS"
+          ],
+          "xpProgression": [
+            0,
+            4000,
+            8000,
+            16000,
+            32000,
+            64000,
+            120000,
+            250000,
+            400000,
+            600000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "drow",
+          "hitDieMax": null,
+          "attackMapping": "drow",
+          "primeRequisites": [
+            "str"
+          ],
+          "saveMapping": "drow"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "druid",
+        "name": "Druid",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "WIS"
+          ],
+          "xpProgression": [
+            0,
+            2000,
+            4000,
+            7500,
+            12500,
+            20000,
+            35000,
+            60000,
+            90000,
+            125000,
+            200000,
+            300000,
+            750000,
+            1500000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "cleric",
+          "hitDieMax": 6,
+          "attackMapping": "cleric",
+          "primeRequisites": [
+            "wis"
+          ],
+          "saveMapping": "cleric"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "dwarf",
+        "name": "Dwarf",
+        "profile": {
+          "hitDie": "1d8",
+          "primeRequisites": [
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            2200,
+            4400,
+            8800,
+            17000,
+            35000,
+            70000,
+            140000,
+            270000,
+            400000,
+            530000,
+            660000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "dwarf",
+          "hitDieMax": 8,
+          "attackMapping": "dwarf",
+          "primeRequisites": [
+            "str"
+          ],
+          "saveMapping": "dwarf"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "elf",
+        "name": "Elf",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "INT",
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            4000,
+            8000,
+            16000,
+            32000,
+            64000,
+            120000,
+            250000,
+            400000,
+            600000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "elf",
+          "hitDieMax": 8,
+          "attackMapping": "elf",
+          "primeRequisites": [
+            "int",
+            "str"
+          ],
+          "saveMapping": "elf"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "fighter",
+        "name": "Fighter",
+        "profile": {
+          "hitDie": "1d8",
+          "primeRequisites": [
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            2000,
+            4000,
+            8000,
+            16000,
+            32000,
+            64000,
+            120000,
+            240000,
+            360000,
+            480000,
+            600000,
+            720000,
+            840000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "fighter",
+          "hitDieMax": 8,
+          "attackMapping": "fighter",
+          "primeRequisites": [
+            "str"
+          ],
+          "saveMapping": "fighter"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "gnome",
+        "name": "Gnome",
+        "profile": {
+          "hitDie": "1d4",
+          "primeRequisites": [
+            "DEX",
+            "INT"
+          ],
+          "xpProgression": [
+            0,
+            3000,
+            6000,
+            12000,
+            30000,
+            60000,
+            120000,
+            240000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "gnome",
+          "hitDieMax": 8,
+          "attackMapping": "gnome",
+          "primeRequisites": [
+            "int"
+          ],
+          "saveMapping": "gnome"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "half-elf",
+        "name": "Half-Elf",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "INT",
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            2500,
+            5000,
+            10000,
+            20000,
+            40000,
+            80000,
+            150000,
+            300000,
+            450000,
+            600000,
+            750000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "half-elf",
+          "hitDieMax": 8,
+          "attackMapping": "half-elf",
+          "primeRequisites": [
+            "int",
+            "str"
+          ],
+          "saveMapping": "half-elf"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "hobbit",
+        "name": "Hobbit",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "DEX",
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            2000,
+            4000,
+            8000,
+            16000,
+            32000,
+            64000,
+            120000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "hobbit",
+          "hitDieMax": 6,
+          "attackMapping": "hobbit",
+          "primeRequisites": [
+            "dex",
+            "str"
+          ],
+          "saveMapping": "hobbit"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "half-orc",
+        "name": "Half-Orc",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "DEX",
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            1800,
+            3600,
+            7000,
+            14000,
+            28000,
+            60000,
+            120000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "half-orc",
+          "hitDieMax": 8,
+          "attackMapping": "half-orc",
+          "primeRequisites": [
+            "str",
+            "con"
+          ],
+          "saveMapping": "half-orc"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "illusionist",
+        "name": "Illusionist",
+        "profile": {
+          "hitDie": "1d4",
+          "primeRequisites": [
+            "INT"
+          ],
+          "xpProgression": [
+            0,
+            2500,
+            5000,
+            10000,
+            20000,
+            40000,
+            80000,
+            150000,
+            300000,
+            450000,
+            600000,
+            750000,
+            900000,
+            1050000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "magic-user",
+          "hitDieMax": 4,
+          "attackMapping": "magic-user",
+          "primeRequisites": [
+            "int"
+          ],
+          "saveMapping": "magic-user"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "knight",
+        "name": "Knight",
+        "profile": {
+          "hitDie": "1d8",
+          "primeRequisites": [
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            2500,
+            5000,
+            10000,
+            18500,
+            37000,
+            85000,
+            140000,
+            270000,
+            400000,
+            530000,
+            660000,
+            790000,
+            920000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "fighter",
+          "hitDieMax": 8,
+          "attackMapping": "fighter",
+          "primeRequisites": [
+            "str"
+          ],
+          "saveMapping": "fighter"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "magic-user",
+        "name": "Magic-User",
+        "profile": {
+          "hitDie": "1d4",
+          "primeRequisites": [
+            "INT"
+          ],
+          "xpProgression": [
+            0,
+            2500,
+            5000,
+            10000,
+            20000,
+            40000,
+            80000,
+            150000,
+            300000,
+            450000,
+            600000,
+            750000,
+            900000,
+            1050000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "magic-user",
+          "hitDieMax": 4,
+          "attackMapping": "magic-user",
+          "primeRequisites": [
+            "int"
+          ],
+          "saveMapping": "magic-user"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "paladin",
+        "name": "Paladin",
+        "profile": {
+          "hitDie": "1d8",
+          "primeRequisites": [
+            "STR",
+            "WIS"
+          ],
+          "xpProgression": [
+            0,
+            2750,
+            5500,
+            12000,
+            24000,
+            45000,
+            95000,
+            175000,
+            350000,
+            500000,
+            650000,
+            800000,
+            950000,
+            1100000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "cleric",
+          "hitDieMax": 8,
+          "attackMapping": "cleric",
+          "primeRequisites": [
+            "str",
+            "cha"
+          ],
+          "saveMapping": "paladin"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "ranger",
+        "name": "Ranger",
+        "profile": {
+          "hitDie": "1d8",
+          "primeRequisites": [
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            2250,
+            4500,
+            10000,
+            20000,
+            40000,
+            90000,
+            150000,
+            300000,
+            425000,
+            550000,
+            675000,
+            800000,
+            925000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "fighter",
+          "hitDieMax": 8,
+          "attackMapping": "fighter",
+          "primeRequisites": [
+            "str",
+            "wis"
+          ],
+          "saveMapping": "fighter"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "thief",
+        "name": "Thief",
+        "profile": {
+          "hitDie": "1d4",
+          "primeRequisites": [
+            "DEX"
+          ],
+          "xpProgression": [
+            0,
+            1200,
+            2400,
+            4800,
+            9600,
+            20000,
+            40000,
+            80000,
+            160000,
+            280000,
+            400000,
+            520000,
+            640000,
+            760000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "thief",
+          "hitDieMax": 6,
+          "attackMapping": "thief",
+          "primeRequisites": [
+            "dex"
+          ],
+          "saveMapping": "thief"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "match",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "beast-master",
+        "name": "Beast Master",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "STR",
+            "WIS"
+          ],
+          "xpProgression": [
+            0,
+            1800,
+            3600,
+            7250,
+            15000,
+            30000,
+            60000,
+            120000,
+            240000,
+            360000,
+            480000,
+            600000,
+            720000,
+            840000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "beast-master",
+          "hitDieMax": null,
+          "attackMapping": "beast-master",
+          "primeRequisites": [
+            "str"
+          ],
+          "saveMapping": "beast-master"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "warden",
+        "name": "Warden",
+        "profile": {
+          "hitDie": "1d8",
+          "primeRequisites": [
+            "STR"
+          ],
+          "xpProgression": [
+            0,
+            2000,
+            4000,
+            8000,
+            16000,
+            32000,
+            64000,
+            120000,
+            240000,
+            360000,
+            480000,
+            600000,
+            720000,
+            840000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "fighter",
+          "hitDieMax": 8,
+          "attackMapping": "fighter",
+          "primeRequisites": [
+            "str",
+            "con"
+          ],
+          "saveMapping": "warden"
+        },
+        "differences": {
+          "hitDie": "match",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      },
+      {
+        "id": "mage",
+        "name": "Mage",
+        "profile": {
+          "hitDie": "1d6",
+          "primeRequisites": [
+            "INT",
+            "WIS"
+          ],
+          "xpProgression": [
+            0,
+            2800,
+            5600,
+            12000,
+            24000,
+            48000,
+            100000,
+            200000,
+            400000,
+            560000,
+            720000,
+            980000,
+            1140000,
+            1300000
+          ]
+        },
+        "runtime": {
+          "xpMapping": "magic-user",
+          "hitDieMax": 4,
+          "attackMapping": "magic-user",
+          "primeRequisites": [
+            "int"
+          ],
+          "saveMapping": "mage"
+        },
+        "differences": {
+          "hitDie": "diff-or-missing",
+          "primeRequisites": "diff",
+          "xp": "runtime may use mapped generic table; compare table values separately",
+          "attack": "runtime uses mapped attack group, not profile THAC0/progression fields",
+          "saves": "runtime uses actor.js local save table/mapping, not class_profiles save fields"
+        }
+      }
+    ]
+  }
+}

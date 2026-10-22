@@ -22,10 +22,15 @@ export const applyBankFontSetting = () => {
 };
 
 export const registerSettings = () => {
+  // Durable XP/progression state; controlled through the progression authority.
+  for (const key of ['progressionOperationReceipts', 'xpAwardLedger']) {
+    game.settings.register(game.system.id, key, { scope: 'world', config: false, type: Object, default: {} });
+  }
+  game.settings.register(game.system.id, 'partyXPRemainder', { scope: 'world', config: false, type: Number, default: 0 });
   game.settings.register(game.system.id, "initiative", {
     name: game.i18n.localize("OSE.Setting.Initiative"),
     hint: game.i18n.localize("OSE.Setting.InitiativeHint"),
-    default: "group",
+    default: "individual",
     scope: "world",
     config: true,
     type: String,
@@ -38,7 +43,7 @@ export const registerSettings = () => {
   game.settings.register(game.system.id, "rerollInitiative", {
     name: game.i18n.localize("OSE.Setting.RerollInitiative"),
     hint: game.i18n.localize("OSE.Setting.RerollInitiativeHint"),
-    default: "reset",
+    default: "reroll",
     scope: "world",
     config: true,
     type: String,
@@ -47,6 +52,13 @@ export const registerSettings = () => {
       reset: game.i18n.localize("OSE.Setting.RerollInitiativeReset"),
       reroll: game.i18n.localize("OSE.Setting.RerollInitiativeReroll"),
     },
+  });
+
+  game.settings.register(game.system.id, "initiativeRulesVersion", {
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 0,
   });
 
   game.settings.register(game.system.id, "ascendingAC", {
@@ -198,6 +210,13 @@ export const registerSettings = () => {
     config: false,
     type: Object,
     default: { items: [], log: [] },
+  });
+
+  game.settings.register(game.system.id, "inventoryOperationReceipts", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {},
   });
 
 };

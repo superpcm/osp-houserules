@@ -8,13 +8,16 @@
     <p class="xp-share">{{localize "OSE.party.xp.share"}}: <strong>{{share}}</strong> XP {{localize "OSE.party.xp.perMember"}}</p>
   {{/if}}
 
+  <p>Saved from the previous party award: <strong>{{savedRemainder}}</strong> XP.</p>
+  <p>Saved after this award: <strong>{{nextRemainder}}</strong> XP.</p>
   <table class="party-xp-table">
     <thead>
       <tr>
         <th>{{localize "OSE.Name"}}</th>
         <th>{{localize "OSE.Level"}}</th>
         <th>{{localize "OSE.CurrentXP"}}</th>
-        <th>{{localize "OSE.party.xp.share"}}</th>
+        <th>XP modifier</th>
+        <th>XP awarded</th>
         <th>{{localize "OSE.NextLevel"}}</th>
       </tr>
     </thead>
@@ -24,7 +27,8 @@
           <td>{{name}}</td>
           <td>{{level}}</td>
           <td>{{currentXP}}</td>
-          <td>+{{share}}</td>
+          <td>{{modifier}}%</td>
+          <td>+{{awarded}}</td>
           <td>{{nextLevel}}</td>
         </tr>
       {{/each}}

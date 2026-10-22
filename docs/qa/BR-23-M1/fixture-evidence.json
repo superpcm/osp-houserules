@@ -1,0 +1,141 @@
+{
+  "timestamp": "2026-10-04T00:42:44.361865+00:00",
+  "scope": "synthetic JSON fixtures only; no native or production data",
+  "localWorkspace": "/private/tmp/osp-br23-evidence-0vyex89w",
+  "dependencies": "copied existing locked BR25 test dependencies; no clean install claimed",
+  "sourceFiles": {
+    "migrations/br23-world.js": "66507a8c4c83d00bbedcc38d4ecd838c4a6cc9b3d0d1d2f13f72dca1efa7cc5c",
+    "migrations/fixtures/br23-legacy-world.json": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+    "scripts/br23-world-migrate.js": "e6009d4b1b13b56e05d6a822e45d53ceb52ffc596207e742a4261c06c64c19ea",
+    "scripts/br23-world-migrate.test.js": "b2824d05f48a55540520428cea0ac77225a68325a9b5ddbf5a9e5a702a6e36e9",
+    "src/module/actor/level-up-state.js": "4bc95eb2b8738746d217b2db8bcfcbd282827fd60ef3ce0f75122ce918e56a43",
+    "src/config/progression.js": "be82b164cddecbf5fd56216bcf0b61da8464271eea5da35495adf8c855179aad",
+    "package.json": "04147b1184c9283f36be8220147f66005c6c2593d024f8ce045faab827b980d8",
+    "package-lock.json": "14011891d804b861e00c0a531b79c5906059e505592fd3751b980a10a49c3373",
+    "vitest.config.js": "b99791dbaaf2bfd2e168bf4eb1db6d7a0a3fde48652430258cc4fcff363f2e96",
+    "template.json": "007aefe0a2a531c4d60da464e4f589fa10cbf527f2494d6e9697db0471da61c1",
+    "system.json": "66f0a6e34d288b207f1863cfce28806d4defc6041d8de5cbbc3b9e44533d0b47",
+    "data/ammunition.json": "22b050d5d7606167a1ce52f723235a8c66a683c5e4f4ffc2ac87384f5a9a0b2f",
+    "data/armor.json": "49bcea49c4bad8eb5f626f3a368320de58294badf1dc1e8f03a08dc0351d8e69",
+    "data/clothing.json": "0c8715240378285642f8b67ba3ec5ed2acffa462672263c05aa3aec97bbb3b2a",
+    "data/gear.json": "cec88db10295b5959f4f9b0ada7ff0d162b1a4a59d090577df91e5f14ac67967",
+    "data/livestock.json": "cde3243d223c47273e23b759e4003994b496ab50b332ad8fe5b1791cebf19e0a",
+    "data/misc.json": "1ab837d76c68074335d2b395217116e201e07a143ab9af0cd6b10882c0f683a5",
+    "data/spells.json": "0c603fb238f9bb87bd8ad279c8f62c99c9ddaf79789014aca9031e8ca5083ccd",
+    "data/tack.json": "c2f873aa855238dfdf1e32af74fc3719d18f4548817da18c99e1cc7cf92dc149",
+    "data/treasure.json": "456ba182d781f537720bacae367088670793991e7ff1e5f6ac54f6f028fbe925",
+    "data/vehicles.json": "a0841d5a730d531b9821a508b440c98dd87657e7fc5aec87afada583353366ad",
+    "data/weapons.json": "8912a99d98dee940fb0b46eefbe69c50679a535ad902337a43d53262ce0e9d61"
+  },
+  "commands": [
+    {
+      "label": "fixture-tests",
+      "command": [
+        "rtk",
+        "proxy",
+        "npm",
+        "test",
+        "--",
+        "scripts/br23-world-migrate.test.js"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "label": "help",
+      "command": [
+        "rtk",
+        "proxy",
+        "node",
+        "scripts/br23-world-migrate.js",
+        "--help"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "label": "dry-run",
+      "command": [
+        "rtk",
+        "proxy",
+        "node",
+        "scripts/br23-world-migrate.js",
+        "dry-run",
+        "--input",
+        "/private/tmp/osp-br23-evidence-0vyex89w/migrations/fixtures/br23-legacy-world.json"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "label": "apply-copy",
+      "command": [
+        "rtk",
+        "proxy",
+        "node",
+        "scripts/br23-world-migrate.js",
+        "apply-copy",
+        "--input",
+        "/private/tmp/osp-br23-evidence-0vyex89w/migrations/fixtures/br23-legacy-world.json",
+        "--output",
+        "/private/tmp/osp-br23-evidence-0vyex89w/apply"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "label": "repeat-copy",
+      "command": [
+        "rtk",
+        "proxy",
+        "node",
+        "scripts/br23-world-migrate.js",
+        "apply-copy",
+        "--input",
+        "/private/tmp/osp-br23-evidence-0vyex89w/apply/world.json",
+        "--output",
+        "/private/tmp/osp-br23-evidence-0vyex89w/repeat"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "label": "restore",
+      "command": [
+        "rtk",
+        "proxy",
+        "node",
+        "scripts/br23-world-migrate.js",
+        "restore",
+        "--backup",
+        "/private/tmp/osp-br23-evidence-0vyex89w/apply",
+        "--output",
+        "/private/tmp/osp-br23-evidence-0vyex89w/restore"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "label": "corrupt-backup",
+      "command": [
+        "rtk",
+        "proxy",
+        "node",
+        "scripts/br23-world-migrate.js",
+        "restore",
+        "--backup",
+        "/private/tmp/osp-br23-evidence-0vyex89w/corrupt-backup",
+        "--output",
+        "/private/tmp/osp-br23-evidence-0vyex89w/rejected"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1
+    }
+  ],
+  "originalSha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+  "backupSha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+  "restoredSha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+  "sourceUnchanged": true,
+  "repeatChanges": 0,
+  "corruptRestoreOutputExists": false
+}

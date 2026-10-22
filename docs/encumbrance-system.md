@@ -1,170 +1,47 @@
-# Encumbrance System
+# Encumbrance system
 
-This document describes the implemented encumbrance system for OSP House Rules.
+Release authority: the BR-07 approvals and [BR-13 decisions](BR-13-ENCUMBRANCE-AND-MOVEMENT.md). These supersede the old CW movement bands and size-letter conversion tables.
 
-## Overview
+## Weight and movement
 
-The encumbrance system tracks both **Weight** (total carrying capacity) and **Capacity** (how items fit in containers).
+Personal load is the sum of each carried item's pounds per unit multiplied by quantity, including equipped items, containers and their contents exactly once. Mounts, vehicles and all cargo nested beneath them are excluded from personal load. A zero quantity contributes nothing; legacy quantity objects use their `value`.
 
-## Weight System
+Maximum load is STR × 15 pounds. Compare the unrounded total against these inclusive boundaries:
 
-### Calculation
-- **Maximum Weight**: `STR × 15` pounds
-- **Total Weight**: Sum of ALL items (equipped + stored), including containers and their contents
+| Load | Encounter movement penalty |
+|---|---|
+| At or below one-third maximum | None |
+| Above one-third, at or below two-thirds | −10 feet |
+| Above two-thirds, at or below maximum | −20 feet |
+| Above maximum | Immobile |
 
-### Encumbrance Levels
+Humans, Elves, Half-Elves and Half-Orcs start at 40 feet; Dwarves, Gnomes and Hobbits at 30 feet. Unlisted races default to 40 feet. Running is twice adjusted encounter movement; exploration is three times adjusted encounter movement per exploration turn. The sheet labels these Encounter, Run and Explore. The ruler uses encounter speed in combat and exploration speed outside combat, preserving zero when overloaded.
 
-| Level | Threshold | Movement Penalty | Description |
-|-------|-----------|------------------|-------------|
-| **Unencumbered** | ≤ 1/3 max weight | 0 | No penalty |
-| **Light** | ≤ 2/3 max weight | -10' | Slightly burdened |
-| **Heavy** | ≤ max weight | -20' | Heavily burdened |
-| **Overloaded** | > max weight | Cannot move | Too much weight |
+For STR 12 the boundaries are 60, 120 and 180 pounds. Equipped and lashed items still contribute weight.
 
-### Base Movement Rates
-- **Dwarves, Gnomes, Hobbits**: 30 feet
-- **All other races**: 40 feet
+## Bulk and containers
 
-### Example
-Character with STR 12:
-- Max Weight: 12 × 15 = 180 lbs
-- Unencumbered: ≤ 60 lbs (no penalty)
-- Light: ≤ 120 lbs (-10' movement)
-- Heavy: ≤ 180 lbs (-20' movement)
-- Overloaded: > 180 lbs (cannot move)
+Catalog `storedSize` is bulk per unit; `capacity` uses the same numeric unit. Use the catalog values directly. Only immediate children consume a container's capacity, excluding lashed children. A packed backpack consumes only its own bulk in its parent; the backpack's contents consume the backpack's capacity. Contents never consume capacity again in ancestors. Container weight subtotals include nested contents for display, but those subtotals are never added again to personal load.
 
-## Capacity System
+| Catalog container | Own weight (lb) | Own bulk | Capacity |
+|---|---:|---:|---:|
+| Backpack | 2 | 4 | 20 |
+| Sack, Large | 0.5 | 2 | 24 |
+| Sack, Small | 0.25 | 2 | 8 |
+| Coin Purse | 0.25 | 1 | 4 |
 
-### Size Categories
+Drop validation, transfers, purchase placement and sheet capacity displays use this same immediate-child calculation. Legacy object capacities use `max` or `value`.
 
-| Size | Coin Equivalent | Slots | Examples |
-|------|----------------|-------|----------|
-| **T** (Tiny) | 25 coins | 1 | Ring, potion, scroll |
-| **S** (Small) | 50 coins | 2 | Dagger, torch, rope |
-| **M** (Medium) | 100 coins | 4 | Sword, shield, backpack |
-| **L** (Large) | 600 coins | 24 | Two-handed weapon, large sack |
-| **W** (Worn) | - | 0 | Armor, cloak, helm |
-| **B** (Beast) | - | 0 | Cart, mount equipment |
+## Currency and existing items
 
-### Size Conversions
-- 1L = 6M = 12S = 24T
-- 1M = 3S = 6T
-- 1S = 2T
+Exchange is 10 copper = 1 silver and 10 silver = 1 gold. Coin weight and bulk come from the treasure catalog: copper and silver weigh 0.02 pounds each; gold weighs 0.04 pounds each. Each coin uses 0.04 bulk. Currency value does not determine weight.
 
-### Container Capacities
+Current `unitWeight` is pounds per unit. If it is absent, documented legacy `weight` is coin weight and is divided by 10 to obtain pounds. A present `unitWeight`, including zero, takes precedence. Items whose old conversion history is unknown require catalog review; the system does not guess that a differing value is custom or automatically rescale it.
 
-| Container | Capacity | Slot Count |
-|-----------|----------|------------|
-| Backpack | 6M | 24 slots |
-| Large Sack | 1L | 24 slots |
-| Small Sack | 4M | 16 slots |
+The GM's **Catalog Weight & Bulk Review** in the DM Toolkit compares exact catalog names and item types for world items and actor inventories. Known ordinary matches can be selected for update; uncertain values require review, and unmatched or ambiguous entries cannot be overwritten. Explicit custom flags and items with custom effects are preserved. The GM may mark selected items custom.
 
-### Capacity Rules
+Updates change only catalog weight, bulk and capacity fields. Quantity, cost, equipment state, storage relationships and other item data are preserved. The active GM validates the original requester and obtains replacement values from trusted catalogs. Durable operation IDs, per-item receipts and readback checks support retry after interruption. Review history offers undo when the current fields still match that update; later edits block unsafe undo. The refresh-items macro now opens this review instead of deleting or recreating inventory.
 
-1. **Equipped vs Stored**
-   - `equipped: true` = Carried on person (doesn't use container capacity)
-   - `equipped: false` = Stored in container (uses capacity)
+## Validation
 
-2. **Worn Items**
-   - Items with size "W" (armor, cloaks, helms) don't consume container capacity
-   - They still count toward total weight
-
-3. **Containers**
-   - Containers have their own size (M or L)
-   - When nested, the container itself uses capacity in the parent container
-   - Example: Backpack (M) inside Large Sack uses 4 slots
-
-### Body Slots (Optional)
-
-The `carryLocation` field can track specific carrying locations:
-
-- **Hands**: `hand-primary`, `hand-secondary`
-- **Belt**: `belt-1`, `belt-2`, `belt-3` (typically 2-3 items of S-M size)
-- **Slung**: `slung` (1 Medium item like a shield or quiver)
-- **Lashed**: `lashed-top`, `lashed-bottom`, `lashed-side-1`, `lashed-side-2`
-  - Top/Bottom: 1L or smaller
-  - Sides: 1M or smaller
-- **Worn**: `worn` (armor, cloak, helm)
-- **Stored**: Empty or container ID
-
-## Implementation Details
-
-### Data Structure (template.json)
-
-```json
-{
-  "character": {
-    "encumbrance": {
-      "weight": {
-        "value": 0,     // Current total weight
-        "max": 0        // STR × 15
-      },
-      "level": "",      // unencumbered/light/heavy/overloaded
-      "movement": 0     // Final movement rate
-    }
-  },
-  "item": {
-    "carryLocation": "" // Optional: specific body slot
-  }
-}
-```
-
-### Actor Calculation (actor.js)
-
-The `_calculateEncumbrance()` method:
-1. Sums all item weights (ALL items count)
-2. Calculates max weight from STR × 15
-3. Determines encumbrance level based on thresholds
-4. Calculates movement penalty
-5. Updates `system.encumbrance` object
-
-The `_calculateCapacity()` method:
-1. Converts size categories to slot counts
-2. Sums used capacity in each container
-3. Updates container capacity tracking
-
-### Character Sheet Display
-
-The character sheet expects:
-- `totalWeight` / `maxWeight` - For text display
-- `encumbrancePercentage` - For progress bar
-- These are calculated automatically from the encumbrance object
-
-## Testing
-
-To test the encumbrance system:
-
-1. Create or open a character
-2. Set the character's STR score
-3. Add items to the character's inventory
-4. Run the test script in browser console:
-
-```javascript
-// Copy and paste test-encumbrance.js into console
-```
-
-5. Verify:
-   - Total weight matches sum of all items
-   - Max weight = STR × 15
-   - Encumbrance level is correct for weight thresholds
-   - Movement rate shows correct penalty
-   - Container capacity tracking works
-
-## Future Enhancements
-
-1. **Container Assignment**
-   - Track which specific container holds each item
-   - Prevent over-capacity warnings
-
-2. **Body Slot Validation**
-   - Enforce hand limits (2 hands)
-   - Validate belt/slung/lashed limits
-
-3. **UI Improvements**
-   - Visual indicators for encumbrance level
-   - Container capacity bars
-   - Drag-and-drop between containers
-
-4. **Coin Weight**
-   - Track coin weight (600 coins = 1 lb)
-   - Include in encumbrance calculations
+Focused automated coverage includes movement boundaries, races, zero quantities, floating-point totals, transitive mounted cargo, nested capacity, populated-container transfers, ruler distances, catalog authorization, lost acknowledgements, retry, custom preservation and guarded undo. Live Foundry interaction remains a separate manual QA check.

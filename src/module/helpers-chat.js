@@ -1,6 +1,24 @@
 /**
  * @file Helper functions for OSP chat messages
  */
+import { changeHealth } from './health/health-authority.js';
+
+/** Effective BR-10 damage is authoritative; raw rolls remain evidence. */
+export function getChatDamageTotal(message) {
+  const flags = message?.flags?.['osp-houserules'];
+  const flagged = flags?.combatDamage ? (flags.combatDamageTotal ?? (flags.manualRoll ? flags.manualDamageTotal : undefined)) : undefined;
+  const total = flagged ?? message?.rolls?.[0]?.total;
+  return typeof total === 'number' && Number.isFinite(total) ? Math.max(0, total) : null;
+}
+
+export function getChatDamageAmount(message, multiplier = 1) {
+  const total = getChatDamageTotal(message);
+  if (total == null) return null;
+  let amount = Math.floor(total * multiplier);
+  const cap = message?.flags?.['osp-houserules']?.nonProficiencyCap;
+  if (amount > 0 && cap != null && Number.isFinite(Number(cap)) && Number(cap) > 0) amount = Math.min(amount, Number(cap));
+  return amount;
+}
 
 /**
  * Adds context menu options to chat messages for applying damage/healing
@@ -8,7 +26,7 @@
 export const addChatMessageContextOptions = (html, options) => {
   const canApply = (li) => {
     const message = game.messages.get(li.data("messageId"));
-    return message?.isRoll && message?.rolls?.length > 0;
+    return getChatDamageTotal(message) != null && !message?.flags?.['osp-houserules']?.healthApplied;
   };
 
   options.push(
@@ -31,7 +49,7 @@ export const addChatMessageContextOptions = (html, options) => {
       callback: (li) => applyDamage(li.data("messageId"), 0.5),
     },
     {
-      name: game.i18n.localize("OSE.messages.ApplyHealing"),
+      name: "Apply magical healing",
       icon: '<i class="fas fa-user-plus"></i>',
       condition: canApply,
       callback: (li) => applyDamage(li.data("messageId"), -1),
@@ -45,12 +63,11 @@ export const addChatMessageContextOptions = (html, options) => {
  * @param {string} messageId - The ID of the chat message containing the roll
  * @param {number} multiplier - Damage multiplier (1=normal, 2=double, 0.5=half, -1=healing)
  */
-const applyDamage = async (messageId, multiplier) => {
+export const applyDamage = async (messageId, multiplier) => {
   const message = game.messages.get(messageId);
-  const roll = message?.rolls?.[0];
-  if (!roll) return;
-
-  const amount = Math.floor(roll.total * multiplier);
+  if (message?.flags?.['osp-houserules']?.healthApplied) return;
+  const amount = getChatDamageAmount(message, multiplier);
+  if (amount == null) return;
   const applyOption = game.settings.get(game.system.id, "applyDamageOption");
 
   let targets = [];
@@ -60,16 +77,22 @@ const applyDamage = async (messageId, multiplier) => {
     targets = canvas.tokens.controlled.map((t) => t.actor).filter(Boolean);
   }
 
+  targets = [...new Map(targets.map((actor) => [actor.uuid ?? actor.id ?? actor, actor])).values()];
+
   if (targets.length === 0) {
     ui.notifications.warn(game.i18n.localize("OSE.messages.NoDamageTarget"));
     return;
   }
 
   for (const actor of targets) {
-    const hp = actor.system.hitpoints ?? 0;
-    const maxHp = actor.system.maxhitpoints ?? hp;
-    const newHp = Math.min(Math.max(hp - amount, 0), maxHp);
-    await actor.update({ "system.hitpoints": newHp });
+    const command = multiplier < 0
+      ? { action: 'heal', amount: Math.abs(amount), magical: true }
+      : { action: 'damage', amount };
+    const actorKey = String(actor.uuid ?? actor.id ?? 'actor').replace(/[^A-Za-z0-9_-]/g, '_');
+    const scale = String(Math.abs(multiplier)).replace('.', '_');
+    const operationId = `health-chat-${String(messageId).replace(/[^A-Za-z0-9_-]/g, '_')}-${actorKey}-${multiplier < 0 ? 'heal' : 'damage'}-${scale}`;
+    const result = await changeHealth(actor, command, operationId);
+    if (!result?.success) ui.notifications?.warn(`${actor.name ?? 'Target'} health change failed: ${result?.reason ?? 'unknown reason'}`);
   }
 };
 
@@ -77,7 +100,7 @@ const applyDamage = async (messageId, multiplier) => {
  * Adds a damage application button to chat roll cards
  */
 export const addChatMessageButtons = (message, html, data) => {
-  if (!message.isRoll || !message.rolls?.length) return;
+  if (getChatDamageTotal(message) == null) return;
 
   const damageButton = document.createElement("button");
   damageButton.className = "apply-damage";

@@ -1,0 +1,58 @@
+[
+  {
+    "tab": "skills",
+    "header": "Skill Targets",
+    "visibleInkTop": 100,
+    "windowTop": 10,
+    "distance": 90,
+    "pass": true
+  },
+  {
+    "tab": "combat",
+    "header": "Combat & Movement",
+    "visibleInkTop": 100,
+    "windowTop": 10,
+    "distance": 90,
+    "pass": true
+  },
+  {
+    "tab": "gear",
+    "header": "Gear",
+    "visibleInkTop": 100,
+    "windowTop": 10,
+    "distance": 90,
+    "pass": true
+  },
+  {
+    "tab": "attributes",
+    "header": "Spells",
+    "visibleInkTop": 100,
+    "windowTop": 10,
+    "distance": 90,
+    "pass": true
+  },
+  {
+    "tab": "character",
+    "header": "Details",
+    "visibleInkTop": 100,
+    "windowTop": 10,
+    "distance": 90,
+    "pass": true
+  },
+  {
+    "tab": "background",
+    "header": "Character Background",
+    "visibleInkTop": 100,
+    "windowTop": 10,
+    "distance": 90,
+    "pass": true
+  },
+  {
+    "tab": "notes",
+    "header": "Character Notes",
+    "visibleInkTop": 100,
+    "windowTop": 10,
+    "distance": 90,
+    "pass": true
+  }
+]

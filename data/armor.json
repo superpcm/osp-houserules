@@ -26,7 +26,7 @@
     "type": "armor",
     "img": "systems/osp-houserules/assets/thumbs/images/armor/body-shield_thumb.webp",
     "system": {
-      "description": "This tall, kite-shaped body shield is built from stout wooden planks banded with dark iron and anchored by a heavy central boss, broad enough to cover a warrior from shoulder to knee. Designed for shield-wall fighting and holding ground, it trades agility for tremendous frontal protection.",
+      "description": "A tall kite-shaped shield of stout wood, iron bands, and a heavy central boss covers the body from shoulder to knee. Built for shield-wall fighting, it trades agility for strong frontal protection.",
       "cost": 10,
       "unitWeight": 12,
       "storedSize": 60,
@@ -50,7 +50,7 @@
     "type": "armor",
     "img": "systems/osp-houserules/assets/thumbs/images/armor/brigandine_thumb.webp",
     "system": {
-      "description": "Brigandine is a flexible armor made of small overlapping steel plates riveted between layers of sturdy fabric or leather, creating a protective yet maneuverable defense. Its distinctive grid of visible rivets gives it a rugged, utilitarian appearance favored by soldiers and mercenaries.",
+      "description": "Flexible armor of small overlapping steel plates riveted between sturdy fabric or leather layers. Its visible rivet grid gives soldiers and mercenaries practical protection with good maneuverability.",
       "cost": 120,
       "unitWeight": 20,
       "storedSize": 16,
@@ -182,7 +182,7 @@
     "type": "armor",
     "img": "systems/osp-houserules/assets/thumbs/images/armor/helm-great_thumb.webp",
     "system": {
-      "description": "This great helm is a heavy cylindrical helmet of thick steel, with narrow eye slits and rows of punched ventilation holes forming a stark, imposing mask. Typically worn by knights and heavy infantry, it provides exceptional protection to the entire head—though at the cost of limited vision and airflow.",
+      "description": "A heavy cylindrical steel helmet with narrow eye slits and punched ventilation holes protects the entire head. It offers exceptional defense at the cost of limited vision and airflow.",
       "cost": 30,
       "unitWeight": 5,
       "storedSize": 12,
@@ -204,7 +204,7 @@
     "type": "armor",
     "img": "systems/osp-houserules/assets/thumbs/images/armor/helm_thumb.webp",
     "system": {
-      "description": "This standard helmet is a sturdy steel cap with a reinforced brow and a simple nasal guard, offering balanced protection without restricting vision. Common among soldiers and adventurers, it provides reliable head defense while remaining light enough for extended wear.",
+      "description": "A sturdy steel cap with reinforced brow and simple nasal guard protects the head without restricting vision. It is light enough for extended wear by soldiers and adventurers.",
       "cost": 6,
       "unitWeight": 2,
       "storedSize": 8,
@@ -292,7 +292,7 @@
     "type": "armor",
     "img": "systems/osp-houserules/assets/thumbs/images/armor/ring-mail_thumb.webp",
     "system": {
-      "description": "Ring mail consists of a leather or cloth garment reinforced with metal rings sewn directly onto its surface, providing basic protection without the full weight of true chain mail. It is typically worn by low-status soldiers or adventurers needing inexpensive armor that offers better defense than padded or leather options, though it remains less effective than more advanced mail types.",
+      "description": "A leather or cloth garment reinforced with sewn metal rings, ring mail offers better defense than padded or leather armor without true chain mail's weight. It is less effective than advanced mail.",
       "cost": 75,
       "unitWeight": 22,
       "storedSize": 16,
@@ -321,7 +321,9 @@
       "quantity": 1,
       "equipped": false,
       "lashable": false,
-      "tags": ["underarmor"],
+      "tags": [
+        "underarmor"
+      ],
       "containerSizeRequired": "",
       "slotCost": 0,
       "aac": {

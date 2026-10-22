@@ -1,0 +1,51 @@
+{
+  "assets": "All synthetic input bytes included; Node/Python/dependencies needed. Core icon referenced, UI not exercised; no campaign/runtime/Foundry assets in QA bundle.",
+  "blocked": [
+    "real source capture: three locks held by PID 3035 in foundryvtt_narlington on the-citadel",
+    "full catalog/Foundry/release acceptance",
+    "live BR-21/22/30"
+  ],
+  "branch": "main",
+  "canonicalExportSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+  "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+  "checks": {
+    "Node22_Node24_Rehydration": "three identical identities",
+    "archiveEntryBytesAndCRC": "checked",
+    "focusedTests": "11 passed",
+    "rawAndOutputHashes": "passed",
+    "repositoryLint": "passed",
+    "syntaxAndPythonCompilation": "passed"
+  },
+  "dirtyWorkspace": true,
+  "fixtureBuiltAt": "2026-10-03T04:29:33.704Z",
+  "fixtureRecords": 2,
+  "milestone": "BR-25 M1",
+  "minimumSafeRealCapture": "Approval for graceful shutdown of identified Foundry instance, wait for lock release, capture before restart; or verified closed backup. No stop/kill performed.",
+  "neverRun": [
+    "full runtime suite/build for this milestone",
+    "release install or Foundry/browser acceptance",
+    "native Linux/Windows execution",
+    "forced round-trip mismatch injection"
+  ],
+  "projectSpace": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules",
+  "releaseCommitCreated": false,
+  "reproduce": [
+    "rtk npm ci",
+    "rtk npm test -- scripts/pack-snapshot.test.js --maxWorkers=2 --hookTimeout=30000",
+    "rtk proxy node scripts/pack-snapshot.js --root fixture --output /private/tmp/osp-br25-independent-UNIQUE",
+    "rtk proxy python3 evidence/verify-snapshot.py fixture"
+  ],
+  "revision": "327fbc73048223b9875045e6468fc53beca3de4a",
+  "source": {
+    "alias": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br25-m1-source-20261003.zip",
+    "builtAt": "2026-10-03T04:45:21.822078+00:00",
+    "bytes": 208085,
+    "entries": 34,
+    "entryChecksPassed": true,
+    "identity": "content-addressed archive plus SHA-256; read-only retained file",
+    "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br25-m1-source-af40be68fe43663f58b15afb50bc76f1b9268d5ce361527dc1fed8b4d15103a6.zip",
+    "sha256": "af40be68fe43663f58b15afb50bc76f1b9268d5ce361527dc1fed8b4d15103a6"
+  },
+  "status": "implementation ready for independent QA; BR-25 remains open",
+  "validation": "implementer-reported with internal verifier review; synthetic fixture only"
+}

@@ -4,7 +4,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/images/misc/cart.webp",
     "system": {
-      "description": "This sturdy two-wheeled wooden cart has iron-banded wheels, a slatted cargo bed, and long shafts ready to be hitched to a beast of burden. It is typically used by farmers, merchants, and traveling parties to haul goods, supplies, and sometimes passengers along rough roads and village lanes.",
+      "description": "A sturdy two-wheeled wooden cart with iron-banded wheels, a slatted cargo bed, and shafts for a beast of burden. Farmers, merchants, and travelers haul goods, supplies, and passengers in it.",
       "cost": 115,
       "unitWeight": 200,
       "storedSize": 99,

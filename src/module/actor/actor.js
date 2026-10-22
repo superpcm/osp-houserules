@@ -1,5 +1,11 @@
+import { healthSnapshot, conditionEffects } from '../health/health-rules.js';
 import { calculateXPModifier, getLevelFromXP, getNextLevelXP, getPrimeRequisites } from "../../config/classes.js";
 import { deriveExplorationSkills } from "./exploration-skills.js";
+import { createCharacterFromPrompt } from "./character-creation-dialog.js";
+import { getSavingThrowModifiers, getSavingThrowTarget } from './saving-throws.js';
+import { calculatePersonalEncumbrance, isCarriedByMountOrVehicle } from '../inventory/encumbrance.js';
+import { getUnauthorizedAbilityScoreChanges } from './ability-score-permissions.js';
+import { ospDialogOptions } from '../dialog/dialog-theme.js';
 
 export class OspActor extends Actor {
   constructor(data, context) {
@@ -7,238 +13,79 @@ export class OspActor extends Actor {
     super(data, context);
   }
 
+  /** Character ability scores are GM-managed; preserve all other actor updates. */
+  async _preUpdate(changes, options, user) {
+    const result = await super._preUpdate(changes, options, user);
+    if (result === false) return false;
+    const requester = user ?? globalThis.game?.user;
+    if (this.type !== 'character' || requester?.isGM) return result;
+    const blocked = getUnauthorizedAbilityScoreChanges(changes, this.system);
+    if (!blocked.length) return result;
+    globalThis.ui?.notifications?.warn?.('Only the Game Master can change ability scores.');
+    return false;
+  }
+
+  /** Use the OSP creation flow before Foundry's callback can render an undefined document. */
+  static async createDialog(data = {}, createOptions = {}, dialogOptions = {}, renderOptions = {}) {
+    const type = data.type || 'character';
+    const attrs = data.system?.attributes;
+    const blankCharacter = type === 'character'
+      && !(attrs && Object.values(attrs).some((attribute) => Number(attribute?.value) > 0));
+    if (!blankCharacter || createOptions.osprSkipDialog) return super.createDialog(data, createOptions, dialogOptions, renderOptions);
+
+    return new Promise((resolve) => {
+      let settled = false;
+      let submitting = false;
+      const finish = (value) => { if (!settled) { settled = true; resolve(value); } };
+      const dialog = new foundry.applications.api.DialogV2(ospDialogOptions({
+        window: { title: game.i18n?.localize?.('OSE.dialog.CharacterCreation') || 'Create Actor' },
+        content: `<div class="form-group"><label for="osp-create-name">Name</label><input id="osp-create-name" name="name" type="text" value="${foundry.utils.escapeHTML(data.name || '')}" autofocus></div><div class="form-group"><label for="osp-create-type">Type</label><select id="osp-create-type" name="type"><option value="character">Character</option><option value="monster">Monster</option></select></div><div class="form-group"><label for="osp-create-folder">Folder</label><select id="osp-create-folder" name="folder"><option value="">— None —</option>${game.folders.filter((folder) => folder.type === 'Actor').map((folder) => `<option value="${folder.id}"${folder.id === data.folder ? ' selected' : ''}>${foundry.utils.escapeHTML(folder.name)}</option>`).join('')}</select></div>`,
+        buttons: [{ action: 'create', label: 'Create', default: true, callback: async (_event, _button, app) => {
+          submitting = true;
+          const root = app?.element || dialog.element;
+          const value = (selector) => root?.querySelector(selector)?.value || '';
+          const sourceData = foundry.utils.deepClone(data);
+          sourceData.name = value('[name="name"]') || data.name || 'New Actor';
+          sourceData.type = value('[name="type"]') || 'character';
+          sourceData.folder = value('[name="folder"]') || null;
+          let actor;
+          if (sourceData.type === 'character') {
+            actor = await createCharacterFromPrompt(sourceData, {
+              create: (actorData, helperOptions) => this.create(actorData, { ...createOptions, ...helperOptions, renderSheet: false })
+            });
+          } else {
+            actor = await this.create(sourceData, { ...createOptions, renderSheet: false });
+          }
+          if (actor) await actor.sheet?.render(true, renderOptions);
+          finish(actor || null);
+        } }, { action: 'cancel', label: 'Cancel', callback: () => finish(null) }],
+        close: () => { if (!submitting) finish(null); },
+        ...dialogOptions,
+      }));
+      dialog.render({ force: true });
+    });
+  }
+
     /**
    * Calculate saving throws based on class, level, and race
    * @private
    */
   _calculateSavingThrows() {
-
-
-    // Initialize saves structure if it doesn't exist
-    if (!this.system.saves) {
-      this.system.saves = {
-        death: { value: 0 },
-        wands: { value: 0 },
-        paralysis: { value: 0 },
-        breath: { value: 0 },
-        spells: { value: 0 }
-      };
+    if (!this.system.saves) this.system.saves = {};
+    const attributes = this.system.attributes || {};
+    const options = {
+      className: this.system.class || '', level: this.system.level,
+      race: this.system.race, con: attributes.con?.value ?? 10, wis: attributes.wis?.value ?? 10,
+      situationalBonus: conditionEffects(healthSnapshot(this)).savePenalty
+    };
+    for (const saveType of ['death', 'wands', 'paralysis', 'breath', 'spells']) {
+      if (!this.system.saves[saveType]) this.system.saves[saveType] = {};
+      this.system.saves[saveType].value = getSavingThrowTarget({ ...options, saveType });
     }
-
-    const characterClass = this.system.class || '';
-    const level = parseInt(this.system.level) || 1;
-    const race = this.system.race?.toLowerCase() || '';
-
-
-
-    // OSE saving throw tables by class
-    const savingThrowTables = {
-      'fighter': {
-        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4],
-        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5],
-        paralysis: [14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6],
-        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8, 5, 5],
-        spells: [16, 16, 16, 14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8]
-      },
-      'cleric': {
-        death: [11, 11, 11, 11, 9, 9, 9, 9, 6, 6, 6, 6, 3, 3],
-        wands: [12, 12, 12, 12, 10, 10, 10, 10, 7, 7, 7, 7, 5, 5],
-        paralysis: [14, 14, 14, 14, 12, 12, 12, 12, 9, 9, 9, 9, 7, 7],
-        breath: [16, 16, 16, 16, 14, 14, 14, 14, 11, 11, 11, 11, 8, 8],
-        spells: [15, 15, 15, 15, 12, 12, 12, 12, 9, 9, 9, 9, 7, 7]
-      },
-      'magic-user': {
-        death: [13, 13, 13, 13, 13, 11, 11, 11, 11, 11, 8, 8, 8, 8],
-        wands: [14, 14, 14, 14, 14, 12, 12, 12, 12, 12, 9, 9, 9, 9],
-        paralysis: [13, 13, 13, 13, 13, 11, 11, 11, 11, 11, 8, 8, 8, 8],
-        breath: [16, 16, 16, 16, 16, 14, 14, 14, 14, 14, 11, 11, 11, 11],
-        spells: [15, 15, 15, 15, 15, 12, 12, 12, 12, 12, 8, 8, 8, 8]
-      },
-      'thief': {
-        death: [13, 13, 13, 13, 12, 12, 12, 12, 10, 10, 10, 10, 8, 8],
-        wands: [14, 14, 14, 14, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
-        paralysis: [13, 13, 13, 13, 11, 11, 11, 11, 9, 9, 9, 9, 7, 7],
-        breath: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10],
-        spells: [15, 15, 15, 15, 13, 13, 13, 13, 10, 10, 10, 10, 8, 8]
-      },
-      'barbarian': {
-        death: [10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4, 4, 3, 3],
-        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5],
-        paralysis: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4],
-        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8, 5, 5],
-        spells: [16, 16, 16, 13, 13, 13, 10, 10, 10, 7, 7, 7, 5, 5]
-      },
-      'assassin': {
-        death: [13, 13, 13, 13, 12, 12, 12, 12, 10, 10, 10, 10, 8, 8],
-        wands: [14, 14, 14, 14, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
-        paralysis: [13, 13, 13, 13, 11, 11, 11, 11, 9, 9, 9, 9, 7, 7],
-        breath: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10],
-        spells: [15, 15, 15, 15, 13, 13, 13, 13, 10, 10, 10, 10, 8, 8]
-      },
-      'mage': {
-        death: [12, 12, 12, 12, 12, 10, 10, 10, 10, 10, 7, 7, 7, 7],
-        wands: [13, 13, 13, 13, 13, 11, 11, 11, 11, 11, 8, 8, 8, 8],
-        paralysis: [12, 12, 12, 12, 12, 10, 10, 10, 10, 10, 7, 7, 7, 7],
-        breath: [15, 15, 15, 15, 15, 13, 13, 13, 13, 13, 10, 10, 10, 10],
-        spells: [14, 14, 14, 14, 14, 11, 11, 11, 11, 11, 7, 7, 7, 7]
-      },
-      'warden': {
-        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4],
-        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5],
-        paralysis: [14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6],
-        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8, 5, 5],
-        spells: [16, 16, 16, 14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8]
-      },
-      'beast master': {
-        death: [11, 11, 11, 11, 9, 9, 9, 9, 7, 7, 7, 7, 5, 5],
-        wands: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
-        paralysis: [12, 12, 12, 12, 10, 10, 10, 10, 8, 8, 8, 8, 6, 6],
-        breath: [15, 15, 15, 15, 13, 13, 13, 13, 11, 11, 11, 11, 9, 9],
-        spells: [16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10, 10]
-      },
-      'drow': {
-        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6],
-        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7],
-        paralysis: [13, 13, 13, 11, 11, 11, 9, 9, 9, 8],
-        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8],
-        spells: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6]
-      },
-      'paladin': {
-        death: [10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4, 4, 2, 2],
-        wands: [11, 11, 11, 9, 9, 9, 7, 7, 7, 5, 5, 5, 3, 3],
-        paralysis: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4],
-        breath: [13, 13, 13, 11, 11, 11, 8, 8, 8, 6, 6, 6, 3, 3],
-        spells: [14, 14, 14, 12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6]
-      },
-      'elf': {
-        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6],
-        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7],
-        paralysis: [13, 13, 13, 11, 11, 11, 9, 9, 9, 8],
-        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8],
-        spells: [15, 15, 15, 12, 12, 12, 10, 10, 10, 8]
-      },
-      'half-elf': {
-        death: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6],
-        wands: [13, 13, 13, 11, 11, 11, 9, 9, 9, 7, 7, 7],
-        paralysis: [13, 13, 13, 11, 11, 11, 9, 9, 9, 8, 8, 8],
-        breath: [15, 15, 15, 13, 13, 13, 10, 10, 10, 8, 8, 8],
-        spells: [15, 15, 15, 12, 12, 12, 10, 10, 10, 8, 8, 8]
-      },
-      'gnome': {
-        death: [8, 8, 8, 8, 8, 6, 6, 6],
-        wands: [9, 9, 9, 9, 9, 7, 7, 7],
-        paralysis: [10, 10, 10, 10, 10, 8, 8, 8],
-        breath: [14, 14, 14, 14, 14, 11, 11, 11],
-        spells: [11, 11, 11, 11, 11, 9, 9, 9]
-      },
-      'dwarf': {
-        death: [8, 8, 8, 6, 6, 6, 4, 4, 4, 2, 2, 2],
-        wands: [9, 9, 9, 7, 7, 7, 5, 5, 5, 3, 3, 3],
-        paralysis: [10, 10, 10, 8, 8, 8, 6, 6, 6, 4, 4, 4],
-        breath: [13, 13, 13, 10, 10, 10, 7, 7, 7, 4, 4, 4],
-        spells: [12, 12, 12, 10, 10, 10, 8, 8, 8, 6, 6, 6]
-      },
-      'hobbit': {
-        death: [8, 8, 8, 6, 6, 6, 4, 4],
-        wands: [9, 9, 9, 7, 7, 7, 5, 5],
-        paralysis: [10, 10, 10, 8, 8, 8, 6, 6],
-        breath: [13, 13, 13, 10, 10, 10, 7, 7],
-        spells: [12, 12, 12, 10, 10, 10, 8, 8]
-      },
-      'half-orc': {
-        death: [13, 13, 13, 13, 12, 12, 12, 12],
-        wands: [14, 14, 14, 14, 13, 13, 13, 13],
-        paralysis: [13, 13, 13, 13, 11, 11, 11, 11],
-        breath: [16, 16, 16, 16, 14, 14, 14, 14],
-        spells: [15, 15, 15, 15, 13, 13, 13, 13]
-      }
-    };
-
-
-
-    // Map additional classes to their saving throw patterns
-    const classMapping = {
-      // Core OSE classes
-      'fighter': 'fighter',
-      'cleric': 'cleric', 
-      'magic-user': 'magic-user',
-      'thief': 'thief',
-
-      // Advanced Fantasy classes with specific tables
-      'assassin': 'assassin',          // Assassins have their own progression
-      'barbarian': 'barbarian',        // Barbarians have their own progression
-      'bard': 'thief',                 // Bards use thief saves
-      'beast master': 'beast master',  // Beast Masters have their own progression
-      'druid': 'cleric',               // Druids use cleric saves
-      'knight': 'fighter',             // Knights use fighter saves
-      'paladin': 'paladin',            // Paladins have their own progression
-      'ranger': 'fighter',             // Rangers use fighter saves
-      'warden': 'warden',              // Wardens have their own progression (matches fighter)
-
-      // Magic users and variants
-      'illusionist': 'magic-user',     // Illusionists use magic-user saves
-      'mage': 'mage',                  // Mages have their own progression
-
-      // Race-as-class options with specific tables
-      'drow': 'drow',                  // Drow class has its own progression
-      'dwarf': 'dwarf',                // Dwarf class has its own progression
-      'elf': 'elf',                    // Elf class has its own progression
-      'gnome': 'gnome',                // Gnome class has its own progression
-      'half-elf': 'half-elf',          // Half-Elf class has its own progression
-      'half-orc': 'half-orc',          // Half-Orc class has its own progression
-      'hobbit': 'hobbit'               // Hobbit class has its own progression
-    };
-
-    // Get the appropriate save table for this class
-    const mappedClass = classMapping[characterClass.toLowerCase()] || 'fighter';
-    const saveTable = savingThrowTables[mappedClass];
-
-
-    const levelIndex = Math.min(Math.max(level - 1, 0), 14); // Levels 1-15, array index 0-14
-
-
-
-
-
-    // Calculate each saving throw
-    ['death', 'wands', 'paralysis', 'breath', 'spells'].forEach(saveType => {
-      // Ensure the save type exists in the structure
-      if (!this.system.saves[saveType]) {
-        this.system.saves[saveType] = { value: 0 };
-      }
-
-      let baseValue = saveTable[saveType] ? saveTable[saveType][levelIndex] : 15;
-
-
-      // Apply racial bonuses
-      let racialBonus = 0;
-
-      // Dwarf racial bonus - CON-based bonus vs poison, spells, wands/rods/staves
-      if (race === 'dwarf' && (saveType === 'death' || saveType === 'spells' || saveType === 'wands')) {
-        const conScore = parseInt(this.system.abilities?.con?.value) || 10;
-        if (conScore <= 6) {
-          racialBonus = 0; // No bonus
-        } else if (conScore >= 7 && conScore <= 10) {
-          racialBonus = 2; // +2 bonus
-        } else if (conScore >= 11 && conScore <= 14) {
-          racialBonus = 3; // +3 bonus
-        } else if (conScore >= 15 && conScore <= 17) {
-          racialBonus = 4; // +4 bonus
-        } else if (conScore >= 18) {
-          racialBonus = 5; // +5 bonus
-        }
-
-      } 
-      // Hobbit racial bonus (keeping old system for now)
-      else if (race === 'hobbit' && (saveType === 'wands' || saveType === 'spells' || saveType === 'paralysis' || saveType === 'death')) {
-        racialBonus = 4; // Hobbits get +4 vs magic
-      }
-
-      const finalValue = Math.max(baseValue - racialBonus, 2); // Minimum save of 2
-
-
-      this.system.saves[saveType].value = finalValue;
-    });
+    this.system.saves.death.poisonValue = getSavingThrowTarget({ ...options, saveType: 'death', poison: true });
+    const modifiers = getSavingThrowModifiers(options);
+    this.system.saves.magicModifier = modifiers.magic;
+    this.system.saves.resilienceBonus = modifiers.wands;
   }
 
   /**
@@ -248,7 +95,7 @@ export class OspActor extends Actor {
     const characterClass = this.system.class || '';
     if (!characterClass) return;
     const xp = parseInt(String(this.system.xp ?? 0).replace(/,/g, '')) || 0;
-    this.system.level = getLevelFromXP(characterClass, xp);
+    this.system.level = getLevelFromXP(characterClass, xp, this.system.race || '');
   }
 
   /**
@@ -259,7 +106,7 @@ export class OspActor extends Actor {
     const characterClass = this.system.class || '';
     const level = parseInt(this.system.level) || 1;
 
-    this.system.nextLevelXP = getNextLevelXP(characterClass, level);
+    this.system.nextLevelXP = getNextLevelXP(characterClass, level, this.system.race || '');
   }
 
   /**
@@ -360,103 +207,32 @@ export class OspActor extends Actor {
    * @private
    */
   _isCarriedByMountOrVehicle(item, visited = new Set()) {
-    if (visited.has(item.id)) return false; // guard against a malformed containerId cycle
-    visited.add(item.id);
-    if ((item.system.tags || []).includes('vehicle')) return true;
-    if (item.type === 'livestock') return true;
-    const containerId = item.system.containerId;
-    if (!containerId) return false;
-    const parent = this.items.get(containerId);
-    if (!parent) return false;
-    return this._isCarriedByMountOrVehicle(parent, visited);
+    return isCarriedByMountOrVehicle(item, id => this.items.get(id), visited);
   }
 
   _calculateEncumbrance() {
-    // Calculate total weight - ALL items count regardless of equipped status
-    let totalWeight = 0;
-
-    this.items.forEach(item => {
-      // Vehicles/Livestock, and anything stored or lashed inside them (cargo, tack, gear lashed
-      // to tack), are carried by the vehicle/mount, not the character — exclude their weight.
-      if (this._isCarriedByMountOrVehicle(item)) return;
-
-      // Handle quantity as either a number or an object with a value property
-      let quantity = 1;
-      if (typeof item.system.quantity === 'number') {
-        quantity = item.system.quantity;
-      } else if (typeof item.system.quantity === 'object' && item.system.quantity !== null) {
-        quantity = item.system.quantity.value || 1;
-      }
-
-      const weight = item.system.unitWeight || 0;
-      totalWeight += weight * quantity;
-    });
-
-    // Calculate max weight from STR (STR × 15)
-    const strScore = parseInt(this.system.attributes?.str?.value) || 10;
-    const maxWeight = strScore * 15;
-
-    // Calculate encumbrance thresholds
-    const unencumberedThreshold = maxWeight / 3;
-    const lightThreshold = (maxWeight * 2) / 3;
-
-    // Determine encumbrance level
-    let encumbranceLevel = "";
-    let movementPenalty = 0;
-
-    if (totalWeight <= unencumberedThreshold) {
-      encumbranceLevel = "unencumbered";
-      movementPenalty = 0;
-    } else if (totalWeight <= lightThreshold) {
-      encumbranceLevel = "light";
-      movementPenalty = -10;
-    } else if (totalWeight <= maxWeight) {
-      encumbranceLevel = "heavy";
-      movementPenalty = -20;
-    } else {
-      encumbranceLevel = "overloaded";
-      movementPenalty = 0; // Cannot move
-    }
-
-    // Calculate base movement rate based on race
-    const race = (this.system.race || "").toLowerCase();
-    let baseMovement = 40; // Default for most races
-    
-    if (race === "dwarf" || race === "gnome" || race === "hobbit") {
-      baseMovement = 30;
-    }
-
-    // Calculate final movement rate
-    let finalMovement = baseMovement;
-    if (encumbranceLevel === "overloaded") {
-      finalMovement = 0; // Cannot move
-    } else {
-      finalMovement = Math.max(0, baseMovement + movementPenalty);
-    }
-
-    // Calculate encumbrance percentage for UI
-    const encumbrancePercentage = Math.min(100, (totalWeight / maxWeight) * 100);
+    const result = calculatePersonalEncumbrance({ items: [...this.items], strength: this.system.attributes?.str?.value, race: this.system.race, getParent: id => this.items.get(id) });
 
     // Update the encumbrance object in system data (matches template.json structure)
     this.system.encumbrance = {
       weight: {
-        value: Math.round(totalWeight * 10) / 10, // Round to 1 decimal
-        max: maxWeight
+        value: result.totalWeight,
+        max: result.maxWeight
       },
-      level: encumbranceLevel,
-      movement: finalMovement,
+      level: result.level,
+      movement: result.tactical,
       // Legacy properties for character sheet compatibility
-      totalWeight: Math.round(totalWeight * 10) / 10,
-      maxWeight: maxWeight,
-      percentage: Math.round(encumbrancePercentage),
-      encumbered: totalWeight > unencumberedThreshold
+      totalWeight: result.totalWeight,
+      maxWeight: result.maxWeight,
+      percentage: Math.round(result.percentage),
+      encumbered: result.level !== 'unencumbered'
     };
 
     // Calculate movement rates
     this.system.movement = {
-      tactical: finalMovement,  // Walk speed (encounter movement)
-      overland: Math.floor(finalMovement / 3),  // Travel speed (overland movement, 1/3 of tactical)
-      dash: finalMovement * 3  // Run speed (3x tactical)
+      tactical: result.tactical,
+      overland: result.explore,
+      dash: result.dash
     };
   }
 

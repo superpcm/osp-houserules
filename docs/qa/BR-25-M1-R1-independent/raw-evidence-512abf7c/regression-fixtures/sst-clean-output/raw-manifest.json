@@ -1,0 +1,55 @@
+{
+  "capture": "all declared POSIX LOCKs held; original databases never opened",
+  "capturedAt": "2026-10-03T05:54:49.206948+00:00",
+  "catalogs": [
+    "ammunition",
+    "armor",
+    "clothing",
+    "gear",
+    "livestock",
+    "misc",
+    "spells",
+    "tack",
+    "treasure",
+    "vehicles",
+    "weapons"
+  ],
+  "directories": [
+    "packs/qa-fixture"
+  ],
+  "format": "osp-houserules-br25-raw-v1",
+  "packs": [
+    {
+      "name": "qa-fixture",
+      "path": "packs/qa-fixture",
+      "type": "Item"
+    }
+  ],
+  "sourceFiles": {
+    "data/ammunition.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/armor.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/clothing.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/gear.json": "0892471a84d7efe72e7d3c15f156fbed07c083d504d1c24c3f5eebce92766cc4",
+    "data/item-templates.js": "450f0af4f4c1ecc4c7180f2e364c8a59bfed69dd350fb6b47bce8641c2a37786",
+    "data/livestock.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/misc.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/spells.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "data/tack.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/treasure.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/vehicles.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/weapons.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "package-lock.json": "14011891d804b861e00c0a531b79c5906059e505592fd3751b980a10a49c3373",
+    "package.json": "04147b1184c9283f36be8220147f66005c6c2593d024f8ce045faab827b980d8",
+    "packs/qa-fixture/000007.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "packs/qa-fixture/000008.ldb": "40f8ef76a0f877bd900e856c5507e9c5b8c32cb02f111398ac786b036f3736ed",
+    "packs/qa-fixture/000009.ldb": "b7008a7dac7829bfcd4b4556191d2340df56d290ea38c5dc7be8b200e51c3c4e",
+    "packs/qa-fixture/CURRENT": "0861415cada612ea5834d56e2cf1055d3e63979b69eb71d32ae9ae394d8306cd",
+    "packs/qa-fixture/LOCK": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "packs/qa-fixture/LOG": "74dd7654d63329dd18eeb84e21608c21a1e7617f6c1a24c8e5501cfe7798ba8c",
+    "packs/qa-fixture/LOG.old": "1781baaecaf4339f0eb52faf4165975164d7c116aec7832cdd0210bb55cfbf75",
+    "packs/qa-fixture/MANIFEST-000004": "2bfabb9d1f4fefd2f70311d140dd8f73afeeaec25f3f8ea0463450d90eeafc1e",
+    "system.json": "461c4b059036856f3b0549a92763ac7a717184122b46d5efccec7e92dfe26f2c",
+    "template.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+  },
+  "sourceRoot": "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/regressions/sst-input"
+}

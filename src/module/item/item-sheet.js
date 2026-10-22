@@ -1,10 +1,17 @@
 import { ItemPositionToolHandler } from './handlers/item-position-tool-handler.js';
 import { ItemCardDialog } from '../cards/item-card-dialog.js';
 
+let tooltipInstanceSequence = 0;
+
 export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
   constructor(...args) {
     super(...args);
     this.handlers = new Map();
+    this._tooltipNamespace = `.ospItemSheetTooltip${++tooltipInstanceSequence}`;
+    this._tooltipTimers = new Set();
+    this._sizeTooltip = null;
+    this._equippedTooltip = null;
+    this._tooltipTargets = new Set();
   }
 
   /** @override */
@@ -71,6 +78,9 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    this._cleanupTooltips(true);
+    this._destroyHandlers();
+
     // Initialize position tool handler only if GM or in development
     if (game.user.isGM) {
       this.ensurePositionToolHandler(html);
@@ -98,13 +108,7 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
       const positionableElements = html.find('[class*="is-pos-"]');
       if (positionableElements.length === 0) return;
 
-      if (this.handlers.has('positionTool')) {
-        const existingHandler = this.handlers.get('positionTool');
-        if (existingHandler && typeof existingHandler.destroy === 'function') {
-          existingHandler.destroy();
-        }
-        this.handlers.delete('positionTool');
-      }
+      this._destroyHandlers();
 
       const handler = new ItemPositionToolHandler(html, this.item);
       handler.initialize();
@@ -125,34 +129,15 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     if (!storedSize) return;
 
     // Create tooltip element
-    let tooltip = document.getElementById('item-size-tooltip');
-    if (!tooltip) {
-      tooltip = document.createElement('div');
-      tooltip.id = 'item-size-tooltip';
-      tooltip.className = 'cs-tooltip';
-      tooltip.style.cssText = `
-        position: absolute;
-        background: #333;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        line-height: 1.4;
-        z-index: 10000;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.2s;
-        white-space: nowrap;
-      `;
-      document.body.appendChild(tooltip);
-    }
-
-    let tooltipTimeout;
+    const tooltip = this._createTooltip('size');
+    this._sizeTooltip = tooltip;
+    this._tooltipTargets.add(sizeElement);
+    const schedule = (callback, delay) => this._scheduleTooltip(callback, delay);
 
     // Attach events to the size select element
-    sizeElement.on('mouseenter', (e) => {
-      clearTimeout(tooltipTimeout);
-      tooltipTimeout = setTimeout(() => {
+    sizeElement.off(this._tooltipNamespace).on(`mouseenter${this._tooltipNamespace}`, (e) => {
+      this._clearTooltipTimers();
+      schedule(() => {
         tooltip.textContent = `Stored Size: ${storedSize}`;
 
         const rect = e.currentTarget.getBoundingClientRect();
@@ -163,8 +148,8 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
       }, 500);
     });
 
-    sizeElement.on('mouseleave', () => {
-      clearTimeout(tooltipTimeout);
+    sizeElement.on(`mouseleave${this._tooltipNamespace}`, () => {
+      this._clearTooltipTimers();
       tooltip.style.opacity = '0';
     });
   }
@@ -177,33 +162,14 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     if (!equippedWrapper || equippedWrapper.length === 0) return;
 
     // Create tooltip element
-    let tooltip = document.getElementById('item-equipped-tooltip');
-    if (!tooltip) {
-      tooltip = document.createElement('div');
-      tooltip.id = 'item-equipped-tooltip';
-      tooltip.className = 'cs-tooltip';
-      tooltip.style.cssText = `
-        position: absolute;
-        background: #333;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        line-height: 1.4;
-        z-index: 10000;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.2s;
-        white-space: nowrap;
-      `;
-      document.body.appendChild(tooltip);
-    }
+    const tooltip = this._createTooltip('equipped');
+    this._equippedTooltip = tooltip;
+    this._tooltipTargets.add(equippedWrapper);
+    const schedule = (callback, delay) => this._scheduleTooltip(callback, delay);
 
-    let tooltipTimeout;
-
-    equippedWrapper.on('mouseenter', (e) => {
-      clearTimeout(tooltipTimeout);
-      tooltipTimeout = setTimeout(() => {
+    equippedWrapper.off(this._tooltipNamespace).on(`mouseenter${this._tooltipNamespace}`, (e) => {
+      this._clearTooltipTimers();
+      schedule(() => {
         tooltip.textContent = 'Equip/Unequip';
 
         const rect = e.currentTarget.getBoundingClientRect();
@@ -214,10 +180,72 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
       }, 500);
     });
 
-    equippedWrapper.on('mouseleave', () => {
-      clearTimeout(tooltipTimeout);
+    equippedWrapper.on(`mouseleave${this._tooltipNamespace}`, () => {
+      this._clearTooltipTimers();
       tooltip.style.opacity = '0';
     });
+  }
+
+  _createTooltip(kind) {
+    const tooltip = document.createElement('div');
+    tooltip.className = `cs-tooltip item-sheet-${kind}-tooltip`;
+    tooltip.style.cssText = `
+      position: absolute;
+      background: #333;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 1.4;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    `;
+    document.body.appendChild(tooltip);
+    return tooltip;
+  }
+
+  _scheduleTooltip(callback, delay) {
+    const timer = setTimeout(() => {
+      this._tooltipTimers.delete(timer);
+      if (!this._tooltipTimers || this._destroyed) return;
+      callback();
+    }, delay);
+    this._tooltipTimers.add(timer);
+    return timer;
+  }
+
+  _clearTooltipTimers() {
+    for (const timer of this._tooltipTimers) clearTimeout(timer);
+    this._tooltipTimers.clear();
+  }
+
+  _cleanupTooltips(reset = false) {
+    if (reset) this._destroyed = false;
+    this._clearTooltipTimers();
+    for (const target of this._tooltipTargets) target.off(this._tooltipNamespace);
+    this._tooltipTargets.clear();
+    for (const tooltip of [this._sizeTooltip, this._equippedTooltip]) {
+      if (tooltip?.parentNode) tooltip.parentNode.removeChild(tooltip);
+    }
+    this._sizeTooltip = null;
+    this._equippedTooltip = null;
+  }
+
+  async close(options = {}) {
+    this._destroyed = true;
+    this._cleanupTooltips();
+    this._destroyHandlers();
+    return super.close(options);
+  }
+
+  _destroyHandlers() {
+    for (const handler of this.handlers.values()) {
+      if (handler && typeof handler.destroy === 'function') handler.destroy();
+    }
+    this.handlers.clear();
   }
 
   /** @override */

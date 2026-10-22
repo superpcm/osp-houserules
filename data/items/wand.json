@@ -1,0 +1,19 @@
+{
+  "name": "Wand",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/wand_thumb.webp",
+  "system": {
+    "description": "A wooden wand shaped and finished to suit its owner, from a plain tapered length to a crooked, carved, or wrapped design. It serves as a spell focus held or displayed when casting and contains no stored spells or charges of its own.",
+    "cost": 1,
+    "unitWeight": 0.1,
+    "storedSize": 1,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "tags": [
+      "focus",
+      "wand",
+      "wooden"
+    ]
+  }
+}

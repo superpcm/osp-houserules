@@ -1,0 +1,8 @@
+BR23 offline world migration
+
+Usage:
+  node scripts/br23-world-migrate.js dry-run --input FILE
+  node scripts/br23-world-migrate.js apply-copy --input FILE --output UNIQUE_DIR
+  node scripts/br23-world-migrate.js restore --backup DIR --output UNIQUE_DIR
+
+Offline JSON only; no Foundry native database support.

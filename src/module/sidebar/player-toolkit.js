@@ -5,6 +5,7 @@
  */
 import { BankLedgerView } from "../apps/bank-ledger-view.js";
 import { StorehouseView } from "../apps/storehouse-view.js";
+import { ospDialogOptions } from '../dialog/dialog-theme.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { AbstractSidebarTab } = foundry.applications.sidebar;
@@ -61,7 +62,7 @@ export default class PlayerToolkitTab extends HandlebarsApplicationMixin(Abstrac
   static async _promptChooseActor(actors, serviceName, accountName) {
     const options = actors.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
     return new Promise((resolve) => {
-      new Dialog({
+      new Dialog(ospDialogOptions({
         title: `${serviceName} — Choose Character`,
         content: `
           <form>
@@ -83,7 +84,7 @@ export default class PlayerToolkitTab extends HandlebarsApplicationMixin(Abstrac
           }
         },
         default: 'open'
-      }).render(true);
+      })).render(true);
     });
   }
 }

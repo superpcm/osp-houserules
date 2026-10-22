@@ -1,3 +1,5 @@
+import { ospDialogOptions } from './dialog-theme.js';
+
 /**
  * GM prompt shown when treasure is granted to a character from outside their inventory.
  * The chosen value is written only to the newly-created embedded item, leaving the catalog
@@ -19,7 +21,7 @@ export class TreasureValueDialog {
 
     return new Promise((resolve) => {
       let resolved = false;
-      new Dialog({
+      new Dialog(ospDialogOptions({
         title: `Set ${safeName} Value`,
         content: `
           <form>
@@ -53,7 +55,7 @@ export class TreasureValueDialog {
         default: 'add',
         close: () => { if (!resolved) resolve(null); },
         render: (html) => html.find('[name="treasureValue"]').focus().select(),
-      }).render(true);
+      })).render(true);
     });
   }
 }

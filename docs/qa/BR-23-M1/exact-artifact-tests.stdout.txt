@@ -1,0 +1,14 @@
+
+> osp-houserules@1.0.12 test
+> vitest run scripts/br23-world-migrate.test.js
+
+
+ RUN  v3.2.7 /private/tmp/osp-br23-exact-9ugkjcnh/BR23-M1-SOURCE
+
+ ✓ scripts/br23-world-migrate.test.js (21 tests) 469ms
+
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Start at  20:46:20
+   Duration  631ms (transform 25ms, setup 0ms, collect 31ms, tests 469ms, environment 0ms, prepare 24ms)
+

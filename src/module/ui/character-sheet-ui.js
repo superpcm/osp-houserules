@@ -107,8 +107,9 @@ export class CharacterSheetUI {
     const updateNextLevel = () => {
       const level = parseInt(levelField?.value) || 1;
       const characterClass = classField?.value || 'fighter';
+      const race = document.querySelector('[name="system.race"]')?.value || '';
       
-      const nextLevelXP = getNextLevelXP(characterClass, level);
+      const nextLevelXP = getNextLevelXP(characterClass, level, race);
       nextLevelField.value = this.formatNumberWithCommas(nextLevelXP);
     };
 

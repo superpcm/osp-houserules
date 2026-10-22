@@ -1,0 +1,7 @@
+{"level":"info","message":"Running on Node.js - Version 24.21.0","timestamp":"2026-10-02 21:09:17"}
+{"level":"info","message":"Foundry Virtual Tabletop - Version 14 Build 367","timestamp":"2026-10-02 21:09:17"}
+{"level":"info","message":"Running on Node.js - Version 24.21.0","timestamp":"2026-10-02 21:10:43"}
+{"level":"info","message":"Foundry Virtual Tabletop - Version 14 Build 367","timestamp":"2026-10-02 21:10:43"}
+{"level":"info","message":"Running on Node.js - Version 24.21.0","timestamp":"2026-10-02 21:11:43"}
+{"level":"info","message":"Foundry Virtual Tabletop - Version 14 Build 367","timestamp":"2026-10-02 21:11:43"}
+{"level":"info","message":"Server started and listening on socket /private/tmp/osp-br21-20261002/foundry.sock","timestamp":"2026-10-02 21:11:44"}

@@ -1,0 +1,37 @@
+
+> osp-houserules@1.0.12 test
+> vitest run scripts/br23-world-migrate.test.js
+
+
+ RUN  v3.2.7 /private/tmp/osp-br23-evidence-i81u7lo3
+
+ ❯ scripts/br23-world-migrate.test.js (21 tests | 2 failed) 468ms
+   ✓ BR23 pure contract > uses current catalog defaults without overwriting custom physical values 4ms
+   ✓ BR23 pure contract > preserves legacy progression state and blocks conflicting missing baselines 2ms
+   ✓ BR23 pure contract > reports malformed flags without committing migration markers 0ms
+   ✓ BR23 pure contract > reports null embedded document without committing migration markers 0ms
+   ✓ BR23 pure contract > reports malformed pack without committing migration markers 0ms
+   ✓ BR23 pure contract > reports missing image without committing migration markers 0ms
+   ✓ BR23 pure contract > reports future version without committing migration markers 0ms
+   ✓ BR23 pure contract > reports negative version without committing migration markers 0ms
+   ✓ BR23 pure contract > reports duplicate actors without committing migration markers 0ms
+   ✓ BR23 pure contract > reports explicit kg override without committing migration markers 0ms
+   ✓ BR23 pure contract > reports ambiguous legacy Backpack without committing migration markers 0ms
+   × BR23 pure contract > reports null capacity without committing migration markers 3ms
+     → expected 0 to be greater than 0
+   ✓ BR23 pure contract > checks completed exports and resolves Item pack references in the pack scope 1ms
+   ✓ BR23 pure contract > preserves ledgers, custom data, item snapshots and character state 0ms
+   × BR23 pure contract > is repeat safe and rejects malformed units, ledgers, references and journals 1ms
+     → expected 0 to be greater than 0
+   ✓ BR23 pure contract > keeps collection scoped IDs independent while rejecting local collisions 0ms
+   ✓ BR23 pure contract > derives a missing baseline from class, race and XP without rewriting character history 0ms
+   ✓ BR23 CLI filesystem contract > dry-run emits JSON only and never writes beside the source 34ms
+   ✓ BR23 CLI filesystem contract > apply-copy records a byte backup, hashes and provenance, and repeats with no changes 74ms
+   ✓ BR23 CLI filesystem contract > restores original bytes and refuses corrupt or unsafe backup children 185ms
+   ✓ BR23 CLI filesystem contract > rejects extra, duplicate and unsafe path arguments without output 161ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 19 passed (21)
+   Start at  20:41:33
+   Duration  638ms (transform 26ms, setup 0ms, collect 31ms, tests 468ms, environment 0ms, prepare 24ms)
+

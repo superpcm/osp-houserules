@@ -1,0 +1,15 @@
+{
+  "capturedAt": "2026-10-03T04:04:17.799200+00:00",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "python": "3.12.0 (v3.12.0:0fb18b02c8, Oct  2 2023, 09:45:56) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "nodeShell": "22.22.3",
+  "nodeFoundry": "24.21.0",
+  "foundryInstalled": "14.367",
+  "dependencies": {
+    "classic-level": "3.0.0",
+    "vitest": "3.2.7",
+    "typescript": "5.9.2",
+    "rollup": "4.49.0",
+    "sass": "1.91.0"
+  }
+}

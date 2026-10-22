@@ -1,0 +1,10 @@
+{
+  "alias": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br25-m1-source-20261003.zip",
+  "builtAt": "2026-10-03T04:45:21.822078+00:00",
+  "bytes": 208085,
+  "entries": 34,
+  "entryChecksPassed": true,
+  "identity": "content-addressed archive plus SHA-256; read-only retained file",
+  "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br25-m1-source-af40be68fe43663f58b15afb50bc76f1b9268d5ce361527dc1fed8b4d15103a6.zip",
+  "sha256": "af40be68fe43663f58b15afb50bc76f1b9268d5ce361527dc1fed8b4d15103a6"
+}

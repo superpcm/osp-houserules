@@ -1,0 +1,32 @@
+{
+  "fixture-original.json": {
+    "sha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+    "bytes": 2858,
+    "capturedFrom": "/private/tmp/osp-br23-evidence-0vyex89w/migrations/fixtures/br23-legacy-world.json"
+  },
+  "fixture-backup.json": {
+    "sha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+    "bytes": 2858,
+    "capturedFrom": "/private/tmp/osp-br23-evidence-0vyex89w/apply/backup.json"
+  },
+  "fixture-migrated.json": {
+    "sha256": "1977e3bc47e6720d896a1dd97c722a43271ff3a6219f078650a9f2fd6935bd28",
+    "bytes": 6891,
+    "capturedFrom": "/private/tmp/osp-br23-evidence-0vyex89w/apply/world.json"
+  },
+  "fixture-backup-manifest.json": {
+    "sha256": "2682add00497393a83cd6af648e942c6c6443849af6a261039d7ca36db6a15f5",
+    "bytes": 35454,
+    "capturedFrom": "/private/tmp/osp-br23-evidence-0vyex89w/apply/manifest.json"
+  },
+  "fixture-repeat.json": {
+    "sha256": "1977e3bc47e6720d896a1dd97c722a43271ff3a6219f078650a9f2fd6935bd28",
+    "bytes": 6891,
+    "capturedFrom": "/private/tmp/osp-br23-evidence-0vyex89w/repeat/world.json"
+  },
+  "fixture-restored.json": {
+    "sha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+    "bytes": 2858,
+    "capturedFrom": "/private/tmp/osp-br23-evidence-0vyex89w/restore/restored.json"
+  }
+}

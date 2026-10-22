@@ -3,11 +3,14 @@
  */
 import { OSP } from "../config";
 import { getNextLevelXP } from "../../config/classes.js";
+import { awardXP, calculateXPAward } from '../progression/xp-awards.js';
 
 export class OspPartyXP extends FormApplication {
   constructor(data = {}, options = {}) {
     super(data, options);
     this._party = data.party ?? [];
+    this._awardId = foundry.utils.randomID();
+    this._awarding = false;
   }
 
   /** @override */
@@ -26,7 +29,10 @@ export class OspPartyXP extends FormApplication {
   getData() {
     const totalXP = this.object.totalXP ?? 0;
     const party = this._party;
-    const share = this._calculateShare(party, totalXP);
+    const savedRemainder = Number(game.settings.get(game.system.id, 'partyXPRemainder')) || 0;
+    const share = this._calculateShare(party, totalXP + savedRemainder);
+    const preview = Number.isSafeInteger(totalXP) && totalXP > 0 && party.length
+      ? calculateXPAward({ amount: totalXP, actors: party, party: true, remainder: savedRemainder }) : null;
 
     return {
       party: party.map((actor) => ({
@@ -37,10 +43,14 @@ export class OspPartyXP extends FormApplication {
         level: actor.system.level ?? 1,
         currentXP: actor.system.xp ?? 0,
         share,
-        nextLevel: getNextLevelXP(actor.system.class ?? "", actor.system.level ?? 1),
+        awarded: preview?.entries.find(entry => entry.actorId === actor.id)?.awarded ?? 0,
+        modifier: preview?.entries.find(entry => entry.actorId === actor.id)?.modifier ?? 0,
+        nextLevel: getNextLevelXP(actor.system.class ?? "", actor.system.level ?? 1, actor.system.race ?? ""),
       })),
       totalXP,
       share,
+      savedRemainder,
+      nextRemainder: preview?.remainderAfter ?? savedRemainder,
     };
   }
 
@@ -58,24 +68,39 @@ export class OspPartyXP extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
     html.find(".deal-xp").click(() => this._dealXP(html));
+    html.find('[name="totalXP"]').on('change', event => {
+      this.object.totalXP = Number(event.target.value);
+      this.render(false);
+    });
   }
 
   /**
    * Distribute XP to all party members
    */
   async _dealXP(html) {
-    const totalXP = parseInt(html.find('[name="totalXP"]').val()) || 0;
-    const share = this._calculateShare(this._party, totalXP);
-
-    for (const actor of this._party) {
-      const currentXP = actor.system.xp ?? 0;
-      await actor.update({ "system.xp": currentXP + share });
+    if (this._awarding) return;
+    const amount = Number(html.find('[name="totalXP"]').val());
+    if (!Number.isSafeInteger(amount) || amount <= 0) {
+      ui.notifications.warn('Enter a positive whole-number XP award.');
+      return;
     }
-
-    ui.notifications.info(
-      game.i18n.format("OSE.party.xp.dealt", { amount: share })
-    );
-    this.close();
+    this._awarding = true;
+    html.find('.deal-xp').prop('disabled', true);
+    try {
+      const result = await awardXP({ amount, party: true, awardId: this._awardId,
+        actorRefs: this._party.map(actor => ({ actorId: actor.id, actorUuid: actor.uuid })) });
+      if (!result.success) {
+        ui.notifications.warn(result.reason || 'XP award needs recovery in DM Toolkit → XP History.');
+        return;
+      }
+      ui.notifications.info(`Party XP awarded with individual modifiers. ${result.remainderAfter} XP saved for the next party award.`);
+      this.close();
+    } catch (error) {
+      ui.notifications.warn(`${error.message}. Retry this award or open DM Toolkit → XP History.`);
+    } finally {
+      this._awarding = false;
+      html.find('.deal-xp').prop('disabled', false);
+    }
   }
 
   /** @override */

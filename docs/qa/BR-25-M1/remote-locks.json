@@ -1,0 +1,60 @@
+{
+  "errors": [],
+  "inspection": "read-only; no database open, shutdown or kill",
+  "packs": {
+    "armor": {
+      "device": [
+        259,
+        2
+      ],
+      "inode": 4444197,
+      "locks": [
+        {
+          "cgroup": "0::/system.slice/docker-d8e3fbf34b41bbd287e6d2237324aa520c9920ea260a79c2b4ba9fe7d98db94c.scope",
+          "kernelRecord": "262: POSIX  ADVISORY  WRITE 3035 103:02:4444197 0 EOF",
+          "mode": "WRITE",
+          "pid": 3035,
+          "processName": "MainThread",
+          "type": "POSIX"
+        }
+      ],
+      "path": "/home/superpcm/foundry/narlington-data/Data/systems/osp-houserules/packs/armor/LOCK"
+    },
+    "gear": {
+      "device": [
+        259,
+        2
+      ],
+      "inode": 4444204,
+      "locks": [
+        {
+          "cgroup": "0::/system.slice/docker-d8e3fbf34b41bbd287e6d2237324aa520c9920ea260a79c2b4ba9fe7d98db94c.scope",
+          "kernelRecord": "261: POSIX  ADVISORY  WRITE 3035 103:02:4444204 0 EOF",
+          "mode": "WRITE",
+          "pid": 3035,
+          "processName": "MainThread",
+          "type": "POSIX"
+        }
+      ],
+      "path": "/home/superpcm/foundry/narlington-data/Data/systems/osp-houserules/packs/gear/LOCK"
+    },
+    "weapons": {
+      "device": [
+        259,
+        2
+      ],
+      "inode": 4444190,
+      "locks": [
+        {
+          "cgroup": "0::/system.slice/docker-d8e3fbf34b41bbd287e6d2237324aa520c9920ea260a79c2b4ba9fe7d98db94c.scope",
+          "kernelRecord": "263: POSIX  ADVISORY  WRITE 3035 103:02:4444190 0 EOF",
+          "mode": "WRITE",
+          "pid": 3035,
+          "processName": "MainThread",
+          "type": "POSIX"
+        }
+      ],
+      "path": "/home/superpcm/foundry/narlington-data/Data/systems/osp-houserules/packs/weapons/LOCK"
+    }
+  }
+}

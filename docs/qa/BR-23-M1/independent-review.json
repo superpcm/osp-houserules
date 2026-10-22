@@ -1,0 +1,10 @@
+{
+  "recordedAt": "2026-10-04T03:03:41.620828+00:00",
+  "sourceIdentity": "3ca5211d5717366e93698be2d4c37575fe4877625556c72e87d701252fcc76df",
+  "sourceArchiveSha256": "02360ee6c9a508c02fd1bfa476e013f9bfc0be9a9db6e72570cdbff4809c641a",
+  "qaArchiveSha256": "eb4c578fd44cfdd6d0da08f6ece0b0ef9454371b26925fb4133d7461de9d354b",
+  "verdict": "User reports independent review complete; all looks good apart from formatting issues.",
+  "scope": "BR-23 offline M1; representative-world and native rollback gates remain open",
+  "formatting": "Issues noted; affected screens and details not yet specified.",
+  "userStatement": "Besides some formatting issues, all looks good."
+}

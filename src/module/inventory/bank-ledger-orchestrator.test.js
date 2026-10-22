@@ -1,4 +1,8 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { initBankLedgerAuthority } from "./bank-ledger-orchestrator.js";
+import { initPartyTreasury } from "./party-treasury.js";
+import { initStorehouse } from "./storehouse.js";
+import { COIN_TEMPLATES } from './treasure-cost.js';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   getLedger,
   depositItem,
@@ -9,9 +13,17 @@ import {
   dmAddItem,
   dmRemoveItem,
 } from './bank-ledger-orchestrator.js';
+import { JOURNAL_FLAG } from './transaction-journal.js';
 
-beforeAll(() => {
-  globalThis.game = { user: { id: 'test-user' } };
+beforeEach(() => {
+  const gm = { id: 'test-user', isGM: true };
+  const settings = new Map();
+  globalThis.game = { user: gm, users: Object.assign(new Map([[gm.id, gm]]), { activeGM: gm }), actors: new Map(), system: { id: 'osp-houserules' }, settings: { get: (_scope, key) => settings.get(key), set: async (_scope, key, value) => settings.set(key, structuredClone(value)) } };
+  const callbacks = [];
+  globalThis.Hooks = { on: (_event, callback) => callbacks.push(callback) };
+  globalThis.ChatMessage = { create: vi.fn(async data => { const doc = { flags: data.flags }; callbacks[0]?.(doc, {}, game.user.id); return doc; }) };
+  delete globalThis.__ospInventoryChatHook;
+  initBankLedgerAuthority(); initPartyTreasury(); initStorehouse();
 });
 
 function applyChanges(obj, changes) {
@@ -36,7 +48,13 @@ function fakeItem(overrides = {}) {
     get system() { return data.system; },
     toObject: () => structuredClone(data),
     update: vi.fn(async (changes) => { applyChanges(data, changes); }),
-    delete: vi.fn(async () => {}),
+    delete: vi.fn(async function deleteItem() {
+      const ownerItems = this.parent?.items;
+      if (Array.isArray(ownerItems)) {
+        const index = ownerItems.indexOf(this);
+        if (index >= 0) ownerItems.splice(index, 1);
+      }
+    }),
   };
 }
 
@@ -45,14 +63,35 @@ function fakeContainer(overrides = {}) {
 }
 
 function fakeActor(id, items = []) {
-  let flagValue;
-  return {
-    id,
-    items,
-    getFlag: vi.fn(() => flagValue),
-    setFlag: vi.fn(async (_scope, _key, value) => { flagValue = value; }),
-    createEmbeddedDocuments: vi.fn(async (_type, data) => data),
+  const flags = new Map();
+  let liveItems = [];
+  const attach = (item) => {
+    if (item && typeof item === 'object') {
+      item.parent = actor;
+      item.actor = actor;
+    }
   };
+  const actor = {
+    id,
+    get items() { return liveItems; },
+    set items(value) { liveItems = value; liveItems.forEach(attach); },
+    getFlag: vi.fn((_scope, key) => flags.get(key)),
+    setFlag: vi.fn(async (_scope, key, value) => { flags.set(key, value); }),
+    createEmbeddedDocuments: vi.fn(async (_type, data) => {
+      const created = data.map((itemData) => {
+        const item = fakeItem({ ...structuredClone(itemData), id: itemData._id ?? itemData.id });
+        delete item._id;
+        return item;
+      });
+      liveItems.push(...created);
+      created.forEach(attach);
+      return created;
+    }),
+  };
+  actor.type = "character";
+  game.actors.set(id, actor);
+  actor.items = items;
+  return actor;
 }
 
 describe('getLedger', () => {
@@ -114,7 +153,7 @@ describe('withdrawItem', () => {
     expect(plan.success).toBe(true);
     expect(actor.createEmbeddedDocuments).toHaveBeenCalledWith('Item', [
       expect.objectContaining({ name: 'Ruby', system: expect.objectContaining({ quantity: 1, containerId: 'destC' }) }),
-    ]);
+    ], { keepId: true });
     expect(getLedger(actor).items).toHaveLength(0);
   });
 
@@ -199,7 +238,7 @@ describe('currency deposit/withdraw', () => {
     expect(plan.success).toBe(true);
     expect(actor.createEmbeddedDocuments).toHaveBeenCalledWith('Item', [
       expect.objectContaining({ name: 'Gold Coins', system: expect.objectContaining({ quantity: 4, containerId: 'destC' }) }),
-    ]);
+    ], { keepId: true });
     expect(getLedger(actor).currency.gold).toBe(6);
   });
 
@@ -209,7 +248,7 @@ describe('currency deposit/withdraw', () => {
     await depositCurrency(actor, 'gold', 10, coin);
 
     const target = fakeContainer();
-    const existingGold = fakeItem({ id: 'g2', name: 'Gold Coins', type: 'coin', system: { quantity: 3, containerId: 'destC' } });
+    const existingGold = fakeItem({ ...COIN_TEMPLATES['Gold Coins'], id: 'g2', system: { ...COIN_TEMPLATES['Gold Coins'].system, quantity: 3, containerId: 'destC' } });
     actor.items = [target, existingGold];
 
     const plan = await withdrawCurrency(actor, 'gold', 4, target);
@@ -274,8 +313,9 @@ describe('mutation failure safety — the withdrawCurrency bug this suite now gu
     const plan = await depositItem(actor, source, 1);
 
     expect(plan.success).toBe(false);
-    expect(actor.setFlag).not.toHaveBeenCalled();
+    expect(actor.setFlag.mock.calls.filter(([, key]) => key === 'bankLedger')).toHaveLength(0);
     expect(getLedger(actor).items).toHaveLength(0);
+    expect(actor.items.find((item) => item.id === source.id)).toBe(source);
   });
 
   it('withdrawItem: if creating the destination item throws, the ledger entry is left in place instead of being removed', async () => {
@@ -295,17 +335,30 @@ describe('mutation failure safety — the withdrawCurrency bug this suite now gu
     expect(getLedger(actor).items[0].entryId).toBe(entryId);
   });
 
-  it('surfaces a setFlag failure as a normal result too, after the real item mutation already succeeded', async () => {
+  it('surfaces a ledger setFlag failure as a normal result after compensation restores the source item', async () => {
     const source = fakeItem();
     const actor = fakeActor('a1', [source]);
-    actor.setFlag = vi.fn(async () => { throw new Error('simulated flag write failure'); });
+    const originalSetFlag = actor.setFlag;
+    actor.setFlag = vi.fn(async (scope, key, value) => {
+      if (key === 'bankLedger') throw new Error('simulated ledger flag write failure');
+      return originalSetFlag(scope, key, value);
+    });
 
     const plan = await depositItem(actor, source, 1);
 
     expect(plan.success).toBe(false);
-    // The item mutation itself did go through — this is the accepted, visible failure mode
-    // (surfaced as an error) rather than a silent one.
+    expect(plan.reason).toMatch(/restored|cancelled|flag/i);
     expect(source.delete).toHaveBeenCalled();
+    const restored = actor.items.find((item) => item.id === source.id);
+    expect(restored).toBeDefined();
+    expect(restored.toObject()).toMatchObject({
+      _id: source.id,
+      name: source.name,
+      type: source.type,
+      system: expect.objectContaining({ quantity: 1, containerId: 'c1' }),
+    });
+    expect(getLedger(actor).items).toHaveLength(0);
+    expect(actor.getFlag('osp-houserules', JOURNAL_FLAG)).toBeNull();
   });
 });
 

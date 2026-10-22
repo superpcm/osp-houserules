@@ -1,0 +1,32 @@
+[
+  {
+    "tab": "Background",
+    "panels": [
+      {
+        "bottom": 699.9982967885655,
+        "height": "594.547px",
+        "prompt": "none"
+      },
+      {
+        "bottom": 699.9982967885655,
+        "height": "594.547px",
+        "prompt": "none"
+      }
+    ]
+  },
+  {
+    "tab": "Details",
+    "panels": [
+      {
+        "bottom": 699.9950067886421,
+        "height": "593.352px",
+        "prompt": "none"
+      },
+      {
+        "bottom": 699.9950067886421,
+        "height": "593.352px",
+        "prompt": "none"
+      }
+    ]
+  }
+]

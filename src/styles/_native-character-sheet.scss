@@ -1,0 +1,36 @@
+/* Preserve the journal's inner form while Foundry V2 manages its window. */
+.application.window-app.osp-native-character {
+  display: flex;
+  flex-direction: column;
+
+  > .window-header {
+    flex: 0 0 auto;
+
+    .header-control {
+      width: 24px;
+      min-width: 24px;
+      height: 24px;
+      min-height: 0;
+      padding: 0;
+      line-height: 1;
+      color: inherit;
+      font-family: var(--font-awesome) !important;
+      font-weight: 900 !important;
+    }
+  }
+
+  > .window-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0;
+  }
+
+  prose-mirror.editor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+
+    .editor-content { flex: 1 1 auto; min-height: 0; }
+  }
+}

@@ -9,6 +9,7 @@ $font-cooper: 'Cooper Std', 'Cooper Standard', Georgia, serif;  // Cooper Std wi
 @import 'z-index';
 @import '_tabs';
 @import 'character-sheet-main';
+@import 'spell-list-controls';
 @import 'dm-toolkit';
 @import 'bank';
 @import 'monster-sheet';
@@ -98,8 +99,6 @@ form.osp button {
 .application.window-app.sheet.actor.character.osp .window-header .window-title,
 .osp.sheet .window-header .header-button,
 .application.window-app.sheet.actor.character.osp .window-header .header-button,
-.osp.sheet .window-header .popout-module-button,
-.application.window-app.sheet.actor.character.osp .window-header .popout-module-button,
 .osp.sheet .window-header .window-minimize,
 .application.window-app.sheet.actor.character.osp .window-header .window-minimize,
 .osp.sheet .window-header .window-close,
@@ -187,3 +186,16 @@ form.osp button {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+@import 'themed-selects';
+@import 'native-character-sheet';
+@import 'bio-field-alignment';
+@import 'character-ink-color';
+@import 'details-dividers';
+@import 'combat-hp-art';
+@import 'sheet-content-offsets';
+@import 'encumbrance-balance';
+@import 'combat-weapon-columns';
+@import 'combat-armor-columns';
+@import 'item-row-highlights';
+@import 'dialog-theme';

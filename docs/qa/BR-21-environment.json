@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-02",
+  "status": "blocked-before-browser-acceptance",
+  "foundry": "14.367",
+  "node": "24.21.0",
+  "system": "1.0.12",
+  "dataDirectory": "/private/tmp/osp-br21-20261002",
+  "worldId": "westford",
+  "worldTitle": "BR-21 Acceptance \u2014 Westford Copy",
+  "sourceWorld": "/Users/paul/FoundryData/osp-dev/Data/worlds/westford",
+  "checkout": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules",
+  "url": "http://127.0.0.1:30021",
+  "listener": "loopback proxy to Foundry Unix socket",
+  "worldAndCompendiums": "independent copies",
+  "thirdPartyModules": "not installed in isolated baseline",
+  "browserVersion": null,
+  "browserTestsRun": false,
+  "blocker": "Browser security check unavailable: administrator-enforced policy could not be verified; access denied; no workaround permitted.",
+  "sha256": {
+    "system.json": "66f0a6e34d288b207f1863cfce28806d4defc6041d8de5cbbc3b9e44533d0b47",
+    "template.json": "007aefe0a2a531c4d60da464e4f589fa10cbf527f2494d6e9697db0471da61c1",
+    "dist/ose.js": "1da56ded624dbc547bf9133d1157b6ab62d115b75aac1bc68a71044836ec5795",
+    "dist/ose.css": "453ed37f5205bc9a7c2b3b583f94ad44edac862c70d6037adbbf5e410936e669"
+  },
+  "serverState": "stopped cleanly after browser-policy block",
+  "retries": [
+    {
+      "at": "2026-10-03T02:55:19.890051+00:00",
+      "result": "Same browser policy verification denial after user restarted app; no live client tests executed."
+    }
+  ]
+}

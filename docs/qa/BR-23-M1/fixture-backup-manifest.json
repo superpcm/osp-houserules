@@ -1,0 +1,1448 @@
+{
+  "format": "osp-br23-backup-v1",
+  "worldFormat": "osp-br23-world-export-v1",
+  "source": {
+    "path": "/private/tmp/osp-br23-evidence-0vyex89w/migrations/fixtures/br23-legacy-world.json",
+    "originalSha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+    "bytes": 2858,
+    "inode": 129814725
+  },
+  "backupSha256": "1b67fe050379a8da1fcae2ce3580effc799f08ff13233d64d8942c163e04d6d3",
+  "outputSha256": "1977e3bc47e6720d896a1dd97c722a43271ff3a6219f078650a9f2fd6935bd28",
+  "version": 5,
+  "migrationIds": [
+    "BR23-001-unit-weight",
+    "BR23-002-item-defaults",
+    "BR23-003-images",
+    "BR23-004-progression",
+    "BR23-005-ledgers"
+  ],
+  "timestamp": "2026-10-04T00:42:32.217Z",
+  "provenance": {
+    "catalogs": {
+      "ammunition": {
+        "path": "data/ammunition.json",
+        "sha256": "22b050d5d7606167a1ce52f723235a8c66a683c5e4f4ffc2ac87384f5a9a0b2f",
+        "bytes": 3052
+      },
+      "armor": {
+        "path": "data/armor.json",
+        "sha256": "49bcea49c4bad8eb5f626f3a368320de58294badf1dc1e8f03a08dc0351d8e69",
+        "bytes": 13321
+      },
+      "clothing": {
+        "path": "data/clothing.json",
+        "sha256": "0c8715240378285642f8b67ba3ec5ed2acffa462672263c05aa3aec97bbb3b2a",
+        "bytes": 6822
+      },
+      "gear": {
+        "path": "data/gear.json",
+        "sha256": "cec88db10295b5959f4f9b0ada7ff0d162b1a4a59d090577df91e5f14ac67967",
+        "bytes": 37925
+      },
+      "livestock": {
+        "path": "data/livestock.json",
+        "sha256": "cde3243d223c47273e23b759e4003994b496ab50b332ad8fe5b1791cebf19e0a",
+        "bytes": 14034
+      },
+      "misc": {
+        "path": "data/misc.json",
+        "sha256": "1ab837d76c68074335d2b395217116e201e07a143ab9af0cd6b10882c0f683a5",
+        "bytes": 4467
+      },
+      "tack": {
+        "path": "data/tack.json",
+        "sha256": "c2f873aa855238dfdf1e32af74fc3719d18f4548817da18c99e1cc7cf92dc149",
+        "bytes": 8119
+      },
+      "treasure": {
+        "path": "data/treasure.json",
+        "sha256": "456ba182d781f537720bacae367088670793991e7ff1e5f6ac54f6f028fbe925",
+        "bytes": 12113
+      },
+      "vehicles": {
+        "path": "data/vehicles.json",
+        "sha256": "a0841d5a730d531b9821a508b440c98dd87657e7fc5aec87afada583353366ad",
+        "bytes": 1484
+      },
+      "weapons": {
+        "path": "data/weapons.json",
+        "sha256": "8912a99d98dee940fb0b46eefbe69c50679a535ad902337a43d53262ce0e9d61",
+        "bytes": 32663
+      }
+    },
+    "catalogCount": 171,
+    "template": {
+      "path": "template.json",
+      "sha256": "007aefe0a2a531c4d60da464e4f589fa10cbf527f2494d6e9697db0471da61c1",
+      "bytes": 5291
+    },
+    "runtime": {
+      "node": "v22.22.3",
+      "package": {
+        "version": "1.0.12",
+        "sha256": "04147b1184c9283f36be8220147f66005c6c2593d024f8ce045faab827b980d8"
+      },
+      "system": {
+        "version": "1.0.12",
+        "sha256": "66f0a6e34d288b207f1863cfce28806d4defc6041d8de5cbbc3b9e44533d0b47"
+      },
+      "dependencies": {
+        "package-lock.json": "14011891d804b861e00c0a531b79c5906059e505592fd3751b980a10a49c3373"
+      },
+      "tool": {
+        "path": "scripts/br23-world-migrate.js",
+        "sha256": "e6009d4b1b13b56e05d6a822e45d53ceb52ffc596207e742a4261c06c64c19ea"
+      },
+      "implementation": {
+        "migrations/br23-world.js": {
+          "sha256": "66507a8c4c83d00bbedcc38d4ecd838c4a6cc9b3d0d1d2f13f72dca1efa7cc5c",
+          "bytes": 30648
+        },
+        "src/config/progression.js": {
+          "sha256": "be82b164cddecbf5fd56216bcf0b61da8464271eea5da35495adf8c855179aad",
+          "bytes": 21810
+        },
+        "src/module/actor/level-up-state.js": {
+          "sha256": "4bc95eb2b8738746d217b2db8bcfcbd282827fd60ef3ce0f75122ce918e56a43",
+          "bytes": 4834
+        }
+      }
+    }
+  },
+  "summary": {
+    "before": {
+      "actors": 2,
+      "worldItems": 3,
+      "compendiumDocuments": 1,
+      "items": 6,
+      "quantities": 9,
+      "hp": 17,
+      "maxHp": 21,
+      "xp": 4000,
+      "references": 1,
+      "accounts": {
+        "actors[0].flags.osp-houserules.bankLedger": {
+          "currency": {
+            "gold": 17,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [
+            {
+              "id": "log-1"
+            }
+          ],
+          "items": [
+            {
+              "_id": "bank-item",
+              "quantity": 2
+            }
+          ]
+        },
+        "actors[0].flags.osp-houserules.storehouse": {
+          "log": [],
+          "items": [
+            {
+              "_id": "stored-1",
+              "quantity": 3
+            }
+          ]
+        },
+        "settings.osp-houserules.partyTreasury": {
+          "currency": {
+            "gold": 25,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [],
+          "items": [
+            {
+              "_id": "treasury-1",
+              "quantity": 1
+            }
+          ]
+        },
+        "settings.osp-houserules.partyStorehouse": {
+          "log": [],
+          "items": []
+        }
+      },
+      "receipts": {
+        "receipt-1": {
+          "status": "complete"
+        }
+      },
+      "customSettings": {
+        "custom.setting": {
+          "keep": true
+        }
+      },
+      "records": [
+        {
+          "path": "actors[0]",
+          "id": "actor-hero",
+          "type": "character",
+          "name": "Mira",
+          "hp": 12,
+          "maxHp": 16,
+          "xp": 4000,
+          "system": {
+            "class": "Fighter",
+            "race": "Human",
+            "level": 3,
+            "hitpoints": 12,
+            "maxhitpoints": 16,
+            "xp": 4000,
+            "skills": {
+              "climbSheer": 2
+            },
+            "weight": "bodyweight"
+          },
+          "customFlags": {
+            "osp-houserules": {
+              "customActorData": {
+                "origin": "synthetic"
+              }
+            }
+          }
+        },
+        {
+          "path": "actors[0].flags.osp-houserules.bankLedger.items[0].itemData",
+          "id": "bank-item-data",
+          "type": null,
+          "name": "Ruby",
+          "quantity": null,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {},
+          "flags": null
+        },
+        {
+          "path": "actors[0].flags.osp-houserules.storehouse.items[0].itemData",
+          "id": null,
+          "type": null,
+          "name": "Rope",
+          "quantity": 3,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 3
+          },
+          "flags": null
+        },
+        {
+          "path": "actors[0].items[0]",
+          "id": "actor-belt",
+          "type": "clothing",
+          "name": "Belt",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": {
+            "custom": true
+          }
+        },
+        {
+          "path": "actors[0].items[1]",
+          "id": "actor-backpack",
+          "type": "container",
+          "name": "Backpack",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "actors[1]",
+          "id": "actor-monster",
+          "type": "monster",
+          "name": "Goblin",
+          "hp": 5,
+          "maxHp": 5,
+          "xp": null,
+          "system": {
+            "hp": {
+              "value": 5,
+              "max": 5
+            },
+            "details": {
+              "xp": 10
+            }
+          },
+          "customFlags": {
+            "osp-houserules": {
+              "custom": "preserve"
+            }
+          }
+        },
+        {
+          "path": "compendiums[0].documents[0]",
+          "id": "pack-belt",
+          "type": "clothing",
+          "name": "Belt",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "items[0]",
+          "id": "world-backpack",
+          "type": "container",
+          "name": "Backpack",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1,
+            "customData": {
+              "keep": true
+            }
+          },
+          "flags": null
+        },
+        {
+          "path": "items[1]",
+          "id": "world-rope",
+          "type": "item",
+          "name": "Rope",
+          "quantity": 1,
+          "cost": null,
+          "containerId": "world-backpack",
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "items[2]",
+          "id": "world-custom",
+          "type": "item",
+          "name": "Custom Relic",
+          "quantity": 4,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 4,
+            "customField": "preserve"
+          },
+          "flags": null
+        }
+      ]
+    },
+    "after": {
+      "actors": 2,
+      "worldItems": 3,
+      "compendiumDocuments": 1,
+      "items": 6,
+      "quantities": 9,
+      "hp": 17,
+      "maxHp": 21,
+      "xp": 4000,
+      "references": 1,
+      "accounts": {
+        "actors[0].flags.osp-houserules.bankLedger": {
+          "currency": {
+            "gold": 17,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [
+            {
+              "id": "log-1"
+            }
+          ],
+          "items": [
+            {
+              "_id": "bank-item",
+              "quantity": 2
+            }
+          ]
+        },
+        "actors[0].flags.osp-houserules.storehouse": {
+          "log": [],
+          "items": [
+            {
+              "_id": "stored-1",
+              "quantity": 3
+            }
+          ]
+        },
+        "actors[1].flags.osp-houserules.bankLedger": {
+          "currency": {
+            "gold": 0,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [],
+          "items": []
+        },
+        "actors[1].flags.osp-houserules.storehouse": {
+          "log": [],
+          "items": []
+        },
+        "settings.osp-houserules.partyTreasury": {
+          "currency": {
+            "gold": 25,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [],
+          "items": [
+            {
+              "_id": "treasury-1",
+              "quantity": 1
+            }
+          ]
+        },
+        "settings.osp-houserules.partyStorehouse": {
+          "log": [],
+          "items": []
+        }
+      },
+      "receipts": {
+        "receipt-1": {
+          "status": "complete"
+        }
+      },
+      "customSettings": {
+        "custom.setting": {
+          "keep": true
+        }
+      },
+      "records": [
+        {
+          "path": "actors[0]",
+          "id": "actor-hero",
+          "type": "character",
+          "name": "Mira",
+          "hp": 12,
+          "maxHp": 16,
+          "xp": 4000,
+          "system": {
+            "class": "Fighter",
+            "race": "Human",
+            "level": 3,
+            "hitpoints": 12,
+            "maxhitpoints": 16,
+            "xp": 4000,
+            "skills": {
+              "climbSheer": 2
+            },
+            "weight": "bodyweight"
+          },
+          "customFlags": {
+            "osp-houserules": {
+              "customActorData": {
+                "origin": "synthetic"
+              }
+            }
+          }
+        },
+        {
+          "path": "actors[0].flags.osp-houserules.bankLedger.items[0].itemData",
+          "id": "bank-item-data",
+          "type": null,
+          "name": "Ruby",
+          "quantity": null,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {},
+          "flags": null
+        },
+        {
+          "path": "actors[0].flags.osp-houserules.storehouse.items[0].itemData",
+          "id": null,
+          "type": null,
+          "name": "Rope",
+          "quantity": 3,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 3
+          },
+          "flags": null
+        },
+        {
+          "path": "actors[0].items[0]",
+          "id": "actor-belt",
+          "type": "clothing",
+          "name": "Belt",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": {
+            "custom": true
+          }
+        },
+        {
+          "path": "actors[0].items[1]",
+          "id": "actor-backpack",
+          "type": "container",
+          "name": "Backpack",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "actors[1]",
+          "id": "actor-monster",
+          "type": "monster",
+          "name": "Goblin",
+          "hp": 5,
+          "maxHp": 5,
+          "xp": null,
+          "system": {
+            "hp": {
+              "value": 5,
+              "max": 5
+            },
+            "details": {
+              "xp": 10
+            }
+          },
+          "customFlags": {
+            "osp-houserules": {
+              "custom": "preserve"
+            }
+          }
+        },
+        {
+          "path": "compendiums[0].documents[0]",
+          "id": "pack-belt",
+          "type": "clothing",
+          "name": "Belt",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "items[0]",
+          "id": "world-backpack",
+          "type": "container",
+          "name": "Backpack",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1,
+            "customData": {
+              "keep": true
+            }
+          },
+          "flags": null
+        },
+        {
+          "path": "items[1]",
+          "id": "world-rope",
+          "type": "item",
+          "name": "Rope",
+          "quantity": 1,
+          "cost": null,
+          "containerId": "world-backpack",
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "items[2]",
+          "id": "world-custom",
+          "type": "item",
+          "name": "Custom Relic",
+          "quantity": 4,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 4,
+            "customField": "preserve"
+          },
+          "flags": null
+        }
+      ]
+    }
+  },
+  "report": {
+    "format": "osp-br23-world-export-v1",
+    "errors": [],
+    "warnings": [],
+    "changes": [
+      {
+        "path": "actors[0].items[0].system.unitWeight",
+        "new": 0.25,
+        "reason": "BR23-001"
+      },
+      {
+        "path": "actors[0].items[0].system.weight",
+        "old": 0.25,
+        "reason": "BR23-001"
+      },
+      {
+        "path": "items[0].system.unitWeight",
+        "new": 2,
+        "reason": "BR23-001"
+      },
+      {
+        "path": "items[0].system.weight",
+        "old": 2,
+        "reason": "BR23-001"
+      },
+      {
+        "path": "actors[0].items[0].system.storedSize",
+        "new": 1,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].system.slotCost",
+        "new": 0,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].system.lashSlots",
+        "new": 6,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].system.lashAllowedSizes",
+        "new": [
+          "S",
+          "M"
+        ],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].system.allowedContainers",
+        "new": [],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].system.lashable",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].system.lashed",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].system.containerId",
+        "new": null,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].system.containerSizeRequired",
+        "new": "",
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.storedSize",
+        "new": 4,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.capacity",
+        "new": 20,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.containerSize",
+        "new": "medium",
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.slotCost",
+        "new": 0,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.lashSlots",
+        "new": 4,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.blockedTypes",
+        "new": [
+          "slungable",
+          "sword"
+        ],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.allowedContainers",
+        "new": [],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.lashable",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.lashed",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[1].system.containerSizeRequired",
+        "new": "",
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.storedSize",
+        "new": 4,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.capacity",
+        "new": 20,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.containerSize",
+        "new": "medium",
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.slotCost",
+        "new": 0,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.lashSlots",
+        "new": 4,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.blockedTypes",
+        "new": [
+          "slungable",
+          "sword"
+        ],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.allowedContainers",
+        "new": [],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.lashable",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.lashed",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.containerId",
+        "new": null,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[0].system.containerSizeRequired",
+        "new": "",
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[1].system.storedSize",
+        "new": 4,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[1].system.slotCost",
+        "new": 0,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[1].system.allowedContainers",
+        "new": [],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[1].system.lashable",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[1].system.lashed",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[1].system.containerSizeRequired",
+        "new": "",
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[2].system.storedSize",
+        "new": 4,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[2].system.slotCost",
+        "new": 0,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[2].system.allowedContainers",
+        "new": [],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[2].system.lashable",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[2].system.lashed",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[2].system.containerId",
+        "new": null,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "items[2].system.containerSizeRequired",
+        "new": "",
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.storedSize",
+        "new": 1,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.slotCost",
+        "new": 0,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.lashSlots",
+        "new": 6,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.lashAllowedSizes",
+        "new": [
+          "S",
+          "M"
+        ],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.allowedContainers",
+        "new": [],
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.lashable",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.lashed",
+        "new": false,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.containerId",
+        "new": null,
+        "reason": "BR23-002"
+      },
+      {
+        "path": "compendiums[0].documents[0].system.containerSizeRequired",
+        "new": "",
+        "reason": "BR23-002"
+      },
+      {
+        "path": "actors[0].items[0].img",
+        "old": "systems/osp-houserules/assets/images/clothing/belt.webp",
+        "new": "systems/osp-houserules/assets/thumbs/images/clothing/belt_thumb.webp",
+        "reason": "BR23-003"
+      },
+      {
+        "path": "items[0].img",
+        "old": "/systems/osp-houserules/assets/images/gear/backpack.webp",
+        "new": "systems/osp-houserules/assets/thumbs/images/gear/backpack_thumb.webp",
+        "reason": "BR23-003"
+      },
+      {
+        "path": "actors[0].flags.osp-houserules.levelUpState",
+        "new": {
+          "version": 1,
+          "generation": 1,
+          "fromLevel": 3,
+          "targetLevel": 3,
+          "nextLevel": 4,
+          "status": "complete",
+          "levels": {},
+          "pendingClaim": null
+        },
+        "reason": "BR23-004"
+      },
+      {
+        "path": "actors[0].flags.osp-houserules.lastKnownLevel",
+        "new": 3,
+        "reason": "BR23-004"
+      },
+      {
+        "path": "actors[1].flags.osp-houserules.bankLedger",
+        "new": {
+          "currency": {
+            "gold": 0,
+            "silver": 0,
+            "copper": 0
+          },
+          "items": [],
+          "log": []
+        },
+        "reason": "BR23-005"
+      },
+      {
+        "path": "actors[1].flags.osp-houserules.storehouse",
+        "new": {
+          "items": [],
+          "log": []
+        },
+        "reason": "BR23-005"
+      },
+      {
+        "path": "migrationVersion",
+        "old": 0,
+        "new": 5,
+        "reason": "BR23-marker"
+      },
+      {
+        "path": "migrationHistory",
+        "old": [],
+        "new": [
+          "BR23-001-unit-weight",
+          "BR23-002-item-defaults",
+          "BR23-003-images",
+          "BR23-004-progression",
+          "BR23-005-ledgers"
+        ],
+        "reason": "BR23-marker"
+      }
+    ],
+    "steps": [
+      {
+        "id": "BR23-001-unit-weight",
+        "changes": 4
+      },
+      {
+        "id": "BR23-002-item-defaults",
+        "changes": 52
+      },
+      {
+        "id": "BR23-003-images",
+        "changes": 2
+      },
+      {
+        "id": "BR23-004-progression",
+        "changes": 2
+      },
+      {
+        "id": "BR23-005-ledgers",
+        "changes": 2
+      }
+    ],
+    "before": {
+      "actors": 2,
+      "worldItems": 3,
+      "compendiumDocuments": 1,
+      "items": 6,
+      "quantities": 9,
+      "hp": 17,
+      "maxHp": 21,
+      "xp": 4000,
+      "references": 1,
+      "accounts": {
+        "actors[0].flags.osp-houserules.bankLedger": {
+          "currency": {
+            "gold": 17,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [
+            {
+              "id": "log-1"
+            }
+          ],
+          "items": [
+            {
+              "_id": "bank-item",
+              "quantity": 2
+            }
+          ]
+        },
+        "actors[0].flags.osp-houserules.storehouse": {
+          "log": [],
+          "items": [
+            {
+              "_id": "stored-1",
+              "quantity": 3
+            }
+          ]
+        },
+        "settings.osp-houserules.partyTreasury": {
+          "currency": {
+            "gold": 25,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [],
+          "items": [
+            {
+              "_id": "treasury-1",
+              "quantity": 1
+            }
+          ]
+        },
+        "settings.osp-houserules.partyStorehouse": {
+          "log": [],
+          "items": []
+        }
+      },
+      "receipts": {
+        "receipt-1": {
+          "status": "complete"
+        }
+      },
+      "customSettings": {
+        "custom.setting": {
+          "keep": true
+        }
+      },
+      "records": [
+        {
+          "path": "actors[0]",
+          "id": "actor-hero",
+          "type": "character",
+          "name": "Mira",
+          "hp": 12,
+          "maxHp": 16,
+          "xp": 4000,
+          "system": {
+            "class": "Fighter",
+            "race": "Human",
+            "level": 3,
+            "hitpoints": 12,
+            "maxhitpoints": 16,
+            "xp": 4000,
+            "skills": {
+              "climbSheer": 2
+            },
+            "weight": "bodyweight"
+          },
+          "customFlags": {
+            "osp-houserules": {
+              "customActorData": {
+                "origin": "synthetic"
+              }
+            }
+          }
+        },
+        {
+          "path": "actors[0].flags.osp-houserules.bankLedger.items[0].itemData",
+          "id": "bank-item-data",
+          "type": null,
+          "name": "Ruby",
+          "quantity": null,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {},
+          "flags": null
+        },
+        {
+          "path": "actors[0].flags.osp-houserules.storehouse.items[0].itemData",
+          "id": null,
+          "type": null,
+          "name": "Rope",
+          "quantity": 3,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 3
+          },
+          "flags": null
+        },
+        {
+          "path": "actors[0].items[0]",
+          "id": "actor-belt",
+          "type": "clothing",
+          "name": "Belt",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": {
+            "custom": true
+          }
+        },
+        {
+          "path": "actors[0].items[1]",
+          "id": "actor-backpack",
+          "type": "container",
+          "name": "Backpack",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "actors[1]",
+          "id": "actor-monster",
+          "type": "monster",
+          "name": "Goblin",
+          "hp": 5,
+          "maxHp": 5,
+          "xp": null,
+          "system": {
+            "hp": {
+              "value": 5,
+              "max": 5
+            },
+            "details": {
+              "xp": 10
+            }
+          },
+          "customFlags": {
+            "osp-houserules": {
+              "custom": "preserve"
+            }
+          }
+        },
+        {
+          "path": "compendiums[0].documents[0]",
+          "id": "pack-belt",
+          "type": "clothing",
+          "name": "Belt",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "items[0]",
+          "id": "world-backpack",
+          "type": "container",
+          "name": "Backpack",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1,
+            "customData": {
+              "keep": true
+            }
+          },
+          "flags": null
+        },
+        {
+          "path": "items[1]",
+          "id": "world-rope",
+          "type": "item",
+          "name": "Rope",
+          "quantity": 1,
+          "cost": null,
+          "containerId": "world-backpack",
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "items[2]",
+          "id": "world-custom",
+          "type": "item",
+          "name": "Custom Relic",
+          "quantity": 4,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 4,
+            "customField": "preserve"
+          },
+          "flags": null
+        }
+      ]
+    },
+    "after": {
+      "actors": 2,
+      "worldItems": 3,
+      "compendiumDocuments": 1,
+      "items": 6,
+      "quantities": 9,
+      "hp": 17,
+      "maxHp": 21,
+      "xp": 4000,
+      "references": 1,
+      "accounts": {
+        "actors[0].flags.osp-houserules.bankLedger": {
+          "currency": {
+            "gold": 17,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [
+            {
+              "id": "log-1"
+            }
+          ],
+          "items": [
+            {
+              "_id": "bank-item",
+              "quantity": 2
+            }
+          ]
+        },
+        "actors[0].flags.osp-houserules.storehouse": {
+          "log": [],
+          "items": [
+            {
+              "_id": "stored-1",
+              "quantity": 3
+            }
+          ]
+        },
+        "actors[1].flags.osp-houserules.bankLedger": {
+          "currency": {
+            "gold": 0,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [],
+          "items": []
+        },
+        "actors[1].flags.osp-houserules.storehouse": {
+          "log": [],
+          "items": []
+        },
+        "settings.osp-houserules.partyTreasury": {
+          "currency": {
+            "gold": 25,
+            "silver": 0,
+            "copper": 0
+          },
+          "log": [],
+          "items": [
+            {
+              "_id": "treasury-1",
+              "quantity": 1
+            }
+          ]
+        },
+        "settings.osp-houserules.partyStorehouse": {
+          "log": [],
+          "items": []
+        }
+      },
+      "receipts": {
+        "receipt-1": {
+          "status": "complete"
+        }
+      },
+      "customSettings": {
+        "custom.setting": {
+          "keep": true
+        }
+      },
+      "records": [
+        {
+          "path": "actors[0]",
+          "id": "actor-hero",
+          "type": "character",
+          "name": "Mira",
+          "hp": 12,
+          "maxHp": 16,
+          "xp": 4000,
+          "system": {
+            "class": "Fighter",
+            "race": "Human",
+            "level": 3,
+            "hitpoints": 12,
+            "maxhitpoints": 16,
+            "xp": 4000,
+            "skills": {
+              "climbSheer": 2
+            },
+            "weight": "bodyweight"
+          },
+          "customFlags": {
+            "osp-houserules": {
+              "customActorData": {
+                "origin": "synthetic"
+              }
+            }
+          }
+        },
+        {
+          "path": "actors[0].flags.osp-houserules.bankLedger.items[0].itemData",
+          "id": "bank-item-data",
+          "type": null,
+          "name": "Ruby",
+          "quantity": null,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {},
+          "flags": null
+        },
+        {
+          "path": "actors[0].flags.osp-houserules.storehouse.items[0].itemData",
+          "id": null,
+          "type": null,
+          "name": "Rope",
+          "quantity": 3,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 3
+          },
+          "flags": null
+        },
+        {
+          "path": "actors[0].items[0]",
+          "id": "actor-belt",
+          "type": "clothing",
+          "name": "Belt",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": {
+            "custom": true
+          }
+        },
+        {
+          "path": "actors[0].items[1]",
+          "id": "actor-backpack",
+          "type": "container",
+          "name": "Backpack",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "actors[1]",
+          "id": "actor-monster",
+          "type": "monster",
+          "name": "Goblin",
+          "hp": 5,
+          "maxHp": 5,
+          "xp": null,
+          "system": {
+            "hp": {
+              "value": 5,
+              "max": 5
+            },
+            "details": {
+              "xp": 10
+            }
+          },
+          "customFlags": {
+            "osp-houserules": {
+              "custom": "preserve"
+            }
+          }
+        },
+        {
+          "path": "compendiums[0].documents[0]",
+          "id": "pack-belt",
+          "type": "clothing",
+          "name": "Belt",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "items[0]",
+          "id": "world-backpack",
+          "type": "container",
+          "name": "Backpack",
+          "quantity": 1,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 1,
+            "customData": {
+              "keep": true
+            }
+          },
+          "flags": null
+        },
+        {
+          "path": "items[1]",
+          "id": "world-rope",
+          "type": "item",
+          "name": "Rope",
+          "quantity": 1,
+          "cost": null,
+          "containerId": "world-backpack",
+          "protectedSystem": {
+            "quantity": 1
+          },
+          "flags": null
+        },
+        {
+          "path": "items[2]",
+          "id": "world-custom",
+          "type": "item",
+          "name": "Custom Relic",
+          "quantity": 4,
+          "cost": null,
+          "containerId": null,
+          "protectedSystem": {
+            "quantity": 4,
+            "customField": "preserve"
+          },
+          "flags": null
+        }
+      ]
+    }
+  }
+}

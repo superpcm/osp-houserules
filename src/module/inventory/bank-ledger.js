@@ -1,3 +1,4 @@
+import { canStackItems, isUniqueStackItem } from './stack-identity.js';
 /**
  * @file Pure ledger math for Westford Bank. No Foundry globals — every function here takes a
  * plain ledger object (see emptyLedger()) plus plain inputs and returns either a failure reason
@@ -9,8 +10,8 @@
  * A ledger entry stores a full item-data snapshot (captured at deposit time) rather than a
  * reference to a live embedded item, because depositing deletes the item from the actor's
  * inventory — the snapshot is what gets recreated on withdrawal. Stack identity/merging is keyed
- * on item name (mirroring how treasure-cost.js matches coin items by name), since embedded-item
- * ids aren't stable across delete/recreate. Unique items (system.tags includes 'unique') are
+ * on complete item identity except document metadata, quantity, and placement, since item
+ * ids are not stable across delete/recreate. Unique items (system.tags includes 'unique') are
  * never merged, even when their name matches an existing stack.
  */
 
@@ -37,7 +38,7 @@ export function isTreasureEligible(itemData) {
 
 /** @param {{system?:{tags?:string[]}}} itemData */
 export function isUniqueItem(itemData) {
-  return (itemData?.system?.tags || []).includes('unique');
+  return isUniqueStackItem(itemData);
 }
 
 function cloneLedger(ledger) {
@@ -56,8 +57,8 @@ function stripSnapshotFields(itemData) {
   return { ...rest, system: { ...rest.system, containerId: null, lashed: false, equipped: false } };
 }
 
-function findMatchingStack(ledger, name) {
-  return ledger.items.find((e) => e.name === name && !e.unique) ?? null;
+function findMatchingStack(ledger, itemData) {
+  return ledger.items.find(entry => !entry.unique && canStackItems(entry.itemData, itemData)) ?? null;
 }
 
 function buildLogEntry(meta, defaultAction, fields) {
@@ -98,7 +99,7 @@ export function planDepositItem(ledger, itemData, quantity, meta = {}) {
 
   const newLedger = cloneLedger(ledger);
   let entryId;
-  const existing = !unique ? findMatchingStack(newLedger, itemData.name) : null;
+  const existing = !unique ? findMatchingStack(newLedger, itemData) : null;
   if (existing) {
     existing.quantity += quantity;
     entryId = existing.entryId;
@@ -150,7 +151,8 @@ export function planWithdrawItem(ledger, entryId, quantity, containerCheck, meta
   const newLedger = cloneLedger(ledger);
   const newEntry = newLedger.items.find((e) => e.entryId === entryId);
   const itemDataToCreate = structuredClone(newEntry.itemData);
-  const unique = newEntry.unique;
+  const unique = newEntry.unique || isUniqueItem(newEntry.itemData);
+  if (unique && !isUniqueItem(itemDataToCreate)) itemDataToCreate.system.tags = [...(itemDataToCreate.system.tags ?? []), 'unique'];
 
   // Full-stack withdrawal removes the row entirely — never left behind at quantity 0.
   if (quantity === newEntry.quantity) {

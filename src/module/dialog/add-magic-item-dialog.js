@@ -12,6 +12,7 @@ import { MAGIC_CATEGORIES, renderMagicCategoryFields, initMagicCategoryFields } 
 import { collectSystemData } from "./add-item/catalog-schema.js";
 import { slugify } from "./add-item/image-pipeline.js";
 import { generateGlowImage, ensureMagicFolder } from "./magic-item-shared.js";
+import { ospDialogOptions } from './dialog-theme.js';
 
 // See add-item-dialog.js — both the full-size and thumbnail uploads must
 // actually be .webp or item-card-renderer.js's "_thumb.webp" -> ".webp"
@@ -95,7 +96,7 @@ export class AddMagicItemDialog {
 
     return new Promise((resolve) => {
       let resolved = false;
-      const dialog = new foundry.applications.api.DialogV2({
+      const dialog = new foundry.applications.api.DialogV2(ospDialogOptions({
         window: { title: "Add Magic Item" },
         position: { width: 640 },
         content,
@@ -104,7 +105,7 @@ export class AddMagicItemDialog {
         ],
         close: () => { if (!resolved) resolve(); },
         rejectClose: false
-      });
+      }));
 
       dialog.render({ force: true }).then(() => {
         const el = dialog.element;

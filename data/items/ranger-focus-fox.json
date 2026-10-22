@@ -1,0 +1,19 @@
+{
+  "name": "Animal Totem",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/ranger-focus-fox_thumb.webp",
+  "system": {
+    "description": "A wooden animal totem personally carved by the Ranger from a special tree's dead wood, never cut from a living tree, with a plain leather thong. It must depict a forest animal native to their range and be held or displayed while casting.",
+    "cost": 0,
+    "unitWeight": 0.1,
+    "storedSize": 0.25,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "tags": [
+      "focus",
+      "ranger",
+      "wooden"
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+// Shared palette for system sheets and their dialogs, including opened menus.
+.osp select {
+  color-scheme: light;
+  color: #34271b;
+  accent-color: #34432c;
+
+  &:focus-visible {
+    outline: 2px solid #34432c !important;
+    outline-offset: 2px;
+  }
+
+  option, optgroup {
+    background-color: #ead7aa !important;
+    color: #34271b !important;
+    font-family: inherit;
+  }
+
+  option:checked, option:hover, option:focus {
+    background-color: #34432c !important;
+    color: #fff0c8 !important;
+  }
+}
+
+// Customizable native selects retain keyboard/type-ahead behavior while allowing
+// the open popup to use our palette instead of the operating system's blue.
+
+@supports (appearance: base-select) {
+  .osp select:not([multiple]):not([size]),
+  .osp select:not([multiple]):not([size])::picker(select) {
+    appearance: base-select;
+  }
+
+  .osp select::picker(select) {
+    opacity: 1;
+    background: #ead7aa;
+    color: #34271b;
+    border: 1px solid #8a642e;
+    border-radius: 3px;
+    padding: 3px;
+    box-shadow: 0 4px 10px rgba(52, 39, 27, .25);
+    font-family: 'Handwritten', Georgia, serif;
+  }
+
+  .osp select option {
+    padding: 5px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    white-space: normal;
+  }
+
+  .osp select option:checked,
+  .osp select option:hover,
+  .osp select option:focus {
+    box-shadow: none !important;
+  }
+}

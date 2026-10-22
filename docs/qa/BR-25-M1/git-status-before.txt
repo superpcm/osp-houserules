@@ -1,0 +1,210 @@
+ M data/class_profiles.json
+ M data/refresh-items-macro.js
+ M docs/encumbrance-system.md
+ M docs/listening-at-doors.md
+ M docs/searching-traps-secret-doors.md
+ M migrations/README.md
+ D packs/armor/000408.log
+ M packs/armor/CURRENT
+ M packs/armor/LOG
+ M packs/armor/LOG.old
+ D packs/armor/MANIFEST-000407
+ D packs/gear/000039.ldb
+ D packs/gear/000412.log
+ M packs/gear/CURRENT
+ M packs/gear/LOG
+ M packs/gear/LOG.old
+ D packs/gear/MANIFEST-000411
+ D packs/weapons/000408.log
+ M packs/weapons/CURRENT
+ M packs/weapons/LOG
+ M packs/weapons/LOG.old
+ D packs/weapons/MANIFEST-000407
+ M src/config/classes.js
+ M src/module/actor/actor.js
+ M src/module/actor/character-creation-dialog.js
+ M src/module/actor/exploration-skills.js
+ M src/module/actor/exploration-skills.test.js
+ M src/module/actor/level-up.js
+ M src/module/actor/sheets/character-sheet.js
+ M src/module/actor/sheets/handlers/background-handler.js
+ M src/module/actor/sheets/handlers/item-handler.js
+ M src/module/actor/sheets/handlers/language-handler.js
+ M src/module/actor/sheets/handlers/race-class-handler.js
+ M src/module/actor/sheets/handlers/xp-progress-handler.js
+ M src/module/actor/sheets/monster-sheet.js
+ M src/module/actor/token-ruler.js
+ M src/module/apps/bank-deposit-dialog.js
+ M src/module/apps/bank-dm-edit-dialog.js
+ M src/module/apps/bank-dm-ledgers-view.js
+ M src/module/apps/bank-ledger-view.js
+ M src/module/apps/bank-withdraw-dialog.js
+ M src/module/cards/item-card-dialog.js
+ M src/module/combat/combat-tracker.js
+ M src/module/combat/combat.js
+ M src/module/combat/combatant.js
+ M src/module/dialog/skill-point-dialog.js
+ M src/module/dice.js
+ M src/module/helpers-chat.js
+ M src/module/helpers-macros.js
+ M src/module/inventory/bank-ledger-orchestrator.js
+ M src/module/inventory/bank-ledger-orchestrator.test.js
+ M src/module/inventory/bank-ledger.js
+ M src/module/inventory/container-capacity.js
+ M src/module/inventory/container-capacity.test.js
+ M src/module/inventory/party-treasury.js
+ M src/module/inventory/storehouse.js
+ M src/module/inventory/treasure-cost.js
+ M src/module/inventory/treasure-cost.test.js
+ M src/module/item/item-sheet.js
+ M src/module/item/item.js
+ M src/module/party/party-xp.js
+ M src/module/settings.js
+ M src/module/sidebar/dm-toolkit.js
+ M src/module/ui/character-sheet-ui.js
+ M src/ose.js
+ M src/styles/character-sheet-main.scss
+ M template.json
+ M templates/actors/character-sheet.html
+ M templates/apps/bank-dm-ledgers-view.html
+ M templates/items/spell-sheet.html
+ M templates/party/party-xp.html
+ M templates/sidebar/dm-toolkit.html
+?? PRODUCTION-READINESS-BURNDOWN.md
+?? docs/BR-05-MULTIPLAYER-ACCEPTANCE.md
+?? docs/BR-06-PERMISSIONS.md
+?? docs/BR-07-EQUIPMENT-COMPARISON.json
+?? docs/BR-07-PROGRESSION-COMPARISON.json
+?? docs/BR-07-RULE-AUTHORITY.md
+?? docs/BR-07-RULE-MATRIX.json
+?? docs/BR-09-SAVING-THROWS.md
+?? docs/BR-10-WEAPON-PROFICIENCY.md
+?? docs/BR-11-CLASS-PROGRESSION.md
+?? docs/BR-12-XP-AND-LEVEL-UP.md
+?? docs/BR-13-ENCUMBRANCE-AND-MOVEMENT.md
+?? docs/BR-14-INITIATIVE.md
+?? docs/BR-15-COMBAT-SUPPORT.md
+?? docs/BR-16-SPELLCASTING.md
+?? docs/BR-17-EXPLORATION-AND-SKILLS.md
+?? docs/BR-18-HEALTH-CONDITIONS-CRITICALS.md
+?? docs/BR-19-RESPONSIVE-COMBAT-NUMERALS.md
+?? docs/BR-20-INVENTORY-PLACEMENT.md
+?? docs/BR-21-LIVE-ACCEPTANCE.md
+?? docs/BR-22-SHEET-LIFECYCLE.md
+?? docs/BR-25-CLOSED-SNAPSHOT.md
+?? docs/INVENTORY-RECOVERY.md
+?? docs/STACK-IDENTITY.md
+?? docs/qa/BR-19-responsive-numerals.json
+?? docs/qa/BR-19-responsive-numerals.png
+?? docs/qa/BR-21-environment.json
+?? docs/qa/BR-21-startup.txt
+?? docs/qa/BR-25-M1/baseline.json
+?? docs/qa/BR-25-M1/environment.json
+?? docs/qa/BR-25-M1/pack-files-before.json
+?? packs/armor/MANIFEST-000413
+?? packs/gear/000417.ldb
+?? packs/gear/MANIFEST-000418
+?? packs/weapons/MANIFEST-000413
+?? scripts/pack-snapshot.js
+?? scripts/pack-snapshot.py
+?? scripts/verify-combat-sizing.cjs
+?? src/config/progression.js
+?? src/config/progression.test.js
+?? src/module/actor/actor-creation.test.js
+?? src/module/actor/character-creation-dialog.test.js
+?? src/module/actor/level-up-authority.test.js
+?? src/module/actor/level-up-state.js
+?? src/module/actor/level-up-state.test.js
+?? src/module/actor/noncombat-prompts.js
+?? src/module/actor/noncombat-reference.js
+?? src/module/actor/noncombat-rules.js
+?? src/module/actor/noncombat-rules.test.js
+?? src/module/actor/noncombat-ui.js
+?? src/module/actor/noncombat-ui.test.js
+?? src/module/actor/noncombat.js
+?? src/module/actor/noncombat.test.js
+?? src/module/actor/progression-behavior.test.js
+?? src/module/actor/saving-throws.js
+?? src/module/actor/saving-throws.test.js
+?? src/module/actor/sheets/character-sheet-drop.test.js
+?? src/module/actor/sheets/character-sheet.lifecycle.test.js
+?? src/module/actor/sheets/combat-value-sizing.js
+?? src/module/actor/sheets/combat-value-sizing.test.js
+?? src/module/actor/sheets/handlers/background-handler.test.js
+?? src/module/actor/sheets/handlers/item-placement.test.js
+?? src/module/actor/sheets/handlers/language-handler.test.js
+?? src/module/actor/token-ruler.test.js
+?? src/module/apps/bank-ledger-lifecycle.test.js
+?? src/module/cards/item-card-dialog.lifecycle.test.js
+?? src/module/combat/attack-authority.test.js
+?? src/module/combat/attack-support.js
+?? src/module/combat/attack-support.test.js
+?? src/module/combat/combat-flow.js
+?? src/module/combat/combat-flow.test.js
+?? src/module/combat/combat-support-ui.js
+?? src/module/combat/combat-support-ui.test.js
+?? src/module/combat/combat-tracker.test.js
+?? src/module/combat/critical-rules.js
+?? src/module/combat/critical-rules.test.js
+?? src/module/combat/initiative-dice.js
+?? src/module/combat/initiative-dice.test.js
+?? src/module/combat/initiative-input.test.js
+?? src/module/combat/initiative-migration.js
+?? src/module/combat/initiative-migration.test.js
+?? src/module/combat/initiative.js
+?? src/module/combat/initiative.test.js
+?? src/module/combat/weapon-policy.js
+?? src/module/combat/weapon-policy.test.js
+?? src/module/health/critical-authority.js
+?? src/module/health/health-authority.js
+?? src/module/health/health-authority.test.js
+?? src/module/health/health-integration.test.js
+?? src/module/health/health-rules.js
+?? src/module/health/health-rules.test.js
+?? src/module/health/health-ui.js
+?? src/module/health/monster-health-integration.test.js
+?? src/module/inventory/br06-transport.test.js
+?? src/module/inventory/bulk.js
+?? src/module/inventory/bulk.test.js
+?? src/module/inventory/catalog-reconciliation-ui.js
+?? src/module/inventory/catalog-reconciliation.js
+?? src/module/inventory/catalog-reconciliation.test.js
+?? src/module/inventory/containment.js
+?? src/module/inventory/deposit-integration.test.js
+?? src/module/inventory/deposit-source.js
+?? src/module/inventory/deposit-source.test.js
+?? src/module/inventory/drop-transaction.js
+?? src/module/inventory/drop-transaction.test.js
+?? src/module/inventory/encumbrance.js
+?? src/module/inventory/encumbrance.test.js
+?? src/module/inventory/inventory-authority.js
+?? src/module/inventory/inventory-authority.test.js
+?? src/module/inventory/item-removal-ui.js
+?? src/module/inventory/item-removal-ui.test.js
+?? src/module/inventory/item-removal.js
+?? src/module/inventory/item-removal.test.js
+?? src/module/inventory/placement-matrix.test.js
+?? src/module/inventory/purchase-charge.test.js
+?? src/module/inventory/scene-token-transaction.test.js
+?? src/module/inventory/stack-identity-integration.test.js
+?? src/module/inventory/stack-identity.js
+?? src/module/inventory/stack-identity.test.js
+?? src/module/inventory/transaction-journal.js
+?? src/module/inventory/transaction-journal.test.js
+?? src/module/inventory/transfer-recovery.test.js
+?? src/module/item/item-permissions.test.js
+?? src/module/item/item-sheet-lifecycle.test.js
+?? src/module/progression/progression-authority.js
+?? src/module/progression/progression-authority.test.js
+?? src/module/progression/xp-award-ui.js
+?? src/module/progression/xp-awards.js
+?? src/module/progression/xp-awards.test.js
+?? src/module/spells/spell-macro-route.test.js
+?? src/module/spells/spell-rules.js
+?? src/module/spells/spell-rules.test.js
+?? src/module/spells/spell-state.js
+?? src/module/spells/spell-state.test.js
+?? src/module/spells/spellcasting-ui.js
+?? src/module/spells/spellcasting-ui.test.js
+?? src/module/spells/spellcasting.js
+?? src/module/spells/spellcasting.test.js

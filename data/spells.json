@@ -12,8 +12,14 @@
       "natural20": "Boon: additional, powerful, or helpful result.",
       "natural1": "Bane: wild, unpredictable, or possibly harmful result."
     },
-    "spellcastingFocus": "Spellcasters require a focus object (staff, wand, crystal, instrument, or holy symbol). Without it they cannot cast.",
-    "spellbooks": "All arcane spells must be stored in a spellbook. One page per spell level.",
+    "spellcastingFocus": {
+      "rule": "A required physical focus must be held or displayed when casting.",
+      "classFocuses": {"Magic-User": "a Wand or Staff", "Illusionist": "a Wand or Staff", "Mage": "a Wand or Staff", "Cleric": "a Holy Symbol", "Paladin": "a Holy Symbol", "Druid": "a sprig of mistletoe", "Bard": "the instrument", "Ranger": "a small token personally carved or whittled by the Ranger as a forest animal native to the area they range, using dead wood from a special tree, never cut from a living tree"},
+      "raceAsClassExempt": ["Elf", "Gnome", "Half-Elf", "Drow"],
+      "racialAbilityExempt": true,
+      "externalSourceIsOwnFocus": ["scroll", "wand", "staff", "item"]
+    },
+    "spellbooks": "Arcane spells occupy one page per level and must fit completely within one 100-page volume, without duplicate entries of the same spell in that volume. Magic-Users and Illusionists require an available containing volume to prepare a spell; casting a prepared spell requires a held or displayed Wand or Staff.",
     "bonusSpells": {
       "doesNotApplyTo": [
         "Bard",

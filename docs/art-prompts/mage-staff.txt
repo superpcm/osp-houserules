@@ -1,0 +1,29 @@
+ITEM TO CREATE: Mage's Staff
+
+Create a single fantasy tabletop RPG inventory item icon of a Mage's Staff. Output a 1024x1024 square image with a genuinely transparent alpha background.
+
+Style requirements:
+Render the item in a semi-realistic hand-painted OSR fantasy equipment style, matching classic tabletop roleplaying game inventory art. The object should be isolated, centered, and fully visible, with a clean transparent background. Use dark brown or black hand-drawn outlines, soft painterly shading, muted earthy medieval colors, and subtle highlights. The item should look practical, worn, and usable rather than ornate or overtly magical.
+
+Context:
+A Mage's personal spell-focus staff that also functions as a sturdy two-handed quarterstaff in combat and a walking staff on long journeys. A single long straight length of tough weathered brown hardwood, roughly human height, with believable weight and thickness suitable for striking and parrying. The upper end has a modest natural rounded knot, smoothly worn, no branches sticking out. The shaft has visible grain, a few tool marks and small nicks; a simple worn dark leather grip is wrapped around the middle. A small dull iron ferrule reinforces the bottom end. It is practical medieval adventuring equipment, not a jeweled wizard's scepter. No crystal, gemstone, glowing orb, runes, dangling charms, skull, blade or elaborate carving. The staff is one object and is not inherently enchanted merely because it is a spell focus.
+
+Semi-realistic hand-painted fantasy equipment art, muted medieval palette, clean dark outlines, soft shading, transparent background, item-only.
+
+Composition requirements:
+Show only the full staff itself, not a character, not a hand holding it, and not a scene. Arrange the long staff diagonally from lower left to upper right, centered in the square canvas, with both ends fully visible and comfortable transparent margins. Slight three-quarter angle so the rounded shaft and grip wrapping have readable volume. Keep the shaft long and slender but thick enough to remain clearly visible at 96x96 thumbnail size. Include believable wood grain, scuffed iron and leather wrapping seams. No additional objects.
+
+Lighting and rendering:
+Soft neutral lighting from the upper left, with gentle shadows painted onto the item itself. Avoid harsh dramatic lighting, glossy digital effects, photorealism, cel shading, anime styling, 3D rendering, or modern concept-art polish. Match hand-painted medieval adventuring gear.
+
+Color palette:
+Restrained natural weathered browns, tans, ochres, worn dark brown leather, and dull iron gray. No neon colors, saturated glow, excessive gold, or high-contrast modern game icon colors.
+
+Background:
+Genuinely transparent background only. No scenery, table, floor, decorative frame, parchment card, text, label, border, or shadow cast onto a floor.
+
+Consistency controls:
+Maintain the brush texture, dark outline weight, muted palette, and isolated equipment-icon presentation used for the Ranger's wooden fox token and Druid's mistletoe sprig. Do not drift into photorealistic product render, cartoon icon, high-fantasy magic item, video game loot icon, flat vector art, or painterly splash art.
+
+Negative prompt:
+character, person, hand holding item, full scene, background environment, frame, border, label, text, logo, UI icon frame, glowing aura, magic particles, neon colors, photorealistic render, 3D render, flat vector, anime, cartoon, modern object, excessive ornamentation, overly clean new materials, dramatic shadows, cinematic lighting, clutter, multiple unrelated objects, crystal, gemstone, orb, gold, runes, skulls, wizard hat, spear, blade, cropped ends, short wand

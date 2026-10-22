@@ -1763,6 +1763,13 @@ form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-saving-throws-ima
   margin: 0 0 18px;
 }
 
+form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-save-notes {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+}
+
 form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-save-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1931,7 +1938,7 @@ form.osp.sheet.actor.character .tab[data-tab="combat"] .combat-hpac-image :is(.c
   background: transparent !important;
   box-shadow: none !important;
   font-family: handwritten !important;
-  font-size: 54px !important;
+  font-size: var(--ej-combat-value-font-size, 54px) !important;
   font-weight: 400 !important;
   line-height: 1 !important;
   text-align: center;
@@ -2950,27 +2957,100 @@ input[type="number"] {
 /* Generic small field label */
 .cs-field-label { margin-bottom: 0.5rem; font-size: 1.1rem; }
 
-/* Languages row and tags reset for consistent layout */
+/* Languages stay on one readable line; long lists expand into an anchored parchment popover. */
 .languages-row.open-language-dialog { width: var(--languages-row-width, 272px); height: 33px; min-height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 2px; z-index: var(--z-lang-row, 101); }
-.languages-tags { 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  width: 100%; 
-  line-height: 0.6;
-  white-space: wrap; /* Allow wrapping when needed */
-  overflow: hidden; 
-  font-size: var(--languages-font-size, 34px) !important;
+.cs-languages-field { position: relative; overflow: visible; }
+.languages-tags {
+  display: block;
+  width: 100%;
+  margin-right: 0;
+  line-height: 1;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  font-size: var(--languages-font-size, 22px) !important;
   padding: 0 4px;
-
-
   text-align: center;
-  word-wrap: break-word; /* Allow breaking long words if needed */
-  
-  /* When not empty, ensure our font size applies - higher specificity */
-  &:not(:empty) {
-    font-size: var(--languages-font-size, 34px) !important;
+  word-wrap: normal;
+}
+.cs-languages-field.has-language-overflow .languages-tags { width: calc(100% - 24px); margin-right: 24px; }
+.cs-languages-toggle {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid rgba(120, 105, 77, .65);
+  border-radius: 50%;
+  background: #f4e7c3;
+  color: #78694D;
+  cursor: pointer;
+  z-index: 3;
+}
+.cs-languages-toggle[hidden] { display: none; }
+.cs-languages-expanded {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-height: 25px;
+  padding: 8px 10px;
+  background: #f4e7c3;
+  border: 1px solid #78694D;
+  color: #2b2116;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+  font-size: 22px;
+  z-index: 200;
+  box-shadow: 0 3px 8px rgba(43, 33, 22, .25);
+}
+.cs-languages-expanded[hidden] { display: none !important; }
+
+/* Keep the disclosure above the fixed Bio header rows and reserve caret space
+   against the Explorer's Journal skin's existing language-column overrides. */
+.osp #languages-container#languages-container#languages-container {
+  &:has(.cs-languages-expanded:not([hidden])) { z-index: 200 !important; }
+
+  .cs-languages-toggle {
+    width: 22px !important;
+    height: 22px !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    font-size: 11px !important;
+    color: #78694D !important;
+    background: #f4e7c3 !important;
   }
+
+  .cs-languages-toggle[hidden] { display: none !important; }
+  .cs-languages-expanded {
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+    background: #f4e7c3 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+}
+
+.osp form.ej-sheet #languages-container#languages-container#languages-container .cs-languages-field .languages-tags {
+  display: block !important;
+  height: auto !important;
+  align-self: center !important;
+  line-height: 1 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  text-overflow: ellipsis !important;
+}
+
+.osp form.ej-sheet #languages-container#languages-container#languages-container .cs-languages-field.has-language-overflow .languages-tags {
+  width: calc(75% - 24px) !important;
+  margin-right: 24px !important;
 }
 
 /* Bio content wrapper */
@@ -4088,4 +4168,140 @@ input[type="number"] {
     color: #888;
     font-style: italic;
   }
+}
+/* Spell detail typography, including the Explorer's Journal sheet skin. */
+.osp.sheet.actor.character .spell-detail-card h3 {
+  font-size: 20px !important;
+}
+
+.osp.sheet.actor.character .spell-detail-card dt {
+  font-family: $font-cooper !important;
+  color: #78694D !important;
+  text-shadow: none !important;
+}
+
+/* Raise every letter equally, preserving the Level label's existing arc. */
+.osp #level-container#level-container#level-container .cs-level-arc span {
+  top: calc(var(--ly) + 5px) !important;
+}
+
+
+// Position ability rings and labels together below the subtitle.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab='bio'].active) .tab[data-tab='bio'] .bio-abilities-image .ability.cs-ability {
+  translate: 0 24.134px !important;
+}
+
+// Move the Bio saving throw rings and their curved labels together.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab='bio'].active) .tab[data-tab='bio'] .combat-save-grid {
+  translate: 0 -2px !important;
+}
+
+/* Move the complete Bio Saving Throws section down together. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab='bio'].active) .tab[data-tab='bio'] .bio-saving-throws-section > .combat-saving-throws-image {
+  translate: 0 3px !important;
+}
+
+/* Combat choices belong inside their class ability descriptions. */
+.osp.sheet.actor.character .tab[data-tab='skills'] .combat-talents-section {
+  margin-top: 10px;
+  padding: 0;
+  color: #352b1b;
+  .combat-talent-slot { display: block; min-width: 0; margin: 0 0 12px; padding: 0; border: 0; }
+  legend { padding: 0; margin-bottom: 8px; font-size: 12px; }
+  .combat-talent-option { display: grid; grid-template-columns: 18px minmax(0, 1fr); align-items: start; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(69, 47, 27, .18); cursor: pointer; }
+  .combat-talent-option:has(input:checked) { background: rgba(74, 94, 62, .08); }
+  .combat-talent-option input[type='radio'] { width: 16px !important; height: 16px !important; margin: 2px 0 0 !important; padding: 0 !important; accent-color: #35452d; }
+  .combat-talent-option strong { display: block; font-family: 'Cooper Std', serif !important; font-size: 14px !important; }
+  .combat-talent-description { display: block; margin-top: 4px; font: 14px/1.45 'Handwritten', cursive !important; }
+  .combat-talent-detail { display: flex; flex-direction: column; gap: 4px; margin: 10px 0 10px 26px; font-size: 12px; }
+  [hidden] { display: none !important; }
+  select, input { width: 100%; height: 30px; margin: 0; padding: 2px 8px; background: #fff0c8; border: 1px solid #92703d; color: #352b1b; font: 14px 'Handwritten', cursive; }
+  button { width: auto; min-height: 30px; padding: 2px 16px; background: #35452d !important; color: #fff0c8 !important; border: 1px solid #92703d; font: 14px 'Handwritten', cursive !important; }
+  [data-talent-status] { margin: 4px 0 0; font-size: 12px; }
+  [data-talent-status]:empty { display: none; }
+}
+.osp.sheet.actor.character .tab[data-tab='skills'] .combat-skills-section {
+  grid-column: 1 / -1;
+  h3 { margin: 12px 0 8px; border: 0; font: 16px 'Cooper Std', serif !important; color: #352b1b; }
+  .combat-skill-choice { margin: 4px 0; }
+}
+
+/* Expanded descriptions grow with their embedded controls instead of overlapping. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .skill-abilities-content:has(.combat-talents-section) {
+  grid-auto-rows: max-content !important;
+}
+
+/* Talent instructions and confirmation use the sheet's Cooper typeface. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] :is(.combat-talent-intro, .combat-talent-intro *, .combat-talents-section legend, .combat-talents-section [data-save-talents]) {
+  font-family: 'Cooper Std', 'Cooper Standard', serif !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+/* Align selection controls with the title line and keep Save text-sized. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section {
+  .combat-talent-option { grid-template-rows: auto auto; align-items: center; }
+  .combat-talent-option > span { display: contents; }
+  .combat-talent-option strong { grid-column: 2; grid-row: 1; line-height: 20px !important; }
+  .combat-talent-option input[type='radio'] { grid-column: 1; grid-row: 1; align-self: center; margin: 0 !important; top: 0 !important; bottom: auto !important; }
+  .combat-talent-description { grid-column: 2; grid-row: 2; }
+  [data-save-talents] { display: inline-block !important; flex: none !important; width: fit-content !important; min-width: 0 !important; height: auto !important; min-height: 0 !important; padding: 3px 9px !important; margin: 0 !important; }
+}
+
+/* Match the shaded fill to the bronze artwork's off-center aperture. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab].active) .tab.tab[data-tab='bio'] :is(.ability.cs-ability, .bio-saving-throws-section .cs-save)::before,
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab.tab[data-tab='skills'] .listening-group::before {
+  background-position: 49.88% 44.68%, center !important;
+}
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section [data-save-talents] {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 1 !important;
+  padding: 4px 9px !important;
+  .combat-save-label { display: block; font: inherit !important; line-height: 1 !important; transform: translateY(1px); }
+}
+
+/* Keep each talent title and its description compact and clearly grouped. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section {
+  .combat-talent-option { row-gap: 0; }
+  /* Font line boxes include extra blank space; this leaves about 5px between visible letters. */
+  .combat-talent-description { margin-top: -4.6px; line-height: 1.15 !important; }
+}
+
+/* Use the same compact rhythm for every class and race ability description. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] {
+  .skill-abilities-content { grid-auto-rows: max-content !important; }
+  .skill-ability-entry:not(.skill-ability-collapsed) > .skill-ability-name { min-height: 0 !important; line-height: 20px !important; }
+  .skill-ability-effect { padding-top: 0 !important; margin-top: -4.6px; font-size: 14px !important; line-height: 1.15 !important; }
+}
+
+/* Description copy is readable at 20px; headings and instructions keep their type sizes. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .skill-abilities-section {
+  .skill-ability-effect,
+  .combat-talents-section .combat-talent-description {
+    font-size: 20px !important;
+    line-height: 1.15 !important;
+  }
+}
+
+/* Give Skills description copy five more pixels below its title row. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] {
+  .skill-ability-effect { margin-top: 0.4px; }
+  .combat-talents-section .combat-talent-description { margin-top: 0.4px; }
+}
+
+/* Keep the Skills title fixed while lifting the subtitle and every target layer. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab='skills'].active) .tab.tab[data-tab='skills'] {
+  .skill-tab-title { translate: 0 4.05311px !important; }
+  .skill-tab-subtitle {
+    --osp-subtitle-ink-gap: 2;
+    translate: 0 -8.192px !important;
+  }
+  > .cs-skill-svg-container { translate: 0 -19.064px !important; }
+}
+
+/* Keep character names centered in both display and editing states. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet input#char-name {
+  text-align: center !important;
 }

@@ -18,6 +18,7 @@
         "xp": 0,
         "background": "",
         "languages": "",
+        "vision": "Normal",
         "listeningAtDoors": "1",
         "findSecretDoor": "1",
         "openStuckDoors": "1",

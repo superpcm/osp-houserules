@@ -1,0 +1,33 @@
+{
+  "capturedAt": "2026-10-03T05:06:49.925281+00:00",
+  "command": [
+    "node",
+    "/private/tmp/osp-br25-exact-artifact-gv42mi20/BR25-M1-QA/scripts/pack-snapshot.js",
+    "--root",
+    "/private/tmp/osp-br25-r1-before-o0fhziak/input",
+    "--output",
+    "/private/tmp/osp-br25-r1-before-o0fhziak/output"
+  ],
+  "exit": 0,
+  "work": "/private/tmp/osp-br25-r1-before-o0fhziak",
+  "walBytes": 466,
+  "originalWalSha256": "8cddba2579de0f576c8c3648f8a5f89940e589abc5e0f733b5af1852cf707f40",
+  "corruptWalSha256": "91913f0b8bdecadc19581293e4ca5295f2d1e9a848604be8a7dfc75693852daa",
+  "sourceUnchanged": true,
+  "published": true,
+  "packDiagnostics": {
+    "qa-fixture": {
+      "records": 1,
+      "itemDocuments": 1,
+      "types": {
+        "item": 1
+      },
+      "invalidJsonValues": 0,
+      "otherRecords": 0,
+      "canonicalFileSha256": "eaac58fc9cbe07e50a0cfa09701c3d87e375f052256a8c52dfe3630e9535232a",
+      "roundTripVerified": true,
+      "rawTreeSha256": "fde2188aa7ee542790776f7bb450992d43cefade62c388de4820b193e413020f",
+      "warnings": []
+    }
+  }
+}

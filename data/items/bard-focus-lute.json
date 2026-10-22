@@ -1,0 +1,20 @@
+{
+  "name": "Instrument",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/gear/bard-focus-lute_thumb.webp",
+  "system": {
+    "description": "A well-used musical instrument, its worn surfaces and careful repairs reflecting a life of travel and performance. It serves as a Bard's instrument and spell focus and must be held or displayed while casting.",
+    "cost": 3.5,
+    "unitWeight": 2,
+    "storedSize": 8,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": true,
+    "tags": [
+      "instrument",
+      "focus",
+      "bard",
+      "wooden"
+    ]
+  }
+}

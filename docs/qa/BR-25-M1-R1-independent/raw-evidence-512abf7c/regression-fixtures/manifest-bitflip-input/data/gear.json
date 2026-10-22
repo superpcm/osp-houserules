@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "QAItem0000000001",
+    "name": "Synthetic QA item 1",
+    "type": "item",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "quantity": 1,
+      "cost": 1,
+      "unitWeight": 1,
+      "storedSize": 1,
+      "tags": [
+        "synthetic-qa"
+      ]
+    }
+  },
+  {
+    "_id": "QAItem0000000002",
+    "name": "Synthetic QA item 2",
+    "type": "item",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "quantity": 1,
+      "cost": 2,
+      "unitWeight": 2,
+      "storedSize": 2,
+      "tags": [
+        "synthetic-qa"
+      ]
+    }
+  }
+]

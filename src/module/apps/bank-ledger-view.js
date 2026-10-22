@@ -233,7 +233,7 @@ export class BankLedgerView extends HandlebarsApplicationMixin(ApplicationV2) {
       ui.notifications.info(`Deposited ${chosen}${drop.denomination ? "" : "×"} ${drop.item.name} into ${destination}.`);
     } catch (err) {
       console.error("[Westford Bank] vault drop deposit failed unexpectedly", err);
-      ui.notifications.error("Deposit failed unexpectedly — nothing was changed. Check the console for details.");
+      ui.notifications.error("Deposit failed unexpectedly. Check pending recovery in DM Toolkit → Bank Ledgers and verify the account before retrying.");
     } finally {
       this.render();
     }

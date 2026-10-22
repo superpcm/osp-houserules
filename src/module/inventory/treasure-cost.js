@@ -1,3 +1,4 @@
+import { canStackItems } from './stack-identity.js';
 /**
  * @file Charges an item's gp-equivalent cost against a character's stored coinage before the
  * item is added to the sheet. Coins are Foundry "coin" items (Copper/Silver/Gold Coins) owned
@@ -10,6 +11,9 @@
  * that scale) exactly. Internally everything is converted to integer "pennies" (1 penny =
  * 1 Copper Coin = 0.1 sp) to avoid float rounding.
  */
+
+import { createDropDraft, diffDropDraft, unchangedDropInventory, validDropQuantity } from './drop-transaction.js';
+import { runTransaction } from './transaction-journal.js';
 
 export const CONTAINER_SEARCH_ORDER = ['Coin Purse', 'Belt Pouch (L)', 'Belt Pouch (S)', 'Backpack', 'Sidesack'];
 
@@ -93,21 +97,21 @@ export function planCostCharge(costSp, containers) {
 
 /**
  * Foundry-facing orchestrator — resolves the actor's actual containers/coin items, runs the
- * pure planner, and (only on success) applies the resulting quantity changes. Nothing is
- * written to the actor unless the full cost can be covered, so there's no partial-charge state
- * to roll back.
+ * pure planner, and applies the resulting changes to a DETACHED inventory draft. Callers
+ * commit the resulting item changes with placement through the durable transaction journal.
  *
  * @param {{type:string, name:string, system:{cost?:number, treasure?:boolean}}} itemData
  * @param {import('../actor/actor.js').OspActor} actor
  * @returns {Promise<{success:boolean, shortfallSp?:number}>}
  */
-export async function chargeItemCost(itemData, actor) {
+export async function stageItemCost(itemData, actor) {
   // Coins and treasure (gems/jewelry, system.treasure) carry a "cost" field for their own
   // value, not a price to pay — dropping them onto the sheet is receiving treasure, not buying
   // an item, so they're exempt even though they'd otherwise match the "has a cost" gate.
   if (itemData?.type === 'coin' || itemData?.system?.treasure) return { success: true };
 
   const cost = itemData?.system?.cost;
+  if (cost != null && (!Number.isFinite(cost) || cost < 0)) return { success: false, reason: 'Invalid purchase cost.' };
   if (!cost || cost <= 0) return { success: true };
 
   const containerItems = CONTAINER_SEARCH_ORDER.flatMap((name) =>
@@ -119,11 +123,13 @@ export async function chargeItemCost(itemData, actor) {
     coins: Object.fromEntries(
       COIN_NAMES.map((coinName) => [
         coinName,
-        actor.items.find((i) => i.type === 'coin' && i.name === coinName && i.system.containerId === c.id)
-          ?.system.quantity || 0,
+        actor.items.filter(i => i.type === 'coin' && i.name === coinName && i.system.containerId === c.id)
+          .reduce((sum, coin) => sum + coin.system.quantity, 0),
       ])
     ),
   }));
+
+  if (actor.items.filter(item => item.type === 'coin' && containerItems.some(container => item.system.containerId === container.id)).some(coin => !Number.isSafeInteger(coin.system.quantity) || coin.system.quantity < 0)) return { success: false, reason: 'Stored coin quantities must be whole numbers.' };
 
   const plan = planCostCharge(cost, containers);
   if (!plan.success) {
@@ -133,12 +139,20 @@ export async function chargeItemCost(itemData, actor) {
   const updates = [];
   const creates = [];
   for (const { containerId, coinName, delta } of plan.deltas) {
-    const existing = actor.items.find((i) => i.type === 'coin' && i.name === coinName && i.system.containerId === containerId);
-    if (existing) {
-      updates.push({ _id: existing.id, 'system.quantity': (existing.system.quantity || 0) + delta });
+    const candidates = actor.items.filter(item => item.type === 'coin' && item.name === coinName && item.system.containerId === containerId);
+    if (delta < 0) {
+      let remaining = -delta;
+      for (const existing of candidates) {
+        const spent = Math.min(existing.system.quantity, remaining);
+        if (spent) updates.push({ _id: existing.id, 'system.quantity': existing.system.quantity - spent });
+        remaining -= spent;
+        if (!remaining) break;
+      }
     } else if (delta > 0) {
       const template = COIN_TEMPLATES[coinName];
-      creates.push({ ...template, system: { ...template.system, quantity: delta, containerId } });
+      const existing = candidates.find(item => canStackItems(item, template));
+      if (existing) updates.push({ _id: existing.id, 'system.quantity': existing.system.quantity + delta });
+      else creates.push({ ...template, system: { ...template.system, quantity: delta, containerId } });
     }
   }
 
@@ -146,4 +160,14 @@ export async function chargeItemCost(itemData, actor) {
   if (creates.length) await actor.createEmbeddedDocuments('Item', creates);
 
   return { success: true };
+}
+
+/** Standalone charge. Sheet purchases stage this together with placement instead. */
+export async function chargeItemCost(itemData, actor, quantity = itemData?.system?.quantity ?? 1) {
+  if (!validDropQuantity(quantity)) return { success: false, reason: 'Invalid purchase quantity.' };
+  const draft = createDropDraft(actor);
+  const result = await stageItemCost({ ...itemData, system: { ...itemData.system, cost: Number(itemData.system?.cost ?? 0) * quantity } }, draft.actor);
+  if (!result.success) return result;
+  const changes = diffDropDraft(actor, draft);
+  return changes.length ? runTransaction(actor, { label: `Payment: ${quantity} × ${itemData.name}`, changes, validate: () => unchangedDropInventory(draft) }) : result;
 }

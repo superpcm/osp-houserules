@@ -1,0 +1,204 @@
+/* Shared OSP dialog surface. The .osp-dialog hook is added by the dialog
+   wrappers; keeping it explicit prevents this palette from leaking into
+   Foundry's core dialogs, sidebar panels, or item/actor sheets. */
+$osp-dialog-root: ':is(.osp-dialog, .osp.dialog, .window-app.osp.dialog, .osp.osp-bank-ledger-view, .osp.osp-bank-deposit-dialog, .osp.osp-bank-withdraw-dialog, .osp.osp-bank-dm-ledgers-view, .osp.osp-bank-dm-edit-dialog, .osp.osp-storehouse-view, .osp.osp-storehouse-withdraw, .osp.osp-item-card-dialog, .osp.osp-choose-spellbook, .osp.osp-spellbook-rename, .osp.osp-language-dialog)';
+
+#{$osp-dialog-root} {
+  box-sizing: border-box;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border: 1px solid rgba(69, 47, 27, 0.78);
+  border-radius: 8px;
+  background: linear-gradient(rgba(231, 214, 169, 0.93), rgba(190, 157, 101, 0.95)),
+    url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp') center / cover;
+  color: #34271b;
+  font-family: 'Handwritten', Georgia, serif;
+  box-shadow: 0 10px 28px rgba(24, 15, 8, 0.42);
+}
+
+#{$osp-dialog-root} .window-header {
+  min-height: 36px;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  align-items: center;
+  color: #fff5db;
+  background: #24382d !important;
+  border-bottom: 1px solid #a28c62 !important;
+  font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+#{$osp-dialog-root} .window-header :is(.window-title, .header-button) {
+  color: inherit;
+  font-family: inherit !important;
+}
+
+#{$osp-dialog-root} .window-header .header-control {
+  box-sizing: border-box;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  min-height: 0;
+  padding: 0;
+  line-height: 1;
+  font-family: var(--font-awesome, 'Font Awesome 7 Pro') !important;
+  font-weight: 900 !important;
+}
+
+#{$osp-dialog-root} .window-content {
+  box-sizing: border-box;
+  min-height: 0;
+  max-height: calc(100dvh - 68px);
+  overflow: auto;
+  padding: 14px !important;
+  background: linear-gradient(rgba(255, 248, 225, 0.68), rgba(255, 248, 225, 0.68)),
+    url('/systems/osp-houserules/assets/backgrounds/parchment_background.webp') center / cover;
+  color: #34271b;
+  font-family: 'Handwritten', Georgia, serif !important;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+#{$osp-dialog-root} :is(.dialog-content, .form-group, form, .dialog-form, fieldset) {
+  min-width: 0;
+  max-width: 75ch;
+}
+
+#{$osp-dialog-root} :is(label, legend, .form-group > label) {
+  color: #34271b;
+  font-family: 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+#{$osp-dialog-root} .dialog-content > p {
+  color: #34271b;
+  font: 20px/1.4 'Handwritten', Georgia, serif !important;
+}
+
+#{$osp-dialog-root} :is(label, .form-group > label) {
+  overflow-wrap: anywhere;
+}
+
+// Inline labels and Foundry's separate form labels need the same breathing room.
+#{$osp-dialog-root} label > select {
+  margin-inline-start: 10px;
+  max-width: calc(100% - 10px);
+}
+
+#{$osp-dialog-root} .form-group {
+  column-gap: 10px;
+  row-gap: 10px;
+}
+
+#{$osp-dialog-root} label + select {
+  margin-inline-start: 10px;
+}
+
+#{$osp-dialog-root} button:not(.header-control) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+#{$osp-dialog-root} :is(input:not([type='checkbox']):not([type='radio']), select, textarea) {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid #8a642e;
+  border-radius: 4px;
+  background: #fff0c8;
+  color: #34271b;
+  font: 20px/1.35 'Handwritten', Georgia, serif !important;
+}
+
+#{$osp-dialog-root} :is(input:not([type='checkbox']):not([type='radio']), select, textarea):hover:not(:disabled) {
+  border-color: #b47a2d;
+}
+
+#{$osp-dialog-root} :is(input:not([type='checkbox']):not([type='radio']), select) {
+  min-height: 34px;
+  padding: 4px 9px;
+}
+
+#{$osp-dialog-root} textarea {
+  min-height: 88px;
+  padding: 7px 9px;
+  resize: vertical;
+}
+
+#{$osp-dialog-root} select option {
+  background: #fff8e1;
+  color: #34271b;
+}
+
+#{$osp-dialog-root} :is(input, select, textarea, button):focus-visible {
+  outline: 2px solid #c8943e;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 248, 225, 0.85) !important;
+}
+
+#{$osp-dialog-root} :is(input, select, textarea, button):focus:not(:focus-visible) {
+  outline: none;
+}
+
+#{$osp-dialog-root} :is(.dialog-buttons, footer.form-footer, .form-footer) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(69, 47, 27, 0.28);
+}
+
+#{$osp-dialog-root} :is(.dialog-buttons, footer.form-footer, .form-footer) button {
+  width: auto !important;
+  flex: 1 1 auto;
+  margin: 0;
+  min-width: 108px;
+  min-height: 34px;
+  // Cooper's visible glyphs sit above its line-box center; lower them optically.
+  padding: 7px 12px 3px;
+  border: 1px solid #8a642e !important;
+  border-radius: 4px;
+  background: linear-gradient(#3f5336, #24382d) !important;
+  color: #fff0c8 !important;
+  font: 16px/1.2 'Cooper Std', 'Cooper Standard', Georgia, serif !important;
+  text-transform: none;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.16), 0 2px 4px rgba(36, 23, 12, 0.2);
+}
+
+#{$osp-dialog-root} :is(.dialog-buttons, footer.form-footer, .form-footer) button > span {
+  font: inherit !important;
+}
+
+#{$osp-dialog-root} :is(.dialog-buttons, footer.form-footer, .form-footer) button:is([data-button='cancel'],[data-action='cancel'],[name='cancel'],.cancel) {
+  background: #fff0c8 !important;
+  color: #34271b !important;
+}
+
+#{$osp-dialog-root} :is(.dialog-buttons, footer.form-footer, .form-footer) button:hover:not(:disabled) {
+  border-color: #d4a853 !important;
+  background: linear-gradient(#526945, #2e4937) !important;
+  filter: brightness(1.08);
+}
+
+#{$osp-dialog-root} :is(.dialog-buttons, footer.form-footer, .form-footer) button:is([data-button='cancel'],[data-action='cancel'],[name='cancel'],.cancel):hover:not(:disabled) {
+  background: #fff8df !important;
+}
+
+#{$osp-dialog-root} :is(button, input, select, textarea):disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+#{$osp-dialog-root} ::selection {
+  background: #34432c;
+  color: #fff0c8;
+}
+

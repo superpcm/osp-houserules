@@ -1,0 +1,16 @@
+{
+  "verifiedAt": "2026-10-03T23:41:18.640217+00:00",
+  "verdict": "bounded R2 tooling PASS; full BR25 open",
+  "files": [
+    {
+      "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/docs/qa/BR-25-M1-R2-independent/REPORT-20261003.md",
+      "sha256": "22daa2cec2306144d3b80937ac5527f6bd50e542a14070f1cc3d8d6dc88662b2",
+      "bytes": 6122
+    },
+    {
+      "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/docs/qa/BR-25-M1-R2-independent/independent-evidence-e24cd77dc0468461af9e9ce3c53833d41c4988dfb9e723110c4dea3a2c918f55.zip",
+      "sha256": "e24cd77dc0468461af9e9ce3c53833d41c4988dfb9e723110c4dea3a2c918f55",
+      "bytes": 926722
+    }
+  ]
+}

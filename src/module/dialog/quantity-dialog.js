@@ -1,3 +1,5 @@
+import { ospDialogOptions } from './dialog-theme.js';
+
 /**
  * @file Reusable "how many?" prompt — first shared version of the quantity dialog that
  * _handleStackedItemDrop / _handleCoinDrop / _handleAmmunitionDrop in character-sheet.js each
@@ -12,7 +14,7 @@ export class QuantityDialog {
   static async prompt({ title, label, max, min = 1, initial = max }) {
     return new Promise((resolve) => {
       let resolved = false;
-      new Dialog({
+      new Dialog(ospDialogOptions({
         title,
         content: `
           <form>
@@ -40,7 +42,7 @@ export class QuantityDialog {
         default: 'ok',
         close: () => { if (!resolved) resolve(null); },
         render: (html) => html.find('[name="qty"]').focus().select(),
-      }).render(true);
+      })).render(true);
     });
   }
 }

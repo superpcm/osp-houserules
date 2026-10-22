@@ -1,0 +1,8 @@
+{
+  "status": "published",
+  "output": "/private/tmp/osp-br25-r1-before-o0fhziak/output",
+  "packs": [
+    "qa-fixture"
+  ],
+  "canonicalIdentity": "305a09292c32f664af6a7dccf8c591b4943b77f4ffae6983b1cb7648843f293a"
+}

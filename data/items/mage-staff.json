@@ -1,0 +1,34 @@
+{
+  "name": "Staff",
+  "type": "weapon",
+  "img": "systems/osp-houserules/assets/thumbs/images/weapons/mage-staff_thumb.webp",
+  "system": {
+    "description": "A long, sturdy quarterstaff, sometimes reinforced at the ends, used as a walking aid, two-handed weapon, or spell focus held or displayed while casting.",
+    "cost": 1,
+    "unitWeight": 4,
+    "storedSize": 15,
+    "allowedContainers": [
+      "Cart",
+      "Wagon"
+    ],
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "damage": "1d6",
+    "damageL": "1d6",
+    "damageType": "B",
+    "size": "L",
+    "speedFactor": 4,
+    "rof": 1,
+    "bonus": 0,
+    "tags": [
+      "blunt",
+      "melee",
+      "two-handed",
+      "focus",
+      "mage"
+    ],
+    "melee": true,
+    "missile": false
+  }
+}

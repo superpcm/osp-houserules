@@ -18,11 +18,31 @@ export default class OspCombatant extends Combatant {
     return this.actor?.system?.isSlow ?? false;
   }
 
-  /** Whether this combatant is defeated (hp at 0 or below) */
+  /** Whether the GM explicitly marked this combatant defeated. */
   get isDefeated() {
-    const hp = this.actor?.system?.hitpoints ?? null;
-    if (hp === null) return false;
-    return hp <= 0;
+    return Boolean(this.defeated);
+  }
+
+  get combatInitiativeState() {
+    return this.getFlag(game.system.id, "initiativeState") ?? {};
+  }
+
+  get actionDeclaration() {
+    return this.combatInitiativeState.declaration ?? null;
+  }
+
+  async setActionDeclaration(declaration, round = this.parent?.round ?? 1) {
+    if (!this.parent?.setDeclaration) throw new Error("Combat declaration authority is unavailable.");
+    return this.parent.setDeclaration(this.id, declaration, round);
+  }
+
+  get isSurprised() {
+    return Boolean(this.getFlag(game.system.id, "surprised"));
+  }
+
+  async setDefeated(defeated) {
+    if (!game.user?.isGM) throw new Error("Only a GM may mark combatants defeated.");
+    return this.parent.markDefeated(this.id, Boolean(defeated));
   }
 
   /**

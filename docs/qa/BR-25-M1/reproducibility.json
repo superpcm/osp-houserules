@@ -1,0 +1,93 @@
+{
+  "validation": "implementer-reported synthetic fixture; independent acceptance pending",
+  "capturedAt": "2026-10-03T04:31:11.371620+00:00",
+  "identitiesEqual": true,
+  "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+  "builds": [
+    {
+      "path": "/private/tmp/osp-br25-m1-qa-20261003-a",
+      "builtAt": "2026-10-03T04:29:33.704Z",
+      "runtime": {
+        "node": "v22.22.3",
+        "platform": "darwin",
+        "osRelease": "27.0.0",
+        "architecture": "arm64",
+        "python": "Python 3.12.0",
+        "classicLevel": "3.0.0"
+      },
+      "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+      "packDiagnostics": {
+        "qa-fixture": {
+          "records": 2,
+          "itemDocuments": 2,
+          "types": {
+            "item": 2
+          },
+          "invalidJsonValues": 0,
+          "otherRecords": 0,
+          "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+          "roundTripVerified": true,
+          "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "path": "/private/tmp/osp-br25-m1-qa-20261003-b",
+      "builtAt": "2026-10-03T04:29:57.912Z",
+      "runtime": {
+        "node": "v24.21.0",
+        "platform": "darwin",
+        "osRelease": "27.0.0",
+        "architecture": "arm64",
+        "python": "Python 3.12.0",
+        "classicLevel": "3.0.0"
+      },
+      "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+      "packDiagnostics": {
+        "qa-fixture": {
+          "records": 2,
+          "itemDocuments": 2,
+          "types": {
+            "item": 2
+          },
+          "invalidJsonValues": 0,
+          "otherRecords": 0,
+          "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+          "roundTripVerified": true,
+          "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "path": "/private/tmp/osp-br25-m1-qa-20261003-c",
+      "builtAt": "2026-10-03T04:30:41.607Z",
+      "runtime": {
+        "node": "v22.22.3",
+        "platform": "darwin",
+        "osRelease": "27.0.0",
+        "architecture": "arm64",
+        "python": "Python 3.12.0",
+        "classicLevel": "3.0.0"
+      },
+      "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+      "packDiagnostics": {
+        "qa-fixture": {
+          "records": 2,
+          "itemDocuments": 2,
+          "types": {
+            "item": 2
+          },
+          "invalidJsonValues": 0,
+          "otherRecords": 0,
+          "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+          "roundTripVerified": true,
+          "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+          "warnings": []
+        }
+      }
+    }
+  ],
+  "rehydration": "C rebuilt from A snapshot inputs; A and B built from the same closed synthetic source"
+}

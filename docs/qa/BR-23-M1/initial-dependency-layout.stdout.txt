@@ -1,0 +1,4 @@
+
+> osp-houserules@1.0.12 test
+> vitest run scripts/br23-world-migrate.test.js
+

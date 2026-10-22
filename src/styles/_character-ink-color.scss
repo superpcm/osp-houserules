@@ -1,0 +1,105 @@
+// Character-sheet ink: preserve each existing rule scope and priority.
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet {
+  --ej-ink: #78694D;
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet .ej-bio-header :is(input:not([type=hidden]), select, .cs-level-display, .cs-themed-select-trigger, .cs-themed-select-option, .cs-char-class-static, .cs-char-race-static) {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet :is(.cs-ability-input, .cs-ability-static) {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet .tab[data-tab=skills] .cs-listening-select {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet .tab[data-tab=combat] .cs-save-value {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet .tab[data-tab=combat] .combat-hpac-image :is(.cs-unarmored-box, .cs-combat-input) {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet .bg-panel-editor .editor-content, .window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet .bg-panel-editor .ProseMirror {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet .bg-panel-editor menu button {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-skills:has(.tab[data-tab=skills].active) .tab[data-tab=skills] > .ej-running-head {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-skills:has(.tab[data-tab=skills].active) .tab[data-tab=skills] .cs-listening-select {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-skills:has(.tab[data-tab=skills].active) .tab[data-tab=skills] .cs-skill-value-display text {
+  fill: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-skills:has(.tab[data-tab=skills].active) .tab[data-tab=skills] .cs-listening-select.cs-skill-value-enhanced option {
+  color: #78694D !important;
+  -webkit-text-fill-color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-skills:has(.tab[data-tab=skills].active) .skill-ability-effect {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-background:has(.tab:is([data-tab=background],[data-tab=character]).active) .tab:is([data-tab=background],[data-tab=character]) > .ej-running-head {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-background:has(.tab:is([data-tab=background],[data-tab=character]).active) .tab:is([data-tab=background],[data-tab=character]) .editor-container,
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-background:has(.tab:is([data-tab=background],[data-tab=character]).active) .tab:is([data-tab=background],[data-tab=character]) .editor-content {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-notes:has(.tab[data-tab=notes].active) .tab[data-tab=notes] > .ej-running-head {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-notes:has(.tab[data-tab=notes].active) .tab[data-tab=notes] .editor-container,
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-notes:has(.tab[data-tab=notes].active) .tab[data-tab=notes] .editor-content {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab=combat].active) .sheet-body > .tab[data-tab=combat] .combat-hpac-image .combat-stat :is(.cs-unarmored-box, .cs-combat-input) {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-combat:has(.tab[data-tab=combat].active) .sheet-body > .tab[data-tab=combat] .combat-save-notes {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet:has(.tab[data-tab=attributes].active) .sheet-body > .tab[data-tab=attributes] .spell-description, .window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet:has(.tab[data-tab=attributes].active) .sheet-body > .tab[data-tab=attributes] .spell-entry-body p {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab].active) .tab[data-tab='bio'] .ej-bio-header .ej-bio-identity .cs-abs::after {
+  color: #78694D !important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab].active) .tab[data-tab=bio] .bio-saving-throws-section .cs-save-value {
+  color: #78694D;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab="combat"] .combat-b-dashboard > :is(.combat-b-label,.combat-b-number) {
+  color:#78694D!important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab="combat"].active) .tab.tab[data-tab="combat"] .combat-tab .item-header .item-name {
+  color:#78694D!important;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab="combat"].active) .tab.tab[data-tab="combat"] .combat-tab .item-header .field-short {
+  color:#78694D!important;
+}

@@ -1,65 +1,19 @@
-**Dwarf & Gnome Special Abilities:**
-- Dwarves have two unique detection skills:
-	- Detect Construction Tricks (stonework, sliding walls, new construction, etc.): 2-in-6 chance
-	- Detect Room Traps (in stonework): 2-in-6 chance
-- Gnomes can Detect Construction Tricks (stonework, sliding walls, new construction, etc.) with a 2-in-6 chance.
-**Skill Defaults:**
-- All Thief, Assassin, and Barbarian skills are d6 skills with a default of 1, except for Assassinate (AS).
+# Searching and trained d6 skills
 
-**Assassinate (AS) Progression (Assassin Only):**
+| Activity | Eligible characters | Chance |
+| --- | --- | --- |
+| Secret-door search | Anyone | Elf/Half-Elf 2-in-6; others 1-in-6 |
+| Room-trap search | Anyone | Normally 1-in-6; Dwarf stonework detection 2-in-6 |
+| Construction tricks | Dwarf/Gnome | 2-in-6 |
+| Small trap mechanisms, locks, pockets | Thief | Trained 1–5-in-6 |
+| Climb Sheer Surfaces, Move Silently | Thief/Assassin/Barbarian | Trained 1–5-in-6 |
+| Hide in Shadows, Hear Noise | Thief/Assassin | Trained 1–5-in-6; hearing uses max(racial, trained) |
+| Hide in Undergrowth | Barbarian | Trained 1–5-in-6 |
 
-| Assassin Level | Assassinate (AS) |
-|:--------------:|:----------------:|
-| 1–3            | 0                |
-| 4–5            | -1               |
-| 6–7            | -2               |
-| 8–9            | -3               |
-| 10–11          | -4               |
-| 12–13          | -5               |
-| 14             | -6               |
-**Thief-Only Skills:**
-- The following skills are exclusive to the Thief class:
-	- Find/Remove Traps (TR)
-	- Open Locks (OL)
-	- Pick Pockets (PP)
-**Assassin-Only Skill:**
-- The following skill is unique to the Assassin class:
-	- Assassinate (AS)
-**Class-Specific Skills:**
-- The following skill is shared by Thief and Assassin classes:
-	- Hear Noise (HN)
-# OSE/House Rules: Searching for Traps & Secret Doors (d6 Thief Skills)
+Spend **Skill Points** to improve training. Thief starts with 4 and gains 2 per level; Assassin starts with 3 and gains 1.5; Barbarian starts with 2 and gains 0.5. Save fractional and unspent points and combine them with later awards. All trained skills start at 1-in-6; none may exceed 5-in-6. Assassination is a special rear attack/death-save procedure, not an allocatable d6 skill. Historical values are preserved for GM review.
 
-| Activity                | Who Can Attempt             | Default Chance | Editable? (on Sheet) | Notes                                                      |
-|-------------------------|----------------------------|----------------|----------------------|------------------------------------------------------------|
-| Find Secret Door        | Anyone (non-Elf)           | 1-in-6         | No                   | Elves have 2-in-6 (OSE default)                            |
-| Find Secret Door        | Elf, Half-Elf              | 2-in-6         | No                   | Always 2-in-6 for Elves and Half-Elves                     |
-| Find Secret Door        | Thief/Assassin/Barbarian   | 1-in-6         | No                   | No special bonus, but can search                           |
-| Find Traps (mechanical) | Thief only                 | 1-in-6         | Yes (Thief only)     | Editable by Thief, not Assassin/Barbarian                  |
-| Find Traps (other)      | Anyone                     | 1-in-6         | No                   | For obvious traps, if searching                            |
-| Thief Skills (d6)       | Thief/Assassin/Barbarian   | 1-in-6         | Yes (all 3 classes)  | All skills except Find Traps editable for these classes     |
+Climb Sheer Surfaces and Move Silently suffer -1-in-6 with equipped body armor except Leather, Padded or Hide. Pick Pockets loses 1-in-6 per three victim levels; natural 6 is noticed. The adjusted chance may reach zero. Other prerequisites and failure consequences follow the Players Tome.
 
+Use **Exploration** for private checks. The GM confirms the searched area, time spent and retry limits before rolling, and communicates only character-visible discoveries. Racial secret-door chance does not acquire a class bonus from historical editable fields. The sheet shows effective hearing and racial search chances as read-only; allocated training remains separate.
 
-**Key Points:**
-- Thief and Assassin d6 skills (except Find Traps) are editable and default to 1-in-6.
-- Barbarian skills use fixed level-based progression (read-only, auto-calculated).
-- Find Traps is only editable and available for Thief.
-- All other classes see these fields as read-only.
-- Skills can be increased by spending points at level-up (Thief/Assassin only).
-
-**Common Skills:**
-- The following skills are shared by Thief, Assassin, and Barbarian classes:
-  - Hide (HD)
-  - Climb Sheer Surfaces (CS)
-  - Move Silently (MS)
-
-**Barbarian-Specific Skill Progression:**
-- Barbarians have unique level-based progressions for these skills (read-only, auto-calculated):
-
-| Level | CS    | HD    | MS    |
-|-------|-------|-------|-------|
-| 1-3   | 5-in-6| 1-in-6| 1-in-6|
-| 4-5   | 5-in-6| 1-in-6| 2-in-6|
-| 6-10  | 5-in-6| 2-in-6| 2-in-6|
-| 11-13 | 5-in-6| 3-in-6| 3-in-6|
-| 14    | 5-in-6| 4-in-6| 3-in-6|
+See [BR-17 support contract](BR-17-EXPLORATION-AND-SKILLS.md) for supported automation and referee-managed procedures.

@@ -1,3 +1,10 @@
+import { normalizeQuantity } from '../../../inventory/encumbrance.js';
+import { deleteInventoryItem, dropInventoryItem } from '../../../inventory/item-removal-ui.js';
+import { checkWithdrawTarget } from '../../../inventory/container-capacity.js';
+import { inventoryItems, containedSubtree } from '../../../inventory/containment.js';
+import { rollCritical } from '../../../health/critical-authority.js';
+import { storedBulk, usedBulk, capacityValue } from '../../../inventory/bulk.js';
+import { canStackItems } from '../../../inventory/stack-identity.js';
 /**
  * Handles item management operations (CRUD, equipment, etc.)
  */
@@ -5,6 +12,10 @@ import { getAttackBonus, getAbilityModifier } from "../../../../config/classes.j
 import { ItemCardDialog } from "../../../cards/item-card-dialog.js";
 import { ospRoll, buildManualChatContent } from "../../../dice.js";
 import { isConsumableWeapon, checkAmmoAvailability } from "../../../combat/ammo-logic.js";
+import { evaluateWeaponPolicy, weaponDamageFormula, applyWeaponDamageCap, findClassProfile, loadWeaponProfiles, isBluntWeapon, requiresTwoHands } from "../../../combat/weapon-policy.js";
+import { confirmAttackContext } from "../../../combat/combat-support-ui.js";
+import { createSheetDialog } from '../sheet-dialog.js';
+import { handCost, heldItems, handsUsed, canHold } from '../../../inventory/hand-capacity.js';
 
 const critDamageFormula = (formula) =>
   formula.replace(/(\d+)d(\d+)/gi, (_, n, d) => `${parseInt(n) * 2}d${d}`);
@@ -44,6 +55,7 @@ export class ItemHandler {
     const material = item.system?.material; // wood | metal (shields only)
     const cls = this.actor.system.class || 'This class';
 
+    if ((this.actor.system.class || '').toLowerCase() !== 'knight' && Number(item.system?.minStr) > Number(this.actor.system.attributes?.str?.value ?? 10)) return {allowed:false,reason:`${name} requires STR ${item.system.minStr}. Knights ignore armor STR requirements.`};
     if (type === 'helmet') return { allowed: true };
 
     if (permissions.some(p => p === 'Any' || p === 'Any (size-appropriate)')) return { allowed: true };
@@ -81,99 +93,31 @@ export class ItemHandler {
     return { allowed: false, reason: `${cls} cannot wear ${label} armour.` };
   }
 
-  /**
-   * Load weaponPermissions for the actor's current class from class_profiles.json.
-   * Falls back to ['Any'] if the class cannot be resolved.
-   */
-  async _getClassWeaponPermissions() {
-    if (!this.sheet?.loadProfileData) return ['Any'];
-    const classKey = (this.actor.system.class || '').toLowerCase();
+  /** Class lists describe proficiency, while physical restrictions remain hard limits. */
+  async _getWeaponPolicy(item) {
+    if (this.actor.type === 'monster') return { allowed: true, proficient: true, attackPenalty: 0, damageCapHD: null };
     try {
-      const { classes } = await this.sheet.loadProfileData();
-      const profile = classes.find(c => (c.id || c.name || '').toLowerCase() === classKey);
-      return profile?.weaponPermissions ?? ['Any'];
+      const { classes = [], races = [] } = this.sheet?.loadProfileData
+        ? await this.sheet.loadProfileData() : await loadWeaponProfiles();
+      const className = this.actor.system.class || 'Fighter';
+      const raceName = this.actor.system.race || this.actor.system.species || className;
+      const policy = evaluateWeaponPolicy({ item,
+        classProfile: findClassProfile(classes, className),
+        raceProfile: findClassProfile(races, raceName),
+        strength: this.actor.system.attributes?.str?.value
+      });
+      policy.deityRisk = String(className).toLowerCase() === 'cleric' && !isBluntWeapon(item);
+      return policy;
     } catch {
-      return ['Any'];
+      return { allowed: false, reason: 'Weapon proficiency data could not be loaded. Try again before attacking.' };
     }
   }
 
-  /**
-   * Check whether a weapon may be wielded given the class's weaponPermissions.
-   * A character can still carry a restricted weapon (no drag-drop/storage check) —
-   * this only gates actually taking it in hand. Unrecognized permission phrases fail
-   * open (allowed) rather than block valid play.
-   * Returns { allowed: boolean, reason?: string }.
-   */
-  _checkWeaponPermission(item, permissions) {
-    const tags = item.system?.tags || [];
-    const size = item.system?.size;
-    const melee = !!item.system?.melee;
-    const missile = !!item.system?.missile;
-    const isBlunt = item.system?.damageType === 'B' || tags.includes('blunt');
-    const name = item.name;
-    const cls = this.actor.system.class || 'This class';
-
-    if (permissions.some(p => p === 'Any')) return { allowed: true };
-
-    if (permissions.includes('No longbows') && name === 'Longbow') {
-      return { allowed: false, reason: `${cls} cannot use longbows.` };
-    }
-    if (permissions.includes('No two-handed swords') && tags.includes('sword') && tags.includes('two-handed')) {
-      return { allowed: false, reason: `${cls} cannot use two-handed swords.` };
-    }
-
-    if (permissions.includes('Blunt weapons only')) {
-      return isBlunt
-        ? { allowed: true }
-        : { allowed: false, reason: `${cls} may only use blunt weapons.` };
-    }
-
-    if (permissions.includes('Melee weapons only')) {
-      return melee
-        ? { allowed: true }
-        : { allowed: false, reason: `${cls} may only use melee weapons.` };
-    }
-
-    if (permissions.includes('Missile weapons') || permissions.includes('One-handed melee weapons')) {
-      const okMissile = permissions.includes('Missile weapons') && missile;
-      const okMelee = permissions.includes('One-handed melee weapons') && melee && !tags.includes('two-handed');
-      return (okMissile || okMelee)
-        ? { allowed: true }
-        : { allowed: false, reason: `${cls} may only use missile weapons or one-handed melee weapons.` };
-    }
-
-    if (permissions.includes('Small-size weapons')) {
-      return size === 'S'
-        ? { allowed: true }
-        : { allowed: false, reason: `${cls} may only use small-size weapons.` };
-    }
-
-    if (permissions.includes('Small/normal weapons')) {
-      return size !== 'L'
-        ? { allowed: true }
-        : { allowed: false, reason: `${cls} cannot use large weapons.` };
-    }
-
-    // Named-item allowlist (e.g. Druid: Club/Dagger/Sling/Spear/Staff;
-    // Magic-User/Illusionist: Dagger + optional Staff; Mage: Dagger/Short sword/Staff/Sword)
-    const keywords = new Set(['Any', 'Missile weapons', 'One-handed melee weapons', 'Blunt weapons only',
-      'Melee weapons only', 'Small-size weapons', 'Small/normal weapons', 'No longbows', 'No two-handed swords']);
-    const namedItems = permissions.filter(p => !keywords.has(p)).map(p => p.replace(/\s*optional\s*$/i, '').trim());
-    if (namedItems.length > 0) {
-      const normalize = (s) => s.toLowerCase().replace(/[^a-z]/g, '');
-      const itemNorm = normalize(name);
-      const matchesNamed = namedItems.some((n) => {
-        const nNorm = normalize(n);
-        if (nNorm === 'sword') return tags.includes('sword');
-        if (nNorm === 'dagger') return tags.includes('dagger') || itemNorm === 'dagger';
-        return itemNorm === nNorm || itemNorm.includes(nNorm);
-      });
-      return matchesNamed
-        ? { allowed: true }
-        : { allowed: false, reason: `${cls} may only use: ${namedItems.join(', ')}.` };
-    }
-
-    return { allowed: true };
+  async _checkWeaponPermission(item) {
+    const policy = await this._getWeaponPolicy(item);
+    if (policy.allowed && policy.attackPenalty) ui.notifications.warn(`Non-proficient weapon: -2 to hit; final damage capped at ${policy.damageCapHD}.`);
+    if (policy.allowed && policy.deityRisk) ui.notifications.warn('Cleric using a non-blunt weapon: deity anger is adjudicated by the GM.');
+    return policy;
   }
 
   /**
@@ -253,274 +197,25 @@ export class ItemHandler {
    * Handle deleting an item
    */
   async onItemDelete(event) {
-    event.preventDefault();
-    event.stopPropagation(); // Prevent triggering item roll
-    const li = $(event.currentTarget).parents(".item-entry");
+    event.preventDefault(); event.stopPropagation();
     const item = this.getItemFromEvent(event);
-    if (!item) return;
-
-    // The actual DOM row for this item — a nested stored-item row (div) or a top-level item-entry (li)
-    const nestedRow = $(event.currentTarget).closest(".lashed-stored-item, .contained-item");
-    const row = nestedRow.length ? nestedRow : li;
-
-    // Warn if this item contains others that will also be deleted
-    const descendants = this._getContainedDescendants(item);
-    if (descendants.length > 0) {
-      const nameList = descendants.map(i => `<strong>${esc(i.name)}</strong>`).join(', ');
-      const confirmed = await new Promise(resolve => {
-        new Dialog({
-          title: `Delete ${item.name}`,
-          content: `<p>Deleting <strong>${esc(item.name)}</strong> will also delete: ${nameList}.</p>`,
-          buttons: {
-            yes:    { icon: '<i class="fas fa-trash"></i>', label: 'Yes, Delete All', callback: () => resolve(true) },
-            cancel: { icon: '<i class="fas fa-times"></i>', label: 'Cancel',           callback: () => resolve(false) }
-          },
-          default: 'cancel'
-        }).render(true);
-      });
-      if (!confirmed) return;
-      await Promise.all(descendants.map(d => d.delete()));
-    }
-
-    const parentScabbard = this._getParentScabbard(item);
-    const currentQuantity = item.system.quantity || 1;
-
-    // Helper: delete item + scabbard together (or just item if no scabbard)
-    const deleteAll = async () => {
-      if (nestedRow.length) nestedRow.remove();
-      const ops = [item.delete()];
-      if (parentScabbard) ops.push(parentScabbard.delete());
-      await Promise.all(ops);
-      if (!nestedRow.length) row.slideUp(200, () => this.actor.sheet.render(false));
-      else this.actor.sheet.render(false);
-    };
-
-    // Helper: reduce qty by deleteQty; if it reaches 0 delete both
-    const reduceQty = async (deleteQty) => {
-      const remaining = currentQuantity - deleteQty;
-      if (remaining <= 0) {
-        await deleteAll();
-      } else {
-        const ops = [item.update({ "system.quantity": remaining })];
-        if (parentScabbard) ops.push(parentScabbard.update({ "system.quantity": remaining }));
-        await Promise.all(ops);
-      }
-    };
-
-    // If quantity is 1 or item doesn't use quantity system, just delete
-    if (currentQuantity <= 1) {
-      await deleteAll();
-      return;
-    }
-
-    // For items with quantity > 1, show dialog
-    const content = `
-      <form>
-        <div class="form-group">
-          <label>Current Quantity: <strong>${currentQuantity}</strong></label>
-          <label style="margin-top: 10px;">Delete how many?</label>
-          <input type="number" name="deleteQuantity" value="1" min="1" max="${currentQuantity}" style="width: 100%;" />
-        </div>
-      </form>
-    `;
-
-    new Dialog({
-      title: `Delete ${item.name}`,
-      content: content,
-      buttons: {
-        deleteAll: {
-          icon: '<i class="fas fa-trash"></i>',
-          label: "Delete All",
-          callback: async () => deleteAll()
-        },
-        deleteSpecific: {
-          icon: '<i class="fas fa-minus"></i>',
-          label: "Delete Quantity",
-          callback: async (html) => {
-            const deleteQty = parseInt(html.find('[name="deleteQuantity"]').val()) || 1;
-            await reduceQty(deleteQty);
-          }
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: "Cancel"
-        }
-      },
-      default: "deleteSpecific"
-    }).render(true);
+    if (!item || this._removalBusy) return;
+    this._removalBusy = true;
+    try { return await deleteInventoryItem(this.actor, item); }
+    catch (error) { ui.notifications.error(error.message); }
+    finally { this._removalBusy = false; }
   }
 
-  /**
-   * Handle dropping an item onto the scene
-   */
   async onItemDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    
+    event.preventDefault(); event.stopPropagation();
     const item = this.getItemFromEvent(event);
-    if (!item) return;
-
-    // Check if there's an active scene
-    const scene = game.scenes.active;
-    if (!scene) {
-      ui.notifications.error("No active scene to drop item on.");
-      return;
-    }
-
-    // Check if user has a controlled token, or find their owned token
-    let token = canvas.tokens.controlled[0] ?? null;
-    if (!token) {
-      const ownedTokens = canvas.tokens.placeables.filter(t =>
-        t.actor && t.document.isOwner && t.actor.type === "character"
-      );
-      if (ownedTokens.length === 1) token = ownedTokens[0];
-    }
-
-    const currentQuantity = item.system.quantity || 1;
-    let dropQuantity = 1;
-
-    // If quantity > 1, prompt for how many to drop
-    if (currentQuantity > 1) {
-      const content = `
-        <form>
-          <div class="form-group">
-            <label>Current Quantity: <strong>${currentQuantity}</strong></label>
-            <label style="margin-top: 10px;">Drop how many?</label>
-            <input type="number" name="dropQuantity" value="1" min="1" max="${currentQuantity}" style="width: 100%;" />
-          </div>
-        </form>
-      `;
-
-      const dropAll = await new Promise(resolve => {
-        new Dialog({
-          title: `Drop ${item.name}`,
-          content: content,
-          buttons: {
-            dropAll: {
-              icon: '<i class="fas fa-box-open"></i>',
-              label: "Drop All",
-              callback: () => resolve(currentQuantity)
-            },
-            dropSpecific: {
-              icon: '<i class="fas fa-hand-holding"></i>',
-              label: "Drop Quantity",
-              callback: (html) => {
-                const qty = parseInt(html.find('[name="dropQuantity"]').val());
-                resolve(Math.min(Math.max(qty, 1), currentQuantity));
-              }
-            },
-            cancel: {
-              icon: '<i class="fas fa-times"></i>',
-              label: "Cancel",
-              callback: () => resolve(null)
-            }
-          },
-          default: "dropSpecific"
-        }).render(true);
-      });
-
-      if (dropAll === null) return; // User cancelled
-      dropQuantity = dropAll;
-    }
-
-    // Warn if dropping all of a container that holds other items
-    const descendants = this._getContainedDescendants(item);
-    if (descendants.length > 0 && dropQuantity >= currentQuantity) {
-      const nameList = descendants.map(i => `<strong>${esc(i.name)}</strong>`).join(', ');
-      const confirmed = await new Promise(resolve => {
-        new Dialog({
-          title: `Drop ${item.name}`,
-          content: `<p>Dropping <strong>${esc(item.name)}</strong> will also remove from your inventory: ${nameList}.</p>`,
-          buttons: {
-            yes:    { icon: '<i class="fas fa-box-open"></i>', label: 'Drop',   callback: () => resolve(true) },
-            cancel: { icon: '<i class="fas fa-times"></i>',   label: 'Cancel', callback: () => resolve(false) }
-          },
-          default: 'cancel'
-        }).render(true);
-      });
-      if (!confirmed) return;
-    }
-
-    // Calculate drop position
-    const gridSize = scene.grid.size;
-    let dropX, dropY;
-    if (token) {
-      const radians = ((token.document.rotation || 0) * Math.PI) / 180;
-      dropX = token.x + Math.cos(radians) * gridSize;
-      dropY = token.y + Math.sin(radians) * gridSize;
-    } else {
-      const dims = scene.dimensions;
-      dropX = Math.floor(dims.width / 2 / gridSize) * gridSize;
-      dropY = Math.floor(dims.height / 2 / gridSize) * gridSize;
-    }
-
-    // Unequip if equipped
-    const wasEquipped = item.system.equipped;
-    if (wasEquipped) {
-      await item.update({ "system.equipped": false });
-    }
-
-    // Create item data to store in token
-    const itemData = item.toObject();
-    itemData.system.quantity = dropQuantity;
-
-    try {
-      // Create an unlinked token (no actor) to represent the dropped item
-      const tokenData = {
-        name: `${item.name} (${dropQuantity})`,
-        x: dropX,
-        y: dropY,
-        texture: {
-          src: item.img
-        },
-        width: 1,
-        height: 1,
-        lockRotation: true,
-        actorLink: false,
-        displayName: CONST.TOKEN_DISPLAY_MODES.ALWAYS,
-        displayBars: CONST.TOKEN_DISPLAY_MODES.NONE,
-        flags: {
-          'osp-houserules': {
-            droppedItem: true,
-            itemData: itemData,
-            originalActorId: this.actor.id
-          }
-        }
-      };
-
-      // Create the token WITHOUT an actor (unlinked)
-      await scene.createEmbeddedDocuments("Token", [tokenData]);
-
-      // Update or delete the item from actor's inventory
-      if (dropQuantity >= currentQuantity) {
-        // Dropped all — delete contents first, then the item
-        if (descendants.length > 0) await Promise.all(descendants.map(d => d.delete()));
-        await item.delete();
-        ui.notifications.info(`Dropped all ${item.name}.`);
-      } else {
-        // Reduce quantity
-        const newQuantity = currentQuantity - dropQuantity;
-        await item.update({ "system.quantity": newQuantity });
-        ui.notifications.info(`Dropped ${dropQuantity} ${item.name}. ${newQuantity} remaining.`);
-      }
-
-      // Re-render the sheet
-      this.actor.sheet.render(false);
-
-    } catch (error) {
-      console.error("Error dropping item:", error);
-      ui.notifications.error(`Failed to drop item: ${error.message}`);
-      
-      // Re-equip if it was equipped before
-      if (wasEquipped) {
-        await item.update({ "system.equipped": true });
-      }
-    }
+    if (!item || this._removalBusy) return;
+    this._removalBusy = true;
+    try { return await dropInventoryItem(this.actor, item); }
+    catch (error) { ui.notifications.error(error.message); }
+    finally { this._removalBusy = false; }
   }
 
-  /**
-   * Handle toggling item equipment status
-   */
   async onItemToggle(event) {
     event.preventDefault();
     event.stopPropagation(); // Prevent triggering item roll
@@ -615,8 +310,7 @@ export class ItemHandler {
           const handsUsed = this._countHandsUsed(item.id);
           const handsFree = 2 - handsUsed;
           if (handsFree < handsNeeded) {
-            const needed = handsNeeded === 2 ? 'both hands' : 'one free hand';
-            ui.notifications.error(`${item.name} requires ${needed}. Unequip weapons, shields, and hand-held items first.`);
+            await this._showEquipHandDialog(item);
             return;
           }
         }
@@ -729,10 +423,15 @@ export class ItemHandler {
     } else if (item.type === "weapon") {
       // ── WEAPON EQUIP TOGGLE ───────────────────────────────────────────────
       if (newEquippedState) {
-        // Consumable thrown weapons (Oil Flask, Holy Water, Darts): ready from container without
-        // occupying hand slots.
+        const policy = await this._checkWeaponPermission(item);
+        if (!policy.allowed) { ui.notifications.warn(policy.reason); return; }
+        // Consumable thrown weapons (Oil Flask, Holy Water, Darts) still occupy a hand when readied.
         if (isConsumableWeapon(item)) {
-          const currentQty = item.system.quantity || 1;
+          if (!canHold(this.actor.items, item)) {
+            await this._showEquipWeaponDialog(item);
+            return;
+          }
+          const currentQty = normalizeQuantity(item.system.quantity);
           if (currentQty > 1) {
             // Split: leave (qty-1) in storage, create a new equipped copy with qty=1
             const itemData = item.toObject();
@@ -751,13 +450,6 @@ export class ItemHandler {
           }
           return;
         }
-        // Equipping (draw): class may carry this weapon but not wield it
-        const weaponPermissions = await this._getClassWeaponPermissions();
-        const { allowed: weaponAllowed, reason: weaponReason } = this._checkWeaponPermission(item, weaponPermissions);
-        if (!weaponAllowed) {
-          ui.notifications.warn(weaponReason);
-          return;
-        }
         // Equipping (draw): check hand slots
         const { canEquip, reason } = this._canEquipWeapon(item);
         if (canEquip) {
@@ -767,8 +459,6 @@ export class ItemHandler {
           if (item.system.lashed) drawUpdates['system.containerId'] = null;
           await item.update(drawUpdates);
           ui.notifications.info(`${item.name} taken in hand.`);
-        } else if (reason === 'size_mismatch') {
-          ui.notifications.error(`Cannot equip ${item.name} — no free hand that fits a ${item.system.size}-sized weapon.`);
         } else {
           await this._showEquipWeaponDialog(item);
         }
@@ -786,11 +476,12 @@ export class ItemHandler {
           } else {
             // qty>1 split path: find matching stack in any container and merge, then delete this copy
             const allContainerItems = this.actor.items.filter(i =>
-              i.system.containerId && i.name === item.name && !i.system.equipped && i.id !== item.id
+              i.system.containerId && canStackItems(i, item) && !i.system.equipped && !i.system.lashed && i.id !== item.id &&
+              checkWithdrawTarget({ ...item.toObject(), system: { ...item.system, quantity: normalizeQuantity(i.system.quantity) + normalizeQuantity(item.system.quantity) } }, this.actor.items.get(i.system.containerId), inventoryItems(this.actor).filter(entry => ![i.id, item.id].includes(entry.id))).allowed
             );
             if (allContainerItems.length > 0) {
               const target = allContainerItems[0];
-              await target.update({ 'system.quantity': (target.system.quantity || 1) + 1 });
+              await target.update({ 'system.quantity': normalizeQuantity(target.system.quantity) + normalizeQuantity(item.system.quantity) });
               await item.delete();
               ui.notifications.info(`${item.name} stowed in container.`);
             } else {
@@ -901,6 +592,18 @@ export class ItemHandler {
           }
         }
 
+        // Every hand-held item, including wands and shields, shares the same two-hand budget.
+        if (this._isShield(item)) {
+          const shieldCheck = this._canEquipShield(item.id);
+          if (!shieldCheck.canEquip) {
+            await this._showEquipShieldDialog(item);
+            return;
+          }
+        } else if (handCost(item) > 0 && !canHold(this.actor.items, item, item.id)) {
+          await this._showEquipWeaponDialog(item);
+          return;
+        }
+
         // Only one piece of body armor at a time — except underarmor (e.g. Gambeson),
         // which can share the slot with one compatible main armor in either order.
         const armorBodyTypes = ["light", "medium", "heavy"];
@@ -968,8 +671,7 @@ export class ItemHandler {
         // Belt attachment being removed — show drop/delete/cancel dialog
         await this._showUnlashContainerDialog(item);
       } else if (item.type === 'weapon') {
-        const weaponPermissions = await this._getClassWeaponPermissions();
-        const { allowed: weaponAllowed, reason: weaponReason } = this._checkWeaponPermission(item, weaponPermissions);
+        const { allowed: weaponAllowed, reason: weaponReason } = await this._checkWeaponPermission(item);
         if (!weaponAllowed) {
           ui.notifications.warn(weaponReason);
           return;
@@ -978,8 +680,6 @@ export class ItemHandler {
         if (canEquip) {
           await item.update({ 'system.lashed': false, 'system.containerId': null, 'system.equipped': true });
           ui.notifications.info(`${item.name} taken in hand.`);
-        } else if (reason === 'size_mismatch') {
-          ui.notifications.error(`Cannot take ${item.name} — no free hand that fits a ${item.system.size}-sized weapon.`);
         } else {
           await this._showEquipWeaponDialog(item);
         }
@@ -994,8 +694,6 @@ export class ItemHandler {
         if (canEquip) {
           await item.update({ 'system.lashed': false, 'system.containerId': null, 'system.equipped': true });
           ui.notifications.info(`${item.name} raised.`);
-        } else if (reason === 'has_shield') {
-          ui.notifications.error(`Cannot equip ${item.name} — a shield is already equipped.`);
         } else {
           await this._showEquipShieldDialog(item);
         }
@@ -1117,25 +815,15 @@ export class ItemHandler {
    */
   _parseCapacity(capacity) {
     // Capacity is now a direct numeric value
-    const parsed = parseFloat(capacity);
-    return isNaN(parsed) ? 0 : parsed;
+    return capacityValue(capacity);
   }
   
   /**
    * Get used capacity in a container
    */
-  _getUsedCapacity(container) {
-    return this.actor.items
-      .filter(i => i.system.containerId === container.id && !i.system.lashed)
-      .reduce((total, item) => total + this._getEffectiveStoredSize(item), 0);
-  }
+  _getUsedCapacity(container) { return usedBulk(container, this.actor.items); }
 
-  _getEffectiveStoredSize(item) {
-    const own = (parseFloat(item.system.storedSize) || 0) * (item.system.quantity || 1);
-    if (!item.system.capacity) return own;
-    const nested = this.actor.items.filter(i => i.system.containerId === item.id && !i.system.lashed);
-    return own + nested.reduce((sum, i) => sum + this._getEffectiveStoredSize(i), 0);
-  }
+  _getEffectiveStoredSize(item) { return storedBulk(item); }
 
   _getItemSlotSize(item) {
     return this._getEffectiveStoredSize(item);
@@ -1162,12 +850,7 @@ export class ItemHandler {
 
   /** Returns all currently equipped hand items (weapons + shields + sacks), optionally excluding one by id. */
   _getEquippedHandItems(excludeId = null) {
-    return this.actor.items.filter(i =>
-      i.system.equipped && i.id !== excludeId &&
-      (i.type === 'weapon' ||
-       (i.type === 'armor' && i.name.toLowerCase().includes('shield')) ||
-       i.name === 'Sack, Large' || i.name === 'Sack, Small')
-    );
+    return heldItems(this.actor.items, excludeId);
   }
 
   /**
@@ -1181,33 +864,9 @@ export class ItemHandler {
    * @returns {{ canEquip: boolean, reason: 'hands_full'|'size_mismatch'|null }}
    */
   _canEquipWeapon(weapon, excludeId = null) {
-    const tags = weapon.system?.tags || [];
     const size = weapon.system?.size;
-    const isTwoHanded = tags.includes('two-handed');
-    const hasShield = this._isShieldEquipped(excludeId);
     const equipped = this._getEquippedWeapons(excludeId);
-
-    // Hands occupied by equipped sacks (not captured by weapon/shield checks)
-    const sackHandsUsed = this.actor.items.reduce((total, i) => {
-      if (!i.system.equipped || i.id === excludeId) return total;
-      if (i.name === 'Sack, Large') return total + 2;
-      if (i.name === 'Sack, Small') return total + 1;
-      return total;
-    }, 0);
-
-    // Cannot add anything if a two-handed weapon is already equipped
-    if (equipped.some(w => (w.system?.tags || []).includes('two-handed'))) {
-      return { canEquip: false, reason: 'hands_full' };
-    }
-
-    if (isTwoHanded) {
-      if (equipped.length > 0 || hasShield || sackHandsUsed > 0)
-        return { canEquip: false, reason: 'hands_full' };
-      return { canEquip: true, reason: null };
-    }
-
-    const maxWeapons = Math.max(0, 2 - sackHandsUsed - (hasShield ? 1 : 0));
-    if (equipped.length >= maxWeapons) return { canEquip: false, reason: 'hands_full' };
+    if (!canHold(this.actor.items, weapon, excludeId)) return { canEquip: false, reason: 'hands_full' };
 
     // At most one non-S weapon can be held at a time
     if (size !== 'S' && equipped.some(w => (w.system?.size || 'S') !== 'S')) {
@@ -1226,109 +885,161 @@ export class ItemHandler {
   _canEquipShield(excludeId = null) {
     const handItems = this._getEquippedHandItems(excludeId);
     if (handItems.some(i => this._isShield(i))) return { canEquip: false, reason: 'has_shield' };
-    if (handItems.some(i => (i.system?.tags || []).includes('two-handed'))) return { canEquip: false, reason: 'hands_full' };
-    if (handItems.length >= 2) return { canEquip: false, reason: 'hands_full' };
+    if (handsUsed(handItems) + 1 > 2) return { canEquip: false, reason: 'hands_full' };
     return { canEquip: true, reason: null };
+  }
+
+  /**
+   * Ask how each occupied hand should be freed before readying an item.  This
+   * deliberately keeps every disposition explicit: the handler never drops,
+   * deletes, or silently unequips a held item while opening the prompt.
+   */
+  _handDispositionOptions(item, items = inventoryItems(this.actor)) {
+    const options = [];
+    const excluded = new Set([item.id, ...containedSubtree(items, item.id).map(child => child.id)]);
+    const tags = item.system?.tags || [];
+    const slungOnly = item.type === 'weapon' && (String(item.name).toLowerCase().includes('crossbow') || (tags.includes('missile') && tags.includes('two-handed')));
+    for (const destination of items) {
+      if (excluded.has(destination.id)) continue;
+      if (!slungOnly && (destination.type === 'container' || destination.type === 'clothing' && destination.system?.equipped)
+        && checkWithdrawTarget(item, destination, items.filter(other => other.id !== item.id)).allowed) {
+        options.push({ value: `stow:${destination.id}`, containerId: destination.id, lashed: false, label: `Stow in ${destination.name}` });
+      }
+      const canLash = !slungOnly && (this._isShield(item) || item.system?.lashable === true);
+      const validMount = destination.type === 'container' && !destination.system?.lashable || destination.type === 'clothing' && destination.system?.equipped;
+      if (!canLash || !validMount || this._isShield(item) && !String(destination.name).toLowerCase().includes('backpack')) continue;
+      const sizes = destination.system?.lashAllowedSizes || [];
+      if (sizes.length && !sizes.includes(item.system?.size)) continue;
+      const used = items.filter(other => other.id !== item.id && other.system?.containerId === destination.id && other.system?.lashed)
+        .reduce((sum, other) => sum + (Number(other.system?.slotCost) || 1), 0);
+      if (used + (Number(item.system?.slotCost) || 1) <= (Number(destination.system?.lashSlots) || 0)) {
+        options.push({ value: `lash:${destination.id}`, containerId: destination.id, lashed: true, label: `Lash to ${destination.name}` });
+      }
+    }
+    return options;
+  }
+
+  async _showEquipHandDialog(incoming) {
+    const held = this._getEquippedHandItems();
+    if (!held.length) return false;
+    const offered = new Map(held.map(item => [item.id, this._handDispositionOptions(item)]));
+    const content = `<p>Free enough hands to equip <strong>${esc(incoming.name)}</strong>. Choose where each held item should go.</p>` + held.map(item =>
+      `<label style="display:flex;align-items:center;gap:10px;margin:10px 0;"><span style="flex:0 1 180px;min-width:0;font:20px/1.3 'Cooper Std', 'Cooper Standard', Georgia, serif !important;">${esc(item.name)}</span>` +
+      `<select data-hand-choice-id="${esc(item.id)}"><option value="keep">Keep in hand</option>` +
+      offered.get(item.id).map(option => `<option value="${esc(option.value)}">${esc(option.label)}</option>`).join('') +
+      '<option value="drop">Drop on ground</option></select></label>').join('');
+    const readChoices = html => {
+      const values = {};
+      html.find('[data-hand-choice-id]').each((_, node) => { values[node.dataset.handChoiceId] = node.value; });
+      return values;
+    };
+    const refuse = message => { ui.notifications.warn(message); return false; };
+    const execute = async choices => {
+      const items = inventoryItems(this.actor);
+      const currentIncoming = this.actor.items.get(incoming.id);
+      const currentHeld = this._getEquippedHandItems();
+      if (!currentIncoming || currentIncoming.system.equipped || currentHeld.length !== held.length || currentHeld.some(item => !offered.has(item.id))) {
+        return refuse('Your held items changed. Cancel and try equipping again.');
+      }
+      const actions = [];
+      for (const item of currentHeld) {
+        const choice = choices[item.id];
+        if (choice === 'keep' || choice === 'drop') { actions.push({ item, choice }); continue; }
+        const option = offered.get(item.id).find(option => option.value === choice);
+        if (!option || !this._handDispositionOptions(item, items).some(current => current.value === choice)) {
+          return refuse(`The selected destination is no longer available for ${item.name}.`);
+        }
+        actions.push({ item, choice, ...option });
+      }
+      const kept = actions.filter(action => action.choice === 'keep').map(action => action.item);
+      if (handsUsed(kept) + handCost(currentIncoming) > 2) return refuse('Free enough hands before equipping this item.');
+      if (currentIncoming.type === 'weapon' && currentIncoming.system?.size !== 'S' && kept.some(item => item.type === 'weapon' && (item.system?.size || 'S') !== 'S')) {
+        return refuse('Put away the other larger weapon before equipping this weapon.');
+      }
+      if (this._isShield(currentIncoming) && kept.some(item => this._isShield(item))) return refuse('Put away the equipped shield first.');
+      if (currentIncoming.type === 'weapon') {
+        const permission = await this._checkWeaponPermission(currentIncoming);
+        if (!permission.allowed) return refuse(permission.reason);
+      } else if (currentIncoming.type === 'armor') {
+        const permission = this._checkArmorPermission(currentIncoming, await this._getClassArmorPermissions());
+        if (!permission.allowed) return refuse(permission.reason);
+      }
+      // Reserve all selected destinations together before changing any real item.
+      const projected = items.filter(item => !actions.some(action => action.item.id === item.id && action.choice === 'drop')).map(item => {
+        const action = actions.find(action => action.item.id === item.id);
+        return { id: item.id, name: item.name, type: item.type, system: { ...item.system,
+          ...(action?.containerId ? { equipped: false, containerId: action.containerId, lashed: action.lashed } : {}) } };
+      });
+      for (const action of actions.filter(action => action.containerId)) {
+        const visited = new Set([action.item.id]);
+        let parentId = action.containerId;
+        while (parentId) {
+          if (visited.has(parentId)) return refuse('Items cannot be stored inside themselves or each other.');
+          visited.add(parentId);
+          parentId = projected.find(item => item.id === parentId)?.system?.containerId;
+        }
+      }
+      for (const action of actions.filter(action => action.containerId)) {
+        const item = projected.find(item => item.id === action.item.id);
+        const destination = projected.find(item => item.id === action.containerId);
+        if (!destination) return refuse('A selected destination is no longer available.');
+        if (!action.lashed) {
+          const check = checkWithdrawTarget(item, destination, projected.filter(other => other.id !== item.id));
+          if (!check.allowed) return refuse(check.reason);
+        } else {
+          const used = projected.filter(other => other.system.containerId === destination.id && other.system.lashed)
+            .reduce((sum, other) => sum + (Number(other.system.slotCost) || 1), 0);
+          if (used > (Number(destination.system.lashSlots) || 0)) return refuse(`${destination.name} does not have enough lash slots for those items.`);
+        }
+      }
+      try {
+        for (const action of actions) {
+          if (action.choice === 'keep') continue;
+          if (action.choice === 'drop') {
+            if (!(await this._dropItem(action.item))?.success) return false;
+          } else {
+            await action.item.update({ 'system.equipped': false, 'system.containerId': action.containerId, 'system.lashed': action.lashed });
+            if (action.item.system.equipped || action.item.system.containerId !== action.containerId) return refuse(`${action.item.name} could not be moved. The new item remains unequipped.`);
+          }
+        }
+        if (!canHold(this.actor.items, currentIncoming, currentIncoming.id)) return refuse('No free hand is available. The new item remains unequipped.');
+        if (isConsumableWeapon(currentIncoming) && normalizeQuantity(currentIncoming.system.quantity) > 1) {
+          const quantity = normalizeQuantity(currentIncoming.system.quantity);
+          const data = currentIncoming.toObject();
+          delete data._id;
+          Object.assign(data.system, { quantity: 1, equipped: true, containerId: null, lashed: false });
+          const created = await this.actor.createEmbeddedDocuments('Item', [data]);
+          if (!created?.length) return refuse('The item could not be readied.');
+          await currentIncoming.update({ 'system.quantity': quantity - 1 });
+        } else {
+          const updates = { 'system.equipped': true, 'system.lashed': false };
+          if (currentIncoming.type !== 'weapon' || currentIncoming.system.lashed) updates['system.containerId'] = null;
+          await currentIncoming.update(updates);
+          if (!currentIncoming.system.equipped) return false;
+        }
+        ui.notifications.info(`${currentIncoming.name} taken in hand.`);
+        return true;
+      } catch (error) {
+        ui.notifications.error(`Could not finish equipping ${currentIncoming.name}: ${error.message}`);
+        return false;
+      }
+    };
+    return new Promise(resolve => {
+      createSheetDialog(this.sheet, {
+        title: `Equip ${incoming.name}`, content, close: () => resolve(false),
+        buttons: {
+          confirm: { label: 'Equip', callback: async html => { const result = await execute(readChoices(html)); if (result) resolve(true); return result; } },
+          cancel: { label: 'Cancel', callback: () => { resolve(false); return true; } }
+        }, default: 'cancel'
+      }, { width: 520 }).render(true);
+    });
   }
 
   /**
    * Shows Swap / Drop / Delete / Cancel dialog when equipping a shield with full hands.
    * @param {Item} shield
    */
-  async _showEquipShieldDialog(shield) {
-    const handItems = this._getEquippedHandItems();
-    const swapTargets = handItems.filter(h => this._canEquipShield(h.id).canEquip);
-
-    if (swapTargets.length === 0) {
-      ui.notifications.error(`Cannot equip ${shield.name} — no valid swap is possible.`);
-      return;
-    }
-
-    const executeEquip = async (swapOutItem) => {
-      if (swapOutItem.type === 'weapon') {
-        const swapTags = swapOutItem.system?.tags || [];
-        const isSword = swapTags.includes('sword');
-        const isDagger = swapTags.includes('dagger');
-        const scabbard = (isSword || isDagger) ? this._findEmptyScabbardForWeapon(swapOutItem) : null;
-        if (scabbard) {
-          await swapOutItem.update({ 'system.equipped': false, 'system.containerId': scabbard.id, 'system.lashed': false });
-        } else if (isDagger) {
-          const storage = this._findStorageForWeapon(swapOutItem);
-          if (storage) {
-            await swapOutItem.update({ 'system.equipped': false, 'system.lashed': storage.lashed, 'system.containerId': storage.container.id });
-          } else {
-            await swapOutItem.update({ 'system.equipped': false });
-            ui.notifications.info(`${swapOutItem.name} unequipped (no storage found).`);
-          }
-        } else if (!isSword) {
-          const storage = this._findStorageForWeapon(swapOutItem);
-          if (storage) {
-            await swapOutItem.update({ 'system.equipped': false, 'system.lashed': storage.lashed, 'system.containerId': storage.container.id });
-          } else {
-            await swapOutItem.update({ 'system.equipped': false });
-            ui.notifications.info(`${swapOutItem.name} unequipped (no storage found).`);
-          }
-        } else {
-          await swapOutItem.update({ 'system.equipped': false });
-          ui.notifications.info(`${swapOutItem.name} unequipped (no scabbard available).`);
-        }
-      } else {
-        // Another shield — lash to backpack or drop
-        const backpack = this.actor.items.find(c =>
-          c.type === 'container' && c.name.toLowerCase().includes('backpack') &&
-          (c.system.lashSlots || 0) > 0 &&
-          this.actor.items.filter(i => i.system.containerId === c.id && i.system.lashed).length < c.system.lashSlots
-        );
-        if (backpack) {
-          await swapOutItem.update({ 'system.equipped': false, 'system.lashed': true, 'system.containerId': backpack.id });
-          ui.notifications.info(`${swapOutItem.name} lashed to ${backpack.name}.`);
-        } else {
-          await swapOutItem.update({ 'system.equipped': false });
-          await this._dropItem(swapOutItem);
-        }
-      }
-      await shield.update({ 'system.equipped': true, 'system.lashed': false, 'system.containerId': null });
-      ui.notifications.info(`${shield.name} raised.`);
-    };
-
-    const swapContent = swapTargets.length === 1
-      ? `<p>Swap with: <strong>${swapTargets[0].name}</strong></p>`
-      : `<p>Choose which item to put away:</p>${swapTargets.map(i =>
-          `<label style="display:block;margin:4px 0;"><input type="radio" name="swapTarget" value="${i.id}"> ${i.name}</label>`
-        ).join('')}`;
-
-    return new Promise(resolve => {
-      new Dialog({
-        title: `Equip ${shield.name}`,
-        content: `<p>Your hands are full. What would you like to do?</p>${swapContent}`,
-        buttons: {
-          swap: {
-            label: 'Swap',
-            callback: async (html) => {
-              if (swapTargets.length === 1) {
-                await executeEquip(swapTargets[0]);
-              } else {
-                const id = html.find('[name="swapTarget"]:checked').val();
-                if (!id) { ui.notifications.warn('Select an item to swap out.'); resolve(false); return; }
-                await executeEquip(this.actor.items.get(id));
-              }
-              resolve(true);
-            }
-          },
-          drop: {
-            label: 'Drop',
-            callback: async () => { await this._dropItem(shield); resolve(true); }
-          },
-          delete: {
-            label: 'Delete',
-            callback: async () => { await shield.delete(); resolve(true); }
-          },
-          cancel: { label: 'Cancel', callback: () => resolve(false) }
-        },
-        default: 'cancel'
-      }).render(true);
-    });
-  }
+  async _showEquipShieldDialog(shield) { return this._showEquipHandDialog(shield); }
 
   /**
    * Finds the best lash-based storage for a non-sword weapon (belt first, then any lash slot).
@@ -1349,10 +1060,11 @@ export class ItemHandler {
 
     // Fall back to any container with lash slots using slotCost-aware check
     const lashContainer = this.actor.items.find(i => {
-      if ((i.system.lashSlots || 0) === 0) return false;
+      if ((i.system.lashSlots || 0) === 0 || (i.type === 'clothing' && !i.system.equipped)) return false;
+      if (i.system.lashAllowedSizes?.length && !i.system.lashAllowedSizes.includes(weapon.system.size)) return false;
       const attached = this.actor.items.filter(a => a.system.containerId === i.id && a.system.lashed);
       const used = attached.reduce((sum, a) => sum + (a.system.slotCost || 1), 0);
-      return used < i.system.lashSlots;
+      return used + (weapon.system.slotCost || 1) <= i.system.lashSlots;
     });
     if (lashContainer) return { container: lashContainer, lashed: true };
 
@@ -1374,11 +1086,7 @@ export class ItemHandler {
   }
 
   _getContainedDescendants(item) {
-    const direct = this.actor.items.filter(i => i.system.containerId === item.id);
-    return direct.reduce((all, child) => {
-      all.push(child, ...this._getContainedDescendants(child));
-      return all;
-    }, []);
+    return containedSubtree(inventoryItems(this.actor), item.id);
   }
 
   _scabbardAcceptsWeapon(scabbard, weaponName) {
@@ -1428,43 +1136,7 @@ export class ItemHandler {
    * Used by equip/unlash dialogs.
    */
   async _dropItem(item) {
-    const scene = game.scenes.active;
-    if (!scene) { ui.notifications.error("No active scene to drop item on."); return; }
-
-    let token = canvas.tokens.controlled[0];
-    if (!token) {
-      const owned = canvas.tokens.placeables.filter(t =>
-        t.actor && t.document.isOwner && t.actor.type === 'character'
-      );
-      if (owned.length === 1) token = owned[0];
-    }
-    const gridSize = scene.grid.size;
-    let dropX, dropY;
-    if (token) {
-      const radians = ((token.document.rotation || 0) * Math.PI) / 180;
-      dropX = token.x + Math.cos(radians) * gridSize;
-      dropY = token.y + Math.sin(radians) * gridSize;
-    } else {
-      const dims = scene.dimensions;
-      dropX = Math.floor(dims.width / 2 / gridSize) * gridSize;
-      dropY = Math.floor(dims.height / 2 / gridSize) * gridSize;
-    }
-    try {
-      await scene.createEmbeddedDocuments('Token', [{
-        name: item.name,
-        x: dropX,
-        y: dropY,
-        texture: { src: item.img },
-        width: 1, height: 1, lockRotation: true, actorLink: false,
-        displayName: CONST.TOKEN_DISPLAY_MODES.ALWAYS,
-        displayBars: CONST.TOKEN_DISPLAY_MODES.NONE,
-        flags: { 'osp-houserules': { droppedItem: true, itemData: item.toObject(), originalActorId: this.actor.id } }
-      }]);
-      await item.delete();
-      ui.notifications.info(`${item.name} dropped.`);
-    } catch (err) {
-      ui.notifications.error(`Failed to drop ${item.name}: ${err.message}`);
-    }
+    return dropInventoryItem(this.actor, item, { wholeStack: true });
   }
 
   /**
@@ -1472,110 +1144,7 @@ export class ItemHandler {
    * @param {Item} incomingWeapon
    * @param {boolean} wasLashed - Whether the weapon was lashed (used in update)
    */
-  async _showEquipWeaponDialog(incomingWeapon) {
-    const handItems = this._getEquippedHandItems();
-    const isTwoHanded = (incomingWeapon.system?.tags || []).includes('two-handed');
-    // For two-handed: must clear all hand items. Otherwise: any hand item whose removal
-    // would free enough room for the incoming weapon is a valid swap target.
-    const swapTargets = isTwoHanded
-      ? handItems
-      : handItems.filter(h => this._canEquipWeapon(incomingWeapon, h.id).canEquip);
-
-    if (swapTargets.length === 0) {
-      ui.notifications.error(`Cannot equip ${incomingWeapon.name} — no valid swap is possible.`);
-      return;
-    }
-
-    const executeEquip = async (swapOutItems) => {
-      for (const item of swapOutItems) {
-        if (item.type === 'weapon') {
-          const swapTags = item.system?.tags || [];
-          const isSword = swapTags.includes('sword');
-          const isDagger = swapTags.includes('dagger');
-          const scabbard = (isSword || isDagger) ? this._findEmptyScabbardForWeapon(item) : null;
-          if (scabbard) {
-            await item.update({ 'system.equipped': false, 'system.containerId': scabbard.id, 'system.lashed': false });
-          } else if (isDagger || !isSword) {
-            const storage = this._findStorageForWeapon(item);
-            if (storage) {
-              await item.update({ 'system.equipped': false, 'system.lashed': storage.lashed, 'system.containerId': storage.container.id });
-            } else {
-              await item.update({ 'system.equipped': false });
-              ui.notifications.info(`${item.name} unequipped (no storage found).`);
-            }
-          } else {
-            await item.update({ 'system.equipped': false });
-            ui.notifications.info(`${item.name} unequipped (no scabbard available).`);
-          }
-        } else if (item.name === 'Sack, Large' || item.name === 'Sack, Small') {
-          // Sack — put it down (unequipped, free-floating until stored)
-          await item.update({ 'system.equipped': false, 'system.containerId': null, 'system.lashed': false });
-          ui.notifications.info(`${item.name} put down.`);
-        } else {
-          // Shield — try to lash to a backpack, otherwise drop it
-          const backpack = this.actor.items.find(c =>
-            c.type === 'container' && c.name.toLowerCase().includes('backpack') &&
-            (c.system.lashSlots || 0) > 0 &&
-            this.actor.items.filter(i => i.system.containerId === c.id && i.system.lashed).length < c.system.lashSlots
-          );
-          if (backpack) {
-            await item.update({ 'system.equipped': false, 'system.lashed': true, 'system.containerId': backpack.id });
-            ui.notifications.info(`${item.name} lashed to ${backpack.name}.`);
-          } else {
-            await item.update({ 'system.equipped': false });
-            await this._dropItem(item);
-          }
-        }
-      }
-      const swapDrawUpdates = { 'system.equipped': true, 'system.lashed': false };
-      if (incomingWeapon.system.lashed) swapDrawUpdates['system.containerId'] = null;
-      await incomingWeapon.update(swapDrawUpdates);
-      ui.notifications.info(`${incomingWeapon.name} taken in hand.`);
-    };
-
-    let swapContent;
-    if (isTwoHanded) {
-      swapContent = `<p>Equipping a two-handed weapon requires both hands free. This will unequip: <strong>${handItems.map(i => i.name).join(', ')}</strong>.</p>`;
-    } else if (swapTargets.length === 1) {
-      swapContent = `<p>Swap with: <strong>${swapTargets[0].name}</strong></p>`;
-    } else {
-      swapContent = `<p>Choose which item to put away:</p>${swapTargets.map(i =>
-        `<label style="display:block;margin:4px 0;"><input type="radio" name="swapTarget" value="${i.id}"> ${i.name}</label>`
-      ).join('')}`;
-    }
-
-    return new Promise(resolve => {
-      new Dialog({
-        title: `Equip ${incomingWeapon.name}`,
-        content: `<p>Your hands are full. What would you like to do?</p>${swapContent}`,
-        buttons: {
-          swap: {
-            label: 'Swap',
-            callback: async (html) => {
-              if (isTwoHanded || swapTargets.length === 1) {
-                await executeEquip(swapTargets);
-              } else {
-                const id = html.find('[name="swapTarget"]:checked').val();
-                if (!id) { ui.notifications.warn('Select a weapon to swap out.'); resolve(false); return; }
-                await executeEquip([this.actor.items.get(id)]);
-              }
-              resolve(true);
-            }
-          },
-          drop: {
-            label: 'Drop',
-            callback: async () => { await this._dropItem(incomingWeapon); resolve(true); }
-          },
-          delete: {
-            label: 'Delete',
-            callback: async () => { await incomingWeapon.delete(); resolve(true); }
-          },
-          cancel: { label: 'Cancel', callback: () => resolve(false) }
-        },
-        default: 'cancel'
-      }).render(true);
-    });
-  }
+  async _showEquipWeaponDialog(incomingWeapon) { return this._showEquipHandDialog(incomingWeapon); }
 
   /**
    * Shows Drop / Delete / Cancel dialog when no storage is available for an unequipped weapon.
@@ -1600,7 +1169,7 @@ export class ItemHandler {
 
     return new Promise(resolve => {
       const buttons = {
-        drop: { label: 'Drop', callback: async () => { await this._dropItem(weapon); resolve(true); } }
+        drop: { label: 'Drop', callback: async () => { resolve(Boolean((await this._dropItem(weapon))?.success)); } }
       };
       if (canSling) {
         buttons.sling = {
@@ -1618,7 +1187,7 @@ export class ItemHandler {
         ? `<p><strong>${weapon.name}</strong> has nowhere to go. Sling it, drop it, or keep it in hand.</p>`
         : `<p><strong>${weapon.name}</strong> has nowhere to go. Drop it on the ground or keep it in hand.</p>`;
 
-      new Dialog({
+      createSheetDialog(this.sheet, {
         title: `Unequip ${weapon.name}`,
         content,
         buttons,
@@ -1635,6 +1204,12 @@ export class ItemHandler {
     if (backpack) {
       await item.update({ 'system.equipped': false, 'system.lashed': true, 'system.containerId': backpack.id });
       ui.notifications.info(`${item.name} lashed to ${backpack.name}.`);
+      return;
+    }
+    const container = this._findContainerWithSpace(item);
+    if (container) {
+      await item.update({ 'system.equipped': false, 'system.containerId': container.id, 'system.lashed': false });
+      ui.notifications.info(`${item.name} stored in ${container.name}.`);
       return;
     }
     await this._showArmorNoStorageDialog(item);
@@ -1676,7 +1251,7 @@ export class ItemHandler {
    * or null if none can hold it.
    */
   _findContainerWithSpace(item) {
-    const itemSize = this._getItemSlotSize(item);
+    const items = inventoryItems(this.actor);
     const _itemTags = item.system?.tags || [];
     const _itemName = (item.name || '').toLowerCase();
     const _isBowOrCrossbow = item.type === 'weapon' &&
@@ -1685,10 +1260,9 @@ export class ItemHandler {
       .filter(c => {
         if (c.type !== 'container' || c.system.containerId || c.system.lashed || c.id === item.id) return false;
         if (_isBowOrCrossbow && (c.name === 'Sack, Large' || c.name === 'Sack, Small')) return false;
-        return true;
+        return checkWithdrawTarget(item, c, items.filter(entry => entry.id !== item.id)).allowed;
       })
       .map(c => ({ container: c, available: this._parseCapacity(c.system.capacity) - this._getUsedCapacity(c) }))
-      .filter(c => c.available >= itemSize)
       .sort((a, b) => b.available - a.available);
     return candidates.length > 0 ? candidates[0].container : null;
   }
@@ -1714,21 +1288,17 @@ export class ItemHandler {
       buttons.drop = {
         label: 'Drop',
         callback: async () => {
-          await item.update({ 'system.lashed': false, 'system.containerId': null });
-          await this._dropItem(item);
-          resolve(true);
+          resolve(Boolean((await this._dropItem(item))?.success));
         }
       };
       buttons.delete = {
         label: 'Delete',
         callback: async () => {
-          await item.update({ 'system.lashed': false, 'system.containerId': null });
-          await item.delete();
-          resolve(true);
+          resolve(Boolean((await deleteInventoryItem(this.actor, item))?.success));
         }
       };
       buttons.cancel = { label: 'Cancel', callback: () => resolve(false) };
-      new Dialog({
+      createSheetDialog(this.sheet, {
         title: `Unlash ${item.name}`,
         content: `<p>Where does <strong>${esc(item.name)}</strong> go?</p>`,
         buttons,
@@ -1743,7 +1313,7 @@ export class ItemHandler {
   async _showUnlashItemDialog(item) {
     const containers = this.actor.items.filter(c =>
       c.type === 'container' && !c.system.containerId && !c.system.lashed &&
-      this.sheet._hasContainerSpace(c, item)
+      c.id !== item.id && checkWithdrawTarget(item, c, inventoryItems(this.actor).filter(entry => entry.id !== item.id)).allowed
     );
     return new Promise(resolve => {
       const buttons = {};
@@ -1760,13 +1330,11 @@ export class ItemHandler {
       buttons.drop = {
         label: 'Drop',
         callback: async () => {
-          await item.update({ 'system.lashed': false, 'system.containerId': null });
-          await this._dropItem(item);
-          resolve(true);
+          resolve(Boolean((await this._dropItem(item))?.success));
         }
       };
       buttons.cancel = { label: 'Cancel', callback: () => resolve(false) };
-      new Dialog({
+      createSheetDialog(this.sheet, {
         title: `Unlash ${item.name}`,
         content: `<p>Where does <strong>${esc(item.name)}</strong> go?</p>`,
         buttons,
@@ -1780,12 +1348,12 @@ export class ItemHandler {
    */
   async _showArmorNoStorageDialog(item) {
     return new Promise(resolve => {
-      new Dialog({
+      createSheetDialog(this.sheet, {
         title: `Unequip ${item.name}`,
         content: `<p>No container has enough space for <strong>${esc(item.name)}</strong>. What would you like to do?</p>`,
         buttons: {
-          drop: { label: 'Drop', callback: async () => { await this._dropItem(item); resolve(true); } },
-          delete: { label: 'Delete', callback: async () => { await item.delete(); resolve(true); } },
+          drop: { label: 'Drop', callback: async () => { resolve(Boolean((await this._dropItem(item))?.success)); } },
+          delete: { label: 'Delete', callback: async () => { resolve(Boolean((await deleteInventoryItem(this.actor, item))?.success)); } },
           cancel: { label: 'Cancel', callback: () => resolve(false) }
         },
         default: 'cancel'
@@ -1851,13 +1419,11 @@ export class ItemHandler {
       b.drop = {
         label: 'Drop',
         callback: async () => {
-          await sword.update({ 'system.equipped': false });
-          await this._dropItem(sword);
-          resolve(true);
+          resolve(Boolean((await this._dropItem(sword))?.success));
         }
       };
       b.cancel = { label: 'Cancel', callback: () => resolve(false) };
-      new Dialog({
+      createSheetDialog(this.sheet, {
         title: `Sheathe ${sword.name}`,
         content: `<p>There is no scabbard in which to sheathe <strong>${esc(sword.name)}</strong>.${hasSwap ? ' You may swap with a sheathed sword, or drop it.' : ' Drop it or cancel.'}</p>${swapContent}`,
         buttons: b,
@@ -1906,8 +1472,17 @@ export class ItemHandler {
   async onItemRoll(event) {
     event.preventDefault();
     const item = this.getItemFromEvent(event);
-    
+    if (item && item.type === "weapon") return this.rollWeapon(item);
+  }
+
+  /** Canonical weapon roll entry point shared by sheets and macros. */
+  async rollWeapon(item) {
     if (item && item.type === "weapon") {
+      const weaponPolicy = await this._getWeaponPolicy(item);
+      if (!weaponPolicy.allowed) { ui.notifications.warn(weaponPolicy.reason); return; }
+      const hands = this._canEquipWeapon(item, item.id);
+      if (!hands.canEquip) { ui.notifications.warn('Cannot attack with this weapon: free the required hands first.'); return; }
+      if (weaponPolicy.deityRisk) ui.notifications.warn('Cleric using a non-blunt weapon: deity anger is adjudicated by the GM.');
       // Get character stats
       const characterClass = this.actor.system.class || 'fighter';
       const level = parseInt(this.actor.system.level) || 1;
@@ -1925,7 +1500,7 @@ export class ItemHandler {
         !(itemTags.includes('missile') && itemTags.includes('reload'));
       if (isDualUse) {
         const choice = await new Promise(resolve => {
-          new Dialog({
+          createSheetDialog(this.sheet, {
             title: `${item.name} — Attack Mode`,
             content: `<p>How are you attacking with the <strong>${item.name}</strong>?</p>`,
             buttons: {
@@ -1950,7 +1525,7 @@ export class ItemHandler {
       }
 
       // Calculate attack bonus from class/level
-      const classAttackBonus = getAttackBonus(characterClass, level);
+      const classAttackBonus = getAttackBonus(characterClass, level, this.actor.system.race || '');
 
       // Get weapon's inherent bonus
       const weaponBonus = parseInt(item.system.bonus) || 0;
@@ -1974,22 +1549,29 @@ export class ItemHandler {
       }
       
       // Calculate total bonus
-      const totalBonus = classAttackBonus + weaponBonus + abilityModifier;
+      const context = await confirmAttackContext(this.actor, item, isThrown || (!isMelee && isMissile));
+      if (!context) return;
+      const talentBonus = { attack: context.attack, damage: context.damage };
+      const totalBonus = classAttackBonus + weaponBonus + abilityModifier + (weaponPolicy.attackPenalty || 0) + talentBonus.attack;
       
       // Build formula and flavor text
       const formula = totalBonus >= 0 ? `1d20 + ${totalBonus}` : `1d20 - ${Math.abs(totalBonus)}`;
       const bonusBreakdown = [
         `Class: +${classAttackBonus}`,
+        weaponPolicy.attackPenalty ? `Non-proficient: ${weaponPolicy.attackPenalty}; final damage cap ${weaponPolicy.damageCapHD}` : null,
         weaponBonus !== 0 ? `Weapon: ${weaponBonus >= 0 ? '+' : ''}${weaponBonus}` : null,
         `${abilityName}: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}`
+        , talentBonus.attack ? `Combat modifiers: ${talentBonus.attack >= 0 ? '+' : ''}${talentBonus.attack}` : null
       ].filter(b => b !== null).join(', ');
       
-      const flavor = `${esc(item.name)} Attack Roll<br><small>${bonusBreakdown}</small>`;
+      const flavor = `${esc(item.name)} Attack Roll<br><small>${bonusBreakdown}</small>${weaponPolicy.deityRisk ? '<br><small>Cleric non-blunt weapon: risk of deity anger; GM adjudicates consequences.</small>' : ''}`;
 
       // Resolve target for hit/miss comparison
       const targetOpts = this._resolveTargetOpts(totalBonus);
 
-      const { isHit, isCrit, cancelled } = await this._rollAttack(formula, flavor, targetOpts);
+      // Reserve the authenticated combat allowance before opening the physical roll dialog.
+      // A cancelled dialog releases the reservation; a completed hit or miss spends it.
+      const { isHit, isCrit, isFumble, cancelled } = await this._performCombatAttack(item, context, formula, flavor, targetOpts);
       if (cancelled) return;
 
       // Consumable thrown weapons are expended on throw (hit or miss)
@@ -2035,18 +1617,28 @@ export class ItemHandler {
         }
       }
 
+      const critical = isCrit || isFumble ? await rollCritical(this.actor, isCrit ? 'hit' : 'miss') : null;
+      if (critical && !critical.success) { ui.notifications.warn('Recover the critical result from XP History, then resolve damage manually. Do not repeat the attack.'); return; }
+
       // Roll damage: always when no target, only on a hit when targeting
-      if (item.system.damage && (isHit === null || isHit)) {
-        const baseDmgFormula = weaponBonus > 0
-          ? `${item.system.damage} + ${weaponBonus}`
-          : item.system.damage;
-        const dmgFormula = isCrit ? critDamageFormula(baseDmgFormula) : baseDmgFormula;
+      const damageFormula = weaponDamageFormula(item, isThrown ? 'oneHanded' : (item.system.wieldMode || 'oneHanded'), 'normal');
+      if (damageFormula && !isFumble && (isHit === null || isHit)) {
+        // STR modifies melee attack and damage; DEX modifies missile attack only.
+        const damageBonuses = [];
+        if (isMelee && !isThrown && abilityModifier) damageBonuses.push(abilityModifier);
+        if (weaponBonus) damageBonuses.push(weaponBonus);
+        if (talentBonus.damage) damageBonuses.push(talentBonus.damage);
+        const baseDmgFormula = damageBonuses.length
+          ? `${damageFormula} ${damageBonuses.map(n => `${n >= 0 ? '+' : '-'} ${Math.abs(n)}`).join(' ')}`
+          : damageFormula;
+        let dmgFormula = context.automatic ? baseDmgFormula.replace(/(\d+)d(\d+)/gi, (_,n,d) => String(Number(n)*Number(d))) : isCrit ? critDamageFormula(baseDmgFormula) : baseDmgFormula;
+        if (critical?.rerollOnes) dmgFormula = dmgFormula.replace(/(\d+d\d+)/gi, '$1rr1');
         const dmgFlavor = isCrit
           ? `${item.name} Damage <em>(Critical Hit!)</em>`
           : weaponBonus > 0
             ? `${item.name} Damage<br><small>Weapon bonus: +${weaponBonus}</small>`
             : `${item.name} Damage`;
-        await this._rollDamage(dmgFormula, dmgFlavor);
+        await this._rollDamage(dmgFormula, dmgFlavor, { damageCapHD: weaponPolicy.damageCapHD });
       }
     }
   }
@@ -2061,9 +1653,11 @@ export class ItemHandler {
     const level = parseInt(this.actor.system.level) || 1;
     const strScore = parseInt(this.actor.system.attributes?.str?.value) || 10;
 
-    const classAttackBonus = getAttackBonus(characterClass, level);
+    const classAttackBonus = getAttackBonus(characterClass, level, this.actor.system.race || '');
     const abilityModifier = getAbilityModifier(strScore);
-    const totalBonus = classAttackBonus + abilityModifier;
+    const context = await confirmAttackContext(this.actor, null, false);
+    if (!context) return;
+    const totalBonus = classAttackBonus + abilityModifier + context.attack;
 
     const formula = totalBonus >= 0 ? `1d20 + ${totalBonus}` : `1d20 - ${Math.abs(totalBonus)}`;
     const bonusBreakdown = [
@@ -2072,18 +1666,49 @@ export class ItemHandler {
     ].join(', ');
 
     const targetOpts = this._resolveTargetOpts(totalBonus);
-    const { isHit, isCrit, cancelled } = await this._rollAttack(formula, `Unarmed Attack (Punch/Kick)<br><small>${bonusBreakdown}</small>`, targetOpts);
+    const { isHit, isCrit, isFumble, cancelled } = await this._performCombatAttack(null, context, formula, `Unarmed Attack (Punch/Kick)<br><small>${bonusBreakdown}</small>`, targetOpts);
     if (cancelled) return;
+    const critical = isCrit || isFumble ? await rollCritical(this.actor, isCrit ? 'hit' : 'miss') : null;
+    if (critical && !critical.success) { ui.notifications.warn('Recover the critical result from XP History, then resolve damage manually. Do not repeat the attack.'); return; }
 
-    if (isHit === null || isHit) {
-      const baseDmgFormula = abilityModifier >= 0
-        ? `1d2 + ${abilityModifier}`
-        : `1d2 - ${Math.abs(abilityModifier)}`;
-      const dmgFormula = isCrit ? critDamageFormula(baseDmgFormula) : baseDmgFormula;
+    if (!isFumble && (isHit === null || isHit)) {
+      const damageModifier = abilityModifier + context.damage;
+      const baseDmgFormula = damageModifier >= 0
+        ? `1d2 + ${damageModifier}`
+        : `1d2 - ${Math.abs(damageModifier)}`;
+      let dmgFormula = context.automatic ? baseDmgFormula.replace(/(\d+)d(\d+)/gi, (_,n,d) => String(Number(n)*Number(d))) : isCrit ? critDamageFormula(baseDmgFormula) : baseDmgFormula;
+      if (critical?.rerollOnes) dmgFormula = dmgFormula.replace(/(\d+d\d+)/gi, '$1rr1');
       const dmgFlavor = isCrit
         ? `Unarmed Damage <em>(Critical Hit!)</em>`
         : `Unarmed Damage<br><small>STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}</small>`;
       await this._rollDamage(dmgFormula, dmgFlavor);
+    }
+  }
+
+  async _performCombatAttack(item, context, formula, flavor, targetOpts) {
+    const combat = game.combat;
+    const operationId = `attack-${globalThis.foundry?.utils?.randomID?.() ?? crypto.randomUUID()}`;
+    let reservation = null, completed = false;
+    if (combat?.round && combat.reserveAttackForActor) {
+      try { reservation = await combat.reserveAttackForActor(this.actor, {operationId,offhand:context.offhand,weaponId:item?.id ?? null,primaryId:context.primaryId || null,override:context.override}); }
+      catch (error) { ui.notifications.warn(error.message); return {cancelled:true}; }
+    }
+    const settle = async committed => {
+      if (reservation && !reservation.skipped) await combat.settleAttackForActor(this.actor,operationId,committed,reservation);
+    };
+    try {
+      if (context.automatic) {
+        completed = true; await settle(true);
+        await ChatMessage.create({speaker:ChatMessage.getSpeaker({actor:this.actor}),content:'Helpless target: automatic melee hit, maximum damage.',flavor:DOMPurify.sanitize(flavor)});
+        return {isHit:true,isCrit:false,cancelled:false};
+      }
+      const result = await this._rollAttack(formula,flavor,targetOpts,async () => {completed = true;await settle(true);});
+      if (result.cancelled) await settle(false);
+      return result;
+    } catch (error) {
+      if (!completed) await settle(false).catch(() => {});
+      ui.notifications.error(`Attack requires review: ${error.message}`);
+      throw error;
     }
   }
 
@@ -2100,13 +1725,14 @@ export class ItemHandler {
     return { targetAAC, targetName: targetToken.name, needRoll: targetAAC - totalBonus };
   }
 
-  async _rollAttack(formula, flavor, targetOpts = null) {
+  async _rollAttack(formula, flavor, targetOpts = null, onCompleted = null) {
     const result = await ospRoll(formula, { label: flavor });
     if (result.cancelled) return { isHit: null, isCrit: false, cancelled: true };
+    if (onCompleted) await onCompleted();
 
     let finalFlavor = flavor;
     let isHit = null;
-    let isCrit = false;
+    let isCrit = result.naturalD20 === 20;
     let flags = {};
 
     if (targetOpts) {
@@ -2138,28 +1764,26 @@ export class ItemHandler {
       });
     }
 
-    return { isHit, isCrit, cancelled: false };
+    return { isHit, isCrit, isFumble: result.naturalD20 === 1, cancelled: false };
   }
 
-  async _rollDamage(formula, flavor) {
+  async _rollDamage(formula, flavor, { damageCapHD = null } = {}) {
     const result = await ospRoll(formula, { label: flavor });
     if (result.cancelled) return;
-
-    const speaker  = ChatMessage.getSpeaker({ actor: this.actor });
+    const effective = applyWeaponDamageCap(result.total, damageCapHD);
+    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
     const rollMode = game.settings.get('core', 'rollMode');
-    const flags    = { "osp-houserules": { combatDamage: true, manualRoll: result.manual, manualDamageTotal: result.manual ? result.total : undefined } };
-
+    const flags = { 'osp-houserules': { combatDamage: true, combatDamageTotal: effective.total,
+      rawDamageTotal: result.total, nonProficiencyCap: damageCapHD, damageCapped: effective.capped,
+      manualRoll: result.manual, manualDamageTotal: result.manual ? effective.total : undefined } };
+    const capNote = damageCapHD == null ? '' : `<br><small>Non-proficient: final damage maximum ${damageCapHD}, including bonuses and criticals. Raw ${result.total}; effective damage <strong>${effective.total}</strong>.</small>`;
+    const safeFlavor = DOMPurify.sanitize(`${flavor}${capNote}`);
     if (result.foundryRoll) {
-      await result.foundryRoll.toMessage({ speaker, flavor, rollMode, flags });
+      await result.foundryRoll.toMessage({ speaker, flavor: safeFlavor, rollMode, flags });
     } else {
       const whisperData = ChatMessage.applyRollMode({}, rollMode);
-      await ChatMessage.create({
-        ...whisperData,
-        speaker,
-        flavor,
-        content: buildManualChatContent(result, { formula, label: flavor }),
-        flags
-      });
+      await ChatMessage.create({ ...whisperData, speaker, flavor: safeFlavor,
+        content: buildManualChatContent(result, { formula, label: flavor }), flags });
     }
   }
 
@@ -2207,15 +1831,7 @@ export class ItemHandler {
    * excludeItemId: skip that item (the one being toggled) so we don't double-count it.
    */
   _countHandsUsed(excludeItemId = null) {
-    return this.actor.items.reduce((total, i) => {
-      if (!i.system.equipped || i.id === excludeItemId) return total;
-      const tags = i.system.tags || [];
-      if (i.type === 'weapon') return total + (tags.includes('two-handed') ? 2 : 1);
-      if (i.type === 'armor' && i.system.type === 'shield') return total + 1;
-      if (i.name === 'Sack, Large') return total + 2;
-      if (i.name === 'Sack, Small') return total + 1;
-      return total;
-    }, 0);
+    return handsUsed(this.actor.items, excludeItemId);
   }
 
   /**

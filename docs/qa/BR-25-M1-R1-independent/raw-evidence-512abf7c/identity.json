@@ -1,0 +1,12 @@
+[
+  {
+    "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br25-m1-r1-source-a7f0865b292bf353eb2771aabb1ea40c183c919b9fda5eaefd92dfa53663b3cd.zip",
+    "sha256": "a7f0865b292bf353eb2771aabb1ea40c183c919b9fda5eaefd92dfa53663b3cd",
+    "entries": 38
+  },
+  {
+    "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br25-m1-r1-qa-ea6732720891baef66cecfcbf88ac003f48d04756f1c000e60f0d6c52f550e5f.zip",
+    "sha256": "ea6732720891baef66cecfcbf88ac003f48d04756f1c000e60f0d6c52f550e5f",
+    "entries": 53
+  }
+]

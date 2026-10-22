@@ -1,0 +1,38 @@
+[
+  {
+    "tab": "Details",
+    "data": [
+      {
+        "borderBottom": 673.9926351613956,
+        "editorBottom": 673.9940795898438,
+        "titleTop": 15.165310337768004,
+        "toolbars": 1
+      },
+      {
+        "borderBottom": 673.9926351613956,
+        "editorBottom": 673.9940795898438,
+        "titleTop": 15.165310337768004,
+        "toolbars": 1
+      }
+    ]
+  },
+  {
+    "tab": "Background",
+    "data": [
+      {
+        "baseline": 160.9906768798828,
+        "borderBottom": 673.9999671612248,
+        "editorBottom": 673.99365234375,
+        "titleTop": 8.406540761302722,
+        "toolbars": 1
+      },
+      {
+        "baseline": 160.94776916503906,
+        "borderBottom": 673.9999671612248,
+        "editorBottom": 673.99365234375,
+        "titleTop": 8.36361778766991,
+        "toolbars": 1
+      }
+    ]
+  }
+]

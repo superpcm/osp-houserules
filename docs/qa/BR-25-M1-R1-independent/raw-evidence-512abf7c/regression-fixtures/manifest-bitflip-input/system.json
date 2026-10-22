@@ -1,0 +1,11 @@
+{
+  "id": "osp-br25-synthetic-qa",
+  "version": "1.0.12",
+  "packs": [
+    {
+      "name": "qa-fixture",
+      "path": "packs/qa-fixture",
+      "type": "Item"
+    }
+  ]
+}

@@ -133,7 +133,7 @@ export class BankWithdrawDialog extends HandlebarsApplicationMixin(ApplicationV2
       ui.notifications.info(`Withdrew ${chosen} ${denomination} coins into ${targetContainer.name}.`);
     } catch (err) {
       console.error('[Westford Bank] currency withdrawal failed unexpectedly', err);
-      ui.notifications.error("Withdrawal failed unexpectedly — nothing was changed. Check the console for details.");
+      ui.notifications.error("Withdrawal failed unexpectedly. Check pending recovery in DM Toolkit → Bank Ledgers and verify the account before retrying.");
     } finally {
       this.render();
     }
@@ -157,7 +157,7 @@ export class BankWithdrawDialog extends HandlebarsApplicationMixin(ApplicationV2
       ui.notifications.info(`Withdrew ${chosen}× ${entry.name} into ${targetContainer.name}.`);
     } catch (err) {
       console.error('[Westford Bank] item withdrawal failed unexpectedly', err);
-      ui.notifications.error("Withdrawal failed unexpectedly — nothing was changed. Check the console for details.");
+      ui.notifications.error("Withdrawal failed unexpectedly. Check pending recovery in DM Toolkit → Bank Ledgers and verify the account before retrying.");
     } finally {
       this.render();
     }

@@ -1,0 +1,10 @@
+> vitest run scripts/pack-snapshot.test.js scripts/leveldb-log-integrity.test.js --maxWorkers=2 --hookTimeout=30000
+ RUN  v3.2.7 /Users/paul/Documents/Codex/2026-10-03/task-2/r1/source/BR25-M1-R1-SOURCE
+ ✓ scripts/leveldb-log-integrity.test.js (11 tests) 5ms
+ ✓ scripts/pack-snapshot.test.js (12 tests) 1996ms
+   ✓ BR-25 closed pack/catalog snapshot > preserves every original byte and exports sorted records with a stable pack/catalog identity  412ms
+   ✓ BR-25 closed pack/catalog snapshot > includes a changed catalog in the canonical identity  339ms
+ Test Files  2 passed (2)
+      Tests  23 passed (23)
+   Start at  01:53:45
+   Duration  2.31s (transform 22ms, setup 0ms, collect 222ms, tests 2.00s, environment 0ms, prepare 60ms)

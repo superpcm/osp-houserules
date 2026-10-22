@@ -1,0 +1,21 @@
+{
+  "name": "Scroll of Hold Person",
+  "type": "item",
+  "img": "systems/osp-houserules/assets/thumbs/images/magic/scroll-hold-person_thumb.webp",
+  "system": {
+    "description": "Paralyses human or human-like creatures unless they save versus spells. The scroll is consumed when cast.",
+    "quantity": 1,
+    "cost": 0,
+    "unitWeight": 0.1,
+    "storedSize": 1,
+    "tags": [
+      "magic",
+      "scroll",
+      "consumable"
+    ],
+    "spellKey": "hold_person",
+    "spellClass": "cleric",
+    "spellReversed": false,
+    "spellSourceKind": "scroll"
+  }
+}

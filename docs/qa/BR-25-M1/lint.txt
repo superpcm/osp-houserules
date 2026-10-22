@@ -1,0 +1,5 @@
+
+> osp-houserules@1.0.12 lint
+> node ./scripts/quality-lint.js
+
+Repository quality checks passed.

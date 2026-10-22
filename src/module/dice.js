@@ -1,3 +1,5 @@
+import { ospDialogOptions } from './dialog/dialog-theme.js';
+
 /**
  * @file Central dice rolling module — virtual and manual physical dice paths.
  *
@@ -112,7 +114,14 @@ function _updateLiveTotal(html, parsed) {
   html.find('.osp-total-display').text(allFilled ? sum : '—');
 }
 
-function _validateAndCollect(html, parsed) {
+/** Strict physical-die input: never truncate a fractional or malformed entry. */
+export function parsePhysicalDieInteger(raw) {
+  if (String(raw ?? '').trim() === '') return NaN;
+  const value = Number(raw);
+  return Number.isInteger(value) ? value : NaN;
+}
+
+function _validateAndCollect(html, parsed, options = {}) {
   const inputs = html.find('.osp-die-input');
   let valid = true;
   const dieResults = [];
@@ -120,11 +129,11 @@ function _validateAndCollect(html, parsed) {
   inputs.each(function() {
     const inp = $(this);
     const raw = inp.val().trim();
-    const val = parseInt(raw);
+    const val = options.strictIntegers ? parsePhysicalDieInteger(raw) : parseInt(raw);
     const faces = parseInt(inp.data('faces'));
     const errorEl = inp.siblings('.osp-die-error');
 
-    if (raw === '' || isNaN(val)) {
+    if (raw === '' || !Number.isFinite(val) || (options.strictIntegers && !Number.isInteger(val))) {
       errorEl.text('Required');
       inp.addClass('osp-die-invalid');
       valid = false;
@@ -148,7 +157,7 @@ function _showManualDialog(parsed, options = {}) {
   return new Promise((resolve) => {
     let resolved = false;
 
-    const dialog = new Dialog({
+    const dialog = new Dialog(ospDialogOptions({
       title: options.label ? `Enter Physical Dice: ${options.label}` : 'Enter Physical Dice',
       content,
       buttons: {
@@ -181,7 +190,7 @@ function _showManualDialog(parsed, options = {}) {
         const submitBtn = html.find('[data-button="submit"]');
         submitBtn.off('click').on('click', (e) => {
           e.stopImmediatePropagation();
-          const dieResults = _validateAndCollect(html, parsed);
+          const dieResults = _validateAndCollect(html, parsed, options);
           if (!dieResults) return;  // errors shown inline — keep dialog open
 
           resolved = true;
@@ -207,7 +216,7 @@ function _showManualDialog(parsed, options = {}) {
           if (e.key === 'Enter') submitBtn.trigger('click');
         });
       }
-    });
+    }));
 
     dialog.render(true);
   });
@@ -218,7 +227,7 @@ function _showManualDialog(parsed, options = {}) {
 function _showAskDialog(label) {
   return new Promise((resolve) => {
     const desc = label ? ` for <em>${label}</em>` : '';
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: 'How would you like to roll?',
       content: `<p style="margin:0 0 4px">Roll${desc}:</p>`,
       buttons: {
@@ -240,16 +249,28 @@ function _showAskDialog(label) {
       },
       default: 'virtual',
       close: () => resolve('cancel')
-    }).render(true);
+    })).render(true);
   });
 }
 
 // ── Roll paths ─────────────────────────────────────────────────────────────────
 
-async function _virtualPath(formula) {
+function _validateStrictIntegerResult(result, formula) {
+  for (const die of result.dice) {
+    for (const value of die.results) {
+      if (!Number.isInteger(Number(value)) || Number(value) < 1 || Number(value) > die.faces) {
+        throw new Error(`Invalid integer result for ${formula}`);
+      }
+    }
+  }
+  if (!Number.isInteger(Number(result.total))) throw new Error(`Invalid integer total for ${formula}`);
+  return result;
+}
+
+async function _virtualPath(formula, options = {}) {
   const roll = await new Roll(formula).evaluate();
   const d20Die = roll.dice.find(d => d.faces === 20);
-  return {
+  const result = {
     total: roll.total,
     dice: roll.dice.map(d => ({ faces: d.faces, results: d.results.map(r => r.result) })),
     naturalD20: d20Die?.total ?? null,
@@ -258,13 +279,14 @@ async function _virtualPath(formula) {
     cancelled: false,
     foundryRoll: roll
   };
+  return options.strictIntegers ? _validateStrictIntegerResult(result, formula) : result;
 }
 
 async function _manualPath(formula, options) {
   const parsed = parseOspFormula(formula);
   if (!parsed) {
     ui.notifications.info(`"${formula}" is too complex for manual entry — rolling virtually instead.`);
-    return await _virtualPath(formula);
+    return await _virtualPath(formula, options);
   }
   const result = await _showManualDialog(parsed, options);
   if (!result) return { cancelled: true, manual: true, foundryRoll: null };
@@ -288,7 +310,7 @@ async function _manualPath(formula, options) {
 export async function ospRoll(formula, options = {}) {
   // Player Lock active → force virtual path (preCreateChatMessage hook blocks it)
   const isLocked = game.settings.get('osp-houserules', 'playerLock') && !game.user.isGM;
-  if (isLocked) return await _virtualPath(formula);
+  if (isLocked) return await _virtualPath(formula, options);
 
   const allowManual  = game.settings.get('osp-houserules', 'allowManualPhysicalRolls');
   const forceVirtual = game.settings.get('osp-houserules', 'gmRequireVirtualRolls');
@@ -307,5 +329,5 @@ export async function ospRoll(formula, options = {}) {
     return await _manualPath(formula, options);
   }
 
-  return await _virtualPath(formula);
+  return await _virtualPath(formula, options);
 }

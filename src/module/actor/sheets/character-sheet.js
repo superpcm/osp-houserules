@@ -1,3 +1,15 @@
+import { handCost, handsUsed, canHold } from '../../inventory/hand-capacity.js';
+import { checkWithdrawTarget } from '../../inventory/container-capacity.js';
+import { nameDroppedSpellbook } from '../../spells/spellbook-drop.js';
+import { assertNoContainmentCycles, inventoryItems, containedSubtree, canBeParent, physicalItemTypes } from '../../inventory/containment.js';
+import { renderSpellcastingTab } from '../../spells/spellcasting-ui.js';
+import { baseSpellSlots, spellClassKey, canCastClassSpellsAtLevel, focusKindForItem } from '../../spells/spell-rules.js';
+import { activateCombatTalents } from '../../combat/combat-talents-ui.js';
+import { storedBulk, usedBulk, capacityValue, contentsWeight } from '../../inventory/bulk.js';
+import { calculatePersonalEncumbrance, normalizeQuantity, unitWeightPounds } from '../../inventory/encumbrance.js';
+import { resumeLevelUp } from '../level-up.js';
+import { showSkillPointDialog } from '../../dialog/skill-point-dialog.js';
+import { canStackItems } from '../../inventory/stack-identity.js';
 import { RaceClassHandler } from './handlers/race-class-handler.js';
 import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
@@ -6,14 +18,19 @@ import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 import { BackgroundHandler } from './handlers/background-handler.js';
 import { PositionToolHandler } from './handlers/position-tool-handler.js';
 import { PortraitTool } from './portrait-tool.js';
-import { calculateMaxHP, XP_TABLES, CLASS_XP_MAPPING } from '../../../config/classes.js';
+import { calculateMaxHP } from '../../../config/classes.js';
+import { getMaximumLevel, getClassProgression } from '../../../config/progression.js';
 import { externalDrag } from '../../external-drag-tracker.js';
 import { isConsumableWeapon } from '../../combat/ammo-logic.js';
-import { checkAllowedContainers } from '../../inventory/container-allowlist.js';
-import { chargeItemCost } from '../../inventory/treasure-cost.js';
+import { checkAllowedContainers, matchesContainerAllowedNames, matchesContainerType } from '../../inventory/container-allowlist.js';
+import { stageItemCost } from '../../inventory/treasure-cost.js';
+import { createDropDraft, diffDropDraft, validDropQuantity, classifyDrop, dropDescendants, unchangedDropInventory } from '../../inventory/drop-transaction.js';
+import { runTransaction, transactionBlock } from '../../inventory/transaction-journal.js';
 import { TreasureValueDialog } from '../../dialog/treasure-value-dialog.js';
-
-const { ActorSheet } = foundry.appv1.sheets;
+import { activateCombatValueSizing } from './combat-value-sizing.js';
+import { NativeCharacterSheet } from './native-character-sheet.js';
+import { healthSnapshot } from '../../health/health-rules.js';
+import { changeHealth } from '../../health/health-authority.js';
 
 const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -26,6 +43,13 @@ const HAND_CARRY_CONTAINERS = new Set(['Sack, Large', 'Sack, Small']);
 
 const isSlungable = (tags) => tags.includes('slungable') || tags.includes('sling')
   || (tags.includes('missile') && tags.includes('two-handed'));
+
+// Wands are item documents, but an equipped wand occupies the same hand slot
+// as a weapon and should therefore be rendered in Combat. Unequipped wands
+// remain ordinary Gear items. Keep this predicate narrow so other spell foci
+// and held items are not promoted into the weapon list.
+export const isEquippedWandCombatItem = item =>
+  item?.type === 'item' && focusKindForItem(item) === 'wand' && Boolean(item.system?.equipped);
 
 // Back-carry compatibility: Backpack, Weapon-Sling Harness (Baldric/Axe Sling), a personally
 // slung Bow (Longbow/Shortbow), Crossbow (Light/Heavy), Quiver, and Skin Sling all compete for
@@ -57,7 +81,7 @@ const BACK_SLOT_INCOMPATIBLE = {
   skinsling: new Set(),
 };
 
-export class OspActorSheetCharacter extends ActorSheet {
+export class OspActorSheetCharacter extends NativeCharacterSheet {
   // Skill configuration: defines which skills are available for each class and race
   static SKILL_CONFIG = {
     // Base skills that all characters have
@@ -81,7 +105,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       'magic-user': [],
 
       // Advanced Fantasy classes with special skills
-      assassin: ['assassination', 'climb-sheer', 'hide-shadows', 'move-silently'],
+      assassin: ['climb-sheer', 'hide-shadows', 'move-silently'],
       barbarian: ['climb-sheer', 'move-silently', 'hide-undergrowth'],
       bard: [],
       'beast master': [],
@@ -142,7 +166,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const result = html.find(selector);
       return result.length > 0 ? result : null;
     }
-    return this.element?.[0]?.querySelector(selector) ?? null;
+    return this.element?.querySelector(selector) ?? null;
   }
 
   /**
@@ -152,7 +176,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * @returns {jQuery|NodeList} Elements collection
    */
   getElements(html, selector) {
-    return (html && html.find) ? html.find(selector) : (this.element?.[0]?.querySelectorAll(selector) ?? []);
+    return (html && html.find) ? html.find(selector) : (this.element?.querySelectorAll(selector) ?? []);
   }
 
 
@@ -171,65 +195,46 @@ export class OspActorSheetCharacter extends ActorSheet {
     return false;
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["osp", "sheet", "actor", "character"],
-      template: "systems/osp-houserules/templates/actors/character-sheet.html",
-      width: 750,
-      height: 835, // 800px content area + ~35px title bar
-      resizable: false,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "attributes" }],
-      submitOnClose: true,
-      // Foundry's core Application#_render saves/restores scroll position for these selectors
-      // automatically on every re-render (e.g. after a drag-drop item update) — this must be used
-      // instead of a custom override, since ApplicationV1's own _saveScrollPositions runs
-      // unconditionally (its default scrollY is [], which is still truthy) and will clobber any
-      // hand-rolled this._scrollPositions bookkeeping done outside this mechanism.
-      scrollY: [".gear-scrollable-content", ".skill-abilities-content", ".spell-subtab-panel"],
-    });
-  }
+  static DEFAULT_OPTIONS = {
+    classes: ['osp', 'sheet', 'actor', 'character'],
+    position: { width: 750, height: 835 },
+    actions: {
+      resumeLevelUp() {
+        return resumeLevelUp(this.actor).then(result => {
+          if (!result.success && result.reason) ui.notifications.warn(result.reason);
+        }).catch(error => ui.notifications.warn(error.message));
+      },
+      allocateSkillPoints() {
+        return showSkillPointDialog(this.actor, Number(this.actor.getFlag('osp-houserules', 'pendingSkillPoints')) || 0);
+      },
+    },
+  };
 
-  /**
-   * Override ProseMirror plugin config so every save path uses preventRender,
-   * keeping the editor alive through font/formatting changes.
-   */
-  _configureProseMirrorPlugins(name, { remove = true } = {}) {
-    const save = () => this.saveEditor(name, { remove, preventRender: true });
-    return {
-      menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
-        destroyOnSave: remove,
-        onSave: save,
-      }),
-      keyMaps: ProseMirror.ProseMirrorKeyMaps.build(ProseMirror.defaultSchema, {
-        onSave: save,
-      }),
-    };
-  }
-
-  _getHeaderButtons() {
-    const buttons = super._getHeaderButtons();
-    // Guarantee the prototype token config button is present — it may not render
-    // in Foundry v13's AppV1 compatibility layer without an explicit override.
-    if (!buttons.find(b => b.class === 'configure-token')) {
-      buttons.unshift({
-        label: 'Token',
-        class: 'configure-token',
-        icon: 'fas fa-user-circle',
-        onclick: ev => this._onConfigureToken(ev)
-      });
+  _getHeaderControls() {
+    const buttons = super._getHeaderControls();
+    if (this.actor.isOwner) {
+      const pending = Number(this.actor.getFlag('osp-houserules', 'pendingSkillPoints')) || 0;
+      const state = this.actor.getFlag('osp-houserules', 'levelUpState');
+      const known = Number(this.actor.getFlag('osp-houserules', 'lastKnownLevel')) || 1;
+      if (Number(this.actor.system.level || 1) > known || state && state.nextLevel <= state.targetLevel) {
+        buttons.unshift({ label: 'Resume Level-up', action: 'resumeLevelUp', icon: 'fas fa-arrow-up' });
+      }
+      if (pending > 0) buttons.unshift({ label: `Skill Points (${pending})`, action: 'allocateSkillPoints', icon: 'fas fa-list' });
     }
     return buttons;
   }
 
-  async getData(options) {
+  async _prepareContext(options) {
     // If we're in the process of closing, don't render
     if (this._isClosing) {
       return {};
     }
     
-    const context = await super.getData(options);
+    const context = await super._prepareContext(options);
     context.system = this.actor.system;
     context.isGM = game.user.isGM;
+    context.healthSnapshot = healthSnapshot(this.actor);
+    context.canEditHP = Boolean(game.user.isGM || this.actor.testUserPermission?.(game.user, 'OWNER'));
 
     context.enrichedBackground = await TextEditor.enrichHTML(context.system.details?.background || '', { async: true, relativeTo: this.actor });
     context.enrichedHistory = await TextEditor.enrichHTML(context.system.details?.notes || '', { async: true, relativeTo: this.actor });
@@ -262,7 +267,12 @@ export class OspActorSheetCharacter extends ActorSheet {
       item.type === "item" && 
       item.system.damage && item.system.range && (item.system.melee || item.system.missile)
     );
-    context.weapons = [...regularWeapons, ...itemsWithWeaponProperties];
+    const equippedWands = this.actor.items.filter(isEquippedWandCombatItem);
+    // De-duplicate in case an item has both weapon properties and wand focus metadata.
+    context.weapons = [...new Map(
+      [...regularWeapons, ...itemsWithWeaponProperties, ...equippedWands]
+        .map(item => [item.id, item])
+    ).values()];
     context.armor = this.actor.items.filter(i => i.type === "armor");
     
     // Filter equipped weapons and worn armor/shields for Combat tab
@@ -289,6 +299,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     const allAmmunition = this.actor.items.filter(i => i.type === "ammunition");
     const allCoins = this.actor.items.filter(i => i.type === "coin");
     const allLivestock = this.actor.items.filter(i => i.type === "livestock");
+    // Physical spell focuses use the same hand toggle as other carried equipment.
+    this.actor.items.forEach(item => { item.isSpellFocus = Boolean(focusKindForItem(item)); });
 
     // Consumable weapons (Oil Flask, Holy Water, Darts, etc.) can be readied from containers.
     // When equipped, they appear on the combat tab and hide from their container.
@@ -299,8 +311,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     
     context.clothing = topLevelClothing.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(item => {
       // Calculate display weight: unitWeight * quantity
-      const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
-      const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
+      const itemWeight = unitWeightPounds(item);
+      const currentQuantity = normalizeQuantity(item.system.quantity);
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
       item.totalWeight = item.displayWeight; // default; overridden below if has capacity
 
@@ -327,8 +339,8 @@ export class OspActorSheetCharacter extends ActorSheet {
         
         // Calculate display values for nested items
         allContainedItems.forEach(nestedItem => {
-          const nestedWeight = parseFloat(nestedItem.system.unitWeight || nestedItem.system.weight) || 0;
-          const nestedQuantity = nestedItem.system.quantity !== undefined ? nestedItem.system.quantity : 1;
+          const nestedWeight = unitWeightPounds(nestedItem);
+          const nestedQuantity = normalizeQuantity(nestedItem.system.quantity);
           nestedItem.unitWeight = Math.round(nestedWeight * 100) / 100;
           nestedItem.displayWeight = Math.round(nestedWeight * nestedQuantity * 10) / 10;
 
@@ -339,8 +351,8 @@ export class OspActorSheetCharacter extends ActorSheet {
           if (nestedItem.type === 'container') {
             const subItems = this.actor.items.filter(i => i.system.containerId === nestedItem.id && !i.system.lashed && !(i.system.equipped && isConsumableWeapon(i)));
             subItems.forEach(si => {
-              const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
-              const siQty = si.system.quantity || 1;
+              const siWeight = unitWeightPounds(si);
+              const siQty = normalizeQuantity(si.system.quantity);
               si.unitWeight = Math.round(siWeight * 100) / 100;
               si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
               si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
@@ -364,7 +376,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         let usedCapacity = 0;
         allContainedItems.forEach(nestedItem => {
           const storedSize = parseFloat(nestedItem.system.storedSize) || 0;
-          const qty = nestedItem.system.quantity || 1;
+          const qty = normalizeQuantity(nestedItem.system.quantity);
           usedCapacity += storedSize * qty;
         });
         
@@ -382,8 +394,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       if (item.system.lashSlots > 0) {
         const lashedAttachments = this.actor.items.filter(c => c.system.containerId === item.id && c.system.lashed);
         lashedAttachments.forEach(c => {
-          const wt = parseFloat(c.system.unitWeight || c.system.weight) || 0;
-          c.displayWeight = Math.round(wt * (c.system.quantity || 1) * 10) / 10;
+          const wt = unitWeightPounds(c);
+          c.displayWeight = Math.round(wt * (normalizeQuantity(c.system.quantity)) * 10) / 10;
           c.slotCost = c.system.slotCost || 1;
           // Always (re)assign storedWeapon/storedItem so stale values from prior renders are cleared
           // For capacity containers (pouches etc.) include stackable weapons alongside items.
@@ -395,24 +407,24 @@ export class OspActorSheetCharacter extends ActorSheet {
           ) ?? null;
           // Sub-containers stored inside this attachment (e.g. Scabbard, Sword inside Sword Frog)
           c.subContainers = allContainers.filter(sc => sc.system.containerId === c.id).map(sub => {
-            const swt2 = parseFloat(sub.system.unitWeight || sub.system.weight) || 0;
+            const swt2 = unitWeightPounds(sub);
             sub.unitWeight = Math.round(swt2 * 100) / 100;
-            sub.displayWeight = Math.round(swt2 * (sub.system.quantity || 1) * 10) / 10;
+            sub.displayWeight = Math.round(swt2 * (normalizeQuantity(sub.system.quantity)) * 10) / 10;
             sub.itemId = sub.id;
             const subWeapon = allWeapons.find(w => w.system.containerId === sub.id) ?? null;
             if (subWeapon) {
-              const wt2 = parseFloat(subWeapon.system.unitWeight || subWeapon.system.weight) || 0;
+              const wt2 = unitWeightPounds(subWeapon);
               subWeapon.unitWeight = Math.round(wt2 * 100) / 100;
-              subWeapon.displayWeight = Math.round(wt2 * (subWeapon.system.quantity || 1) * 10) / 10;
+              subWeapon.displayWeight = Math.round(wt2 * (normalizeQuantity(subWeapon.system.quantity)) * 10) / 10;
               subWeapon.itemId = subWeapon.id;
             }
             sub.storedWeapon = subWeapon;
             return sub;
           });
           if (storedWeapon) {
-            const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
+            const swt = unitWeightPounds(storedWeapon);
             storedWeapon.unitWeight = Math.round(swt * 100) / 100;
-            storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
+            storedWeapon.displayWeight = Math.round(swt * (normalizeQuantity(storedWeapon.system.quantity)) * 10) / 10;
             storedWeapon.itemId = storedWeapon.id;
           }
           c.storedWeapon = storedWeapon;
@@ -422,9 +434,9 @@ export class OspActorSheetCharacter extends ActorSheet {
                 (i.type === 'item' || i.type === 'ammunition' || i.type === 'coin' || isConsumableWeapon(i)) &&
                 !(i.system.equipped && isConsumableWeapon(i))
               ).map(i => {
-                const sit = parseFloat(i.system.unitWeight || i.system.weight) || 0;
+                const sit = unitWeightPounds(i);
                 i.unitWeight = Math.round(sit * 100) / 100;
-                i.displayWeight = Math.round(sit * (i.system.quantity || 1) * 10) / 10;
+                i.displayWeight = Math.round(sit * (normalizeQuantity(i.system.quantity)) * 10) / 10;
                 i.itemId = i.id;
                 i.isConsumableWeapon = isConsumableWeapon(i);
                 return i;
@@ -443,7 +455,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           const cap = parseFloat(c.system.capacity) || 0;
           if (cap > 0) {
             const allStored = this.actor.items.filter(i => i.system.containerId === c.id && !i.system.lashed);
-            const usedCap = allStored.reduce((sum, i) => sum + (parseFloat(i.system.storedSize) || 0) * (i.system.quantity || 1), 0);
+            const usedCap = allStored.reduce((sum, i) => sum + (parseFloat(i.system.storedSize) || 0) * (normalizeQuantity(i.system.quantity)), 0);
             c.remainingCapacity = Math.round((cap - usedCap) * 10) / 10;
             c.capacityPercentage = Math.round((usedCap / cap) * 100);
             c.capacityLabel = `${Math.round(usedCap * 10) / 10}/${cap}`;
@@ -470,23 +482,23 @@ export class OspActorSheetCharacter extends ActorSheet {
       return i.system.equipped;
     });
     const slungItems = allSlungable.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(item => {
-      const wt = parseFloat(item.system.unitWeight || item.system.weight) || 0;
-      item.displayWeight = Math.round(wt * (item.system.quantity || 1) * 10) / 10;
+      const wt = unitWeightPounds(item);
+      item.displayWeight = Math.round(wt * (normalizeQuantity(item.system.quantity)) * 10) / 10;
       item.unitWeight = Math.round(wt * 100) / 100;
       if ((item.system.tags || []).includes('sling')) {
         const storedWeapon = allWeapons.find(w => w.system.containerId === item.id) ?? null;
         if (storedWeapon) {
-          const swt = parseFloat(storedWeapon.system.unitWeight || storedWeapon.system.weight) || 0;
+          const swt = unitWeightPounds(storedWeapon);
           storedWeapon.unitWeight = Math.round(swt * 100) / 100;
-          storedWeapon.displayWeight = Math.round(swt * (storedWeapon.system.quantity || 1) * 10) / 10;
+          storedWeapon.displayWeight = Math.round(swt * (normalizeQuantity(storedWeapon.system.quantity)) * 10) / 10;
           storedWeapon.itemId = storedWeapon.id;
         }
         item.storedWeapon = storedWeapon;
         const storedIt = (!storedWeapon && allItems.find(i2 => i2.system.containerId === item.id)) || null;
         if (storedIt) {
-          const sit = parseFloat(storedIt.system.unitWeight || storedIt.system.weight) || 0;
+          const sit = unitWeightPounds(storedIt);
           storedIt.unitWeight = Math.round(sit * 100) / 100;
-          storedIt.displayWeight = Math.round(sit * (storedIt.system.quantity || 1) * 10) / 10;
+          storedIt.displayWeight = Math.round(sit * (normalizeQuantity(storedIt.system.quantity)) * 10) / 10;
           storedIt.itemId = storedIt.id;
         }
         item.storedItem = storedIt;
@@ -501,9 +513,9 @@ export class OspActorSheetCharacter extends ActorSheet {
         const containedAmmo = allAmmunition.filter(a => a.system.containerId === item.id);
         if (containedAmmo.length > 0) {
           containedAmmo.forEach(ammo => {
-            const awt = parseFloat(ammo.system.unitWeight || ammo.system.weight) || 0;
+            const awt = unitWeightPounds(ammo);
             ammo.unitWeight = Math.round(awt * 100) / 100;
-            ammo.displayWeight = Math.round(awt * (ammo.system.quantity || 1) * 10) / 10;
+            ammo.displayWeight = Math.round(awt * (normalizeQuantity(ammo.system.quantity)) * 10) / 10;
             ammo.itemId = ammo.id;
           });
           item.containedAmmunition = containedAmmo;
@@ -572,8 +584,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Calculate display weight for each item and separate by lashed status
       allContainedItems.forEach(item => {
         // Handle both 'unitWeight' and 'weight' field names
-        const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
-        const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
+        const itemWeight = unitWeightPounds(item);
+        const currentQuantity = normalizeQuantity(item.system.quantity);
         const storedSize = parseFloat(item.system.storedSize) || 0;
 
         // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
@@ -589,8 +601,8 @@ export class OspActorSheetCharacter extends ActorSheet {
         if (item.type === 'container') {
           const subItems = this.actor.items.filter(i => i.system.containerId === item.id && !i.system.lashed && !(i.system.equipped && isConsumableWeapon(i)));
           subItems.forEach(si => {
-            const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
-            const siQty = si.system.quantity || 1;
+            const siWeight = unitWeightPounds(si);
+            const siQty = normalizeQuantity(si.system.quantity);
             si.unitWeight = Math.round(siWeight * 100) / 100;
             si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
             si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
@@ -616,7 +628,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       
       // Calculate total weight: container weight + all contained items' weights (both stored and lashed)
       // Handle both 'unitWeight' and 'weight' field names
-      const containerWeight = parseFloat(container.system.unitWeight || container.system.weight) || 0;
+      const containerWeight = unitWeightPounds(container);
       const containedWeight = allContainedItems.reduce((total, item) => {
         return total + (item.displayWeight || 0);
       }, 0);
@@ -627,7 +639,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       // storedSize is per-unit; multiply by quantity for all item types
       const usedCapacity = storedItems.reduce((total, item) => {
         const storedSize = parseFloat(item.system.storedSize) || 0;
-        const currentQuantity = item.system.quantity || 1;
+        const currentQuantity = normalizeQuantity(item.system.quantity);
         return total + storedSize * currentQuantity;
       }, 0);
 
@@ -686,6 +698,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // are visible and manageable rather than silently inflating encumbrance.
     const freeItems = allItems.filter(item =>
       item.type !== 'container' && item.type !== 'clothing' &&
+      !isEquippedWandCombatItem(item) &&
       !item.system.lashed && !slungItemIds.has(item.id) &&
       (!item.system.containerId || !validContainerIds.has(item.system.containerId))
     );
@@ -711,8 +724,8 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Calculate displayWeight for general items, loose weapons, and livestock
     [...generalItems, ...unequippedWeapons, ...freeLivestock].forEach(item => {
-      const itemWeight = parseFloat(item.system.unitWeight || item.system.weight) || 0;
-      const currentQuantity = item.system.quantity !== undefined ? item.system.quantity : 1;
+      const itemWeight = unitWeightPounds(item);
+      const currentQuantity = normalizeQuantity(item.system.quantity);
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
     });
 
@@ -727,8 +740,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     context.livestock.forEach(l => {
       const wornTack = this.actor.items.filter(i => i.system.containerId === l.id);
       wornTack.forEach(t => {
-        const tWeight = parseFloat(t.system.unitWeight || t.system.weight) || 0;
-        const tQty = t.system.quantity || 1;
+        const tWeight = unitWeightPounds(t);
+        const tQty = normalizeQuantity(t.system.quantity);
         t.unitWeight = Math.round(tWeight * 100) / 100;
         t.displayWeight = Math.round(tWeight * tQty * 10) / 10;
         t.displayCapacity = Math.round((parseFloat(t.system.storedSize) || 0) * tQty * 10) / 10;
@@ -741,15 +754,15 @@ export class OspActorSheetCharacter extends ActorSheet {
           const subItems = this.actor.items.filter(i => i.system.containerId === t.id && !i.system.lashed);
           const lashedItems = this.actor.items.filter(i => i.system.containerId === t.id && i.system.lashed);
           [...subItems, ...lashedItems].forEach(si => {
-            const siWeight = parseFloat(si.system.unitWeight || si.system.weight) || 0;
-            const siQty = si.system.quantity || 1;
+            const siWeight = unitWeightPounds(si);
+            const siQty = normalizeQuantity(si.system.quantity);
             si.unitWeight = Math.round(siWeight * 100) / 100;
             si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
             si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
           });
           t.containedItems = subItems;
           t.collapsed = this.actor.getFlag('osp-houserules', `container-${t.id}-collapsed`) ?? false;
-          const usedCapacity = subItems.reduce((sum, si) => sum + (parseFloat(si.system.storedSize) || 0) * (si.system.quantity || 1), 0);
+          const usedCapacity = subItems.reduce((sum, si) => sum + (parseFloat(si.system.storedSize) || 0) * (normalizeQuantity(si.system.quantity)), 0);
           t.remainingCapacity = Math.round(Math.max(0, (t.system.capacity || 0) - usedCapacity) * 100) / 100;
           t.capacityPercentage = t.system.capacity ? Math.min(100, Math.round((usedCapacity / t.system.capacity) * 100)) : 0;
           t.capacityLabel = `${Math.round(usedCapacity * 10) / 10}/${t.system.capacity || 0}`;
@@ -760,8 +773,8 @@ export class OspActorSheetCharacter extends ActorSheet {
           lashedItems.forEach((li, liIndex) => {
             const liContents = this.actor.items.filter(i => i.system.containerId === li.id);
             liContents.forEach(ci => {
-              const ciWeight = parseFloat(ci.system.unitWeight || ci.system.weight) || 0;
-              const ciQty = ci.system.quantity || 1;
+              const ciWeight = unitWeightPounds(ci);
+              const ciQty = normalizeQuantity(ci.system.quantity);
               ci.unitWeight = Math.round(ciWeight * 100) / 100;
               ci.displayWeight = Math.round(ciWeight * ciQty * 10) / 10;
               ci.displayCapacity = Math.round((parseFloat(ci.system.storedSize) || 0) * ciQty * 10) / 10;
@@ -771,8 +784,8 @@ export class OspActorSheetCharacter extends ActorSheet {
               if (ci.type === 'container') {
                 const ciContents = this.actor.items.filter(i => i.system.containerId === ci.id);
                 ciContents.forEach(deep => {
-                  const deepWeight = parseFloat(deep.system.unitWeight || deep.system.weight) || 0;
-                  const deepQty = deep.system.quantity || 1;
+                  const deepWeight = unitWeightPounds(deep);
+                  const deepQty = normalizeQuantity(deep.system.quantity);
                   deep.unitWeight = Math.round(deepWeight * 100) / 100;
                   deep.displayWeight = Math.round(deepWeight * deepQty * 10) / 10;
                   deep.displayCapacity = Math.round((parseFloat(deep.system.storedSize) || 0) * deepQty * 10) / 10;
@@ -788,7 +801,7 @@ export class OspActorSheetCharacter extends ActorSheet {
             li.collapsed = this.actor.getFlag('osp-houserules', `container-${li.id}-collapsed`) ?? false;
             // Capacity for the lashed item itself (e.g. Sack lashed to a Saddle's lash slots) —
             // separate from the Saddle's own lashSlots capacity computed above.
-            const liUsedCapacity = liContents.reduce((sum, ci) => sum + (parseFloat(ci.system.storedSize) || 0) * (ci.system.quantity || 1), 0);
+            const liUsedCapacity = liContents.reduce((sum, ci) => sum + (parseFloat(ci.system.storedSize) || 0) * (normalizeQuantity(ci.system.quantity)), 0);
             li.remainingCapacity = Math.round(Math.max(0, (li.system.capacity || 0) - liUsedCapacity) * 100) / 100;
             li.capacityPercentage = li.system.capacity ? Math.min(100, Math.round((liUsedCapacity / li.system.capacity) * 100)) : 0;
             li.capacityLabel = `${Math.round(liUsedCapacity * 10) / 10}/${li.system.capacity || 0}`;
@@ -818,7 +831,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Total weight shown in tWT: the animal's own weight plus everything it's wearing/carrying,
       // including items lashed to a tack item's own lash slots (e.g. a sword in a Saddle-lashed
       // Baldric) and whatever's stored inside those.
-      const ownWeight = (parseFloat(l.system.unitWeight) || 0) * (l.system.quantity || 1);
+      const ownWeight = unitWeightPounds(l) * (normalizeQuantity(l.system.quantity));
       const tackWeight = wornTack.reduce((sum, t) => {
         const nestedWeight = (t.containedItems || []).reduce((s2, si) => s2 + si.displayWeight, 0);
         const lashedWeight = (t.lashedItems || []).reduce((s2, li) => {
@@ -832,12 +845,15 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Unequipped weapons rendered separately in gear tab with weapon-row layout
     context.unequippedWeapons = unequippedWeapons.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     // All weapons for combat tab (equipped, sheathed, and lashed all appear; unequipped shown greyed out)
-    context.allWeapons = allWeapons;
+    context.allWeapons = [...allWeapons, ...equippedWands];
     
     context.treasures = this.actor.system.treasures || [];
 
     // Tag each top-level item with its section so the unified template loop can branch
-    const unequippedShields = context.allShields.filter(s => !s.system.equipped && !s.system.lashed);
+    const unequippedShields = context.allShields.filter(s =>
+      !s.system.equipped && !s.system.lashed &&
+      (!s.system.containerId || !validContainerIds.has(s.system.containerId))
+    );
     context.clothing.forEach(i => { i._gearSection = 'clothing'; });
     context.unequippedWeapons.forEach(i => { i._gearSection = 'weapon'; });
     unequippedShields.forEach(i => { i._gearSection = 'shield'; });
@@ -852,9 +868,34 @@ export class OspActorSheetCharacter extends ActorSheet {
     ].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
 
     // Encumbrance data
+    const displayItems = this.actor.items;
+    const annotated = new Set();
+    const annotateStorage = node => {
+      const nodeId = node.id ?? node._id;
+      if (annotated.has(nodeId)) return;
+      annotated.add(nodeId);
+      const source = displayItems.get?.(nodeId) ?? displayItems.find?.(item => item.id === nodeId);
+      if (source && (source.type === 'container' || source.type === 'livestock' || source.system.capacity)) {
+        const ownWeight = unitWeightPounds(source) * normalizeQuantity(source.system.quantity);
+        node.totalWeight = Math.round((ownWeight + contentsWeight(source.id, displayItems)) * 100) / 100;
+        const used = usedBulk(source, displayItems), max = capacityValue(source.system.capacity);
+        node.usedCapacity = used; node.maxCapacity = max; node.remainingCapacity = Math.max(0, max - used);
+        node.capacityLabel = `${used}/${max}`;
+        node.capacityPercentage = max > 0 ? Math.min(100, used / max * 100) : 0;
+      }
+      for (const child of [...(node.containedItems || []), ...(node.lashedItems || [])]) annotateStorage(child);
+    };
+    for (const node of [...(context.containers || []), ...(context.clothing || []), ...(context.vehicles || []), ...(context.livestock || [])]) annotateStorage(node);
     context.totalWeight = this.actor.system.encumbrance?.totalWeight || 0;
-    context.maxWeight = this.actor.system.encumbrance?.maxWeight || 100;
+    context.maxWeight = this.actor.system.encumbrance?.maxWeight ?? 100;
     context.encumbrancePercentage = this.actor.system.encumbrance?.percentage || 0;
+    // Derive threshold markers from the same Strength rules as movement penalties.
+    const burdenThresholds = calculatePersonalEncumbrance({ strength: this.actor.system.attributes?.str?.value });
+    context.encumbranceThresholds = burdenThresholds.maxWeight > 0 ? [
+      { label: 'Mildly encumbered above', weight: burdenThresholds.third, percentage: burdenThresholds.third / burdenThresholds.maxWeight * 100 },
+      { label: 'Heavily encumbered above', weight: burdenThresholds.twoThirds, percentage: burdenThresholds.twoThirds / burdenThresholds.maxWeight * 100 }
+    ] : [];
+
     
     // Determine encumbrance threshold level for color coding
     if (context.encumbrancePercentage < 33) {
@@ -875,25 +916,13 @@ export class OspActorSheetCharacter extends ActorSheet {
       spells: { value: 0 }
     };
 
-    // Calculate Max HP based on class, level, and CON modifier — this formula (always-max Hit
-    // Die) is now only the ONE-TIME baseline system.maxhitpoints gets banked from; every level
-    // past that baseline is a rolled Hit Die accumulated by module/actor/level-up.js instead.
+    // Display-only maximum-roll estimate; accumulated rolled/fixed HP remains actor data.
     const characterClass = this.actor.system.class || '';
     const level = this.actor.system.level || 1;
     const conScore = this.actor.system.attributes?.con?.value || 10;
-    context.calculatedMaxHP = calculateMaxHP(characterClass, level, conScore);
+    context.calculatedMaxHP = calculateMaxHP(characterClass, level, conScore, this.actor.system.race || '');
 
-    // One-time bake-in for characters that predate the banked-maxHP system (including brand
-    // new level-1 characters): freeze their current formula-derived HP as the starting balance,
-    // and mark their current level as "already accounted for" so level-up detection in ose.js
-    // only rolls Hit Dice for levels gained *after* this point, never retroactively.
-    if (this.actor.isOwner) {
-      const bakeIn = {};
-      if (!this.actor.system.maxhitpoints) bakeIn['system.maxhitpoints'] = context.calculatedMaxHP;
-      if (this.actor.getFlag('osp-houserules', 'lastKnownLevel') === undefined) bakeIn['flags.osp-houserules.lastKnownLevel'] = level;
-      if (Object.keys(bakeIn).length) this.actor.update(bakeIn, { render: false });
-    }
-
+    // Historical HP and progression baselines are never inferred or written during render.
     const { classes } = await this.loadProfileData();
     context.showSpellsTab = this._shouldShowSpellsTab(context.system, classes);
 
@@ -901,25 +930,8 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   _shouldShowSpellsTab(system, classProfiles = []) {
-    const cls = (system.class || '').toLowerCase().trim();
-    const level = parseInt(system.level) || 1;
-    const wis = parseInt(system.attributes?.wis?.value) || 10;
-
-    // Look up spellcasting data from profile
-    const profile = classProfiles.find(c =>
-      (c.id || '').toLowerCase() === cls || (c.name || '').toLowerCase() === cls
-    );
-    const sc = profile?.spellcasting;
-    if (!sc) return false;
-
-    const base = sc.startsAtLevel ?? 1;
-
-    // WIS-adjusted gates for divine casters
-    if (cls === 'cleric')  return level >= (wis >= 15 ? Math.max(1, base - 1) : base);
-    if (cls === 'paladin') return level >= Math.max(1, base - Math.max(0, wis - 15));
-    if (cls === 'ranger')  return level >= Math.max(1, base - Math.max(0, wis - 15));
-
-    return level >= base;
+    const profile = classProfiles.find(p => spellClassKey(p) === spellClassKey(system.class));
+    return canCastClassSpellsAtLevel(system, profile);
   }
 
   /**
@@ -931,11 +943,14 @@ export class OspActorSheetCharacter extends ActorSheet {
       return this;
     }
 
-    return super.render(force, options);
+    return super.render(typeof force === 'object' ? force : { ...options, force });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  _activateSheetListeners(html) {
+    this.destroyHandlers();
+    this._disposeSheetUi();
+    this._combatValueSizing?.();
+    this._combatValueSizing = activateCombatValueSizing(html?.[0] ?? html);
 
     // Apply theme class to the form element and outer app element.
     // Parchment is the default look; "default" (Old School Green) is the opt-out.
@@ -943,7 +958,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (theme !== 'default') {
       const formEl = html[0]?.closest?.('form') ?? html[0];
       formEl?.classList.add(`theme-${theme}`);
-      this.element[0]?.classList.add(`theme-${theme}`);
+      this.element?.classList.add(`theme-${theme}`);
     }
 
     // ALWAYS initialize position tool handler first, regardless of editable state
@@ -951,6 +966,8 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Skill target selects are GM-only
     if (!game.user.isGM) html.find('.cs-listening-select').prop('disabled', true);
+
+    this._activateHPInput(html);
 
     // Age field tooltip — shows race age guidelines after 2-second hover
     this._activateAgeTooltip(html);
@@ -965,6 +982,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.find('.belt-row-toggle').click(this._onBeltRowToggle.bind(this));
     html.find('.sling-storage-toggle').click(this._onSlingStorageToggle.bind(this));
     html.find('.slung-section-toggle').click(async () => {
+      if (!(this.isEditable)) return;
       const current = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? true;
       await this.actor.setFlag('osp-houserules', 'slung-collapsed', !current);
     });
@@ -1065,7 +1083,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     });
 
     // Only initialize other handlers if sheet is editable
-    if (!this.options.editable) {
+    if (!this.isEditable) {
+      this.setupTabSystem(html);
       return;
     }
 
@@ -1077,22 +1096,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.updateSkillLayout(html);
 
     // Handle all bio textarea changes - use both blur and change events
-    html.find('.bio-text-field').on('blur change', async (event) => {
-      const fieldName = event.target.name;
-      const value = event.target.value;
-      await this.actor.update({ [fieldName]: value });
+    const reportSaveError = error => ui.notifications.error(`Could not save character notes: ${error.message}`);
+    html.find('.bio-text-field').off('.ospBio').on('blur.ospBio change.ospBio', event => {
+      this._onSubmit(event, { preventRender: true }).catch(reportSaveError);
     });
 
-    // Save ProseMirror editors when focus leaves the editor container
-    html.find('div.editor[data-edit]').on('focusout', (event) => {
-      const editorDiv = event.currentTarget;
-      const name = editorDiv.dataset.edit;
-      if (!editorDiv.contains(event.relatedTarget) && this.editors[name]?.instance) {
-        // preventRender: true stops the actor update from triggering a sheet re-render,
-        // which would destroy the ProseMirror instance mid-interaction (e.g. while the
-        // font dropdown is open) and lose any pending formatting changes.
-        this.saveEditor(name, { remove: false, preventRender: true });
-      }
+    this._sheetDisposers.push(() => {
+      html.find('.bio-text-field').off('.ospBio');
     });
 
     // Set encumbrance bar widths - each bar shows its portion relative to its section
@@ -1119,41 +1129,54 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Up/down arrows to reorder top-level items on the Gear tab
     this._activateGearItemSort(html);
 
-    // Ensure the window close button always works for this sheet instance.
-    // Some tools register capturing handlers that can prevent the normal close.
-    try {
-      const windowApp = html.closest('.window-app')[0];
-      if (windowApp) {
-        const closeBtn = windowApp.querySelector('.window-header .window-close');
-        if (closeBtn) {
-          // Cleanup any existing handler for this instance
-          if (this._ospCloseHandler && this._ospCloseEl) {
-            try { this._ospCloseEl.removeEventListener('click', this._ospCloseHandler, true); } catch(e) {}
-            this._ospCloseHandler = null;
-            this._ospCloseEl = null;
-          }
-          this._ospCloseEl = closeBtn;
-          this._ospCloseHandler = (e) => {
-            // Prevent other handlers from swallowing this click and close the sheet
-            e.stopPropagation();
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            this.close();
-            return false;
-          };
-          // Use capture phase so our handler runs before potential interfering handlers
-          closeBtn.addEventListener('click', this._ospCloseHandler, true);
-        }
-      }
-    } catch (err) {
-      console.error('CharacterSheet: failed to attach explicit close handler', err);
-    }
-
     // Set up tab system AFTER all other handlers to ensure it has priority
     clearTimeout(this._tabTimer);
-    this._tabTimer = setTimeout(() => {
+    this._tabTimer = this._setSheetTimeout(() => {
       this.setupTabSystem(html);
     }, 100);
+  }
+
+  _activateHPInput(html) {
+    const input = html.find?.('#char-hp')?.[0] ?? html?.querySelector?.('#char-hp');
+    if (!input) return;
+    const canEdit = () => Boolean(game.user?.isGM || this.actor.testUserPermission?.(game.user, 'OWNER'));
+    const restore = () => {
+      input.value = String(healthSnapshot(this.actor).hp);
+      input.disabled = !canEdit();
+    };
+    input.disabled = !canEdit();
+    const onChange = async event => {
+      event.preventDefault();
+      if (this._hpMutationPending) return;
+      if (!canEdit()) { restore(); return; }
+      const raw = String(input.value ?? '');
+      const value = Number(raw);
+      const snapshot = healthSnapshot(this.actor);
+      if (!raw.trim() || !Number.isFinite(value) || !Number.isInteger(value) || value > snapshot.maxHp) {
+        ui.notifications.warn(`HP must be a whole number at or below ${snapshot.maxHp}.`);
+        restore();
+        return;
+      }
+      this._hpMutationPending = true;
+      input.disabled = true;
+      try {
+        const result = await changeHealth(this.actor, { action: 'setHP', value });
+        if (!result.success) ui.notifications.warn(result.reason || 'HP change was refused.');
+      } catch (error) {
+        ui.notifications.warn(error.message);
+      } finally {
+        this._hpMutationPending = false;
+        restore();
+      }
+    };
+    if (html.find) html.find('#char-hp').off('.ospHP').on('change.ospHP', onChange);
+    else input.addEventListener('change', onChange);
+    this._sheetDisposers ??= [];
+    this._sheetDisposers.push(() => {
+      if (html.find) html.find('#char-hp').off('.ospHP');
+      else input.removeEventListener('change', onChange);
+      this._hpMutationPending = false;
+    });
   }
 
   /**
@@ -1279,13 +1302,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     // may have been hidden (display: none) when the SVG first injected, in
     // which case getBoundingClientRect returned zero and positions weren't set.
     html.find('.sheet-tabs a[data-tab="skills"]').on('click', () => {
-      requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
+      this.sheetWindow.requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
     });
 
     // Render spell tab on initial load and whenever it is activated
     this.renderSpellTab(html);
     html.find('.sheet-tabs a[data-tab="attributes"]').on('click', () => {
-      requestAnimationFrame(() => this.renderSpellTab(html));
+      this.sheetWindow.requestAnimationFrame(() => this.renderSpellTab(html));
     });
   }
 
@@ -1336,34 +1359,54 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Override form submission to prevent re-render for race/class changes
    * Updates skill layout dynamically instead
    */
-  async _onSubmit(event, options = {}) {
-    // Check if this is a race or class change
-    const target = event.target;
-    const isRaceChange = target?.name === 'system.race';
-    const isClassChange = target?.name === 'system.class';
-    
-    // For race changes, tell XP handler to ignore updates
-    if (isRaceChange) {
-      this._ignoringRaceChange = true;
+  _onSubmit(event, options = {}) {
+    event?.preventDefault?.();
+    if (!(this.isEditable)) return Promise.resolve(false);
+    // Capture live editor content before an earlier submission can replace this form.
+    const updateData = this.form ? this._getSubmitData(options.updateData ?? {}) : options.updateData;
+    const run = () => this._submitSheetForm(event, { ...options, updateData });
+    const pending = (this._sheetSubmitQueue ?? Promise.resolve()).catch(() => {}).then(run);
+    this._sheetSubmitQueue = pending;
+    pending.catch(() => {}); // DOM event callers need not await; editor/close callers still receive failures.
+    return pending;
+  }
+
+  async _submitSheetForm(event, options) {
+    const isRaceChange = event?.target?.name === 'system.race';
+    const isClassChange = event?.target?.name === 'system.class';
+    this._suppressSubmitRender = Boolean(options.preventRender || isRaceChange || this._isClosing);
+    this._sheetSubmitError = null;
+    if (isRaceChange) this._ignoringRaceChange = true;
+    try {
+      const result = await super._onSubmit(event, { ...options, preventRender: this._suppressSubmitRender });
+      // Foundry v14 logs _updateObject failures instead of rejecting its submit promise.
+      if (this._sheetSubmitError) throw this._sheetSubmitError;
+      if (isRaceChange || isClassChange) this.updateSkillLayout($(this.form));
+      return result;
+    } finally {
+      this._suppressSubmitRender = false;
+      if (isRaceChange) this._setSheetTimeout(() => { this._ignoringRaceChange = false; }, 100);
     }
-    
-    // Call parent to handle the actual data update
-    // Race changes suppress render so the XP handler ignore-flag has time to clear.
-    // Class changes must allow a full render so {{#if showSpellsTab}} re-evaluates.
-    await super._onSubmit(event, { ...options, preventRender: isRaceChange });
-    
-    // Clear the flag
-    if (isRaceChange) {
-      setTimeout(() => {
-        this._ignoringRaceChange = false;
-      }, 100);
-    }
-    
-    // If race or class changed, update skill layout without full re-render
-    if (isRaceChange || isClassChange) {
-      const html = this.element;
-      this.updateSkillLayout(html);
-    }
+  }
+
+  _setSheetTimeout(callback, delay) {
+    this._sheetTimers ??= new Set();
+    const timer = setTimeout(() => { this._sheetTimers.delete(timer); callback(); }, delay);
+    this._sheetTimers.add(timer);
+    return timer;
+  }
+
+  _clearSheetTimeout(timer) {
+    clearTimeout(timer);
+    this._sheetTimers?.delete(timer);
+  }
+
+  _disposeSheetUi() {
+    for (const timer of this._sheetTimers ?? []) clearTimeout(timer);
+    this._sheetTimers = new Set();
+    for (const dispose of this._sheetDisposers ?? []) dispose();
+    this._sheetDisposers = [];
+    this._ignoringRaceChange = false;
   }
 
   /**
@@ -1373,8 +1416,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     const nameInput = html.find('#char-name')[0];
     if (nameInput) {
       // Check if CSS applied correctly after a brief delay
-      setTimeout(() => {
-        const computedStyle = window.getComputedStyle(nameInput);
+      this._setSheetTimeout(() => {
+        const computedStyle = this.sheetWindow.getComputedStyle(nameInput);
         if (!computedStyle.fontFamily.includes('Handwritten')) {
           // CSS failed, apply via JavaScript as fallback
           // Prefer class-based fallback so CSS remains centralized
@@ -1390,6 +1433,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * events, so existing handlers and Foundry form persistence keep working.
    */
   _activateThemedBioSelects(html) {
+    const document = this.sheetDocument;
     const selector = [
       '.cs-class-select',
       '.cs-race-select',
@@ -1560,47 +1604,48 @@ export class OspActorSheetCharacter extends ActorSheet {
       formData["img"] = newPortrait;
     }
 
-    const result = await super._updateObject(event, formData);
-
-    if (this.actor) {
-      this.actor.prepareDerivedData();
-      this.render(false);
+    try {
+      const result = await super._updateObject(event, formData);
+      if (this.actor && !this._suppressSubmitRender && !this._isClosing) {
+        this.actor.prepareDerivedData();
+        this.render(false);
+      }
+      return result;
+    } catch (error) {
+      this._sheetSubmitError = error;
+      throw error;
     }
-
-    return result;
   }
 
-  /**
-   * Override close to clean up handlers
-   */
   async close(options = {}) {
-    // Set flag to prevent rendering during close
+    if (this._closeTask) return this._closeTask;
+    this._closeTask = this._closeSheet(options);
+    try { return await this._closeTask; }
+    finally { this._closeTask = null; }
+  }
+
+  async _closeSheet(options) {
     this._isClosing = true;
-    
-    this.destroyHandlers();
-    // Clear any pending timers
-    if (this._tabTimer) {
+    try {
+      if ((this.isEditable) && (options.submit ?? this.options.submitOnClose)) {
+        // This captures all active ProseMirror instances and waits behind earlier writes.
+        const result = await this._onSubmit(new Event('submit', { cancelable: true }), { preventClose: true, preventRender: true });
+        if (result === false) throw new Error('The form is not ready to save. Please retry closing it.');
+      } else await this._sheetSubmitQueue?.catch(() => {});
+    } catch (error) {
+      this._isClosing = false;
+      ui.notifications.error(`Character sheet remains open because saving failed: ${error.message}`);
+      return false;
+    }
+    try {
+      this.destroyHandlers();
+      this._disposeSheetUi();
+      this._combatValueSizing?.();
+      this._combatValueSizing = null;
       clearTimeout(this._tabTimer);
       this._tabTimer = null;
-    }
-
-    // Remove any explicit close-button handler we attached
-    try {
-      if (this._ospCloseEl && this._ospCloseHandler) {
-        try { this._ospCloseEl.removeEventListener('click', this._ospCloseHandler, true); } catch(e) {}
-      }
-    } catch (err) {
-      /* ignore */
-    }
-    this._ospCloseHandler = null;
-    this._ospCloseEl = null;
-
-    const result = await super.close(options);
-    
-    // Clear the closing flag (though sheet should be destroyed at this point)
-    this._isClosing = false;
-    
-    return result;
+      return await super.close({ ...options, submit: false });
+    } finally { this._isClosing = false; }
   }
 
   /**
@@ -1794,7 +1839,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     </svg>`;
     el.dataset.skillSet = skills.join(',');
     // Defer to next frame so layout is computed before measuring.
-    requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
+    this.sheetWindow.requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
   }
 
   /**
@@ -1814,7 +1859,6 @@ export class OspActorSheetCharacter extends ActorSheet {
     'openstuckdoors',
     'detectconstruction', 'detectconstructiontricks',
     'detectroomtraps',
-    'assassination',
     'climbsheer', 'climbsheersurfaces',
     'hideshadows', 'hideinshadows',
     'movesilently',
@@ -1859,513 +1903,15 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Returns { [spellLevel]: maxSlots } or empty object if no spellcasting.
    */
   _computeMaxSpellSlots(system, classProfile) {
-    const sc = classProfile?.spellcasting;
-    if (!sc?.spellProgression) return {};
-    const level = String(parseInt(system.level) || 1);
-    return { ...(sc.spellProgression[level] || {}) };
+    return baseSpellSlots(system, classProfile);
   }
 
   /**
    * Render the Spells tab: slot tracker + full class spell list with expandable entries.
    */
   async renderSpellTab(html) {
-    const slotsSection = this.getElement(html, '.spell-slots-section');
-    const listContent = this.getElement(html, '.spell-list-content');
-    if (!slotsSection || !listContent) return;
-
-    const slotEl = slotsSection[0] || slotsSection;
-    const listEl = listContent[0] || listContent;
-    const root = html[0] || html;
-    const subtabNavEl  = root.querySelector('.spell-subtab-nav');
-    const spellbookEl  = root.querySelector('.spell-subtab-panel[data-subtab="spellbook"]');
-    const allSpellsEl  = root.querySelector('.spell-subtab-panel[data-subtab="all"]');
-
-    // Force Cooper Std on static template elements — CSS !important is overridden by Foundry's layer system
-    const cooperFont = `'Cooper Std', 'Cooper Standard', Georgia, serif`;
-    const $root = html.find ? html : $(html);
-    $root.find('.spell-tab-title, .spell-tab-subtitle').each((_, el) => {
-      el.style.setProperty('font-family', cooperFont, 'important');
-    });
-
-    const system = this.actor.system;
-    const classId = (system.class || '').toLowerCase().replace(/-/g, '_').replace(/\s/g, '_');
-
-    const { classes } = await this.loadProfileData();
-    const spellsData = await this.loadSpellsData();
-
-    const profile = classes.find(c => (c.id || '').toLowerCase() === classId);
-    const sc = profile?.spellcasting;
-
-    if (!sc || !sc.spellProgression) {
-      slotEl.innerHTML = '<div class="spell-no-slots">No spell slots available at this level.</div>';
-      listEl.innerHTML = '';
-      return;
-    }
-
-    // Arcane casters must select/copy spells into a spellbook
-    const isArcane = (sc.summary || '').toLowerCase().includes('arcane');
-    const isDivine = !isArcane && (sc.summary || '').toLowerCase().includes('divine');
-    const knownSpells = isArcane
-      ? (this.actor.getFlag('osp-houserules', 'knownSpells') || {})
-      : null;
-    const memorizedSpells = (isArcane || isDivine)
-      ? (this.actor.getFlag('osp-houserules', 'memorizedSpells') || {})
-      : null;
-
-    const maxSlots = this._computeMaxSpellSlots(system, profile);
-
-    // Apply bonus spell slots from house rules (based on prime requisite score)
-    const bonusCfg = OspActorSheetCharacter._bonusSpellsConfig;
-    const baseSlots = { ...maxSlots };   // snapshot before bonus
-    const bonusApplied = {};             // { '1': n, '2': n, '3': n }
-    let formulaMeta = null;              // { stat, statValue, bracket, isExcluded }
-
-    if (bonusCfg) {
-      const excluded = (bonusCfg.doesNotApplyTo || []).map(n => n.toLowerCase());
-      const classNameNorm = (system.class || '').toLowerCase().replace(/[^a-z]/g, '');
-      const isExcluded = excluded.some(n => classNameNorm.includes(n.replace(/[^a-z]/g, '')));
-      const bonusStat = isArcane ? 'int' : 'wis';
-      const statValue = system.attributes?.[bonusStat]?.value ?? 0;
-      let bonusRow = null;
-      if (!isExcluded) {
-        for (const row of bonusCfg.table) {
-          const parts = row.primeRequisite.split('-').map(Number);
-          if (statValue >= parts[0] && statValue <= parts[1]) { bonusRow = row; break; }
-        }
-        if (bonusRow) {
-          if (bonusRow.level1 && (maxSlots['1'] || 0) > 0) { maxSlots['1'] = (maxSlots['1'] || 0) + bonusRow.level1; bonusApplied['1'] = bonusRow.level1; }
-          if (bonusRow.level2 && (maxSlots['2'] || 0) > 0) { maxSlots['2'] = (maxSlots['2'] || 0) + bonusRow.level2; bonusApplied['2'] = bonusRow.level2; }
-          if (bonusRow.level3 && (maxSlots['3'] || 0) > 0) { maxSlots['3'] = (maxSlots['3'] || 0) + bonusRow.level3; bonusApplied['3'] = bonusRow.level3; }
-        }
-      }
-      formulaMeta = { stat: bonusStat.toUpperCase(), statValue, bracket: bonusRow?.primeRequisite || null, isExcluded };
-    }
-
-    const usedSlots = system.spellSlots || {};
-    const spellListKey = sc.spellList || '';
-    const spells = spellsData[spellListKey] || [];
-
-    // Group spells by level
-    const byLevel = {};
-    for (const sp of spells) {
-      const lv = String(sp.level || 1);
-      if (!byLevel[lv]) byLevel[lv] = [];
-      byLevel[lv].push(sp);
-    }
-
-    // --- Slot Tracker ---
-    const spellLevels = Object.keys(maxSlots).sort((a, b) => +a - +b).filter(lv => maxSlots[lv] > 0);
-
-    // Count memorized/prayed spells per level so pips can show green when a slot is filled
-    const memorizedCountByLevel = {};
-    if (memorizedSpells) {
-      for (const lv of spellLevels) {
-        memorizedCountByLevel[lv] = (byLevel[lv] || []).reduce((sum, sp) => sum + (Number(memorizedSpells[sp.id]) || 0), 0);
-      }
-    }
-
-    if (spellLevels.length === 0) {
-      slotEl.innerHTML = '<div class="spell-no-slots">No spell slots available at this level.</div>';
-    } else {
-      const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
-      let slotHTML = '<div class="spell-slots-grid">';
-      for (const lv of spellLevels) {
-        const max = maxSlots[lv] || 0;
-        const used = Math.min(parseInt((usedSlots[lv] || {}).used) || 0, max);
-        const memCount = memorizedCountByLevel[lv] || 0;
-        const label = levelLabels[+lv - 1] || `L${lv}`;
-        slotHTML += `<div class="spell-slot-group" data-spell-level="${lv}">`;
-        slotHTML += `<div class="spell-slot-label" style="font-family:${cooperFont};">${label}</div>`;
-        slotHTML += `<div class="spell-slot-pips">`;
-        for (let i = 0; i < max; i++) {
-          const isUsed = i < used;
-          const isMem  = !isUsed && i < used + memCount;
-          const cls    = isUsed ? ' used' : (isMem ? ' memorized' : '');
-          const title  = isUsed ? 'Click to restore' : (isMem ? 'Memorized — click to mark used' : 'Click to mark used');
-          slotHTML += `<span role="button" tabindex="0" class="spell-slot-pip${cls}" data-level="${lv}" data-pip="${i}" title="${title}"></span>`;
-        }
-        slotHTML += `</div></div>`;
-      }
-      slotHTML += '</div>';
-
-      // Formula breakdown
-      const charClass = esc(system.class || '?');
-      const charLevel = parseInt(system.level) || 1;
-      const levelLabelsOrd = ['1st','2nd','3rd','4th','5th','6th'];
-      let formulaLines = [];
-      for (const lv of spellLevels) {
-        const base = baseSlots[lv] || 0;
-        const bonus = bonusApplied[lv] || 0;
-        const total = maxSlots[lv] || 0;
-        const label = levelLabelsOrd[+lv - 1] || `L${lv}`;
-        const bonusPart = bonus > 0 ? ` + ${bonus} bonus` : '';
-        formulaLines.push(`${label}: ${base}${bonusPart} = <b>${total}</b>`);
-      }
-      let formulaStatLine = '';
-      if (formulaMeta) {
-        const { stat, statValue, bracket, isExcluded } = formulaMeta;
-        const eStat = esc(stat); const eVal = esc(String(statValue));
-        if (isExcluded) {
-          formulaStatLine = `${eStat} ${eVal} — no bonus (class excluded)`;
-        } else if (bracket) {
-          formulaStatLine = `${eStat} ${eVal} → bracket ${esc(bracket)} applies`;
-        } else {
-          formulaStatLine = `${eStat} ${eVal} — no bonus bracket matched`;
-        }
-      }
-      slotHTML += `<div class="spell-formula">`;
-      slotHTML += `<div class="spell-formula-header">Lv ${charLevel} ${charClass} &nbsp;·&nbsp; ${formulaStatLine}</div>`;
-      slotHTML += `<div class="spell-formula-slots">${formulaLines.join(' &nbsp;|&nbsp; ')}</div>`;
-      slotHTML += `</div>`;
-
-      slotEl.innerHTML = slotHTML;
-
-      // Force Cooper Std on slot labels and formula panel — inline style= loses to Foundry's button layer rules
-      slotEl.querySelectorAll('.spell-slot-label, .spell-formula, .spell-formula-header, .spell-formula-slots').forEach(el => {
-        el.style.setProperty('font-family', cooperFont, 'important');
-      });
-
-      // Slot pip click
-      slotEl.querySelectorAll('.spell-slot-pip').forEach(pip => {
-        pip.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          const lv = pip.dataset.level;
-          const pipIdx = parseInt(pip.dataset.pip);
-          const max = maxSlots[lv] || 0;
-          const newUsed = pip.classList.contains('used') ? pipIdx : pipIdx + 1;
-          await this.actor.update({ [`system.spellSlots.${lv}.used`]: Math.max(0, Math.min(newUsed, max)) });
-        });
-      });
-
-    }
-
-    // --- Sub-tab nav (arcane only) ---
-    if (isArcane) {
-      if (!this._activeSpellSubtab) this._activeSpellSubtab = 'spellbook';
-      if (subtabNavEl) {
-        subtabNavEl.innerHTML =
-          `<span class="spell-subtab-btn${this._activeSpellSubtab === 'spellbook' ? ' active' : ''}" data-subtab="spellbook">Spellbook</span>` +
-          `<span class="spell-subtab-btn${this._activeSpellSubtab === 'all'       ? ' active' : ''}" data-subtab="all">All Spells</span>`;
-        subtabNavEl.querySelectorAll('.spell-subtab-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            this._activeSpellSubtab = btn.dataset.subtab;
-            this.renderSpellTab(this.element);
-          });
-        });
-      }
-      if (spellbookEl) spellbookEl.classList.toggle('active', this._activeSpellSubtab === 'spellbook');
-      if (allSpellsEl) allSpellsEl.classList.toggle('active', this._activeSpellSubtab === 'all');
-    } else {
-      if (subtabNavEl) { subtabNavEl.innerHTML = ''; subtabNavEl.style.display = 'none'; }
-      if (spellbookEl) spellbookEl.classList.remove('active');
-      if (allSpellsEl) allSpellsEl.classList.add('active');
-    }
-
-    // --- Spell List ---
-    if (spells.length === 0) {
-      listEl.innerHTML = '<div class="spell-no-spells">No spells found for this class.</div>';
-      return;
-    }
-
-    const maxLevel = sc.maxSpellLevel || 6;
-    const availableLevels = Object.keys(byLevel).sort((a, b) => +a - +b).filter(lv => +lv <= maxLevel);
-
-    if (!this._collapsedSpellLevels) this._collapsedSpellLevels = new Set();
-    if (!this._collapsedSpellbookLevels) this._collapsedSpellbookLevels = new Set();
-
-    const imgMem            = '/systems/osp-houserules/assets/images/icons/spell-memorized.webp';
-    const imgNo             = '/systems/osp-houserules/assets/images/icons/spell_no_memory.webp';
-    const imgLearn          = '/systems/osp-houserules/assets/images/icons/learn-spell.webp';
-    const imgCast           = '/systems/osp-houserules/assets/images/icons/cast.webp';
-    const classLower = (system.class || '').toLowerCase();
-    const isDruidOrRanger = classLower === 'druid' || classLower === 'ranger' || classLower === 'bard';
-    const imgPray           = isDruidOrRanger
-      ? '/systems/osp-houserules/assets/images/icons/leaf.webp'
-      : '/systems/osp-houserules/assets/images/icons/pray.webp';
-    const imgPrayerAnswered = isDruidOrRanger
-      ? '/systems/osp-houserules/assets/images/icons/green-leaf.webp'
-      : '/systems/osp-houserules/assets/images/icons/prayer-answered.webp';
-    const iconStyle = 'flex:0 0 auto;display:inline-block;padding:0 2px;line-height:0;';
-
-    // Build a single spell entry row — context: 'all' | 'spellbook'
-    const buildEntry = (sp, lv, context) => {
-      const hasReversed = !!sp.reversed;
-      const isAlwaysKnown = !!sp.alwaysKnown;
-      const isKnown = isArcane ? (isAlwaysKnown || knownSpells[sp.id] === true) : true;
-      const memCount    = (isArcane || isDivine) ? (Number(memorizedSpells[sp.id]) || 0) : 0;
-      const isMemorized = memCount > 0;
-      let h = `<div class="spell-entry${isArcane && !isKnown ? ' unknown' : ''}" data-spell-id="${esc(sp.id)}">`;
-      h += `<div class="spell-entry-header" style="display:flex;flex-direction:row;align-items:center;gap:4px;padding:4px 6px;cursor:pointer;border-radius:3px;user-select:none;width:100%;box-sizing:border-box;">`;
-      if (isDivine) {
-        const prayImg = isMemorized ? imgPrayerAnswered : imgPray;
-        h += `<span role="button" tabindex="0" class="spell-pray-indicator${isMemorized ? ' prayed' : ''}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${isMemorized ? 'Change prayers' : 'Pray for spell'}" style="${iconStyle}cursor:pointer;"><img src="${prayImg}" style="width:24px;height:24px;display:block;" alt="${isMemorized ? 'Prayed' : 'Not prayed'}"></span>`;
-        const pipCap = Math.max(0, (maxSlots[lv] || 0) - Math.min(parseInt((usedSlots[lv] || {}).used) || 0, maxSlots[lv] || 0));
-        let pipsHTML = `<span class="spell-pip-mini-group">`;
-        for (let i = 0; i < pipCap; i++) pipsHTML += `<span class="spell-pip-mini${i < memCount ? ' filled' : ''}"></span>`;
-        h += pipsHTML + '</span>';
-        const castDim   = isMemorized ? '' : 'opacity:0.3;pointer-events:none;';
-        const castTitle = isMemorized ? 'Cast this spell' : 'Pray first to cast';
-        h += `<span role="button" tabindex="0" class="spell-cast-btn${isMemorized ? '' : ' disabled'}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${castTitle}" style="${iconStyle}cursor:${isMemorized ? 'pointer' : 'default'};"><img src="${imgCast}" style="width:24px;height:24px;display:block;${castDim}" alt="Cast"></span>`;
-      } else if (isArcane) {
-        if (context === 'all') {
-          // All Spells panel: learn icon only
-          if (isAlwaysKnown) {
-            // Always-known: greyed, non-interactive
-            h += `<span class="spell-learn-btn known" title="Always known" style="${iconStyle}cursor:default;"><img src="${imgLearn}" style="width:24px;height:24px;display:block;opacity:0.35;" alt="Always known"></span>`;
-          } else if (!isKnown) {
-            // Unknown: black learn icon → click to learn
-            h += `<span role="button" tabindex="0" class="spell-learn-btn" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" data-spell-name="${esc(sp.name)}" title="Learn — add to spellbook" style="${iconStyle}cursor:pointer;"><img src="${imgLearn}" style="width:24px;height:24px;display:block;" alt="Learn"></span>`;
-          } else {
-            // Known: greyed learn icon → click to open forget dialog
-            h += `<span role="button" tabindex="0" class="spell-learn-btn known" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" data-spell-name="${esc(sp.name)}" title="In spellbook — click to forget" style="${iconStyle}cursor:pointer;"><img src="${imgLearn}" style="width:24px;height:24px;display:block;opacity:0.35;" alt="Learned"></span>`;
-          }
-        } else {
-          // Spellbook panel: memory indicator + mini-pips + cast
-          const memImg = isMemorized ? imgMem : imgNo;
-          h += `<span role="button" tabindex="0" class="spell-memorize-indicator${isMemorized ? ' memorized' : ''}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${isMemorized ? 'Change memorizations' : 'Memorize spell'}" style="${iconStyle}cursor:pointer;"><img src="${memImg}" style="width:24px;height:24px;display:block;" alt="${isMemorized ? 'Memorized' : 'Not memorized'}"></span>`;
-          const pipCap = Math.max(0, (maxSlots[lv] || 0) - Math.min(parseInt((usedSlots[lv] || {}).used) || 0, maxSlots[lv] || 0));
-          let pipsHTML = `<span class="spell-pip-mini-group">`;
-          for (let i = 0; i < pipCap; i++) pipsHTML += `<span class="spell-pip-mini${i < memCount ? ' filled' : ''}"></span>`;
-          h += pipsHTML + '</span>';
-          const castDim   = isMemorized ? '' : 'opacity:0.3;pointer-events:none;';
-          const castTitle = isMemorized ? 'Cast this spell' : 'Memorize first to cast';
-          h += `<span role="button" tabindex="0" class="spell-cast-btn${isMemorized ? '' : ' disabled'}" data-spell-id="${esc(sp.id)}" data-spell-level="${lv}" title="${castTitle}" style="${iconStyle}cursor:${isMemorized ? 'pointer' : 'default'};"><img src="${imgCast}" style="width:24px;height:24px;display:block;${castDim}" alt="Cast"></span>`;
-        }
-      }
-      h += `<span class="spell-entry-chevron" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;margin-left:4px;">&#9654;</span>`;
-      h += `<span class="spell-entry-name" style="flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:24px;font-weight:bold;color:#1a1a1a;">${esc(sp.name)}${hasReversed ? ' <span class="spell-reversible-tag">R</span>' : ''}</span>`;
-      h += `<span class="spell-entry-meta" style="flex:0 0 auto;font-size:20px;color:#666;white-space:nowrap;">${esc(sp.duration || '')}${sp.duration && sp.range ? ' &bull; ' : ''}${esc(sp.range || '')}</span>`;
-      h += `</div><div class="spell-entry-body"><p class="spell-description">${esc(sp.description || '')}</p>`;
-      if (hasReversed) h += `<div class="spell-reversed-block"><div class="spell-reversed-name">Reversed: ${esc(sp.reversed.name || '')}</div><p class="spell-description">${esc(sp.reversed.description || '')}</p></div>`;
-      h += `</div></div>`;
-      return h;
-    };
-
-    // Build a level group block — context passed through to buildEntry
-    const buildLevelGroup = (lv, lvSpells, collapsedSet, knownOnly, context) => {
-      const filtered = knownOnly ? lvSpells.filter(sp => !!sp.alwaysKnown || knownSpells[sp.id] === true) : lvSpells;
-      if (filtered.length === 0) return '';
-      const max = maxSlots[lv] || 0;
-      const isCollapsed = collapsedSet.has(lv);
-      let h = `<div class="spell-level-group${isCollapsed ? ' collapsed' : ''}" data-level="${lv}">`;
-      h += `<div class="spell-level-heading" style="display:flex;align-items:center;gap:8px;padding:3px 4px 4px;cursor:pointer;user-select:none;">`;
-      h += `<span class="spell-level-caret" style="flex:0 0 auto;font-size:14px;color:#704214;line-height:1;">${isCollapsed ? '&#9654;' : '&#9660;'}</span>`;
-      h += `Level ${lv}${max ? ` <span class="spell-level-slots">(${max} slot${max !== 1 ? 's' : ''})</span>` : ''}`;
-      h += `</div>`;
-      for (const sp of filtered) h += buildEntry(sp, lv, context);
-      h += `</div>`;
-      return h;
-    };
-
-    // Post a spell-cast card to chat
-    const postSpellToChat = (sp, spellLevel) => {
-      if (!sp) return;
-      const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
-      const levelLabel  = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
-      const castType    = isDivine ? 'Divine Prayer' : 'Arcane Spell';
-      const meta = [levelLabel];
-      if (sp.duration) meta.push(`Duration: ${esc(sp.duration)}`);
-      if (sp.range)    meta.push(`Range: ${esc(sp.range)}`);
-      const actorName = esc(this.actor.name || 'Unknown');
-      const rawContent = `<div class="osp-spell-cast-card">
-        <div class="spell-card-header">
-          <div class="spell-card-name">${actorName} casts ${esc(sp.name)}</div>
-          <div class="spell-card-type">${castType}</div>
-        </div>
-        <div class="spell-card-meta">${meta.join(' &bull; ')}</div>
-        ${sp.description ? `<div class="spell-card-desc">${sp.description}</div>` : ''}
-      </div>`;
-      ChatMessage.create({
-        content: DOMPurify.sanitize(rawContent),
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        rollMode: game.settings.get('core', 'rollMode'),
-      });
-    };
-
-    // Attach all listeners — context: 'all' | 'spellbook'
-    const attachListeners = (containerEl, collapsedSet, context) => {
-      containerEl.querySelectorAll('.spell-level-heading').forEach(heading => {
-        heading.addEventListener('click', () => {
-          const group = heading.closest('.spell-level-group');
-          const lv = group.dataset.level;
-          const isNowCollapsed = group.classList.toggle('collapsed');
-          if (isNowCollapsed) collapsedSet.add(lv);
-          else collapsedSet.delete(lv);
-          const caret = heading.querySelector('.spell-level-caret');
-          if (caret) caret.innerHTML = isNowCollapsed ? '&#9654;' : '&#9660;';
-        });
-      });
-      containerEl.querySelectorAll('.spell-entry-header').forEach(header => {
-        header.addEventListener('click', (e) => {
-          if (e.target.closest('.spell-learn-btn,.spell-known-btn,.spell-cast-btn,.spell-pray-btn')) return;
-          const entry = header.closest('.spell-entry');
-          const isOpen = entry.classList.toggle('open');
-          const chevron = header.querySelector('.spell-entry-chevron');
-          if (chevron) chevron.innerHTML = isOpen ? '&#9660;' : '&#9654;';
-        });
-      });
-      if (isDivine) {
-        const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
-        containerEl.querySelectorAll('.spell-pray-indicator').forEach(indicator => {
-          indicator.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const spellId    = indicator.dataset.spellId;
-            const spellLevel = indicator.dataset.spellLevel;
-            const mem        = this.actor.getFlag('osp-houserules', 'memorizedSpells') || {};
-            const thisCount  = Number(mem[spellId]) || 0;
-            const used       = parseInt((system.spellSlots?.[spellLevel] || {}).used) || 0;
-            const cap        = Math.max(0, (maxSlots[spellLevel] || 0) - used);
-            const totalCount = (byLevel[spellLevel] || []).reduce((sum, sp) => sum + (Number(mem[sp.id]) || 0), 0);
-            let newCount;
-            if (totalCount < cap) {
-              newCount = thisCount + 1;
-            } else if (thisCount > 0) {
-              newCount = 0;
-            } else {
-              const label = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
-              ui.notifications?.warn(`${label}: not enough slots remaining.`);
-              return;
-            }
-            await this.actor.setFlag('osp-houserules', 'memorizedSpells', { ...mem, [spellId]: newCount });
-          });
-        });
-        containerEl.querySelectorAll('.spell-cast-btn:not(.disabled)').forEach(btn => {
-          btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const spellId    = btn.dataset.spellId;
-            const spellLevel = btn.dataset.spellLevel;
-            const max        = maxSlots[spellLevel] || 0;
-            const currentUsed = parseInt((system.spellSlots?.[spellLevel] || {}).used) || 0;
-            if (currentUsed >= max) {
-              ui.notifications?.warn('No spell slots remaining at this level.');
-              return;
-            }
-            const sp       = (byLevel[spellLevel] || []).find(s => s.id === spellId);
-            const mem      = this.actor.getFlag('osp-houserules', 'memorizedSpells') || {};
-            const newCount = Math.max(0, (Number(mem[spellId]) || 0) - 1);
-            postSpellToChat(sp, spellLevel);
-            await Promise.all([
-              this.actor.update({ [`system.spellSlots.${spellLevel}.used`]: currentUsed + 1 }),
-              this.actor.setFlag('osp-houserules', 'memorizedSpells', { ...mem, [spellId]: newCount }),
-            ]);
-          });
-        });
-        return;
-      }
-      if (!isArcane) return;
-
-      if (context === 'all') {
-        // Unknown spell learn icon → add to spellbook
-        containerEl.querySelectorAll('.spell-learn-btn:not(.known)').forEach(btn => {
-          btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const spellId = btn.dataset.spellId;
-            const known = this.actor.getFlag('osp-houserules', 'knownSpells') || {};
-            await this.actor.setFlag('osp-houserules', 'knownSpells', { ...known, [spellId]: true });
-          });
-        });
-
-        // Known spell learn icon (greyed) → forget dialog
-        containerEl.querySelectorAll('.spell-learn-btn.known[data-spell-id]').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const spellId   = btn.dataset.spellId;
-            const spellName = btn.dataset.spellName || spellId;
-            new Dialog({
-              title: 'Forget Spell',
-              content: `<p>Remove <strong>${spellName}</strong> from your spellbook?</p>`,
-              buttons: {
-                forget: {
-                  label: 'Forget',
-                  callback: async () => {
-                    const known = this.actor.getFlag('osp-houserules', 'knownSpells') || {};
-                    await this.actor.setFlag('osp-houserules', 'knownSpells', { ...known, [spellId]: false });
-                  }
-                },
-                cancel: { label: 'Cancel' }
-              },
-              default: 'cancel'
-            }).render(true);
-          });
-        });
-
-      } else {
-        // Spellbook panel: memorize toggle + cast
-        const levelLabels = ['1st','2nd','3rd','4th','5th','6th'];
-
-        containerEl.querySelectorAll('.spell-memorize-indicator').forEach(indicator => {
-          indicator.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const spellId    = indicator.dataset.spellId;
-            const spellLevel = indicator.dataset.spellLevel;
-            const mem        = this.actor.getFlag('osp-houserules', 'memorizedSpells') || {};
-            const thisCount  = Number(mem[spellId]) || 0;
-            const used       = parseInt((system.spellSlots?.[spellLevel] || {}).used) || 0;
-            const cap        = Math.max(0, (maxSlots[spellLevel] || 0) - used);
-            const totalCount = (byLevel[spellLevel] || []).reduce((sum, sp) => sum + (Number(mem[sp.id]) || 0), 0);
-            let newCount;
-            if (totalCount < cap) {
-              newCount = thisCount + 1;
-            } else if (thisCount > 0) {
-              newCount = 0;
-            } else {
-              const label = levelLabels[+spellLevel - 1] || `Level ${spellLevel}`;
-              ui.notifications?.warn(`${label}: not enough slots remaining.`);
-              return;
-            }
-            await this.actor.setFlag('osp-houserules', 'memorizedSpells', { ...mem, [spellId]: newCount });
-          });
-        });
-
-        containerEl.querySelectorAll('.spell-cast-btn:not(.disabled)').forEach(btn => {
-          btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const spellId    = btn.dataset.spellId;
-            const spellLevel = btn.dataset.spellLevel;
-            const max        = maxSlots[spellLevel] || 0;
-            const currentUsed = parseInt((system.spellSlots?.[spellLevel] || {}).used) || 0;
-            if (currentUsed >= max) {
-              ui.notifications?.warn('No spell slots remaining at this level.');
-              return;
-            }
-            const sp       = (byLevel[spellLevel] || []).find(s => s.id === spellId);
-            const mem      = this.actor.getFlag('osp-houserules', 'memorizedSpells') || {};
-            const newCount = Math.max(0, (Number(mem[spellId]) || 0) - 1);
-            postSpellToChat(sp, spellLevel);
-            await Promise.all([
-              this.actor.update({ [`system.spellSlots.${spellLevel}.used`]: currentUsed + 1 }),
-              this.actor.setFlag('osp-houserules', 'memorizedSpells', { ...mem, [spellId]: newCount }),
-            ]);
-          });
-        });
-      }
-    };
-
-    // --- Spellbook panel (arcane only: known + alwaysKnown spells) ---
-    if (isArcane && spellbookEl) {
-      let sbHTML = '';
-      let hasAny = false;
-      for (const lv of availableLevels) {
-        const lvSpells = byLevel[lv].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-        const chunk = buildLevelGroup(lv, lvSpells, this._collapsedSpellbookLevels, true, 'spellbook');
-        if (chunk) hasAny = true;
-        sbHTML += chunk;
-      }
-      if (!hasAny) sbHTML += '<div class="spell-no-spells">No spells in spellbook yet.</div>';
-      spellbookEl.innerHTML = sbHTML;
-      attachListeners(spellbookEl, this._collapsedSpellbookLevels, 'spellbook');
-    } else if (spellbookEl) {
-      spellbookEl.innerHTML = '';
-    }
-
-    // --- Full spell list ---
-    let listHTML = '';
-    for (const lv of availableLevels) {
-      const lvSpells = byLevel[lv].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-      listHTML += buildLevelGroup(lv, lvSpells, this._collapsedSpellLevels, false, 'all');
-    }
-    listEl.innerHTML = listHTML;
-    attachListeners(listEl, this._collapsedSpellLevels, 'all');
+    try { await renderSpellcastingTab(this, html); }
+    catch (error) { ui.notifications.error(error.message); }
   }
 
   /**
@@ -2455,6 +2001,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     unique.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
+    delete el.dataset.talentsIntegrated;
     el.innerHTML = unique.map(e => {
       const tag = e.source === 'race'
         ? ' <span class="skill-ability-tag skill-ability-tag--race">Race</span>'
@@ -2464,7 +2011,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const trigger = e.trigger
         ? `<span class="skill-ability-trigger">${escape(e.trigger)}.</span> `
         : '';
-      return `<div class="skill-ability-entry skill-ability-collapsed">` +
+      return `<div class="skill-ability-entry skill-ability-collapsed" data-ability-name="${escape(e.name)}">` +
         `<div class="skill-ability-name skill-ability-toggle">` +
         `<span class="skill-ability-caret">&#9654;</span>${escape(e.name)}${tag}</div>` +
         `<div class="skill-ability-effect">${trigger}${escape(e.effect || '')}</div>` +
@@ -2480,6 +2027,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       const collapsed = entry.classList.toggle('skill-ability-collapsed');
       caret.innerHTML = collapsed ? '&#9654;' : '&#9660;';
     });
+    activateCombatTalents(html?.[0] ?? html, this.actor, this.isEditable, Object.fromEntries(classes.flatMap(profile => [...(profile.activeAbilities || []), ...(profile.passiveAbilities || [])]).map(ability => [ability.name, ability.effect || '']))).catch(error => ui.notifications.error(error.message));
+
   }
 
   /**
@@ -2555,7 +2104,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * This function dynamically shows/hides skills and applies appropriate positioning
    */
   updateSkillLayout(html) {
-    if (!html) html = this.element;
+    if (!html) html = $(this.form);
 
     const actorData = this.actor.system;
     const characterClass = actorData.class?.toLowerCase() || '';
@@ -2574,7 +2123,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     this.renderAbilities(html, characterClass, race);
     
     // Apply layout CSS classes
-    const formElement = this.element.find('form');
+    const formElement = $(this.form);
     if (formElement.length > 0) {
       // Remove all skill-layout-*, racial-skill-layout-*, and skills-layout-* classes
       const currentClasses = formElement[0].className.split(' ');
@@ -2655,8 +2204,10 @@ export class OspActorSheetCharacter extends ActorSheet {
       html.append($tooltip);
       let timer = null;
 
-      $group.on('mouseenter.statooltip', () => {
-        timer = setTimeout(() => {
+      this._sheetDisposers ??= [];
+      this._sheetDisposers.push(() => { this._clearSheetTimeout(timer); $group.off('.statooltip'); $tooltip.remove(); });
+      $group.off('.statooltip').on('mouseenter.statooltip', () => {
+        timer = this._setSheetTimeout(() => {
           const race = this.actor.system.race || '';
           $tooltip.html(buildFn(tableData[race], race, ...buildArgs));
           const offset = $group.position();
@@ -2666,7 +2217,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       });
 
       $group.on('mouseleave.statooltip', () => {
-        clearTimeout(timer);
+        this._clearSheetTimeout(timer);
         $tooltip.removeClass('visible');
       });
     };
@@ -2677,16 +2228,6 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   _activateLevelTooltip(html) {
-    // Level limits for demi-human races (class name → max level, null means unlimited)
-    const LEVEL_LIMITS = {
-      'Dwarf':    { Assassin: 9, Cleric: 8, Fighter: 10, Thief: 9 },
-      'Elf':      { Assassin: 10, Cleric: 7, Druid: 8, Fighter: 7, Knight: 11, 'Magic-User': 11, Ranger: 11, Thief: 10 },
-      'Gnome':    { Assassin: 6, Cleric: 7, Fighter: 6, Illusionist: 7, Thief: 8 },
-      'Half-Elf': { Assassin: 11, Bard: 12, Cleric: 5, Druid: 12, Fighter: 8, Knight: 12, 'Magic-User': 8, Paladin: 12, Ranger: 8, Thief: 12 },
-      'Hobbit':   { Druid: 6, Fighter: 6, Thief: 8 },
-      'Half-Orc': { Assassin: 8, Cleric: 4, Fighter: 10, Thief: 8 },
-    };
-
     const $container = html.find('#level-container');
     if (!$container.length) return;
 
@@ -2694,28 +2235,23 @@ export class OspActorSheetCharacter extends ActorSheet {
     html.append($tooltip);
     let timer = null;
 
-    $container.on('mouseenter.levtip', () => {
-      timer = setTimeout(() => {
+    this._sheetDisposers ??= [];
+    this._sheetDisposers.push(() => { this._clearSheetTimeout(timer); $container.off('.levtip'); $tooltip.remove(); });
+    $container.off('.levtip').on('mouseenter.levtip', () => {
+      timer = this._setSheetTimeout(() => {
         const cls   = this.actor.system.class  || '';
         const race  = this.actor.system.race   || '';
-        const clsKey = cls.toLowerCase();
+
 
         // Resolve XP table
-        const tableKey = CLASS_XP_MAPPING[clsKey];
-        const xpTable  = tableKey ? XP_TABLES[tableKey] : null;
+        const progression = getClassProgression(cls);
+        const xpTable = progression?.xp;
 
         if (!xpTable) {
           $tooltip.html(`<div class="level-prog-tooltip-none">No progression table for <em>${esc(cls) || 'unknown class'}</em>.</div>`);
         } else {
           // Determine max level for this race/class combo
-          const raceLimits = LEVEL_LIMITS[race];
-          let maxLevel = xpTable.length; // default: full table
-
-          if (raceLimits) {
-            // Case-insensitive class match against limit keys
-            const limitKey = Object.keys(raceLimits).find(k => k.toLowerCase() === cls.toLowerCase());
-            if (limitKey !== undefined) maxLevel = raceLimits[limitKey];
-          }
+          const maxLevel = getMaximumLevel(cls, race);
 
           // Format XP with commas
           const fmt = n => n.toLocaleString();
@@ -2724,7 +2260,7 @@ export class OspActorSheetCharacter extends ActorSheet {
             const level = i + 1;
             const isCurrent = level === (parseInt(this.actor.system.level) || 1);
             const cls2 = isCurrent ? ' level-prog-current' : '';
-            const nextXP = xpTable[i + 1];
+            const nextXP = level < maxLevel ? xpTable[i + 1] : undefined;
             const range = nextXP !== undefined
               ? `${fmt(xp)} – ${fmt(nextXP - 1)}`
               : `${fmt(xp)}+`;
@@ -2734,7 +2270,7 @@ export class OspActorSheetCharacter extends ActorSheet {
             </tr>`;
           }).join('');
 
-          const limitNote = raceLimits && maxLevel < xpTable.length
+          const limitNote = maxLevel < xpTable.length
             ? `<div class="level-prog-limit">Max level ${maxLevel} for ${esc(race)} ${esc(cls)}</div>`
             : '';
 
@@ -2758,7 +2294,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     });
 
     $container.on('mouseleave.levtip', () => {
-      clearTimeout(timer);
+      this._clearSheetTimeout(timer);
       $tooltip.removeClass('visible');
     });
   }
@@ -2767,6 +2303,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Handle toggling container collapsed state
    */
   async _onContainerToggle(event) {
+    if (!(this.isEditable)) return;
     event.preventDefault();
     event.stopPropagation();
 
@@ -2784,6 +2321,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   async _onLashedToggle(event) {
+    if (!(this.isEditable)) return;
     event.preventDefault();
     event.stopPropagation();
     
@@ -2796,6 +2334,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   async _onBeltRowToggle(event) {
+    if (!(this.isEditable)) return;
     event.preventDefault();
     event.stopPropagation();
     const itemId = $(event.currentTarget).data('item-id');
@@ -2805,6 +2344,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   async _onAttachmentToggle(event) {
+    if (!(this.isEditable)) return;
     event.preventDefault();
     event.stopPropagation();
     const itemId = $(event.currentTarget).data('item-id');
@@ -2814,6 +2354,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   }
 
   async _onSlingStorageToggle(event) {
+    if (!(this.isEditable)) return;
     event.preventDefault();
     event.stopPropagation();
     const itemId = $(event.currentTarget).data('item-id');
@@ -2839,6 +2380,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // We only handle Item drops with our custom logic
     if (data.type === "Item") {
+      if (!this.isEditable || Hooks.call('dropActorSheetData', this.actor, this, data) === false) return false;
       return this._onDropItem(event, data);
     }
 
@@ -2849,12 +2391,304 @@ export class OspActorSheetCharacter extends ActorSheet {
   /**
    * Handle dropping an item
    */
+  _dropInfo(message) {
+    if (this._dropMessages) this._dropMessages.push(message);
+    else ui.notifications.info(message);
+  }
+
+  /** Capture a placement failure while a drop is being planned.  The caller can then offer
+   * valid destinations without emitting a technical notification or mutating the live actor. */
+  _rejectDropPlacement(message) {
+    if (this._dropPlanning) {
+      this._dropRejectedReason = message;
+      return false;
+    }
+    ui.notifications.warn(message);
+    return false;
+  }
+
+    async _checkOpenGearEquipment(itemData, excludeId = null) {
+    const handler = this.getHandler('item');
+    if (handCost(itemData) > 0 && !canHold(this.actor.items, itemData, excludeId)) {
+      return { allowed: false, reason: `You do not have enough free hands to hold ${itemData.name}. Choose somewhere to store it.` };
+    }
+    if (itemData.type === 'weapon') {
+      const permission = await handler._checkWeaponPermission(itemData);
+      if (!permission.allowed) return permission;
+      if (!handler._canEquipWeapon(itemData, excludeId).canEquip) return { allowed: false, reason: `Put away your other larger weapon before holding ${itemData.name}.` };
+    }
+    if (itemData.type === 'armor') {
+      const permission = handler._checkArmorPermission(itemData, await handler._getClassArmorPermissions());
+      if (!permission.allowed) return permission;
+      const worn = this.actor.items.filter(item => item.id !== excludeId && item.type === 'armor' && item.system.equipped);
+      if (handler._isShield(itemData)) {
+        if (worn.some(item => handler._isShield(item))) return { allowed: false, reason: 'You are already holding a shield. Choose somewhere to store this one.' };
+      } else if (['light', 'medium', 'heavy'].includes(itemData.system?.type)) {
+        const body = worn.filter(item => ['light', 'medium', 'heavy'].includes(item.system.type));
+        const under = (itemData.system.tags || []).includes('underarmor');
+        const fits = body.length === 0 || body.length === 1 && (under
+          ? !(body[0].system.tags || []).includes('underarmor') && (itemData.system.allowedArmors || []).includes(body[0].name)
+          : (body[0].system.tags || []).includes('underarmor') && (body[0].system.allowedArmors || []).includes(itemData.name));
+        if (!fits) return { allowed: false, reason: 'You are already wearing armor in that slot. Choose somewhere to store this piece.' };
+      } else if (worn.some(item => item.system.type === itemData.system.type)) {
+        return { allowed: false, reason: `You are already wearing ${itemData.name}. Choose somewhere to store this one.` };
+      }
+    }
+    return { allowed: true };
+  }
+
+  _validateGearPlacementDraft(state) {
+    const items = inventoryItems(state.actor);
+    try { assertNoContainmentCycles(items); }
+    catch { return { allowed: false, reason: 'An item cannot be placed inside itself or its own contents.' }; }
+    const changes = diffDropDraft(state.live, state).filter(change => change.after);
+    const beforeById = new Map(state.before.map(item => [item._id, item]));
+    for (const change of changes) {
+      const item = items.find(item => item.id === change.id);
+      if (!item || !physicalItemTypes.has(item.type)) continue;
+      const parentId = item.system.containerId;
+      if (parentId) {
+        const parent = items.find(item => item.id === parentId);
+        if (!canBeParent(parent)) return { allowed: false, reason: `Choose a carrying location for ${item.name}. Its previous location is no longer available.` };
+        if (!item.system.lashed && !item.system.equipped && parent.type !== 'livestock') {
+          const admission = checkWithdrawTarget(item, parent, items.filter(other => other.id !== item.id));
+          if (!admission.allowed) return { allowed: false, reason: `There is not enough room, or ${parent.name} cannot hold ${item.name}. Choose another destination.` };
+        }
+      } else if (!item.system.equipped && !item.system.lashed && item.type !== 'livestock' && !(item.system.tags || []).includes('vehicle')) {
+        return { allowed: false, reason: `${item.name} needs a carrying location. Choose a container or a suitable place to wear or hold it.` };
+      }
+      const before = beforeById.get(item.id);
+      if (item.system.equipped && handCost(item) > 0 && (!before?.system?.equipped || handCost(item) > handCost(before)) && handsUsed(items) > 2) {
+        return { allowed: false, reason: `You do not have enough free hands to hold ${item.name}. Choose somewhere to store it.` };
+      }
+    }
+    return { allowed: true };
+  }
+
+_clothingSlot(itemLike) {
+    const explicit = String(itemLike?.system?.slot ?? '').trim().toLowerCase();
+    if (explicit) return explicit;
+    const name = String(itemLike?.name ?? '').trim().toLowerCase();
+    if (name === 'belt') return 'belt';
+    if (name === 'boots') return 'boots';
+    if (name === 'cloak') return 'cloak';
+    if (name.startsWith('clothes')) return 'clothes';
+    return name;
+  }
+
+  _canWearOpenSpace(itemData, excludeId = null) {
+    if (itemData.type === 'clothing') {
+      const slot = this._clothingSlot(itemData);
+      return !this.actor.items.some(item => item.id !== excludeId && item.type === 'clothing' &&
+        item.system?.equipped && this._clothingSlot(item) === slot);
+    }
+    const category = this._backSlotCategory(itemData);
+    if (itemData.type === 'container' && category) {
+      const check = this._checkBackSlotCompatibility(category, excludeId);
+      return check.allowed;
+    }
+    return false;
+  }
+
+  _dropPlacementCandidates(itemData, excludeId = null) {
+    const candidates = [{ id: '__open_gear__', label: 'Wear or carry it' }];
+    const seen = new Set();
+    for (const target of inventoryItems(this.actor)) {
+      if (target.id === excludeId || seen.has(target.id)) continue;
+      const isStorage = canBeParent(target);
+      const excludedItem = excludeId ? this.actor.items.get?.(excludeId) : null;
+      if (!isStorage || (excludedItem && this._containerIsDescendant(target, excludedItem))) continue;
+      seen.add(target.id);
+      candidates.push({ id: target.id, label: target.name });
+    }
+    return candidates;
+  }
+
+  async _showDropPlacementDialog(itemData, reason, candidates) {
+    return new Promise(resolve => {
+      const options = candidates.map(candidate => `<option value="${esc(candidate.id)}">${esc(candidate.label)}</option>`).join('');
+      this.createDialog({
+        title: `Choose where to place ${itemData.name}`,
+        content: `<p>${esc(reason || `Choose a valid place for ${itemData.name}.`)}</p>${candidates.length ? `<label>Destination <select name="destination">${options}</select></label>` : '<p>No compatible destinations currently have room.</p>'}`,
+        buttons: {
+          ...(candidates.length ? { place: { label: 'Place item', callback: html => resolve(html.find('[name="destination"]').val()) } } : {}),
+          cancel: { label: 'Cancel', callback: () => resolve(null) }
+        },
+        default: 'cancel', close: () => resolve(null)
+      }).render(true);
+    });
+  }
+
+  async _selectDropQuantity(itemData, available, prompt) {
+    const initial = normalizeQuantity(itemData.system?.quantity);
+    if (!prompt) return initial;
+    return new Promise(resolve => {
+      this.createDialog({
+        title: `Quantity: ${itemData.name}`,
+        content: `<form><label>How many ${esc(itemData.name)}?</label><input name="quantity" type="number" min="1" step="1" value="${initial}" ${Number.isFinite(available) ? `max="${available}"` : ''}></form>`,
+        buttons: {
+          accept: { label: 'Continue', callback: html => resolve(Number(html.find('[name="quantity"]').val())) },
+          cancel: { label: 'Cancel', callback: () => resolve(null) }
+        },
+        default: 'accept', close: () => resolve(null)
+      }).render(true);
+    });
+  }
+
   async _onDropItem(event, data) {
+    if (!this.actor.isOwner) return false;
+    try {
+      const liveItem = await Item.implementation.fromDropData(data);
+      if (!liveItem) throw new Error('The source item no longer exists.');
+      const source = liveItem.actor;
+      const destination = this.actor;
+      assertNoContainmentCycles(inventoryItems(destination));
+      if (source) assertNoContainmentCycles(inventoryItems(source));
+      let itemData = liveItem.toObject();
+      const operation = classifyDrop(source, destination, itemData, game.user.isGM);
+      const internal = operation === 'move';
+      if (source && (!source.isOwner || source.items.get(liveItem.id) !== liveItem)) throw new Error('The source item is stale or you do not own it.');
+      const pending = transactionBlock(destination);
+      if (pending) throw new Error(pending.reason);
+      if (source) { const blocked = transactionBlock(source); if (blocked) throw new Error(blocked.reason); }
+      if (operation === 'purchase' && this._isStoreLocked(false)) { ui.notifications.warn('The store is locked — you cannot add items to your inventory right now.'); return false; }
+      // Capture the live snapshots before any quantity seam or chooser work. Every fresh
+      // planning draft below reuses these baselines so a concurrent/stale source or destination
+      // is rejected at commit rather than becoming the new baseline for a retry.
+      const baselineDestination = createDropDraft(destination);
+      const baselineSource = source && !internal ? createDropDraft(source) : null;
+      const available = source ? normalizeQuantity(itemData.system?.quantity) : Infinity;
+      if (source && !validDropQuantity(available)) throw new Error('The source stack has an invalid quantity.');
+      // Dragging an item to Gear moves the whole stack.  Keep the quantity helper seam for
+      // existing callers/tests, but do not interrupt ordinary drag-and-drop with a prompt.
+      const quantity = await this._selectDropQuantity(itemData, available, false);
+      if (quantity === null) return false;
+      if (!validDropQuantity(quantity, available)) throw new Error('Quantity must be a positive whole number within the live source stack.');
+      const initialSourceState = source ? createDropDraft(source) : null;
+      const initialDescendants = source ? dropDescendants(initialSourceState.actor, liveItem.id) : [];
+      if (initialDescendants.some(child => !validDropQuantity(normalizeQuantity(child.system?.quantity)))) throw new Error('A contained item has an invalid quantity.');
+      if (initialDescendants.length && quantity !== available) throw new Error('Transfer a container or animal with contents as a complete stack.');
+      if (!source) {
+        itemData = await nameDroppedSpellbook(itemData);
+        if (!itemData) return false;
+        if (game.user.isGM && itemData.type === 'item' && itemData.system?.treasure === true) {
+          const value = await TreasureValueDialog.prompt({ itemName: itemData.name, initialValue: itemData.system.cost });
+          if (value === null) return false;
+          itemData.system.cost = value;
+        }
+      }
+      const prepareAttempt = async (placementTarget = null) => {
+        const destinationState = createDropDraft(destination);
+        const sourceState = source ? internal ? destinationState : createDropDraft(source) : null;
+        destinationState.before = structuredClone(baselineDestination.before);
+        if (sourceState && sourceState !== destinationState) sourceState.before = structuredClone(baselineSource.before);
+        const descendants = source ? dropDescendants(sourceState.actor, liveItem.id) : [];
+        let item;
+        if (source) item = sourceState.items.get(liveItem.id);
+        else {
+          const [created] = await destinationState.actor.createEmbeddedDocuments('Item', [itemData]);
+          created.actor = null;
+          created._deleted = true;
+          item = created;
+        }
+        if (internal && quantity < available) {
+          await item.update({ 'system.quantity': available - quantity });
+          const [split] = await destinationState.actor.createEmbeddedDocuments('Item', [{ ...itemData, system: { ...itemData.system, quantity } }]);
+          item = split;
+        } else item._data.system.quantity = quantity;
+        const staged = Object.create(this);
+        Object.defineProperty(staged, 'actor', { value: destinationState.actor });
+        staged._dropMessages = [];
+        staged._dropPlanning = true;
+        staged._dropSelectedQuantity = quantity;
+        staged._dropOperation = operation;
+        staged._dropHasContents = descendants.length > 0;
+        staged._dropPlacementTarget = placementTarget;
+        staged._dropProbe = true;
+        staged.handlers = new Map(this.handlers ?? []);
+        const handler = new ItemHandler(null, destinationState.actor, staged);
+        handler._dropItem = async () => { staged._dropRejectedReason = 'Choose a valid inventory destination before acquiring this item.'; return false; };
+        handler._showArmorNoStorageDialog = async () => { staged._dropRejected = true; staged._dropRejectedReason = 'No valid storage is available for this item.'; return false; };
+        staged.handlers.set('item', handler);
+        staged._showSlingNoRoomDialog = async () => { staged._dropRejected = true; staged._dropRejectedReason = 'There is no room to wear this item.'; return false; };
+        let result;
+        try {
+          result = await staged._planDropItem(event, data, item);
+          if (result !== false && result !== null && !staged._dropRejectedReason) {
+            const check = staged._validateGearPlacementDraft(destinationState);
+            if (!check.allowed) result = staged._rejectDropPlacement(check.reason);
+          }
+        } catch (error) { result = staged._rejectDropPlacement(error.message); }
+        return { destinationState, sourceState, descendants, item, staged, result };
+      };
+      let attempt = await prepareAttempt();
+      if ((attempt.staged._dropRejectedReason || attempt.staged._dropRejected || attempt.result === false || attempt.result === null) && !attempt.staged._dropPlacementTarget) {
+        const candidateSeeds = this._dropPlacementCandidates(itemData, liveItem.id);
+        const candidates = [];
+        for (const candidate of candidateSeeds) {
+          const trial = await prepareAttempt(candidate.id);
+          if (!trial.staged._dropRejected && !trial.staged._dropRejectedReason && trial.result !== false && trial.result !== null) candidates.push(candidate);
+        }
+        const choice = await this._showDropPlacementDialog(itemData, attempt.staged._dropRejectedReason, candidates);
+        if (!choice || !candidates.some(candidate => candidate.id === choice)) return false;
+        attempt = await prepareAttempt(choice);
+      }
+      const { destinationState, sourceState, descendants, item, staged, result } = attempt;
+      if (staged._dropRejected || staged._dropRejectedReason || result === false || result === null) return false;
+      const count = entries => entries.filter(entry => entry.name === itemData.name && entry.type === itemData.type).reduce((sum, entry) => sum + normalizeQuantity(entry.system?.quantity), 0);
+      const delivered = count(destinationState.items.filter(() => true)) - count(destinationState.before);
+      if (!internal && delivered !== quantity) throw new Error('Placement did not accept the selected quantity; no inventory was changed.');
+      if (internal && count(destinationState.items.filter(() => true)) !== count(destinationState.before)) throw new Error('The move would change the total quantity; no inventory was changed.');
+      if (!internal && source) {
+        const remaining = available - quantity;
+        if (remaining) { item._deleted = false; item._data = { ...structuredClone(itemData), system: { ...structuredClone(itemData.system), quantity: remaining } }; }
+        else item._deleted = true;
+        if (descendants.length) {
+          const roots = destinationState.items.filter(candidate => !destinationState.before.some(before => before._id === candidate.id) && candidate.name === itemData.name && candidate.type === itemData.type);
+          if (roots.length !== 1) throw new Error('A populated container or animal must retain its own identity.');
+          const ids = new Map([[liveItem.id, roots[0].id]]);
+          for (const child of descendants) {
+            const copy = child.toObject();
+            copy.system.containerId = ids.get(copy.system.containerId);
+            if (!copy.system.containerId) throw new Error('A contained item has an invalid parent.');
+            const [created] = await destinationState.actor.createEmbeddedDocuments('Item', [copy]);
+            ids.set(child.id, created.id); await child.delete();
+          }
+          let parent = destinationState.items.get(roots[0].system.containerId);
+          const visited = new Set();
+          while (parent && !visited.has(parent.id)) {
+            visited.add(parent.id);
+            if (parent.system.capacity && !staged._skipCapacityCheck(parent) && staged._getUsedCapacity(parent) > capacityValue(parent.system.capacity)) throw new Error(`Not enough space in ${parent.name} for the container and its contents.`);
+            parent = destinationState.items.get(parent.system.containerId);
+          }
+        }
+      }
+      const finalPlacement = staged._validateGearPlacementDraft(destinationState);
+      if (!finalPlacement.allowed) throw new Error(finalPlacement.reason);
+      if (operation === 'purchase') {
+        const charge = await stageItemCost({ ...itemData, system: { ...itemData.system, cost: Number(itemData.system?.cost ?? 0) * quantity } }, destinationState.actor);
+        if (!charge.success) { ui.notifications.warn(charge.reason ?? `Not enough treasure — need ${charge.shortfallSp} more sp.`); return false; }
+      }
+      const states = sourceState && sourceState !== destinationState ? [destinationState, sourceState] : [destinationState];
+      const changes = states.flatMap(state => diffDropDraft(state.live, state));
+      if (!changes.length) return false;
+      if (changes.some(change => [change.before, change.after].some(snapshot => snapshot?.system?.quantity != null && (!Number.isSafeInteger(normalizeQuantity(snapshot.system.quantity)) || normalizeQuantity(snapshot.system.quantity) < 0)))) throw new Error('A participating stack has an invalid quantity.');
+      const outcome = await runTransaction(destination, {
+        label: `${operation}: ${quantity} × ${itemData.name}`, changes,
+        validate: () => states.every(unchangedDropInventory) && (operation !== 'purchase' || !this._isStoreLocked(false))
+      });
+      if (!outcome.success) { ui.notifications.error(outcome.reason); return false; }
+      staged._dropMessages.forEach(message => ui.notifications.info(message));
+      return true;
+    } catch (error) { ui.notifications.error(error.message); return false; }
+  }
+
+  async _planDropItem(event, data, resolvedItem) {
     if (!this.actor.isOwner) return false;
 
     const LASHABLE_CONTAINER_NAMES = new Set(['Bolt Case', 'Quiver, Hip']);
 
-    const item = await Item.implementation.fromDropData(data);
+    const item = resolvedItem;
     const itemData = item.toObject();
 
     // Check if dropping onto a container or a contained item.
@@ -2867,8 +2701,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     // A single comma-separated selector is required here — closest(A) || closest(B) picks
     // whichever of A/B has ANY match, even an outer ancestor, ignoring which is actually nearer;
     // closest('A, B') correctly finds the nearest ancestor matching either.
-    let dropTarget = event.target.closest('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id], .lashed-sub-stored-item[data-item-id]');
-    let targetContainer = dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null;
+    let dropTarget = this._dropPlacementTarget ? null : event.target.closest('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id], .lashed-sub-stored-item[data-item-id]');
+    let targetContainer = this._dropPlacementTarget === '__open_gear__' ? null : this._dropPlacementTarget
+      ? this.actor.items.get(this._dropPlacementTarget)
+      : (dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null);
+    if (dropTarget && !targetContainer) {
+      return this._rejectDropPlacement('That destination is no longer available. Choose another place for this item.');
+    }
     
     // If we dropped on a contained item (not a container or clothing with capacity), find its parent container
     if (targetContainer && targetContainer.type !== "container" && !(targetContainer.type === "clothing" && targetContainer.system.capacity) && targetContainer.system.containerId) {
@@ -2881,8 +2720,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       (targetContainer.type === "clothing" && targetContainer.system.capacity));
     const noStoreReason = this._getNoStoreRejection(itemData, targetContainer);
     if (noStoreReason) {
-      ui.notifications.warn(noStoreReason);
-      return false;
+      return this._rejectDropPlacement(noStoreReason);
     }
 
     // Check if this item already exists on this actor
@@ -2892,46 +2730,30 @@ export class OspActorSheetCharacter extends ActorSheet {
     const isReordering = item.actor && item.actor.id === this.actor.id;
 
     // Prevent circular containment: a container cannot be moved into itself or its own descendants
-    if (isReordering && targetContainer && itemData.type === 'container') {
+    if (isReordering && targetContainer && canBeParent(itemData)) {
       if (targetContainer.id === item.id) {
-        ui.notifications.error(`Cannot drop ${item.name} into itself.`);
-        return false;
+        return this._rejectDropPlacement(`Cannot place ${item.name} inside itself.`);
       }
       if (this._containerIsDescendant(targetContainer, item)) {
-        ui.notifications.error(`Cannot drop ${item.name} into one of its own contents.`);
-        return false;
+        return this._rejectDropPlacement(`Cannot place ${item.name} inside one of its own contents.`);
       }
     }
 
     // Store Lock — block non-GM players from acquiring items from outside their inventory
-    if (this._isStoreLocked(isReordering)) {
-      ui.notifications.warn("The store is locked — you cannot add items to your inventory right now.");
-      return false;
+    if (!this._dropOperation && this._isStoreLocked(isReordering)) {
+      return this._rejectDropPlacement("The store is locked — you cannot add items to your inventory right now.");
     }
 
     // Treasure values often vary from one find to the next. When a GM grants a catalog treasure
     // item, let them customize this particular copy while retaining the JSON value as the default.
     // Reordering an item already on the actor must never reopen the prompt.
-    if (!isReordering && game.user.isGM && itemData.type === 'item' && itemData.system?.treasure === true) {
+    if (!this._dropProbe && !item.actor && game.user.isGM && itemData.type === 'item' && itemData.system?.treasure === true) {
       const value = await TreasureValueDialog.prompt({
         itemName: itemData.name,
         initialValue: itemData.system.cost,
       });
       if (value === null) return false;
       itemData.system.cost = value;
-    }
-
-    // Charge the item's cost against stored treasure before it's ever added to the sheet.
-    // Applies to any newly-acquired item (not a reorder within the actor's own inventory) that
-    // carries a cost — single shared path so every item type (gear, weapon, armor, livestock...)
-    // inherits it automatically. GMs bypass this like they bypass Store Lock above: granting an
-    // item for free is a GM action, not a purchase.
-    if (!isReordering && !game.user.isGM) {
-      const charge = await chargeItemCost(itemData, this.actor);
-      if (!charge.success) {
-        ui.notifications.warn(`Not enough treasure to acquire ${itemData.name} — need ${charge.shortfallSp} more sp.`);
-        return false;
-      }
     }
 
     // Tack (saddles, barding, bit & bridle, saddlebags) worn by livestock — dispatched early,
@@ -2948,8 +2770,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // no capacity field, but with a confusing "invalid capacity" error instead of a clear one.
     if (itemData.type === 'container' && (itemData.system?.tags || []).includes('tack') &&
         (!targetContainer || targetContainer.type !== 'livestock')) {
-      ui.notifications.error(`${itemData.name} must be attached directly to a compatible animal, not stored in a container.`);
-      return false;
+      return this._rejectDropPlacement(`${itemData.name} must be attached directly to a compatible animal, not stored in a container.`);
     }
 
     // Livestock roam free (not stored in containers), so they never hit the container-drop
@@ -2958,17 +2779,16 @@ export class OspActorSheetCharacter extends ActorSheet {
     // targetContainer directly — dropping onto another livestock row (or any non-container
     // item-entry) resolves targetContainer to that item, which isn't a real storage target.
     if (itemData.type === 'livestock' && !isStorageTarget) {
-      const matchingLivestock = this.actor.items.find(i =>
-        i.type === 'livestock' &&
-        i.name === itemData.name &&
+      const matchingLivestock = !this._dropHasContents && this.actor.items.find(i =>
+        canStackItems(i, itemData) && !i.system.equipped && !i.system.lashed &&
         !i.system.containerId &&
         !i.system.lashed &&
         (!isReordering || i.id !== item.id)
       );
       if (matchingLivestock) {
-        const addingQty = itemData.system.quantity || 1;
-        const newQty = (matchingLivestock.system.quantity || 1) + addingQty;
-        ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
+        const addingQty = normalizeQuantity(itemData.system.quantity);
+        const newQty = (matchingLivestock.system.quantity ?? 0) + addingQty;
+        this._dropInfo(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
         if (isReordering) {
           return item.delete().then(() => matchingLivestock.update({"system.quantity": newQty}));
         }
@@ -2984,7 +2804,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Drop onto the Slung Items section → equip the item (= sling it)
     // But skip if dropping onto a specific slung container (e.g. Baldric) — let normal container logic handle it
     const droppedOnSlungItem = event.target.closest('.slung-item');
-    if (event.target.closest('.slung-section-entry') && !droppedOnSlungItem) {
+    if (!this._dropPlacementTarget && event.target.closest('.slung-section-entry') && !droppedOnSlungItem) {
       const tags = itemData.system?.tags || [];
       if (!isSlungable(tags)) {
         // Zweihander/Greatsword aren't slungable themselves — they ride inside an equipped
@@ -2998,12 +2818,12 @@ export class OspActorSheetCharacter extends ActorSheet {
           const wornHarness = this.actor.items.find(i => this._backSlotCategory(i) === 'harness' && this._isWornInBackSlot(i));
           const harnessOccupied = wornHarness && this.actor.items.some(i => i.system.containerId === wornHarness.id && i.id !== item.id);
           if (harnessOccupied) {
-            ui.notifications.warn(`Already wearing a Weapon-Sling Harness (${wornHarness.name}) holding another weapon.`);
+            this._rejectDropPlacement(`Already wearing a Weapon-Sling Harness (${wornHarness.name}) holding another weapon.`);
             return false;
           }
           const harnessCheck = this._checkBackSlotCompatibility('harness', item.id);
           if (!harnessCheck.allowed && !harnessCheck.sameCategory) {
-            ui.notifications.warn(harnessCheck.reason);
+            this._rejectDropPlacement(harnessCheck.reason);
             return false;
           }
           let provisioned;
@@ -3011,13 +2831,13 @@ export class OspActorSheetCharacter extends ActorSheet {
             provisioned = await this._autoProvisionSwordCarrier(item, itemData, null);
           } catch (err) {
             console.error('[OSP] Sword carrier provisioning failed:', err);
-            ui.notifications.error(`Could not place ${itemData.name}: ${err.message || 'internal error'}`);
+            this._rejectDropPlacement(`Could not place ${itemData.name}: ${err.message || 'internal error'}`);
             return false;
           }
           if (!provisioned) return false;
           targetContainer = provisioned;
         } else {
-          ui.notifications.warn(`${itemData.name} cannot be slung.`);
+          this._rejectDropPlacement(`${itemData.name} cannot be slung.`);
           return false;
         }
       } else {
@@ -3027,7 +2847,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         if (category) {
           const check = this._checkBackSlotCompatibility(category, item.id);
           if (!check.allowed) {
-            ui.notifications.warn(check.reason);
+            this._rejectDropPlacement(check.reason);
             return false;
           }
         }
@@ -3071,7 +2891,7 @@ export class OspActorSheetCharacter extends ActorSheet {
           provisioned = await this._autoProvisionSwordCarrier(item, itemData, explicitLashHost);
         } catch (err) {
           console.error('[OSP] Sword carrier provisioning failed:', err);
-          ui.notifications.error(`Could not place ${itemData.name}: ${err.message || 'internal error'}`);
+          this._rejectDropPlacement(`Could not place ${itemData.name}: ${err.message || 'internal error'}`);
           return false;
         }
         if (!provisioned) return false;
@@ -3146,16 +2966,14 @@ export class OspActorSheetCharacter extends ActorSheet {
         );
         
         if (existingBackpacks.length > 0) {
-          ui.notifications.error("You can only carry one Backpack at a time. Store additional backpacks inside containers.");
-          return false;
+          return this._rejectDropPlacement("You can only carry one Backpack at a time. Store additional backpacks inside containers.");
         }
 
         // A worn Weapon-Sling Harness or Quiver takes the same shoulder/back real estate a
         // Backpack needs — see BACK_SLOT_INCOMPATIBLE.
         const backpackCheck = this._checkBackSlotCompatibility('backpack', itemData._id);
         if (!backpackCheck.allowed) {
-          ui.notifications.error(backpackCheck.reason);
-          return false;
+          return this._rejectDropPlacement(backpackCheck.reason);
         }
       }
     }
@@ -3173,8 +2991,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         );
         
         if (existingPouches.length >= 2) {
-          ui.notifications.error("You can only carry two Belt Pouches at a time. Store additional pouches inside containers.");
-          return false;
+          return this._rejectDropPlacement("You can only carry two Belt Pouches at a time. Store additional pouches inside containers.");
         }
       }
     }
@@ -3187,16 +3004,14 @@ export class OspActorSheetCharacter extends ActorSheet {
       if (targetContainer && targetContainer.type === 'container') {
         const lashSlots = targetContainer.system?.lashSlots || 0;
         if (lashSlots <= 0) {
-          ui.notifications.error(`${itemData.name} cannot be stored in a container.`);
-          return false;
+          return this._rejectDropPlacement(`${itemData.name} cannot be stored in a container.`);
         }
         const usedSlots = this.actor.items
           .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== itemData._id)
           .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
         const itemSlotCost = item.system?.slotCost || itemData.system?.slotCost || 1;
         if (usedSlots + itemSlotCost > lashSlots) {
-          ui.notifications.error(`${targetContainer.name} has no available lash slots (${usedSlots}/${lashSlots} used).`);
-          return false;
+          return this._rejectDropPlacement(`${targetContainer.name} has no available lash slots (${usedSlots}/${lashSlots} used).`);
         }
         itemData.system.containerId = targetContainer.id;
         itemData.system.lashed = true;
@@ -3220,8 +3035,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       if (category) {
         const crossCheck = this._checkBackSlotCompatibility(category, itemData._id);
         if (!crossCheck.allowed && !crossCheck.sameCategory) {
-          ui.notifications.error(crossCheck.reason);
-          return false;
+          return this._rejectDropPlacement(crossCheck.reason);
         }
       }
 
@@ -3332,8 +3146,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       }
 
       if (!targetHasCapacity) {
-        ui.notifications.error(lashReason);
-        return false;
+        return this._rejectDropPlacement(lashReason);
       }
       // else: target also has capacity — fall through to ordinary storage below.
     }
@@ -3346,158 +3159,35 @@ export class OspActorSheetCharacter extends ActorSheet {
     // swords/daggers) got redirected to a nested scabbard/Baldric, which has real capacity and
     // so isn't a lash-mount target itself. Only non-lash-eligible stragglers reach here.
     if (targetContainer && this._isLashMountTarget(targetContainer)) {
-      ui.notifications.error(`${targetContainer.name} can only hold lashed items, not ${itemData.name}.`);
-      return false;
+      return this._rejectDropPlacement(`${targetContainer.name} can only hold lashed items, not ${itemData.name}.`);
     }
 
     if (itemData.type === 'weapon' || itemData.type === 'armor') {
-      const isTargetContainer = targetContainer &&
-        (targetContainer.type === 'container' ||
-         (targetContainer.type === 'clothing' && targetContainer.system.capacity));
-
-      if (isTargetContainer) {
-        // Dropped onto a specific container — fall through to existing container handling below
-      } else if (isReordering) {
-        // Weapon/armor being dragged to open space: only allow if currently equipped
-        if (!item.system.equipped) {
-          ui.notifications.error(`${item.name} must be stored in a container. Drag it onto a container.`);
-          return false;
-        }
-        // Equipped item dropped on open space: no-op (stays on Combat tab)
-        return false;
-      } else {
-        // Shields dropped onto gear tab always go to backpack lash slot
-        if (itemData.type === 'armor' && itemData.system?.type === 'shield') {
-          const itemHandler = this.getHandler('item');
-          const backpack = itemHandler._findBackpackWithLashSlot(itemData);
-          if (backpack) {
-            itemData.system.lashed = true;
-            itemData.system.containerId = backpack.id;
-            itemData.system.equipped = false;
-          } else {
-            // No slot — create item then show dialog
-            const [created] = await this.actor.createEmbeddedDocuments('Item', [itemData]);
-            await itemHandler._showArmorNoStorageDialog(created);
-            return;
-          }
-          if (item.actor && item.actor.id !== this.actor.id) {
-            return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
-              this.actor.createEmbeddedDocuments('Item', [itemData])
-            );
-          }
-          if (item.actor && item.actor.id === this.actor.id) {
-            return item.update({ 'system.equipped': false, 'system.containerId': itemData.system.containerId, 'system.lashed': true });
-          }
-          return this.actor.createEmbeddedDocuments('Item', [itemData]);
-        }
-
-        // New item — auto-equip if slot is free, otherwise auto-store
-        const armorBodyTypes = ['light', 'medium', 'heavy'];
-        let slotFree;
-        if (itemData.type === 'weapon') {
-          slotFree = !this.actor.items.some(i => i.type === 'weapon' && i.system.equipped);
-        } else if (armorBodyTypes.includes(itemData.system?.type)) {
-          // Underarmor (e.g. Gambeson) can share the body-armor slot with one compatible
-          // main armor — either order is allowed as long as they're on each other's allow list.
-          const equippedBodyArmor = this.actor.items.filter(i =>
-            i.type === 'armor' && armorBodyTypes.includes(i.system.type) && i.system.equipped);
-          const incomingTags = itemData.system?.tags || [];
-          const incomingIsUnderArmor = incomingTags.includes('underarmor');
-          const incomingAllowList = itemData.system?.allowedArmors || [];
-          if (equippedBodyArmor.length === 0) {
-            slotFree = true;
-          } else if (incomingIsUnderArmor) {
-            slotFree = equippedBodyArmor.length === 1 &&
-              !(equippedBodyArmor[0].system.tags || []).includes('underarmor') &&
-              incomingAllowList.includes(equippedBodyArmor[0].name);
-          } else {
-            slotFree = equippedBodyArmor.length === 1 &&
-              (equippedBodyArmor[0].system.tags || []).includes('underarmor') &&
-              (equippedBodyArmor[0].system.allowedArmors || []).includes(itemData.name);
-          }
-        } else {
-          // Shield or other non-body armor
-          slotFree = !this.actor.items.some(i =>
-            i.type === 'armor' && !armorBodyTypes.includes(i.system.type) && i.system.equipped);
-        }
-
-        // Class armor restrictions gate auto-equip on drop the same as the manual toggle —
-        // a disallowed piece is still added to inventory, just stored rather than worn.
-        let armorAllowed = true, armorDenyReason = null;
-        if (itemData.type === 'armor' && slotFree) {
-          const itemHandler = this.getHandler('item');
-          const permissions = await itemHandler._getClassArmorPermissions();
-          ({ allowed: armorAllowed, reason: armorDenyReason } = itemHandler._checkArmorPermission(itemData, permissions));
-        }
-
-        if (slotFree && armorAllowed) {
-          itemData.system.equipped = true;
-          itemData.system.containerId = null;
-        } else {
-          if (itemData.type === 'armor' && !armorAllowed) {
-            ui.notifications.warn(`${armorDenyReason} Stored instead.`);
-          }
-          let stored = false;
-          const _weaponTags = itemData.system?.tags || [];
-          const _noBackpackLash = itemData.type === 'weapon' && (
-            (_weaponTags.includes('missile') && _weaponTags.includes('two-handed')) ||
-            (itemData.name || '').toLowerCase().includes('crossbow')
-          );
-          // Try lash first if item supports it (bows/crossbows/sacks/containers must not be lashed to backpack)
-          if (itemData.system.lashable && itemData.type !== 'container' && !_noBackpackLash && !HAND_CARRY_CONTAINERS.has(itemData.name)) {
-            const lashContainer = this._findContainerWithLashSlot(itemData);
-            if (lashContainer) {
-              itemData.system.containerId = lashContainer.id;
-              itemData.system.lashed = true;
-              itemData.system.equipped = false;
-              stored = true;
-            }
-          }
-          if (!stored) {
-            const storageContainer = this._findContainerWithSpace(itemData);
-            if (storageContainer) {
-              itemData.system.containerId = storageContainer.id;
-              itemData.system.equipped = false;
-              stored = true;
-            }
-          }
-          if (!stored) {
-            ui.notifications.error(`No available storage for ${itemData.name}. Free up container space first.`);
-            return false;
-          }
-        }
-
-        if (item.actor && item.actor.id !== this.actor.id) {
-          return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() =>
-            this.actor.createEmbeddedDocuments('Item', [itemData])
-          );
-        }
-        if (item.actor && item.actor.id === this.actor.id) {
-          return item.update({
-            'system.equipped': itemData.system.equipped,
-            'system.containerId': itemData.system.containerId,
-            'system.lashed': itemData.system.lashed ?? false
-          });
-        }
+      const isStorage = targetContainer && canBeParent(targetContainer);
+      if (!isStorage) {
+        const check = await this._checkOpenGearEquipment(itemData, isReordering ? item.id : null);
+        if (!check.allowed) return this._rejectDropPlacement(check.reason);
+        Object.assign(itemData.system, { equipped: true, containerId: null, lashed: false });
+        if (isReordering) return item.update({ 'system.equipped': true, 'system.containerId': null, 'system.lashed': false });
+        if (item.actor) await item.actor.deleteEmbeddedDocuments('Item', [item.id]);
         return this.actor.createEmbeddedDocuments('Item', [itemData]);
       }
     }
 
     // If the item is of type "item", "coin", or "ammunition" (not weapon/armor/container/clothing), it MUST go into a container
-    if (itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition") {
+    if ((itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition") && !(handCost(itemData) > 0 && !targetContainer)) {
       // Check if target is a valid container (container type OR clothing with capacity)
       const isValidContainer = targetContainer &&
         (targetContainer.type === "container" ||
          (targetContainer.type === "clothing" && targetContainer.system.capacity));
 
       if (!isValidContainer) {
-        ui.notifications.error("Items must be stored in a container. Drag the item onto a container.");
-        return false;
+        return this._rejectDropPlacement("Items must be stored in a container. Choose a container or cancel.");
       }
 
       // Check container type restrictions BEFORE handling coins/ammunition
       const check0 = this._isItemAllowedInContainer(itemData, targetContainer);
-      if (!check0.allowed) { ui.notifications.error(check0.reason); return false; }
+      if (!check0.allowed) return this._rejectDropPlacement(check0.reason);
 
       // For coins, show quantity dialog
       if (itemData.type === "coin") {
@@ -3511,14 +3201,13 @@ export class OspActorSheetCharacter extends ActorSheet {
 
       // Check container restrictions (type, size, containerSizeRequired)
       const check1 = this._isItemAllowedInContainer(itemData, targetContainer);
-      if (!check1.allowed) { ui.notifications.error(check1.reason); return false; }
+      if (!check1.allowed) return this._rejectDropPlacement(check1.reason);
 
       // Check capacity (skip for hideCapacity containers like scabbards)
       const alreadyInContainer1 = isReordering && itemData.system.containerId === targetContainer.id;
       if (!alreadyInContainer1 && !this._skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
         const totalRequired = this._getEffectiveDropSize(itemData);
-        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
-        return false;
+        return this._rejectDropPlacement(`There is not enough room in ${targetContainer.name} for ${itemData.name}.`);
       }
 
       // Set the container ID
@@ -3529,14 +3218,13 @@ export class OspActorSheetCharacter extends ActorSheet {
     else if (itemData.type === "container" && targetContainer && targetContainer.type === "container") {
       // Check container restrictions
       const check2 = this._isItemAllowedInContainer(itemData, targetContainer);
-      if (!check2.allowed) { ui.notifications.error(check2.reason); return false; }
+      if (!check2.allowed) return this._rejectDropPlacement(check2.reason);
 
       // Check if there's enough space in the target container
       const alreadyInContainer2 = isReordering && itemData.system.containerId === targetContainer.id;
       if (!alreadyInContainer2 && !this._skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
         const totalRequired = this._getEffectiveDropSize(itemData);
-        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
-        return false;
+        return this._rejectDropPlacement(`There is not enough room in ${targetContainer.name} for ${itemData.name}.`);
       }
 
       itemData.system.containerId = targetContainer.id;
@@ -3546,11 +3234,12 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Belt with items attached cannot be stored in a container
     else if (itemData.type === "clothing" && targetContainer && targetContainer.type === "container") {
       const beltReason = this._getBeltAttachmentRejection(itemData, item.id, targetContainer, isReordering);
-      if (beltReason) {
-        ui.notifications.error(beltReason);
-        return false;
-      }
+      if (beltReason) return this._rejectDropPlacement(beltReason);
+      const check = checkWithdrawTarget(itemData, targetContainer, inventoryItems(this.actor).filter(entry => entry.id !== item.id));
+      if (!check.allowed) return this._rejectDropPlacement(check.reason);
       itemData.system.containerId = targetContainer.id;
+      itemData.system.equipped = false;
+      itemData.system.lashed = false;
     }
     // Weapons/armor can be dropped onto containers
     else if (targetContainer &&
@@ -3559,16 +3248,15 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Stack-merge: if an identical item already exists in this container, merge quantities
       // and return early — this bypasses maxItems so daggers in a scabbard can stack.
       const stackMatch3 = this.actor.items.find(i =>
-        i.name === itemData.name &&
-        i.type === itemData.type &&
+        canStackItems(i, itemData) && !i.system.equipped && !i.system.lashed &&
         i.system.containerId === targetContainer.id &&
         i.system.storedSize === itemData.system.storedSize &&
         (!isReordering || i.id !== item.id)
       );
       if (stackMatch3) {
-        const addingQty = itemData.system.quantity || 1;
-        const newQty = (stackMatch3.system.quantity || 1) + addingQty;
-        ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
+        const addingQty = normalizeQuantity(itemData.system.quantity);
+        const newQty = (stackMatch3.system.quantity ?? 0) + addingQty;
+        this._dropInfo(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
         // If the container is a scabbard (weapon-storage), its qty mirrors the contained stack
         const isScabbardContainer = (targetContainer.system?.tags || []).includes('scabbard');
         const syncScabbardQty = isScabbardContainer
@@ -3585,7 +3273,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
       // Check container restrictions
       const check3 = this._isItemAllowedInContainer(itemData, targetContainer);
-      if (!check3.allowed) { ui.notifications.error(check3.reason); return false; }
+      if (!check3.allowed) return this._rejectDropPlacement(check3.reason);
 
       // Stackable thrown weapons (consumable splash weapons, darts) use the quantity dialog
       if (isConsumableWeapon(itemData)) {
@@ -3595,34 +3283,41 @@ export class OspActorSheetCharacter extends ActorSheet {
       const alreadyInContainer3 = isReordering && itemData.system.containerId === targetContainer.id;
       if (!alreadyInContainer3 && !this._skipCapacityCheck(targetContainer) && !this._hasContainerSpace(targetContainer, itemData)) {
         const totalRequired = this._getEffectiveDropSize(itemData);
-        ui.notifications.error(`Not enough space in ${targetContainer.name}. Required: ${totalRequired}, Available: ${this._getAvailableSpace(targetContainer)}`);
-        return false;
+        return this._rejectDropPlacement(`There is not enough room in ${targetContainer.name} for ${itemData.name}.`);
       }
       const parentReason = this._getHiddenCapacityParentRejection(itemData, targetContainer, alreadyInContainer3);
       if (parentReason) {
-        ui.notifications.error(parentReason);
-        return false;
+        return this._rejectDropPlacement(parentReason);
       }
       itemData.system.containerId = targetContainer.id;
     }
-    // Belt dropped onto open gear tab space: auto-equip if no belt worn, else auto-store
-    else if (itemData.type === "clothing" && itemData.name === "Belt" && !targetContainer) {
-      const equippedBelt = this.actor.items.find(i =>
-        i.type === "clothing" && i.name === "Belt" && i.system.equipped &&
-        (!isReordering || i.id !== item.id)
-      );
-      if (!equippedBelt) {
+    // Ready hand-held focuses and hand-carried sacks without creating loose gear.
+    else if (!targetContainer && handCost(itemData) > 0) {
+      const check = await this._checkOpenGearEquipment(itemData, isReordering ? item.id : null);
+      if (!check.allowed) return this._rejectDropPlacement(check.reason);
+      Object.assign(itemData.system, { equipped: true, containerId: null, lashed: false });
+    }
+    // Wearable clothing dropped onto open Gear space goes directly into its free slot.  A
+    // conflicting slot is a placement failure; _onDropItem will offer compatible containers
+    // through the themed chooser instead of silently replacing the worn item or creating loose
+    // top-level gear.
+    else if (itemData.type === "clothing" && !targetContainer) {
+      if (this._canWearOpenSpace(itemData, isReordering ? item.id : null)) {
         itemData.system.equipped = true;
         itemData.system.containerId = null;
+        itemData.system.lashed = false;
       } else {
-        const container = this._findContainerWithSpace(itemData);
-        if (container) {
-          itemData.system.containerId = container.id;
-          itemData.system.equipped = false;
-        } else {
-          ui.notifications.error(`No storage space available for ${itemData.name}. Free up container space first.`);
-          return false;
-        }
+        return this._rejectDropPlacement(`${itemData.name} cannot be worn because that clothing slot is already occupied.`);
+      }
+    }
+    // Back-slot carriers dropped onto open Gear space are worn when their slot is available.
+    else if (itemData.type === 'container' && !targetContainer && this._backSlotCategory(itemData)) {
+      if (this._canWearOpenSpace(itemData, isReordering ? item.id : null)) {
+        itemData.system.containerId = null;
+        itemData.system.equipped = true;
+        itemData.system.lashed = false;
+      } else {
+        return this._rejectDropPlacement(`${itemData.name} cannot be worn because its carrying slot is already occupied.`);
       }
     }
     // Lashable containers (and weapon-storage carriers like scabbards) dropped on open space:
@@ -3652,14 +3347,14 @@ export class OspActorSheetCharacter extends ActorSheet {
             itemData.system.containerId = belt.id;
             itemData.system.equipped = false;
           } else {
-            ui.notifications.error(`No free belt slots for ${itemData.name}. Drop it onto a container to store it instead.`);
+            this._rejectDropPlacement(`No free belt slots for ${itemData.name}. Drop it onto a container to store it instead.`);
             return false;
           }
         } else {
           const msg = tags.includes('weapon-storage')
             ? `${itemData.name} must be worn on a belt — equip a belt first.`
             : `${itemData.name} must be attached to a belt or stored in a container.`;
-          ui.notifications.error(msg);
+          this._rejectDropPlacement(msg);
           return false;
         }
       }
@@ -3683,7 +3378,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     if (item.actor && item.actor.id === this.actor.id) {
       
       // For stacked items (quantity > 1) moving to a different container, show dialog
-      const movingQty = itemData.system.quantity || 1;
+      const movingQty = normalizeQuantity(itemData.system.quantity);
       const currentContainerId = item.system.containerId;
       const targetContainerId = targetContainer?.id || null;
       
@@ -3694,22 +3389,21 @@ export class OspActorSheetCharacter extends ActorSheet {
       // Check if we should stack this item with an existing one in the target container
       if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor" || itemData.type === "livestock")) {
         // Find matching item in the target container (excluding the item being moved)
-        const matchingItem = this.actor.items.find(i => 
+        const matchingItem = !this._dropHasContents && this.actor.items.find(i =>
           i.id !== item.id && // Don't match with itself
-          i.name === itemData.name &&
-          i.type === itemData.type &&
+          canStackItems(i, itemData) && !i.system.equipped && !i.system.lashed &&
           i.system.containerId === targetContainer.id &&
           i.system.storedSize === itemData.system.storedSize
         );
         
         if (matchingItem) {
           // Stack: increase quantity of existing item and delete the moved item
-          const currentQty = matchingItem.system.quantity || 1;
-          const addingQty = itemData.system.quantity || 1;
+          const currentQty = matchingItem.system.quantity ?? 0;
+          const addingQty = normalizeQuantity(itemData.system.quantity);
           const maxQty = matchingItem;
           const newQty = currentQty + addingQty;
           
-          ui.notifications.info(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
+          this._dropInfo(`Merged ${addingQty} ${itemData.name}(s) with existing stack.`);
           
           // Just update quantity - unitWeight stays the same (it's per unit!)
           const updateData = {"system.quantity": newQty};
@@ -3725,10 +3419,8 @@ export class OspActorSheetCharacter extends ActorSheet {
       // When dropped onto an explicit targetContainer, always clear lashed/equipped (item is stored, not lashed).
       // When auto-placed by belt-lash logic (targetContainer null), use the values set above.
       const updatePayload = {"system.containerId": itemData.system.containerId};
-      if (itemData.system.containerId) {
-        updatePayload["system.lashed"] = targetContainer ? false : (itemData.system.lashed ?? false);
-        updatePayload["system.equipped"] = targetContainer ? false : (itemData.system.equipped ?? false);
-      }
+      updatePayload["system.lashed"] = targetContainer ? false : (itemData.system.lashed ?? false);
+      updatePayload["system.equipped"] = targetContainer ? false : (itemData.system.equipped ?? false);
       return item.update(updatePayload);
     }
 
@@ -3736,10 +3428,8 @@ export class OspActorSheetCharacter extends ActorSheet {
     const existingItem = this.actor.items.get(itemData._id);
     if (existingItem) {
       const existingUpdatePayload = {"system.containerId": itemData.system.containerId};
-      if (itemData.system.containerId) {
-        existingUpdatePayload["system.lashed"] = targetContainer ? false : (itemData.system.lashed ?? false);
-        existingUpdatePayload["system.equipped"] = targetContainer ? false : (itemData.system.equipped ?? false);
-      }
+      existingUpdatePayload["system.lashed"] = targetContainer ? false : (itemData.system.lashed ?? false);
+      existingUpdatePayload["system.equipped"] = targetContainer ? false : (itemData.system.equipped ?? false);
       return existingItem.update(existingUpdatePayload);
     }
 
@@ -3748,21 +3438,20 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Check if we should stack this item with an existing one
     if (targetContainer && (itemData.type === "item" || itemData.type === "container" || itemData.type === "ammunition" || itemData.type === "weapon" || itemData.type === "armor" || itemData.type === "livestock")) {
       // Find matching item in the same container
-      const matchingItem = this.actor.items.find(i => 
-        i.name === itemData.name &&
-        i.type === itemData.type &&
+      const matchingItem = !this._dropHasContents && this.actor.items.find(i =>
+        canStackItems(i, itemData) && !i.system.equipped && !i.system.lashed &&
         i.system.containerId === targetContainer.id &&
         i.system.storedSize === itemData.system.storedSize
       );
       
       if (matchingItem) {
         // Stack: increase quantity of existing item
-        const currentQty = matchingItem.system.quantity || 1;
-        const addingQty = itemData.system.quantity || 1;
+        const currentQty = matchingItem.system.quantity ?? 0;
+        const addingQty = normalizeQuantity(itemData.system.quantity);
         const maxQty = matchingItem;
         const newQty = currentQty + addingQty;
         
-        ui.notifications.info(`Added ${addingQty} ${itemData.name}(s) to existing stack.`);
+        this._dropInfo(`Added ${addingQty} ${itemData.name}(s) to existing stack.`);
         
         // Just update quantity - unitWeight stays the same (it's per unit!)
         const updateData = {"system.quantity": newQty};
@@ -3790,6 +3479,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   };
 
   _isItemAllowedInContainer(itemData, container) {
+    if (['ability', 'spell'].includes(itemData.type)) return { allowed: false, reason: 'Abilities and spells are not physical container contents.' };
     // Sling containers (Baldric, Axe Sling, etc.) cannot be stored in any container
     if (itemData.type === 'container' && (itemData.system?.tags || []).includes('sling')) {
       return { allowed: false, reason: `${itemData.name} cannot be stored in a container.` };
@@ -3805,8 +3495,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Strip trailing modifier (e.g. " +2") so "Longsword +2" matches "Longsword".
     const allowedNames = container.system?.allowedNames;
     if (allowedNames?.length > 0) {
-      const baseName = itemData.name.replace(/\s*[+-]\d+$/, '');
-      if (!allowedNames.includes(baseName)) {
+      if (!matchesContainerAllowedNames(itemData, container)) {
         return { allowed: false, reason: `${container.name} only accepts: ${allowedNames.join(', ')}.` };
       }
     }
@@ -3814,9 +3503,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // Check allowedTypes — strict whitelist by tag, weaponType, or Foundry item type (used by quivers, bolt cases).
     const allowedTypes = container.system?.allowedTypes;
     if (allowedTypes?.length > 0) {
-      const itemTags = itemData.system?.tags || [];
-      const weaponType = itemData.system?.weaponType || '';
-      const matches = allowedTypes.some(t => itemTags.includes(t) || weaponType === t || itemData.type === t);
+      const matches = allowedTypes.some(t => matchesContainerType(itemData, t));
       if (!matches) return { allowed: false, reason: `${container.name} only accepts: ${allowedTypes.join(', ')}.` };
     }
 
@@ -3825,9 +3512,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     // BUILT_IN_BLOCKED_TYPES table so rules apply to actors that pre-date the refresh macro.
     const blockedTypes = container.system?.blockedTypes ?? OspActorSheetCharacter.BUILT_IN_BLOCKED_TYPES[container.name];
     if (blockedTypes?.length > 0) {
-      const itemTags = itemData.system?.tags || [];
-      const weaponType = itemData.system?.weaponType || '';
-      const matchedBlock = blockedTypes.find(t => itemTags.includes(t) || weaponType === t || itemData.type === t);
+      const matchedBlock = blockedTypes.find(t => matchesContainerType(itemData, t));
       if (matchedBlock) {
         return { allowed: false, reason: this._blockedItemReason(itemData, container) };
       }
@@ -3843,7 +3528,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const required = itemData.system?.containerSizeRequired || '';
     if (required) {
       const sizeRank = { small: 1, medium: 2, large: 3 };
-      const containerSize = container.system?.containerSize || 'medium';
+      const containerSize = container.system?.containerSize || ((container.system?.tags || []).includes('vehicle') ? 'large' : 'medium');
       if ((sizeRank[containerSize] || 2) < (sizeRank[required] || 1)) {
         return { allowed: false, reason: `${itemData.name} is too large to fit inside ${container.name}.` };
       }
@@ -4399,7 +4084,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _provisionBeltLoop(item, itemData, dryRun = false) {
     const belt = this._getEquippedBelt();
     if (!belt) {
-      if (!dryRun) ui.notifications.error('Cannot equip belt loop: this character does not have a belt.');
+      if (!dryRun) this._rejectDropPlacement('Cannot equip belt loop: this character does not have a belt.');
       return null;
     }
     const baseName = (itemData.name || '').replace(/\s*[+-]\d+$/, '');
@@ -4417,7 +4102,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
     const neededSlots = tmpl.system.slotCost ?? 1;
     if (usedSlots + neededSlots > (belt.system.lashSlots || 0)) {
-      if (!dryRun) ui.notifications.error(`Cannot add Belt Loop: ${belt.name} is full (${usedSlots}/${belt.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
+      if (!dryRun) this._rejectDropPlacement(`Cannot add Belt Loop: ${belt.name} is full (${usedSlots}/${belt.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
       return null;
     }
     if (dryRun) return true;
@@ -4435,7 +4120,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _provisionBeltScabbard(scabbardName, itemBeingMoved = null, hostOverride = null, dryRun = false) {
     const host = this._resolveScabbardHost(hostOverride);
     if (!host) {
-      if (!dryRun) ui.notifications.error('Cannot equip scabbard: this character does not have a belt.');
+      if (!dryRun) this._rejectDropPlacement('Cannot equip scabbard: this character does not have a belt.');
       return null;
     }
     // Reuse existing scabbard of this type on the host, excluding the item being moved from the occupancy check
@@ -4483,7 +4168,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
     const neededSlots = tmpl.system.slotCost ?? 1;
     if (usedSlots + neededSlots > (host.system.lashSlots || 0)) {
-      if (!dryRun) ui.notifications.error(`Cannot create ${scabbardName}: ${host.name} is full (${usedSlots}/${host.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
+      if (!dryRun) this._rejectDropPlacement(`Cannot create ${scabbardName}: ${host.name} is full (${usedSlots}/${host.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
       return null;
     }
     if (dryRun) return true;
@@ -4507,11 +4192,11 @@ export class OspActorSheetCharacter extends ActorSheet {
     const scabbardItemData = { name: scabbardName, type: 'container', system: { ...tmpl.system, quantity: 1 } };
     const containerCheck = this._isItemAllowedInContainer(scabbardItemData, container);
     if (!containerCheck.allowed) {
-      ui.notifications.error(`${container.name} cannot hold a ${scabbardName}: ${containerCheck.reason}`);
+      this._rejectDropPlacement(`${container.name} cannot hold a ${scabbardName}: ${containerCheck.reason}`);
       return null;
     }
     if (!this._skipCapacityCheck(container) && !this._hasContainerSpace(container, scabbardItemData)) {
-      ui.notifications.error(`Not enough space in ${container.name} for a ${scabbardName}.`);
+      this._rejectDropPlacement(`Not enough space in ${container.name} for a ${scabbardName}.`);
       return null;
     }
 
@@ -4525,7 +4210,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _provisionSwordFrogAndScabbard(itemBeingMoved = null, hostOverride = null, dryRun = false) {
     const host = this._resolveScabbardHost(hostOverride);
     if (!host) {
-      if (!dryRun) ui.notifications.error('Cannot equip scabbard: this character does not have a belt.');
+      if (!dryRun) this._rejectDropPlacement('Cannot equip scabbard: this character does not have a belt.');
       return null;
     }
     // Look for an existing Sword Frog on the host with a usable Scabbard, Sword.
@@ -4557,7 +4242,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const frogTmpl = this._getSwordCarrierTemplate('Sword Frog');
     const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
     if (usedSlots + 2 > (host.system.lashSlots || 0)) {
-      if (!dryRun) ui.notifications.error(`Cannot equip scabbard: ${host.name} is full.`);
+      if (!dryRun) this._rejectDropPlacement(`Cannot equip scabbard: ${host.name} is full.`);
       return null;
     }
     if (dryRun) return true;
@@ -4578,7 +4263,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _findOrCreateSwordFrog(item, isReordering) {
     const belt = this._getEquippedBelt();
     if (!belt) {
-      ui.notifications.error('No belt equipped — equip a belt before placing a scabbard.');
+      this._rejectDropPlacement('No belt equipped — equip a belt before placing a scabbard.');
       return null;
     }
     const frogs = this.actor.items.filter(
@@ -4596,7 +4281,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
     const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
     if (usedSlots + 2 > (belt.system.lashSlots || 0)) {
-      ui.notifications.error('Cannot add Sword Frog: belt is full. Remove an attachment to make room.');
+      this._rejectDropPlacement('Cannot add Sword Frog: belt is full. Remove an attachment to make room.');
       return null;
     }
     const [frog] = await this.actor.createEmbeddedDocuments('Item', [{
@@ -4630,7 +4315,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Check if container has space for an item
    */
   _hasContainerSpace(container, itemData) {
-    const capacity = parseFloat(container.system?.capacity);
+    const capacity = capacityValue(container.system?.capacity);
 
     // A lash-only mount (lashSlots set, capacity intentionally 0) isn't a storage container at
     // all — that's not a data error, so skip the scary notification callers would otherwise get.
@@ -4638,7 +4323,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     if (isNaN(capacity) || capacity <= 0) {
       console.error('ERROR: Container capacity must be a positive number', container.system?.capacity);
-      ui.notifications.error(`Container "${container.name}" has invalid capacity. Delete and re-add the container.`);
+      this._rejectDropPlacement(`Container "${container.name}" has invalid capacity. Delete and re-add the container.`);
       return false;
     }
 
@@ -4651,7 +4336,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Get available space in a container
    */
   _getAvailableSpace(container) {
-    const maxCapacity = container.system?.capacity || 0;
+    const maxCapacity = capacityValue(container.system?.capacity);
     const usedCapacity = this._getUsedCapacity(container);
     return maxCapacity - usedCapacity;
   }
@@ -4678,6 +4363,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   // Items tagged no-store can never go in any container; no-vehicle-store items additionally
   // can't go in a vehicle-tagged container (Cart/Wagon) even though they could store elsewhere.
   _getNoStoreRejection(itemData, targetContainer) {
+    if (targetContainer && ['ability', 'spell'].includes(itemData.type)) return 'Abilities and spells are not physical container contents.';
     const isStorageTarget = targetContainer && (targetContainer.type === "container" ||
       (targetContainer.type === "clothing" && targetContainer.system.capacity));
     if (isStorageTarget && (itemData.system?.tags || []).includes('no-store')) {
@@ -4707,21 +4393,8 @@ export class OspActorSheetCharacter extends ActorSheet {
   // When the target has hidden capacity (e.g. a Belt Loop) and is itself stored, non-lashed,
   // inside a parent container, the parent also needs room for the incoming item — a hideCapacity
   // container's own capacity bar doesn't reflect what it silently adds to its parent's load.
-  _getHiddenCapacityParentRejection(itemData, targetContainer, alreadyInContainer) {
-    if (alreadyInContainer || !this._skipCapacityCheck(targetContainer) ||
-        !targetContainer.system.containerId || targetContainer.system.lashed) {
-      return null;
-    }
-    const parentContainer = this.actor.items.get(targetContainer.system.containerId);
-    // Tack (Saddle, Saddle, Pack, etc.) points its containerId at the livestock wearing it, not
-    // a real storage container — livestock have no capacity concept at all, so _hasContainerSpace
-    // would treat their missing capacity field as a data error. Nothing "consumes" an animal's
-    // capacity the way it would a Backpack's, so there's nothing to check here.
-    if (!parentContainer || parentContainer.type === 'livestock') return null;
-    if (!this._skipCapacityCheck(parentContainer) && !this._hasContainerSpace(parentContainer, itemData)) {
-      const itemSize = this._getEffectiveDropSize(itemData);
-      return `Not enough space in ${parentContainer.name} for ${itemData.name} (size ${itemSize}).`;
-    }
+  _getHiddenCapacityParentRejection(_itemData, _targetContainer, _alreadyInContainer) {
+    // Packed contents consume their immediate host's capacity only.
     return null;
   }
 
@@ -4760,53 +4433,24 @@ export class OspActorSheetCharacter extends ActorSheet {
         const weaponSize = itemData.system?.size;
         if (!weaponSize || !c.system.lashAllowedSizes.includes(weaponSize)) return false;
       }
-      const used = this.actor.items.filter(i => i.system.containerId === c.id && i.system.lashed).length;
-      return used < lashSlots;
+      const used = this.actor.items.filter(i => i.system.containerId === c.id && i.system.lashed && i.id !== (itemData?.id ?? itemData?._id)).reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+      return used + (itemData?.system?.slotCost || 1) <= lashSlots;
     }) ?? null;
   }
 
   /**
    * Calculate used capacity in a container.
-   * Includes nested contents of any sub-containers (e.g. weapons inside a belt loop inside a backpack).
+   * Counts only immediate child bulk; packed contents use their own container capacity.
    */
-  _getUsedCapacity(container) {
-    return this.actor.items
-      .filter(item => item.system.containerId === container.id && !item.system.lashed)
-      .reduce((total, item) => {
-        const ownSize = (parseFloat(item.system.storedSize) || 0) * (item.system.quantity || 1);
-        const nestedSize = item.type === 'container' ? this._getTotalNestedSize(item.id) : 0;
-        return total + ownSize + nestedSize;
-      }, 0);
-  }
+  _getUsedCapacity(container) { return usedBulk(container, this.actor.items); }
 
-  // Returns the stored-size footprint of an item in its parent container.
-  // A container occupies only its own storedSize regardless of its contents.
-  _getEffectiveStoredSize(item) {
-    return (parseFloat(item.system.storedSize) || 0) * (item.system.quantity || 1);
-  }
+  _getEffectiveStoredSize(item) { return storedBulk(item); }
 
-  // Returns the effective size for an item being dropped (may be a plain data object, not a live item).
-  // For containers, includes the total stored size of all nested contents.
-  _getEffectiveDropSize(itemData) {
-    const ss = parseFloat(itemData.system?.storedSize);
-    if (isNaN(ss) || ss < 0) {
-      return (itemData.type === 'weapon' || itemData.type === 'armor') ? 9999 : 0;
-    }
-    const ownSize = ss * (parseFloat(itemData.system.quantity) || 1);
-    if (itemData.type === 'container' && itemData._id) {
-      return ownSize + this._getTotalNestedSize(itemData._id);
-    }
-    return ownSize;
-  }
+  _getEffectiveDropSize(itemData) { return storedBulk(itemData, { invalidPenalty: true }); }
 
   // Recursively sums storedSize of all items inside a container (by id), including deep descendants.
   _getTotalNestedSize(containerId) {
-    return this.actor.items
-      .filter(i => i.system.containerId === containerId)
-      .reduce((sum, child) => {
-        const childSize = (parseFloat(child.system.storedSize) || 0) * (child.system.quantity || 1);
-        return sum + childSize + (child.type === 'container' ? this._getTotalNestedSize(child.id) : 0);
-      }, 0);
+    return containedSubtree(inventoryItems(this.actor), containerId).reduce((sum, child) => sum + storedBulk(child), 0);
   }
 
   /**
@@ -4814,7 +4458,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   async _showSlingNoRoomDialog(item, itemHandler) {
     return new Promise(resolve => {
-      new Dialog({
+      this.createDialog({
         title: `Cannot Wear ${item.name}`,
         content: `<p>You are already wearing a <strong>${esc(item.name)}</strong>. It cannot be stored or lashed. What would you like to do?</p>`,
         buttons: {
@@ -4832,7 +4476,16 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Supports full-stack moves (merge if matching stack exists) and partial splits.
    */
   async _handleStackedItemDrop(item, itemData, targetContainer, currentContainerId) {
-    const totalQuantity = itemData.system.quantity || 1;
+    const totalQuantity = normalizeQuantity(itemData.system.quantity);
+    if (this._dropSelectedQuantity) {
+      const targetId = targetContainer?.id ?? null;
+      const matching = !this._dropHasContents && this.actor.items.find(candidate => candidate.id !== item.id && canStackItems(candidate, itemData) && !candidate.system.equipped && !candidate.system.lashed && candidate.system.containerId === targetId && candidate.system.storedSize === itemData.system.storedSize);
+      if (matching) {
+        await matching.update({ 'system.quantity': (matching.system.quantity ?? 0) + totalQuantity });
+        await item.delete();
+      } else await item.update({ 'system.containerId': targetId, 'system.lashed': itemData.system.lashed ?? false, 'system.equipped': itemData.system.equipped ?? false });
+      return true;
+    }
     const targetName = targetContainer ? esc(targetContainer.name) : 'top level';
 
     return new Promise((resolve) => {
@@ -4846,7 +4499,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         </form>
       `;
 
-      new Dialog({
+      this.createDialog({
         title: `Move ${item.name}`,
         content,
         buttons: {
@@ -4854,9 +4507,9 @@ export class OspActorSheetCharacter extends ActorSheet {
             icon: '<i class="fas fa-arrows-alt"></i>',
             label: 'Move',
             callback: async (html) => {
-              const moveQty = parseInt(html.find('[name="moveQuantity"]').val());
-              if (!moveQty || moveQty < 1 || moveQty > totalQuantity) {
-                ui.notifications.error(`Quantity must be between 1 and ${totalQuantity}.`);
+              const moveQty = Number(html.find('[name="moveQuantity"]').val());
+              if (!validDropQuantity(moveQty, totalQuantity)) {
+                this._rejectDropPlacement(`Quantity must be between 1 and ${totalQuantity}.`);
                 resolve(false);
                 return;
               }
@@ -4864,25 +4517,24 @@ export class OspActorSheetCharacter extends ActorSheet {
               const targetContainerId = targetContainer?.id ?? null;
               const matchingItem = this.actor.items.find(i =>
                 i.id !== item.id &&
-                i.name === itemData.name &&
-                i.type === itemData.type &&
+                canStackItems(i, itemData) && !i.system.equipped && !i.system.lashed &&
                 i.system.containerId === targetContainerId &&
                 i.system.storedSize === itemData.system.storedSize
               );
 
               if (moveQty === totalQuantity) {
                 if (matchingItem) {
-                  await matchingItem.update({ 'system.quantity': (matchingItem.system.quantity || 1) + totalQuantity });
+                  await matchingItem.update({ 'system.quantity': (matchingItem.system.quantity ?? 0) + totalQuantity });
                   await item.delete();
-                  ui.notifications.info(`Merged ${totalQuantity}× ${itemData.name} with existing stack.`);
+                  this._dropInfo(`Merged ${totalQuantity}× ${itemData.name} with existing stack.`);
                 } else {
                   await item.update({ 'system.containerId': itemData.system.containerId });
                 }
               } else {
                 if (matchingItem) {
-                  await matchingItem.update({ 'system.quantity': (matchingItem.system.quantity || 1) + moveQty });
+                  await matchingItem.update({ 'system.quantity': (matchingItem.system.quantity ?? 0) + moveQty });
                   await item.update({ 'system.quantity': totalQuantity - moveQty });
-                  ui.notifications.info(`Moved ${moveQty}× ${itemData.name} to existing stack.`);
+                  this._dropInfo(`Moved ${moveQty}× ${itemData.name} to existing stack.`);
                 } else {
                   const newItemData = foundry.utils.duplicate(itemData);
                   newItemData.system.quantity = moveQty;
@@ -4890,7 +4542,7 @@ export class OspActorSheetCharacter extends ActorSheet {
                   delete newItemData._id;
                   await item.update({ 'system.quantity': totalQuantity - moveQty });
                   await this.actor.createEmbeddedDocuments('Item', [newItemData]);
-                  ui.notifications.info(`Split: moved ${moveQty}× ${itemData.name}.`);
+                  this._dropInfo(`Split: moved ${moveQty}× ${itemData.name}.`);
                 }
               }
               resolve(true);
@@ -4983,8 +4635,7 @@ export class OspActorSheetCharacter extends ActorSheet {
   async _handleTackDrop(item, itemData, targetContainer, isReordering) {
     const check = this._getTackCompatibility(itemData, targetContainer, isReordering ? item.id : null);
     if (!check.valid) {
-      ui.notifications.error(check.reason);
-      return false;
+      return this._rejectDropPlacement(check.reason);
     }
 
     if (isReordering) {
@@ -5024,6 +4675,7 @@ export class OspActorSheetCharacter extends ActorSheet {
    */
   async _handleCoinDrop(item, itemData, targetContainer, isReordering) {
     const currentQuantity = itemData.system.quantity || 0;
+    if (this._dropSelectedQuantity) return this._resolveCoinMove(item, itemData, targetContainer, currentQuantity);
 
     // Reordering an existing stack already down to a single coin has no quantity to choose —
     // move it directly. A coin dropped from outside (sidebar, compendium, another actor) always
@@ -5052,7 +4704,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         </form>
       `;
 
-      new Dialog({
+      this.createDialog({
         title: `Add ${item.name}`,
         content: content,
         buttons: {
@@ -5060,7 +4712,7 @@ export class OspActorSheetCharacter extends ActorSheet {
             icon: '<i class="fas fa-coins"></i>',
             label: "Add Coins",
             callback: async (html) => {
-              const quantity = parseInt(html.find('[name="coinQuantity"]').val());
+              const quantity = Number(html.find('[name="coinQuantity"]').val());
               const result = await this._resolveCoinMove(item, itemData, targetContainer, quantity);
               resolve(result);
             }
@@ -5090,20 +4742,19 @@ export class OspActorSheetCharacter extends ActorSheet {
     const storedSize = parseFloat(itemData.system.storedSize) || 0.04;
     const maxCoins = Math.floor(this._getAvailableSpace(targetContainer) / storedSize);
 
-    if (quantity <= 0) {
-      ui.notifications.warn("Quantity must be greater than 0");
+    if (!validDropQuantity(quantity, item.actor ? item.system.quantity : Infinity)) {
+      this._rejectDropPlacement("Quantity must be greater than 0");
       return false;
     }
 
     if (quantity > maxCoins) {
-      ui.notifications.error(`Not enough space in ${targetContainer.name}. Maximum coins that fit: ${maxCoins}`);
+      this._rejectDropPlacement(`Not enough space in ${targetContainer.name}. Maximum coins that fit: ${maxCoins}`);
       return false;
     }
 
     // Check if there's already a coin of this type in the target container
     const existingCoin = this.actor.items.find(i =>
-      i.type === "coin" &&
-      i.name === itemData.name &&
+      canStackItems(i, itemData) && !i.system.equipped && !i.system.lashed &&
       i.system.containerId === targetContainer.id &&
       (!item.actor || i.id !== item.id) // Don't match with the coin being moved
     );
@@ -5115,7 +4766,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       const availableSpace = this._getAvailableSpace(targetContainer);
 
       if (additionalSpace > availableSpace) {
-        ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${additionalSpace} slots, have ${availableSpace} available.`);
+        this._rejectDropPlacement(`Not enough space in ${targetContainer.name}. Need ${additionalSpace} slots, have ${availableSpace} available.`);
         return false;
       }
     } else {
@@ -5123,7 +4774,7 @@ export class OspActorSheetCharacter extends ActorSheet {
       itemData.system.quantity = quantity;
 
       if (!this._hasContainerSpace(targetContainer, itemData)) {
-        ui.notifications.error(`Not enough space in ${targetContainer.name} for ${quantity} coins.`);
+        this._rejectDropPlacement(`Not enough space in ${targetContainer.name} for ${quantity} coins.`);
         return false;
       }
     }
@@ -5141,7 +4792,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         const newQuantity = (existingCoin.system.quantity || 0) + quantity;
         await existingCoin.update({"system.quantity": newQuantity});
         await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
-        ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
+        this._dropInfo(`Added ${quantity} ${itemData.name} to existing stack`);
       } else {
         await item.actor.deleteEmbeddedDocuments("Item", [item.id]);
         await this.actor.createEmbeddedDocuments("Item", [itemData]);
@@ -5154,7 +4805,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         const newQuantity = (existingCoin.system.quantity || 0) + quantity;
         await existingCoin.update({"system.quantity": newQuantity});
         await item.delete();
-        ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack`);
+        this._dropInfo(`Merged ${quantity} ${itemData.name} with existing stack`);
       } else {
         await item.update(itemData);
       }
@@ -5165,7 +4816,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         // Stack with existing coin
         const newQuantity = (existingCoin.system.quantity || 0) + quantity;
         await existingCoin.update({"system.quantity": newQuantity});
-        ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack`);
+        this._dropInfo(`Added ${quantity} ${itemData.name} to existing stack`);
       } else {
         await this.actor.createEmbeddedDocuments("Item", [itemData]);
       }
@@ -5178,7 +4829,8 @@ export class OspActorSheetCharacter extends ActorSheet {
    * Handle dropping ammunition with quantity dialog
    */
   async _handleAmmunitionDrop(item, itemData, targetContainer, isReordering) {
-    const totalQuantity = itemData.system.quantity || 1;
+    if (this._dropSelectedQuantity) return this._resolveAmmunitionMove(item, itemData, targetContainer, itemData.system.quantity, itemData.system.quantity, isReordering);
+    const totalQuantity = normalizeQuantity(itemData.system.quantity);
 
     // Reordering an existing stack already down to a single unit has no quantity to choose —
     // move it directly. Ammunition dropped from outside (sidebar, compendium, another actor)
@@ -5203,7 +4855,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         </form>
       `;
 
-      new Dialog({
+      this.createDialog({
         title: `${isReordering ? 'Move' : 'Add'} ${itemData.name}`,
         content: content,
         buttons: {
@@ -5211,7 +4863,7 @@ export class OspActorSheetCharacter extends ActorSheet {
             icon: '<i class="fas fa-plus"></i>',
             label: isReordering ? "Move" : "Add",
             callback: async (html) => {
-              const quantity = parseInt(html.find('[name="ammoQuantity"]').val());
+              const quantity = Number(html.find('[name="ammoQuantity"]').val());
               const result = await this._resolveAmmunitionMove(item, itemData, targetContainer, quantity, totalQuantity, isReordering);
               resolve(result);
             }
@@ -5237,8 +4889,8 @@ export class OspActorSheetCharacter extends ActorSheet {
    * per-callback resolve() calls did.
    */
   async _resolveAmmunitionMove(item, itemData, targetContainer, quantity, totalQuantity, isReordering) {
-    if (!quantity || quantity <= 0 || (isReordering && quantity > totalQuantity)) {
-      ui.notifications.warn(isReordering
+    if (!validDropQuantity(quantity, item.actor ? totalQuantity : Infinity)) {
+      this._rejectDropPlacement(isReordering
         ? `Quantity must be between 1 and ${totalQuantity}`
         : "Quantity must be greater than 0");
       return false;
@@ -5246,8 +4898,7 @@ export class OspActorSheetCharacter extends ActorSheet {
 
     // Check if there's already a matching stack of this item in the target container
     const existingAmmo = this.actor.items.find(i =>
-      i.type === itemData.type &&
-      i.name === itemData.name &&
+      canStackItems(i, itemData) && !i.system.equipped && !i.system.lashed &&
       i.system.containerId === targetContainer.id &&
       i.id !== item.id
     );
@@ -5258,7 +4909,7 @@ export class OspActorSheetCharacter extends ActorSheet {
     const availableSpace = this._getAvailableSpace(targetContainer);
 
     if (spaceNeeded > availableSpace) {
-      ui.notifications.error(`Not enough space in ${targetContainer.name}. Need ${spaceNeeded} slots, have ${availableSpace} available.`);
+      this._rejectDropPlacement(`Not enough space in ${targetContainer.name}. Need ${spaceNeeded} slots, have ${availableSpace} available.`);
       return false;
     }
 
@@ -5275,7 +4926,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         } else {
           await item.delete();
         }
-        ui.notifications.info(`Merged ${quantity} ${itemData.name} with existing stack.`);
+        this._dropInfo(`Merged ${quantity} ${itemData.name} with existing stack.`);
       } else if (isPartialMove) {
         // Split: create new stack in target, reduce source
         const newItemData = foundry.utils.duplicate(itemData);
@@ -5286,7 +4937,7 @@ export class OspActorSheetCharacter extends ActorSheet {
         newItemData.system.lashed = false;
         await item.update({"system.quantity": totalQuantity - quantity});
         await this.actor.createEmbeddedDocuments("Item", [newItemData]);
-        ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
+        this._dropInfo(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
       } else {
         // Move entire stack — clear equipped/lashed too, or a consumable weapon
         // dragged in already-readied would stay hidden from this container's contents
@@ -5315,12 +4966,12 @@ export class OspActorSheetCharacter extends ActorSheet {
         }
         await this.actor.createEmbeddedDocuments("Item", [newItemData]);
       }
-      ui.notifications.info(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
+      this._dropInfo(`Moved ${quantity} ${itemData.name} to ${targetContainer.name}.`);
     } else {
       // New item from compendium/sidebar (no actor)
       if (existingAmmo) {
         await existingAmmo.update({"system.quantity": (existingAmmo.system.quantity || 0) + quantity});
-        ui.notifications.info(`Added ${quantity} ${itemData.name} to existing stack.`);
+        this._dropInfo(`Added ${quantity} ${itemData.name} to existing stack.`);
       } else {
         const newItemData = foundry.utils.duplicate(itemData);
         delete newItemData._id;

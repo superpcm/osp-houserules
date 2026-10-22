@@ -34,7 +34,7 @@
     "type": "livestock",
     "img": "systems/osp-houserules/assets/images/livestock/dog-guard.webp",
     "system": {
-      "description": "This guard dog is a muscular, broad-chested hound with a cropped tail, thick neck, and heavy leather collar, its stance braced and expression wary. It is typically used by nobles, merchants, and watchmen to protect homes, caravans, and strongholds, barking warnings and attacking intruders on command.",
+      "description": "A muscular guard hound with cropped tail and leather collar. Nobles, merchants, and watchmen use it to guard homes, caravans, and strongholds, barking warnings and attacking intruders on command.",
       "cost": 25,
       "unitWeight": 80,
       "storedSize": 60,
@@ -99,7 +99,7 @@
     "type": "livestock",
     "img": "systems/osp-houserules/assets/images/livestock/donkey.webp",
     "system": {
-      "description": "This donkey is a small, sturdy beast with long ears, a rough coat, and a patient expression, rendered in muted browns and greys. It is typically used by farmers and travelers to carry packs or pull small carts, prized for its endurance and surefootedness more than for speed.",
+      "description": "A small, sturdy beast with long ears and a rough coat. Farmers and travelers use it to carry packs or pull small carts, valuing its endurance and surefootedness over speed.",
       "cost": 8,
       "unitWeight": 400,
       "storedSize": 99,
@@ -162,7 +162,7 @@
     "type": "livestock",
     "img": "systems/osp-houserules/assets/images/livestock/hawk.webp",
     "system": {
-      "description": "This hawk is a sharp-eyed raptor with mottled brown plumage, curved talons, and a hooked beak, rendered in earthy tones with careful feather detail. It is typically used by hunters, scouts, and rangers as a trained companion for scouting, tracking, or delivering swift, deadly strikes from above.",
+      "description": "A sharp-eyed hawk with mottled brown plumage, curved talons, and a hooked beak. Hunters, scouts, and rangers train it for scouting, tracking, and swift, deadly strikes from above.",
       "cost": 1000,
       "unitWeight": 3,
       "storedSize": 20,
@@ -195,7 +195,7 @@
     "type": "livestock",
     "img": "systems/osp-houserules/assets/images/livestock/horse-draft.webp",
     "system": {
-      "description": "This draft horse is a stocky, muscular animal with feathered hooves and a sturdy harness, built for strength rather than speed. It is typically used to pull wagons, plows, and heavy loads, serving as the backbone of caravans and farmsteads alike in a medieval-fantasy world.",
+      "description": "A stocky, muscular horse with feathered hooves and a sturdy harness, built for strength over speed. It pulls wagons, plows, and heavy loads for caravans and farmsteads.",
       "cost": 200,
       "unitWeight": 1800,
       "storedSize": 99,
@@ -229,7 +229,7 @@
     "type": "livestock",
     "img": "systems/osp-houserules/assets/images/livestock/horse-riding.webp",
     "system": {
-      "description": "This riding horse is a lean, well-muscled bay with a worn leather saddle and bridle, built for speed and endurance rather than brute strength. It is typically used by messengers, travelers, and light cavalry to cover long distances quickly across roads, fields, and open country.",
+      "description": "A lean, well-muscled bay with a worn leather saddle and bridle, built for speed and endurance. Messengers, travelers, and light cavalry ride it across roads, fields, and open country.",
       "cost": 75,
       "unitWeight": 1000,
       "storedSize": 99,
@@ -264,7 +264,7 @@
     "type": "livestock",
     "img": "systems/osp-houserules/assets/images/livestock/horse-war.webp",
     "system": {
-      "description": "This war horse is a powerful, broad-chested steed with sturdy legs and a worn leather war saddle, built to carry an armored rider into the thick of battle. Trained not to panic at blood, noise, or steel, it is typically used by knights and heavy cavalry to charge enemy lines and break formations.",
+      "description": "A powerful, broad-chested steed with sturdy legs and a worn leather war saddle, trained not to panic at blood, noise, or steel. Knights and heavy cavalry use it to charge and break enemy formations.",
       "cost": 250,
       "unitWeight": 1200,
       "storedSize": 99,
@@ -301,7 +301,7 @@
     "type": "livestock",
     "img": "systems/osp-houserules/assets/images/livestock/mule.webp",
     "system": {
-      "description": "This mule is a sturdy, surefooted beast of burden with simple tack and bulging saddlebags, built more for endurance than for speed or glamour. It is typically used by merchants and adventurers to haul gear, supplies, and treasure across rough terrain where wagons and fine horses would struggle.",
+      "description": "A sturdy, surefooted beast of burden with simple tack and saddlebags, built for endurance over speed. Merchants and adventurers use it to haul gear, supplies, and treasure across rough terrain.",
       "cost": 8,
       "unitWeight": 900,
       "storedSize": 99,
@@ -431,7 +431,7 @@
     "type": "livestock",
     "img": "systems/osp-houserules/assets/images/livestock/sheep.webp",
     "system": {
-      "description": "This sheep is a woolly, thick-fleeced animal with a calm expression and sturdy legs, rendered in soft, earthy tones. It is typically raised by villagers and herders for its wool, milk, and meat, grazing in flocks across hillsides and pastures around rural settlements.",
+      "description": "A woolly, thick-fleeced animal with sturdy legs, raised by villagers and herders for wool, milk, and meat. It grazes in flocks across hillsides and pastures around rural settlements.",
       "cost": 2,
       "unitWeight": 150,
       "storedSize": 50,

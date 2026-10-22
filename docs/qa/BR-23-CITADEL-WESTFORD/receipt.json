@@ -1,0 +1,28 @@
+{
+  "recordedAt": "2026-10-04T03:54:16.126693+00:00",
+  "approval": "Paul explicitly approved stopping only Westford, capturing/verifying, and immediate restart.",
+  "host": "the-citadel",
+  "container": "foundryvtt_westford",
+  "image": "ghcr.io/felddy/foundryvtt:14",
+  "worldId": "westford",
+  "savedWorldCoreVersion": "13.351",
+  "savedSystemVersion": "1.0.1",
+  "archiveSha256": "9164c29161cd4da8b54c4abb8710bb8bd648a217b9833933a53af54c10858ed1",
+  "archiveBytes": 446054400,
+  "entries": 3205,
+  "stoppedAt": "2026-10-04T03:48:48.078401+00:00",
+  "capturedAt": "2026-10-04T03:48:52.673551+00:00",
+  "restartedAt": "2026-10-04T03:49:01.112754+00:00",
+  "sourceUnchanged": true,
+  "postCaptureHealth": {
+    "westford": "running healthy",
+    "narlington": "running healthy",
+    "greyhawk": "running healthy"
+  },
+  "baseline": "/Users/paul/FoundryData/osp-test-captures/citadel-westford-20261003-778l8sif/baseline",
+  "archive": "/Users/paul/FoundryData/osp-test-captures/citadel-westford-20261003-778l8sif/baseline.tar",
+  "workingCopy": "/Users/paul/FoundryData/osp-test-captures/citadel-westford-20261003-778l8sif/working",
+  "workingCopyStarted": false,
+  "scope": "Closed current Westford world, installed system and modules. npm node_modules and shared external assets excluded.",
+  "migrationAcceptance": "Not performed; native export, migration, reconciliation and rollback tests remain pending."
+}

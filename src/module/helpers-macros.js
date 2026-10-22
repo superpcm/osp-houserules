@@ -1,7 +1,9 @@
+import { readItemSpell } from './spells/item-spell.js';
+import { castSpellItem } from './spells/spellcasting-ui.js';
 /**
  * @file Helper functions for creating and running OSP macros
  */
-import { getAttackBonus, getAbilityModifier } from "../config/classes.js";
+import { ItemHandler } from "./actor/sheets/handlers/item-handler.js";
 
 /**
  * Create a macro from a dropped Item
@@ -54,12 +56,16 @@ export const rollItemMacro = (itemName, actorId = null) => {
     );
   }
 
+  if (readItemSpell(item)) return castSpellItem(actor, item).catch(error => ui.notifications.error(error.message));
+
   // For weapons, do a basic attack roll
   if (item.type === "weapon") {
     return _rollWeaponMacro(actor, item);
   }
 
-  // For spells and abilities, send info to chat
+  if (item.type === 'spell') return castSpellItem(actor, item).catch(error => ui.notifications.error(error.message));
+
+  // Ordinary ability macros display information.
   return _rollAbilityMacro(actor, item);
 };
 
@@ -79,52 +85,7 @@ export const rollTableMacro = async (tableName) => {
  * Internal: handle weapon attack via chat
  */
 const _rollWeaponMacro = async (actor, item) => {
-  const characterClass = actor.system.class || 'fighter';
-  const level = parseInt(actor.system.level) || 1;
-  const strScore = parseInt(actor.system.attributes?.str?.value) || 10;
-  const dexScore = parseInt(actor.system.attributes?.dex?.value) || 10;
-
-  const classAttackBonus = getAttackBonus(characterClass, level);
-  const weaponBonus = parseInt(item.system.bonus) || 0;
-
-  let abilityModifier, abilityName;
-  if (item.system.missile) {
-    abilityModifier = getAbilityModifier(dexScore);
-    abilityName = 'DEX';
-  } else {
-    abilityModifier = getAbilityModifier(strScore);
-    abilityName = 'STR';
-  }
-
-  const totalBonus = classAttackBonus + weaponBonus + abilityModifier;
-  const formula = totalBonus >= 0 ? `1d20 + ${totalBonus}` : `1d20 - ${Math.abs(totalBonus)}`;
-  const bonusBreakdown = [
-    `Class: +${classAttackBonus}`,
-    weaponBonus !== 0 ? `Weapon: ${weaponBonus >= 0 ? '+' : ''}${weaponBonus}` : null,
-    `${abilityName}: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}`
-  ].filter(Boolean).join(', ');
-
-  const roll = await new Roll(formula).evaluate();
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: `${item.name} Attack Roll<br><small>${bonusBreakdown}</small>`,
-    rollMode: game.settings.get('core', 'rollMode')
-  });
-
-  if (item.system.damage) {
-    const dmgFormula = weaponBonus > 0
-      ? `${item.system.damage} + ${weaponBonus}`
-      : item.system.damage;
-    const dmgFlavor = weaponBonus > 0
-      ? `${item.name} Damage<br><small>Weapon bonus: +${weaponBonus}</small>`
-      : `${item.name} Damage`;
-    const dmgRoll = await new Roll(dmgFormula).evaluate();
-    await dmgRoll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: dmgFlavor,
-      rollMode: game.settings.get('core', 'rollMode')
-    });
-  }
+  return new ItemHandler(null, actor, actor.sheet).rollWeapon(item);
 };
 
 /**
@@ -135,7 +96,7 @@ const _rollAbilityMacro = async (actor, item) => {
     user: game.user.id,
     speaker: ChatMessage.getSpeaker({ actor }),
     flavor: item.name,
-    content: `<p>${item.system.description || ""}</p>`,
+    content: `<p>${item.system.description || ""}</p><p>This is an information card. Spell-producing inventory items use the Cast action on their item card.</p>`,
   };
   ChatMessage.create(chatData);
 };

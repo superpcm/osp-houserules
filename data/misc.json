@@ -21,7 +21,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/images/misc/chest-large.webp",
     "system": {
-      "description": "This large ('24\" × 16\" × 16\"') wooden chest, reinforced with iron bands and secured by a heavy lock, is built to store valuables, equipment, or important supplies. Adventurers and merchants alike rely on such chests to keep their belongings safe from theft, weather, and the dangers of travel.",
+      "description": "A large wooden chest (24\" × 16\" × 16\") reinforced with iron bands and secured by a heavy lock. It stores valuables, equipment, and supplies safely from theft, weather, and travel dangers.",
       "cost": 50,
       "unitWeight": 20,
       "storedSize": 150,
@@ -77,7 +77,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/misc/tent-one-person.webp",
     "system": {
-      "description": "This one-person tent is a compact canvas shelter supported by simple poles and stakes, designed to protect a lone traveler from wind and weather. It is typically used for overnight camps, providing basic cover and privacy while remaining light enough to carry on long journeys.",
+      "description": "A compact canvas shelter for one person, supported by simple poles and stakes. It protects a lone traveler from wind and weather while remaining light enough for long journeys.",
       "cost": 5,
       "unitWeight": 10,
       "storedSize": 10,
@@ -94,7 +94,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/misc/tent-two-person.webp",
     "system": {
-      "description": "This two-person tent is a sturdy canvas shelter supported by simple poles and stakes, offering enough space for two travelers to rest and store basic gear. It is typically used for shared camps, providing protection from the elements while remaining practical for overland travel.",
+      "description": "A sturdy canvas shelter for two people, supported by simple poles and stakes, with room for basic gear. It protects travelers from the elements during overland journeys.",
       "cost": 10,
       "unitWeight": 20,
       "storedSize": 20,
@@ -111,7 +111,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/images/misc/tent-two-person.webp",
     "system": {
-      "description": "This four-person tent is a large canvas shelter supported by multiple poles and stakes, offering ample space for several travelers and their gear. It is typically used by small groups to establish a shared campsite, providing protection from the elements during extended journeys or expeditions.",
+      "description": "A large canvas shelter for four people, supported by multiple poles and stakes, with room for their gear. Small groups use it for shared camps during extended journeys and expeditions.",
       "cost": 20,
       "unitWeight": 40,
       "storedSize": 40,

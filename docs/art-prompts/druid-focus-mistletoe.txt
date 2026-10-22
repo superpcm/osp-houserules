@@ -1,0 +1,29 @@
+ITEM TO CREATE: Druid's Spell Focus — Sprig of Mistletoe
+
+Create a single fantasy tabletop RPG inventory item icon of a modest sprig of mistletoe. Output a 1024x1024 square image with a genuinely transparent alpha background.
+
+Style requirements:
+Render the item in a semi-realistic hand-painted OSR fantasy equipment style, matching classic tabletop roleplaying game inventory art. The object should be isolated, centered, and fully visible, with a clean transparent background. Use dark brown or black hand-drawn outlines, soft painterly shading, muted earthy medieval colors, and subtle highlights. The item should look practical, worn, and usable rather than ornate or magical.
+
+Context:
+A single small, naturally forked sprig of mistletoe used as a Druid's Spell Focus. Show a short slender woody green-brown stem with a few branching tips, paired leathery oval evergreen leaves in muted olive and sage green, and small clusters of round ivory-white berries nestled at the leaf joints. Leaves have smooth rounded edges, not spiky holly leaves; berries are white, never red. It is a modest usable herb sprig, not a wreath, bouquet, potted plant or holiday decoration. Subtle imperfect leaf edges and a naturally broken lower stem give it an earthy adventuring-equipment character. No ribbon, cord, ornaments, metal, runes or magical effects.
+
+Semi-realistic hand-painted fantasy equipment art, muted medieval palette, clean dark outlines, soft shading, transparent background, item-only.
+
+Composition requirements:
+Show only the sprig itself, not a character, not a hand holding it, and not a full scene. A slightly angled front view, the stem pointing down and the forked leafy branches spreading upward, centered and fully visible. Use a compact, readable silhouette that works at 96x96 thumbnail size. Leave comfortable transparent margins. Include believable subtle leaf veins, woody stem texture and soft matte ivory berries.
+
+Lighting and rendering:
+Use soft neutral lighting from the upper left, with gentle shadows painted onto the item itself. Avoid harsh dramatic lighting, glossy digital effects, photorealism, cel shading, anime styling, 3D rendering, or modern concept-art polish. The item should feel like it belongs in the same equipment set as hand-painted medieval adventuring gear.
+
+Color palette:
+Restrained muted greens, olive, sage, weathered brown stems, bone-white and ivory berries. Avoid neon colors, saturated fantasy glow, excessive gold, or high-contrast modern game icon colors.
+
+Background:
+Transparent background only. No scenery, no table surface, no decorative frame, no parchment card, no text, no label, no border, no shadow cast onto a floor.
+
+Consistency controls:
+Maintain the same proportions, brush texture, outline weight, muted palette, and isolated inventory-icon presentation as classic hand-painted medieval adventuring gear. Do not drift into photorealistic product render, cartoon icon, high-fantasy magic item, video game loot icon, flat vector art, or painterly splash art.
+
+Negative prompt:
+character, person, hand holding item, full scene, background environment, frame, border, label, text, logo, UI icon frame, glowing aura, magic particles, neon colors, photorealistic render, 3D render, flat vector, anime, cartoon, modern object, excessive ornamentation, overly clean new materials, dramatic shadows, cinematic lighting, clutter, multiple unrelated objects, holly, red berries, spiky leaves, ribbon, Christmas decoration, wreath, bouquet, pot

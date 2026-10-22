@@ -1,0 +1,16 @@
+{
+  "time": "2026-10-03T05:40:45.879026+00:00",
+  "command": "rtk proxy node node_modules/vitest/vitest.mjs run scripts/pack-snapshot.test.js scripts/leveldb-log-integrity.test.js --maxWorkers=2 --hookTimeout=30000",
+  "cwd": "/private/tmp/osp-br25-r1-localdeps-aspma73y",
+  "exit": 0,
+  "files": 2,
+  "passed": 23,
+  "sourceBytesMatch": true,
+  "vitest": "3.2.7",
+  "dependencies": "copied existing independently installed locked dependencies; no reinstall",
+  "attempts": [
+    "mounted dependencies stalled without output",
+    "outside writable roots symlink failed EPERM writing .vite-temp",
+    "full local copy passed"
+  ]
+}

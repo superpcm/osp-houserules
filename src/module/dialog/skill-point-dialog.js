@@ -1,19 +1,22 @@
+import { requestProgressionMutation } from '../progression/progression-authority.js';
+import { ospDialogOptions } from './dialog-theme.js';
+
 /**
  * Skill point distribution dialog — shown when a Thief, Assassin, or Barbarian gains a level.
  *
  * Points are stored in actor flags:
  *   flags['osp-houserules'].pendingSkillPoints  — unspent points waiting for distribution
- *   flags['osp-houserules'].lastKnownLevel       — last level already processed for skill points
  */
 
 export const SKILL_POINT_CONFIG = {
-  'Thief':     { startPoints: 4, rate: 2,   skills: ['climbSheer', 'hideShadows', 'moveSilently', 'findTraps', 'openLocks', 'pickPockets'] },
-  'Assassin':  { startPoints: 3, rate: 1.5, skills: ['assassination', 'climbSheer', 'hideShadows', 'moveSilently'] },
-  'Barbarian': { startPoints: 3, rate: 0.75, skills: ['climbSheer', 'moveSilently', 'hideUndergrowth'] },
+  'Thief':     { startPoints: 4, rate: 2,   skills: ['climbSheer', 'listeningAtDoors', 'hideShadows', 'moveSilently', 'findTraps', 'openLocks', 'pickPockets'] },
+  'Assassin':  { startPoints: 3, rate: 1.5, skills: ['climbSheer', 'listeningAtDoors', 'hideShadows', 'moveSilently'] },
+  'Barbarian': { startPoints: 2, rate: 0.5, skills: ['climbSheer', 'moveSilently', 'hideUndergrowth'] },
 };
 
 const SKILL_LABELS = {
   assassination:   'Assassination',
+  listeningAtDoors: 'Hear Noise',
   climbSheer:      'Climb Sheer Surfaces',
   hideShadows:     'Hide in Shadows',
   moveSilently:    'Move Silently',
@@ -30,13 +33,11 @@ const MAX_SKILL = 5;
  * Level 1 awards the class starting pool; subsequent levels use the fractional rate.
  */
 export function calcSkillPoints(config, fromLevel, toLevel) {
-  let total = 0;
-  for (let lvl = fromLevel + 1; lvl <= toLevel; lvl++) {
-    total += lvl === 1
-      ? config.startPoints
-      : Math.floor(config.rate * lvl) - Math.floor(config.rate * (lvl - 1));
-  }
-  return total;
+  const start = Number(config?.startPoints) || 0;
+  const rate = Number(config?.rate) || 0;
+  const from = Math.max(0, Math.floor(Number(fromLevel) || 0));
+  const to = Math.max(from, Math.floor(Number(toLevel) || from));
+  return Math.max(0, Math.floor(start + rate * Math.max(0, to - 1)) - (from === 0 ? 0 : Math.floor(start + rate * Math.max(0, from - 1))));
 }
 
 export function showSkillPointDialog(actor, totalPending) {
@@ -48,11 +49,12 @@ export function showSkillPointDialog(actor, totalPending) {
 
   // Snapshot current values before the dialog opens
   const base = {};
-  for (const sk of skills) base[sk] = parseInt(actor.system[sk]) || 0;
+  for (const sk of skills) base[sk] = parseInt(actor.system[sk]) || 1;
 
   // Mutable dialog state
   const inc = Object.fromEntries(skills.map(sk => [sk, 0]));
   let pool  = totalPending;
+  const allocationId = globalThis.foundry?.utils?.randomID?.() || `skill-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
   // ── Row builder ────────────────────────────────────────────────────────────
   const buildRows = () => skills.map(sk => {
@@ -96,7 +98,9 @@ export function showSkillPointDialog(actor, totalPending) {
       <p class="osp-skp-note">Max 5-in-6 per skill. Unspent points are saved for next session.</p>
     </div>`;
 
-  new Dialog({
+  const poolVersion = Number(actor.getFlag?.('osp-houserules', 'skillPoolVersion') || 0);
+  let submitting = false;
+  new Dialog(ospDialogOptions({
     title: `Skill Points — ${actor.name}`,
     content,
     buttons: {
@@ -104,15 +108,23 @@ export function showSkillPointDialog(actor, totalPending) {
         icon:  '<i class="fas fa-check"></i>',
         label: 'OK',
         callback: async () => {
+          if (submitting) return false;
+          submitting = true;
           const spent     = skills.reduce((s, sk) => s + inc[sk], 0);
           const remaining = totalPending - spent;
 
-          const updateData = {};
-          for (const sk of skills) {
-            if (inc[sk] > 0) updateData[`system.${sk}`] = String(base[sk] + inc[sk]);
+          const allocation = Object.fromEntries(skills.filter(sk => inc[sk] > 0).map(sk => [sk, inc[sk]]));
+          const result = await requestProgressionMutation('skill.allocate', {
+            actorId: actor.id,
+            allocationId,
+            allocation,
+            poolVersion
+          }, allocationId);
+          submitting = false;
+          if (!result?.success) {
+            ui.notifications.warn(result?.reason || 'Skill allocation could not be committed.');
+            return;
           }
-          if (Object.keys(updateData).length > 0) await actor.update(updateData);
-          await actor.setFlag('osp-houserules', 'pendingSkillPoints', remaining);
 
           if (spent > 0)
             ui.notifications.info(`${spent} skill point${spent !== 1 ? 's' : ''} distributed for ${actor.name}.`);
@@ -151,5 +163,5 @@ export function showSkillPointDialog(actor, totalPending) {
 
       bind();
     }
-  }).render(true);
+  })).render(true);
 }

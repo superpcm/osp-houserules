@@ -1,0 +1,93 @@
+// Option 1: slim brass gauge, olive load fill, and faceted diamond marker.
+.application.window-app.sheet.actor.character.osp
+form.osp.sheet.actor.character .tab.tab[data-tab="gear"] {
+  .encumbrance-bar-wrapper {
+    box-sizing: border-box !important;
+    width: calc(100% - 36px) !important;
+    height: 62px !important;
+    margin: 0 18px 6px !important;
+    padding: 0 !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
+  .encumbrance-brass { position: relative; width: 100%; height: 62px; color: #78694d; }
+  .encumbrance-brass-weight {
+    position: absolute; left: clamp(0%, var(--encumbrance-position, 0%), 100%); top: -31px;
+    transform: translateX(-50%); white-space: nowrap;
+    font-family: handwritten, cursive !important; font-size: 20px !important;
+    line-height: 25px; text-align: center; color: #78694d !important;
+  }
+  .encumbrance-brass-endpoint {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 1;
+    font-family: handwritten, cursive !important; font-size: 20px !important;
+    line-height: 18px; color: #78694d !important; pointer-events: none;
+  }
+  .encumbrance-brass-zero { left: 5px; }
+  .encumbrance-brass-max { right: 5px; }
+  .encumbrance-brass-track {
+    position: absolute; left: 0; right: 0; top: 28px; height: 24px;
+    box-sizing: border-box; border: 3px solid #ab762f; border-radius: 7px;
+    background: rgba(146, 111, 55, .07);
+    box-shadow: 0 1px 3px #6b481e66, inset 0 1px 4px #69451555;
+    overflow: visible;
+    &::after {
+      content: ""; position: absolute; inset: -2px; border: 1px solid #f1ce87;
+      border-radius: 5px; pointer-events: none;
+    }
+  }
+  // Bands use the calculated tick positions; only the carried portion is revealed.
+  .encumbrance-brass-fill {
+    position: absolute; inset: 0; border-radius: 3px;
+    clip-path: inset(0 calc(100% - clamp(0%, var(--encumbrance-position, 0%), 100%)) 0 0);
+    overflow: hidden;
+  }
+  .encumbrance-brass-band { position: absolute; top: 0; bottom: 0; }
+  .encumbrance-brass-band-green {
+    left: 0; width: var(--encumbrance-tick-0, 33.333333%);
+    background: linear-gradient(180deg, #686b42bb, #8a8b60bb 50%, #777a4cbb);
+    box-shadow: inset 0 1px 3px #35412355;
+  }
+  .encumbrance-brass-band-yellow {
+    left: var(--encumbrance-tick-0, 33.333333%);
+    width: calc(var(--encumbrance-tick-1, 66.666667%) - var(--encumbrance-tick-0, 33.333333%));
+    background: linear-gradient(180deg, #aa882bbb, #cfb55dbb 50%, #b69a3bbb);
+    box-shadow: inset 0 1px 3px #69511b55;
+  }
+  .encumbrance-brass-band-red {
+    left: var(--encumbrance-tick-1, 66.666667%); right: 0;
+    background: linear-gradient(180deg, #994b3bbb, #bd7660bb 50%, #aa5947bb);
+    box-shadow: inset 0 1px 3px #612e2455;
+  }
+  .encumbrance-brass-tick {
+    position: absolute; top: 0; bottom: 0; width: 1px;
+    background: #74572c; opacity: .75; transform: translateX(-50%);
+  }
+  .encumbrance-brass-pointer {
+    position: absolute; top: 50%; left: clamp(0%, var(--encumbrance-position, 0%), 100%);
+    width: 18px; height: 29px; transform: translate(-50%, -50%);
+    overflow: visible; z-index: 1; filter: drop-shadow(0 1px 1px #4a301866);
+  }
+}
+// Preserve the inventory's lower edge with the taller label-and-gauge layout.
+.application.window-app.sheet.actor.character.osp.osp-native-character
+form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab.tab[data-tab="gear"] {
+  // Let the last rows pass underneath the journal's lower decorative bar.
+  .gear-tab, .gear-scrollable-content { height: 548px !important; }
+  .gear-tab { margin-top: calc(14px - 8px / .94) !important; }
+}
+
+// Repaint only the bottom of the existing journal artwork above Gear contents.
+// The full background stays behind the sheet; this strip cannot intercept input.
+.application.window-app.sheet.actor.character.osp.osp-native-character form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab='gear'].active)::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  background: url('/systems/osp-houserules/assets/character-sheet/explorers-journal/sewn-manuscript-wide-v1.png') center / 100% 100% no-repeat !important;
+  clip-path: inset(93% 0 0) !important;
+  opacity: 1 !important;
+  z-index: 1000 !important;
+  pointer-events: none !important;
+}

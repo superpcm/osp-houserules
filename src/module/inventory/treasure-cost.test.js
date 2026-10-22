@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { planCostCharge, chargeItemCost, CONTAINER_SEARCH_ORDER } from './treasure-cost.js';
+import { planCostCharge, stageItemCost as chargeItemCost, CONTAINER_SEARCH_ORDER } from './treasure-cost.js';
 
 function container(id, coins) {
   return { id, coins };
@@ -112,7 +112,7 @@ function fakeActor(items) {
   };
 }
 
-describe('chargeItemCost', () => {
+describe('stageItemCost (detached inventory planner)', () => {
   it('exempts coin items — dropping coins is receiving treasure, not buying an item', async () => {
     const actor = fakeActor([]);
     const result = await chargeItemCost({ type: 'coin', name: 'Gold Coins', system: { cost: 10 } }, actor);
@@ -177,4 +177,23 @@ describe('chargeItemCost', () => {
     expect(actor.updateEmbeddedDocuments).not.toHaveBeenCalled();
     expect(actor.createEmbeddedDocuments).not.toHaveBeenCalled();
   });
+});
+
+it('spends across distinct same-denomination stacks without collapsing their identities', async () => {
+  const purse = { id: 'purse', type: 'container', name: 'Coin Purse' };
+  const first = { id: 'first', name: 'Silver Coins', type: 'coin', flags: { custom: { stamp: 'one' } }, system: { quantity: 3, containerId: 'purse' } };
+  const second = { id: 'second', name: 'Silver Coins', type: 'coin', flags: { custom: { stamp: 'two' } }, system: { quantity: 7, containerId: 'purse' } };
+  const actor = fakeActor([purse, first, second]);
+  expect((await chargeItemCost({ name: 'Purchase', system: { cost: 8 } }, actor)).success).toBe(true);
+  expect(actor.updateEmbeddedDocuments).toHaveBeenCalledWith('Item', [{ _id: 'first', 'system.quantity': 0 }, { _id: 'second', 'system.quantity': 2 }]);
+  expect(first.flags.custom.stamp).toBe('one'); expect(second.flags.custom.stamp).toBe('two');
+});
+it('creates ordinary change separately from a customized same-name coin stack', async () => {
+  const purse = { id: 'purse', type: 'container', name: 'Coin Purse' };
+  const gold = { id: 'gold', type: 'coin', name: 'Gold Coins', system: { quantity: 1, containerId: 'purse' } };
+  const customized = { id: 'custom', type: 'coin', name: 'Silver Coins', flags: { module: { magic: true } }, system: { quantity: 0, containerId: 'purse' } };
+  const actor = fakeActor([purse, gold, customized]);
+  expect((await chargeItemCost({ name: 'Purchase', system: { cost: 8 } }, actor)).success).toBe(true);
+  expect(actor.updateEmbeddedDocuments).toHaveBeenCalledWith('Item', [{ _id: 'gold', 'system.quantity': 0 }]);
+  expect(actor.createEmbeddedDocuments).toHaveBeenCalledWith('Item', [expect.objectContaining({ name: 'Silver Coins', system: expect.objectContaining({ quantity: 2 }) })]);
 });

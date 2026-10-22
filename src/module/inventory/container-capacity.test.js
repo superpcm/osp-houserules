@@ -55,6 +55,18 @@ describe('checkWithdrawTarget — type acceptance', () => {
 });
 
 describe('checkWithdrawTarget — capacity', () => {
+  it('treats a vehicle-tagged container without an explicit size as large', () => {
+    const wagon = container({ name: 'Wagon', tags: ['vehicle'], capacity: 200 });
+    const shield = item({ name: 'Shield', type: 'armor', storedSize: 20, containerSizeRequired: 'large' });
+    expect(checkWithdrawTarget(shield, wagon, []).allowed).toBe(true);
+  });
+
+  it('honors an explicit medium vehicle size for large-only items', () => {
+    const wagon = container({ name: 'Wagon', tags: ['vehicle'], containerSize: 'medium', capacity: 200 });
+    const shield = item({ name: 'Shield', type: 'armor', storedSize: 20, containerSizeRequired: 'large' });
+    expect(checkWithdrawTarget(shield, wagon, []).allowed).toBe(false);
+  });
+
   it('rejects when the container is full, with a capacity reasonType and required/available in the message', () => {
     const small = container({ capacity: 1 });
     const existing = [{ id: 'x1', type: 'item', system: { containerId: 'c1', storedSize: 0.9, quantity: 1 } }];
@@ -86,12 +98,14 @@ describe('getUsedCapacity / getEffectiveDropSize', () => {
     expect(getUsedCapacity(container(), items)).toBe(1); // 0.5 * 2
   });
 
-  it('includes nested sub-container contents recursively', () => {
+  it('counts only a nested container own bulk in its parent', () => {
     const items = [
       { id: 'sub', type: 'container', system: { containerId: 'c1', storedSize: 1, quantity: 1, lashed: false } },
       { id: 'inner', type: 'item', system: { containerId: 'sub', storedSize: 2, quantity: 1, lashed: false } },
     ];
-    expect(getUsedCapacity(container(), items)).toBe(1 + 2);
+    expect(getUsedCapacity(container(), items)).toBe(1);
+    expect(getUsedCapacity({ id: 'sub' }, items)).toBe(2);
+    expect(getEffectiveDropSize({ _id: 'sub', type: 'container', system: { storedSize: 1, quantity: 1 } }, items)).toBe(1);
   });
 
   it('effective drop size scales with quantity for the item being dropped', () => {

@@ -1,3 +1,5 @@
+import { repairInventoryLinksFromToolkit } from '../inventory/item-removal-ui.js';
+import { changeSpellState } from '../spells/spellcasting.js';
 /**
  * @file DM's Toolkit — GM-only sidebar tab with party utility actions.
  */
@@ -5,7 +7,13 @@
 import { AddItemDialog } from "../dialog/add-item/add-item-dialog.js";
 import { AddMagicItemDialog } from "../dialog/add-magic-item-dialog.js";
 import { getAbilityModifier } from "../../config/classes.js";
+import { awardXP } from '../progression/xp-awards.js';
+import { openCatalogReconciliation } from '../inventory/catalog-reconciliation-ui.js';
+import { openXPAwardHistory } from '../progression/xp-award-ui.js';
 import { BankDmLedgersView } from "../apps/bank-dm-ledgers-view.js";
+import { changeHealth } from "../health/health-authority.js";
+import { healthSnapshot } from "../health/health-rules.js";
+import { ospDialogOptions } from '../dialog/dialog-theme.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { AbstractSidebarTab } = foundry.applications.sidebar;
@@ -21,6 +29,9 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       exportCharacters: DmToolkitTab._onExportCharacters,
       giveXP: DmToolkitTab._onGiveXP,
       setXP: DmToolkitTab._onSetXP,
+      xpHistory: DmToolkitTab._onXPHistory,
+      catalogReview: DmToolkitTab._onCatalogReview,
+      repairInventoryLinks: DmToolkitTab._onRepairInventoryLinks,
       setMaxHP: DmToolkitTab._onSetMaxHP,
       editAbilityScore: DmToolkitTab._onEditAbilityScore,
       editSkillValue: DmToolkitTab._onEditSkillValue,
@@ -45,6 +56,20 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     context.playerLockActive = game.settings.get("osp-houserules", "playerLock");
     context.storeLockActive  = game.settings.get("osp-houserules", "storeLock");
     return context;
+  }
+
+  static async _onRepairInventoryLinks() {
+    try { return await repairInventoryLinksFromToolkit(); }
+    catch (error) { ui.notifications.warn(error.message); }
+  }
+
+  static async _onCatalogReview() {
+    try { return await openCatalogReconciliation(); }
+    catch (error) { ui.notifications.warn(error.message); }
+  }
+
+  static async _onXPHistory() {
+    openXPAwardHistory();
   }
 
   static async _onAddItem(_event, _target) {
@@ -76,7 +101,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
   static async _onRest(_event, _target) {
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: "Rest the Party" },
-      content: "<p>Reset all spell slots for every player character?</p>",
+      content: "<p>Confirm that every player character has had uninterrupted sleep and one hour for spell preparation. Restore used spell slots while preserving uncast prepared spells?</p>",
       yes: { label: "Yes" },
       no: { label: "Cancel" }
     });
@@ -85,25 +110,21 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     const pcs = game.actors.filter(a => a.type === "character");
     await DmToolkitTab._resetSpellSlots(pcs);
 
-    ui.notifications.info("Rest complete — all spell slots and memorized spells cleared.");
+    ui.notifications.info("Rest complete — used spell slots restored; uncast prepared spells preserved.");
   }
 
   static async _resetSpellSlots(pcs) {
-    const slotUpdates = {};
-    for (let i = 1; i <= 6; i++) {
-      slotUpdates[`system.spellSlots.${i}.used`] = 0;
-    }
-
     for (const actor of pcs) {
-      await actor.update(slotUpdates);
-      await actor.unsetFlag("osp-houserules", "memorizedSpells");
+      if (healthSnapshot(actor).dead) continue;
+      const result = await changeSpellState(actor, { action: 'rest', confirmed: true });
+      if (!result.success) throw new Error(`${actor.name}: ${result.reason}`);
     }
   }
 
   static async _onAwardRest(_event, _target) {
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: "Award Rest" },
-      content: "<p>Heal every player character (1d4 + CON modifier, minimum 1 HP, up to max HP) and reset all spell slots?</p>",
+      content: "<p>Heal every player character (1d4 + CON modifier, minimum 1 HP, up to max HP) and restore used spell slots after uninterrupted sleep and one hour for preparation? Uncast prepared spells are preserved.</p>",
       yes: { label: "Yes" },
       no: { label: "Cancel" }
     });
@@ -112,27 +133,20 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     const pcs = game.actors.filter(a => a.type === "character");
 
     let totalHealed = 0;
+    let healedActors = 0;
     for (const actor of pcs) {
-      const current = actor.system.hitpoints ?? 0;
-      const max = actor.system.maxhitpoints ?? current;
-      if (current >= max) continue;
-
-      const conMod = getAbilityModifier(actor.system.attributes?.con?.value);
-      const roll = await new Roll("1d4").evaluate();
-      const healed = Math.max(1, roll.total + conMod);
-      const newHP = Math.min(current + healed, max);
-      totalHealed += newHP - current;
-
-      await actor.update({ "system.hitpoints": newHP });
-
-      const speaker = ChatMessage.getSpeaker({ actor });
-      const flavor = `${actor.name} — Award Rest: <strong>+${newHP - current} HP</strong> (now ${newHP}/${max})`;
-      await roll.toMessage({ speaker, flavor: DOMPurify.sanitize(flavor) });
+      const snapshot = healthSnapshot(actor);
+      if (snapshot.dead || snapshot.bleed || snapshot.hp >= snapshot.maxHp) continue;
+      const result = await changeHealth(actor, { action: 'naturalHealing', confirmed: true });
+      if (!result?.success) { ui.notifications.warn(`${actor.name}: ${result?.reason || 'Healing pending GM recovery.'}`); continue; }
+      if (result.afterHP <= result.beforeHP) continue;
+      healedActors += 1;
+      totalHealed += result.afterHP - result.beforeHP;
     }
 
     await DmToolkitTab._resetSpellSlots(pcs);
 
-    ui.notifications.info(`Award Rest complete — healed ${totalHealed} HP across ${pcs.length} character${pcs.length === 1 ? "" : "s"}; all spell slots restored.`);
+    ui.notifications.info(`Award Rest complete — healed ${totalHealed} HP across ${healedActors} character${healedActors === 1 ? "" : "s"}; eligible living characters had used spell slots restored.`);
   }
 
   static async _onExportCharacters(_event, _target) {
@@ -283,7 +297,9 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         </div>
       </div>`;
 
-    new Dialog({
+    const awardId = foundry.utils.randomID();
+    let awarding = false;
+    new Dialog(ospDialogOptions({
       title: "Give XP",
       content,
       buttons: {
@@ -291,9 +307,9 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
           icon: '<i class="fas fa-star"></i>',
           label: "Give",
           callback: async (html) => {
-            const amount = parseInt(html.find('#osp-xp-amount').val()) || 0;
-            if (amount <= 0) {
-              ui.notifications.warn("XP amount must be greater than 0.");
+            const amount = Number(html.find('#osp-xp-amount').val());
+            if (!Number.isSafeInteger(amount) || amount <= 0) {
+              ui.notifications.warn("XP amount must be a positive whole number.");
               return;
             }
 
@@ -303,16 +319,19 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
               return;
             }
 
-            for (const id of selectedIds) {
-              const actor = game.actors.get(id);
-              if (!actor) continue;
-              const current = parseInt(String(actor.system.xp ?? 0).replace(/,/g, '')) || 0;
-              const modifier = actor.system.xpModifier || 0;
-              const adjusted = Math.round(amount * (1 + modifier / 100));
-              await actor.update({ 'system.xp': current + adjusted }, { ospXPAward: true, ospXPAmount: adjusted });
+            if (awarding) return false;
+            awarding = true;
+            try {
+              const result = await awardXP({ amount, party: false, awardId,
+                actorRefs: selectedIds.map(id => ({ actorId: id, actorUuid: game.actors.get(id)?.uuid })) });
+              if (!result.success) {
+                ui.notifications.warn(result.reason || 'XP award needs recovery in XP History.');
+                return false;
+              }
+              ui.notifications.info(`Awarded ${amount} base XP per character, with individual modifiers.`);
+            } finally {
+              awarding = false;
             }
-
-            ui.notifications.info(`Awarded ${amount} XP (with individual modifiers) to ${selectedIds.length} character${selectedIds.length === 1 ? "" : "s"}.`);
           }
         },
         cancel: {
@@ -332,7 +351,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         });
         html.find('#osp-xp-amount').focus();
       }
-    }).render(true);
+    })).render(true);
   }
 
   static async _onSetXP(_event, _target) {
@@ -359,7 +378,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         </div>
       </div>`;
 
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: "Set XP",
       content,
       buttons: {
@@ -397,7 +416,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         prefill();
         input.focus().select();
       }
-    }).render(true);
+    })).render(true);
   }
 
   static async _onSetMaxHP(_event, _target) {
@@ -424,7 +443,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         </div>
       </div>`;
 
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: "Set Max HP",
       content,
       buttons: {
@@ -462,7 +481,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         prefill();
         input.focus().select();
       }
-    }).render(true);
+    })).render(true);
   }
 
   static async _onEditSkillValue(_event, _target) {
@@ -514,7 +533,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         </div>
       </div>`;
 
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: "Edit Skill Value",
       content,
       buttons: {
@@ -557,7 +576,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         skillSelect.on('change', prefill);
         prefill();
       }
-    }).render(true);
+    })).render(true);
   }
 
   static async _onEditAbilityScore(_event, _target) {
@@ -595,7 +614,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         </div>
       </div>`;
 
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: "Edit Ability Score",
       content,
       buttons: {
@@ -638,7 +657,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         prefill();
         valueInput.focus().select();
       }
-    }).render(true);
+    })).render(true);
   }
 
   static async _onImportMonsters(_event, _target) {
@@ -650,7 +669,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
           placeholder='[{ "name": "Goblin", ... }]'></textarea>
       </div>`;
 
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: "Import Monsters",
       content,
       buttons: {
@@ -695,7 +714,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         }
       },
       default: "import"
-    }).render(true);
+    })).render(true);
   }
 
   static _mapMonsterData(m) {
@@ -849,7 +868,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         }
       },
       default: "update"
-    }, { width: 560 }).render(true);
+    }, ospDialogOptions({ width: 560 })).render(true);
   }
 
   static _mapMonsterItem(item) {

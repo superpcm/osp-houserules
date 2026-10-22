@@ -1,0 +1,24 @@
+
+> osp-houserules@1.0.12 test
+> vitest run scripts/pack-snapshot.test.js --maxWorkers=2 --hookTimeout=30000
+
+
+ RUN  v3.2.7 /System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules
+
+ ✓ scripts/pack-snapshot.test.js (11 tests) 37520ms
+   ✓ BR-25 closed pack/catalog snapshot > preserves every original byte and exports sorted records with a stable pack/catalog identity  6782ms
+   ✓ BR-25 closed pack/catalog snapshot > includes a changed catalog in the canonical identity  5988ms
+   ✓ BR-25 closed pack/catalog snapshot > fails closed while ClassicLevel actually holds the original LOCK  2599ms
+   ✓ BR-25 closed pack/catalog snapshot > keeps the POSIX lock held after source LOCK has been hashed and copied  556ms
+   ✓ BR-25 closed pack/catalog snapshot > reports an empty database without treating it as catalog acceptance  2735ms
+   ✓ BR-25 closed pack/catalog snapshot > refuses existing or unsafe output without modifying source inputs  5133ms
+   ✓ BR-25 closed pack/catalog snapshot > rejects missing inputs and symlink/hardlink input aliases  7742ms
+   ✓ BR-25 closed pack/catalog snapshot > rejects malformed databases rather than silently creating a fresh empty pack  2798ms
+   ✓ BR-25 closed pack/catalog snapshot > rejects source change during copy and publishes no partial output  333ms
+   ✓ BR-25 closed pack/catalog snapshot > fails closed on unsupported platforms and unsafe manifest paths  2731ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  00:26:04
+   Duration  72.57s (transform 1.06s, setup 0ms, collect 9.55s, tests 37.52s, environment 0ms, prepare 6.30s)
+

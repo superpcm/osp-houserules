@@ -1,0 +1,8 @@
+{
+  "command": "rtk proxy /opt/homebrew/opt/node@24/bin/node scripts/pack-snapshot.js --root /private/var/folders/pc/ts104dqj2dgdfg5s9d1d85c00000gn/T/osp-br25-m1-fixture-W2hjAh --output release/br25-m1-fixture-a",
+  "result": "No output or staging progress observed; interrupted owned process with SIGINT",
+  "exitCode": 130,
+  "acceptedArtifact": false,
+  "artifactExists": false,
+  "interpretation": "Cause not established; no success claim. Local-output fixture check follows."
+}

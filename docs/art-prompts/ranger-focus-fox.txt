@@ -1,0 +1,29 @@
+ITEM TO CREATE: Ranger's Spell Focus — Hand-Whittled Fox Token
+
+Create a single fantasy tabletop RPG inventory item icon of a Ranger's hand-whittled wooden fox token. Output a 1024x1024 square image with a genuinely transparent alpha background.
+
+Style requirements:
+Render the item in a semi-realistic hand-painted OSR fantasy equipment style, matching classic tabletop roleplaying game inventory art. The object should be isolated, centered, and fully visible, with a clean transparent background. Use dark brown or black hand-drawn outlines, soft painterly shading, muted earthy medieval colors, and subtle highlights. The item should look practical, worn, and usable rather than ornate or magical.
+
+Context:
+A small wooden spell-focus token personally carved or whittled by a Ranger into the likeness of a fox, a forest animal native to the area they range. The wood was gathered as dead wood from a special tree, never cut from a living tree. Show a recognizable simple seated fox silhouette, pointed ears and a substantial curled tail, carved entirely from a single piece of natural weathered brown wood. It is clearly a wooden animal carving, not a living fox: visible knife-cut facets, understated grain, a few small natural imperfections, and gently worn edges. A plain short leather thong through a small drilled hole allows it to be displayed; the simple cord and carved token together are one inventory item. No metal fittings, gems, runes, writing, leaves, branches, or extra objects.
+
+Semi-realistic hand-painted fantasy equipment art, muted medieval palette, clean dark outlines, soft shading, transparent background, item-only.
+
+Composition requirements:
+Show only the item itself, not a character, not a hand holding it, and not a full scene. Use a simple three-quarter view or slightly angled front view. Keep the silhouette readable at 96x96 thumbnail size. Center the fully visible token with the short plain cord loosely arranged above it; the carved fox should dominate the image. Include believable wood grain, whittling facets, wear and leather fibers.
+
+Lighting and rendering:
+Use soft neutral lighting from the upper left, with gentle shadows painted onto the item itself. Avoid harsh dramatic lighting, glossy digital effects, photorealism, cel shading, anime styling, 3D rendering, or modern concept-art polish. The item should feel like it belongs in the same equipment set as hand-painted medieval adventuring gear.
+
+Color palette:
+Use restrained natural browns, tans and ochres, weathered wood and worn leather. The fox is unpainted wood, no colored fur. Avoid neon colors, saturated fantasy glow, excessive gold, or high-contrast modern game icon colors.
+
+Background:
+Transparent background only. No scenery, no table surface, no decorative frame, no parchment card, no text, no label, no border, no shadow cast onto a floor.
+
+Consistency controls:
+Maintain the same proportions, brush texture, outline weight, muted palette, and isolated inventory-icon presentation as classic hand-painted medieval adventuring gear. Do not drift into photorealistic product render, cartoon icon, high-fantasy magic item, video game loot icon, flat vector art, or painterly splash art.
+
+Negative prompt:
+character, person, hand holding item, living fox, realistic fur, full scene, background environment, frame, border, label, text, logo, UI icon frame, glowing aura, magic particles, neon colors, photorealistic render, 3D render, flat vector, anime, cartoon, modern object, excessive ornamentation, overly clean new materials, dramatic shadows, cinematic lighting, clutter, multiple unrelated objects

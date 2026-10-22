@@ -1,0 +1,29 @@
+ITEM TO CREATE: Lute — Bard's Spell Focus
+
+Create a single fantasy tabletop RPG inventory item icon of a medieval lute used as a Bard's Spell Focus. Output a 1024x1024 square image with a genuinely transparent alpha background.
+
+Style requirements:
+Render the item in a semi-realistic hand-painted OSR fantasy equipment style, matching classic tabletop roleplaying game inventory art. Isolated, centered, fully visible, with a clean transparent background. Dark brown or black hand-drawn outlines, soft painterly shading, muted earthy medieval colors, and subtle highlights. Practical, worn, usable adventuring equipment rather than ornate or magical.
+
+Context:
+One well-used medieval lute, with a pear-shaped wooden body and a rounded bowl back made of narrow curved wooden ribs. A pale weathered honey-tan soundboard has a single modest pierced wooden rosette soundhole. A short dark hardwood neck leads to the characteristic pegbox bent backward at a clear angle, with simple wooden tuning pegs. Fine natural gut strings run continuously from the wooden bridge over the soundboard and neck to the pegbox. Softly worn edges, subtle scratches, believable wood grain and slight hand wear show a working travelling musician's instrument. Simple construction and understated rosette, no gilding, jewels, runes, magical glow or excessive decoration. No modern guitar shape, no flat guitar back, no metal machine tuners or electric components. Do not add a case, loose pick, strap, stand or other separate objects.
+
+Semi-realistic hand-painted fantasy equipment art, muted medieval palette, clean dark outlines, soft shading, transparent background, item-only.
+
+Composition requirements:
+Show only the whole instrument itself, not a character, not a hand holding it, and not a full scene. Three-quarter front view angled slightly from lower left body to upper right neck, showing soundboard, some rounded ribbed bowl depth, and the bent pegbox. Fully visible with comfortable transparent margins. Keep the pear-shaped silhouette readable at 96x96 thumbnail size. Strings and instrument construction must remain coherent and believable.
+
+Lighting and rendering:
+Soft neutral upper-left lighting, gentle shadows painted onto the instrument itself. Avoid harsh dramatic lighting, glossy digital effects, photorealism, cel shading, anime styling, 3D rendering, or modern concept-art polish. Match hand-painted medieval adventuring gear.
+
+Color palette:
+Restrained honey-tan and ochre soundboard, muted warm brown ribbed bowl, dark brown hardwood neck and pegs, pale natural gut strings. Avoid neon colors, saturated fantasy glow, excessive gold, or high-contrast modern game icon colors.
+
+Background:
+Genuinely transparent background only. No scenery, table, floor, decorative frame, parchment card, text, label, border, or shadow cast onto a floor.
+
+Consistency controls:
+Maintain the brush texture, dark outline weight, muted palette, and isolated equipment-icon presentation used for the Ranger's wooden fox token, Druid's mistletoe sprig, and Mage's Staff. Do not drift into photorealistic product render, cartoon icon, high-fantasy magic item, video game loot icon, flat vector art, or painterly splash art.
+
+Negative prompt:
+character, person, hand holding item, full scene, background environment, frame, border, label, text, logo, UI icon frame, glowing aura, magic particles, neon colors, photorealistic render, 3D render, flat vector, anime, cartoon, modern object, excessive ornamentation, overly clean new materials, dramatic shadows, cinematic lighting, clutter, multiple unrelated objects, modern guitar, electric guitar, metal tuning machines, extra necks, broken strings, floating strings, case, stand, cropped pegbox

@@ -1,0 +1,26 @@
+{
+  "revision": "327fbc73048223b9875045e6468fc53beca3de4a",
+  "branch": "main",
+  "dirtyWorkspace": true,
+  "selectedFilesChangedAtBaseline": {
+    "template.json": " M",
+    "PRODUCTION-READINESS-BURNDOWN.md": "??",
+    "docs/BR-07-RULE-AUTHORITY.md": "??",
+    "docs/BR-07-RULE-MATRIX.json": "??",
+    "docs/BR-25-CLOSED-SNAPSHOT.md": "??",
+    "scripts/pack-snapshot.js": "??",
+    "scripts/pack-snapshot.py": "??"
+  },
+  "newMilestoneSourceFiles": [
+    "scripts/pack-snapshot.js",
+    "scripts/pack-snapshot.py",
+    "scripts/pack-snapshot.test.js",
+    "docs/BR-25-CLOSED-SNAPSHOT.md",
+    "docs/qa/BR-25-M1/build-handoff.py",
+    "docs/qa/BR-25-M1/create-fixture.mjs",
+    "docs/qa/BR-25-M1/verify-snapshot.py",
+    "docs/qa/BR-25-M1/inspect-remote-locks.py"
+  ],
+  "exactBytes": "Source snapshot manifest hashes capture all selected files; Git HEAD alone does not identify this dirty version.",
+  "excludedChanges": "Existing runtime changes outside milestone source scope remain preserved; full release freeze not claimed."
+}

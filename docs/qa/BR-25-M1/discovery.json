@@ -1,0 +1,25 @@
+{
+  "validation": "implementer-reported discovery; no database content acceptance",
+  "declaredPacks": [
+    "packs/weapons",
+    "packs/armor",
+    "packs/gear"
+  ],
+  "undeclaredPack": "packs/westford-ammo",
+  "catalogCounts": {
+    "weapons": 34,
+    "armor": 17,
+    "gear": 52,
+    "ammunition": 5,
+    "clothing": 10,
+    "livestock": 14,
+    "tack": 10,
+    "treasure": 20,
+    "misc": 7,
+    "vehicles": 2
+  },
+  "spellsShape": "object with 3 top-level keys",
+  "overlay": "LOCAL-DEVELOPMENT.md states mutable dev packs are independent copies",
+  "packager": "scripts/package-release.js copies mutable dirs directly; unchanged in this milestone",
+  "destination": "No accessible Space/Page recovered; existing local project and repository docs remain destination"
+}

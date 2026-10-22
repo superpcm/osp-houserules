@@ -1131,6 +1131,11 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   justify-content: flex-start;
 }
 
+// Keep Gear names legible on parchment instead of inheriting Foundry's light heading color.
+.osp.sheet.actor.character .tab[data-tab="gear"] .item-name {
+  color: #78694D;
+}
+
 .quantity input {
   width: 40px;
   border: none;

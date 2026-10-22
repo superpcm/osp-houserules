@@ -1,0 +1,22 @@
+{
+  "originalRejectedArchives": {
+    "source": "af40be68fe43663f58b15afb50bc76f1b9268d5ce361527dc1fed8b4d15103a6",
+    "qa": "0a3fff34316664b8af24207898e2a3982e4dec62672e618e2fcbc6f254c5ac85"
+  },
+  "r1Archives": {
+    "source": "a7f0865b292bf353eb2771aabb1ea40c183c919b9fda5eaefd92dfa53663b3cd",
+    "qa": "ea6732720891baef66cecfcbf88ac003f48d04756f1c000e60f0d6c52f550e5f"
+  },
+  "sst": [
+    {
+      "file": "000008.ldb",
+      "beforeSha256": "40f8ef76a0f877bd900e856c5507e9c5b8c32cb02f111398ac786b036f3736ed",
+      "afterSha256": "387a300874d0c97d246033b404b439f5b01d882abb36444169e3889811f3e04e"
+    },
+    {
+      "file": "000009.ldb",
+      "beforeSha256": "b7008a7dac7829bfcd4b4556191d2340df56d290ea38c5dc7be8b200e51c3c4e",
+      "afterSha256": "b7008a7dac7829bfcd4b4556191d2340df56d290ea38c5dc7be8b200e51c3c4e"
+    }
+  ]
+}

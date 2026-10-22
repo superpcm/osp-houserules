@@ -1,4 +1,39 @@
 <div class="osp-bank-dm-ledgers-view flexcol">
+  {{#if hasPendingOperations}}
+    <section class="osp-bank-pending-recoveries">
+      <h2>Pending authority operations</h2>
+      <p>New bank and store edits are blocked until these requests are reconciled.</p>
+      {{#each pendingOperations}}
+        <article>
+          <strong>{{action}}</strong>
+          <details><summary>Inspect operation {{operationId}}</summary><pre>{{detailsJson}}</pre></details>
+          <button type="button" data-action="recoverOperation" data-operation-id="{{operationId}}">Retry recovery</button>
+        </article>
+      {{/each}}
+    </section>
+  {{/if}}
+  {{#if hasPendingRecoveries}}
+    <section class="osp-bank-pending-recoveries" aria-labelledby="osp-bank-pending-recoveries-heading">
+      <h2 id="osp-bank-pending-recoveries-heading">Pending transfer recovery</h2>
+      <p class="osp-bank-empty-note">Inventory transfers below are blocked until they are recovered. Inspect the journal snapshot, then retry recovery.</p>
+      {{#each pendingRecoveries}}
+        <article class="osp-bank-pending-recovery" data-actor-id="{{actorId}}" data-actor-uuid="{{actorUuid}}">
+          <div class="osp-bank-pending-recovery-header">
+            <strong>{{actorName}}</strong>
+            <span>{{label}}</span>
+            <time datetime="{{createdAt}}">{{timeLabel}}</time>
+          </div>
+          <details>
+            <summary>Inspect transfer {{operationId}}</summary>
+            <pre>{{detailsJson}}</pre>
+          </details>
+          <span role="button" tabindex="0" class="osp-bank-action-btn" data-action="recoverTransaction" data-actor-id="{{actorId}}" data-actor-uuid="{{actorUuid}}" title="Recover pending transfer">
+            <i class="fas fa-rotate"></i> Retry recovery
+          </span>
+        </article>
+      {{/each}}
+    </section>
+  {{/if}}
   {{#if hasLedgers}}
     {{#each ledgers}}
       <div class="osp-bank-dm-ledger-card" data-actor-id="{{actorId}}">

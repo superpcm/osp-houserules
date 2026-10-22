@@ -8,6 +8,7 @@
  */
 
 import { ensureDirectory } from "./add-item/image-pipeline.js";
+import { resolveFullResolutionImagePath } from "../cards/item-image-path.js";
 
 /**
  * Renders a gold drop-shadow glow around `srcImg` and uploads the result,
@@ -86,12 +87,7 @@ export async function generateGlowImage(srcImg, uploadTarget = null) {
  * thumb path. Used when enchanting an existing item (its thumb is already on disk).
  */
 export function resolveFullRes(imgPath) {
-  const THUMB_BASE = 'systems/osp-houserules/assets/thumbs/images/';
-  if (imgPath && imgPath.includes(THUMB_BASE)) {
-    const relative = imgPath.slice(imgPath.indexOf(THUMB_BASE) + THUMB_BASE.length);
-    return 'systems/osp-houserules/assets/images/' + relative.replace('_thumb.webp', '.webp');
-  }
-  return imgPath;
+  return resolveFullResolutionImagePath(imgPath);
 }
 
 /**

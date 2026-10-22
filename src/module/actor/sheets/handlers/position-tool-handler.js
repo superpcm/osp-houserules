@@ -5,12 +5,21 @@
  * that allows users to adjust field x,y coordinates and width/height dimensions.
  */
 import { savePositionOverride, removePositionOverride } from './position-file-writer.js';
+import { ospDialogOptions } from '../../../dialog/dialog-theme.js';
 
 export class PositionToolHandler {
   constructor(html, actor) {
     this.html = html;
     this.actor = actor;
     this.positionDialog = null;
+  }
+
+  _ownerDocument(element) {
+    return element?.[0]?.ownerDocument ?? this.html?.[0]?.ownerDocument ?? globalThis.document;
+  }
+
+  _ownerWindow(element) {
+    return this._ownerDocument(element)?.defaultView ?? globalThis.window;
   }
 
   /**
@@ -172,7 +181,7 @@ export class PositionToolHandler {
     `;
 
     // Create and show the dialog using Foundry's Dialog class
-    this.positionDialog = new Dialog({
+    this.positionDialog = new Dialog(ospDialogOptions({
       title: `Position Tool - ${positionData.name}`,
       content: content,
       buttons: {
@@ -208,7 +217,7 @@ export class PositionToolHandler {
       render: (html) => {
         this.setupDialogEventHandlers(html, positionData);
       }
-    });
+    }));
 
     this.positionDialog.render(true);
   }
@@ -256,7 +265,7 @@ export class PositionToolHandler {
    * Get current position and size data for an element
    */
   getElementPositionData(element) {
-    const computedStyle = window.getComputedStyle(element[0]);
+    const computedStyle = this._ownerWindow(element).getComputedStyle(element[0]);
     const classList = element[0].className;
     
     // Extract position class name - check cs-pos-* first, then fallback to other types
@@ -321,7 +330,7 @@ export class PositionToolHandler {
    */
   updateElementPosition(element, newData) {
 
-    const root = document.documentElement;
+    const root = this._ownerDocument(element).documentElement;
     
     // Safety check for cssClass
     if (!newData.cssClass) {
@@ -341,7 +350,7 @@ export class PositionToolHandler {
     }
     
     // Get element's current computed and inline styles for debugging
-    const computedBefore = window.getComputedStyle(element[0]);
+    const computedBefore = this._ownerWindow(element).getComputedStyle(element[0]);
     const inlineBefore = {
       left: element[0].style.left,
       top: element[0].style.top,
@@ -415,7 +424,7 @@ export class PositionToolHandler {
     element[0].offsetHeight;
     
     // Check styles AFTER update
-    const computedAfter = window.getComputedStyle(element[0]);
+    const computedAfter = this._ownerWindow(element).getComputedStyle(element[0]);
     const inlineAfter = {
       left: element[0].style.left,
       top: element[0].style.top,
@@ -438,7 +447,7 @@ export class PositionToolHandler {
     this.currentGuideElement = element;
     
     // Store the original border style (handle both inline and computed styles)
-    const computedStyle = window.getComputedStyle(element[0]);
+    const computedStyle = this._ownerWindow(element).getComputedStyle(element[0]);
     this.originalBorderStyle = element[0].style.border || '';
     this.originalBorderColor = element[0].style.borderColor || computedStyle.borderColor || '';
     this.originalBorderWidth = element[0].style.borderWidth || computedStyle.borderWidth || '';

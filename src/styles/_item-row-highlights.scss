@@ -1,0 +1,12 @@
+// Target the row itself so nested contents never light up an ancestor container.
+.application.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab='gear'].active) .tab[data-tab='gear'] .gear-scrollable-content .item-header {
+  background-color: transparent !important;
+
+  &:is(:hover, :focus-within) {
+    background-color: rgba(122, 74, 35, .14) !important;
+
+    > :is(.item-name, .field-short, .field-long, .item-controls) {
+      background-color: transparent !important;
+    }
+  }
+}

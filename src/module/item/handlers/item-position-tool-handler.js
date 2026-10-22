@@ -4,6 +4,8 @@
  * This handler allows users to adjust field x,y coordinates and width/height dimensions
  * on item, weapon, armor, and container sheets.
  */
+import { ospDialogOptions } from '../../dialog/dialog-theme.js';
+
 export class ItemPositionToolHandler {
   constructor(html, item) {
     this.html = html;
@@ -169,7 +171,7 @@ export class ItemPositionToolHandler {
     `;
 
     // Create and show the dialog using Foundry's Dialog class
-    this.positionDialog = new Dialog({
+    this.positionDialog = new Dialog(ospDialogOptions({
       title: `Item Position Tool - ${positionData.name}`,
       content: content,
       buttons: {
@@ -210,7 +212,7 @@ export class ItemPositionToolHandler {
       render: (html) => {
         this.setupDialogEventHandlers(html, positionData);
       }
-    });
+    }));
 
     this.positionDialog.render(true);
   }
@@ -263,7 +265,7 @@ export class ItemPositionToolHandler {
     `;
 
     // Create a dialog to show the CSS rule
-    new Dialog({
+    new Dialog(ospDialogOptions({
       title: "CSS Rule Generated",
       content: message,
       buttons: {
@@ -286,7 +288,7 @@ export class ItemPositionToolHandler {
         }
       },
       default: "copy"
-    }).render(true);
+    })).render(true);
 
     // Also apply the changes immediately for preview
     const newData = {

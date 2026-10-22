@@ -1,0 +1,194 @@
+{
+  "format": "osp-houserules-br25-snapshot-v1",
+  "builtAt": "2026-10-03T05:53:53.700Z",
+  "source": {
+    "capture": "all declared POSIX LOCKs held; original databases never opened",
+    "capturedAt": "2026-10-03T05:53:53.650838+00:00",
+    "catalogs": [
+      "ammunition",
+      "armor",
+      "clothing",
+      "gear",
+      "livestock",
+      "misc",
+      "spells",
+      "tack",
+      "treasure",
+      "vehicles",
+      "weapons"
+    ],
+    "directories": [
+      "packs/qa-fixture"
+    ],
+    "format": "osp-houserules-br25-raw-v1",
+    "packs": [
+      {
+        "name": "qa-fixture",
+        "path": "packs/qa-fixture",
+        "type": "Item"
+      }
+    ],
+    "sourceFiles": {
+      "data/ammunition.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "data/armor.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "data/clothing.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "data/gear.json": "0892471a84d7efe72e7d3c15f156fbed07c083d504d1c24c3f5eebce92766cc4",
+      "data/item-templates.js": "450f0af4f4c1ecc4c7180f2e364c8a59bfed69dd350fb6b47bce8641c2a37786",
+      "data/livestock.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "data/misc.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "data/spells.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "data/tack.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "data/treasure.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "data/vehicles.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "data/weapons.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "package-lock.json": "14011891d804b861e00c0a531b79c5906059e505592fd3751b980a10a49c3373",
+      "package.json": "04147b1184c9283f36be8220147f66005c6c2593d024f8ce045faab827b980d8",
+      "packs/qa-fixture/000003.log": "8cddba2579de0f576c8c3648f8a5f89940e589abc5e0f733b5af1852cf707f40",
+      "packs/qa-fixture/CURRENT": "1005a525006f148c86efcbfb36c6eac091b311532448010f70f7de9a68007167",
+      "packs/qa-fixture/LOCK": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "packs/qa-fixture/LOG": "1781baaecaf4339f0eb52faf4165975164d7c116aec7832cdd0210bb55cfbf75",
+      "packs/qa-fixture/MANIFEST-000002": "e292f241daafc3df90f3e2d339c61c6e2787a0d0739aac764e1ea9bb8544ee97",
+      "system.json": "461c4b059036856f3b0549a92763ac7a717184122b46d5efccec7e92dfe26f2c",
+      "template.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "sourceRoot": "/Users/paul/Documents/Codex/2026-10-03/task-2/r1/qa/BR25-M1-R1-QA/fixture"
+  },
+  "packs": [
+    "qa-fixture"
+  ],
+  "requiredFiles": [
+    "data/ammunition.json",
+    "data/armor.json",
+    "data/clothing.json",
+    "data/gear.json",
+    "data/livestock.json",
+    "data/misc.json",
+    "data/spells.json",
+    "data/tack.json",
+    "data/treasure.json",
+    "data/vehicles.json",
+    "data/weapons.json",
+    "data/item-templates.js",
+    "system.json",
+    "template.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "catalogDiagnostics": {
+    "ammunition.json": {
+      "shape": "array",
+      "count": 0
+    },
+    "armor.json": {
+      "shape": "array",
+      "count": 0
+    },
+    "clothing.json": {
+      "shape": "array",
+      "count": 0
+    },
+    "gear.json": {
+      "shape": "array",
+      "count": 2
+    },
+    "livestock.json": {
+      "shape": "array",
+      "count": 0
+    },
+    "misc.json": {
+      "shape": "array",
+      "count": 0
+    },
+    "spells.json": {
+      "shape": "object",
+      "count": null
+    },
+    "tack.json": {
+      "shape": "array",
+      "count": 0
+    },
+    "treasure.json": {
+      "shape": "array",
+      "count": 0
+    },
+    "vehicles.json": {
+      "shape": "array",
+      "count": 0
+    },
+    "weapons.json": {
+      "shape": "array",
+      "count": 0
+    }
+  },
+  "packDiagnostics": {
+    "qa-fixture": {
+      "records": 2,
+      "itemDocuments": 2,
+      "types": {
+        "item": 2
+      },
+      "invalidJsonValues": 0,
+      "otherRecords": 0,
+      "canonicalFileSha256": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325",
+      "roundTripVerified": true,
+      "walIntegrityVerified": true,
+      "nativeRecoveryVerified": true,
+      "integrity": {
+        "physicalRecords": 4,
+        "logicalRecords": 4,
+        "files": 2
+      },
+      "rawTreeSha256": "5426c5d3669c0d22f3594d4c67ea6c3094340e67030d62078bd51d6ffbdb7861",
+      "warnings": []
+    }
+  },
+  "provenance": {
+    "sourceRevision": {
+      "available": false,
+      "error": "fatal: not a git repository (or any of the parent directories): .git"
+    },
+    "branch": {
+      "available": false,
+      "error": "fatal: not a git repository (or any of the parent directories): .git"
+    },
+    "workspaceStatus": {
+      "available": false,
+      "error": "fatal: not a git repository (or any of the parent directories): .git"
+    },
+    "runtime": {
+      "node": "v22.22.3",
+      "platform": "darwin",
+      "osRelease": "27.0.0",
+      "architecture": "arm64",
+      "python": "Python 3.12.0",
+      "classicLevel": "3.0.0"
+    },
+    "toolHashes": {
+      "pack-snapshot.js": "5b6281113f34acf9f7f6efabb96068572b86c821203c163b26b8a1e6a913be2f",
+      "pack-snapshot.py": "da053c17c1dd841ecfa755bcd6824a060d39f836898c8a40c65e2658a1e05e7a",
+      "leveldb-log-integrity.js": "94d803c462ca22d1ceec346d28f8f159c9c63f51b8db6a94b9269681ab23bf6f"
+    },
+    "validation": "implementer-reported; Foundry/catalog/release acceptance pending"
+  },
+  "walIntegrityVerified": true,
+  "outputFiles": {
+    "data/ammunition.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/armor.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/clothing.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/gear.json": "0892471a84d7efe72e7d3c15f156fbed07c083d504d1c24c3f5eebce92766cc4",
+    "data/livestock.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/misc.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/spells.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "data/tack.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/treasure.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/vehicles.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/weapons.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "data/item-templates.js": "450f0af4f4c1ecc4c7180f2e364c8a59bfed69dd350fb6b47bce8641c2a37786",
+    "system.json": "461c4b059036856f3b0549a92763ac7a717184122b46d5efccec7e92dfe26f2c",
+    "template.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "package.json": "04147b1184c9283f36be8220147f66005c6c2593d024f8ce045faab827b980d8",
+    "package-lock.json": "14011891d804b861e00c0a531b79c5906059e505592fd3751b980a10a49c3373",
+    "canonical/qa-fixture.json": "aa1a51a451dc71d0432f5ff85c5ec2c7925d082f86e96cf40f1d35507f5c0325"
+  },
+  "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97"
+}

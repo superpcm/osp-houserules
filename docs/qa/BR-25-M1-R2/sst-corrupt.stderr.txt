@@ -1,0 +1,6 @@
+Error: packs/qa-fixture/000008.ldb: data checksum mismatch at 0
+    at fail (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/leveldb-table-integrity.js:9:39)
+    at readBlock (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/leveldb-table-integrity.js:166:83)
+    at validateTable (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/leveldb-table-integrity.js:207:19)
+    at validateCapturedTables (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js:110:20)
+    at async main (file:///System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/scripts/pack-snapshot.js:128:28)

@@ -1,0 +1,297 @@
+{
+  "format": "osp-br23-world-export-v1",
+  "migrationVersion": 5,
+  "migrationHistory": [
+    "BR23-001-unit-weight",
+    "BR23-002-item-defaults",
+    "BR23-003-images",
+    "BR23-004-progression",
+    "BR23-005-ledgers"
+  ],
+  "source": {
+    "classification": "synthetic",
+    "legacyWeightUnits": "lb"
+  },
+  "actors": [
+    {
+      "_id": "actor-hero",
+      "name": "Mira",
+      "type": "character",
+      "system": {
+        "class": "Fighter",
+        "race": "Human",
+        "level": 3,
+        "hitpoints": 12,
+        "maxhitpoints": 16,
+        "xp": 4000,
+        "skills": {
+          "climbSheer": 2
+        },
+        "weight": "bodyweight"
+      },
+      "flags": {
+        "osp-houserules": {
+          "customActorData": {
+            "origin": "synthetic"
+          },
+          "bankLedger": {
+            "currency": {
+              "gold": 17,
+              "silver": 0,
+              "copper": 0
+            },
+            "items": [
+              {
+                "_id": "bank-item",
+                "quantity": 2,
+                "itemData": {
+                  "_id": "bank-item-data",
+                  "name": "Ruby"
+                }
+              }
+            ],
+            "log": [
+              {
+                "id": "log-1"
+              }
+            ]
+          },
+          "storehouse": {
+            "items": [
+              {
+                "_id": "stored-1",
+                "quantity": 3,
+                "itemData": {
+                  "name": "Rope",
+                  "system": {
+                    "quantity": 3
+                  }
+                }
+              }
+            ],
+            "log": []
+          },
+          "levelUpState": {
+            "version": 1,
+            "generation": 1,
+            "fromLevel": 3,
+            "targetLevel": 3,
+            "nextLevel": 4,
+            "status": "complete",
+            "levels": {},
+            "pendingClaim": null
+          },
+          "lastKnownLevel": 3
+        }
+      },
+      "items": [
+        {
+          "_id": "actor-belt",
+          "name": "Belt",
+          "type": "clothing",
+          "img": "systems/osp-houserules/assets/thumbs/images/clothing/belt_thumb.webp",
+          "system": {
+            "quantity": 1,
+            "legacyWeightUnits": "lb",
+            "unitWeight": 0.25,
+            "storedSize": 1,
+            "slotCost": 0,
+            "lashSlots": 6,
+            "lashAllowedSizes": [
+              "S",
+              "M"
+            ],
+            "allowedContainers": [],
+            "lashable": false,
+            "lashed": false,
+            "containerId": null,
+            "containerSizeRequired": ""
+          },
+          "flags": {
+            "custom": true
+          }
+        },
+        {
+          "_id": "actor-backpack",
+          "name": "Backpack",
+          "type": "container",
+          "system": {
+            "unitWeight": 2,
+            "containerId": null,
+            "quantity": 1,
+            "storedSize": 4,
+            "capacity": 20,
+            "containerSize": "medium",
+            "slotCost": 0,
+            "lashSlots": 4,
+            "blockedTypes": [
+              "slungable",
+              "sword"
+            ],
+            "allowedContainers": [],
+            "lashable": false,
+            "lashed": false,
+            "containerSizeRequired": ""
+          }
+        }
+      ]
+    },
+    {
+      "_id": "actor-monster",
+      "name": "Goblin",
+      "type": "monster",
+      "system": {
+        "hp": {
+          "value": 5,
+          "max": 5
+        },
+        "details": {
+          "xp": 10
+        }
+      },
+      "flags": {
+        "osp-houserules": {
+          "custom": "preserve",
+          "bankLedger": {
+            "currency": {
+              "gold": 0,
+              "silver": 0,
+              "copper": 0
+            },
+            "items": [],
+            "log": []
+          },
+          "storehouse": {
+            "items": [],
+            "log": []
+          }
+        }
+      },
+      "items": []
+    }
+  ],
+  "items": [
+    {
+      "_id": "world-backpack",
+      "name": "Backpack",
+      "type": "container",
+      "img": "systems/osp-houserules/assets/thumbs/images/gear/backpack_thumb.webp",
+      "system": {
+        "legacyWeightUnits": "lb",
+        "quantity": 1,
+        "customData": {
+          "keep": true
+        },
+        "unitWeight": 2,
+        "storedSize": 4,
+        "capacity": 20,
+        "containerSize": "medium",
+        "slotCost": 0,
+        "lashSlots": 4,
+        "blockedTypes": [
+          "slungable",
+          "sword"
+        ],
+        "allowedContainers": [],
+        "lashable": false,
+        "lashed": false,
+        "containerId": null,
+        "containerSizeRequired": ""
+      }
+    },
+    {
+      "_id": "world-rope",
+      "name": "Rope",
+      "type": "item",
+      "system": {
+        "unitWeight": 2,
+        "quantity": 1,
+        "containerId": "world-backpack",
+        "storedSize": 4,
+        "slotCost": 0,
+        "allowedContainers": [],
+        "lashable": false,
+        "lashed": false,
+        "containerSizeRequired": ""
+      }
+    },
+    {
+      "_id": "world-custom",
+      "name": "Custom Relic",
+      "type": "item",
+      "img": "custom/relic.webp",
+      "system": {
+        "quantity": 4,
+        "customField": "preserve",
+        "storedSize": 4,
+        "slotCost": 0,
+        "allowedContainers": [],
+        "lashable": false,
+        "lashed": false,
+        "containerId": null,
+        "containerSizeRequired": ""
+      }
+    }
+  ],
+  "settings": {
+    "osp-houserules.partyTreasury": {
+      "currency": {
+        "gold": 25,
+        "silver": 0,
+        "copper": 0
+      },
+      "items": [
+        {
+          "_id": "treasury-1",
+          "quantity": 1
+        }
+      ],
+      "log": []
+    },
+    "osp-houserules.partyStorehouse": {
+      "items": [],
+      "log": []
+    },
+    "osp-houserules.inventoryOperationReceipts": {
+      "receipt-1": {
+        "status": "complete"
+      }
+    },
+    "custom.setting": {
+      "keep": true
+    }
+  },
+  "compendiums": [
+    {
+      "packId": "synthetic.items",
+      "documentName": "Item",
+      "documents": [
+        {
+          "_id": "pack-belt",
+          "name": "Belt",
+          "type": "clothing",
+          "system": {
+            "unitWeight": 0.25,
+            "quantity": 1,
+            "storedSize": 1,
+            "slotCost": 0,
+            "lashSlots": 6,
+            "lashAllowedSizes": [
+              "S",
+              "M"
+            ],
+            "allowedContainers": [],
+            "lashable": false,
+            "lashed": false,
+            "containerId": null,
+            "containerSizeRequired": ""
+          }
+        }
+      ]
+    }
+  ],
+  "assetIndex": [
+    "systems/osp-houserules/assets/thumbs/images/clothing/belt_thumb.webp",
+    "systems/osp-houserules/assets/thumbs/images/gear/backpack_thumb.webp"
+  ]
+}

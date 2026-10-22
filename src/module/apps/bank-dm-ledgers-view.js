@@ -8,6 +8,8 @@
 import { getLedger } from "../inventory/bank-ledger-orchestrator.js";
 import { BankDmEditDialog } from "./bank-dm-edit-dialog.js";
 import { getPartyTreasury } from "../inventory/party-treasury.js";
+import { listInventoryOperations, recoverInventoryOperation, RECEIPTS_SETTING } from "../inventory/inventory-authority.js";
+import { listPendingTransactions, recoverTransaction } from "../inventory/transaction-journal.js";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
@@ -20,6 +22,8 @@ export class BankDmLedgersView extends HandlebarsApplicationMixin(ApplicationV2)
     position: { width: 640, height: 700 },
     actions: {
       manageLedger: BankDmLedgersView._onManageLedger,
+      recoverTransaction: BankDmLedgersView._onRecoverTransaction,
+      recoverOperation: BankDmLedgersView._onRecoverOperation,
     },
   };
 
@@ -67,6 +71,20 @@ export class BankDmLedgersView extends HandlebarsApplicationMixin(ApplicationV2)
       hasLog: partyLog.length > 0,
     }, ...personalLedgers];
     context.hasLedgers = context.ledgers.length > 0;
+    const pending = game.user?.isGM ? listPendingTransactions() : [];
+    context.pendingRecoveries = pending.map(({ actorId, actorUuid, actorName, record }) => ({
+      actorId,
+      actorUuid,
+      actorName,
+      label: record.label ?? "Inventory transfer",
+      createdAt: record.createdAt,
+      timeLabel: record.createdAt ? new Date(record.createdAt).toLocaleString() : "Unknown time",
+      operationId: record.id,
+      detailsJson: JSON.stringify(record.changes ?? [], null, 2),
+    }));
+    context.pendingOperations = game.user?.isGM ? listInventoryOperations().map(receipt => ({ ...receipt, detailsJson: JSON.stringify(receipt.transaction?.changes ?? [], null, 2) })) : [];
+    context.hasPendingOperations = context.pendingOperations.length > 0;
+    context.hasPendingRecoveries = context.pendingRecoveries.length > 0;
     return context;
   }
 
@@ -75,7 +93,7 @@ export class BankDmLedgersView extends HandlebarsApplicationMixin(ApplicationV2)
     super._onFirstRender?.(context, options);
     this._updateActorHook = (actor) => { if (actor.type === "character") this.render(); };
     Hooks.on("updateActor", this._updateActorHook);
-    this._updateSettingHook = (setting) => { if (setting.key === `${game.system.id}.partyTreasury`) this.render(); };
+    this._updateSettingHook = (setting) => { if ([`${game.system.id}.partyTreasury`, `${game.system.id}.${RECEIPTS_SETTING}`].includes(setting.key)) this.render(); };
     Hooks.on("updateSetting", this._updateSettingHook);
   }
 
@@ -110,5 +128,40 @@ export class BankDmLedgersView extends HandlebarsApplicationMixin(ApplicationV2)
     const actor = game.actors.get(actorId);
     if (!actor) return;
     new BankDmEditDialog({ actor }).render({ force: true });
+  }
+
+  static async _onRecoverOperation(_event, target) {
+    const result = await recoverInventoryOperation(target.dataset.operationId);
+    ui.notifications?.[result.success ? "info" : "error"]?.(result.reason ?? `Recovery ${result.outcome ?? "completed"}.`);
+    await this.render();
+  }
+
+  /** @this {BankDmLedgersView} */
+  static async _onRecoverTransaction(_event, target) {
+    if (!game.user?.isGM) {
+      ui.notifications?.error?.("Only the GM can recover pending inventory transfers.");
+      return;
+    }
+    const row = target.closest('[data-actor-id]');
+    const actorId = row?.dataset.actorId;
+    const actorUuid = row?.dataset.actorUuid;
+    let actor;
+    try { actor = actorUuid ? await fromUuid(actorUuid) : game.actors.get(actorId); }
+    catch (_error) { actor = null; }
+    if (!actor) {
+      ui.notifications?.error?.("The character for this pending transfer could not be found.");
+      return;
+    }
+    const result = await recoverTransaction(actor);
+    if (result.success && result.outcome === "committed") {
+      ui.notifications?.info?.("Pending transfer confirmed as committed.");
+    } else if (result.success && result.outcome === "restored") {
+      ui.notifications?.info?.("Pending transfer was restored to its original state.");
+    } else if (result.success) {
+      ui.notifications?.info?.(result.reason ?? "No pending transfer remains.");
+    } else {
+      ui.notifications?.error?.(result.reason ?? "Recovery is still pending; manual reconciliation is required.");
+    }
+    await this.render();
   }
 }

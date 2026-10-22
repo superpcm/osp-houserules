@@ -1,0 +1,22 @@
+{
+  "canonicalIdentity": "cf5dcfbaae859c631228f8d93fed66470906686b767999d4b4a3571dac311c97",
+  "dirtyWorkspace": true,
+  "generatedAt": "2026-10-03T23:21:32.861296+00:00",
+  "qaBundle": {
+    "builtAt": "2026-10-03T23:21:32.861296+00:00",
+    "bytes": 163601,
+    "entries": 112,
+    "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br25-m1-r2-qa-3defaa12144ea8d316edc079f7d897c4b69100ce176aa4170ad721b55a091372.zip",
+    "sha256": "3defaa12144ea8d316edc079f7d897c4b69100ce176aa4170ad721b55a091372"
+  },
+  "revision": "327fbc73048223b9875045e6468fc53beca3de4a",
+  "sourceIdentity": "227e1a4f6504d52da50477695cb6fe1d1873c71e56a7563a719e27a376f12b01",
+  "sourceSnapshot": {
+    "builtAt": "2026-10-03T23:21:32.861296+00:00",
+    "bytes": 229019,
+    "entries": 44,
+    "path": "/System/Volumes/Data/mnt/foundry/narlington-data/Data/systems/osp-houserules/release/osp-br25-m1-r2-source-a356e514c1251622865089f647094e4cb6de43ce1dc9fa3f48e203f55a17682a.zip",
+    "sha256": "a356e514c1251622865089f647094e4cb6de43ce1dc9fa3f48e203f55a17682a"
+  },
+  "status": "ready for independent retest; BR-25 unaccepted"
+}

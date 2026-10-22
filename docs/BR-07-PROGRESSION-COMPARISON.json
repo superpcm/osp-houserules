@@ -1,0 +1,5413 @@
+{
+  "status": "DRAFT; house tables approved over runtime, baseline-only classes awaiting baseline choice",
+  "sourceEvidence": {
+    "house": "data/ose_house_rules_v1_5.json custom_classes",
+    "profiles": "data/class_profiles.json classProfiles",
+    "xp": "src/module/actor/actor.js:246 -> src/config/classes.js:getLevelFromXP",
+    "hitDie": "src/module/actor/level-up.js:26 -> src/config/classes.js:getHitDieMax",
+    "attack": "src/module/actor/sheets/handlers/item-handler.js:1954 -> src/config/classes.js:getAttackBonus",
+    "saves": "src/module/actor/actor.js:_calculateSavingThrows (Human race, avoiding racial adjustments)",
+    "primes": "src/module/actor/actor.js:269 -> src/config/classes.js:calculateXPModifier"
+  },
+  "classes": [
+    {
+      "name": "Assassin",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d4",
+      "runtimeHitDie": "1d6",
+      "housePrimes": null,
+      "profilePrimes": [
+        "DEX"
+      ],
+      "runtimePrimes": [
+        "str",
+        "dex"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 1500,
+          "runtime": {
+            "xp": 1200,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 3000,
+          "runtime": {
+            "xp": 2400,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 6000,
+          "runtime": {
+            "xp": 4800,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 12000,
+          "runtime": {
+            "xp": 9600,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 25000,
+          "runtime": {
+            "xp": 20000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 50000,
+          "runtime": {
+            "xp": 40000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 100000,
+          "runtime": {
+            "xp": 80000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 200000,
+          "runtime": {
+            "xp": 160000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 300000,
+          "runtime": {
+            "xp": 280000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 425000,
+          "runtime": {
+            "xp": 400000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 575000,
+          "runtime": {
+            "xp": 520000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 750000,
+          "runtime": {
+            "xp": 640000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 900000,
+          "runtime": {
+            "xp": 760000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Barbarian",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d8",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "STR",
+        "CON"
+      ],
+      "runtimePrimes": [
+        "str",
+        "con"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 10,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2500,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 10,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 5000,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 10,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 10000,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 8,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 18500,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 8,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 37000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 8,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 85000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 140000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 270000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 400000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 4,
+              "wands": 7,
+              "paralysis": 6,
+              "breath": 8,
+              "spells": 7
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 530000,
+          "runtime": {
+            "xp": 480000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 4,
+              "wands": 7,
+              "paralysis": 6,
+              "breath": 8,
+              "spells": 7
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 660000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 4,
+              "wands": 7,
+              "paralysis": 6,
+              "breath": 8,
+              "spells": 7
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 790000,
+          "runtime": {
+            "xp": 720000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 3,
+              "wands": 5,
+              "paralysis": 4,
+              "breath": 5,
+              "spells": 5
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 920000,
+          "runtime": {
+            "xp": 840000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 3,
+              "wands": 5,
+              "paralysis": 4,
+              "breath": 5,
+              "spells": 5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bard",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d6",
+      "housePrimes": null,
+      "profilePrimes": [
+        "CHA"
+      ],
+      "runtimePrimes": [
+        "dex",
+        "cha"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2000,
+          "runtime": {
+            "xp": 1200,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 4000,
+          "runtime": {
+            "xp": 2400,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 8000,
+          "runtime": {
+            "xp": 4800,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 16000,
+          "runtime": {
+            "xp": 9600,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 32000,
+          "runtime": {
+            "xp": 20000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 64000,
+          "runtime": {
+            "xp": 40000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 80000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 240000,
+          "runtime": {
+            "xp": 160000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 360000,
+          "runtime": {
+            "xp": 280000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 480000,
+          "runtime": {
+            "xp": 400000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 520000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 720000,
+          "runtime": {
+            "xp": 640000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 840000,
+          "runtime": {
+            "xp": 760000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cleric",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d6",
+      "housePrimes": null,
+      "profilePrimes": [
+        "WIS"
+      ],
+      "runtimePrimes": [
+        "wis"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 14,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 1500,
+          "runtime": {
+            "xp": 1500,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 14,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 3000,
+          "runtime": {
+            "xp": 3000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 14,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 6000,
+          "runtime": {
+            "xp": 6000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 14,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 12000,
+          "runtime": {
+            "xp": 12000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 12,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 25000,
+          "runtime": {
+            "xp": 25000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 12,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 50000,
+          "runtime": {
+            "xp": 50000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 12,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 100000,
+          "runtime": {
+            "xp": 100000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 12,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 200000,
+          "runtime": {
+            "xp": 200000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 9,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 300000,
+          "runtime": {
+            "xp": 300000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 9,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 400000,
+          "runtime": {
+            "xp": 400000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 9,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 500000,
+          "runtime": {
+            "xp": 500000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 9,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 3,
+              "wands": 5,
+              "paralysis": 7,
+              "breath": 8,
+              "spells": 7
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 700000,
+          "runtime": {
+            "xp": 700000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 3,
+              "wands": 5,
+              "paralysis": 7,
+              "breath": 8,
+              "spells": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Drow",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d6",
+      "housePrimes": null,
+      "profilePrimes": [
+        "STR",
+        "WIS"
+      ],
+      "runtimePrimes": [
+        "str"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 10,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 4000,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 8000,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 16000,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 32000,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 64000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 250000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 400000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Druid",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d6",
+      "housePrimes": null,
+      "profilePrimes": [
+        "WIS"
+      ],
+      "runtimePrimes": [
+        "wis"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 14,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2000,
+          "runtime": {
+            "xp": 1500,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 14,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 4000,
+          "runtime": {
+            "xp": 3000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 14,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 7500,
+          "runtime": {
+            "xp": 6000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 14,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 12500,
+          "runtime": {
+            "xp": 12000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 12,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 20000,
+          "runtime": {
+            "xp": 25000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 12,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 35000,
+          "runtime": {
+            "xp": 50000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 12,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 60000,
+          "runtime": {
+            "xp": 100000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 12,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 90000,
+          "runtime": {
+            "xp": 200000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 9,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 125000,
+          "runtime": {
+            "xp": 300000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 9,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 200000,
+          "runtime": {
+            "xp": 400000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 9,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 300000,
+          "runtime": {
+            "xp": 500000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 9,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 750000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 3,
+              "wands": 5,
+              "paralysis": 7,
+              "breath": 8,
+              "spells": 7
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 1500000,
+          "runtime": {
+            "xp": 700000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 3,
+              "wands": 5,
+              "paralysis": 7,
+              "breath": 8,
+              "spells": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dwarf",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d8",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "STR"
+      ],
+      "runtimePrimes": [
+        "str"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 12,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2200,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 4400,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 8800,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 17000,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 35000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 70000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 7,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 140000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 7,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 270000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 7,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 400000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 2,
+              "wands": 3,
+              "paralysis": 4,
+              "breath": 4,
+              "spells": 6
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 530000,
+          "runtime": {
+            "xp": 480000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 2,
+              "wands": 3,
+              "paralysis": 4,
+              "breath": 4,
+              "spells": 6
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 660000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 2,
+              "wands": 3,
+              "paralysis": 4,
+              "breath": 4,
+              "spells": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Elf",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "INT",
+        "STR"
+      ],
+      "runtimePrimes": [
+        "int",
+        "str"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 10,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 4000,
+          "runtime": {
+            "xp": 2500,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 8000,
+          "runtime": {
+            "xp": 5000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 16000,
+          "runtime": {
+            "xp": 10000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 32000,
+          "runtime": {
+            "xp": 20000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 64000,
+          "runtime": {
+            "xp": 40000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 80000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 250000,
+          "runtime": {
+            "xp": 150000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 400000,
+          "runtime": {
+            "xp": 300000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 450000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fighter",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d8",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "STR"
+      ],
+      "runtimePrimes": [
+        "str"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2000,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 4000,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 8000,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 16000,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 32000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 64000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 240000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 360000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 480000,
+          "runtime": {
+            "xp": 480000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 720000,
+          "runtime": {
+            "xp": 720000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 840000,
+          "runtime": {
+            "xp": 840000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gnome",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d4",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "DEX",
+        "INT"
+      ],
+      "runtimePrimes": [
+        "int"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 8,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 14,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 3000,
+          "runtime": {
+            "xp": 1500,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 14,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 6000,
+          "runtime": {
+            "xp": 3000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 14,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 12000,
+          "runtime": {
+            "xp": 6000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 14,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 30000,
+          "runtime": {
+            "xp": 12000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 14,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 60000,
+          "runtime": {
+            "xp": 25000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 50000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 240000,
+          "runtime": {
+            "xp": 100000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 9
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Half-Elf",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "INT",
+        "STR"
+      ],
+      "runtimePrimes": [
+        "int",
+        "str"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 12,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2500,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 5000,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 13,
+              "breath": 15,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 10000,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 20000,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 40000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 11,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 80000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 150000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 300000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 9,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 450000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 480000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 750000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hobbit",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d6",
+      "housePrimes": null,
+      "profilePrimes": [
+        "DEX",
+        "STR"
+      ],
+      "runtimePrimes": [
+        "dex",
+        "str"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 8,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2000,
+          "runtime": {
+            "xp": 1200,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 4000,
+          "runtime": {
+            "xp": 2400,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 8000,
+          "runtime": {
+            "xp": 4800,
+            "attackBonus": 0,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 16000,
+          "runtime": {
+            "xp": 9600,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 32000,
+          "runtime": {
+            "xp": 20000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 10,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 64000,
+          "runtime": {
+            "xp": 40000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 7,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 80000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 7,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Half-Orc",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "DEX",
+        "STR"
+      ],
+      "runtimePrimes": [
+        "str",
+        "con"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 8,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 1800,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 3600,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 7000,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 14000,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 28000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 60000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Illusionist",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d4",
+      "runtimeHitDie": "1d4",
+      "housePrimes": null,
+      "profilePrimes": [
+        "INT"
+      ],
+      "runtimePrimes": [
+        "int"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2500,
+          "runtime": {
+            "xp": 2500,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 5000,
+          "runtime": {
+            "xp": 5000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 10000,
+          "runtime": {
+            "xp": 10000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 20000,
+          "runtime": {
+            "xp": 20000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 40000,
+          "runtime": {
+            "xp": 40000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 80000,
+          "runtime": {
+            "xp": 80000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 150000,
+          "runtime": {
+            "xp": 150000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 300000,
+          "runtime": {
+            "xp": 300000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 450000,
+          "runtime": {
+            "xp": 450000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 750000,
+          "runtime": {
+            "xp": 750000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 900000,
+          "runtime": {
+            "xp": 900000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 1050000,
+          "runtime": {
+            "xp": 1050000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Knight",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d8",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "STR"
+      ],
+      "runtimePrimes": [
+        "str"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2500,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 5000,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 10000,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 18500,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 37000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 85000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 140000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 270000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 400000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 530000,
+          "runtime": {
+            "xp": 480000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 660000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 790000,
+          "runtime": {
+            "xp": 720000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 920000,
+          "runtime": {
+            "xp": 840000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Magic-User",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d4",
+      "runtimeHitDie": "1d4",
+      "housePrimes": null,
+      "profilePrimes": [
+        "INT"
+      ],
+      "runtimePrimes": [
+        "int"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2500,
+          "runtime": {
+            "xp": 2500,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 5000,
+          "runtime": {
+            "xp": 5000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 10000,
+          "runtime": {
+            "xp": 10000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 20000,
+          "runtime": {
+            "xp": 20000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 40000,
+          "runtime": {
+            "xp": 40000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 80000,
+          "runtime": {
+            "xp": 80000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 150000,
+          "runtime": {
+            "xp": 150000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 300000,
+          "runtime": {
+            "xp": 300000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 450000,
+          "runtime": {
+            "xp": 450000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 750000,
+          "runtime": {
+            "xp": 750000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 900000,
+          "runtime": {
+            "xp": 900000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 1050000,
+          "runtime": {
+            "xp": 1050000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Paladin",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d8",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "STR",
+        "WIS"
+      ],
+      "runtimePrimes": [
+        "str",
+        "cha"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2750,
+          "runtime": {
+            "xp": 1500,
+            "attackBonus": 0,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 5500,
+          "runtime": {
+            "xp": 3000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 12000,
+          "runtime": {
+            "xp": 6000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 11,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 24000,
+          "runtime": {
+            "xp": 12000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 11,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 45000,
+          "runtime": {
+            "xp": 25000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 11,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 95000,
+          "runtime": {
+            "xp": 50000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 175000,
+          "runtime": {
+            "xp": 100000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 350000,
+          "runtime": {
+            "xp": 200000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 500000,
+          "runtime": {
+            "xp": 300000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 6,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 650000,
+          "runtime": {
+            "xp": 400000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 6,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 800000,
+          "runtime": {
+            "xp": 500000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 6,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 950000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 2,
+              "wands": 3,
+              "paralysis": 4,
+              "breath": 3,
+              "spells": 6
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 1100000,
+          "runtime": {
+            "xp": 700000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 2,
+              "wands": 3,
+              "paralysis": 4,
+              "breath": 3,
+              "spells": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ranger",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d8",
+      "runtimeHitDie": "1d8",
+      "housePrimes": null,
+      "profilePrimes": [
+        "STR"
+      ],
+      "runtimePrimes": [
+        "str",
+        "wis"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 2250,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 4500,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 10000,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 20000,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 40000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 90000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 150000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 300000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 425000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 550000,
+          "runtime": {
+            "xp": 480000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 675000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 800000,
+          "runtime": {
+            "xp": 720000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 925000,
+          "runtime": {
+            "xp": 840000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Thief",
+      "housePointer": null,
+      "houseHitDie": null,
+      "profileHitDie": "1d4",
+      "runtimeHitDie": "1d6",
+      "housePrimes": null,
+      "profilePrimes": [
+        "DEX"
+      ],
+      "runtimePrimes": [
+        "dex"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": null,
+      "levels": [
+        {
+          "level": 1,
+          "house": null,
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": null,
+          "profileXp": 1200,
+          "runtime": {
+            "xp": 1200,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": null,
+          "profileXp": 2400,
+          "runtime": {
+            "xp": 2400,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": null,
+          "profileXp": 4800,
+          "runtime": {
+            "xp": 4800,
+            "attackBonus": 0,
+            "saves": {
+              "death": 13,
+              "wands": 14,
+              "paralysis": 13,
+              "breath": 16,
+              "spells": 15
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": null,
+          "profileXp": 9600,
+          "runtime": {
+            "xp": 9600,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": null,
+          "profileXp": 20000,
+          "runtime": {
+            "xp": 20000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": null,
+          "profileXp": 40000,
+          "runtime": {
+            "xp": 40000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": null,
+          "profileXp": 80000,
+          "runtime": {
+            "xp": 80000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 11,
+              "breath": 14,
+              "spells": 13
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": null,
+          "profileXp": 160000,
+          "runtime": {
+            "xp": 160000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": null,
+          "profileXp": 280000,
+          "runtime": {
+            "xp": 280000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": null,
+          "profileXp": 400000,
+          "runtime": {
+            "xp": 400000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": null,
+          "profileXp": 520000,
+          "runtime": {
+            "xp": 520000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 9,
+              "breath": 12,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": null,
+          "profileXp": 640000,
+          "runtime": {
+            "xp": 640000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": null,
+          "profileXp": 760000,
+          "runtime": {
+            "xp": 760000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Beast Master",
+      "housePointer": "/custom_classes/Beast Master",
+      "houseHitDie": "1d6",
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d6",
+      "housePrimes": [
+        "STR",
+        "WIS"
+      ],
+      "profilePrimes": [
+        "STR",
+        "WIS"
+      ],
+      "runtimePrimes": [
+        "str",
+        "wis"
+      ],
+      "houseXpBonus": "At least 13 in one prime requisite grants +5% XP. STR and WIS 16+ grants +10% XP.",
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": 14,
+      "levels": [
+        {
+          "level": 1,
+          "house": {
+            "xp": 0,
+            "hd": "1d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          },
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": {
+            "xp": 1800,
+            "hd": "2d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          },
+          "profileXp": 1800,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": {
+            "xp": 3600,
+            "hd": "3d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          },
+          "profileXp": 3600,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": {
+            "xp": 7250,
+            "hd": "4d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          },
+          "profileXp": 7250,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 11,
+              "wands": 12,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": {
+            "xp": 15000,
+            "hd": "5d6",
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 14
+            }
+          },
+          "profileXp": 15000,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": {
+            "xp": 30000,
+            "hd": "6d6",
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 14
+            }
+          },
+          "profileXp": 30000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": {
+            "xp": 60000,
+            "hd": "7d6",
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 14
+            }
+          },
+          "profileXp": 60000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": {
+            "xp": 120000,
+            "hd": "8d6",
+            "attackBonus": 2,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 14
+            }
+          },
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 9,
+              "wands": 10,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": {
+            "xp": 240000,
+            "hd": "9d6",
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 12
+            }
+          },
+          "profileXp": 240000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": {
+            "xp": 360000,
+            "hd": "9d6+2*",
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 12
+            }
+          },
+          "profileXp": 360000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": {
+            "xp": 480000,
+            "hd": "9d6+4*",
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 12
+            }
+          },
+          "profileXp": 480000,
+          "runtime": {
+            "xp": 480000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": {
+            "xp": 600000,
+            "hd": "9d6+6*",
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 12
+            }
+          },
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 8,
+              "breath": 11,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": {
+            "xp": 720000,
+            "hd": "9d6+8*",
+            "attackBonus": 7,
+            "saves": {
+              "death": 5,
+              "wands": 6,
+              "paralysis": 6,
+              "breath": 9,
+              "spells": 10
+            }
+          },
+          "profileXp": 720000,
+          "runtime": {
+            "xp": 720000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 5,
+              "wands": 6,
+              "paralysis": 6,
+              "breath": 9,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": {
+            "xp": 840000,
+            "hd": "9d6+10*",
+            "attackBonus": 7,
+            "saves": {
+              "death": 5,
+              "wands": 6,
+              "paralysis": 6,
+              "breath": 9,
+              "spells": 10
+            }
+          },
+          "profileXp": 840000,
+          "runtime": {
+            "xp": 840000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 5,
+              "wands": 6,
+              "paralysis": 6,
+              "breath": 9,
+              "spells": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Warden",
+      "housePointer": "/custom_classes/Warden",
+      "houseHitDie": "1d8",
+      "profileHitDie": "1d8",
+      "runtimeHitDie": "1d8",
+      "housePrimes": "STR",
+      "profilePrimes": [
+        "STR"
+      ],
+      "runtimePrimes": [
+        "str",
+        "con"
+      ],
+      "houseXpBonus": null,
+      "profileXpBonus": "Use class prime requisite XP bonus rule.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": 14,
+      "levels": [
+        {
+          "level": 1,
+          "house": {
+            "xp": 0,
+            "hd": "1d8",
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          },
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": {
+            "xp": 2000,
+            "hd": "2d8",
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          },
+          "profileXp": 2000,
+          "runtime": {
+            "xp": 2000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": {
+            "xp": 4000,
+            "hd": "3d8",
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          },
+          "profileXp": 4000,
+          "runtime": {
+            "xp": 4000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 14,
+              "breath": 15,
+              "spells": 16
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": {
+            "xp": 8000,
+            "hd": "4d8",
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          },
+          "profileXp": 8000,
+          "runtime": {
+            "xp": 8000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": {
+            "xp": 16000,
+            "hd": "5d8",
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          },
+          "profileXp": 16000,
+          "runtime": {
+            "xp": 16000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": {
+            "xp": 32000,
+            "hd": "6d8",
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          },
+          "profileXp": 32000,
+          "runtime": {
+            "xp": 32000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 12,
+              "breath": 13,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": {
+            "xp": 64000,
+            "hd": "7d8",
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          },
+          "profileXp": 64000,
+          "runtime": {
+            "xp": 64000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": {
+            "xp": 120000,
+            "hd": "8d8",
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          },
+          "profileXp": 120000,
+          "runtime": {
+            "xp": 120000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": {
+            "xp": 240000,
+            "hd": "9d8",
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          },
+          "profileXp": 240000,
+          "runtime": {
+            "xp": 240000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 8,
+              "wands": 9,
+              "paralysis": 10,
+              "breath": 10,
+              "spells": 12
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": {
+            "xp": 360000,
+            "hd": "9d8+2*",
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          },
+          "profileXp": 360000,
+          "runtime": {
+            "xp": 360000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": {
+            "xp": 480000,
+            "hd": "9d8+4*",
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          },
+          "profileXp": 480000,
+          "runtime": {
+            "xp": 480000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": {
+            "xp": 600000,
+            "hd": "9d8+6*",
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          },
+          "profileXp": 600000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 7,
+            "saves": {
+              "death": 6,
+              "wands": 7,
+              "paralysis": 8,
+              "breath": 8,
+              "spells": 10
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": {
+            "xp": 720000,
+            "hd": "9d8+8*",
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          },
+          "profileXp": 720000,
+          "runtime": {
+            "xp": 720000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": {
+            "xp": 840000,
+            "hd": "9d8+10*",
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          },
+          "profileXp": 840000,
+          "runtime": {
+            "xp": 840000,
+            "attackBonus": 9,
+            "saves": {
+              "death": 4,
+              "wands": 5,
+              "paralysis": 6,
+              "breath": 5,
+              "spells": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mage",
+      "housePointer": "/custom_classes/Mage",
+      "houseHitDie": "1d6",
+      "profileHitDie": "1d6",
+      "runtimeHitDie": "1d4",
+      "housePrimes": [
+        "INT",
+        "WIS"
+      ],
+      "profilePrimes": [
+        "INT",
+        "WIS"
+      ],
+      "runtimePrimes": [
+        "int"
+      ],
+      "houseXpBonus": "INT and WIS at least 13 grants +5% XP. INT at least 16 and WIS at least 13 grants +10% XP.",
+      "profileXpBonus": "INT 13+ and WIS 13+ grant +5% XP; INT 16+ and WIS 13+ grant +10% XP.",
+      "runtimeMaximumXpLevel": 15,
+      "profileMaximumLevel": 14,
+      "houseMaximumLevel": 14,
+      "levels": [
+        {
+          "level": 1,
+          "house": {
+            "xp": 0,
+            "hd": "1d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          },
+          "profileXp": 0,
+          "runtime": {
+            "xp": 0,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 2,
+          "house": {
+            "xp": 2800,
+            "hd": "2d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          },
+          "profileXp": 2800,
+          "runtime": {
+            "xp": 2500,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 3,
+          "house": {
+            "xp": 5600,
+            "hd": "3d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          },
+          "profileXp": 5600,
+          "runtime": {
+            "xp": 5000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 4,
+          "house": {
+            "xp": 12000,
+            "hd": "4d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          },
+          "profileXp": 12000,
+          "runtime": {
+            "xp": 10000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 5,
+          "house": {
+            "xp": 24000,
+            "hd": "5d6",
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          },
+          "profileXp": 24000,
+          "runtime": {
+            "xp": 20000,
+            "attackBonus": 0,
+            "saves": {
+              "death": 12,
+              "wands": 13,
+              "paralysis": 12,
+              "breath": 15,
+              "spells": 14
+            }
+          }
+        },
+        {
+          "level": 6,
+          "house": {
+            "xp": 48000,
+            "hd": "6d6",
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          },
+          "profileXp": 48000,
+          "runtime": {
+            "xp": 40000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 7,
+          "house": {
+            "xp": 100000,
+            "hd": "7d6",
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          },
+          "profileXp": 100000,
+          "runtime": {
+            "xp": 80000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 8,
+          "house": {
+            "xp": 200000,
+            "hd": "8d6",
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          },
+          "profileXp": 200000,
+          "runtime": {
+            "xp": 150000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 9,
+          "house": {
+            "xp": 400000,
+            "hd": "9d6",
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          },
+          "profileXp": 400000,
+          "runtime": {
+            "xp": 300000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 10,
+          "house": {
+            "xp": 460000,
+            "hd": "9d6+1*",
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          },
+          "profileXp": 560000,
+          "runtime": {
+            "xp": 450000,
+            "attackBonus": 2,
+            "saves": {
+              "death": 10,
+              "wands": 11,
+              "paralysis": 10,
+              "breath": 13,
+              "spells": 11
+            }
+          }
+        },
+        {
+          "level": 11,
+          "house": {
+            "xp": 620000,
+            "hd": "9d6+2*",
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 7
+            }
+          },
+          "profileXp": 720000,
+          "runtime": {
+            "xp": 600000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 7
+            }
+          }
+        },
+        {
+          "level": 12,
+          "house": {
+            "xp": 880000,
+            "hd": "9d6+3*",
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 7
+            }
+          },
+          "profileXp": 980000,
+          "runtime": {
+            "xp": 750000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 7
+            }
+          }
+        },
+        {
+          "level": 13,
+          "house": {
+            "xp": 1040000,
+            "hd": "9d6+4*",
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 7
+            }
+          },
+          "profileXp": 1140000,
+          "runtime": {
+            "xp": 900000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 7
+            }
+          }
+        },
+        {
+          "level": 14,
+          "house": {
+            "xp": 1200000,
+            "hd": "9d6+5*",
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 7
+            }
+          },
+          "profileXp": 1300000,
+          "runtime": {
+            "xp": 1050000,
+            "attackBonus": 5,
+            "saves": {
+              "death": 7,
+              "wands": 8,
+              "paralysis": 7,
+              "breath": 10,
+              "spells": 7
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

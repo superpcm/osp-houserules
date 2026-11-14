@@ -1,0 +1,5 @@
+.osp-inventory-import { max-height: min(65vh, 560px); overflow: auto; width: 100%; font-family: Georgia, 'Times New Roman', serif; }
+.osp-inventory-import table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+.osp-inventory-import th, .osp-inventory-import td { border-bottom: 1px solid rgba(48,35,21,.25); padding: 4px 6px; text-align: left; }
+.osp-inventory-import th:nth-child(n+2), .osp-inventory-import td:nth-child(n+2) { text-align: right; }
+.osp-inventory-import ul { margin: 6px 0; padding-left: 20px; }

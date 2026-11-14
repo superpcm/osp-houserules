@@ -15,6 +15,8 @@ import { changeHealth } from "../health/health-authority.js";
 import { healthSnapshot } from "../health/health-rules.js";
 import { ospDialogOptions } from '../dialog/dialog-theme.js';
 
+import { openInventoryImport } from '../inventory/inventory-import-ui.js';
+
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { AbstractSidebarTab } = foundry.applications.sidebar;
 
@@ -31,6 +33,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       setXP: DmToolkitTab._onSetXP,
       xpHistory: DmToolkitTab._onXPHistory,
       catalogReview: DmToolkitTab._onCatalogReview,
+      importInventory: DmToolkitTab._onImportInventory,
       repairInventoryLinks: DmToolkitTab._onRepairInventoryLinks,
       setMaxHP: DmToolkitTab._onSetMaxHP,
       editAbilityScore: DmToolkitTab._onEditAbilityScore,
@@ -66,6 +69,11 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
   static async _onCatalogReview() {
     try { return await openCatalogReconciliation(); }
     catch (error) { ui.notifications.warn(error.message); }
+  }
+
+  static async _onImportInventory() {
+    try { return await openInventoryImport(); }
+    catch (error) { ui.notifications.error(error.message); }
   }
 
   static async _onXPHistory() {

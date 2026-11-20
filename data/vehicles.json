@@ -18,7 +18,10 @@
         "no-store"
       ],
       "capacity": 80,
-      "requiresAnimal": "draft"
+      "requiresAnimal": "draft",
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleKind": "cart"
     }
   },
   {
@@ -40,7 +43,106 @@
         "no-store"
       ],
       "capacity": 200,
-      "requiresAnimal": "draft (2+)"
+      "requiresAnimal": "draft (2+)",
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleKind": "wagon"
+    }
+  },
+  {
+    "name": "Wheelbarrow",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/wheelbarrow_thumb.webp",
+    "system": {
+      "description": "A single-wheeled wooden barrow with sturdy handles and a deep tray. It carries tools, earth, and supplies by hand around a yard, camp, or work site.",
+      "cost": 35,
+      "unitWeight": 25,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle",
+        "container",
+        "no-store",
+        "hand-powered"
+      ],
+      "capacity": 10,
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleKind": "wheelbarrow"
+    }
+  },
+  {
+    "name": "Handcart",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/handcart_thumb.webp",
+    "system": {
+      "description": "A compact two-wheeled handcart with a broad bed and long pulling handles. It moves heavier loads than a barrow without requiring an animal.",
+      "cost": 60,
+      "unitWeight": 80,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle",
+        "container",
+        "no-store",
+        "hand-powered"
+      ],
+      "capacity": 30,
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleKind": "handcart"
+    }
+  },
+  {
+    "name": "Wagon, Open",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/wagon-open_thumb.webp",
+    "system": {
+      "description": "A four-wheeled open wagon with a sturdy bed and reinforced running gear. It hauls bulky cargo behind a team of draft animals.",
+      "cost": 150,
+      "unitWeight": 300,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle",
+        "container",
+        "no-store"
+      ],
+      "capacity": 120,
+      "requiresAnimal": "draft (2+)",
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleKind": "wagon"
+    }
+  },
+  {
+    "name": "Wagon, Heavy Freight",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/wagon-heavy-freight_thumb.webp",
+    "system": {
+      "description": "A massive reinforced freight wagon built for long hauls and dense cargo. Its strengthened frame needs a large team of draft animals to move safely.",
+      "cost": 350,
+      "unitWeight": 650,
+      "storedSize": 99,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle",
+        "container",
+        "no-store"
+      ],
+      "capacity": 300,
+      "requiresAnimal": "draft (4+)",
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false,
+      "vehicleKind": "wagon"
     }
   }
 ]

@@ -10,7 +10,7 @@
       "storedSize": 24,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
       "aac": {
         "value": 15
       },
@@ -18,7 +18,9 @@
       "donTime": "5 minutes",
       "doffTime": "1 minute",
       "maxDex": 2,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -33,7 +35,7 @@
       "containerSizeRequired": "large",
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
       "aac": {
         "value": 2
       },
@@ -42,7 +44,9 @@
       "doffTime": "1 round",
       "maxDex": null,
       "minStr": null,
-      "material": "metal"
+      "material": "metal",
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
     }
   },
   {
@@ -64,7 +68,9 @@
       "donTime": "5 minutes",
       "doffTime": "1 minute",
       "maxDex": 2,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -86,7 +92,9 @@
       "donTime": "10 minutes",
       "doffTime": "5 minutes",
       "maxDex": 0,
-      "minStr": 13
+      "minStr": 13,
+      "storeAvailability": "rare",
+      "blacksmithEligible": true
     }
   },
   {
@@ -108,7 +116,9 @@
       "donTime": "5 minutes",
       "doffTime": "1 minute",
       "maxDex": 2,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -130,7 +140,9 @@
       "donTime": "10 minutes",
       "doffTime": "5 minutes",
       "maxDex": 0,
-      "minStr": 15
+      "minStr": 15,
+      "storeAvailability": "exceptional",
+      "blacksmithEligible": true
     }
   },
   {
@@ -152,7 +164,9 @@
       "donTime": "10 minutes",
       "doffTime": "5 minutes",
       "maxDex": 0,
-      "minStr": 16
+      "minStr": 16,
+      "storeAvailability": "exceptional",
+      "blacksmithEligible": true
     }
   },
   {
@@ -160,7 +174,7 @@
     "type": "armor",
     "img": "systems/osp-houserules/assets/thumbs/images/armor/plate-mail_thumb.webp",
     "system": {
-      "description": "Plate mail is a heavy suit of armor made from shaped, overlapping steel plates worn over padding. It provides excellent protection against blades and crushing blows, though its weight, cost, and rigid construction can limit the wearer’s endurance and agility.",
+      "description": "Plate mail is a heavy suit of armor made from shaped, overlapping steel plates worn over padding. It provides excellent protection against blades and crushing blows, though its weight, cost, and rigid construction can limit the wearer\u2019s endurance and agility.",
       "cost": 2000,
       "unitWeight": 40,
       "storedSize": 30,
@@ -174,7 +188,9 @@
       "donTime": "10 minutes",
       "doffTime": "5 minutes",
       "maxDex": 0,
-      "minStr": 14
+      "minStr": 14,
+      "storeAvailability": "rare",
+      "blacksmithEligible": true
     }
   },
   {
@@ -188,7 +204,7 @@
       "storedSize": 12,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
       "aac": {
         "value": 0
       },
@@ -196,7 +212,9 @@
       "donTime": "1 round",
       "doffTime": "1 round",
       "maxDex": null,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -210,7 +228,7 @@
       "storedSize": 8,
       "quantity": 1,
       "equipped": false,
-      "lashable": false,
+      "lashable": true,
       "aac": {
         "value": 0
       },
@@ -218,7 +236,9 @@
       "donTime": "1 round",
       "doffTime": "1 round",
       "maxDex": null,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -240,7 +260,9 @@
       "donTime": "1 minute",
       "doffTime": "1 minute",
       "maxDex": 3,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -262,7 +284,9 @@
       "donTime": "1 minute",
       "doffTime": "1 minute",
       "maxDex": 3,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -284,7 +308,9 @@
       "donTime": "1 minute",
       "doffTime": "1 minute",
       "maxDex": 3,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -306,7 +332,9 @@
       "donTime": "1 minute",
       "doffTime": "1 minute",
       "maxDex": 3,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -352,7 +380,9 @@
         "Sack, Large",
         "Saddlebags, Large",
         "Wagon"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     },
     "folder": "CzfbCiZiPUb664YA"
   },
@@ -377,7 +407,9 @@
       "doffTime": "1 round",
       "maxDex": null,
       "minStr": null,
-      "material": "wood"
+      "material": "wood",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -399,7 +431,33 @@
       "donTime": "1 minute",
       "doffTime": "1 minute",
       "maxDex": 3,
-      "minStr": null
+      "minStr": null,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Scale Mail",
+    "type": "armor",
+    "img": "systems/osp-houserules/assets/images/armor/scale-mail-b-transparent-v1.png",
+    "system": {
+      "description": "Overlapping steel scales fastened to a sturdy leather backing form a protective hauberk with short sleeves and a belted waist. Scale mail offers protection comparable to chain mail at a lower price, with greater weight.",
+      "cost": 50,
+      "unitWeight": 30,
+      "storedSize": 16,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "aac": {
+        "value": 14
+      },
+      "type": "medium",
+      "donTime": "5 minutes",
+      "doffTime": "1 minute",
+      "maxDex": 2,
+      "minStr": null,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   }
 ]

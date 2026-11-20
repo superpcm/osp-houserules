@@ -655,6 +655,73 @@
     ],
     "illusionist": [
       {
+        "id": "lesser_chromatic_orb",
+        "name": "Lesser Chromatic Orb",
+        "level": 1,
+        "duration": "Instant",
+        "atWill": true,
+        "range": "30’",
+        "orbColors": [
+          {
+            "level": 1,
+            "color": "Clear",
+            "gem": "Quartz",
+            "value": 5,
+            "damageFormula": "1d4",
+            "effect": "Light. Save vs. spells or glow in a 7½-foot radius for 1–2 rounds. Attacks against the target in low light gain +1. The target takes a −1 penalty on applicable stealth or surprise rolls."
+          },
+          {
+            "level": 2,
+            "color": "Red",
+            "gem": "Ruby",
+            "value": 25,
+            "damageFormula": "1d6",
+            "effect": "Heat. Save vs. spells or take a −1 penalty to attacks, saves, and AC for 1–2 rounds. The orb can melt up to ½ cubic yard of ice."
+          },
+          {
+            "level": 3,
+            "color": "Orange",
+            "gem": "Agate",
+            "value": 50,
+            "damageFormula": "1d8",
+            "effect": "Fire. Ignites flammable objects within 1 foot. Save vs. spells or carried flammables also ignite, dealing half of 1d3 damage per round for 1–2 rounds, rounded up each round. The target can use its action to extinguish the flames."
+          },
+          {
+            "level": 4,
+            "color": "Black",
+            "gem": "Onyx",
+            "value": 125,
+            "damageFormula": "1d10",
+            "effect": "Impaired vision. Save vs. spells or take a −2 penalty to attacks for 1–2 rounds."
+          },
+          {
+            "level": 5,
+            "color": "Green",
+            "gem": "Emerald",
+            "value": 250,
+            "damageFormula": "1d12",
+            "effect": "Stench. A 2½-foot-radius cloud lasts 5 rounds. Creatures inside save vs. poison or can move at up to ¾ speed and must choose between moving and acting each round. Nausea lasts another 1–2 rounds after leaving."
+          },
+          {
+            "level": 6,
+            "color": "Grey",
+            "gem": "Magnetite",
+            "value": 250,
+            "damageFormula": "2d6",
+            "effect": "Magnetism. Save vs. spells or worn and carried metal objects cling together for 1–2 rounds. Metal armor worsens AC by 1, and attacks with metal weapons take a −2 penalty."
+          },
+          {
+            "level": 7,
+            "color": "Blue",
+            "gem": "Sapphire",
+            "value": 500,
+            "damageFormula": "2d8",
+            "effect": "Partial paralysis. Save vs. paralysis or choose between moving at half speed and taking an action each round for 1–2 rounds."
+          }
+        ],
+        "description": "Make a normal ranged attack against a visible target. On a hit, roll the chosen color’s damage and halve it, rounding up. For effects lasting 1–2 rounds, roll 1d4, halve the result, and round up. You must possess the listed gem, which is reusable. Level 1 · Clear (Quartz, 5 gp) · half of 1d4. Light. Save vs. spells or glow in a 7½-foot radius for 1–2 rounds. Attacks against the target in low light gain +1. The target takes a −1 penalty on applicable stealth or surprise rolls. Level 2 · Red (Ruby, 25 gp) · half of 1d6. Heat. Save vs. spells or take a −1 penalty to attacks, saves, and AC for 1–2 rounds. The orb can melt up to ½ cubic yard of ice. Level 3 · Orange (Agate, 50 gp) · half of 1d8. Fire. Ignites flammable objects within 1 foot. Save vs. spells or carried flammables also ignite, dealing half of 1d3 damage per round for 1–2 rounds, rounded up each round. The target can use its action to extinguish the flames. Level 4 · Black (Onyx, 125 gp) · half of 1d10. Impaired vision. Save vs. spells or take a −2 penalty to attacks for 1–2 rounds. Level 5 · Green (Emerald, 250 gp) · half of 1d12. Stench. A 2½-foot-radius cloud lasts 5 rounds. Creatures inside save vs. poison or can move at up to ¾ speed and must choose between moving and acting each round. Nausea lasts another 1–2 rounds after leaving. Level 6 · Grey (Magnetite, 250 gp) · half of 2d6. Magnetism. Save vs. spells or worn and carried metal objects cling together for 1–2 rounds. Metal armor worsens AC by 1, and attacks with metal weapons take a −2 penalty. Level 7 · Blue (Sapphire, 500 gp) · half of 2d8. Partial paralysis. Save vs. paralysis or choose between moving at half speed and taking an action each round for 1–2 rounds."
+      },
+      {
         "id": "auditory_illusion",
         "name": "Auditory Illusion",
         "level": 1,
@@ -1237,6 +1304,16 @@
       }
     ],
     "magic-user": [
+      {
+        "id": "lesser_magic_missile",
+        "name": "Lesser Magic Missile",
+        "level": 1,
+        "duration": "Instant",
+        "atWill": true,
+        "range": "60’",
+        "damageFormula": "1d4",
+        "description": "Make a normal ranged attack against a visible target. On a hit, one missile deals 1d4 damage at every level."
+      },
       {
         "id": "charm_person",
         "name": "Charm Person",

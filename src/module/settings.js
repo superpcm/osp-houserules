@@ -66,7 +66,7 @@ export const registerSettings = () => {
     hint: game.i18n.localize("OSE.Setting.AscendingACHint"),
     default: true,
     scope: "world",
-    config: true,
+    config: false,
     type: Boolean,
   });
 
@@ -84,7 +84,9 @@ export const registerSettings = () => {
     hint: game.i18n.localize("OSE.Setting.SignificantTreasureHint"),
     default: 800,
     scope: "world",
-    config: true,
+    // Retain the world setting for compatibility with existing worlds, but do
+    // not expose it: inventory and encumbrance now determine treasure weight.
+    config: false,
     type: Number,
   });
 
@@ -98,7 +100,6 @@ export const registerSettings = () => {
     choices: {
       selected: game.i18n.localize("OSE.Setting.ApplyDamageOptionSelected"),
       targeted: game.i18n.localize("OSE.Setting.ApplyDamageOptionTargeted"),
-      originalTarget: game.i18n.localize("OSE.Setting.ApplyDamageOptionOriginalTarget"),
     },
   });
 
@@ -107,7 +108,7 @@ export const registerSettings = () => {
     hint: game.i18n.localize("OSE.Setting.InvertedCtrlBehaviorHint"),
     default: false,
     scope: "client",
-    config: true,
+    config: false,
     type: Boolean,
   });
 
@@ -116,7 +117,7 @@ export const registerSettings = () => {
     hint: game.i18n.localize("OSE.Setting.IgnoreAttackBonusOnDamageRollHint"),
     default: false,
     scope: "world",
-    config: true,
+    config: false,
     type: Boolean,
   });
 

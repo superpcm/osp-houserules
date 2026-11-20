@@ -24,6 +24,7 @@ import { COIN_TEMPLATES } from "./treasure-cost.js";
 import { validateDepositSource } from "./deposit-source.js";
 import { runTransaction, itemChange, createdItemChange, flagChange, transactionBlock } from "./transaction-journal.js";
 import { requestInventoryMutation, registerInventoryAuthority, inventoryRequester, inventoryActorReference, resolveInventoryActor, inventoryWithdrawalAllowed } from "./inventory-authority.js";
+import { isArrowQuiver, prepareArrowQuiverPlacement } from './arrow-bundle.js';
 
 const FLAG_SCOPE = "osp-houserules";
 const FLAG_KEY = "bankLedger";
@@ -100,10 +101,11 @@ async function withdrawItemCore(actor, entryId, quantity, targetContainer) {
     const entry = ledger.items.find((e) => e.entryId === entryId);
     if (!entry) return { success: false, reason: 'That ledger entry no longer exists.' };
 
-    const reconstructed = {
+    let reconstructed = {
       ...entry.itemData,
       system: { ...entry.itemData.system, containerId: targetContainer.id, quantity },
     };
+    if (isArrowQuiver(targetContainer)) reconstructed = prepareArrowQuiverPlacement(reconstructed, targetContainer);
     const containerCheck = checkWithdrawTarget(reconstructed, targetContainer, actor.items);
     const meta = currentUserMeta('player', targetContainer.id);
     const plan = planWithdrawItem(ledger, entryId, quantity, containerCheck, meta);
@@ -116,7 +118,7 @@ async function withdrawItemCore(actor, entryId, quantity, targetContainer) {
 
     const inventoryChange = matching
       ? itemChange(actor, matching, (matching.system.quantity || 0) + quantity)
-      : createdItemChange(actor, { ...plan.itemDataToCreate, system: { ...plan.itemDataToCreate.system, quantity, containerId: targetContainer.id } });
+      : createdItemChange(actor, { ...prepareArrowQuiverPlacement(plan.itemDataToCreate, targetContainer), system: { ...plan.itemDataToCreate.system, quantity, containerId: targetContainer.id } });
     const result = await runTransaction(actor, { authority: true, label: `Withdraw ${quantity}× ${entry.name} from Westford Bank`, changes: [inventoryChange, flagChange(actor, FLAG_KEY, plan.ledger)] });
     return result.success ? plan : result;
   });

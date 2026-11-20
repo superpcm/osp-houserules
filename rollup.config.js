@@ -11,6 +11,14 @@ export default {
     sourcemap: process.env.NODE_ENV !== "production",
   },
   plugins: [
+    // Stable previews use the bundled catalogs without writing them into the world.
+    {
+      name: 'bundled-json-catalogs',
+      transform(source, id) {
+        if (!id.endsWith('.json')) return null;
+        return { code: `export default ${JSON.stringify(JSON.parse(source))};`, map: { mappings: '' } };
+      }
+    },
     // Ensure imports of SCSS in JS don't break the JS bundle; return an empty module for .scss
     {
       name: 'ignore-scss-imports',

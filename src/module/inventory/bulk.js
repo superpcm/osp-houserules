@@ -14,10 +14,44 @@ export function storedBulk(item, { invalidPenalty = false } = {}) {
   }
   return number * normalizeQuantity(item?.system?.quantity);
 }
+
+const itemId = item => item?.id ?? item?._id;
+const itemList = items => items?.contents ?? [...(items ?? [])];
+
+/**
+ * Return the bulk footprint of a node and all eligible descendants.  A lashed
+ * edge is outside storage capacity (including everything attached below it),
+ * while malformed cycles and duplicate ids are ignored safely.
+ */
+export function storageFootprint(item, items, { includeRoot = true, includeLashedEdges = false, blockedIds = [] } = {}) {
+  const all = itemList(items);
+  const byParent = new Map();
+  for (const child of all) {
+    const parent = child?.system?.containerId;
+    if (!parent) continue;
+    const list = byParent.get(parent) ?? [];
+    list.push(child); byParent.set(parent, list);
+  }
+  const seen = new Set(blockedIds);
+  const keyFor = (node, fallback) => itemId(node) ?? fallback;
+  const walk = (node, key, root = false) => {
+    const identity = keyFor(node, key);
+    if (seen.has(identity)) return 0;
+    seen.add(identity);
+    let total = root && !includeRoot ? 0 : storedBulk(node);
+    for (const child of byParent.get(identity) ?? []) {
+      if ((!includeLashedEdges && child?.system?.lashed) || seen.has(keyFor(child, child))) continue;
+      total += walk(child, child, false);
+    }
+    return total;
+  };
+  return roundBulk(walk(item, itemId(item) ?? item, true));
+}
+
+function roundBulk(total) { return Math.round(total * 1e10) / 1e10; }
+
 export function usedBulk(container, items) {
-  const total = (items?.contents ?? [...items]).filter(item => item.system?.containerId === (container.id ?? container._id) && !item.system?.lashed)
-    .reduce((sum, item) => sum + storedBulk(item), 0);
-  return Math.round(total * 1e10) / 1e10;
+  return storageFootprint(container, items, { includeRoot: false });
 }
 /** Inclusive descendant weight for a display subtotal, never added to personal load. */
 export function contentsWeight(containerId, items) {

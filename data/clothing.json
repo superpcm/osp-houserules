@@ -10,6 +10,7 @@
       "storedSize": 1,
       "quantity": 1,
       "equipped": false,
+      "slot": "belt",
       "lashable": false,
       "lashSlots": 6,
       "lashAllowedSizes": [
@@ -18,7 +19,9 @@
       ],
       "tags": [
         "clothing"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -32,10 +35,13 @@
       "storedSize": 3,
       "quantity": 1,
       "equipped": false,
+      "slot": "boots",
       "lashable": false,
       "tags": [
         "clothing"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -43,16 +49,19 @@
     "type": "clothing",
     "img": "systems/osp-houserules/assets/thumbs/images/clothing/cloak_thumb.webp",
     "system": {
-      "description": "A loose, draping garment fastened at the neck or shoulder, providing warmth and protection from wind and rain. Adventurers favor it for its practicality, concealment, and the ease with which it can be thrown over armor or travel gear.",
+      "description": "A loose, draping garment fastened at the neck or shoulder, a cloak provides warmth and protection from wind and rain. It falls easily over ordinary clothing or armor, with discreet pockets for small essentials. When unequipped with empty pockets, it can be rolled up and lashed to a backpack using one lash slot.",
       "cost": 8,
       "unitWeight": 3,
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
+      "slot": "cloak",
       "lashable": false,
       "capacity": 2,
       "lashSlots": 0,
-      "maxItemSize": 0.5
+      "maxItemSize": 0.5,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -66,10 +75,13 @@
       "storedSize": 0.5,
       "quantity": 1,
       "equipped": false,
+      "slot": "bracers",
       "lashable": false,
       "tags": [
         "clothing"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -83,10 +95,13 @@
       "storedSize": 0.25,
       "quantity": 1,
       "equipped": false,
+      "slot": "gloves",
       "lashable": false,
       "tags": [
         "clothing"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -100,10 +115,13 @@
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
+      "slot": "clothes",
       "lashable": false,
       "capacity": 2,
       "lashSlots": 0,
-      "maxItemSize": 0.5
+      "maxItemSize": 0.5,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -117,12 +135,15 @@
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
+      "slot": "clothes",
       "lashable": false,
       "capacity": 2,
       "tags": [
         "clothing"
       ],
-      "maxItemSize": 0.5
+      "maxItemSize": 0.5,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -136,12 +157,15 @@
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
+      "slot": "clothes",
       "lashable": false,
       "capacity": 2,
       "tags": [
         "clothing"
       ],
-      "maxItemSize": 0.5
+      "maxItemSize": 0.5,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -155,12 +179,15 @@
       "storedSize": 5,
       "quantity": 1,
       "equipped": false,
+      "slot": "clothes",
       "lashable": false,
       "capacity": 3,
       "tags": [
         "clothing"
       ],
-      "maxItemSize": 0.5
+      "maxItemSize": 0.5,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -174,12 +201,67 @@
       "storedSize": 4,
       "quantity": 1,
       "equipped": false,
+      "slot": "clothes",
       "lashable": false,
       "capacity": 2,
       "tags": [
         "clothing"
       ],
-      "maxItemSize": 0.5
+      "maxItemSize": 0.5,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Clothes, Winter",
+    "type": "clothing",
+    "img": "systems/osp-houserules/assets/thumbs/images/clothing/winter-clothes_thumb.webp",
+    "system": {
+      "description": "Thick wool garments and a hooded coat lined with fleece protect the wearer from bitter winds and winter cold. Reinforced seams, snug cuffs, and a belted waist retain warmth while allowing freedom of movement. Deep inner pockets keep small essentials close to the body and sheltered from snow and damp.",
+      "cost": 7,
+      "unitWeight": 2,
+      "storedSize": 8,
+      "quantity": 1,
+      "equipped": false,
+      "slot": "clothes",
+      "lashable": false,
+      "capacity": 3,
+      "tags": [
+        "clothing"
+      ],
+      "maxItemSize": 0.5,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
+    },
+    "flags": {
+      "osp-houserules": {
+        "winterClothesProfileV1": {
+          "version": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "Coat, Winter",
+    "type": "clothing",
+    "img": "systems/osp-houserules/assets/thumbs/images/clothing/coat-winter_thumb.webp",
+    "system": {
+      "description": "A roomy hooded coat of heavy wool, lined with fleece at the hood and cuffs, fits comfortably over ordinary clothing. Wooden toggles and a leather waist belt secure the overlapping front against winter wind and snow. Two deep outer pockets hold small essentials; when unequipped with empty pockets, the coat can be rolled up and lashed to a backpack using two slots.",
+      "cost": 5,
+      "unitWeight": 4,
+      "storedSize": 5,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "lashSlots": 0,
+      "capacity": 2,
+      "tags": [
+        "clothing"
+      ],
+      "slot": "outerwear",
+      "maxItemSize": 0.5,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   }
 ]

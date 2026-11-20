@@ -1,0 +1,28 @@
+{
+  "name": "Clothes, Winter",
+  "type": "clothing",
+  "img": "systems/osp-houserules/assets/thumbs/images/clothing/winter-clothes_thumb.webp",
+  "system": {
+    "description": "Thick wool garments and a hooded coat lined with fleece protect the wearer from bitter winds and winter cold. Reinforced seams, snug cuffs, and a belted waist retain warmth while allowing freedom of movement. Deep inner pockets keep small essentials close to the body and sheltered from snow and damp.",
+    "cost": 7,
+    "unitWeight": 2,
+    "storedSize": 8,
+    "quantity": 1,
+    "equipped": false,
+    "lashable": false,
+    "capacity": 3,
+    "tags": [
+      "clothing"
+    ],
+    "maxItemSize": 0.5,
+    "storeAvailability": "common",
+    "blacksmithEligible": false
+  },
+  "flags": {
+    "osp-houserules": {
+      "winterClothesProfileV1": {
+        "version": 1
+      }
+    }
+  }
+}

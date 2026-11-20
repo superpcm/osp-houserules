@@ -106,9 +106,9 @@ export class XPProgressHandler {
 
     if (this.levelXpProgress.length) {
       try {
-        this.levelXpProgress[0].style.setProperty('--xp-progress-width', `${progressPercentage}%`);
+        this.levelXpProgress[0].style.setProperty('--xp-progress-fill', String(progressPercentage / 100));
       } catch (e) {
-        if (this.levelXpProgress[0]) this.levelXpProgress[0].style.width = `${progressPercentage}%`;
+        if (this.levelXpProgress[0]) this.levelXpProgress[0].style.transform = `scaleX(${progressPercentage / 100})`;
       }
     }
 

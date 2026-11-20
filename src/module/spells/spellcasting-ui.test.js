@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const api = vi.hoisted(() => ({ spellView: vi.fn(), changeSpellState: vi.fn(), resolveInterruptedSpell: vi.fn() }));
+const api = vi.hoisted(() => ({ spellView: vi.fn(), changeSpellState: vi.fn(), resolveInterruptedSpell: vi.fn(), validateCastingFocus: vi.fn() }));
 vi.mock('./spellcasting.js', () => api);
+const attacks = vi.hoisted(() => ({ confirmAttackContext: vi.fn(), performSpellAttack: vi.fn() }));
+vi.mock('../combat/combat-support-ui.js', () => ({ confirmAttackContext: attacks.confirmAttackContext }));
 vi.mock('../progression/progression-authority.js', () => ({ recoverProgressionOperation: vi.fn() }));
 
 let view;
@@ -22,6 +24,47 @@ describe('spellcasting entry controls', () => {
     const { castPreparedSpell } = await import('./spellcasting-ui.js');
     await Promise.all([castPreparedSpell({ uuid: 'Actor.test' }, 'light'), castPreparedSpell({ uuid: 'Actor.test' }, 'light')]);
     expect(api.changeSpellState).toHaveBeenCalledTimes(1);
+  });
+
+  it('casts an at-will missile repeatedly without changing preparation or slots', async () => {
+    const actor = { uuid: 'Actor.test', isOwner: true, sheet: { getHandler: () => attacks } };
+    const target = { actor: { system: { aac: 14 } } };
+    game.user.targets = new Set([target]);
+    view.context.focusPolicy = { exempt: true };
+    const spell = { id: 'missile', name: 'Lesser Magic Missile', atWill: true, range: '60’', damageFormula: '1d4' };
+    view.context.spells.missile = spell;
+    const attack = { attack: 1 };
+    attacks.confirmAttackContext.mockResolvedValue(attack);
+    attacks.performSpellAttack.mockClear();
+    const { castPreparedSpell } = await import('./spellcasting-ui.js');
+    await castPreparedSpell(actor, spell.id);
+    await castPreparedSpell(actor, spell.id);
+    expect(api.changeSpellState).not.toHaveBeenCalled();
+    expect(attacks.performSpellAttack).toHaveBeenCalledTimes(2);
+    expect(attacks.performSpellAttack).toHaveBeenLastCalledWith(spell, target, attack);
+  });
+
+  it('shows only unlocked orb colors and routes the chosen gemstone form to the attack', async () => {
+    const actor = { uuid: 'Actor.orb', isOwner: true, sheet: { getHandler: () => attacks } };
+    const target = { actor: { system: { aac: 14 } } };
+    game.user.targets = new Set([target]);
+    view.context.focusPolicy = { exempt: true };
+    view.context.level = 1;
+    const quartz = { level: 1, color: 'Clear', gem: 'Quartz', value: 5, damageFormula: '1d4', effect: 'Light' };
+    view.context.spells.orb = { name: 'Lesser Chromatic Orb', atWill: true, range: '30’', orbColors: [quartz, { level: 2, color: 'Red', gem: 'Ruby', value: 25 }] };
+    const attack = { attack: 0 };
+    attacks.confirmAttackContext.mockResolvedValue(attack);
+    vi.stubGlobal('Dialog', class {
+      constructor(options) { this.options = options; }
+      render() {
+        expect(this.options.content).toContain('Quartz (5 gp)');
+        expect(this.options.content).not.toContain('Ruby');
+        this.options.buttons.ok.callback([{ querySelector: () => ({ value: 'Clear' }) }]);
+      }
+    });
+    const { castPreparedSpell } = await import('./spellcasting-ui.js');
+    await castPreparedSpell(actor, 'orb');
+    expect(attacks.performSpellAttack).toHaveBeenLastCalledWith({ ...quartz, name: 'Lesser Chromatic Orb (Clear)' }, target, attack);
   });
 
   it('chooses the divine reversed form at casting', async () => {
@@ -112,6 +155,46 @@ describe('spellcasting tab placement', () => {
       expect(slotEl.innerHTML).not.toContain('data-spell-setup');
       expect(rendered).toContain('data-book-focus');
     }
+  });
+
+  it('reuses unchanged spell controls and updates only the result panes during search', async () => {
+    const { renderSpellcastingTab } = await import('./spellcasting-ui.js');
+    view.context.mode = 'divine';
+    view.context.slots = { 1: 1 };
+    const slotEl = { querySelector: () => null };
+    const results = {};
+    const search = { addEventListener: vi.fn() };
+    const listEl = {
+      querySelector: selector => ({
+        '.spell-option-body': results,
+        '[data-spell-search]': search,
+        '[data-spell-level]': { addEventListener: vi.fn() },
+      })[selector] ?? null,
+      querySelectorAll: () => [],
+    };
+    results.querySelectorAll = () => [];
+    const root = {
+      querySelector: selector => ({
+        '.spell-slots-section': slotEl,
+        '.spell-list-content': listEl,
+      })[selector] ?? null,
+      querySelectorAll: () => [],
+    };
+    const sheet = { actor: { isOwner: true } };
+    await renderSpellcastingTab(sheet, root);
+    expect(listEl.innerHTML).toContain('Light');
+    const initialMarkup = listEl.innerHTML;
+    const initialSlots = slotEl.innerHTML;
+    await renderSpellcastingTab(sheet, root);
+    expect(search.addEventListener).toHaveBeenCalledTimes(1);
+    expect(results.innerHTML).toBeUndefined();
+
+    const onInput = search.addEventListener.mock.calls[0][1];
+    onInput({ target: { value: 'xyz' } });
+    await vi.waitFor(() => expect(results.innerHTML).toContain('No matching spells'));
+    expect(listEl.innerHTML).toBe(initialMarkup);
+    expect(slotEl.innerHTML).toBe(initialSlots);
+    expect(search.addEventListener).toHaveBeenCalledTimes(1);
   });
 
   it('exposes pending recovery inline only to a GM', async () => {

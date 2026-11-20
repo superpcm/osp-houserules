@@ -1,6 +1,7 @@
 import { createSheetDialog } from './sheet-dialog.js';
 import { activateCombatValueSizing } from './combat-value-sizing.js';
 import { activateChapterHeaderAlignment } from './chapter-header-alignment.js';
+import { activateCharacterNameSizing } from './character-name-sizing.js';
 
 const { ActorSheetV2 } = foundry.applications.sheets;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -38,12 +39,22 @@ export class NativeCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     // Native ActorSheetV2 owns the DragDrop controller; retain the journal's row selectors.
     this._dragDrop.dragSelector = '.item-list .item';
     await super._onRender(context, options);
+    // This fixed manuscript layout must not inherit an older sheet's remembered dimensions.
+    // Retain the window's location while restoring the dimensions declared by the sheet.
+    const designedPosition = this.constructor.DEFAULT_OPTIONS.position;
+    if (designedPosition?.width && designedPosition?.height && this.options?.window?.resizable !== true) {
+      this.setPosition?.({ width: designedPosition.width, height: designedPosition.height });
+    }
     this._activateSheetListeners($(this.form));
+    this._characterNameSizing?.();
+    this._characterNameSizing = activateCharacterNameSizing(this.form);
     this._activateNativeEditors();
     this._chapterHeaderAlignment?.();
     this._chapterHeaderAlignment = activateChapterHeaderAlignment(this.form, this.element);
     this._sheetDisposers ??= [];
     this._sheetDisposers.push(() => {
+      this._characterNameSizing?.();
+      this._characterNameSizing = null;
       this._chapterHeaderAlignment?.();
       this._chapterHeaderAlignment = null;
     });
@@ -121,6 +132,8 @@ export class NativeCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     this._chapterHeaderAlignment = activateChapterHeaderAlignment(this.form, this.element);
     this._combatValueSizing?.();
     this._combatValueSizing = activateCombatValueSizing(this.form);
+    this._characterNameSizing?.();
+    this._characterNameSizing = activateCharacterNameSizing(this.form);
     // Let each sheet's layout observers recalculate in its new viewport, without rebuilding drafts.
     this.sheetWindow?.dispatchEvent(new this.sheetWindow.Event('resize'));
   }

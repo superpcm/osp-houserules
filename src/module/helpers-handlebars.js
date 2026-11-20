@@ -2,7 +2,20 @@
  * @file Registers additional Handlebars helpers beyond those in ose.js
  */
 
+// Format Gear size values without changing data or nonnumeric placeholders.
+export function formatGearSize(value, fallback = '') {
+  const empty = typeof fallback === 'string' ? fallback : '';
+  if (value && typeof value === 'object') {
+    if (Array.isArray(value.tags) && value.tags.includes('no-store')) return 'N/A';
+    value = value.storedSize;
+  }
+  if (value === undefined || value === null || value === '') return empty;
+  const number = Number(value);
+  return Number.isFinite(number) ? number.toFixed(2) : String(value);
+}
+
 export const registerHelpers = () => {
+  Handlebars.registerHelper("gearSize", formatGearSize);
   // Equality check
   Handlebars.registerHelper("eq", (a, b) => a === b);
 
@@ -18,6 +31,13 @@ export const registerHelpers = () => {
   Handlebars.registerHelper("roundWeight", (value) =>
     Math.round(Number(value) * 10) / 10
   );
+
+  // Gear weights are displayed to hundredths so the visible rows reconcile
+  // with their container subtotals without changing the underlying data.
+  Handlebars.registerHelper("gearWeight", (value) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number.toFixed(2) : "0.00";
+  });
 
   // Counter helper for iterating 0..n-1
   Handlebars.registerHelper("counter", (value, max) => {

@@ -1,0 +1,27 @@
+{
+  "tool": "Built-in image_gen",
+  "status": "Three previews; no item selected or created.",
+  "options": [
+    {
+      "number": 1,
+      "name": "hooded-wool",
+      "source": "/Users/paul/.codex/generated_images/01a1e7e8-bc6e-72e2-82dd-aa80518a6185/exec-6c8967f2-c163-4d7e-8931-8b3516d1b0e7.png",
+      "prompt": "Use case: stylized-concept. Create ONE standalone fantasy tabletop RPG inventory item illustration for Westford: Coat, Winter, a separate large outer coat worn over ordinary adventurer clothing. The referenced existing winter-clothes image is STYLE REFERENCE ONLY: hand-painted medieval equipment art, fine dark ink outlines, tactile wool and weathered leather, muted earthy colors, softly modeled volume. Depict ONLY ONE unworn coat, front three-quarter view, full sleeves and hem visible, generous roomy cut and deep pockets. Empty garment: no person, mannequin, hands, legs, boots, tunic, separate cloak, or other equipment. Single coat fills 85% of a square canvas. Truly transparent background, clean alpha edges, no scenery, snow, shadow plane, text, numbers, border or watermark. No modern zippers, snaps, plastics, logos, military insignia or armor. Do not copy stray pixel artifacts from reference. OPTION 1 \u2014 HOODED WOOL GREATCOAT: dark olive-brown dense wool, knee-length flared hem, integrated roomy hood, modest cream fleece lining visible inside hood and cuffs, overlapping front with three simple wooden toggles, weathered leather waist belt. A practical understated traveler coat, clearly one single outer garment.",
+      "file": "/System/Volumes/Data/mnt/foundry/westford-data/Data/systems/osp-houserules/assets/images/clothing/winter-coat-options/option-1-hooded-wool.webp"
+    },
+    {
+      "number": 2,
+      "name": "shearling",
+      "source": "/Users/paul/.codex/generated_images/01a1e7e8-bc6e-72e2-82dd-aa80518a6185/exec-3285d1c7-ac12-4ada-aa4f-5f524fb6218c.png",
+      "prompt": "Use case: stylized-concept. Create ONE standalone fantasy tabletop RPG inventory item illustration for Westford: Coat, Winter, a separate large outer coat worn over ordinary adventurer clothing. The referenced existing winter-clothes image is STYLE REFERENCE ONLY: hand-painted medieval equipment art, fine dark ink outlines, tactile wool and weathered leather, muted earthy colors, softly modeled volume. Depict ONLY ONE unworn coat, front three-quarter view, full sleeves and hem visible, generous roomy cut and deep pockets. Empty garment: no person, mannequin, hands, legs, boots, tunic, separate cloak, or other equipment. Single coat fills 85% of a square canvas. Truly transparent background, clean alpha edges, no scenery, snow, shadow plane, text, numbers, border or watermark. No modern zippers, snaps, plastics, logos, military insignia or armor. Do not copy stray pixel artifacts from reference. OPTION 2 \u2014 SHEARLING WINTER COAT: warm chestnut-brown sheepskin, broad folded cream fleece collar with no hood, substantial fleece cuffs, mid-thigh length, overlapping double front panels, three rugged leather tab fastenings and a simple leather waist belt. Thick cozy rounded silhouette, deep reinforced outer pockets; distinctly a single overcoat.",
+      "file": "/System/Volumes/Data/mnt/foundry/westford-data/Data/systems/osp-houserules/assets/images/clothing/winter-coat-options/option-2-shearling.webp"
+    },
+    {
+      "number": 3,
+      "name": "quilted",
+      "source": "/Users/paul/.codex/generated_images/01a1e7e8-bc6e-72e2-82dd-aa80518a6185/exec-41dfbda3-dfd8-419f-88f8-6a95c059eef5.png",
+      "prompt": "Use case: stylized-concept. Create ONE standalone fantasy tabletop RPG inventory item illustration for Westford: Coat, Winter, a separate large outer coat worn over ordinary adventurer clothing. The referenced existing winter-clothes image is STYLE REFERENCE ONLY: hand-painted medieval equipment art, fine dark ink outlines, tactile wool and weathered leather, muted earthy colors, softly modeled volume. Depict ONLY ONE unworn coat, front three-quarter view, full sleeves and hem visible, generous roomy cut and deep pockets. Empty garment: no person, mannequin, hands, legs, boots, tunic, separate cloak, or other equipment. Single coat fills 85% of a square canvas. Truly transparent background, clean alpha edges, no scenery, snow, shadow plane, text, numbers, border or watermark. No modern zippers, snaps, plastics, logos, military insignia or armor. Do not copy stray pixel artifacts from reference. OPTION 3 \u2014 QUILTED WOOL LONG COAT: charcoal slate-grey heavy wool, subtle broad diamond quilting, tall fleece-lined stand collar with no hood, calf-length split hem, leather edging and leather tie closures, simple narrow leather belt, deep inset hip pockets. Leaner long silhouette while still roomy enough for layering; practical medieval outerwear, not a gambeson or armor.",
+      "file": "/System/Volumes/Data/mnt/foundry/westford-data/Data/systems/osp-houserules/assets/images/clothing/winter-coat-options/option-3-quilted.webp"
+    }
+  ]
+}

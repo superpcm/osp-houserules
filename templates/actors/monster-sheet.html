@@ -140,6 +140,7 @@
         {{#each abilities}}
         <li data-item-id="{{id}}">
           <span class="ability-name">{{name}}</span>
+          <button type="button" class="ability-roll" title="Roll Ability">Roll Ability</button>
           {{#if enrichedDescription}}<span class="ability-desc">{{{enrichedDescription}}}</span>{{/if}}
           <i class="fas fa-trash-alt item-delete"></i>
         </li>

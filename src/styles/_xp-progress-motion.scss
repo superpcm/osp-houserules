@@ -1,0 +1,11 @@
+// Override the frozen theme without changing its approved baseline.
+.xp-group .level-xp-progress {
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(var(--xp-progress-fill, 0));
+  transition: transform 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-group .level-xp-progress { transition: none; }
+}

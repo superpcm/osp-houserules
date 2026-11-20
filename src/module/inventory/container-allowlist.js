@@ -8,11 +8,12 @@
 /** @type {Readonly<Record<string, string[]>>} */
 const DEDICATED_HOLDER_ITEMS = Object.freeze({
   'Scabbard, Dagger': ['Dagger', 'Misericorde'],
-  'Scabbard, Sword': ['Longsword', 'Broadsword', 'Bastard Sword', 'Khopesh', 'Shortsword', 'Rapier'],
+  'Scabbard, Sword': ['Longsword', 'Broadsword', 'Bastard Sword', 'Khopesh', 'Shortsword', 'Rapier', 'Falchion'],
   'Sword Frog': ['Scabbard, Sword'],
   'Baldric': ['Zweihander', 'Greatsword'],
   'Axe Sling': ['Battle Axe', 'Battle Axe, 2-Handed'],
-  'Belt Loop': ['Hand Axe', 'Light Hammer', 'Warhammer', 'Waterskin', 'Mace', 'Morning Star', 'Flail'],
+  'Warhammer Sling': ['Warhammer'],
+  'Belt Loop': ['Hand Axe', 'Light Hammer', 'Warhammer', 'Waterskin', 'Mace', 'Morning Star', 'Flail', "Butcher's Cleaver"],
   'Flask/Potion Holder': ['Vial or Bottle', 'Oil Flask', 'Holy Water'],
   'Skin Sling': ['Waterskin', 'Wineskin'],
 });
@@ -35,8 +36,110 @@ const STANDARD_PORTABLE_CONTAINER_NAMES = new Set([
 // positive-capacity clothing entry in the catalog.
 const POSITIVE_CAPACITY_CLOTHING_NAMES = new Set([
   'Cloak', 'Robes', "Clothes, Commoner's", "Clothes, Merchant's", "Clothes, Adventurer's",
-  "Clothes, Nobleman's",
+  "Clothes, Nobleman's", 'Clothes, Winter', 'Coat, Winter',
 ]);
+
+const POUCH_NAMES = new Set(['Belt Pouch (S)', 'Belt Pouch (L)']);
+const POUCH_BLOCKED_NAMES = new Set([
+  'Pole, Ten Foot', 'Crowbar', 'Torch', 'Hand Axe', 'Light Hammer',
+  'Grappling Hook', 'Lantern, Bullseye', 'Lantern, Hooded', 'Mallet, Wooden',
+  'Rations, Iron',
+]);
+
+// Apply shape restrictions to every garment with internal storage, including
+// existing custom or magical clothing. The dormant maxItemSize is not enforced.
+const CLOTHING_BLOCKED_NAMES = new Set(['Torch', 'Grappling Hook', 'Hammer, Small', 'Boots']);
+const CLOTHING_BLOCKED_AMMUNITION_NAMES = new Set([
+  'Arrow', 'Silver-tipped Arrow', 'Crossbow Bolt, Light', 'Crossbow Bolt, Heavy',
+]);
+
+/** @param {ContainerData} container */
+const isLashedRolledGarment = container => ['Coat, Winter', 'Cloak'].includes(container?.name?.replace(/\s*[+-]\d+$/, '') ?? '')
+  && container?.system?.lashed === true;
+
+/** @param {ContainerData} container */
+function isPositiveCapacityClothing(container) {
+  return container?.type === 'clothing'
+    && positiveCapacity(container) !== null;
+}
+
+/** @param {ItemData} itemData */
+function isArrowOrBolt(itemData) {
+  const tags = Array.isArray(itemData?.system?.tags) ? itemData.system.tags : [];
+  return tags.includes('arrows') || tags.includes('bolts')
+    || CLOTHING_BLOCKED_AMMUNITION_NAMES.has(baseItemName(itemData) || '');
+}
+
+/**
+ * Return the derived storage warning for an item already in positive-capacity clothing.
+ * Dagger and its dagger scabbard remain valid in Adventurer's Clothes; maxItemSize is
+ * intentionally not consulted here.
+ * @param {ItemData} itemData @param {ContainerData} container
+ * @returns {string|null}
+ */
+export function clothingStorageRejection(itemData, container) {
+  if (!isPositiveCapacityClothing(container)) return null;
+  if (isLashedRolledGarment(container)) {
+    return `${itemData.name} cannot be stored in ${container.name} while it is lashed to a Backpack.`;
+  }
+  const name = baseItemName(itemData) || '';
+  if (CLOTHING_BLOCKED_NAMES.has(name)) {
+    return `${itemData.name} is too bulky or awkward to store inside ${container.name}.`;
+  }
+  if (isArrowOrBolt(itemData)) {
+    return `${itemData.name} belongs in a quiver or bolt case, not inside ${container.name}.`;
+  }
+  return null;
+}
+
+/**
+ * Return the derived storage warning for an item already in a belt pouch.
+ * This is intentionally pure: existing invalid contents remain in place until a user moves them.
+ * @param {ItemData} itemData @param {ContainerData} container
+ * @returns {string|null}
+ */
+export function pouchStorageRejection(itemData, container) {
+  if (!container?.name || !POUCH_NAMES.has(container.name)) return null;
+  const name = baseItemName(itemData) || '';
+  if (name === 'Hammer, Small' && container.name === 'Belt Pouch (S)') {
+    return `${itemData.name} is too bulky for a small belt pouch.`;
+  }
+  if (!POUCH_BLOCKED_NAMES.has(name)) return null;
+  return `${itemData.name} is too long or bulky for a belt pouch.`;
+}
+
+/**
+ * Audit pouch contents without changing item data. Includes nested pouches.
+ * @param {any} items
+ * @returns {Array<{item:any,container:any,reason:string}>}
+ */
+export function auditPouchContents(items) {
+  /** @type {any} */
+  const source = items && 'contents' in Object(items) ? items.contents : items;
+  const all = [...(source ?? [])];
+  const byId = new Map(all.map(item => [item?.id ?? item?._id, item]));
+  return all.flatMap(item => {
+    if (item?.system?.lashed) return [];
+    const parent = byId.get(item?.system?.containerId);
+    const reason = pouchStorageRejection(item, parent);
+    return reason ? [{ item, container: parent, reason }] : [];
+  });
+}
+
+/** Audit clothing contents without changing item data; lashed items are external. */
+/** @param {any} items */
+export function auditClothingContents(items) {
+  /** @type {any} */
+  const source = items && 'contents' in Object(items) ? items.contents : items;
+  const all = [...(source ?? [])];
+  const byId = new Map(all.map(item => [item?.id ?? item?._id, item]));
+  return all.flatMap(item => {
+    if (item?.system?.lashed) return [];
+    const parent = byId.get(item?.system?.containerId);
+    const reason = clothingStorageRejection(item, parent);
+    return reason ? [{ item, container: parent, reason }] : [];
+  });
+}
 
 /** @param {*} value */
 function normalizedRestriction(value) {
@@ -83,7 +186,10 @@ function isGeneratedPotionForCanonicalHolder(itemData, container) {
 export function matchesContainerAllowedNames(itemData, container) {
   const allowedNames = container?.system?.allowedNames;
   if (!Array.isArray(allowedNames) || allowedNames.length === 0) return true;
-  return allowedNames.includes(baseItemName(itemData)) || isGeneratedPotionForCanonicalHolder(itemData, container);
+  const name = baseItemName(itemData);
+  // Existing Belt Loops may still have the allowlist from before the cleaver was added.
+  if (container.name === 'Belt Loop' && itemData?.type === 'weapon' && name === "Butcher's Cleaver") return true;
+  return allowedNames.includes(name) || isGeneratedPotionForCanonicalHolder(itemData, container);
 }
 
 /** @param {ContainerData} container */
@@ -140,7 +246,10 @@ export function checkAllowedContainers(itemData, container) {
   if (isGeneratedPotionForCanonicalHolder(itemData, container)) {
     return { allowed: true, reason: null };
   }
-  if (allowedContainers.includes(container?.name)) return { allowed: true, reason: null };
+  if (allowedContainers.includes(container?.name)
+    || (container?.name === "Traveler's Backpack" && allowedContainers.includes('Backpack'))) {
+    return { allowed: true, reason: null };
+  }
   return {
     allowed: false,
     reason: `${itemData.name} only fits in: ${allowedContainers.join(', ')}.`,

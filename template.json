@@ -1,6 +1,7 @@
 {
   "Actor": {
-    "types": ["character", "monster"],
+    "types": ["character", "monster", "marker"],
+    "marker": { "templates": [], "system": {} },
     "character": {
       "templates": [],
       "system": {
@@ -146,9 +147,14 @@
         "equipped": false,
         "lashable": false,
         "lashed": false,
+        "vehicleKind": null,
+        "vehicleAttachmentKind": null,
+        "vehicleAttachment": null,
         "containerId": null,
         "slotCost": 0,
-        "allowedContainers": []
+        "allowedContainers": [],
+        "storeAvailability": null,
+        "blacksmithEligible": null
       }
     },
     "weapon": {
@@ -213,6 +219,7 @@
       "templates": ["base"],
       "system": {
         "equipped": false,
+        "slot": "",
         "lashSlots": 0,
         "lashAllowedSizes": []
       }

@@ -16,6 +16,7 @@ import { COIN_TEMPLATES } from "./treasure-cost.js";
 import { validateDepositSource } from "./deposit-source.js";
 import { runTransaction, itemChange, createdItemChange, flagChange, settingChange, transactionBlock } from "./transaction-journal.js";
 import { requestInventoryMutation, registerInventoryAuthority, resolveInventoryActor, inventoryWithdrawalAllowed } from "./inventory-authority.js";
+import { isArrowQuiver, prepareArrowQuiverPlacement } from './arrow-bundle.js';
 
 const SETTING = "partyTreasury";
 const COINS = { gold: "Gold Coins", silver: "Silver Coins", copper: "Copper Coins" };
@@ -126,6 +127,7 @@ async function execute(request) {
       const entry = ledger.items.find((candidate) => candidate.entryId === request.entryId);
       if (!entry) return { success: false, reason: "That treasury entry no longer exists." };
       itemData = { ...entry.itemData, system: { ...entry.itemData.system, quantity, containerId: container.id } };
+      if (isArrowQuiver(container)) itemData = prepareArrowQuiverPlacement(itemData, container);
       plan = planWithdrawItem(ledger, request.entryId, quantity, checkWithdrawTarget(itemData, container, actor.items), meta(user, actor, container.id));
     }
     if (!plan.success) return plan;

@@ -1,0 +1,97 @@
+// Keep the contextual arrows inside the scroll viewport, above the existing item controls.
+.gear-tab [data-gear-order-row] > .item-sort-controls,
+.gear-tab [data-gear-order-row] > .item-controls > .item-sort-controls {
+  left: auto;
+  right: 2px;
+  top: 0;
+  width: 56px;
+  height: 14px;
+  flex-direction: row;
+  gap: 4px;
+}
+
+// Native, keyboard-accessible controls retain the existing row geometry.
+.gear-tab .item-sort-controls button.item-sort-up,
+.gear-tab .item-sort-controls button.item-sort-down {
+  appearance: none;
+  width: 16px;
+  height: 10px;
+  min-height: 0;
+  flex-shrink: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gear-tab .item-sort-controls button.gear-order-handle {
+  appearance: none;
+  width: 16px;
+  height: 12px;
+  min-height: 0;
+  font-size: 11px;
+  flex: 0 0 16px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  color: inherit;
+  line-height: 1;
+  cursor: grab;
+}
+.gear-tab .item-sort-controls button.gear-order-handle:active { cursor: grabbing; }
+.gear-tab .item-sort-controls button.gear-order-handle:disabled { opacity: .22; cursor: default; pointer-events: auto; }
+.gear-tab .item-sort-controls button.gear-order-handle:focus-visible { outline: 1px solid currentColor; outline-offset: 1px; }
+.gear-tab .gear-order-dragging { opacity: .55; }
+
+.gear-tab .item-sort-controls button:disabled {
+  opacity: .22;
+  cursor: default;
+  pointer-events: none;
+}
+
+.gear-tab .item-sort-controls button:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 1px;
+}
+
+.gear-tab .item-entry:focus-within > .item-sort-controls,
+.gear-tab .slung-item:focus-within > .item-sort-controls,
+.gear-tab .lashed-attachment:focus-within > .item-sort-controls,
+.gear-tab .lashed-stored-item:focus-within > .item-sort-controls {
+  opacity: .85;
+}
+
+.gear-tab [data-gear-order-row]:hover > .item-sort-controls,
+.gear-tab [data-gear-order-row]:focus-within > .item-sort-controls {
+  opacity: .85;
+}
+
+.gear-tab .item-header[data-gear-order-row] > .item-controls > .item-sort-controls {
+  top: -18px;
+}
+.gear-tab [data-gear-order-row]:hover > .item-controls > .item-sort-controls,
+.gear-tab [data-gear-order-row]:focus-within > .item-controls > .item-sort-controls {
+  opacity: .85;
+}
+
+.gear-tab .gear-order-handle { touch-action: none; user-select: none; }
+.gear-order-pointer-active, .gear-order-pointer-active * { cursor: grabbing !important; user-select: none !important; }
+.osp-gear-order-drop-indicator {
+  position: fixed; left: 0; top: 0; height: 2px; z-index: 10000;
+  pointer-events: none; background: #6f3f2a; contain: layout style paint;
+  box-shadow: 0 0 0 1px rgba(255,226,181,.55);
+}
+.osp-gear-order-pointer-ghost {
+  position: fixed; left: 0; top: 0; z-index: 10001; pointer-events: none;
+  max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  padding: 4px 8px; border: 1px solid #6f3f2a; border-radius: 2px;
+  background: rgba(245,230,190,.96); color: #2c1810;
+  font: 14px/1.2 "Handwritten", cursive; contain: layout style paint;
+  &.is-invalid { opacity: .55; }
+}
+.osp-gear-order-drop-indicator[hidden] { display: none !important; }

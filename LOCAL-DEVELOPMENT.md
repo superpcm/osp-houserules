@@ -1,8 +1,22 @@
-# Local Foundry development
+# Westford live target and local development
 
-This checkout is loaded directly by the local Foundry user-data directory:
+## Default target for future changes
 
-`/Users/Shared/foundry/narlington-data/Data/systems/osp-houserules`
+Paul designated **Westford** as the default on 2026-11-10:
+
+- Live session: <https://westford.the-citadel.us/game>
+- Source and build directory: `/System/Volumes/Data/mnt/foundry/westford-data/Data/systems/osp-houserules`
+
+The Narlington checkout is separate. Building there does **not** update Westford.
+Use the Westford directory explicitly, preserve its existing changes, build the
+affected runtime files there, and verify the requested behavior in the live
+Westford browser after reloading. Back up affected live files before replacing
+them. Do not copy world data, compendiums, or configuration between instances.
+
+## Optional isolated local development
+
+The setup below describes the separate local development instance. It is not
+the default live target and does not deploy to Westford.
 
 ## Prerequisites
 

@@ -1,0 +1,33 @@
+<div class="calendar-clock-face">
+  <div class="calendar-analog-clock" role="img" aria-label="Current campaign time {{clock.timeLabel}}">
+    <svg viewBox="0 0 1254 1254" aria-hidden="true">
+      <defs>
+        <linearGradient id="cartographer-hand-metal" x1="0" y1="0" x2="1" y2="0">
+          <stop stop-color="#70491c"/><stop offset=".3" stop-color="#e1bd70"/><stop offset=".48" stop-color="#8d5c23"/><stop offset=".65" stop-color="#edcf8c"/><stop offset="1" stop-color="#6a4017"/>
+        </linearGradient>
+        <linearGradient id="cartographer-ruby" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="#a34b36"/><stop offset=".5" stop-color="#671f1c"/><stop offset="1" stop-color="#32100e"/>
+        </linearGradient>
+        <radialGradient id="cartographer-pivot" cx=".35" cy=".3" r=".7">
+          <stop stop-color="#f1d58f"/><stop offset=".55" stop-color="#c29a53"/><stop offset="1" stop-color="#805321"/>
+        </radialGradient>
+      </defs>
+      <image href="/systems/osp-houserules/assets/calendar/cartographers-clock-face.png" x="0" y="0" width="1254" height="1254"/>
+      <g class="clock-hand clock-hour" transform="rotate({{clock.hour}} 627 600)">
+        <path d="M620 627V392L599 350L627 286L655 350L634 392V627Z" fill="url(#cartographer-hand-metal)" stroke="#38210e" stroke-width="4"/>
+        <path d="M627 309L644 350L627 373L610 350Z" fill="url(#cartographer-ruby)" stroke="#e0bc70" stroke-width="3"/>
+        <path d="M627 390V602" fill="none" stroke="#d0a358" stroke-width="3"/>
+      </g>
+      <g class="clock-hand clock-minute" transform="rotate({{clock.minute}} 627 600)">
+        <path d="M620 627V350L603 310L620 185L627 146L634 185L651 310L634 350V627Z" fill="url(#cartographer-hand-metal)" stroke="#38210e" stroke-width="4"/>
+        <path d="M627 232L641 310L627 334L613 310Z" fill="url(#cartographer-ruby)" stroke="#e0bc70" stroke-width="3"/>
+        <path d="M627 351V602" fill="none" stroke="#d0a358" stroke-width="3"/>
+      </g>
+      <g class="cartographer-clock-pivot">
+        <circle cx="627" cy="600" r="37" fill="#6b471d" stroke="#e7c77e" stroke-width="4"/>
+        <circle cx="627" cy="600" r="29" fill="url(#cartographer-pivot)" stroke="#553516" stroke-width="3"/>
+        <circle cx="627" cy="600" r="8" fill="#b48a45" stroke="#6f491d" stroke-width="2"/>
+      </g>
+    </svg>
+  </div>
+</div>

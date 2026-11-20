@@ -149,3 +149,17 @@ it('keeps a native prompt open when its validation callback rejects the input', 
   await app.options.submit('ok', app);
   expect(app.close).toHaveBeenCalledWith({ submitted: true });
 });
+
+
+it('restores the fixed manuscript dimensions without resetting the window location', async () => {
+  const { s } = fixture();
+  Object.defineProperty(s, 'constructor', { value: { DEFAULT_OPTIONS: { position: { width: 822, height: 754 } } } });
+  s.setPosition = vi.fn();
+  s._dragDrop = {};
+  s._activateSheetListeners = vi.fn();
+  s._activateNativeEditors = vi.fn();
+  await s._onRender({}, {});
+  expect(s.setPosition).toHaveBeenCalledWith({ width: 822, height: 754 });
+  expect(s.setPosition.mock.calls[0][0]).not.toHaveProperty('left');
+  expect(s.setPosition.mock.calls[0][0]).not.toHaveProperty('top');
+});

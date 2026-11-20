@@ -90,6 +90,37 @@ describe('BR-17 language editing', () => {
     expect(toggle.hidden).toBe(true);
   });
 
+  it('coalesces repeated measurements onto one pending frame', () => {
+    const requestAnimationFrame = vi.fn(() => 19);
+    const measureOverflow = vi.fn();
+    const window = { requestAnimationFrame, cancelAnimationFrame: vi.fn() };
+    const model = {
+      _measureFrame: null, _measureFrameWindow: null,
+      _ownerWindow: () => window,
+      measureOverflow,
+    };
+    LanguageHandler.prototype.scheduleOverflowMeasurement.call(model);
+    LanguageHandler.prototype.scheduleOverflowMeasurement.call(model);
+    expect(requestAnimationFrame).toHaveBeenCalledOnce();
+    expect(model._measureFrame).toBe(19);
+  });
+
+  it('skips hidden or inactive Bio measurements without creating a probe', () => {
+    const createElement = vi.fn();
+    const doc = { createElement, body: { appendChild: vi.fn() } };
+    const win = { getComputedStyle: () => ({ display: 'block', visibility: 'visible' }) };
+    const field = { getBoundingClientRect: () => ({ width: 100, height: 20 }) };
+    const bioTab = { classList: { contains: () => false } };
+    const element = { getBoundingClientRect: () => ({ width: 100, height: 20 }), closest: () => bioTab, ownerDocument: doc };
+    const model = { tags: Object.assign([element], { closest: () => [field] }), toggleElement: {}, _ownerWindow: () => win };
+    LanguageHandler.prototype.measureOverflow.call(model);
+    expect(createElement).not.toHaveBeenCalled();
+    bioTab.classList.contains = () => true;
+    element.getBoundingClientRect = () => ({ width: 0, height: 20 });
+    LanguageHandler.prototype.measureOverflow.call(model);
+    expect(createElement).not.toHaveBeenCalled();
+  });
+
   it('disconnects observers and pending measurement frames on destroy', () => {
     const off = vi.fn();
     const disconnect = vi.fn();
@@ -122,6 +153,18 @@ describe('BR-17 language editing', () => {
     expect(newWindow.addEventListener).toHaveBeenCalledWith('resize', handler._onWindowResize);
     expect(oldObserver.disconnect).toHaveBeenCalledOnce();
     expect(newObserver.observe).toHaveBeenCalledWith(element);
+    expect(newWindow.requestAnimationFrame).toHaveBeenCalledOnce();
+  });
+
+  it('cancels a pending frame on the old host before scheduling on the new host', () => {
+    const oldWindow = { cancelAnimationFrame: vi.fn() };
+    const newWindow = { requestAnimationFrame: vi.fn(() => 22), cancelAnimationFrame: vi.fn() };
+    const model = {
+      _measureFrame: 7, _measureFrameWindow: oldWindow,
+      _ownerWindow: () => newWindow, measureOverflow: vi.fn(),
+    };
+    LanguageHandler.prototype.scheduleOverflowMeasurement.call(model);
+    expect(oldWindow.cancelAnimationFrame).toHaveBeenCalledWith(7);
     expect(newWindow.requestAnimationFrame).toHaveBeenCalledOnce();
   });
 });

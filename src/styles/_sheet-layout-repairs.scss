@@ -1,0 +1,232 @@
+// Targeted repairs over the preserved pre-Store stylesheet.
+$sheet: '.application.window-app.osp.sheet.actor.character.osp-native-character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet';
+
+#{$sheet}:has(.tab[data-tab='skills'].active) .tab.tab[data-tab='skills'] {
+  // Match the Details and Background heading positions at the journal's vertical scale.
+  .skill-tab-title { translate: 0 calc(4.05311px + 3.55px / .94) !important; }
+  .skill-tab-subtitle { translate: 0 calc(-8.192px + 4.88px / .94) !important; }
+
+  // Keep the rings, labels, and scrollbar together at the journal's vertical scale.
+  > .cs-skill-svg-container { translate: 0 calc(36px - 5px / .94) !important; }
+  .listening-group {
+    width: var(--width) !important;
+    height: var(--height) !important;
+  }
+  .skill-abilities-section {
+    isolation: isolate !important;
+    z-index: 1 !important;
+    bottom: 14px !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  .skill-abilities-content { height: 100% !important; max-height: none !important; }
+  .skill-ability-caret { position: relative !important; z-index: 0 !important; }
+}
+
+#{$sheet} .tab.tab[data-tab='bio'] .bio-saving-throws-section .combat-saving-throws-subtitle {
+  translate: 0 calc(2px / .94) !important;
+}
+
+// Reuse the existing page art as a foreground only at the lower edge and
+// corners. The central writing area remains visible down to the bottom rule.
+#{$sheet}:has(.tab:is([data-tab='combat'], [data-tab='skills']).active)::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  background: url('/systems/osp-houserules/assets/character-sheet/explorers-journal/sewn-manuscript-wide-v1.png') center / 100% 100% no-repeat !important;
+  clip-path: inset(84% 0 0) !important;
+  mask-image: linear-gradient(to right, #000 0 16%, transparent 16% 84%, #000 84% 100%), linear-gradient(to bottom, transparent 0 93%, #000 93% 100%);
+  filter: var(--osp-border-ink-filter);
+  opacity: 1 !important;
+  z-index: 1000 !important;
+  pointer-events: none !important;
+}
+
+/* Custom ability controls stay readable and keep opening the item separate from rolling. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] {
+  .custom-abilities-header {
+    grid-column: 1 / -1;
+    font: 16px 'Cooper Std', serif !important;
+    color: #352b1b;
+    padding: 4px 0 0;
+  }
+  .custom-ability-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .custom-ability-name {
+    flex: 1 1 12rem;
+    min-width: 0;
+    color: #2e2013;
+    font: 16px 'Cooper Std', serif !important;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .custom-ability-name:focus-visible { outline: 2px solid #92703d; outline-offset: 2px; }
+  .custom-ability-entry [data-roll-ability] {
+    width: auto;
+    min-height: 30px;
+    padding: 4px 10px;
+    background: #35452d !important;
+    color: #fff0c8 !important;
+    border: 1px solid #92703d;
+    font: 14px 'Cooper Std', serif !important;
+    cursor: pointer;
+  }
+  .custom-ability-entry [data-roll-ability]:hover,
+  .custom-ability-entry [data-roll-ability]:focus-visible { background: #4a623e !important; outline: 2px solid #92703d; outline-offset: 1px; }
+  .custom-ability-entry [data-roll-ability]:disabled { opacity: .55; cursor: wait; }
+  .custom-ability-entry .skill-ability-effect { font-size: 16px; }
+}
+
+
+/* Match the Belt branch clearance beneath the Slung Items capacity ring. */
+.osp-native-character .slung-section-entry .slung-item.first-slung-item::before {
+  top: -4px;
+}
+
+/* Keep custom ability actions centered inside their compact parchment buttons. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] {
+  .custom-ability-entry [data-roll-ability] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+  }
+}
+
+/* Replace Foundry's radio glyphs with a single square checkbox/checkmark. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section .combat-talent-option input[type='radio'] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  position: relative;
+  border: 1px solid #78694d !important;
+  border-radius: 2px !important;
+  background: #fff0c8 !important;
+}
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section .combat-talent-option input[type='radio']::before,
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section .combat-talent-option input[type='radio']::after {
+  content: none !important;
+}
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section .combat-talent-option input[type='radio']:checked::after {
+  content: '✓' !important;
+  display: block !important;
+  position: absolute !important;
+  inset: -2px 0 0 !important;
+  color: #35452d !important;
+  font: 700 14px/16px sans-serif !important;
+  text-align: center !important;
+}
+
+/* Lift only the displayed maximum HP value by the requested two pixels. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='combat'] .combat-b-dashboard > .combat-b-number.combat-b-max {
+  margin-top: -2px !important;
+}
+
+/* Larger talent marks and illustrated weapon choices. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section {
+  .combat-talent-option { grid-template-columns: 26px minmax(0, 1fr); }
+  .combat-talent-option input[type='radio'] { width: 24px !important; height: 24px !important; }
+  .combat-talent-option input[type='radio']:checked::after { inset: -2px 0 0 !important; font: 700 24px/24px sans-serif !important; }
+  .combat-talent-detail { font-size: 15px !important; }
+  .combat-weapon-picker { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .combat-weapon-preview { flex: 0 0 44px; width: 44px; height: 44px; object-fit: contain; border: 0; }
+  .combat-weapon-preview[hidden] { display: none; }
+  select[data-talent-weapon] { flex: 1; min-width: 0; height: 44px !important; font-size: 18px !important; line-height: 1.3 !important; }
+  select[data-talent-weapon] option { font-size: 18px !important; }
+  select[data-talent-weapon] option img { width: 32px; height: 32px; object-fit: contain; border: 0; }
+  @supports (appearance: base-select) {
+    select[data-talent-weapon], select[data-talent-weapon]::picker(select) { appearance: base-select; }
+    select[data-talent-weapon] option { display: flex; align-items: center; gap: 10px; padding: 6px 10px; }
+  }
+}
+
+/* Saved specialization reads as an illustrated name, rather than a form field. */
+.window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet .tab[data-tab='skills'] .combat-talents-section {
+  .combat-weapon-name, select[data-talent-weapon] { font-size: 33px !important; text-align: left !important; }
+  .combat-weapon-name { line-height: 1.2; overflow-wrap: anywhere; }
+  .combat-weapon-name[hidden], select[data-talent-weapon]:disabled { display: none !important; }
+  select[data-talent-weapon] { background: transparent !important; border: 0 !important; box-shadow: none !important; padding-left: 0 !important; }
+  select[data-talent-weapon] option { font-size: 33px !important; }
+}
+
+/* Scroll fixed-size skill targets together, including labels and controls. */
+#{$sheet}:has(.tab[data-tab='skills'].active) .tab.tab[data-tab='skills'] .cs-skill-svg-container[data-skill-strip='horizontal'] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  pointer-events: auto;
+  .cs-skill-track { margin-top: 40px; translate: none !important; }
+  &::-webkit-scrollbar { display: none; }
+}
+#{$sheet}:has(.tab[data-tab='skills'].active) .tab.tab[data-tab='skills'] {
+  > .cs-skill-scrollbar {
+    position: absolute;
+    z-index: 12;
+    display: flex;
+    height: 18px;
+    top: calc(36.17517% - 1px - 25px / .94) !important;
+    padding: 2px 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease;
+    &[hidden] { display: none; }
+    input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%; height: 14px; margin: 0;
+      background: transparent !important; border: 0 !important; outline: none !important; box-shadow: none !important; cursor: ew-resize;
+      &::-webkit-slider-runnable-track { height: 6px; background: transparent; border: 0; border-radius: 4px; box-shadow: none; }
+      &::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: var(--skill-scroll-thumb-width, 100%); height: 6px; margin-top: 0; border: 0; border-radius: 4px; background: #294c39; box-shadow: none; }
+      &::-moz-range-track { height: 6px; background: transparent; border: 0; border-radius: 4px; }
+      &::-moz-range-progress { background: transparent; }
+      &::-moz-range-thumb { width: var(--skill-scroll-thumb-width, 100%); height: 6px; border: 0; border-radius: 4px; background: #294c39; }
+    }
+  }
+  &:has(> .cs-skill-svg-container:hover) > .cs-skill-scrollbar,
+  &:has(> .cs-skill-svg-container[data-scrolling='true']) > .cs-skill-scrollbar,
+  > .cs-skill-scrollbar:is(:hover, :focus-within) { opacity: 1; pointer-events: auto; }
+}
+
+// Highlight unsuitable pouch contents without relocating them.
+#{$sheet} .pouch-storage-warning,
+#{$sheet} .clothing-storage-warning { color: #9a3028; font-weight: 700; margin-left: .25rem; cursor: help; }
+
+// Fit tall item artwork inside the directory's square thumbnail frame.
+.items-sidebar .directory-item.item > img.thumbnail {
+  object-fit: contain;
+}
+
+/* Shape each saving-throw caption as one text run along the lower rim. */
+.bio-saving-throws-section .bio-save-arc-text {
+  fill: #21180f;
+  font-family: "Cooper Std", "Cooper Standard", Georgia, serif !important;
+  font-size: 10px !important;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+// Position and size the visible numerals independently of the rings.
+#{$sheet} .tab[data-tab='bio'] .bio-saving-throws-section .cs-save-value {
+  translate: 0 calc(-2px / .94);
+}
+
+#{$sheet} .tab[data-tab='skills'] .cs-skill-value-display {
+  scale: 1.25;
+}
+
+// Carry each continuing stored-item connector across its row's bottom border.
+.gear-tab :is(
+  .lashed-stored-item:has(+ .lashed-stored-item),
+  .lashed-sub-stored-item:has(+ .lashed-sub-stored-item),
+  .lashed-deep-stored-item:has(+ .lashed-deep-stored-item)
+)::before {
+  bottom: -1px;
+}

@@ -1,0 +1,139 @@
+// Body virtual section for the character gear tree.
+.osp.sheet.actor .body-section-entry {
+  list-style: none;
+}
+
+.osp.sheet.actor .body-section-header {
+  grid-template-columns: 18px 48px 217.5px 112.5px 80px 51px 78px 85px !important;
+  max-width: 638px;
+
+  > :nth-child(1) { grid-column: 1; grid-row: 1; }
+  > :nth-child(2) { grid-column: 2; grid-row: 1; }
+  > :nth-child(3) { grid-column: 3; grid-row: 1; }
+}
+
+.osp.sheet.actor .body-section-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 0 !important;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  cursor: pointer;
+
+}
+
+.osp.sheet.actor .body-header-image {
+  background-color: transparent;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: visible;
+}
+
+.osp.sheet.actor .clothing-wear-ring-container {
+  // Keep the mannequin in the existing 48px image column; the ring is an
+  // overlay so it cannot move the name, caret, or gear columns.
+  isolation: isolate;
+}
+
+.osp.sheet.actor .clothing-wear-ring {
+  position: absolute;
+  inset: -4px;
+  width: 56px;
+  height: 56px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.osp.sheet.actor .clothing-wear-segment {
+  fill: none;
+  pointer-events: stroke;
+  stroke: transparent;
+  stroke-width: 3;
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+
+  &.is-occupied { stroke: #7a4a23; stroke-opacity: 0.25; }
+  &.is-conflict { stroke: #a92e25; stroke-opacity: 0.25; }
+}
+
+.osp.sheet.actor .clothing-wear-warning {
+  color: #a92e25;
+  font-weight: 700;
+  margin-left: 3px;
+}
+
+.osp.sheet.actor .body-items-list {
+  list-style: none;
+  position: relative;
+  margin-left: 60px;
+  padding-left: 0;
+  width: calc(100% - 60px);
+  max-width: none;
+
+  // Use the same row-relative trunk and branches as Slung Items. Keeping both
+  // segments on the row prevents list padding from separating their origins.
+  > .item-entry {
+    list-style: none;
+    position: relative;
+    max-width: none;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -17px;
+      top: -1px;
+      bottom: -1px;
+      width: 1px;
+      background: #000;
+      pointer-events: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: -17px;
+      top: 30px;
+      width: 35px;
+      height: 1px;
+      background: #000;
+      pointer-events: none;
+    }
+
+    &:has(> .item-header > a.container-toggle, > .item-header > a.belt-row-toggle)::after {
+      width: 17px;
+    }
+
+    &:last-child::before {
+      bottom: calc(100% - 30px);
+    }
+  }
+
+  .item-header,
+  .container-items-subheader {
+    max-width: none;
+  }
+}
+
+.osp.sheet.actor .body-empty {
+  list-style: none;
+  padding: 8px 0 8px 60px;
+  color: rgba(44, 24, 16, 0.72);
+  font-family: "Cooper Std", "Cooper Standard", Georgia, serif;
+  font-size: 24px;
+}
+
+// Match the standard 7px image-to-name gap without the inherited absolute
+// name offset being applied a second time inside the header's third grid track.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet):not(.ej-mini-character-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet:has(.tab[data-tab].active) .tab[data-tab=gear] .gear-scrollable-content .containers-title + .item-category .item-header.body-section-header > .item-name {
+  left: 7px !important;
+}

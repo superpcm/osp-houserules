@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "cooper std",
+        "files": [
+          "src/styles/character-sheet-main.scss"
+        ],
+        "createdAt": "2026-11-14T22:45:15.388Z",
+        "reason": "Agent: established character-sheet typeface present in the frozen pre-store-baseline.css; DESIGN.md documents the separate Store surface and explicitly preserves character-sheet styling."
+      },
+      {
+        "rule": "design-system-font",
+        "value": "handwritten",
+        "files": [
+          "src/styles/character-sheet-main.scss"
+        ],
+        "createdAt": "2026-11-14T22:45:15.622Z",
+        "reason": "Agent: established character-sheet typeface present in the frozen pre-store-baseline.css; DESIGN.md documents the separate Store surface and explicitly preserves character-sheet styling."
+      },
+      {
+        "rule": "design-system-font",
+        "value": "crimson text",
+        "files": [
+          "src/styles/character-sheet-main.scss"
+        ],
+        "createdAt": "2026-11-14T22:45:15.783Z",
+        "reason": "Agent: established character-sheet typeface present in the frozen pre-store-baseline.css; DESIGN.md documents the separate Store surface and explicitly preserves character-sheet styling."
+      }
+    ]
+  }
+}

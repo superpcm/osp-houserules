@@ -1,0 +1,7 @@
+#osp-browser-tests { position:fixed; z-index:1000; left:12px; top:12px; width:330px; max-height:90vh; overflow:auto; padding:12px; background:#161d25f5; color:#f2f5f7; border:2px solid #66c4ee; border-radius:6px; font:13px/1.35 sans-serif; }
+#osp-browser-tests h2 { font:700 15px sans-serif; margin:0 0 8px; color:#88d8ff; }
+#osp-browser-tests button { font:12px sans-serif; padding:5px; margin:2px 0; color:white; background:#354c62; border:1px solid #718ca2; }
+#osp-browser-tests .actions { display:grid; grid-template-columns:1fr 1fr; gap:3px; }
+#osp-browser-tests pre { max-height:240px; overflow:auto; font:10px monospace; white-space:pre-wrap; }
+#osp-browser-tests output { display:block; margin:4px 0; }
+#osp-browser-tests .pass { color:#8ce4a4; } #osp-browser-tests .fail { color:#ffadad; }

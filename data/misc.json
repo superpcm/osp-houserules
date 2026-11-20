@@ -13,7 +13,9 @@
       "lashable": false,
       "tags": [
         "liquid-storage"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -31,7 +33,9 @@
       "capacity": 150,
       "tags": [
         "container"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -49,7 +53,9 @@
       "capacity": 20,
       "tags": [
         "container"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -69,7 +75,9 @@
         "light source"
       ],
       "lightRadius": 30,
-      "burnTime": 4
+      "burnTime": 4,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -86,7 +94,10 @@
       "lashable": true,
       "tags": [
         "shelter"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "tent"
     }
   },
   {
@@ -103,7 +114,10 @@
       "lashable": true,
       "tags": [
         "shelter"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "tent"
     }
   },
   {
@@ -120,7 +134,127 @@
       "lashable": false,
       "tags": [
         "shelter"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "tent"
+    }
+  },
+  {
+    "name": "Spare Wheel, Cart",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/wheel-spare-cart_thumb.webp",
+    "system": {
+      "description": "An iron-rimmed wooden replacement wheel sized for a handcart or light cart. A matching spare keeps a damaged wheel from stranding the load.",
+      "cost": 15,
+      "unitWeight": 25,
+      "storedSize": 30,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "allowedContainers": [
+        "Cart",
+        "Handcart"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "cart-wheel"
+    }
+  },
+  {
+    "name": "Spare Wheel, Wagon",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/wheel-spare-wagon_thumb.webp",
+    "system": {
+      "description": "A heavy iron-rimmed wooden wheel with stout spokes and a reinforced hub. It replaces a matching wagon wheel and is usually carried with the vehicle.",
+      "cost": 25,
+      "unitWeight": 40,
+      "storedSize": 40,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "allowedContainers": [
+        "Wagon",
+        "Wagon, Open",
+        "Wagon, Heavy Freight"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "wagon-wheel"
+    }
+  },
+  {
+    "name": "Axle, Cart",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/axle-spare-cart_thumb.webp",
+    "system": {
+      "description": "A shaped oak axle beam with iron collars and projecting wheel spindles. It replaces a matching axle on a handcart or light cart.",
+      "cost": 20,
+      "unitWeight": 35,
+      "storedSize": 24,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "allowedContainers": [
+        "Cart",
+        "Handcart"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "cart-axle"
+    }
+  },
+  {
+    "name": "Axle, Wagon",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/axle-spare-wagon_thumb.webp",
+    "system": {
+      "description": "A stout oak wagon axle with iron collars and thick wheel spindles. A matching spare allows a damaged axle to be replaced on the road.",
+      "cost": 35,
+      "unitWeight": 60,
+      "storedSize": 50,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "allowedContainers": [
+        "Wagon",
+        "Wagon, Open",
+        "Wagon, Heavy Freight"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "wagon-axle"
+    }
+  },
+  {
+    "name": "Axle Grease",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/misc/grease-axle_thumb.webp",
+    "system": {
+      "description": "A small pot of thick grease for wheels, axles, and other moving joints. Regular application keeps a loaded vehicle rolling quietly and safely.",
+      "cost": 2,
+      "unitWeight": 2,
+      "storedSize": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   }
 ]

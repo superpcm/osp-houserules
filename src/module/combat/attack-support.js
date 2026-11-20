@@ -39,10 +39,16 @@ export function specializationBonus(level) {
   return n >= 13 ? { attack: 1, damage: 5 } : n >= 10 ? { attack: 1, damage: 3 } : n >= 4 ? { attack: 1, damage: 2 } : n >= 1 ? { attack: 1, damage: 1 } : { attack: 0, damage: 0 };
 }
 
+/** Only Fighters choose talents; Knight/Paladin specialization is a fixed class grant. */
+function classAllowsTalent(actor, name) {
+  const cls = combatKey(actor?.system?.class);
+  return cls === 'fighter' || (['knight', 'paladin'].includes(cls) && combatKey(name) === 'weaponspecialization');
+}
+
 /** Read the character-sheet talent record without requiring a particular sheet schema. */
 export function talentBonuses(actor, item = null, targetType = '') {
   const talents = actor?.getFlag?.('osp-houserules', 'combatTalents') ?? actor?.flags?.['osp-houserules']?.combatTalents ?? [];
-  const entries = Array.isArray(talents) ? talents : Object.values(talents || {});
+  const entries = (Array.isArray(talents) ? talents : Object.values(talents || {})).filter(t => classAllowsTalent(actor, t?.name ?? t));
   const specialization = entries.find(t => combatKey(t?.name ?? t) === 'weaponspecialization');
   const slayer = entries.find(t => combatKey(t?.name ?? t) === 'slayer');
   const selectedWeapon = combatKey(specialization?.weapon ?? specialization?.weaponName ?? specialization?.choice);
@@ -64,7 +70,7 @@ export function twoWeaponPenalties(level) {
 export function hasTalent(actor, name) {
   const stored = actor?.getFlag?.('osp-houserules', 'combatTalents') ?? [];
   const entries = Array.isArray(stored) ? stored : Object.values(stored && typeof stored === 'object' ? stored : {});
-  return entries.some(t => combatKey(t?.name) === combatKey(name));
+  return classAllowsTalent(actor, name) && entries.some(t => combatKey(t?.name) === combatKey(name));
 }
 export function canUseOffhand(item, primary, trained = true) {
   if (!item || !primary || item.id === primary.id || item.system?.wieldMode === 'twoHanded' || primary.system?.wieldMode === 'twoHanded') return false;

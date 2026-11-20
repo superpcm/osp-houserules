@@ -1,13 +1,13 @@
+import { TOOLTIP_DELAY_MS } from '../../ui/tooltips.js';
 /**
  * Portrait Positioning Tool
  * Handles interactive portrait adjustment functionality for character sheets.
- * Manages all 3 portrait interactions:
+ * Manages portrait interactions:
  *   - Double-click: open FilePicker to change portrait
- *   - Right-click (no modifier): position tool pass-through
- *   - Ctrl/Alt+Right-click: show zoom/move/reset adjustment controls
- *     (not Shift — Firefox always forces its native context menu on Shift+right-click,
- *     ignoring contextmenu's preventDefault(), so that combo can never open our panel there)
+ *   - Right-click: show zoom/move/reset adjustment controls
  */
+
+const MAX_PORTRAIT_ZOOM = 10;
 
 export class PortraitTool {
   constructor(actorSheet) {
@@ -15,6 +15,7 @@ export class PortraitTool {
     this.scale = 1;
     this.x = 0;
     this.y = 0;
+    this.rotation = 0;
     this._timers = new Set();
     this._timerHosts = new Map();
     this._listeners = [];
@@ -78,6 +79,7 @@ export class PortraitTool {
       this.setupDblClickHandler(portraitDisplay);
       this.setupRightClickHandler(portraitDisplay);
       this.setupPortraitAdjustment();
+      this.setupPortraitGestures(portraitDisplay);
     }, 500);
     this._timers.add(timer);
     this._timerHosts.set(timer, timerHost);
@@ -87,14 +89,16 @@ export class PortraitTool {
    * Setup hover tooltip on the portrait
    */
   setupTooltip(portraitDisplay) {
-    const root = this._sheetElement();
     const doc = this._sheetDocument();
-    let tooltip = root?.querySelector?.('#portrait-tooltip');
+    let tooltip = this._tooltip;
     if (!tooltip) {
       tooltip = doc.createElement('div');
       tooltip.id = 'portrait-tooltip';
       tooltip.className = 'cs-tooltip cs-tooltip--portrait';
-      root?.appendChild?.(tooltip);
+      // Bounding-client coordinates belong to the viewport. Keep the tooltip out of
+      // the sheet's positioned/transformed ancestors (including popped-out sheets).
+      tooltip.style.position = 'fixed';
+      doc.body.appendChild(tooltip);
     }
 
     this._tooltip = tooltip;
@@ -106,13 +110,13 @@ export class PortraitTool {
       const timer = schedule.call(timerHost, () => {
         this._timers.delete(timer);
         this._timerHosts.delete(timer);
-        tooltip.textContent = 'Double-click to select portrait • Ctrl+Right-click to adjust position';
+        tooltip.textContent = 'Double-click to select portrait • Right-click to adjust, then drag to move or scroll to zoom';
         tooltip.style.opacity = '1';
         const rect = portraitDisplay.getBoundingClientRect();
         const tipRect = tooltip.getBoundingClientRect();
         tooltip.style.left = (rect.left + rect.width / 2 - tipRect.width / 2) + 'px';
         tooltip.style.top = (rect.top - tipRect.height - 8) + 'px';
-      }, 500);
+      }, TOOLTIP_DELAY_MS);
       this._tooltipTimer = timer;
       this._timers.add(timer);
       this._timerHosts.set(timer, timerHost);
@@ -183,16 +187,10 @@ export class PortraitTool {
 
   /**
    * Setup right-click handler to show portrait adjustment controls
-   * Plain right-click passes through; Ctrl/Alt+right-click shows controls.
-   * Deliberately excludes Shift: Firefox always forces its native context menu on
-   * Shift+right-click and ignores contextmenu's preventDefault(), so a Shift-based trigger
-   * can never actually open our panel there.
+   * Plain right-click shows the adjustment controls.
    */
   setupRightClickHandler(portraitDisplay) {
     const handler = (event) => {
-      // Plain right-click: pass through (no action)
-      if (!event.ctrlKey && !event.altKey) return;
-
       event.preventDefault();
       event.stopPropagation();
 
@@ -228,6 +226,9 @@ export class PortraitTool {
     this.scale = parseFloat(getStyle(container).getPropertyValue('--user-portrait-scale')) || 1;
     this.x = parseFloat(getStyle(container).getPropertyValue('--user-portrait-x')) || 0;
     this.y = parseFloat(getStyle(container).getPropertyValue('--user-portrait-y')) || 0;
+    this.rotation = this._normalizeRotation(parseFloat(getStyle(container).getPropertyValue('--user-portrait-rotation')) || 0);
+
+    this.updateZoomReadout();
 
     const buttons = controls.querySelectorAll('button');
     buttons.forEach((button) => {
@@ -243,27 +244,77 @@ export class PortraitTool {
     });
   }
 
+  /** Direct manipulation is active only while the portrait adjustment toolbar is open. */
+  setupPortraitGestures(display) {
+    const container = this._query('#portrait-container');
+    if (!container) return;
+    let drag = null;
+    const finish = () => {
+      const pointer = drag;
+      drag = null;
+      if (pointer && display.hasPointerCapture?.(pointer.id)) display.releasePointerCapture(pointer.id);
+      display.classList.remove('portrait-dragging');
+    };
+    this._listeners.push(finish);
+    this._listen(display, 'dragstart', event => event.preventDefault());
+    this._listen(display, 'pointerdown', event => {
+      if (event.button !== 0 || !container.classList.contains('adjusting')) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const rect = container.getBoundingClientRect();
+      // The sheet scales the frame, and the image transform scales its translation.
+      drag = { id: event.pointerId, x: event.clientX, y: event.clientY,
+        startX: this.x, startY: this.y,
+        factorX: (rect.width / container.offsetWidth || 1) * this.scale,
+        factorY: (rect.height / container.offsetHeight || 1) * this.scale };
+      display.setPointerCapture?.(event.pointerId);
+      display.classList.add('portrait-dragging');
+    });
+    this._listen(display, 'pointermove', event => {
+      if (!drag || event.pointerId !== drag.id) return;
+      event.preventDefault();
+      event.stopPropagation();
+      this.x = drag.startX + (event.clientX - drag.x) / drag.factorX;
+      this.y = drag.startY + (event.clientY - drag.y) / drag.factorY;
+      this.updatePortrait(container);
+    });
+    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+      this._listen(display, type, event => {
+        if (drag?.id === event.pointerId) finish();
+      });
+    }
+    this._listen(display, 'wheel', event => {
+      if (!container.classList.contains('adjusting') || !event.deltaY) return;
+      event.preventDefault();
+      event.stopPropagation();
+      finish();
+      this.scale = Math.max(0.5, Math.min(MAX_PORTRAIT_ZOOM, this.scale + (event.deltaY < 0 ? 0.1 : -0.1)));
+      this.updatePortrait(container);
+    }, { passive: false });
+  }
+
   /**
    * Handle button action clicks
    */
   handleButtonAction(action, event, controls, container) {
     let scaleStep = 0.1;
-    let moveStep = 3;
+    let moveStep = 1;
 
     if (event.shiftKey && event.ctrlKey) {
       scaleStep = 0.01;
       moveStep = 0.5;
     } else if (event.shiftKey) {
       scaleStep = 0.02;
-      moveStep = 1;
+      moveStep = 5;
     } else if (event.ctrlKey) {
       scaleStep = 0.25;
       moveStep = 10;
     }
+    const rotationStep = event.shiftKey ? 5 : event.ctrlKey ? 15 : 1;
 
     switch (action) {
       case 'zoom-in':
-        this.scale = Math.min(this.scale + scaleStep, 2.5);
+        this.scale = Math.min(this.scale + scaleStep, MAX_PORTRAIT_ZOOM);
         this.updatePortrait(container);
         break;
       case 'zoom-out':
@@ -286,10 +337,19 @@ export class PortraitTool {
         this.x += moveStep;
         this.updatePortrait(container);
         break;
+      case 'rotate-left':
+        this.rotation = this._normalizeRotation(this.rotation - rotationStep);
+        this.updatePortrait(container);
+        break;
+      case 'rotate-right':
+        this.rotation = this._normalizeRotation(this.rotation + rotationStep);
+        this.updatePortrait(container);
+        break;
       case 'reset':
         this.scale = 1;
         this.x = 0;
         this.y = 0;
+        this.rotation = 0;
         this.updatePortrait(container);
         break;
       case 'done':
@@ -301,17 +361,30 @@ export class PortraitTool {
   /**
    * Update portrait CSS variables and hidden form inputs
    */
+  updateZoomReadout() {
+    const readout = this._query('[data-portrait-zoom]');
+    if (readout) readout.textContent = `${Number(this.scale.toFixed(2))}×`;
+  }
+
   updatePortrait(container) {
+    this.updateZoomReadout();
     container.style.setProperty('--user-portrait-scale', this.scale);
     container.style.setProperty('--user-portrait-x', this.x + 'px');
     container.style.setProperty('--user-portrait-y', this.y + 'px');
+    container.style.setProperty('--user-portrait-rotation', this.rotation + 'deg');
 
     const scaleInput = this._query('input[name="system.userPortrait.scale"]');
     const xInput = this._query('input[name="system.userPortrait.x"]');
     const yInput = this._query('input[name="system.userPortrait.y"]');
+    const rotationInput = this._query('input[name="system.userPortrait.rotation"]');
     if (scaleInput) scaleInput.value = this.scale;
     if (xInput) xInput.value = this.x;
     if (yInput) yInput.value = this.y;
+    if (rotationInput) rotationInput.value = this.rotation;
+  }
+
+  _normalizeRotation(value) {
+    return ((Number(value) % 360) + 360) % 360;
   }
 
   /**
@@ -359,16 +432,19 @@ export class PortraitTool {
     const updateData = {
       'system.userPortrait.scale': this.scale,
       'system.userPortrait.x': this.x,
-      'system.userPortrait.y': this.y
+      'system.userPortrait.y': this.y,
+      'system.userPortrait.rotation': this.rotation
     };
 
     const syncHiddenInputs = () => {
       const s = this._query('input[name="system.userPortrait.scale"]');
       const x = this._query('input[name="system.userPortrait.x"]');
       const y = this._query('input[name="system.userPortrait.y"]');
+      const rotation = this._query('input[name="system.userPortrait.rotation"]');
       if (s) { s.value = this.scale; s.setAttribute('value', this.scale); }
       if (x) { x.value = this.x; x.setAttribute('value', this.x); }
       if (y) { y.value = this.y; y.setAttribute('value', this.y); }
+      if (rotation) { rotation.value = this.rotation; rotation.setAttribute('value', this.rotation); }
     };
 
     const actor = this.actorSheet?.actor;

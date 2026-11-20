@@ -1,0 +1,179 @@
+<div class="store-ledger stable-ledger">
+  {{#if manager}}
+  <header class="store-banner">
+    <div class="store-mark"><i class="fas fa-horse" aria-hidden="true"></i></div>
+    <div class="store-heading"><h1>Stables &amp; Livestock</h1><p>Animals, tack, transport, and a place to board them.</p></div>
+    {{#if gm}}<button class="store-button" data-action="stableAction" data-verb="create">Create Stable</button>{{/if}}
+  </header>
+  <main class="stable-manager store-scroll">
+    {{#each stables}}
+    <article class="stable-directory-row">
+      <div class="stable-directory-thumb">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="fas fa-horse" aria-hidden="true"></i>{{/if}}</div>
+      <div class="stable-directory-info"><h2>{{name}}</h2><p>{{profileLabel}} · {{entries.length}} products · {{#if accessible}}Accessible to party{{else}}GM only{{/if}}</p><small>{{description}}</small></div>
+      {{#if ../gm}}<button type="button" class="store-button is-secondary" data-action="stableAction" data-verb="directoryPreview" data-stable-id="{{id}}">View as Player</button><button class="store-button is-secondary" data-action="stableAction" data-verb="edit" data-stable-id="{{id}}">Edit</button><button class="store-button is-secondary" data-action="stableAction" data-verb="access" data-stable-id="{{id}}">{{#if accessible}}Close to party{{else}}Open to party{{/if}}</button>{{/if}}
+      {{#if accessible}}<button class="store-button" data-action="stableAction" data-verb="open" data-stable-id="{{id}}">Visit</button>{{/if}}
+    </article>
+    {{else}}<div class="store-empty"><i class="fas fa-horse" aria-hidden="true"></i><h2>No stables available</h2><p>{{#if gm}}Create a stable to stock animals, tack, and vehicles.{{else}}Your GM will make establishments available here.{{/if}}</p></div>{{/each}}
+    {{#if recovery}}<details class="stable-disclosure" open><summary>Pending transaction recovery</summary>{{#each recovery}}<p>{{action}} · {{operationId}} <button class="store-button is-secondary" data-action="stableAction" data-verb="recover" data-operation-id="{{operationId}}">Recover safely</button></p>{{/each}}</details>{{/if}}
+  </main>
+  {{else if creator}}
+  <header class="store-banner">
+    <div class="store-heading"><h1>Stable &amp; Livestock Creator</h1><p>{{stable.name}}</p></div>
+    <button class="store-button is-secondary" data-action="stableAction" data-verb="preview" {{#if busy}}disabled{{/if}}>Preview Stable</button>
+    <button class="store-button" data-action="stableAction" data-verb="save" {{#if busy}}disabled{{/if}}>Save Stable</button>
+  </header>
+  <main class="stable-creator">
+    <section class="stable-creator-details store-scroll">
+      <h2>Establishment</h2>
+      <label>Name<input data-stable-field="name" maxlength="100" value="{{stable.name}}"></label>
+      <label>Specialty<select data-stable-field="profileId">{{#each profiles}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+      <label>House description<textarea data-stable-field="description" maxlength="4000" placeholder="What visitors notice when they arrive…">{{stable.description}}</textarea></label>
+      <div class="stable-image-field">{{#if stable.img}}<img src="{{stable.img}}" alt="Establishment image">{{else}}<i class="fas fa-image" aria-hidden="true"></i>{{/if}}<div><button class="store-button is-secondary" data-action="stableAction" data-verb="establishmentImage">Choose image</button>{{#if stable.img}}<button class="store-link" data-action="stableAction" data-verb="removeEstablishmentImage">Remove image</button>{{/if}}</div></div>
+      <p class="store-hint">Use the building, stable sign, or merchant's logo.</p>
+      <label>Proprietor name<input data-stable-field="proprietorName" maxlength="100" value="{{stable.proprietorName}}"></label>
+      <div class="stable-image-field">{{#if stable.proprietorImg}}<img src="{{stable.proprietorImg}}" alt="Proprietor portrait">{{/if}}<div><button class="store-button is-secondary" data-action="stableAction" data-verb="proprietorImage">Choose proprietor portrait</button>{{#if stable.proprietorImg}}<button class="store-link" data-action="stableAction" data-verb="removeProprietorImage">Remove portrait</button>{{/if}}</div></div>
+      <label class="store-access-toggle"><input type="checkbox" data-stable-field="accessible" {{#if stable.accessible}}checked{{/if}}> Accessible to the whole party</label>
+      <p class="store-hint">New establishments start closed. Preview works while party access is off.</p>
+      <h2>Boarding</h2>
+      <label class="store-access-toggle"><input type="checkbox" data-stable-field="boarding.enabled" {{#if boarding.enabled}}checked{{/if}}> Offer boarding</label>
+      <div class="stable-hours"><label>Total spaces<input type="number" min="1" max="1000" data-stable-field="boarding.capacity" value="{{boarding.capacity}}"></label><label>Per animal/night (sp)<input type="number" min="0" step="0.1" data-stable-field="boarding.priceCp" value="{{boardingPriceSp}}"></label></div>
+      <p class="store-hint">One night lasts 24 in-game hours. Paid stays remain reserved while the stable is closed.</p>
+      <h2>Buying from players</h2>
+      <label class="store-access-toggle"><input type="checkbox" data-stable-field="buysFromPlayers" {{#if stable.buysFromPlayers}}checked{{/if}}> Buy supported animals and equipment</label>
+      <label>Offer (% of base value)<input type="number" min="0" max="100" data-stable-field="buybackRate" value="{{stable.buybackRate}}"></label>
+      <label class="store-access-toggle"><input type="checkbox" data-stable-field="restockPurchases" {{#if stable.restockPurchases}}checked{{/if}}> Add purchased goods to stock</label>
+      <details class="stable-disclosure"><summary>Opening hours</summary>
+        <label class="store-access-toggle"><input type="checkbox" data-stable-field="opening.enabled" {{#if stable.openingHours.enabled}}checked{{/if}}> Use in-game opening hours</label>
+        <div class="stable-hours"><label>Opens<input type="time" data-stable-field="opening.openMinute" value="{{openTime}}"></label><label>Closes<input type="time" data-stable-field="opening.closeMinute" value="{{closeTime}}"></label></div>
+        <label>GM override<select data-stable-field="opening.override"><option value="auto" {{#if (eq stable.openingHours.override 'auto')}}selected{{/if}}>Follow hours</option><option value="open" {{#if (eq stable.openingHours.override 'open')}}selected{{/if}}>Force service open</option><option value="closed" {{#if (eq stable.openingHours.override 'closed')}}selected{{/if}}>Force service closed</option></select></label>
+        <p class="store-hint">Equal opening and closing times mean 24-hour service. Hours never enable party access.</p>
+      </details>
+    </section>
+    <section class="stable-offerings">
+      <div class="stable-section-heading"><h2>Stock <small>{{entries.length}} products</small></h2><button class="store-button" data-action="stableAction" data-verb="tools">Stocking Profiles</button></div>
+      <div class="stable-stock-list store-scroll">
+      {{#each entries}}
+        <article class="stable-stock-entry">
+          <div class="stable-stock-row">
+            <div class="stable-item-identity">{{#if itemData.img}}<button type="button" class="stable-stock-image-button" data-action="stableAction" data-verb="details" data-entry-id="{{id}}" aria-label="View details for {{name}}"><img src="{{itemData.img}}" alt=""></button>{{/if}}<div><strong>{{name}}</strong><small>{{kindLabel}} · {{#if individual}}Individual animal{{else if managed}}Profile stock{{else}}Manual stock{{/if}}</small></div></div>
+            <label>Price (sp)<input type="number" min="0" step="0.1" data-entry-field="customPrice" data-entry-id="{{id}}" value="{{priceSp}}" placeholder="{{basePrice}}"></label>
+            <label>Quantity<input type="number" min="0" {{#if individual}}max="1"{{/if}} data-entry-field="stock" data-entry-id="{{id}}" value="{{stock}}"></label>
+            <div class="stable-row-actions"><label class="store-access-toggle"><input type="checkbox" data-entry-field="hidden" data-entry-id="{{id}}" {{#if hidden}}checked{{/if}}> Hide</label><button class="store-icon-button" data-action="stableAction" data-verb="removeEntry" data-entry-id="{{id}}" aria-label="Remove {{name}}"><i class="fas fa-trash" aria-hidden="true"></i></button></div>
+          </div>
+          {{#if animal}}
+          <button class="store-link" data-action="stableAction" data-verb="individualizeEntry" data-entry-id="{{id}}">{{#if individual}}Use generic listing{{else}}Make an individual animal{{/if}}</button>
+          {{#if individual}}<div class="stable-animal-editor">
+            <label>Animal's name<input data-entry-field="name" data-entry-id="{{id}}" value="{{itemData.name}}" maxlength="100"></label>
+            <label>Temperament<input data-entry-field="temperament" data-entry-id="{{id}}" value="{{itemData.system.temperament}}"></label>
+            <label class="stable-wide">Description<textarea data-entry-field="description" data-entry-id="{{id}}" maxlength="4000">{{itemData.system.description}}</textarea></label>
+            <button class="store-button is-secondary" data-action="stableAction" data-verb="entryImage" data-entry-id="{{id}}">Choose animal portrait</button>
+            <small>Individual listings sell once and are preserved during restocking.</small>
+          </div>{{/if}}{{/if}}
+        </article>
+      {{else}}<div class="store-empty"><h2>Stock this establishment</h2><p>Generate an appropriate selection with Stocking Profiles, or choose catalog items below.</p></div>{{/each}}
+      <details class="stable-catalog" open>
+        <summary>Add Items · {{selectedCount}} selected</summary>
+        <div class="stable-catalog-toolbar"><input data-stable-search aria-label="Search catalog" placeholder="Search animals, tack, or vehicles" value="{{search}}"><select data-catalog-filter aria-label="Equipment type"><option value="">All types</option><option value="animal" {{#if (eq catalogFilter 'animal')}}selected{{/if}}>Animals</option><option value="tack" {{#if (eq catalogFilter 'tack')}}selected{{/if}}>Tack</option><option value="vehicle" {{#if (eq catalogFilter 'vehicle')}}selected{{/if}}>Vehicles</option><option value="parts" {{#if (eq catalogFilter 'parts')}}selected{{/if}}>Parts &amp; Supplies</option></select><button class="store-button" data-action="stableAction" data-verb="addSelected">Add selected</button></div>
+        <div class="stable-catalog-list store-scroll">{{#each catalogItems}}<label><input type="checkbox" data-action="stableAction" data-verb="catalogToggle" data-catalog-id="{{id}}" {{#if selected}}checked{{/if}}> {{name}} <small>{{kindLabel}}</small></label>{{else}}<p>No catalog items match.</p>{{/each}}</div>
+      </details>
+      {{#if bookings}}<details class="stable-disclosure"><summary>Active boarding · {{bookings.length}}</summary>{{#each bookings}}<article class="stable-booking"><strong>{{animals}}</strong><p>{{actorName}} · until {{expires}} · {{remaining}} remaining</p><button class="store-button is-secondary" data-action="stableAction" data-verb="endBooking" data-booking-id="{{id}}">Early checkout</button></article>{{/each}}</details>{{/if}}
+      </div>
+    </section>
+  </main>
+  <footer class="store-footer"><button class="store-link" data-action="stableAction" data-verb="back">All stables</button><span>Changes remain in the draft until saved.</span>{{#if stableId}}<button class="store-button is-secondary" data-action="stableAction" data-verb="reload">Reload saved</button><button class="store-button is-secondary" data-action="stableAction" data-verb="replenish">Restock Now</button>{{/if}}</footer>
+  {{else if tools}}
+  <header class="store-banner"><div class="store-heading"><h1>Stocking Profiles</h1><p>Preview a selection, apply it to the draft, then save the establishment.</p></div><button class="store-button is-secondary" data-action="stableAction" data-verb="close">Cancel</button></header>
+  <main class="stable-tools">
+    <section class="stable-tool-settings store-scroll">
+      <label>Specialty<select data-profile-field="profileId">{{#each profiles}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+      <div class="stable-hours"><label>Settlement<select data-profile-field="settlement">{{#each settlements}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{id}}</option>{{/each}}</select></label><label>Size<select data-profile-field="size">{{#each sizes}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{id}}</option>{{/each}}</select></label></div>
+      <h2>Product variety</h2><div class="stable-hours"><label>Minimum<input type="number" min="1" max="200" data-profile-field="minProducts" value="{{generator.minProducts}}"></label><label>Maximum<input type="number" min="1" max="200" data-profile-field="maxProducts" value="{{generator.maxProducts}}"></label></div>
+      <h2>Quantity per product</h2><div class="stable-hours"><label>Minimum<input type="number" min="1" max="10000" data-profile-field="minQuantity" value="{{generator.minQuantity}}"></label><label>Maximum<input type="number" min="1" max="10000" data-profile-field="maxQuantity" value="{{generator.maxQuantity}}"></label></div>
+      <h2>Price (% of base)</h2><div class="stable-hours"><label>Minimum<input type="number" min="0" max="1000" data-profile-field="minPricePercent" value="{{generator.minPricePercent}}"></label><label>Maximum<input type="number" min="0" max="1000" data-profile-field="maxPricePercent" value="{{generator.maxPricePercent}}"></label></div>
+      <label>Seed<input data-profile-field="seed" value="{{generator.seed}}"></label>
+      <label class="store-access-toggle"><input type="checkbox" data-profile-field="preserveManual" {{#if generator.preserveManual}}checked{{/if}}> Keep manual stock</label>
+      <p class="store-hint">Individual animals are always preserved. Short catalogs produce an honest shortfall.</p>
+      <h2>Ongoing restocking</h2>
+      <label class="store-access-toggle"><input type="checkbox" data-profile-field="enabled" {{#if generator.enabled}}checked{{/if}}> Enable automatic replenishment</label>
+      <label>Interval (in-game days)<input type="number" min="1" max="365" data-profile-field="intervalDays" value="{{generator.intervalDays}}"></label>
+      <label class="store-access-toggle"><input type="checkbox" data-profile-field="randomizePrices" {{#if generator.randomizePrices}}checked{{/if}}> Reroll generated prices when restocking</label>
+      <p class="store-hint">Restocking refills existing profile offerings. Use this preview to change the selection.</p>
+      <button class="store-button" data-action="stableAction" data-verb="generate">Preview stock</button>
+      <details class="stable-disclosure"><summary>Item rules and availability</summary><p class="store-hint">Never Stock overrides automatic selection. Always Stock allows deliberate specialty exceptions. Magic and unique goods remain excluded.</p>
+      {{#each catalogItems}}<div class="stable-profile-rule"><strong>{{name}}</strong><label>Stock policy<select data-stock-policy data-source-id="{{id}}"><option value="auto" {{#if (eq policy 'auto')}}selected{{/if}}>Automatic</option><option value="always" {{#if (eq policy 'always')}}selected{{/if}}>Always Stock</option><option value="never" {{#if (eq policy 'never')}}selected{{/if}}>Never Stock</option></select></label><label>Availability<select data-stock-availability data-source-id="{{id}}"><option value="">Use item / catalog default</option><option value="common" {{#if (eq availability 'common')}}selected{{/if}}>Common</option><option value="uncommon" {{#if (eq availability 'uncommon')}}selected{{/if}}>Uncommon</option><option value="rare" {{#if (eq availability 'rare')}}selected{{/if}}>Rare</option><option value="exceptional" {{#if (eq availability 'exceptional')}}selected{{/if}}>Exceptional</option></select></label></div>{{/each}}</details>
+    </section>
+    <section class="stable-tool-preview store-scroll">
+      <h2>Stock preview</h2>
+      {{#if generated}}<p>{{generated.generatedCount}} generated products · target {{generated.targetCount}} · {{generated.eligibleCount}} eligible</p>
+      {{#if generated.unclassifiedCount}}<p class="store-message">{{generated.unclassifiedCount}} unclassified items excluded. Set availability in the item editor before automatic stocking.</p>{{/if}}
+      {{#if generated.shortfall}}<p class="store-message">{{generated.shortfall}} products short of the target. Inappropriate goods are excluded.</p>{{/if}}
+      {{#each generated.entries}}<article class="stable-preview-row"><strong>{{name}}</strong><span>{{stock}} available</span><span>{{price}}</span><small>{{#if individual}}Individual animal{{else if managed}}Profile stock{{else}}Protected manual stock{{/if}}</small></article>{{/each}}
+      {{else}}<div class="store-empty"><i class="fas fa-clipboard-list" aria-hidden="true"></i><h2>Choose the stable's stock</h2><p>Preview the profile to see products, quantities, prices, and protected items.</p></div>{{/if}}
+    </section>
+  </main>
+  <footer class="store-footer"><span>Party access and paid stays are preserved.</span><button class="store-button" data-action="stableAction" data-verb="applyGenerated" {{#unless generated.success}}disabled{{/unless}}>Apply to draft</button></footer>
+  {{else if shop}}
+  <header class="store-banner stable-shop-banner">{{#if stable.img}}<button type="button" class="store-mark stable-sign-button" data-action="stableAction" data-verb="viewSign" aria-label="Open full-size sign for {{stable.name}}"><img src="{{stable.img}}" alt="{{stable.name}} sign"></button>{{else}}<div class="store-mark"><i class="fas fa-horse" aria-hidden="true"></i></div>{{/if}}<div class="store-heading"><h1>{{stable.name}}</h1>{{#if stable.description}}<p>{{stable.description}}</p>{{/if}}</div><div class="stable-proprietor">{{#if stable.proprietorImg}}<button type="button" class="stable-portrait-button" data-action="stableAction" data-verb="viewProprietor" aria-label="Open full-size proprietor portrait"><img src="{{stable.proprietorImg}}" alt="{{stable.proprietorName}}"></button>{{/if}}<div class="stable-proprietor-name"><strong>{{#each proprietorNameLines}}<span>{{this}}</span>{{/each}}</strong><small>Proprietor</small></div></div></header>
+  {{#if preview}}<p class="store-message">Player preview · orders can be reviewed; coins, stock, animals, and boarding remain unchanged.</p>{{/if}}
+  <div class="stable-status">{{opening.label}} · {{availableBoarding}} boarding spaces available</div>
+  {{#unless canShop}}<div class="store-empty"><h2>This stable is unavailable</h2><p>Existing paid stays remain valid.</p></div>{{else}}
+  <main class="store-columns stable-shop-columns">
+    <section class="stable-shop-main">
+      <nav class="stable-tabs" aria-label="Stable offerings">{{#each tabs}}<button class="store-tab {{#if selected}}is-active{{/if}}" data-action="stableAction" data-verb="tab" data-kind="{{id}}">{{label}}</button>{{/each}}</nav>
+      <div class="stable-products store-scroll">
+      {{#if isBoarding}}
+        <h2>Board your animals</h2><p>{{boardingPrice}} per animal per night · {{availableBoarding}} spaces available.</p>
+        <p class="store-hint">Each night lasts 24 in-game hours. Boarding does not advance time or apply rest benefits.</p>
+        {{#if preview}}<p class="store-hint">The animals below are temporary examples for preview.</p>{{/if}}
+        <label>Animal<select data-boarding-animal><option value="">Choose an owned animal</option>{{#each ownedAnimals}}<option value="{{id}}">{{name}}</option>{{/each}}</select></label>
+        <label>Nights<input type="number" min="1" max="365" value="1" data-boarding-nights></label>
+        {{#if stackedAnimals}}<p class="store-hint">Animals in a quantity stack must be split into individual inventory items before boarding.</p>{{/if}}
+        <button class="store-button" data-action="stableAction" data-verb="addBoarding" {{#unless canAct}}disabled{{/unless}}>Add boarding to order</button>
+      {{else if isSale}}
+        <h2>Sell animals and equipment</h2><p class="store-hint">Offers are {{stable.buybackRate}}% of base value. Animals and vehicles must be empty; boarded animals cannot be sold.</p>
+        {{#unless preview}}<div class="stable-sale-drop" data-stable-sale-drop>Drop an owned animal, tack, cart, or wagon here, or select it below.</div>{{/unless}}
+        {{#each saleItems}}<div class="stable-sale-row"><label><input type="checkbox" data-sale-item="{{id}}" {{#if selected}}checked{{/if}} {{#unless eligible}}disabled{{/unless}}> <strong>{{name}}</strong><small>{{offer}} each</small></label><label>Quantity<input type="number" min="1" max="{{available}}" data-sale-quantity="{{id}}" value="{{quantity}}" {{#unless selected}}disabled{{/unless}}></label></div>{{else}}<p>No supported items are available to sell.</p>{{/each}}
+        <button class="store-button" data-action="stableAction" data-verb="saleReview" {{#unless canAct}}disabled{{/unless}}>Review sale offer</button>
+      {{else}}
+        {{#each products}}<article class="stable-product-row">
+          {{#if itemData.img}}<button type="button" class="stable-product-image-button" data-action="stableAction" data-verb="details" data-entry-id="{{id}}" aria-label="View details for {{name}}"><img src="{{itemData.img}}" alt=""></button>{{/if}}
+          <div><strong>{{name}}</strong><small>{{stockLabel}}{{#if individual}} · Individual animal{{/if}}</small>
+          {{#if animal}}<small>Movement {{itemData.system.movement}}′ · Carrying {{itemData.system.carrying}} lbs · {{itemData.system.temperament}}</small>{{/if}}
+          <details><summary>Description</summary><p>{{itemData.system.description}}</p>{{#if itemData.system.requiresAnimal}}<p>Draft requirement: {{itemData.system.requiresAnimal}}</p>{{/if}}{{#if itemData.system.tackSlot}}<p>Attachment: {{itemData.system.tackSlot}} slot. Fit and prerequisites are checked at review.</p>{{/if}}</details></div>
+          <div class="stable-product-price" aria-label="{{price}}">{{#each priceCoins}}<span class="stable-price-coin"><img src="{{img}}" alt=""><span>{{quantity}} {{label}}</span></span>{{/each}}</div><button class="store-button" data-action="stableAction" data-verb="add" data-entry-id="{{id}}" {{#unless canAdd}}disabled{{/unless}}>Add</button>
+        </article>{{else}}<div class="store-empty"><h2>No offerings in this category</h2><p>Choose another category.</p></div>{{/each}}
+      {{/if}}
+      </div>
+    </section>
+    <aside class="store-basket">
+      <div class="store-wallet"><small>Shopping as</small><h3>{{actorName}}</h3><p>Carried coins <strong>{{availableMoney}}</strong></p></div>
+      <section class="stable-receipt-paper">
+        <header class="stable-receipt-heading"><div><strong>{{stable.name}}</strong><h2>{{#if saleReview}}Review sale{{else if review}}Review purchase{{else}}Your order{{/if}}</h2></div><small>{{#if saleReview}}Sale offer{{else}}Not yet paid{{/if}}</small></header>
+        <div class="stable-receipt-rule" aria-hidden="true"></div>
+        <div class="store-cart-lines store-scroll">
+        {{#if review}}{{#each review.lines}}<article class="store-review-line"><strong>{{quantity}} × {{name}}</strong><span>{{total}}</span>{{#if placement}}<small>{{placement}}</small>{{/if}}{{#if (eq kind 'boarding')}}<small>{{nights}} nights · paid stays begin at checkout.</small>{{/if}}</article>{{/each}}
+        {{else if saleReview}}{{#each saleReview.lines}}<article class="store-review-line"><strong>{{quantity}} × {{name}}</strong><span>{{total}}</span></article>{{/each}}
+        {{else}}{{#each cart}}<article class="stable-cart-line">
+          <div class="stable-cart-title"><strong>{{name}}</strong><button class="store-icon-button" data-action="stableAction" data-verb="removeLine" data-cart-index="{{index}}" aria-label="Remove {{name}}" {{#if ../pending}}disabled{{/if}}><i class="fas fa-xmark" aria-hidden="true"></i></button></div>
+          {{#if boarding}}<label>Nights<input type="number" min="1" max="365" value="{{nights}}" data-cart-field="nights" data-cart-index="{{index}}" {{#if ../pending}}disabled{{/if}}></label>{{else}}
+          <div class="stable-cart-quantity"><label>Quantity<input type="number" min="1" value="{{quantity}}" data-cart-field="quantity" data-cart-index="{{index}}" {{#if ../pending}}disabled{{/if}}></label><small>{{price}} each</small><strong>{{total}}</strong></div>
+          <label>Deliver to<select data-cart-field="destination" data-cart-index="{{index}}" {{#if ../pending}}disabled{{/if}}>{{#each destinations}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>{{/if}}
+          {{#if boarding}}<strong>{{total}}</strong>{{/if}}
+        </article>{{else}}<div class="store-empty"><i class="fas fa-feather-pointed" aria-hidden="true"></i><p>No goods entered.</p></div>{{/each}}{{/if}}
+        </div>
+        {{#if cartError}}<p class="store-message is-error">{{cartError}}</p>{{/if}}{{#if shortfall}}<p class="store-message">You need {{shortfall}} more in carried coins.</p>{{/if}}
+        <p class="store-total"><span>{{#if saleReview}}You receive{{else}}Total{{/if}}</span><strong>{{total}}</strong></p>
+      </section>
+      <div class="stable-checkout-actions">
+        {{#if pending}}<p class="store-hint">An order is pending for the original character. Check it safely before starting another.</p><button class="store-button" data-action="stableAction" data-verb="retry" {{#if busy}}disabled{{/if}}>Check / retry safely</button>
+        {{else if saleReview}}<button class="store-button" data-action="stableAction" data-verb="saleComplete" {{#if preview}}disabled{{else}}{{#unless canAct}}disabled{{/unless}}{{/if}}>Complete sale</button><button class="store-link" data-action="stableAction" data-verb="backCart">Back to order</button>
+        {{else if review}}<button class="store-button" data-action="stableAction" data-verb="complete" {{#if preview}}disabled{{else}}{{#unless canAct}}disabled{{/unless}}{{/if}}>Complete purchase</button><button class="store-link" data-action="stableAction" data-verb="backCart">Back to cart</button>
+        {{else}}<button class="store-button" data-action="stableAction" data-verb="review" {{#unless canReview}}disabled{{/unless}}>Review Purchase</button><button class="store-link" data-action="stableAction" data-verb="clear">Clear order</button>{{/if}}
+      </div>
+    </aside>
+  </main>{{/unless}}
+  {{#if bookings}}<details class="stable-bottom-summary"><summary>Active boarding · {{bookings.length}}</summary><div class="store-scroll">{{#each bookings}}<article class="stable-booking"><strong>{{animals}}</strong><span>{{actorName}} · until {{expires}} · {{remaining}} remaining</span>{{#if canEnd}}<button class="store-button is-secondary" data-action="stableAction" data-verb="endBooking" data-booking-id="{{id}}">Early checkout</button>{{/if}}</article>{{/each}}</div></details>{{/if}}
+  {{/if}}
+  {{#if history}}<details class="stable-bottom-summary"><summary>Transaction history · {{history.length}}</summary><div class="store-scroll">{{#each history}}<article class="stable-history-row"><strong>{{#if sale}}Sale{{else}}Purchase{{/if}} · {{characterName}} · {{total}}</strong><small>{{date}} · Receipt {{id}} · Remaining funds {{after}}</small>{{#each lines}}<p>{{quantity}} × {{name}}</p>{{/each}}</article>{{/each}}</div></details>{{/if}}
+  {{#if error}}<p class="store-message is-error" role="alert">{{error}}</p>{{/if}}
+</div>

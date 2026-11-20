@@ -1,0 +1,56 @@
+// Keep the in-sidebar combat tracker inside Foundry's sidebar column. The
+// combat tracker is also rendered as a popout, so these width constraints only
+// apply to the embedded tab and do not affect standalone tracker windows.
+.combat-sidebar:not(.sidebar-popout) {
+  box-sizing: border-box;
+  width: 100%;
+  left: auto;
+  right: auto;
+  min-width: 0;
+  max-width: 100%;
+
+  .window-content,
+  .combat-tracker-header,
+  .combat-tracker,
+  .combat-controls,
+  .encounters,
+  .encounter-controls,
+  .control-buttons,
+  .combatant,
+  .combatant-controls {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .combat-tracker-header,
+  .combat-controls,
+  .combatant-controls {
+    flex-wrap: wrap;
+  }
+
+  .combat-tracker-header .encounters,
+  .combat-tracker-header .encounter-controls,
+  .combat-tracker .combatant {
+    overflow: hidden;
+  }
+
+  .combat-tracker .token-name {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .combat-tracker .token-name > *,
+  .combat-tracker .osp-combat-support,
+  .combat-tracker .osp-action-declaration,
+  .combat-tracker .osp-surprise-control,
+  .combat-tracker .osp-defeated-control {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .combat-tracker .osp-combat-support {
+    white-space: nowrap;
+  }
+}

@@ -1235,26 +1235,35 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
   position: absolute;
   top: 0;
   height: 100%;
-  transition: width 0.3s ease;
+  transform-origin: left center;
+  transform: scaleX(var(--encumbrance-fill, 1));
+  transition: transform 0.3s ease;
   z-index: 1;
 }
 
 .encumbrance-bar-light {
   left: 0;
   background: rgba(46, 125, 50, 0.6);  // Green — unencumbered, 0-33%
+  width: 33%;
   max-width: 33%;  // Can't extend beyond 33%
 }
 
 .encumbrance-bar-normal {
   left: 33%;
   background: rgba(224, 120, 20, 0.6);  // Orange — light encumbrance, 33-66%
+  width: 33%;
   max-width: 33%;  // Can't extend beyond 33%
 }
 
 .encumbrance-bar-heavy {
   left: 66%;
   background: rgba(178, 34, 34, 0.65);  // Red — heavy encumbrance, 66-100%
+  width: 34%;
   max-width: 34%;  // Can't extend beyond 34%
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .encumbrance-bar { transition: none; }
 }
 
 .encumbrance-threshold-line {
@@ -1317,7 +1326,6 @@ $item-row-height: 60px;  // Height of item rows with images (image-size + paddin
 }
 
 /* Item sheet positioned elements - add your custom positions here */
-/* Right-click an element as GM and use the position tool to get values */
 /* Then uncomment and update the positioning below */
 
 /* Item Sheet Positioning Rules - Standardized */

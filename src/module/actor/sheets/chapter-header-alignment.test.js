@@ -1,7 +1,8 @@
 import { expect, it, vi } from 'vitest';
 import { activateChapterHeaderAlignment } from './chapter-header-alignment.js';
+import * as skillInk from './skill-label-ink.js';
 
-function makeFixture(tab = 'skills', titleBase = 140, subtitleBase = 160, scale = 1) {
+function makeFixture(tab = 'skills', titleBase = 140, subtitleBase = 160, scale = 1, ink = { ascent: 20, descent: 0 }, inkByText = null) {
   const rafQueue = [];
   const styleFor = () => {
     const values = new Map();
@@ -18,13 +19,13 @@ function makeFixture(tab = 'skills', titleBase = 140, subtitleBase = 160, scale 
     ownerDocument: null, style: styleFor(), dataset: {}, textContent: text, offsetHeight: 20, _fontFamily: fontFamily,
     firstChild: { textContent: text }, appendChild(child) { this.firstChild = child; return child; },
     querySelector: () => null,
-    getBoundingClientRect() { const top = baseTop + (Number.parseFloat(this.style.getPropertyValue('top')) || 0); const height = 20 * scale; return { top, bottom: top + height, width: 100, height }; },
+    getBoundingClientRect() { const top = baseTop + (Number.parseFloat(this.style.getPropertyValue('top')) || 0) * scale; const height = 20 * scale; return { top, bottom: top + height, width: 100, height }; },
   });
   const title = makeElement(titleBase, 'Primary header');
   const subtitle = makeElement(subtitleBase, 'Subtitle');
   const document = {
     createElement(type) {
-      if (type === 'canvas') return { getContext: () => ({ font: '', measureText: () => ({ actualBoundingBoxAscent: 20 }) }) };
+      if (type === 'canvas') return { getContext: () => ({ font: '', measureText: text => { const selected = inkByText?.[text] ?? ink; return { actualBoundingBoxAscent: selected.ascent, actualBoundingBoxDescent: selected.descent }; } }) };
       return { dataset: {}, style: styleFor(), firstChild: null, appendChild(child) { this.firstChild = child; return child; }, querySelector: () => null, getBoundingClientRect: () => ({ top: 0, width: 0, height: 0 }) };
     },
     fonts: { ready: Promise.resolve() },
@@ -34,7 +35,7 @@ function makeFixture(tab = 'skills', titleBase = 140, subtitleBase = 160, scale 
     text.dataset.inkGapText = '1';
     const baseline = document.createElement('span');
     baseline.dataset.inkGapBaseline = '1';
-    baseline.getBoundingClientRect = () => ({ top: baselineTop + (Number.parseFloat(element.style.getPropertyValue('top')) || 0), width: 0, height: 0 });
+    baseline.getBoundingClientRect = () => ({ top: baselineTop + (Number.parseFloat(element.style.getPropertyValue('top')) || 0) * scale, width: 0, height: 0 });
     text.querySelector = selector => selector.includes('data-ink-gap-baseline') ? baseline : null;
     text.appendChild(baseline);
     element.querySelector = selector => selector.includes('data-ink-gap-text') ? text : null;
@@ -94,13 +95,129 @@ function makeFixture(tab = 'skills', titleBase = 140, subtitleBase = 160, scale 
   return { form, root, win, title, subtitle, panel, panelTwo, panelTitle, panelHint, panelEditor, panelTwoTitle, panelTwoHint, panelTwoEditor, notesEditor, handwritten, svgText, active, mutation, resize, rafQueue, flush: () => { while (rafQueue.length) rafQueue.shift()(); } };
 }
 
-it('aligns visible baseline ink to root top plus 90px and keeps title/subtitle spacing', () => {
+it('aligns visible baseline ink to root top plus 90px and keeps the requested title/subtitle gap', () => {
   const fixture = makeFixture();
   const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root);
   expect(fixture.rafQueue).toHaveLength(1); fixture.flush();
   expect(fixture.title.style.getPropertyValue('top')).toBe('50px');
   expect(fixture.subtitle.style.getPropertyValue('top')).toBe('50px');
   expect(fixture.subtitle.getBoundingClientRect().top - fixture.title.getBoundingClientRect().top).toBe(20);
+  cleanup();
+});
+
+it('reads handwritten computed styles as a batch before applying color and fill writes', () => {
+  const fixture = makeFixture();
+  const events = [];
+  const originalComputed = fixture.win.getComputedStyle;
+  fixture.win.getComputedStyle = (element, pseudo) => {
+    if (!pseudo && (element === fixture.handwritten || element === fixture.svgText)) events.push('read');
+    return originalComputed(element, pseudo);
+  };
+  for (const element of [fixture.handwritten, fixture.svgText]) {
+    const originalSet = element.style.setProperty;
+    element.style.setProperty = (...args) => {
+      if (args[0] === 'color' || args[0] === 'fill') events.push('write');
+      return originalSet.apply(element.style, args);
+    };
+  }
+  const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root);
+  const immediateEvents = events.splice(0);
+  const firstWrite = immediateEvents.indexOf('write');
+  expect(firstWrite).toBeGreaterThan(-1);
+  expect(immediateEvents.slice(firstWrite).includes('read')).toBe(false);
+  expect(immediateEvents.slice(0, firstWrite).filter(event => event === 'read')).toHaveLength(2);
+  fixture.flush();
+  cleanup();
+});
+
+it('primes handwritten colors immediately while deferring geometry to three RAFs', () => {
+  const fixture = makeFixture();
+  const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root);
+  expect(fixture.handwritten.style.getPropertyValue('color')).toBe('#78694D');
+  expect(fixture.svgText.style.getPropertyValue('fill')).toBe('#78694D');
+  expect(fixture.title.style.getPropertyValue('top')).toBe('');
+  fixture.flush();
+  expect(fixture.title.style.getPropertyValue('top')).toBe('50px');
+  cleanup();
+  expect(fixture.handwritten.style.getPropertyValue('color')).toBe('rgb(1, 2, 3)');
+  expect(fixture.svgText.style.getPropertyValue('fill')).toBe('rgb(4, 5, 6)');
+});
+
+it('aligns the initial Gear header synchronously and preserves the deferred result', () => {
+  const fixture = makeFixture('gear');
+  const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root);
+  expect(fixture.title.style.getPropertyValue('top')).toBe('50px');
+  fixture.flush();
+  expect(fixture.title.style.getPropertyValue('top')).toBe('50px');
+  cleanup();
+  expect(fixture.title.style.getPropertyValue('top')).toBe('');
+});
+
+it('measures Details header spacing from unequal glyph ascent/descent and preserves a stable reapply', () => {
+  const fixture = makeFixture('character', 140, 160, 1, { ascent: 18, descent: 4 });
+  const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root); fixture.flush();
+  const titleBaseline = 160 + (Number.parseFloat(fixture.title.style.getPropertyValue('top')) || 0);
+  const subtitleBaseline = 180 + (Number.parseFloat(fixture.subtitle.style.getPropertyValue('top')) || 0);
+  expect(subtitleBaseline - 18 - (titleBaseline + 4)).toBeCloseTo(4, 6);
+  const titleTop = fixture.title.style.getPropertyValue('top');
+  const subtitleTop = fixture.subtitle.style.getPropertyValue('top');
+  const panelTop = fixture.panel.style.getPropertyValue('--osp-writing-panel-top');
+  fixture.win.addEventListener.mock.calls.find(([type]) => type === 'resize')[1](); fixture.flush();
+  expect(fixture.title.style.getPropertyValue('top')).toBe(titleTop);
+  expect(fixture.subtitle.style.getPropertyValue('top')).toBe(subtitleTop);
+  expect(fixture.panel.style.getPropertyValue('--osp-writing-panel-top')).toBe(panelTop);
+  cleanup();
+});
+
+it('uses one shared title bottom, subtitle gap, and border gap for Details, Background, and Notes', () => {
+  const snapshots = [];
+  for (const [tab, inkByText] of [
+    ['character', { 'Primary header': { ascent: 18, descent: 4 }, Subtitle: { ascent: 14, descent: 2 }, 'Character Background': { ascent: 19, descent: 3 } }],
+    ['background', { 'Primary header': { ascent: 21, descent: 1 }, Subtitle: { ascent: 12, descent: 5 }, 'Character Background': { ascent: 19, descent: 3 } }],
+    ['notes', { 'Primary header': { ascent: 16, descent: 6 }, Subtitle: { ascent: 17, descent: 1 }, 'Character Background': { ascent: 19, descent: 3 } }],
+  ]) {
+    const fixture = makeFixture(tab, 140, 160, 1, { ascent: 20, descent: 0 }, inkByText);
+    const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root); fixture.flush();
+    snapshots.push({
+      titleBodyBottom: Number(fixture.title.dataset.bodyBottom),
+      titleInkBottom: Number(fixture.title.dataset.inkBottom),
+      subtitleTop: Number(fixture.subtitle.dataset.inkTop),
+      subtitleBottom: Number(fixture.subtitle.dataset.inkBottom),
+      borderY: 60.07 + ((Number.parseFloat((tab === 'notes' ? fixture.active : fixture.panel).style.getPropertyValue('--osp-writing-panel-top')) || 0) - 33.7287) * 0.94,
+      editorTop: fixture.notesEditor.style.getPropertyValue('top'),
+    });
+    const resize = fixture.win.addEventListener.mock.calls.find(([type]) => type === 'resize')[1];
+    resize(); fixture.flush();
+    expect(Number(fixture.title.dataset.bodyBottom)).toBeCloseTo(snapshots.at(-1).titleBodyBottom, 6);
+    expect(Number(fixture.subtitle.dataset.inkTop) - Number(fixture.title.dataset.bodyBottom)).toBeCloseTo(4, 6);
+    expect(snapshots.at(-1).borderY - snapshots.at(-1).subtitleBottom).toBeCloseTo(6.65, 6);
+    cleanup();
+  }
+  expect(snapshots[0].titleBodyBottom).toBeCloseTo(snapshots[1].titleBodyBottom, 6);
+  expect(snapshots[1].titleBodyBottom).toBeCloseTo(snapshots[2].titleBodyBottom, 6);
+  expect(snapshots[0].titleInkBottom).not.toBe(snapshots[1].titleInkBottom);
+  expect(snapshots[1].titleInkBottom).not.toBe(snapshots[2].titleInkBottom);
+  expect(snapshots[0].subtitleTop).toBeCloseTo(snapshots[1].subtitleTop, 6);
+  expect(snapshots[1].subtitleTop).toBeCloseTo(snapshots[2].subtitleTop, 6);
+  expect(snapshots[0].subtitleBottom - snapshots[0].subtitleTop).not.toBe(snapshots[1].subtitleBottom - snapshots[1].subtitleTop);
+});
+
+it('aligns Notes independently when it is the first writing tab measured', () => {
+  const fixture = makeFixture('notes', 140, 160, 1, { ascent: 17, descent: 5 });
+  const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root); fixture.flush();
+  expect(Number(fixture.subtitle.dataset.inkBottom) - Number(fixture.subtitle.dataset.inkTop)).toBeCloseTo(22, 6);
+  expect(Number(fixture.subtitle.dataset.inkTop) - Number(fixture.title.dataset.bodyBottom)).toBeCloseTo(4, 6);
+  cleanup();
+});
+
+it('keeps the four-pixel body-line gap clear of a three-and-a-half-pixel descender', () => {
+  const fixture = makeFixture('background', 140, 160, 1, { ascent: 20, descent: 0 }, {
+    'Primary header': { ascent: 20, descent: 3.5 },
+    Subtitle: { ascent: 16, descent: 1 },
+    'Character Background': { ascent: 19, descent: 3 },
+  });
+  const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root); fixture.flush();
+  expect(Number(fixture.subtitle.dataset.inkTop) - Number(fixture.title.dataset.inkBottom)).toBeCloseTo(0.5, 6);
   cleanup();
 });
 
@@ -139,7 +256,7 @@ it('restores original position/top while preserving existing transforms', () => 
   expect(fixture.title.style.getPropertyValue('position')).toBe('absolute'); expect(fixture.title.style.getPropertyValue('top')).toBe('7px'); expect(fixture.title.style.getPropertyValue('transform')).toBe('translateY(4px)');
 });
 
-it('anchors Background and Details writing panels to 674px below the sheet window top and restores custom properties', () => {
+it('anchors each writing panel to the shared subtitle border target and restores custom properties', () => {
   for (const tab of ['background', 'character']) {
     const fixture = makeFixture(tab);
     fixture.panel.style.setProperty('--osp-writing-panel-height', 'original', 'important');
@@ -147,11 +264,12 @@ it('anchors Background and Details writing panels to 674px below the sheet windo
     fixture.panelTwo.style.setProperty('--osp-writing-panel-height', 'original-two', 'important');
     fixture.panelTwo.style.setProperty('--osp-writing-panel-top', 'original-top-two', 'important');
     const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root); fixture.flush();
-    const expectedTop = (232 - 60.07) / 0.94 - (-33.7287);
+    const borderTarget = Number(fixture.subtitle.dataset.inkBottom) + 6.65;
+    const expectedTop = (borderTarget - 60.07) / 0.94 - (-33.7287);
     const expectedHeight = (774 - 60.07) / 0.94 - expectedTop - (-33.7287);
     expect(Number.parseFloat(fixture.panel.style.getPropertyValue('--osp-writing-panel-top'))).toBeCloseTo(expectedTop, 3);
     expect(Number.parseFloat(fixture.panel.style.getPropertyValue('--osp-writing-panel-height'))).toBeCloseTo(expectedHeight, 3);
-    const expectedTopTwo = (232 - 80) / 0.94 - (-12);
+    const expectedTopTwo = (borderTarget - 80) / 0.94 - (-12);
     const expectedHeightTwo = (774 - 80) / 0.94 - expectedTopTwo - (-12);
     expect(Number.parseFloat(fixture.panelTwo.style.getPropertyValue('--osp-writing-panel-top'))).toBeCloseTo(expectedTopTwo, 3);
     expect(Number.parseFloat(fixture.panelTwo.style.getPropertyValue('--osp-writing-panel-height'))).toBeCloseTo(expectedHeightTwo, 3);
@@ -163,15 +281,16 @@ it('anchors Background and Details writing panels to 674px below the sheet windo
   }
 });
 
-it('keeps Background ink five pixels below its panel border and restores editor geometry', () => {
+it('keeps Background ink seven pixels below its panel border and restores editor geometry', () => {
   const fixture = makeFixture('background');
   const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root); fixture.flush();
   expect(fixture.panelTitle.style.getPropertyValue('top')).not.toBe('');
-  expect(Number.parseFloat(fixture.panelTitle.style.getPropertyValue('top')) - Number.parseFloat(fixture.panelHint.style.getPropertyValue('top'))).toBeCloseTo(2, 6);
+  expect(Number.parseFloat(fixture.panelTitle.style.getPropertyValue('top')) - Number.parseFloat(fixture.panelHint.style.getPropertyValue('top'))).toBeCloseTo(0, 6);
   expect(fixture.panelEditor.getBoundingClientRect().top).toBeCloseTo(fixture.panelTitle.getBoundingClientRect().bottom - 2, 1);
   expect(fixture.panelEditor.style.getPropertyValue('height')).not.toBe('');
+  const panelTopValue = Number.parseFloat(fixture.panel.style.getPropertyValue('--osp-writing-panel-top'));
+  const borderY = 60.07 + (0 + panelTopValue + (-33.7287)) * 0.94;
   const titleInkTop = 220 + (Number.parseFloat(fixture.panelTitle.style.getPropertyValue('top')) || 0) - 20;
-  const borderY = 100 + 132;
   expect(titleInkTop).toBeCloseTo(borderY + 7, 1);
   const titleTop = fixture.panelTitle.style.getPropertyValue('top');
   const hintTop = fixture.panelHint.style.getPropertyValue('top');
@@ -200,16 +319,22 @@ it('raises each Details editor to its own panel title bottom', () => {
   cleanup();
 });
 
-it('anchors the Notes panel and editor to the sheet bottom using matrix translation and restores them', () => {
+it('anchors the Notes panel to the shared subtitle border target and editor to the sheet bottom', () => {
   const fixture = makeFixture('notes', 140, 160, 0.94);
   fixture.active.style.setProperty('--osp-writing-panel-height', 'notes-original', 'important');
   fixture.active.style.setProperty('--osp-writing-panel-top', 'notes-original-top', 'important');
   const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root); fixture.flush();
-  const expectedTop = (232 - 60.07) / 0.94 - (-33.7287);
+  const borderTarget = Number(fixture.subtitle.dataset.inkBottom) + 6.65;
+  const expectedTop = (borderTarget - 60.07) / 0.94 - (-33.7287);
   const expectedHeight = (774 - 60.07) / 0.94 - expectedTop - (-33.7287);
   expect(Number.parseFloat(fixture.active.style.getPropertyValue('--osp-writing-panel-top'))).toBeCloseTo(expectedTop, 3);
   expect(Number.parseFloat(fixture.active.style.getPropertyValue('--osp-writing-panel-height'))).toBeCloseTo(expectedHeight, 3);
   expect(fixture.notesEditor.style.getPropertyValue('height')).not.toBe('');
+  const editorTop = fixture.notesEditor.style.getPropertyValue('top');
+  const editorHeight = fixture.notesEditor.style.getPropertyValue('height');
+  fixture.win.addEventListener.mock.calls.find(([type]) => type === 'resize')[1](); fixture.flush();
+  expect(fixture.notesEditor.style.getPropertyValue('top')).toBe(editorTop);
+  expect(fixture.notesEditor.style.getPropertyValue('height')).toBe(editorHeight);
   cleanup();
   expect(fixture.active.style.getPropertyValue('--osp-writing-panel-height')).toBe('notes-original');
   expect(fixture.active.style.getPropertyValue('--osp-writing-panel-top')).toBe('notes-original-top');
@@ -226,5 +351,48 @@ it('applies the handwritten ink color to text and SVG text, including Bio, then 
   expect(fixture.handwritten.style.getPropertyValue('color')).toBe('rgb(1, 2, 3)');
   expect(fixture.svgText.style.getPropertyValue('color')).toBe('');
   expect(fixture.svgText.style.getPropertyValue('fill')).toBe('rgb(4, 5, 6)');
+});
+
+it('moves the Skills section to an eight-pixel subtitle-to-label gap without drift', () => {
+  const fixture = makeFixture('skills', 140, 160, 0.94);
+  const makeStyle = () => { const values = new Map(); return { setProperty: (name, value, priority = '') => values.set(name, { value: String(value), priority }), removeProperty: name => values.delete(name), getPropertyValue: name => values.get(name)?.value ?? '', getPropertyPriority: name => values.get(name)?.priority ?? '' }; };
+  const svg = { style: makeStyle(), dataset: {}, querySelectorAll: () => [label], contains: () => false };
+  svg.style.setProperty('top', '114.414px');
+  const abilities = { style: makeStyle(), getBoundingClientRect: () => ({ top: 329.625, height: 300, width: 500 }) };
+  abilities.style.setProperty('top', '329.625px');
+  const target = { style: makeStyle() };
+  target.style.setProperty('--top', '200px');
+  const label = { ownerDocument: fixture.active.ownerDocument, dataset: {} };
+  const originalQuery = fixture.active.querySelector;
+  fixture.active.querySelector = selector => selector === '.cs-skill-svg-container' ? svg
+    : selector === '.skill-abilities-section' ? abilities : originalQuery(selector);
+  const originalQueryAll = fixture.active.querySelectorAll;
+  fixture.active.querySelectorAll = selector => selector === '.listening-group' ? [target] : originalQueryAll(selector);
+  const originalStyle = fixture.win.getComputedStyle;
+  fixture.win.getComputedStyle = (element, pseudo) => {
+    if (element === svg || element === abilities || element === target) {
+      return { top: element.style.getPropertyValue('top') || '0px', position: 'relative', height: '300px', boxSizing: 'border-box', getPropertyValue: name => element.style.getPropertyValue(name) };
+    }
+    return originalStyle(element, pseudo);
+  };
+  const baselineTop = 400;
+  const measure = vi.spyOn(skillInk, 'measureSkillLabelInk').mockImplementation(() => {
+    const top = baselineTop + ((Number.parseFloat(svg.style.getPropertyValue('top')) || 114.414) - 114.414) * 0.94;
+    return { top, bottom: top + 2, matrix: { d: 1 } };
+  });
+  const cleanup = activateChapterHeaderAlignment(fixture.form, fixture.root); fixture.flush();
+  const subtitleBottom = Number(fixture.subtitle.dataset.inkBottom);
+  const expectedShift = (subtitleBottom + 8 - baselineTop) / 0.94;
+  expect(Number.parseFloat(svg.style.getPropertyValue('top'))).toBeCloseTo(114.414 + expectedShift, 3);
+  expect(Number.parseFloat(abilities.style.getPropertyValue('top'))).toBeCloseTo(329.625 + expectedShift, 3);
+  expect(Number.parseFloat(target.style.getPropertyValue('--top'))).toBeCloseTo(200 + expectedShift, 3);
+  const svgTop = svg.style.getPropertyValue('top');
+  fixture.win.addEventListener.mock.calls.find(([type]) => type === 'resize')[1](); fixture.flush();
+  expect(Number.parseFloat(svg.style.getPropertyValue('top'))).toBeCloseTo(Number.parseFloat(svgTop), 8);
+  cleanup();
+  expect(svg.style.getPropertyValue('top')).toBe('114.414px');
+  expect(abilities.style.getPropertyValue('top')).toBe('329.625px');
+  expect(target.style.getPropertyValue('--top')).toBe('200px');
+  measure.mockRestore();
 });
 

@@ -70,24 +70,26 @@ const realGroups = () => Object.fromEntries(INVENTORY_CATEGORIES.map(category =>
 const validTypes = ['ammunition', 'weapon', 'armor', 'item', 'container', 'clothing', 'coin', 'livestock'];
 afterEach(() => { vi.unstubAllGlobals(); vi.resetModules(); });
 
-it('imports the 191 real bundled records once and preserves every customized existing record', async () => {
+it('imports the 200 real bundled records once and preserves every customized existing record', async () => {
   const groups = realGroups();
+  expect(groups.vehicles).toHaveLength(6);
+  expect(groups.vehicles.map(entry => entry.name)).toEqual(['Cart', 'Wagon', 'Wheelbarrow', 'Handcart', 'Wagon, Open', 'Wagon, Heavy Freight']);
   const original = structuredClone(groups.weapons[0]);
   original._id = 'custom-id'; original.folder = 'custom-folder'; original.img = 'custom.webp'; original.flags = { custom: { note: 'keep' } };
   original.effects = [{ name: 'Custom effect' }]; original.system.cost = 999;
   const snapshot = structuredClone(original);
   const world = [original];
   const plan = buildInventoryPlan(groups, world, validTypes);
-  expect(plan.total).toBe(191); expect(plan.missing).toHaveLength(190); expect(plan.existing).toHaveLength(1);
+  expect(plan.total).toBe(200); expect(plan.missing).toHaveLength(199); expect(plan.existing).toHaveLength(1);
   expect(plan.invalid).toHaveLength(0); expect(plan.duplicates).toHaveLength(0);
   groups.gear[0].system.cost = 'modified after preview';
   const createItem = vi.fn(async data => { world.push(data); return data; });
   const result = await applyInventoryPlan(plan, { getWorldItems: () => world, createItem, isGM: () => true });
-  expect(result.created).toHaveLength(190); expect(result.errors).toHaveLength(0);
+  expect(result.created).toHaveLength(199); expect(result.errors).toHaveLength(0);
   expect(original).toEqual(snapshot);
   expect(world.find(entry => entry.name === groups.gear[0].name).system.cost).not.toBe('modified after preview');
   const rerun = buildInventoryPlan(realGroups(), world, validTypes);
-  expect(rerun.missing).toHaveLength(0); expect(rerun.existing).toHaveLength(191);
+  expect(rerun.missing).toHaveLength(0); expect(rerun.existing).toHaveLength(200);
 });
 
 it('skips a late addition between sequential creations', async () => {
@@ -131,7 +133,7 @@ it('opens one preview, cancels without writes, and supports Foundry array item t
   const h = await uiHarness(realGroups());
   const opened = h.openInventoryImport();
   await vi.waitFor(() => expect(h.dialogs).toHaveLength(1));
-  expect(h.dialogs[0].options.content).toContain('191');
+  expect(h.dialogs[0].options.content).toContain('200');
   expect(Item.create).not.toHaveBeenCalled();
   await h.openInventoryImport();
   expect(h.dialogs).toHaveLength(1);
@@ -211,7 +213,7 @@ const folderOptions = (world, folders = []) => ({
   createItem: vi.fn(async data => { const made = { ...data, id: `new-${world.length}` }; world.push(made); return made; })
 });
 
-it('organizes all 191 real items by stable IDs with only folder changes and no duplicate folders', async () => {
+it('organizes all 197 real items by stable IDs with only folder changes and no duplicate folders', async () => {
   const groups = realGroups();
   const world = Object.values(groups).flat().map((data, n) => ({ ...structuredClone(data), ...(n % 2 ? { id: `world-${n}` } : { _id: `world-${n}` }), folder: null, flags: { custom: { note: `keep-${n}` } }, effects: [{ name: `custom effect ${n}` }] }));
   const personal = { ...item('Personal Satchel', 'container'), id: 'personal', folder: null };
@@ -219,19 +221,19 @@ it('organizes all 191 real items by stable IDs with only folder changes and no d
   const before = structuredClone(world);
   const folders = [], options = folderOptions(world, folders);
   const plan = buildInventoryPlan(groups, world, validTypes, folders);
-  expect(plan.missing).toHaveLength(0); expect(plan.toOrganize).toHaveLength(191);
+  expect(plan.missing).toHaveLength(0); expect(plan.toOrganize).toHaveLength(200);
   const result = await applyInventoryPlan(plan, options);
-  expect(result.organized).toHaveLength(191); expect(result.skippedCount).toBe(0); expect(result.errors).toHaveLength(0);
+  expect(result.organized).toHaveLength(200); expect(result.skippedCount).toBe(0); expect(result.errors).toHaveLength(0);
   expect(result.folderCreated).toHaveLength(10); expect(result.folderReused).toHaveLength(0);
   const counts = Object.fromEntries(folders.map(folder => [folder.name, world.filter(doc => doc.folder === folder.id).length]));
-  expect(counts).toEqual({ 'Adventuring Gear': 45, Ammunition: 5, Armor: 17, Clothing: 12, 'Containers & Storage': 21, Livestock: 14, 'Tack & Harness': 15, Treasure: 20, Vehicles: 6, Weapons: 36 });
+  expect(counts).toEqual({ 'Adventuring Gear': 49, Ammunition: 5, Armor: 18, Clothing: 12, 'Containers & Storage': 23, Livestock: 14, 'Tack & Harness': 15, Treasure: 20, Vehicles: 6, Weapons: 38 });
   expect(world.map(({ folder, ...data }) => data)).toEqual(before.map(({ folder, ...data }) => data));
   expect(personal.folder).toBeNull();
-  expect(options.updateItem).toHaveBeenCalledTimes(191);
+  expect(options.updateItem).toHaveBeenCalledTimes(200);
   for (const [, patch] of options.updateItem.mock.calls) expect(Object.keys(patch)).toEqual(['folder']);
   const again = await applyInventoryPlan(buildInventoryPlan(groups, world, validTypes, folders), options);
-  expect(again.organized).toHaveLength(0); expect(again.created).toHaveLength(0); expect(again.skippedCount).toBe(191);
-  expect(options.createFolder).toHaveBeenCalledTimes(10); expect(options.updateItem).toHaveBeenCalledTimes(191);
+  expect(again.organized).toHaveLength(0); expect(again.created).toHaveLength(0); expect(again.skippedCount).toBe(200);
+  expect(options.createFolder).toHaveBeenCalledTimes(10); expect(options.updateItem).toHaveBeenCalledTimes(200);
 });
 
 it('organizes duplicate world matches and never matches unrelated undefined IDs', async () => {

@@ -8,6 +8,10 @@ const base = (overrides = {}) => ({
 });
 
 describe('canonical stack identity', () => {
+  it('does not split equivalent equipment stacks because merchant metadata differs', () => {
+    expect(canStackItems(base(), base({ storeAvailability: 'rare', blacksmithEligible: false }))).toBe(true);
+    expect(canStackItems(base({ storeAvailability: null }), base({ storeAvailability: 'common', blacksmithEligible: true }))).toBe(true);
+  });
   it('keeps named spellbooks separate even when their names match', () => {
     const book = { ...base(), name: 'Grimoire', flags: { 'osp-houserules': { spellbook: true } } };
     expect(canStackItems(book, { ...book, _id: 'b' })).toBe(false);

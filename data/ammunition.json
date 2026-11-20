@@ -14,7 +14,9 @@
       ],
       "slow": false,
       "unitWeight": 0.1,
-      "storedSize": 0.25
+      "storedSize": 0.25,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -32,7 +34,9 @@
       ],
       "slow": false,
       "unitWeight": 0.1,
-      "storedSize": 0.2
+      "storedSize": 0.2,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -50,7 +54,9 @@
       ],
       "slow": false,
       "unitWeight": 0.15,
-      "storedSize": 0.25
+      "storedSize": 0.25,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
     }
   },
   {
@@ -69,7 +75,9 @@
       ],
       "slow": false,
       "unitWeight": 0.2,
-      "storedSize": 0.25
+      "storedSize": 0.25,
+      "storeAvailability": "rare",
+      "blacksmithEligible": false
     }
   },
   {
@@ -87,7 +95,9 @@
       ],
       "slow": false,
       "unitWeight": 0.1,
-      "storedSize": 0.1
+      "storedSize": 0.1,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   }
 ]

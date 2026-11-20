@@ -1,0 +1,20 @@
+<form class="osp sheet actor marker" autocomplete="off">
+  <header class="marker-header">
+    {{#if editable}}
+    <img width="48" height="48" class="marker-image" src="{{actor.img}}" title="{{actor.name}}" data-edit="img">
+    <input class="marker-name" type="text" name="name" value="{{actor.name}}" placeholder="Marker name">
+    {{else}}
+    <img width="48" height="48" class="marker-image" src="{{actor.img}}" title="{{actor.name}}">
+    <h2>{{actor.name}}</h2>
+    {{/if}}
+  </header>
+  {{#if editable}}
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px" class="marker-pins" aria-label="Marker artwork">
+    {{#each markerPins}}
+    <button type="button" aria-pressed="{{selected}}" style="height:58px;padding:2px;{{#if selected}}outline:2px solid #915d26;{{/if}}" data-marker-pin="{{src}}" class="marker-pin{{#if selected}} selected{{/if}}" title="{{name}}"><img style="width:100%;height:100%;object-fit:contain;border:0" src="{{src}}" alt="{{name}}"></button>
+    {{/each}}
+  </div>
+  {{/if}}
+  {{#if editable}}<label>Token size <input type="range" min="0.25" max="4" step="0.05" value="{{markerScale}}" data-marker-scale><output data-marker-scale-value>{{markerScale}}</output>×</label>{{/if}}
+  <p>The portrait identifies this Marker actor. Choose painted artwork above. Configure who may move it through the actor directory's Configure Ownership action.</p>
+</form>

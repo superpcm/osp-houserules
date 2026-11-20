@@ -1,28 +1,36 @@
+import { isGearOrderDrag } from '../../inventory/gear-order-drag.js';
+import { isCompleteTent, separateTentData } from '../../inventory/tent-components.js';
+import { separateTentComponents } from '../../inventory/tent-component-actions.js';
+import { beltToolLashDecision, getLashSlotCost } from '../../inventory/lash-slot-cost.js';
+import { TOOLTIP_DELAY_MS } from '../../ui/tooltips.js';
+import { movementTooltips } from '../../ui/movement-tooltips.js';
 import { handCost, handsUsed, canHold } from '../../inventory/hand-capacity.js';
-import { checkWithdrawTarget } from '../../inventory/container-capacity.js';
+import { checkWithdrawTarget, hasContainerSpace, getEffectiveDropSize } from '../../inventory/container-capacity.js';
 import { nameDroppedSpellbook } from '../../spells/spellbook-drop.js';
 import { assertNoContainmentCycles, inventoryItems, containedSubtree, canBeParent, physicalItemTypes } from '../../inventory/containment.js';
 import { renderSpellcastingTab } from '../../spells/spellcasting-ui.js';
 import { baseSpellSlots, spellClassKey, canCastClassSpellsAtLevel, focusKindForItem } from '../../spells/spell-rules.js';
 import { activateCombatTalents } from '../../combat/combat-talents-ui.js';
-import { storedBulk, usedBulk, capacityValue, contentsWeight } from '../../inventory/bulk.js';
+import { storedBulk, usedBulk, capacityValue, contentsWeight, storageFootprint } from '../../inventory/bulk.js';
 import { calculatePersonalEncumbrance, normalizeQuantity, unitWeightPounds } from '../../inventory/encumbrance.js';
 import { resumeLevelUp } from '../level-up.js';
 import { showSkillPointDialog } from '../../dialog/skill-point-dialog.js';
-import { canStackItems } from '../../inventory/stack-identity.js';
+import { canStackItems, isUniqueStackItem } from '../../inventory/stack-identity.js';
 import { RaceClassHandler } from './handlers/race-class-handler.js';
 import { LanguageHandler } from './handlers/language-handler.js';
 import { ItemHandler } from './handlers/item-handler.js';
 import { UIHandler } from './handlers/ui-handler.js';
 import { XPProgressHandler } from './handlers/xp-progress-handler.js';
 import { BackgroundHandler } from './handlers/background-handler.js';
-import { PositionToolHandler } from './handlers/position-tool-handler.js';
 import { PortraitTool } from './portrait-tool.js';
 import { calculateMaxHP } from '../../../config/classes.js';
 import { getMaximumLevel, getClassProgression } from '../../../config/progression.js';
 import { externalDrag } from '../../external-drag-tracker.js';
 import { isConsumableWeapon } from '../../combat/ammo-logic.js';
-import { checkAllowedContainers, matchesContainerAllowedNames, matchesContainerType } from '../../inventory/container-allowlist.js';
+import { checkAllowedContainers, matchesContainerAllowedNames, matchesContainerType, pouchStorageRejection, auditPouchContents, clothingStorageRejection, auditClothingContents } from '../../inventory/container-allowlist.js';
+import { isBackpack, isRollableGarment, isBackpackInternalForbidden, getBackpackStorageRejection, auditBackpackContents, backpackLashDecision } from '../../inventory/long-item-transport.js';
+import { getSackStorageRejection, auditSackContents } from '../../inventory/sack-storage.js';
+import { getSaddleStorageRejection, auditSaddleContents } from '../../inventory/saddlebag-storage.js';
 import { stageItemCost } from '../../inventory/treasure-cost.js';
 import { createDropDraft, diffDropDraft, validDropQuantity, classifyDrop, dropDescendants, unchangedDropInventory } from '../../inventory/drop-transaction.js';
 import { runTransaction, transactionBlock } from '../../inventory/transaction-journal.js';
@@ -31,8 +39,26 @@ import { activateCombatValueSizing } from './combat-value-sizing.js';
 import { NativeCharacterSheet } from './native-character-sheet.js';
 import { healthSnapshot } from '../../health/health-rules.js';
 import { changeHealth } from '../../health/health-authority.js';
+import { renderSkillNumeral } from './skill-target-values.js';
+import { alignSkillLabelInk } from './skill-label-ink.js';
+import { getVehicleAttachmentOptions, checkVehicleAttachment, validateVehicleAttachments, vehicleDestination, parseVehicleDestination, readableVehicleAttachmentLabel, getVehicleKind } from '../../inventory/vehicle-lashing.js';
+import { isShieldItem, isShieldLashingHost, lashSlotUsage } from '../../inventory/shield-lashing.js';
+import { getArrowBundleLashDecision, isArrowAmmo, isProtectedArrowBundle, isArrowQuiver, prepareArrowQuiverPlacement, prepareArrowSaleBundle } from '../../inventory/arrow-bundle.js';
+import { packArrowBundle, unpackArrowBundle } from '../../inventory/arrow-bundle-actions.js';
+import { getTorchBundleLashDecision, isProtectedTorchBundle, isTorch, prepareTorchSaleBundle, TORCH_SALE_BUNDLE_QUANTITY } from '../../inventory/torch-bundle.js';
+import { packTorchBundle, unpackTorchBundle } from '../../inventory/torch-bundle-actions.js';
+import { getBoltBundleLashDecision, isBoltAmmo, isProtectedBoltBundle, isBoltCase, prepareBoltCasePlacement, prepareBoltSaleBundle, BOLT_SALE_BUNDLE_QUANTITY } from '../../inventory/bolt-bundle.js';
+import { packBoltBundle, unpackBoltBundle } from '../../inventory/bolt-bundle-actions.js';
+import { skillStripGeometry } from './skill-strip-layout.js';
+import { dropQuantityPrompt, isCatalogQuantityItem, ARROW_BUNDLE_QUANTITY } from '../../inventory/drop-quantity.js';
+import { setupGearOrdering } from '../../inventory/gear-order.js';
+import { auditClothingWear, clothingWearRejection, isBodyWearAccessory, isWornBodyAccessory, isWornClothing, resolveClothingWearCategory } from '../../inventory/clothing-wear.js';
+import { auditRenderedGear, computeMissingGearItems, gearFallbackView, gearVisibilityWarning } from '../../inventory/gear-visibility.js';
 
 const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const roundGearWeight = value => Math.round((Number(value) || 0) * 100) / 100;
+let skillPathSequence = 0;
+
 
 // The two tack items a Livestock mount can lash cargo/weapons directly to. Sacks are normally
 // carried in hand or stored, never lashed to a belt/backpack — except onto one of these, which
@@ -40,6 +66,8 @@ const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 // directly on one of these also get the same Sword Frog/Scabbard auto-provisioning as a belt.
 const SADDLE_LASH_HOSTS = new Set(['Saddle', 'Saddle, Pack']);
 const HAND_CARRY_CONTAINERS = new Set(['Sack, Large', 'Sack, Small']);
+const isCapacityClothing = container => container?.type === 'clothing'
+  && capacityValue(container.system?.capacity) > 0;
 
 const isSlungable = (tags) => tags.includes('slungable') || tags.includes('sling')
   || (tags.includes('missile') && tags.includes('two-handed'));
@@ -61,7 +89,7 @@ export const isEquippedWandCombatItem = item =>
 // coexist" (it would have let a Bow and a Crossbow be slung together, since that's only 2 of 3
 // slots, which this table explicitly forbids). See _checkBackSlotCompatibility.
 const BACK_SLOT_CATEGORY = {
-  'Baldric': 'harness', 'Axe Sling': 'harness',
+  'Baldric': 'harness', 'Axe Sling': 'harness', 'Warhammer Sling': 'harness',
   'Longbow': 'bow', 'Shortbow': 'bow',
   'Crossbow, Light': 'crossbow', 'Crossbow, Heavy': 'crossbow',
   'Quiver': 'quiver',
@@ -112,8 +140,8 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       druid: [],
       knight: [],
       paladin: [],
-      ranger: ['foraging-hunting', 'stealth'],
-      warden: ['foraging-hunting', 'wilderness-surprise-attack'],
+      ranger: ['foraging', 'hunting', 'stealth'],
+      warden: ['foraging', 'hunting', 'wilderness-surprise-attack'],
       illusionist: [],
       mage: [],
       thief: ['climb-sheer', 'hide-shadows', 'move-silently', 'find-traps', 'open-locks', 'pick-pockets'],
@@ -144,6 +172,8 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     'pick-pockets': '.cs-pos-pick-pockets',
     'hide-undergrowth': '.cs-pos-hide-undergrowth',
     'hide-dungeons': '.cs-pos-hide-dungeons',
+    foraging: '.cs-pos-foraging',
+    hunting: '.cs-pos-hunting',
     'foraging-hunting': '.cs-pos-foraging-hunting',
     'stealth': '.cs-pos-stealth',
     'wilderness-surprise-attack': '.cs-pos-wilderness-surprise-attack',
@@ -197,7 +227,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
 
   static DEFAULT_OPTIONS = {
     classes: ['osp', 'sheet', 'actor', 'character'],
-    position: { width: 750, height: 835 },
+    position: { width: 822, height: 754 },
     actions: {
       resumeLevelUp() {
         return resumeLevelUp(this.actor).then(result => {
@@ -224,6 +254,16 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     return buttons;
   }
 
+  async _renderHTML(context, options) {
+    const parts = await super._renderHTML(context, options);
+    const sheet = parts?.sheet ?? parts;
+    if (sheet?.querySelector) {
+      const html = $(sheet);
+      this.activateTab(html, this._activeTab || 'bio');
+    }
+    return parts;
+  }
+
   async _prepareContext(options) {
     // If we're in the process of closing, don't render
     if (this._isClosing) {
@@ -232,20 +272,52 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     
     const context = await super._prepareContext(options);
     context.system = this.actor.system;
+    context.acBreakdown = this.actor.getArmorClassBreakdown?.().tooltip || `Armor Class: ${context.system.ac}`;
     context.isGM = game.user.isGM;
     context.healthSnapshot = healthSnapshot(this.actor);
     context.canEditHP = Boolean(game.user.isGM || this.actor.testUserPermission?.(game.user, 'OWNER'));
 
-    context.enrichedBackground = await TextEditor.enrichHTML(context.system.details?.background || '', { async: true, relativeTo: this.actor });
-    context.enrichedHistory = await TextEditor.enrichHTML(context.system.details?.notes || '', { async: true, relativeTo: this.actor });
-    context.enrichedNotes = await TextEditor.enrichHTML(context.system.tabNotes || '', { async: true, relativeTo: this.actor });
+    const textEditor = globalThis.foundry?.applications?.ux?.TextEditor?.implementation ?? TextEditor;
+    const enrichOptions = { async: true, relativeTo: this.actor };
+    const previousEnrichment = this._plainTextEnrichment;
+    const viewer = game.user;
+    const canReusePlainText = !globalThis.CONFIG?.TextEditor?.enrichers?.length;
+    const plainText = new Map();
+    const enrich = value => {
+      if (!value) return '';
+      // Links, rolls, secrets and custom enrichers can depend on other documents
+      // or current permissions. Only reuse plain copy with no enrichment syntax.
+      const text = value.startsWith('<p>') && value.endsWith('</p>') ? value.slice(3, -4) : value;
+      if (!canReusePlainText || !/^[A-Za-z0-9\s,!?'-]+$/.test(text)) {
+        return textEditor.enrichHTML(value, enrichOptions);
+      }
+      if (!plainText.has(value)) {
+        plainText.set(value, previousEnrichment?.viewer === viewer && previousEnrichment.editor === textEditor
+          ? previousEnrichment.values.get(value) ?? textEditor.enrichHTML(value, enrichOptions)
+          : textEditor.enrichHTML(value, enrichOptions));
+      }
+      return plainText.get(value);
+    };
+    const [background, history, appearance, goals, notes] = await Promise.all([
+      enrich(context.system.details?.background),
+      enrich(context.system.details?.notes),
+      enrich(context.system.details?.appearance),
+      enrich(context.system.details?.goals),
+      enrich(context.system.tabNotes),
+    ]);
+    this._plainTextEnrichment = { viewer, editor: textEditor, values: plainText };
+    context.enrichedBackground = background;
+    context.enrichedHistory = history;
+    context.enrichedAppearance = appearance;
+    context.enrichedGoals = goals;
+    context.enrichedNotes = notes;
 
     // Initialize position and portrait data if missing
     if (!context.system.levelPosition) {
       context.system.levelPosition = { x: 0, y: 0, zIndex: 0 };
     }
     if (!context.system.userPortrait) {
-      context.system.userPortrait = { scale: 1, x: 0, y: 0 };
+      context.system.userPortrait = { scale: 1, x: 0, y: 0, rotation: 0 };
     }
     if (!context.system.namePosition) {
       context.system.namePosition = { x: 0, y: 0, zIndex: 0 };
@@ -288,17 +360,95 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     // All shields (equipped + unequipped, excluding lashed) for combat tab toggle
     context.allShields = context.armor
-      .filter(a => a.name.toLowerCase().includes('shield') && !a.system.lashed)
+      .filter(a => isShieldItem(a) && !a.system.lashed)
       .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
     
     // Organize containers with nested items
-    const allContainers = this.actor.items.filter(i => i.type === "container");
-    const allItems = this.actor.items.filter(i => i.type === "item");
-    const allWeapons = this.actor.items.filter(i => i.type === "weapon");
-    const allArmor = this.actor.items.filter(i => i.type === "armor");
-    const allAmmunition = this.actor.items.filter(i => i.type === "ammunition");
-    const allCoins = this.actor.items.filter(i => i.type === "coin");
-    const allLivestock = this.actor.items.filter(i => i.type === "livestock");
+    const itemsByType = new Map();
+    const itemsByContainer = new Map();
+    for (const item of this.actor.items) {
+      const typed = itemsByType.get(item.type) ?? [];
+      typed.push(item);
+      itemsByType.set(item.type, typed);
+      const containerId = item.system?.containerId;
+      if (containerId) {
+        const contained = itemsByContainer.get(containerId) ?? [];
+        contained.push(item);
+        itemsByContainer.set(containerId, contained);
+      }
+    }
+    const allContainers = itemsByType.get('container') ?? [];
+    const allItems = itemsByType.get('item') ?? [];
+    const allWeapons = itemsByType.get('weapon') ?? [];
+    const allArmor = itemsByType.get('armor') ?? [];
+    const allAmmunition = itemsByType.get('ammunition') ?? [];
+    const allCoins = itemsByType.get('coin') ?? [];
+    const allLivestock = itemsByType.get('livestock') ?? [];
+    const allClothing = itemsByType.get('clothing') ?? [];
+    const inContainer = (id, type, predicate = () => true) =>
+      (itemsByContainer.get(id) ?? []).filter(item => item.type === type && predicate(item));
+    this.actor.items.forEach(item => { item.isProtectedArrowBundle = isProtectedArrowBundle(item); item.isProtectedBundle = isProtectedArrowBundle(item) || isProtectedTorchBundle(item); });
+    this.actor.items.forEach(item => { item.isProtectedTorchBundle = isProtectedTorchBundle(item); });
+    // Recompute warnings from current locations on every render, including collapsed pouches.
+    const pouchViolations = auditPouchContents(this.actor.items);
+    const clothingViolations = auditClothingContents(this.actor.items);
+    const clothingWear = auditClothingWear(this.actor.items);
+    const backpackViolations = auditBackpackContents(this.actor.items);
+    const sackViolations = auditSackContents(this.actor.items);
+    const saddleViolations = auditSaddleContents(this.actor.items);
+    this.actor.items.forEach(item => {
+      const pouchReason = pouchViolations.find(row => row.item.id === item.id)?.reason ?? null;
+      const clothingReason = clothingViolations.find(row => row.item.id === item.id)?.reason ?? null;
+      const backpackReason = backpackViolations.find(row => row.item.id === item.id)?.reason ?? null;
+      const sackReason = sackViolations.find(row => row.item.id === item.id)?.reason ?? null;
+      const saddleReason = saddleViolations.find(row => row.item.id === item.id)?.reason ?? null;
+      item.pouchStorageWarning = pouchReason ?? clothingReason ?? backpackReason ?? sackReason ?? saddleReason;
+      const invalidContents = pouchViolations.filter(row => row.container.id === item.id);
+      const invalidClothingContents = clothingViolations.filter(row => row.container.id === item.id);
+      item.pouchContentsWarning = invalidContents.length
+        ? `Contents do not fit this pouch: ${invalidContents.map(row => row.item.name).join(', ')}.`
+        : (invalidClothingContents.length ? `Contents do not fit this clothing: ${invalidClothingContents.map(row => row.item.name).join(', ')}.` : null);
+      item.clothingStorageWarning = clothingViolations.find(row => row.item.id === item.id)?.reason ?? null;
+      item.clothingWearWarning = clothingWear.warningsById[item.id] ?? null;
+      item.clothingContentsWarning = invalidClothingContents.length
+        ? `Contents do not fit this clothing: ${invalidClothingContents.map(row => row.item.name).join(', ')}.` : null;
+      const invalidBackpackContents = backpackViolations.filter(row => {
+        let current = row.container; const seen = new Set();
+        while (current && !seen.has(current.id)) {
+          if (current.id === item.id) return true;
+          seen.add(current.id);
+          current = this.actor.items.get(current.system?.containerId);
+        }
+        return false;
+      });
+      item.backpackStorageWarning = backpackReason;
+      item.backpackContentsWarning = invalidBackpackContents.length
+        ? `Contents do not fit this Backpack: ${invalidBackpackContents.map(row => row.item.name).join(', ')}.` : null;
+      const invalidSackContents = sackViolations.filter(row => {
+        let current = row.container; const seen = new Set();
+        while (current && !seen.has(current.id)) {
+          if (current.id === item.id) return true;
+          seen.add(current.id);
+          current = this.actor.items.get(current.system?.containerId);
+        }
+        return false;
+      });
+      item.sackStorageWarning = sackReason;
+      item.sackContentsWarning = invalidSackContents.length
+        ? `Contents do not fit this sack: ${invalidSackContents.map(row => row.item.name).join(', ')}.` : null;
+      const invalidSaddleContents = saddleViolations.filter(row => {
+        let current = row.container; const seen = new Set();
+        while (current && !seen.has(current.id)) {
+          if (current.id === item.id) return true;
+          seen.add(current.id); current = this.actor.items.get(current.system?.containerId);
+        }
+        return false;
+      });
+      item.saddleStorageWarning = saddleReason;
+      item.saddleContentsWarning = invalidSaddleContents.length
+        ? `Contents do not fit this saddlebag or pannier: ${invalidSaddleContents.map(row => row.item.name).join(', ')}.` : null;
+      item.pouchContentsWarning ??= item.backpackContentsWarning ?? item.sackContentsWarning ?? item.saddleContentsWarning;
+    });
     // Physical spell focuses use the same hand toggle as other carried equipment.
     this.actor.items.forEach(item => { item.isSpellFocus = Boolean(focusKindForItem(item)); });
 
@@ -306,26 +456,26 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     // When equipped, they appear on the combat tab and hide from their container.
 
     // Filter top-level clothing items (equipped, not in containers)
-    const allClothing = this.actor.items.filter(i => i.type === "clothing");
     const topLevelClothing = allClothing.filter(item => !item.system.containerId);
     
     context.clothing = topLevelClothing.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)).map(item => {
       // Calculate display weight: unitWeight * quantity
       const itemWeight = unitWeightPounds(item);
       const currentQuantity = normalizeQuantity(item.system.quantity);
-      item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
+      const precision = item.type === 'coin' ? 100 : 10;
+      item.displayWeight = Math.round(itemWeight * currentQuantity * precision) / precision;
       item.totalWeight = item.displayWeight; // default; overridden below if has capacity
 
       // If clothing has capacity, treat it like a container
       if (item.system.capacity) {
         // Find items stored in this clothing
-        const containedItems = allItems.filter(i => i.system.containerId === item.id);
-        const containedWeapons = allWeapons.filter(w => w.system.containerId === item.id && !(w.system.equipped && isConsumableWeapon(w)));
-        const containedArmor = allArmor.filter(a => a.system.containerId === item.id);
-        const containedAmmunition = allAmmunition.filter(a => a.system.containerId === item.id);
-        const containedContainers = allContainers.filter(c => c.system.containerId === item.id);
-        const containedClothing = allClothing.filter(c => c.system.containerId === item.id);
-        const containedCoins = allCoins.filter(c => c.system.containerId === item.id);
+        const containedItems = inContainer(item.id, 'item');
+        const containedWeapons = inContainer(item.id, 'weapon', w => !(w.system.equipped && isConsumableWeapon(w)));
+        const containedArmor = inContainer(item.id, 'armor');
+        const containedAmmunition = inContainer(item.id, 'ammunition');
+        const containedContainers = inContainer(item.id, 'container');
+        const containedClothing = inContainer(item.id, 'clothing');
+        const containedCoins = inContainer(item.id, 'coin');
 
         const allContainedItems = [
           ...containedItems,
@@ -344,19 +494,22 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
           nestedItem.unitWeight = Math.round(nestedWeight * 100) / 100;
           nestedItem.displayWeight = Math.round(nestedWeight * nestedQuantity * 10) / 10;
 
-          const storedSize = parseFloat(nestedItem.system.storedSize) || 0;
-          nestedItem.displayCapacity = Math.round(storedSize * nestedQuantity);
+          nestedItem.displayCapacity = Math.round(getEffectiveDropSize(nestedItem, this.actor.items) * 100) / 100;
           nestedItem.isConsumableWeapon = isConsumableWeapon(nestedItem);
+          nestedItem.pouchStorageWarning = pouchStorageRejection(nestedItem, item) ?? clothingStorageRejection(nestedItem, item) ?? getBackpackStorageRejection(nestedItem, item, this.actor.items) ?? getSackStorageRejection(nestedItem, item, this.actor.items) ?? getSaddleStorageRejection(nestedItem, item, this.actor.items);
+          nestedItem.clothingStorageWarning = clothingStorageRejection(nestedItem, item);
 
           if (nestedItem.type === 'container') {
-            const subItems = this.actor.items.filter(i => i.system.containerId === nestedItem.id && !i.system.lashed && !(i.system.equipped && isConsumableWeapon(i)));
+            const subItems = (itemsByContainer.get(nestedItem.id) ?? []).filter(i => !i.system.lashed && !(i.system.equipped && isConsumableWeapon(i)));
             subItems.forEach(si => {
               const siWeight = unitWeightPounds(si);
               const siQty = normalizeQuantity(si.system.quantity);
               si.unitWeight = Math.round(siWeight * 100) / 100;
               si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
-              si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
+              si.displayCapacity = Math.round(getEffectiveDropSize(si, this.actor.items) * 100) / 100;
               si.isConsumableWeapon = isConsumableWeapon(si);
+              si.pouchStorageWarning = pouchStorageRejection(si, nestedItem) ?? clothingStorageRejection(si, nestedItem) ?? getBackpackStorageRejection(si, nestedItem, this.actor.items) ?? getSackStorageRejection(si, nestedItem, this.actor.items) ?? getSaddleStorageRejection(si, nestedItem, this.actor.items);
+              si.clothingStorageWarning = clothingStorageRejection(si, nestedItem);
             });
             nestedItem.containedItems = subItems;
             nestedItem.collapsed = this.actor.getFlag('osp-houserules', `container-${nestedItem.id}-collapsed`) ?? false;
@@ -371,14 +524,9 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
         const containedWeight = allContainedItems.reduce((total, i) => total + (i.displayWeight || 0), 0);
         item.totalWeight = Math.round((item.displayWeight + containedWeight) * 10) / 10;
 
-        // Calculate capacity usage
+        // Calculate recursive capacity usage; the shared helper excludes lashed edges.
         const capacity = parseFloat(item.system.capacity) || 0;
-        let usedCapacity = 0;
-        allContainedItems.forEach(nestedItem => {
-          const storedSize = parseFloat(nestedItem.system.storedSize) || 0;
-          const qty = normalizeQuantity(nestedItem.system.quantity);
-          usedCapacity += storedSize * qty;
-        });
+        const usedCapacity = usedBulk(item, this.actor.items);
         
         item.remainingCapacity = Math.round((capacity - usedCapacity) * 10) / 10;
         item.capacityPercentage = capacity > 0 ? Math.round((usedCapacity / capacity) * 100) : 0;
@@ -392,11 +540,24 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       // restricting this to allContainers silently dropped those from the belt's own list even
       // though the item itself was created correctly (containerId + lashed both set).
       if (item.system.lashSlots > 0) {
-        const lashedAttachments = this.actor.items.filter(c => c.system.containerId === item.id && c.system.lashed);
+        const isZeroCapacityClothingLashHost = item.type === 'clothing'
+          && Number(item.system?.lashSlots) > 0
+          && capacityValue(item.system?.capacity) <= 0;
+        const lashedAttachments = this.actor.items.filter(c => c.system.containerId === item.id
+          && (c.system.lashed || isZeroCapacityClothingLashHost));
         lashedAttachments.forEach(c => {
+          delete c.gearVisibilityWarning;
+          const beltToolDecision = beltToolLashDecision(c, item);
+          if (beltToolDecision.allowed === false) c.gearVisibilityWarning = beltToolDecision.reason;
+          if (isZeroCapacityClothingLashHost && !c.system.lashed) {
+            c.gearVisibilityWarning = [
+              c.gearVisibilityWarning,
+              'Displayed from its belt link; the lash flag is missing.'
+            ].filter(Boolean).join(' ');
+          }
           const wt = unitWeightPounds(c);
           c.displayWeight = Math.round(wt * (normalizeQuantity(c.system.quantity)) * 10) / 10;
-          c.slotCost = c.system.slotCost || 1;
+          c.slotCost = getLashSlotCost(c, item);
           // Always (re)assign storedWeapon/storedItem so stale values from prior renders are cleared
           // For capacity containers (pouches etc.) include stackable weapons alongside items.
           // For non-capacity containers (scabbards) keep the storedWeapon-exclusive pattern.
@@ -411,12 +572,16 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
             sub.unitWeight = Math.round(swt2 * 100) / 100;
             sub.displayWeight = Math.round(swt2 * (normalizeQuantity(sub.system.quantity)) * 10) / 10;
             sub.itemId = sub.id;
+            sub.pouchStorageWarning = pouchStorageRejection(sub, c) ?? clothingStorageRejection(sub, c) ?? getBackpackStorageRejection(sub, c, this.actor.items) ?? getSackStorageRejection(sub, c, this.actor.items) ?? getSaddleStorageRejection(sub, c, this.actor.items);
+            sub.clothingStorageWarning = clothingStorageRejection(sub, c);
             const subWeapon = allWeapons.find(w => w.system.containerId === sub.id) ?? null;
             if (subWeapon) {
               const wt2 = unitWeightPounds(subWeapon);
               subWeapon.unitWeight = Math.round(wt2 * 100) / 100;
               subWeapon.displayWeight = Math.round(wt2 * (normalizeQuantity(subWeapon.system.quantity)) * 10) / 10;
               subWeapon.itemId = subWeapon.id;
+              subWeapon.pouchStorageWarning = pouchStorageRejection(subWeapon, sub) ?? clothingStorageRejection(subWeapon, sub) ?? getBackpackStorageRejection(subWeapon, sub, this.actor.items) ?? getSackStorageRejection(subWeapon, sub, this.actor.items) ?? getSaddleStorageRejection(subWeapon, sub, this.actor.items);
+              subWeapon.clothingStorageWarning = clothingStorageRejection(subWeapon, sub);
             }
             sub.storedWeapon = subWeapon;
             return sub;
@@ -426,6 +591,8 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
             storedWeapon.unitWeight = Math.round(swt * 100) / 100;
             storedWeapon.displayWeight = Math.round(swt * (normalizeQuantity(storedWeapon.system.quantity)) * 10) / 10;
             storedWeapon.itemId = storedWeapon.id;
+            storedWeapon.pouchStorageWarning = pouchStorageRejection(storedWeapon, c) ?? clothingStorageRejection(storedWeapon, c) ?? getBackpackStorageRejection(storedWeapon, c, this.actor.items) ?? getSackStorageRejection(storedWeapon, c, this.actor.items) ?? getSaddleStorageRejection(storedWeapon, c, this.actor.items);
+            storedWeapon.clothingStorageWarning = clothingStorageRejection(storedWeapon, c);
           }
           c.storedWeapon = storedWeapon;
           const storedItems = (hasCapacity || !storedWeapon)
@@ -439,6 +606,8 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
                 i.displayWeight = Math.round(sit * (normalizeQuantity(i.system.quantity)) * 10) / 10;
                 i.itemId = i.id;
                 i.isConsumableWeapon = isConsumableWeapon(i);
+                i.pouchStorageWarning = pouchStorageRejection(i, c) ?? clothingStorageRejection(i, c) ?? getBackpackStorageRejection(i, c, this.actor.items) ?? getSackStorageRejection(i, c, this.actor.items) ?? getSaddleStorageRejection(i, c, this.actor.items);
+                i.clothingStorageWarning = clothingStorageRejection(i, c);
                 return i;
               })
             : [];
@@ -463,7 +632,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
         });
         item.lashedItems = lashedAttachments;
         item.lashSlots = item.system.lashSlots;
-        item.usedLashSlots = lashedAttachments.reduce((sum, c) => sum + (c.system.slotCost || 1), 0);
+        item.usedLashSlots = lashedAttachments.reduce((sum, c) => sum + getLashSlotCost(c, item), 0);
         item.remainingLashSlots = Math.max(0, item.system.lashSlots - item.usedLashSlots);
         item.lashSlotPercentage = item.lashSlots > 0 ? Math.round((item.usedLashSlots / item.lashSlots) * 100) : 0;
         item.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${item.id}-collapsed`) ?? true;
@@ -473,6 +642,14 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
 
       return item;
     });
+    context.clothingWear = clothingWear;
+    // Body is a virtual display group for worn top-level clothing. Keep the existing
+    // clothing collection intact for nested/storage consumers; only remove these same
+    // item ids from the unified top-level gear list below.
+    context.bodyClothing = context.clothing
+      .filter(item => this._isBodyClothing(item))
+      .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    context.bodyCollapsed = this.actor.getFlag('osp-houserules', 'body-collapsed') ?? false;
     
     // Slung Items — containers use equipped:true; weapons use equipped:false+no containerId (limbo state)
     const allSlungable = this.actor.items.filter(i => {
@@ -511,6 +688,11 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       // For slung containers (e.g. quiver), collect contained ammunition for display
       if (item.type === 'container') {
         const containedAmmo = allAmmunition.filter(a => a.system.containerId === item.id);
+        // Item documents are reused between sheet renders. Always replace the
+        // derived list so a quiver that was emptied does not retain its old
+        // ammunition row in the slung-items view.
+        item.containedAmmunition = containedAmmo;
+        item.hasStoredContent = Boolean(item.storedWeapon || item.storedItem || containedAmmo.length);
         if (containedAmmo.length > 0) {
           containedAmmo.forEach(ammo => {
             const awt = unitWeightPounds(ammo);
@@ -518,8 +700,6 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
             ammo.displayWeight = Math.round(awt * (normalizeQuantity(ammo.system.quantity)) * 10) / 10;
             ammo.itemId = ammo.id;
           });
-          item.containedAmmunition = containedAmmo;
-          item.hasStoredContent = true;
           item.storageCollapsed = item.storageCollapsed ??
             (this.actor.getFlag('osp-houserules', `sling-${item.id}-collapsed`) ?? true);
         }
@@ -529,12 +709,16 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     });
     const slungItemIds = new Set(slungItems.map(i => i.id));
     context.slungItems = slungItems;
-    context.slungTotalWeight = Math.round(
-      slungItems.reduce((sum, i) => {
-        const storedWt = (i.storedWeapon?.displayWeight || 0) + (i.storedItem?.displayWeight || 0);
-        return sum + (i.displayWeight || 0) + storedWt;
-      }, 0) * 10
-    ) / 10;
+    // A worn Backpack excludes the Quiver/Harness/Crossbow positions, leaving Bow + Skin Sling.
+    // Without one, compatible combinations can use three slung positions.
+    context.slungCapacity = this._getWornBackSlotItems().backpack?.length ? 2 : 3;
+    context.slungUsedSlots = slungItems.length;
+    context.slungCapacityPercentage = Math.min(100, slungItems.length / context.slungCapacity * 100);
+    context.slungTotalWeight = roundGearWeight(slungItems.reduce((sum, item) => {
+      const source = this.actor.items.get(item.id) ?? item;
+      return sum + unitWeightPounds(source) * normalizeQuantity(source.system?.quantity)
+        + contentsWeight(source.id, this.actor.items);
+    }, 0));
     context.slungCollapsed = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? true;
 
     // Only show TOP-LEVEL containers (not nested, not lashed, not actively slung)
@@ -556,14 +740,14 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       };
       
       // Find ALL items in this container - items, weapons, armor, ammunition, coins, livestock, AND nested containers
-      const containedItems = allItems.filter(item => item.system.containerId === container.id);
-      const containedWeapons = allWeapons.filter(weapon => weapon.system.containerId === container.id && !(weapon.system.equipped && isConsumableWeapon(weapon)));
-      const containedArmor = allArmor.filter(armor => armor.system.containerId === container.id);
-      const containedAmmunition = allAmmunition.filter(ammo => ammo.system.containerId === container.id);
-      const containedContainers = allContainers.filter(c => c.system.containerId === container.id);
-      const containedClothing = allClothing.filter(c => c.system.containerId === container.id);
-      const containedCoins = allCoins.filter(c => c.system.containerId === container.id);
-      const containedLivestock = allLivestock.filter(l => l.system.containerId === container.id);
+      const containedItems = inContainer(container.id, 'item');
+      const containedWeapons = inContainer(container.id, 'weapon', weapon => !(weapon.system.equipped && isConsumableWeapon(weapon)));
+      const containedArmor = inContainer(container.id, 'armor');
+      const containedAmmunition = inContainer(container.id, 'ammunition');
+      const containedContainers = inContainer(container.id, 'container');
+      const containedClothing = inContainer(container.id, 'clothing');
+      const containedCoins = inContainer(container.id, 'coin');
+      const containedLivestock = inContainer(container.id, 'livestock');
 
       // Combine all contained items
       const allContainedItems = [
@@ -586,27 +770,29 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
         // Handle both 'unitWeight' and 'weight' field names
         const itemWeight = unitWeightPounds(item);
         const currentQuantity = normalizeQuantity(item.system.quantity);
-        const storedSize = parseFloat(item.system.storedSize) || 0;
-
         // Simple weight calculation: weight per unit * quantity, rounded to 1 decimal
         item.unitWeight = Math.round(itemWeight * 100) / 100;
         item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
 
         // Capacity: storedSize is per-unit; coins use same logic
-        const itemCapacity = storedSize * currentQuantity;
-        item.displayCapacity = Math.round(itemCapacity * 10) / 10;
+        const itemCapacity = getEffectiveDropSize(item, this.actor.items);
+        item.displayCapacity = Math.round(itemCapacity * 100) / 100;
         item.isConsumableWeapon = isConsumableWeapon(item);
+        if (!item.system.lashed) item.pouchStorageWarning = pouchStorageRejection(item, container) ?? clothingStorageRejection(item, container) ?? getBackpackStorageRejection(item, container, this.actor.items) ?? getSackStorageRejection(item, container, this.actor.items) ?? getSaddleStorageRejection(item, container, this.actor.items);
+        item.clothingStorageWarning = clothingStorageRejection(item, container);
 
         // Build sub-items for nested containers so the template can show their contents
         if (item.type === 'container') {
-          const subItems = this.actor.items.filter(i => i.system.containerId === item.id && !i.system.lashed && !(i.system.equipped && isConsumableWeapon(i)));
+          const subItems = (itemsByContainer.get(item.id) ?? []).filter(i => !i.system.lashed && !(i.system.equipped && isConsumableWeapon(i)));
           subItems.forEach(si => {
             const siWeight = unitWeightPounds(si);
             const siQty = normalizeQuantity(si.system.quantity);
             si.unitWeight = Math.round(siWeight * 100) / 100;
             si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
-            si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
+            si.displayCapacity = Math.round(getEffectiveDropSize(si, this.actor.items) * 100) / 100;
             si.isConsumableWeapon = isConsumableWeapon(si);
+            si.pouchStorageWarning = pouchStorageRejection(si, item) ?? clothingStorageRejection(si, item) ?? getBackpackStorageRejection(si, item, this.actor.items) ?? getSackStorageRejection(si, item, this.actor.items) ?? getSaddleStorageRejection(si, item, this.actor.items);
+            si.clothingStorageWarning = clothingStorageRejection(si, item);
           });
           item.containedItems = subItems;
           item.collapsed = this.actor.getFlag('osp-houserules', `container-${item.id}-collapsed`) ?? false;
@@ -662,7 +848,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       
       // Calculate lash slot usage
       const lashSlots = container.system.lashSlots || 0;
-      const usedLashSlots = lashedItems.length;
+      const usedLashSlots = lashedItems.reduce((sum, item) => sum + getLashSlotCost(item, container), 0);
       containerData.lashSlots = lashSlots;
       containerData.usedLashSlots = usedLashSlots;
       containerData.remainingLashSlots = Math.max(0, lashSlots - usedLashSlots);
@@ -681,15 +867,18 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     // Vehicles (Cart, Wagon, etc.) get their own dedicated Gear tab section instead of
     // sitting in the general container list — pulled out here, after the shared containerData
     // build above, by the "vehicle" tag.
-    context.vehicles = context.containers.filter(c => (c.system.tags || []).includes('vehicle'));
-    context.containers = context.containers.filter(c => !(c.system.tags || []).includes('vehicle'));
+    context.vehicles = context.containers.filter(c => (c.system.tags || []).includes('vehicle') || getVehicleKind(c) !== 'none');
+    context.containers = context.containers.filter(c => !((c.system.tags || []).includes('vehicle') || getVehicleKind(c) !== 'none'));
+    inventoryItems(this.actor).forEach(item => {
+      if (item.system?.vehicleAttachment) item.vehicleAttachmentLabel = readableVehicleAttachmentLabel(item.system.vehicleAttachment);
+    });
 
     // Build set of all valid container/clothing-with-capacity/livestock IDs so we can detect
     // orphaned items. Livestock are included since tack (Saddle, Bit & Bridle, etc.) is "stored"
     // on them via the same containerId mechanism, even though they aren't type "container".
     const validContainerIds = new Set([
       ...allContainers.map(c => c.id),
-      ...this.actor.items.filter(i => i.type === "clothing" && i.system.capacity).map(i => i.id),
+      ...this.actor.items.filter(i => i.type === "clothing" && (i.system.capacity || Number(i.system.lashSlots) > 0)).map(i => i.id),
       ...allLivestock.map(l => l.id)
     ]);
 
@@ -713,23 +902,38 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     );
     const unequippedArmor = allArmor.filter(a =>
       !a.system.equipped && !a.system.lashed &&
-      !a.name.toLowerCase().includes('shield') &&
+      !isShieldItem(a) &&
       (!a.system.containerId || !validContainerIds.has(a.system.containerId))
     );
     const freeLivestock = allLivestock.filter(l =>
       !l.system.lashed &&
       (!l.system.containerId || !validContainerIds.has(l.system.containerId))
     );
-    const generalItems = [...freeItems, ...freeAmmunition, ...unequippedArmor];
+    const freeCoins = allCoins.filter(coin =>
+      !coin.system.lashed && (!coin.system.containerId || !validContainerIds.has(coin.system.containerId))
+    );
+    const generalItems = [...freeItems, ...freeAmmunition, ...freeCoins, ...unequippedArmor];
 
     // Calculate displayWeight for general items, loose weapons, and livestock
     [...generalItems, ...unequippedWeapons, ...freeLivestock].forEach(item => {
       const itemWeight = unitWeightPounds(item);
       const currentQuantity = normalizeQuantity(item.system.quantity);
       item.displayWeight = Math.round(itemWeight * currentQuantity * 10) / 10;
+      item.displayQuantity = (item.type === 'coin' || item.type === 'ammunition') ? currentQuantity : '—';
+      item.displayUnitWeight = Math.round(itemWeight * 100) / 100;
     });
 
     context.items = generalItems.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    // Holy Symbols are worn accessories: show them under Clothing without consuming
+    // one of the six clothing positions or appearing again in general Gear.
+    const wornBodyAccessories = context.items.filter(isWornBodyAccessory);
+    if (wornBodyAccessories.length) {
+      const bodyIds = new Set(context.bodyClothing.map(item => item.id));
+      context.bodyClothing = [...context.bodyClothing, ...wornBodyAccessories.filter(item => !bodyIds.has(item.id))]
+        .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+      const accessoryIds = new Set(wornBodyAccessories.map(item => item.id));
+      context.items = context.items.filter(item => !accessoryIds.has(item.id));
+    }
     // Livestock (Chicken, Horse, Mule, etc.) get their own dedicated Gear tab section instead of
     // sitting in the general item list — same treatment as Vehicles, and also excluded from encumbrance.
     context.livestock = freeLivestock.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
@@ -744,7 +948,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
         const tQty = normalizeQuantity(t.system.quantity);
         t.unitWeight = Math.round(tWeight * 100) / 100;
         t.displayWeight = Math.round(tWeight * tQty * 10) / 10;
-        t.displayCapacity = Math.round((parseFloat(t.system.storedSize) || 0) * tQty * 10) / 10;
+        t.displayCapacity = Math.round(getEffectiveDropSize(t, this.actor.items) * 100) / 100;
 
         // Saddle Pack / Saddlebags are themselves containers — surface their own contents
         // one level deeper, same as a backpack nested inside another container. Anything lashed
@@ -758,11 +962,11 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
             const siQty = normalizeQuantity(si.system.quantity);
             si.unitWeight = Math.round(siWeight * 100) / 100;
             si.displayWeight = Math.round(siWeight * siQty * 10) / 10;
-            si.displayCapacity = Math.round((parseFloat(si.system.storedSize) || 0) * siQty * 10) / 10;
+            si.displayCapacity = Math.round(getEffectiveDropSize(si, this.actor.items) * 100) / 100;
           });
           t.containedItems = subItems;
           t.collapsed = this.actor.getFlag('osp-houserules', `container-${t.id}-collapsed`) ?? false;
-          const usedCapacity = subItems.reduce((sum, si) => sum + (parseFloat(si.system.storedSize) || 0) * (normalizeQuantity(si.system.quantity)), 0);
+          const usedCapacity = usedBulk(t, this.actor.items);
           t.remainingCapacity = Math.round(Math.max(0, (t.system.capacity || 0) - usedCapacity) * 100) / 100;
           t.capacityPercentage = t.system.capacity ? Math.min(100, Math.round((usedCapacity / t.system.capacity) * 100)) : 0;
           t.capacityLabel = `${Math.round(usedCapacity * 10) / 10}/${t.system.capacity || 0}`;
@@ -777,7 +981,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
               const ciQty = normalizeQuantity(ci.system.quantity);
               ci.unitWeight = Math.round(ciWeight * 100) / 100;
               ci.displayWeight = Math.round(ciWeight * ciQty * 10) / 10;
-              ci.displayCapacity = Math.round((parseFloat(ci.system.storedSize) || 0) * ciQty * 10) / 10;
+              ci.displayCapacity = Math.round(getEffectiveDropSize(ci, this.actor.items) * 100) / 100;
 
               // A container (e.g. Coin Purse) stored inside a lashed Sack is itself a
               // container — surface its own contents one level deeper still.
@@ -788,7 +992,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
                   const deepQty = normalizeQuantity(deep.system.quantity);
                   deep.unitWeight = Math.round(deepWeight * 100) / 100;
                   deep.displayWeight = Math.round(deepWeight * deepQty * 10) / 10;
-                  deep.displayCapacity = Math.round((parseFloat(deep.system.storedSize) || 0) * deepQty * 10) / 10;
+                  deep.displayCapacity = Math.round(getEffectiveDropSize(deep, this.actor.items) * 100) / 100;
                 });
                 ci.containedItems = ciContents;
                 ci.collapsed = this.actor.getFlag('osp-houserules', `container-${ci.id}-collapsed`) ?? false;
@@ -816,7 +1020,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
           t.lashedItems = lashedItems;
           const lashSlots = t.system.lashSlots || 0;
           t.lashSlots = lashSlots;
-          t.usedLashSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+          t.usedLashSlots = lashedItems.reduce((sum, i) => sum + getLashSlotCost(i, t), 0);
           t.remainingLashSlots = Math.max(0, lashSlots - t.usedLashSlots);
           t.lashedCollapsed = this.actor.getFlag('osp-houserules', `lashed-${t.id}-collapsed`) ?? true;
         } else {
@@ -860,33 +1064,85 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     context.items.forEach(i => { i._gearSection = 'item'; });
     context.containers.forEach(i => { i._gearSection = 'container'; });
     context.topLevelGearItems = [
-      ...context.clothing,
+      ...context.clothing.filter(item => !context.bodyClothing.some(bodyItem => bodyItem.id === item.id)),
       ...context.unequippedWeapons,
       ...unequippedShields,
       ...context.items,
       ...context.containers,
     ].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
 
-    // Encumbrance data
-    const displayItems = this.actor.items;
-    const annotated = new Set();
-    const annotateStorage = node => {
+    // Normalize every Gear view's own and inclusive weights from raw item data
+    // after all derived child views have been assembled. This deliberately
+    // touches presentation fields only; item system data remains unchanged.
+    const visitedWeightViews = new WeakSet();
+    const weightChildren = ['containedItems', 'lashedItems', 'containedAmmunition',
+      'storedItems', 'subContainers', 'storedWeapon', 'storedItem'];
+    const annotateGearWeight = node => {
+      if (!node || typeof node !== 'object' || visitedWeightViews.has(node)) return;
+      visitedWeightViews.add(node);
       const nodeId = node.id ?? node._id;
-      if (annotated.has(nodeId)) return;
-      annotated.add(nodeId);
+      const source = nodeId ? (this.actor.items.get?.(nodeId) ?? this.actor.items.find?.(item => item.id === nodeId)) : null;
+      if (source) {
+        const ownWeight = unitWeightPounds(source) * normalizeQuantity(source.system?.quantity);
+        node.unitWeight = roundGearWeight(unitWeightPounds(source));
+        node.displayWeight = roundGearWeight(ownWeight);
+        const hasChildren = weightChildren.some(key => Array.isArray(node[key]) ? node[key].length : node[key]);
+        const isCarrier = source.type === 'container' || source.type === 'livestock'
+          || source.type === 'clothing' || source.system?.capacity || source.system?.lashSlots;
+        node.totalWeight = roundGearWeight((hasChildren || isCarrier)
+          ? ownWeight + contentsWeight(source.id, this.actor.items)
+          : ownWeight);
+      }
+      for (const key of weightChildren) {
+        const child = node[key];
+        if (Array.isArray(child)) child.forEach(annotateGearWeight);
+        else if (child) annotateGearWeight(child);
+      }
+    };
+    for (const roots of [context.clothing, context.bodyClothing, context.slungItems,
+      context.containers, context.items, context.vehicles, context.livestock,
+      context.unequippedWeapons, context.allShields, context.topLevelGearItems]) {
+      (roots || []).forEach(annotateGearWeight);
+    }
+
+    // Encumbrance data
+    context.movementTooltips = movementTooltips({ items: [...this.actor.items], strength: this.actor.system.attributes?.str?.value, race: this.actor.system.race, getParent: id => this.actor.items.get(id) });
+    const displayItems = this.actor.items;
+    const annotated = new WeakSet();
+    const annotateStorage = node => {
+      if (!node || typeof node !== 'object' || annotated.has(node)) return;
+      annotated.add(node);
+      const nodeId = node.id ?? node._id ?? node.itemId;
       const source = displayItems.get?.(nodeId) ?? displayItems.find?.(item => item.id === nodeId);
-      if (source && (source.type === 'container' || source.type === 'livestock' || source.system.capacity)) {
+      if (source && (source.type === 'container' || source.type === 'livestock' || source.system.capacity || source.system.lashSlots)) {
+        // Belts carry attachments through lash slots rather than internal capacity.
+        // Include their full subtree using exact weights, just like other carriers.
         const ownWeight = unitWeightPounds(source) * normalizeQuantity(source.system.quantity);
         node.totalWeight = Math.round((ownWeight + contentsWeight(source.id, displayItems)) * 100) / 100;
+      }
+      if (source && (source.type === 'container' || source.type === 'livestock' || source.system.capacity)) {
         const used = usedBulk(source, displayItems), max = capacityValue(source.system.capacity);
         node.usedCapacity = used; node.maxCapacity = max; node.remainingCapacity = Math.max(0, max - used);
-        node.capacityLabel = `${used}/${max}`;
+        node.capacityLabel = `${used.toFixed(2)}/${max.toFixed(2)}`;
         node.capacityPercentage = max > 0 ? Math.min(100, used / max * 100) : 0;
       }
-      for (const child of [...(node.containedItems || []), ...(node.lashedItems || [])]) annotateStorage(child);
+      for (const key of weightChildren) {
+        const child = node[key];
+        if (Array.isArray(child)) child.forEach(annotateStorage);
+        else if (child) annotateStorage(child);
+      }
     };
-    for (const node of [...(context.containers || []), ...(context.clothing || []), ...(context.vehicles || []), ...(context.livestock || [])]) annotateStorage(node);
+    for (const roots of [context.clothing, context.bodyClothing, context.slungItems,
+      context.containers, context.items, context.vehicles, context.livestock,
+      context.unequippedWeapons, context.allShields, context.topLevelGearItems]) {
+      (roots || []).forEach(annotateStorage);
+    }
+    // Sum each worn garment and its full contents once; belts stay outside this group.
+    context.clothingTotalWeight = roundGearWeight(context.bodyClothing.reduce((sum, item) =>
+      sum + unitWeightPounds(item) * normalizeQuantity(item.system.quantity)
+        + contentsWeight(item.id, displayItems), 0));
     context.totalWeight = this.actor.system.encumbrance?.totalWeight || 0;
+    context.totalWeightLabel = Number(Number(context.totalWeight).toFixed(2));
     context.maxWeight = this.actor.system.encumbrance?.maxWeight ?? 100;
     context.encumbrancePercentage = this.actor.system.encumbrance?.percentage || 0;
     // Derive threshold markers from the same Strength rules as movement penalties.
@@ -926,6 +1182,35 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     const { classes } = await this.loadProfileData();
     context.showSpellsTab = this._shouldShowSpellsTab(context.system, classes);
 
+    // Render a detached, fully-expanded audit view at the end of preparation so
+    // every Gear/Combat branch and display-only field is available to the audit.
+    const audit = await auditRenderedGear({
+      context,
+      items: [...this.actor.items],
+      cache: this._gearVisibilityAuditCache,
+      revision: JSON.stringify({
+        actorId: this.actor.id,
+        class: this.actor.system.class,
+        level: this.actor.system.level,
+        race: this.actor.system.race,
+        attributes: this.actor.system.attributes,
+        encumbrance: this.actor.system.encumbrance
+      })
+    });
+    this._gearVisibilityAuditCache = audit;
+    const combatIds = new Set([
+      ...(context.allWeapons || []),
+      ...(context.wornArmor || []),
+      ...(context.allShields || [])
+    ].map(item => item.id).filter(Boolean));
+    const missing = computeMissingGearItems([...this.actor.items], audit.coveredIds, combatIds);
+    const fallbackItems = missing.map(item => {
+      const parent = item.system?.containerId ? this.actor.items.get(item.system.containerId) : null;
+      return gearFallbackView(item, audit.warning || gearVisibilityWarning(item, parent?.name));
+    });
+    context.topLevelGearItems.push(...fallbackItems);
+    fallbackItems.forEach(annotateGearWeight);
+
     return context;
   }
 
@@ -961,16 +1246,14 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       this.element?.classList.add(`theme-${theme}`);
     }
 
-    // ALWAYS initialize position tool handler first, regardless of editable state
-    this.ensurePositionToolHandler(html);
-
     // Skill target selects are GM-only
     if (!game.user.isGM) html.find('.cs-listening-select').prop('disabled', true);
 
     this._activateHPInput(html);
 
-    // Age field tooltip — shows race age guidelines after 2-second hover
+    // Age field tooltip — shows race age guidelines after shared-delay hover
     this._activateAgeTooltip(html);
+    this._activateRaceTooltip(html);
     this._activateLevelTooltip(html);
 
     // Container collapse/expand toggle
@@ -986,11 +1269,13 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       const current = this.actor.getFlag('osp-houserules', 'slung-collapsed') ?? true;
       await this.actor.setFlag('osp-houserules', 'slung-collapsed', !current);
     });
+    html.find('.body-section-toggle').click(this._onBodyToggle.bind(this));
 
     // Keep the live embedded Item available during hover. Browsers hide dataTransfer payload text
     // until drop time, so external targets such as Westford Bank cannot otherwise validate a
     // character-sheet item soon enough to show the correct green/red hover state.
     html[0].addEventListener('dragstart', (event) => {
+      if (isGearOrderDrag(event)) return;
       const itemId = event.target.closest?.('[data-item-id]')?.dataset.itemId;
       const item = itemId ? this.actor.items.get(itemId) : null;
       if (item) externalDrag.item = item;
@@ -1000,12 +1285,40 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       if (externalDrag.item?.actor?.id === this.actor.id) externalDrag.item = null;
     }, { capture: true });
     const gearSection = html.find('.gear-tab')[0];
+    // Empty Gear space needs the same dragover acceptance as container rows so the
+    // browser delivers its drop event to Foundry's native sheet controller.
+    const gearDropSurface = gearSection?.closest('.tab[data-tab="gear"]') ?? gearSection;
+    if (gearDropSurface) this._wireGearDropTarget(gearDropSurface, null);
+
+    // Right-clicking any Gear row opens the same character-sheet dialog used by drop
+    // placement, with explicit storage and lash destinations. Use capture so nested
+    // rows that are rendered as bare divs can resolve their own item rather than an
+    // ancestor container.
+    const gearMoveSurface = html.find('.tab[data-tab="gear"]')[0];
+    if (gearMoveSurface) {
+      const onGearContextMenu = event => {
+        const row = event.target.closest?.('[data-item-id]');
+        if (!row || !gearMoveSurface.contains(row)) return;
+        const item = this.actor.items.get(row.dataset.itemId);
+        if (!item || !this.isEditable) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this._showGearMoveDialog(item, { event, row });
+      };
+      gearMoveSurface.addEventListener('contextmenu', onGearContextMenu, true);
+      this._sheetDisposers.push(() => gearMoveSurface.removeEventListener('contextmenu', onGearContextMenu, true));
+    }
 
     // Slung Items section — validity-aware drop target (slungable items show green, others red)
     const slungEntry = html.find('.slung-section-entry')[0];
     if (slungEntry) {
       this._wireGearDropTarget(slungEntry, null, () => this._getSlungDropValidity());
     }
+
+    // Body is a virtual clothing-only destination. Wire the header itself (not its
+    // wrapper) so nested pocket/attachment rows keep their nearest real target.
+    const bodyHeader = html.find('.body-section-header')[0];
+    if (bodyHeader) this._wireGearDropTarget(bodyHeader, null, () => this._getBodyDropValidity());
 
     // Individual slung containers (Baldric etc.)
     html.find('.slung-item[data-item-id]').each((i, el) => {
@@ -1022,7 +1335,9 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       const item = this.actor.items.get(el.dataset.itemId);
       if (!item) return;
       const tags = item.system?.tags || [];
-      const isDraggable = item.system.lashable || (item.system.slotCost || 0) > 0 || tags.includes('sling');
+      const isHelmet = item.type === 'armor' && item.system?.type === 'helmet';
+      const isShield = isShieldItem(item);
+      const isDraggable = isHelmet || isShield || item.system.lashable || (item.system.slotCost || 0) > 0 || tags.includes('sling');
       if (!isDraggable) return;
       el.setAttribute('draggable', 'true');
       el.addEventListener('dragstart', (e) => {
@@ -1105,20 +1420,20 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       html.find('.bio-text-field').off('.ospBio');
     });
 
-    // Set encumbrance bar widths - each bar shows its portion relative to its section
+    // Scale each fixed-width band without animating layout.
     const encumbrancePercentage = this.actor.system.encumbrance?.percentage || 0;
     
     // Light bar (0-33%): shows from 0 to min(encumbrance, 33)
     const lightWidth = Math.min(encumbrancePercentage, 33);
-    html.find('.encumbrance-bar-light').css('width', `${lightWidth}%`);
+    html.find('.encumbrance-bar-light').css('--encumbrance-fill', Math.max(0, lightWidth) / 33);
     
     // Normal bar (33-66%): shows from 33 to min(encumbrance, 66), but width is relative to its starting position
     const normalWidth = Math.max(0, Math.min(encumbrancePercentage, 66) - 33);
-    html.find('.encumbrance-bar-normal').css('width', `${normalWidth}%`);
+    html.find('.encumbrance-bar-normal').css('--encumbrance-fill', normalWidth / 33);
     
     // Heavy bar (66-100%): shows from 66 to encumbrance, but width is relative to its starting position
     const heavyWidth = Math.max(0, encumbrancePercentage - 66);
-    html.find('.encumbrance-bar-heavy').css('width', `${heavyWidth}%`);
+    html.find('.encumbrance-bar-heavy').css('--encumbrance-fill', Math.min(34, heavyWidth) / 34);
 
     // Auto-resize bio textareas as user types
     this.initializeBioFieldAutoResize(html);
@@ -1130,10 +1445,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     this._activateGearItemSort(html);
 
     // Set up tab system AFTER all other handlers to ensure it has priority
-    clearTimeout(this._tabTimer);
-    this._tabTimer = this._setSheetTimeout(() => {
-      this.setupTabSystem(html);
-    }, 100);
+    this.setupTabSystem(html);
   }
 
   _activateHPInput(html) {
@@ -1258,41 +1570,11 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
   _activateGearItemSort(html) {
     const gearTab = html.find('.tab[data-tab="gear"]')[0];
     if (!gearTab) return;
-
-    gearTab.addEventListener('click', async e => {
-      const btn = e.target.closest('.item-sort-up, .item-sort-down');
-      if (!btn) return;
-      e.preventDefault();
-      e.stopPropagation();
-
-      const row = btn.closest('li.item-entry[data-item-id]');
-      if (!row) return;
-
-      // All top-level gear rows in current DOM order (excludes nested items)
-      const allRows = [...gearTab.querySelectorAll('li.item-entry[data-item-id]')]
-        .filter(el => !el.closest('.lashed-items-list, .contained-items-list, .lashed-item'));
-
-      const rowIndex = allRows.indexOf(row);
-      if (rowIndex === -1) return;
-
-      const isUp = btn.classList.contains('item-sort-up');
-      const targetIndex = isUp ? rowIndex - 1 : rowIndex + 1;
-      if (targetIndex < 0 || targetIndex >= allRows.length) return;
-
-      // Swap the two rows and reassign clean sort values to all top-level items
-      const orderedIds = allRows.map(el => el.dataset.itemId);
-      [orderedIds[rowIndex], orderedIds[targetIndex]] = [orderedIds[targetIndex], orderedIds[rowIndex]];
-
-      const BASE = 100000;
-      const itemUpdates = orderedIds
-        .map((id, idx) => {
-          if (!this.actor.items.get(id)) return null;
-          return { _id: id, sort: (idx + 1) * BASE };
-        })
-        .filter(Boolean);
-
-      await this.actor.updateEmbeddedDocuments('Item', itemUpdates);
-    }, true);
+    this._sheetDisposers.push(setupGearOrdering({
+      root: gearTab,
+      actor: this.actor,
+      editable: Boolean(this.isEditable ?? (game.user?.isGM || this.actor.testUserPermission?.(game.user, 'OWNER'))),
+    }));
   }
 
   initializeBioFieldAutoResize(html) {
@@ -1338,19 +1620,25 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
    */
   activateTab(html, tabName) {
     const tabLinks = html.find('.sheet-tabs a.item');
-    const tabSections = html.find('.sheet-body .tab');
-
-    // Remove active class from all tabs and sections
-    tabLinks.removeClass('active');
-    tabSections.removeClass('active').hide();
-
-    // Add active class to clicked tab and show corresponding section
+    const tabSections = html.find('.sheet-body > .tab');
     const activeLink = tabLinks.filter(`[data-tab="${tabName}"]`);
     const activeSection = tabSections.filter(`[data-tab="${tabName}"]`);
+    const currentLink = tabLinks.filter('.active');
+    const currentSection = tabSections.filter('.active');
+    if (activeLink[0] && currentLink[0] !== activeLink[0]) {
+      currentLink.removeClass('active');
+      activeLink.addClass('active');
+    }
+    if (!activeSection.length) {
+      currentLink.removeClass('active');
+      if (currentSection.length) currentSection.removeClass('active').hide();
+      else tabSections.hide();
+    } else if (currentSection[0] !== activeSection[0]) {
+      if (currentSection.length) currentSection.removeClass('active').hide();
+      else tabSections.not(activeSection).hide();
+      activeSection.addClass('active').show();
+    }
 
-    activeLink.addClass('active');
-    activeSection.addClass('active').show();
-    
     // Store the active tab so it persists across re-renders
     this._activeTab = tabName;
   }
@@ -1440,7 +1728,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       '.cs-alignment-select',
       '.cs-background-select',
       '.cs-sex-field'
-    ].join(',');
+    ].map(value => `select${value}`).join(',');
 
     const closeMenus = (except = null) => {
       html[0].querySelectorAll('.cs-themed-select.is-open').forEach((menu) => {
@@ -1448,7 +1736,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       });
     };
 
-    html[0].querySelectorAll(`.tab[data-tab="bio"] ${selector}`).forEach((select) => {
+    html[0].querySelectorAll(`.tab[data-tab="bio"] :is(${selector})`).forEach((select) => {
       if (select.dataset.themedSelect === 'true' || select.disabled) return;
       select.dataset.themedSelect = 'true';
       select.classList.add('cs-themed-select-native');
@@ -1550,33 +1838,6 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
   }
 
   /**
-   * Ensure position tool handler is initialized (always runs, handles all edge cases)
-   */
-  ensurePositionToolHandler(html) {
-    try {
-      // Clean up any existing handler first to prevent duplicates
-      if (this.handlers.has('positionTool')) {
-        const existingHandler = this.handlers.get('positionTool');
-        if (existingHandler && existingHandler.destroy) {
-          existingHandler.destroy();
-        }
-        this.handlers.delete('positionTool');
-      }
-      
-      const handler = new PositionToolHandler(html, this.actor);
-      handler.initialize();
-      this.handlers.set('positionTool', handler);
-      
-      // Verify handler was added
-      if (!this.handlers.has('positionTool')) {
-        console.error('CharacterSheet: Position tool handler missing from handlers map after creation!');
-      }
-    } catch (error) {
-      console.error('CharacterSheet: Failed to initialize position tool handler:', error);
-    }
-  }
-
-  /**
    * Clean up all handlers
    */
   destroyHandlers() {
@@ -1604,11 +1865,21 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       formData["img"] = newPortrait;
     }
 
+    const safeFields = new Set(['system.age', 'system.sex', 'system.height', 'system.weight']);
+    const readProperty = (source, path) => path.split('.').reduce((value, key) => value?.[key], source);
+    const source = this.actor?._source ?? this.actor;
+    const changedFields = Object.keys(formData).filter(path =>
+      readProperty(source, path) !== formData[path]
+    );
+    const onlyBioFields = changedFields.length > 0 && changedFields.every(path => safeFields.has(path));
     try {
       const result = await super._updateObject(event, formData);
       if (this.actor && !this._suppressSubmitRender && !this._isClosing) {
         this.actor.prepareDerivedData();
-        this.render(false);
+        const matchesControls = onlyBioFields && changedFields.every(path =>
+          this.form?.elements?.namedItem(path)?.value === String(readProperty(this.actor, path) ?? '')
+        );
+        if (!matchesControls) this.render(false);
       }
       return result;
     } catch (error) {
@@ -1775,6 +2046,8 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     const container = this.getElement(html, '.cs-skill-svg-container');
     if (!container) return;
     const el = container[0] || container;
+    const tab = el.closest('.tab[data-tab="skills"]');
+    if (!tab) return;
 
     const labels = {
       listening: 'Listen at Doors',
@@ -1791,42 +2064,72 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       'pick-pockets': 'Pick Pockets',
       'hide-undergrowth': 'Hide in Undergrowth',
       'hide-dungeons': 'Hide in Dungeons',
-      'foraging-hunting': 'Forage & Hunt',
+      foraging: 'Forage',
+      hunting: 'Hunt',
       stealth: 'Stealth',
       'wilderness-surprise-attack': 'Surprise Attack',
       hiding: 'Hiding'
     };
     const skills = [...new Set(requiredSkills)].filter(skill => labels[skill]);
-    const columns = Math.min(6, Math.max(1, skills.length));
-    const cellWidth = 800 / columns;
-    const rowHeight = 142;
-    const rows = Math.ceil(skills.length / columns);
-    const height = Math.max(142, rows * rowHeight);
+    // Keep the original large ring geometry as the skill list grows. The
+    // strip is intentionally wider than the visible sheet and scrolls
+    // horizontally instead of shrinking or wrapping the targets.
+    const { cellWidth, width: svgWidth, height, ringRadius } = skillStripGeometry(skills.length);
+    // The bronze overlay extends 34% beyond the input on each side. Its
+    // curved label must follow that outer rim, with a separate clear gap.
+    const labelRadius = ringRadius * 1.68 + 8;
+    this._skillPathPrefix ??= `skill-label-path-${++skillPathSequence}`;
     const escape = (value) => String(value).replace(/[&<>"']/g, char => (
       { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]
     ));
 
     const circles = skills.map((skill, index) => {
-      const row = Math.floor(index / columns);
-      const column = index % columns;
-      const itemsInRow = Math.min(columns, skills.length - row * columns);
-      const rowOffset = (800 - itemsInRow * cellWidth) / 2;
+      const row = 0;
+      const column = index;
+      const rowOffset = (svgWidth - skills.length * cellWidth) / 2;
       const cx = rowOffset + column * cellWidth + cellWidth / 2;
-      const cy = row * rowHeight + 72;
-      const pathId = `skill-label-path-${skill}`;
+      const cy = row * height + 72;
+      const pathId = `${this._skillPathPrefix}-${skill}`;
       const label = labels[skill];
       const labelSize = 12;
       return `
         <g class="cs-generated-skill" data-skill="${skill}">
-          <path id="${pathId}" d="M ${cx - 57} ${cy - 4} A 57 57 0 0 1 ${cx + 57} ${cy - 4}" fill="none" />
-          <circle class="cs-generated-skill-halo" cx="${cx}" cy="${cy}" r="53" />
-          <circle class="cs-generated-skill-ring" id="${skill}" cx="${cx}" cy="${cy}" r="48" />
-          <circle class="cs-generated-skill-inner" cx="${cx}" cy="${cy}" r="41" />
+          <path id="${pathId}" d="M ${cx - labelRadius} ${cy} A ${labelRadius} ${labelRadius} 0 0 1 ${cx + labelRadius} ${cy}" fill="none" />
+          <circle class="cs-generated-skill-halo" cx="${cx}" cy="${cy}" r="${ringRadius + 5}" />
+          <circle class="cs-generated-skill-ring" id="${skill}" cx="${cx}" cy="${cy}" r="${ringRadius}" />
+          <circle class="cs-generated-skill-inner" cx="${cx}" cy="${cy}" r="${ringRadius - 7}" />
           <text class="cs-generated-skill-label" style="font-size:${labelSize}px"><textPath href="#${pathId}" startOffset="50%" text-anchor="middle">${escape(label)}</textPath></text>
         </g>`;
     }).join('');
 
-    el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 ${height}" width="800" height="${height}" data-skill-svg="true" aria-hidden="true">
+    el.dataset.skillStrip = 'horizontal';
+    el.removeAttribute('aria-hidden');
+    el.setAttribute('role', 'region');
+    el.setAttribute('aria-label', 'Skill targets');
+    el.setAttribute('tabindex', '0');
+    this._skillStripScrollTimer && clearTimeout(this._skillStripScrollTimer);
+    this._skillStripScrollHandler && el.removeEventListener('scroll', this._skillStripScrollHandler);
+    this._skillStripScrollHandler = () => {
+      const bar = tab.querySelector(':scope > .cs-skill-scrollbar');
+      if (bar) {
+        const input = bar.querySelector('input');
+        input.max = String(Math.max(0, el.scrollWidth - el.clientWidth));
+        input.value = String(el.scrollLeft);
+      }
+      el.dataset.scrolling = 'true';
+      clearTimeout(this._skillStripScrollTimer);
+      this._skillStripScrollTimer = setTimeout(() => { delete el.dataset.scrolling; }, 900);
+    };
+    el.addEventListener('scroll', this._skillStripScrollHandler, { passive: true });
+    this._skillStripKeyHandler && el.removeEventListener('keydown', this._skillStripKeyHandler);
+    this._skillStripKeyHandler = event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault();
+      el.scrollBy({ left: event.key === 'ArrowRight' ? cellWidth : -cellWidth, behavior: 'smooth' });
+    };
+    el.addEventListener('keydown', this._skillStripKeyHandler);
+    el.querySelectorAll('.cs-skill-track > .listening-group').forEach(target => tab.append(target));
+    el.innerHTML = `<div class="cs-skill-track"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${height}" width="${svgWidth}" height="${height}" style="width:calc(100% * ${svgWidth / 800});max-width:none" data-skill-svg="true" aria-hidden="true">
       <defs>
         <linearGradient id="cs-skill-parchment" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stop-color="#fff4cf" />
@@ -1836,10 +2139,29 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
           <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#3a2614" flood-opacity=".24" />
         </filter>
       </defs>${circles}
-    </svg>`;
+    </svg></div><div class="cs-skill-scrollbar"><input type="range" min="0" max="0" value="0" step="1" aria-label="Scroll skill targets"></div>`;
+    const track = el.querySelector('.cs-skill-track');
+    skills.forEach(skill => {
+      const target = tab.querySelector(`.cs-pos-${skill}`);
+      if (target && target.parentElement !== track) track.append(target);
+    });
+    tab.querySelector(':scope > .cs-skill-scrollbar')?.remove();
+    const scrollbar = el.querySelector('.cs-skill-scrollbar');
+    if (scrollbar) tab.append(scrollbar);
+    const scrollbarInput = scrollbar?.querySelector('input');
+    if (scrollbarInput) {
+      scrollbarInput.addEventListener('input', event => { event.stopPropagation(); el.scrollLeft = Number(scrollbarInput.value) || 0; });
+      scrollbarInput.addEventListener('change', event => event.stopPropagation());
+      scrollbarInput.max = String(Math.max(0, el.scrollWidth - el.clientWidth));
+      scrollbarInput.value = String(el.scrollLeft);
+      el.dataset.overflow = Number(scrollbarInput.max) > 0 ? 'true' : 'false';
+    }
     el.dataset.skillSet = skills.join(',');
     // Defer to next frame so layout is computed before measuring.
     this.sheetWindow.requestAnimationFrame(() => this.applySkillPositionsFromSVG(html));
+    this.sheetDocument.fonts?.ready.then(() => {
+      if (el.isConnected) this.applySkillPositionsFromSVG(html);
+    });
   }
 
   /**
@@ -1868,7 +2190,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     'hideundergrowth', 'hideinundergrowth',
     'hidedungeons', 'hideindungeons',
     'hiding',
-    'foraginghunting', 'foragehunt', 'foragingandhunting',
+    'foraging', 'hunting', 'foraginghunting', 'foragehunt', 'foragingandhunting',
     'stealth', 'wildernessstealth',
     'wildernesssurpriseattack', 'surpriseattack'
   ]);
@@ -1994,11 +2316,6 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
       return true;
     });
 
-    if (unique.length === 0) {
-      el.innerHTML = '';
-      return;
-    }
-
     unique.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
     delete el.dataset.talentsIntegrated;
@@ -2017,6 +2334,40 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
         `<div class="skill-ability-effect">${trigger}${escape(e.effect || '')}</div>` +
         `</div>`;
     }).join('');
+
+    const customAbilities = this.actor.items.filter(item => item.type === 'ability');
+    if (customAbilities.length) {
+      const customRows = await Promise.all(customAbilities.map(async item => {
+        const description = await TextEditor.enrichHTML(item.system?.description ?? '', { async: true, relativeTo: item });
+        return `<div class="skill-ability-entry custom-ability-entry" data-item-id="${escape(item.id)}">` +
+          `<div class="custom-ability-heading"><a class="custom-ability-name" role="button" tabindex="0">${escape(item.name)}</a>` +
+          `<button type="button" class="ability-roll" data-roll-ability title="Roll Ability">Roll Ability</button></div>` +
+          (description ? `<div class="skill-ability-effect">${description}</div>` : '') +
+          `</div>`;
+      }));
+      el.insertAdjacentHTML('beforeend', `<div class="custom-abilities-header">Custom Abilities</div>${customRows.join('')}`);
+      el.querySelectorAll('.custom-ability-name').forEach(name => {
+        const openSheet = () => {
+          const item = this.actor.items.get(name.closest('[data-item-id]')?.dataset.itemId);
+          item?.sheet?.render(true);
+        };
+        name.addEventListener('click', openSheet);
+        name.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openSheet(); }
+        });
+      });
+      el.querySelectorAll('[data-roll-ability]').forEach(button => button.addEventListener('click', async event => {
+        event.stopPropagation();
+        const item = this.actor.items.get(button.closest('[data-item-id]')?.dataset.itemId);
+        if (!item) return;
+        button.disabled = true;
+        try {
+          const { rollAbility } = await import('../ability-roll.js');
+          await rollAbility(item);
+        } catch (error) { ui.notifications.error(error.message); }
+        finally { button.disabled = false; }
+      }));
+    }
 
     // Toggle expand/collapse on name click
     el.addEventListener('click', (event) => {
@@ -2040,7 +2391,9 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     const container = this.getElement(html, '.cs-skill-svg-container');
     if (!container) return;
     const containerEl = container[0] || container;
-    const svg = containerEl.querySelector('svg');
+    const track = containerEl.querySelector('.cs-skill-track');
+    if (!track) return;
+    const svg = track?.querySelector(':scope > svg');
     if (!svg) return;
 
     const tab = containerEl.closest('.tab[data-tab="skills"]');
@@ -2050,35 +2403,65 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     if (!viewBox || !viewBox.width) return;
 
     const svgRect = svg.getBoundingClientRect();
+    const trackRect = track.getBoundingClientRect();
     const tabRect = tab.getBoundingClientRect();
     // Tab hidden / not laid out yet — bail; we'll retry on tab activation.
     if (!svgRect.width || !tabRect.width) return;
 
-    const scale = svgRect.width / viewBox.width;
-    const svgOffsetX = svgRect.left - tabRect.left;
-    const svgOffsetY = svgRect.top - tabRect.top;
+    // Convert viewport bounds back into the tab’s local coordinates: the
+    // journal body can be scaled independently in each direction.
+    const scaleX = tabRect.width / (tab.offsetWidth || tabRect.width);
+    const scaleY = tabRect.height / (tab.offsetHeight || tabRect.height);
+    const scrollbar = tab.querySelector(':scope > .cs-skill-scrollbar');
+    const scrollbarInput = scrollbar?.querySelector('input');
+    if (scrollbarInput) {
+      const bounds = containerEl.getBoundingClientRect();
+      const maximum = Math.max(0, containerEl.scrollWidth - containerEl.clientWidth);
+      scrollbarInput.max = String(maximum);
+      scrollbarInput.value = String(containerEl.scrollLeft);
+      scrollbar.hidden = maximum === 0;
+      scrollbar.style.left = `${(bounds.left - tabRect.left) / scaleX}px`;
+      scrollbar.style.top = `${(bounds.bottom - tabRect.top) / scaleY - 18}px`;
+      scrollbar.style.width = `${bounds.width / scaleX}px`;
+      const visibleFraction = Math.min(1, containerEl.clientWidth / Math.max(1, containerEl.scrollWidth));
+      scrollbarInput.style.setProperty('--skill-scroll-thumb-width', `${visibleFraction * 100}%`);
+    }
 
     const aliases = OspActorSheetCharacter.SKILL_SVG_ID_ALIASES;
     const positionedSlugs = new Set();
+    const continuousSkills = tab.closest('form')?.classList.contains('ej-sheet--continuous-skills');
 
-    svg.querySelectorAll('circle[id]').forEach(circle => {
-      const id = circle.id;
-      const slug = aliases[id] || id;
-      const targetEl = tab.querySelector(`.cs-pos-${slug}`);
-      if (!targetEl) return;
-
+    const targets = [];
+    for (const circle of svg.querySelectorAll('circle[id]')) {
+      const slug = aliases[circle.id] || circle.id;
+      const targetEl = track.querySelector(`.cs-pos-${slug}`);
+      if (!targetEl) continue;
       const cx = parseFloat(circle.getAttribute('cx'));
       const cy = parseFloat(circle.getAttribute('cy'));
-      if (Number.isNaN(cx) || Number.isNaN(cy)) return;
+      if (Number.isNaN(cx) || Number.isNaN(cy)) continue;
+      targets.push({ circle, slug, targetEl, circleRect: circle.getBoundingClientRect() });
+    }
 
-      const w = targetEl.offsetWidth;
-      const h = targetEl.offsetHeight;
+    // Size every target before reading any of the resulting control dimensions.
+    for (const { targetEl, circleRect } of targets) {
+      if (!circleRect.width || !circleRect.height) continue;
+      const diameter = Math.min(circleRect.width / scaleX, circleRect.height / scaleY);
+      const fieldSize = diameter * (continuousSkills ? 1 : .76);
+      targetEl.style.setProperty('--width', `${fieldSize}px`);
+      targetEl.style.setProperty('--height', `${fieldSize}px`);
+      targetEl.style.setProperty('--ej-skill-value-size', `${continuousSkills ? diameter * 1.15 : Math.min(90, diameter * .70)}px`);
+      if (continuousSkills) renderSkillNumeral(targetEl.querySelector('.cs-listening-select'));
+    }
 
-      const left = svgOffsetX + cx * scale - w / 2;
-      const top = svgOffsetY + cy * scale - h / 2;
-
+    const positions = targets.map(({ targetEl, circleRect }) => ({
+      left: (circleRect.left + circleRect.width / 2 - trackRect.left) / scaleX - targetEl.offsetWidth / 2,
+      top: (circleRect.top + circleRect.height / 2 - trackRect.top) / scaleY - targetEl.offsetHeight / 2,
+    }));
+    targets.forEach(({ circle, slug, targetEl }, index) => {
+      const { left, top } = positions[index];
       targetEl.style.setProperty('--left', `${left}px`);
       targetEl.style.setProperty('--top', `${top}px`);
+      alignSkillLabelInk(circle.closest('g')?.querySelector('.cs-generated-skill-label'), targetEl);
       positionedSlugs.add(slug);
     });
 
@@ -2144,7 +2527,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
   }
 
   /**
-   * Age / Height / Weight tooltips — 2-second hover reveals race guidelines (Tables 10 & 11).
+   * Age / Height / Weight tooltips — shared-delay hover reveals race guidelines (Tables 10 & 11).
    */
   _activateAgeTooltip(html) {
     const AGE_TABLE = {
@@ -2213,7 +2596,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
           const offset = $group.position();
           $tooltip.css({ top: (offset.top + $group.outerHeight() + 4) + 'px', left: offset.left + 'px' });
           $tooltip.addClass('visible');
-        }, 2000);
+        }, TOOLTIP_DELAY_MS);
       });
 
       $group.on('mouseleave.statooltip', () => {
@@ -2225,6 +2608,26 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     attach('age-container',    AGE_TABLE,    buildAgeHtml);
     attach('height-container', HEIGHT_TABLE, buildStatHtml, 'in', 'height');
     attach('weight-container', WEIGHT_TABLE, buildStatHtml, 'lb', 'weight');
+  }
+
+  _activateRaceTooltip(html) {
+    const container = html.find('#race-container');
+    if (!container.length) return;
+    this.loadProfileData().then(({ races }) => {
+      const raceKey = String(this.actor.system.race || '').toLowerCase().replace(/-/g, '_');
+      const profile = races.find(r => String(r.id || '').toLowerCase() === raceKey);
+      if (!profile || !container.length) return;
+      const modifiers = Object.entries(profile.abilityModifiers || {});
+      const modifierHtml = modifiers.length
+        ? modifiers.map(([ability, value]) => `${esc(ability)} ${Number(value) >= 0 ? '+' : ''}${Number(value)}`).join(', ')
+        : 'No ability score modifiers';
+      const abilitiesHtml = (profile.racialAbilities || []).length
+        ? profile.racialAbilities.map(ability => `<div><strong>${esc(ability.name)}</strong>${ability.effect ? `: ${esc(ability.effect)}` : ''}</div>`).join('')
+        : '<div>No racial abilities</div>';
+      const tooltip = `<div><strong>${esc(profile.name || this.actor.system.race || 'Race')}</strong></div><div>Ability modifiers: ${modifierHtml}</div><div>Racial abilities:</div>${abilitiesHtml}`;
+      container.attr('data-tooltip', tooltip);
+      container.find('#char-race, .cs-themed-select-trigger').attr('data-tooltip', tooltip);
+    }).catch(() => {});
   }
 
   _activateLevelTooltip(html) {
@@ -2290,7 +2693,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
           left: offset.left + 'px'
         });
         $tooltip.addClass('visible');
-      }, 3000);
+      }, TOOLTIP_DELAY_MS);
     });
 
     $container.on('mouseleave.levtip', () => {
@@ -2317,7 +2720,6 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     const currentState = this.actor.getFlag('osp-houserules', `container-${containerId}-collapsed`) ?? true;
     
     await this.actor.setFlag('osp-houserules', `container-${containerId}-collapsed`, !currentState);
-    this.render(false);
   }
 
   async _onLashedToggle(event) {
@@ -2330,7 +2732,6 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     const currentState = this.actor.getFlag('osp-houserules', `lashed-${containerId}-collapsed`) ?? true;
     
     await this.actor.setFlag('osp-houserules', `lashed-${containerId}-collapsed`, !currentState);
-    this.render(false);
   }
 
   async _onBeltRowToggle(event) {
@@ -2340,7 +2741,6 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     const itemId = $(event.currentTarget).data('item-id');
     const currentState = this.actor.getFlag('osp-houserules', `lashed-${itemId}-collapsed`) ?? true;
     await this.actor.setFlag('osp-houserules', `lashed-${itemId}-collapsed`, !currentState);
-    this.render(false);
   }
 
   async _onAttachmentToggle(event) {
@@ -2350,7 +2750,6 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     const itemId = $(event.currentTarget).data('item-id');
     const currentState = this.actor.getFlag('osp-houserules', `attachment-${itemId}-collapsed`) ?? true;
     await this.actor.setFlag('osp-houserules', `attachment-${itemId}-collapsed`, !currentState);
-    this.render(false);
   }
 
   async _onSlingStorageToggle(event) {
@@ -2360,7 +2759,14 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     const itemId = $(event.currentTarget).data('item-id');
     const currentState = this.actor.getFlag('osp-houserules', `sling-${itemId}-collapsed`) ?? true;
     await this.actor.setFlag('osp-houserules', `sling-${itemId}-collapsed`, !currentState);
-    this.render(false);
+  }
+
+  async _onBodyToggle(event) {
+    if (!(this.isEditable)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const currentState = this.actor.getFlag('osp-houserules', 'body-collapsed') ?? false;
+    await this.actor.setFlag('osp-houserules', 'body-collapsed', !currentState);
   }
 
   /**
@@ -2368,6 +2774,7 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
    * Captures the item ID so hover validity checks have it synchronously.
    */
   async _onDragStart(event) {
+    if (isGearOrderDrag(event)) return false;
     this._gearDragItemId = event.currentTarget?.dataset?.itemId ?? null;
     return super._onDragStart(event);
   }
@@ -2376,11 +2783,20 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
    * Handle dropping an item onto the sheet
    */
   async _onDrop(event) {
+    if (isGearOrderDrag(event)) return false;
     const data = TextEditor.getDragEventData(event);
+    if (data.type === 'OSPGearOrder') return false;
 
     // We only handle Item drops with our custom logic
     if (data.type === "Item") {
       if (!this.isEditable || Hooks.call('dropActorSheetData', this.actor, this, data) === false) return false;
+      if (!game.user.isGM) {
+        const item = await Item.implementation.fromDropData(data);
+        if (item && classifyDrop(item.actor, this.actor, item.toObject(), false) === 'purchase') {
+          ui.notifications.warn('Buy equipment through Stores in the Player’s Toolkit. Your GM controls which stores are accessible.');
+          return false;
+        }
+      }
       return this._onDropItem(event, data);
     }
 
@@ -2437,16 +2853,60 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
     return { allowed: true };
   }
 
+  /**
+   * Place a shield or helmet dropped onto empty Gear without opening the placement chooser.
+   * Equipment is preferred; when it is unavailable, use the normal lash-slot rules and then
+   * ordinary container capacity.  This runs against a staged actor during drop planning.
+   */
+  async _autoPlaceOpenGearArmor(itemData, item, isReordering) {
+    const equipment = await this._checkOpenGearEquipment(itemData, isReordering ? item.id : null);
+    if (equipment.allowed) {
+      Object.assign(itemData.system, { equipped: true, containerId: null, lashed: false });
+      return;
+    }
+
+    const handler = this.getHandler('item');
+    const lashHost = isShieldItem(itemData)
+      ? handler._findShieldLashSlot(item)
+      : handler._findContainerWithLashSlot(item);
+    if (lashHost) {
+      Object.assign(itemData.system, { equipped: false, containerId: lashHost.id, lashed: true });
+      return;
+    }
+
+    const items = inventoryItems(this.actor);
+    const excluded = new Set([item.id, ...containedSubtree(items, item.id).map(child => child.id)]);
+    const storage = this.actor.items.find(container =>
+      container.type === 'container' && !excluded.has(container.id) &&
+      checkWithdrawTarget(itemData, container, items.filter(candidate => !excluded.has(candidate.id))).allowed
+    ) ?? null;
+    if (storage) {
+      Object.assign(itemData.system, { equipped: false, containerId: storage.id, lashed: false });
+      return;
+    }
+
+    throw new Error(`${itemData.name} cannot be equipped, lashed, or stored because no usable equipment slot, suitable lash slot, or compatible container has room.`);
+  }
+
   _validateGearPlacementDraft(state) {
     const items = inventoryItems(state.actor);
     try { assertNoContainmentCycles(items); }
     catch { return { allowed: false, reason: 'An item cannot be placed inside itself or its own contents.' }; }
+    const vehicleCheck = validateVehicleAttachments(items, { baselineItems: state.before || [] });
+    if (!vehicleCheck.allowed) return vehicleCheck;
     const changes = diffDropDraft(state.live, state).filter(change => change.after);
     const beforeById = new Map(state.before.map(item => [item._id, item]));
     for (const change of changes) {
       const item = items.find(item => item.id === change.id);
       if (!item || !physicalItemTypes.has(item.type)) continue;
       const parentId = item.system.containerId;
+      const beforeRemainder = beforeById.get(item.id);
+      const retainedTentRemainder = state.tentSourceRemainderId === item.id && isCompleteTent(beforeRemainder) &&
+        normalizeQuantity(item.system.quantity) < normalizeQuantity(beforeRemainder.system?.quantity) &&
+        item.system.containerId === beforeRemainder.system?.containerId &&
+        Boolean(item.system.lashed) === Boolean(beforeRemainder.system?.lashed) &&
+        Boolean(item.system.equipped) === Boolean(beforeRemainder.system?.equipped);
+      if (retainedTentRemainder) continue;
       if (parentId) {
         const parent = items.find(item => item.id === parentId);
         if (!canBeParent(parent)) return { allowed: false, reason: `Choose a carrying location for ${item.name}. Its previous location is no longer available.` };
@@ -2454,7 +2914,12 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
           const admission = checkWithdrawTarget(item, parent, items.filter(other => other.id !== item.id));
           if (!admission.allowed) return { allowed: false, reason: `There is not enough room, or ${parent.name} cannot hold ${item.name}. Choose another destination.` };
         }
-      } else if (!item.system.equipped && !item.system.lashed && item.type !== 'livestock' && !(item.system.tags || []).includes('vehicle')) {
+      } else if (!item.system.equipped && !item.system.lashed && item.type !== 'livestock' && !(item.system.tags || []).includes('vehicle') && getVehicleKind(item) === 'none') {
+        const slingCategory = this._backSlotCategory(item);
+        const slungWeapon = state.slingPlacement && item.type === 'weapon' &&
+          isSlungable(item.system.tags || []) &&
+          (!slingCategory || this._checkBackSlotCompatibility(slingCategory, item.id).allowed);
+        if (slungWeapon) continue;
         return { allowed: false, reason: `${item.name} needs a carrying location. Choose a container or a suitable place to wear or hold it.` };
       }
       const before = beforeById.get(item.id);
@@ -2466,21 +2931,18 @@ export class OspActorSheetCharacter extends NativeCharacterSheet {
   }
 
 _clothingSlot(itemLike) {
-    const explicit = String(itemLike?.system?.slot ?? '').trim().toLowerCase();
-    if (explicit) return explicit;
-    const name = String(itemLike?.name ?? '').trim().toLowerCase();
-    if (name === 'belt') return 'belt';
-    if (name === 'boots') return 'boots';
-    if (name === 'cloak') return 'cloak';
-    if (name.startsWith('clothes')) return 'clothes';
-    return name;
+    if (itemLike?.type === 'clothing') return resolveClothingWearCategory(itemLike);
+    return String(itemLike?.system?.slot ?? '').trim().toLowerCase() || null;
+  }
+
+  _isBodyClothing(itemLike) {
+    return isWornBodyAccessory(itemLike) || (isWornClothing(itemLike) && this._clothingSlot(itemLike) !== 'belt');
   }
 
   _canWearOpenSpace(itemData, excludeId = null) {
+    if (isBodyWearAccessory(itemData)) return true;
     if (itemData.type === 'clothing') {
-      const slot = this._clothingSlot(itemData);
-      return !this.actor.items.some(item => item.id !== excludeId && item.type === 'clothing' &&
-        item.system?.equipped && this._clothingSlot(item) === slot);
+      return !clothingWearRejection(itemData, this.actor.items, { excludeId });
     }
     const category = this._backSlotCategory(itemData);
     if (itemData.type === 'container' && category) {
@@ -2497,9 +2959,17 @@ _clothingSlot(itemLike) {
       if (target.id === excludeId || seen.has(target.id)) continue;
       const isStorage = canBeParent(target);
       const excludedItem = excludeId ? this.actor.items.get?.(excludeId) : null;
-      if (!isStorage || (excludedItem && this._containerIsDescendant(target, excludedItem))) continue;
+      if (excludedItem && this._containerIsDescendant(target, excludedItem)) continue;
+      if (!isStorage && getVehicleKind(target) === 'none') continue;
       seen.add(target.id);
       candidates.push({ id: target.id, label: target.name });
+      if (getVehicleKind(target) !== 'none') {
+        const attachmentData = normalizeQuantity(itemData.system?.quantity) > 1
+          ? { ...itemData, system: { ...itemData.system, quantity: 1 } } : itemData;
+        for (const option of getVehicleAttachmentOptions(attachmentData, target, inventoryItems(this.actor), { excludeId })) {
+          candidates.push({ id: vehicleDestination(target.id, option), label: `${target.name} — ${option.label}${normalizeQuantity(itemData.system?.quantity) > 1 ? ' (1 item)' : ''}` });
+        }
+      }
     }
     return candidates;
   }
@@ -2519,13 +2989,219 @@ _clothingSlot(itemLike) {
     });
   }
 
-  async _selectDropQuantity(itemData, available, prompt) {
-    const initial = normalizeQuantity(itemData.system?.quantity);
+  async _showTentSeparationDialog(itemData, reason, candidates, quantity = normalizeQuantity(itemData.system?.quantity)) {
+    const parts = separateTentData(itemData, quantity);
+    const fabricBulk = storedBulk(parts.fabric);
+    const poleBulk = storedBulk(parts.poles);
+    const poleSlots = getLashSlotCost(parts.poles, { name: 'Backpack' });
+    return new Promise(resolve => {
+      const options = candidates.map(candidate => `<option value="${esc(candidate.id)}">${esc(candidate.label)}</option>`).join('');
+      this.createDialog({
+        title: `Separate and stow ${itemData.name}`,
+        content: `<p>Separate this tent for backpack transport?</p><p>Fabric: ${fabricBulk} sSize inside. Poles: ${poleBulk} sSize outside, using ${poleSlots} lash slot${poleSlots === 1 ? '' : 's'}.</p>${!candidates.length && reason ? `<p>${esc(reason)}</p>` : ''}${candidates.length
+          ? `<p>Fabric goes inside the selected Backpack; poles are lashed outside (1 lash slot per tent).</p><label>Backpack <select name="destination">${options}</select></label>`
+          : '<p>No Backpack currently has both enough internal capacity and a free lash slot.</p>'}`,
+        buttons: {
+          ...(candidates.length ? { separate: { label: 'Separate and stow', callback: html => resolve({ action: 'separate', id: html.find('[name="destination"]').val() }) } } : {}),
+          keep: { label: 'Keep tent whole', callback: () => resolve({ action: 'keep' }) },
+          cancel: { label: 'Cancel', callback: () => resolve(null) }
+        },
+        default: candidates.length ? 'separate' : 'keep', close: () => resolve(null)
+      }).render(true);
+    });
+  }
+
+  _coinGearMoveLimit(item, target, items) {
+    const total = normalizeQuantity(item.system?.quantity);
+    if (!validDropQuantity(total)) return 0;
+
+    // Account for coins freed from the source when both containers share an ancestor.
+    const fits = quantity => {
+      const incoming = { name: item.name, type: item.type, system: { ...item.system, quantity } };
+      const remaining = total - quantity;
+      const projected = items.flatMap(entry => entry.id !== item.id ? [entry]
+        : remaining ? [{ id: item.id, name: item.name, type: item.type, system: { ...item.system, quantity: remaining } }] : []);
+      return checkWithdrawTarget(incoming, target, projected).allowed;
+    };
+    let low = 0;
+    let high = total;
+    while (low < high) {
+      const quantity = low + Math.ceil((high - low) / 2);
+      if (fits(quantity)) low = quantity;
+      else high = quantity - 1;
+    }
+    return low;
+  }
+
+  _gearMoveCandidates(item) {
+    const items = inventoryItems(this.actor);
+    const candidates = [];
+    const tags = item.system?.tags || [];
+    const slingCategory = this._backSlotCategory(item);
+    const slingCheck = slingCategory ? this._checkBackSlotCompatibility(slingCategory, item.id) : { allowed: true };
+    const arrowBundle = isArrowAmmo(item) && isProtectedArrowBundle(item);
+    if (isCompleteTent(item)) candidates.push({ id: '__separate_tent__', mode: 'separate-tent', label: 'Separate tent components' });
+    if (isArrowAmmo(item)) {
+      candidates.push({ id: arrowBundle ? '__unpack__' : '__pack__', mode: arrowBundle ? 'unpack' : 'pack', label: arrowBundle ? 'Unpack protected bundle' : 'Pack protected bundle' });
+    }
+    const torchBundle = isTorch(item) && isProtectedTorchBundle(item);
+    if (isTorch(item)) candidates.push({ id: torchBundle ? '__torch-unpack__' : '__torch-pack__', mode: torchBundle ? 'torch-unpack' : 'torch-pack', label: torchBundle ? 'Unpack torch bundle' : 'Pack torch bundle' });
+    const boltBundle = isBoltAmmo(item) && isProtectedBoltBundle(item);
+    if (isBoltAmmo(item)) candidates.push({ id: boltBundle ? '__bolt-unpack__' : '__bolt-pack__', mode: boltBundle ? 'bolt-unpack' : 'bolt-pack', label: boltBundle ? 'Unpack bolt bundle' : 'Pack bolt bundle' });
+    if (isSlungable(tags) && slingCheck.allowed && !this._isWornInBackSlot(item)) {
+      candidates.push({ id: '__slung__', mode: 'sling', label: 'Sling' });
+    }
+    for (const target of items) {
+      if (target.id === item.id || this._containerIsDescendant(target, item)) continue;
+      const sameTarget = item.system?.containerId === target.id;
+      const isStorage = canBeParent(target);
+      if (isStorage) {
+        const canStore = item.type === 'coin' && !sameTarget
+          ? this._coinGearMoveLimit(item, target, items) > 0
+          : checkWithdrawTarget(item, target, items.filter(other => other.id !== item.id)).allowed;
+        const arrowPartial = arrowBundle && isArrowQuiver(target) && !sameTarget &&
+          this._arrowQuiverAvailableQuantity(item, target, item.id) > 0;
+        if ((canStore || arrowPartial) && (!sameTarget || item.system?.lashed)) {
+          candidates.push({ id: target.id, mode: 'store', label: `Store in ${target.name}` });
+        }
+      }
+      const lashSlots = Number(target.system?.lashSlots || 0);
+      if (!lashSlots || sameTarget && item.system?.lashed) continue;
+      const backpackDecision = backpackLashDecision(item, target, items);
+      const beltToolDecision = beltToolLashDecision(item, target);
+      const arrowBundleDecision = getArrowBundleLashDecision(item, target);
+      const torchBundleDecision = getTorchBundleLashDecision(item, target);
+      const boltBundleDecision = getBoltBundleLashDecision(item, target);
+      if (beltToolDecision.allowed === false || arrowBundleDecision.allowed === false || torchBundleDecision.allowed === false || boltBundleDecision.allowed === false || backpackDecision.allowed === false || (arrowBundleDecision.allowed !== true && torchBundleDecision.allowed !== true && boltBundleDecision.allowed !== true && backpackDecision.allowed !== true && isBackpackInternalForbidden(item, target, items))) continue;
+      const isWeaponLashCandidate = item.type === 'weapon' && (item.system?.lashable !== false || backpackDecision.allowed === true);
+      const isFlaggedLashable = item.type !== 'weapon' && (backpackDecision.allowed === true || item.type === 'armor' || item.system?.lashable ||
+        item.name === 'Coin Purse' || item.system?.slotCost > 0 || item.name === 'Quiver, Hip' || item.name === 'Bolt Case' || arrowBundleDecision.allowed === true || torchBundleDecision.allowed === true || boltBundleDecision.allowed === true);
+      if (!isWeaponLashCandidate && !isFlaggedLashable) continue;
+      if (target.type === 'clothing' && !target.system?.equipped) continue;
+      if (item.type === 'armor' && isShieldItem(item) && !isShieldLashingHost(target)) continue;
+      const usedSlots = lashSlotUsage(items, target.id, item.id, target);
+      const slotCost = getLashSlotCost(item, target);
+      if (slotCost > 0 && usedSlots + slotCost > lashSlots) continue;
+      candidates.push({ id: target.id, mode: 'lash', label: `Lash to ${target.name}` });
+    }
+    return candidates;
+  }
+
+  async _moveGearItemToDestination(item, candidate, { probe = false } = {}) {
+    if (candidate.mode === 'bolt-pack') { if (probe) return true; const max = Math.min(20, normalizeQuantity(item.system?.quantity)); const promptData = structuredClone(item.toObject ? item.toObject() : item); promptData.system.quantity = max; const quantity = await this._selectDropQuantity(promptData, max, true, { unitLabel: 'bolts' }); if (quantity == null) return false; const result = await packBoltBundle(this.actor, item, { quantity }); if (!result.success && result.reason) ui.notifications.warn(result.reason); return result.success; }
+    if (candidate.mode === 'bolt-unpack') { if (probe) return true; const result = await unpackBoltBundle(this.actor, item); if (!result.success && result.reason) ui.notifications.warn(result.reason); return result.success; }
+    if (candidate.mode === 'torch-pack') {
+      if (probe) return true;
+      const max = Math.min(6, normalizeQuantity(item.system?.quantity));
+      const promptData = structuredClone(item.toObject ? item.toObject() : item); promptData.system.quantity = max;
+      const quantity = await this._selectDropQuantity(promptData, max, true);
+      if (quantity == null) return false;
+      const result = await packTorchBundle(this.actor, item, { quantity });
+      if (!result.success && result.reason) ui.notifications.warn(result.reason);
+      return result.success;
+    }
+    if (candidate.mode === 'torch-unpack') {
+      if (probe) return true;
+      const result = await unpackTorchBundle(this.actor, item);
+      if (!result.success && result.reason) ui.notifications.warn(result.reason);
+      return result.success;
+    }
+    if (candidate.mode === 'separate-tent') {
+      if (probe) return true;
+      const available = normalizeQuantity(item.system?.quantity);
+      const promptData = structuredClone(item.toObject ? item.toObject() : item);
+      promptData.system.quantity = 1;
+      const quantity = available > 1 ? await this._selectDropQuantity(promptData, available, true) : 1;
+      if (quantity == null) return false;
+      const result = await separateTentComponents(this.actor, item, { quantity });
+      if (!result.success && result.reason) ui.notifications.warn(result.reason);
+      return result.success;
+    }
+
+    if (candidate.mode === 'pack') {
+      if (probe) return true;
+      const max = Math.min(20, normalizeQuantity(item.system?.quantity));
+      const promptData = structuredClone(item.toObject ? item.toObject() : item);
+      promptData.system.quantity = max;
+      const quantity = await this._selectDropQuantity(promptData, max, true);
+      if (quantity == null) return false;
+      const result = await packArrowBundle(this.actor, item, { quantity });
+      if (!result.success && result.reason) ui.notifications.warn(result.reason);
+      return result.success;
+    }
+    if (candidate.mode === 'unpack') {
+      if (probe) return true;
+      const result = await unpackArrowBundle(this.actor, item);
+      if (!result.success && result.reason) ui.notifications.warn(result.reason);
+      return result.success;
+    }
+    const liveElement = this.element;
+    const runner = Object.create(this);
+    Object.defineProperty(runner, 'actor', { value: this.actor });
+    Object.defineProperty(runner, 'element', { value: liveElement });
+    // Foundry's sheet dialog factory reads private application state from its original
+    // instance. Bind it to the live sheet before invoking the runner clone so a real
+    // quantity dialog can render from the gear menu path.
+    runner.createDialog = this.createDialog.bind(this);
+    runner._dropPlacementTarget = candidate.id;
+    runner._forceStorageDestination = candidate.mode === 'store';
+    runner._gearMoveMode = candidate.mode;
+    const event = { target: runner.element, preventDefault() {}, stopPropagation() {} };
+    return runner._onDropItem(event, item.toDragData(), { probe });
+  }
+
+  async _showGearMoveDialog(item, { event, row } = {}) {
+    const candidates = [];
+    for (const candidate of this._gearMoveCandidates(item)) {
+      if (await this._moveGearItemToDestination(item, candidate, { probe: true })) candidates.push(candidate);
+    }
+    this._gearMoveMenuCleanup?.();
+    const doc = this.element?.ownerDocument ?? globalThis.document;
+    if (!doc?.body) return false;
+    const menu = doc.createElement('div');
+    menu.className = 'osp-gear-move-menu';
+    menu.setAttribute('role', 'menu');
+    menu.setAttribute('aria-label', `Move ${item.name}`);
+    if (!candidates.length) {
+      const empty = doc.createElement('span');
+      empty.className = 'osp-gear-move-empty';
+      empty.textContent = 'No compatible destinations';
+      menu.append(empty);
+    } else {
+      for (const candidate of candidates) {
+        const button = doc.createElement('button');
+        button.type = 'button'; button.role = 'menuitem'; button.textContent = candidate.label;
+        button.addEventListener('click', async () => {
+          this._gearMoveMenuCleanup?.();
+          await this._moveGearItemToDestination(item, candidate);
+        });
+        menu.append(button);
+      }
+    }
+    doc.body.append(menu);
+    const rect = row?.getBoundingClientRect?.() ?? { left: event?.clientX ?? 0, bottom: event?.clientY ?? 0 };
+    const view = doc.defaultView ?? globalThis.window;
+    const left = Math.max(8, Math.min(rect.left, (view?.innerWidth ?? 1200) - menu.offsetWidth - 8));
+    const top = Math.max(8, Math.min(rect.bottom, (view?.innerHeight ?? 800) - menu.offsetHeight - 8));
+    menu.style.left = `${left}px`; menu.style.top = `${top}px`;
+    const cleanup = (keepEscapeGuard = false) => { menu.remove(); doc.removeEventListener('pointerdown', onOutside, true); doc.removeEventListener('keydown', onKey, true); if (!keepEscapeGuard) doc.removeEventListener('keyup', swallowEscape, true); this._gearMoveMenuCleanup = null; };
+    const onOutside = e => { if (!menu.contains(e.target)) cleanup(); };
+    const swallowEscape = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation?.(); } };
+    const onKey = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation?.(); doc.addEventListener('keyup', swallowEscape, true); cleanup(true); setTimeout(() => doc.removeEventListener('keyup', swallowEscape, true), 500); } };
+    this._gearMoveMenuCleanup = cleanup;
+    this._sheetDisposers ??= [];
+    this._sheetDisposers.push(cleanup);
+    doc.addEventListener('pointerdown', onOutside, true); doc.addEventListener('keydown', onKey, true);
+    menu.querySelector('button')?.focus();
+    return true;
+  }
+
+  async _selectDropQuantity(itemData, available, prompt, { unitLabel = 'items', initial = normalizeQuantity(itemData.system?.quantity) } = {}) {
     if (!prompt) return initial;
     return new Promise(resolve => {
       this.createDialog({
         title: `Quantity: ${itemData.name}`,
-        content: `<form><label>How many ${esc(itemData.name)}?</label><input name="quantity" type="number" min="1" step="1" value="${initial}" ${Number.isFinite(available) ? `max="${available}"` : ''}></form>`,
+        content: `<form><label>How many ${esc(itemData.name)} (${esc(unitLabel)})?</label><input name="quantity" type="number" min="1" step="1" value="${initial}" ${Number.isFinite(available) ? `max="${available}"` : ''}></form>`,
         buttons: {
           accept: { label: 'Continue', callback: html => resolve(Number(html.find('[name="quantity"]').val())) },
           cancel: { label: 'Cancel', callback: () => resolve(null) }
@@ -2535,7 +3211,7 @@ _clothingSlot(itemLike) {
     });
   }
 
-  async _onDropItem(event, data) {
+  async _onDropItem(event, data, options = {}) {
     if (!this.actor.isOwner) return false;
     try {
       const liveItem = await Item.implementation.fromDropData(data);
@@ -2545,6 +3221,11 @@ _clothingSlot(itemLike) {
       assertNoContainmentCycles(inventoryItems(destination));
       if (source) assertNoContainmentCycles(inventoryItems(source));
       let itemData = liveItem.toObject();
+      const bodyHeaderTarget = !this._dropPlacementTarget
+        ? event.target.closest?.('.body-section-header')
+        : null;
+      const bodyHeaderDrop = Boolean(bodyHeaderTarget?.classList?.contains?.('body-section-header'));
+      const placementTarget = bodyHeaderDrop ? '__body__' : this._dropPlacementTarget;
       const operation = classifyDrop(source, destination, itemData, game.user.isGM);
       const internal = operation === 'move';
       if (source && (!source.isOwner || source.items.get(liveItem.id) !== liveItem)) throw new Error('The source item is stale or you do not own it.');
@@ -2557,13 +3238,65 @@ _clothingSlot(itemLike) {
       // is rejected at commit rather than becoming the new baseline for a retry.
       const baselineDestination = createDropDraft(destination);
       const baselineSource = source && !internal ? createDropDraft(source) : null;
+      const catalogQuantityItem = !source && isCatalogQuantityItem(itemData);
+      const catalogArrow = catalogQuantityItem && isArrowAmmo(itemData);
+      const catalogTorch = catalogQuantityItem && isTorch(itemData);
+      const catalogBolt = catalogQuantityItem && isBoltAmmo(itemData);
+      const catalogSale = catalogArrow || catalogTorch || catalogBolt;
+      const saleBundleQuantity = catalogArrow ? ARROW_BUNDLE_QUANTITY : (catalogTorch ? TORCH_SALE_BUNDLE_QUANTITY : BOLT_SALE_BUNDLE_QUANTITY);
       const available = source ? normalizeQuantity(itemData.system?.quantity) : Infinity;
       if (source && !validDropQuantity(available)) throw new Error('The source stack has an invalid quantity.');
-      // Dragging an item to Gear moves the whole stack.  Keep the quantity helper seam for
-      // existing callers/tests, but do not interrupt ordinary drag-and-drop with a prompt.
-      const quantity = await this._selectDropQuantity(itemData, available, false);
+      const promptTargetItem = placementTarget
+        ? destination.items.get(placementTarget)
+        : (() => {
+          const promptTarget = event.target.closest?.('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id], .lashed-sub-stored-item[data-item-id]');
+          return promptTarget ? destination.items.get(promptTarget.dataset.itemId) : null;
+        })();
+      const promptQuiver = promptTargetItem?.type === 'container' ? promptTargetItem
+        : promptTargetItem?.system?.containerId ? destination.items.get(promptTargetItem.system.containerId) : null;
+      const protectedArrowQuiverMove = source && isProtectedArrowBundle(itemData) && isArrowQuiver(promptQuiver);
+      const protectedBoltCaseMove = source && isProtectedBoltBundle(itemData) && isBoltCase(promptQuiver);
+      // Moving a real stack between actors or inventory locations must let the user choose
+      // how much to transfer. The staged planner receives the selected quantity below, so
+      // this prompt is shown exactly once and partial moves retain the source remainder.
+      const stackable = source && !options.probe && available > 1 &&
+        (canStackItems(itemData, itemData) || isProtectedArrowBundle(itemData) && !isUniqueStackItem(itemData));
+      const boltCaseLimit = protectedBoltCaseMove
+        ? Math.min(available, Math.floor((this._getAvailableSpace(promptQuiver) + 1e-9) / (Number(itemData.system?.storedSize) || 1)))
+        : available;
+      const quiverLimit = protectedArrowQuiverMove
+        ? Math.min(available, this._arrowQuiverAvailableQuantity(itemData, promptQuiver, itemData._id ?? itemData.id))
+        : boltCaseLimit;
+      if (protectedArrowQuiverMove && quiverLimit < 1) throw new Error(`${promptQuiver.name} has no room for more arrows.`);
+      if (protectedBoltCaseMove && quiverLimit < 1) throw new Error(`${promptQuiver.name} has no room for more bolts.`);
+      const coinGearMove = internal && itemData.type === 'coin' && this._gearMoveMode === 'store' && promptTargetItem;
+      const moveLimit = coinGearMove
+        ? this._coinGearMoveLimit(liveItem, promptTargetItem, inventoryItems(destination))
+        : quiverLimit;
+      if (coinGearMove && moveLimit < 1) throw new Error(`${promptTargetItem.name} has no room for more coins.`);
+      const quantityData = structuredClone(itemData);
+      if (coinGearMove || protectedArrowQuiverMove || protectedBoltCaseMove) quantityData.system.quantity = Math.min(available, moveLimit);
+      const quantitySpec = dropQuantityPrompt(quantityData, { catalog: !source, available: moveLimit });
+      const quantity = await this._selectDropQuantity(quantityData, quantitySpec.max, options.probe ? false : (stackable || quantitySpec.prompt), quantitySpec);
       if (quantity === null) return false;
-      if (!validDropQuantity(quantity, available)) throw new Error('Quantity must be a positive whole number within the live source stack.');
+      if (!validDropQuantity(quantity, quantitySpec.max)) throw new Error('Quantity must be a positive whole number within the live source stack and destination limit.');
+      let catalogSaleBundles = 0;
+      if (catalogQuantityItem) {
+        if (catalogArrow) {
+          catalogSaleBundles = quantity;
+          itemData = prepareArrowSaleBundle(itemData);
+          itemData.system.quantity = ARROW_BUNDLE_QUANTITY;
+        } else if (catalogTorch) {
+          catalogSaleBundles = quantity;
+          itemData = prepareTorchSaleBundle(itemData);
+          itemData.system.quantity = TORCH_SALE_BUNDLE_QUANTITY;
+        } else if (catalogBolt) {
+          catalogSaleBundles = quantity;
+          itemData = prepareBoltSaleBundle(itemData);
+          itemData.system.quantity = BOLT_SALE_BUNDLE_QUANTITY;
+        } else itemData.system.quantity = quantity;
+      }
+      const placementQuantity = catalogSale ? quantity * saleBundleQuantity : quantity;
       const initialSourceState = source ? createDropDraft(source) : null;
       const initialDescendants = source ? dropDescendants(initialSourceState.actor, liveItem.id) : [];
       if (initialDescendants.some(child => !validDropQuantity(normalizeQuantity(child.system?.quantity)))) throw new Error('A contained item has an invalid quantity.');
@@ -2577,13 +3310,59 @@ _clothingSlot(itemLike) {
           itemData.system.cost = value;
         }
       }
-      const prepareAttempt = async (placementTarget = null) => {
+      const initialDropTarget = event.target.closest?.('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id], .lashed-sub-stored-item[data-item-id]');
+      const autoOpenGearArmor = !placementTarget && !initialDropTarget && itemData.type === 'armor' &&
+        (isShieldItem(itemData) || itemData.system?.type === 'helmet');
+      let tentSeparationTarget = null;
+      const prepareAttempt = async (placementTarget = null, requestedPlacementQuantity = placementQuantity) => {
         const destinationState = createDropDraft(destination);
+        destinationState.slingPlacement = this._gearMoveMode === 'sling';
         const sourceState = source ? internal ? destinationState : createDropDraft(source) : null;
         destinationState.before = structuredClone(baselineDestination.before);
         if (sourceState && sourceState !== destinationState) sourceState.before = structuredClone(baselineSource.before);
         const descendants = source ? dropDescendants(sourceState.actor, liveItem.id) : [];
         let item;
+        const splitTent = tentSeparationTarget && placementTarget === tentSeparationTarget;
+        const attemptQuantity = requestedPlacementQuantity;
+        let tentComponents = null;
+        if (splitTent) {
+          const backpack = destinationState.items.get(placementTarget);
+          if (!backpack || !isBackpack(backpack)) throw new Error('The selected Backpack is no longer available.');
+          tentComponents = separateTentData(itemData, attemptQuantity);
+          item = source ? sourceState.items.get(liveItem.id) : null;
+          if (internal) {
+            if (!item) throw new Error('The tent source is no longer available.');
+            const remaining = available - attemptQuantity;
+            if (remaining) {
+              item._data.system.quantity = remaining;
+              destinationState.tentSourceRemainderId = item.id;
+            } else item._deleted = true;
+          }
+          const staged = Object.create(this);
+          Object.defineProperty(staged, 'actor', { value: destinationState.actor });
+          staged._dropMessages = [];
+          staged._dropPlanning = true;
+          staged._dropSelectedQuantity = attemptQuantity;
+          staged._dropOperation = operation;
+          staged._dropPlacementTarget = placementTarget;
+          const fail = reason => ({ destinationState, sourceState, descendants, item, staged, result: staged._rejectDropPlacement(reason), splitTent: true, tentComponents });
+          const fabricData = structuredClone(tentComponents.fabric);
+          const poleData = structuredClone(tentComponents.poles);
+          Object.assign(fabricData.system, { containerId: backpack.id, lashed: false, equipped: false });
+          Object.assign(poleData.system, { containerId: backpack.id, lashed: true, equipped: false, slotCost: 1 });
+          const contents = inventoryItems(destinationState.actor);
+          const admission = checkWithdrawTarget(fabricData, backpack, contents);
+          if (!admission.allowed) return fail(admission.reason);
+          const lash = backpackLashDecision(poleData, backpack, contents);
+          if (lash.allowed !== true) return fail(lash.reason || 'The tent poles cannot be lashed to this Backpack.');
+          const occupied = lashSlotUsage(contents, backpack.id, null, backpack);
+          const required = getLashSlotCost(poleData, backpack);
+          if (occupied + required > Number(backpack.system.lashSlots || 0)) return fail(`${backpack.name} needs ${required} free lash slot${required === 1 ? '' : 's'} for the tent poles.`);
+          await destinationState.actor.createEmbeddedDocuments('Item', [fabricData, poleData]);
+          const placement = staged._validateGearPlacementDraft(destinationState);
+          if (!placement.allowed) return fail(placement.reason);
+          return { destinationState, sourceState, descendants, item, staged, result: true, splitTent: true, tentComponents };
+        }
         if (source) item = sourceState.items.get(liveItem.id);
         else {
           const [created] = await destinationState.actor.createEmbeddedDocuments('Item', [itemData]);
@@ -2591,19 +3370,23 @@ _clothingSlot(itemLike) {
           created._deleted = true;
           item = created;
         }
-        if (internal && quantity < available) {
-          await item.update({ 'system.quantity': available - quantity });
-          const [split] = await destinationState.actor.createEmbeddedDocuments('Item', [{ ...itemData, system: { ...itemData.system, quantity } }]);
+        if (internal && attemptQuantity < available) {
+          await item.update({ 'system.quantity': available - attemptQuantity });
+          const [split] = await destinationState.actor.createEmbeddedDocuments('Item', [{ ...itemData, system: { ...itemData.system, quantity: attemptQuantity } }]);
           item = split;
-        } else item._data.system.quantity = quantity;
+        } else item._data.system.quantity = catalogSale ? saleBundleQuantity : attemptQuantity;
         const staged = Object.create(this);
         Object.defineProperty(staged, 'actor', { value: destinationState.actor });
         staged._dropMessages = [];
         staged._dropPlanning = true;
-        staged._dropSelectedQuantity = quantity;
+        staged._dropSelectedQuantity = catalogSale ? saleBundleQuantity : attemptQuantity;
         staged._dropOperation = operation;
         staged._dropHasContents = descendants.length > 0;
         staged._dropPlacementTarget = placementTarget;
+        staged._gearMoveMode = this._gearMoveMode;
+        const saleBackpackStorage = (catalogTorch || catalogBolt) && isBackpack(destinationState.items.get(placementTarget));
+        staged._forceStorageDestination = this._forceStorageDestination || saleBackpackStorage;
+        staged._autoOpenGearArmor = autoOpenGearArmor && !placementTarget;
         staged._dropProbe = true;
         staged.handlers = new Map(this.handlers ?? []);
         const handler = new ItemHandler(null, destinationState.actor, staged);
@@ -2613,34 +3396,136 @@ _clothingSlot(itemLike) {
         staged._showSlingNoRoomDialog = async () => { staged._dropRejected = true; staged._dropRejectedReason = 'There is no room to wear this item.'; return false; };
         let result;
         try {
-          result = await staged._planDropItem(event, data, item);
-          if (result !== false && result !== null && !staged._dropRejectedReason) {
+          const batches = catalogSale ? catalogSaleBundles : 1;
+          for (let index = 0; index < batches; index += 1) {
+            if (index > 0) {
+              const [created] = await destinationState.actor.createEmbeddedDocuments('Item', [itemData]);
+              created.actor = null;
+              created._deleted = true;
+              item = created;
+            }
+            staged._dropSelectedQuantity = catalogSale ? saleBundleQuantity : attemptQuantity;
+            result = await staged._planDropItem(event, data, item);
+            if (result === false || result === null || staged._dropRejectedReason) break;
             const check = staged._validateGearPlacementDraft(destinationState);
-            if (!check.allowed) result = staged._rejectDropPlacement(check.reason);
+            if (!check.allowed) { result = staged._rejectDropPlacement(check.reason); break; }
           }
-        } catch (error) { result = staged._rejectDropPlacement(error.message); }
-        return { destinationState, sourceState, descendants, item, staged, result };
+          if (catalogSale && result !== false && result !== null && !staged._dropRejectedReason) {
+            staged._dropSelectedQuantity = attemptQuantity;
+          }
+        } catch (error) {
+          if (staged._autoOpenGearArmor) throw error;
+          result = staged._rejectDropPlacement(error.message);
+        }
+        return { destinationState, sourceState, descendants, item, staged, result, splitTent: false, tentComponents: null };
       };
-      let attempt = await prepareAttempt();
-      if ((attempt.staged._dropRejectedReason || attempt.staged._dropRejected || attempt.result === false || attempt.result === null) && !attempt.staged._dropPlacementTarget) {
-        const candidateSeeds = this._dropPlacementCandidates(itemData, liveItem.id);
+      let attempt = await prepareAttempt(placementTarget || null);
+      if (autoOpenGearArmor && (attempt.staged._dropRejected || attempt.staged._dropRejectedReason || attempt.result === false || attempt.result === null)) {
+        throw new Error(attempt.staged._dropRejectedReason || `${itemData.name} could not be placed.`);
+      }
+      // A complete tent dropped on Gear (or directly on a Backpack) may be separated
+      // atomically in the same draft: fabric is stored, poles are lashed outside.
+      // Probe calls only test the ordinary staged placement and never open this dialog.
+      const directTarget = initialDropTarget ? destination.items.get(initialDropTarget.dataset.itemId) : null;
+      const explicitTarget = placementTarget ? destination.items.get(placementTarget) : null;
+      const effectiveTarget = explicitTarget || directTarget;
+      const targetBackpack = effectiveTarget && (isBackpack(effectiveTarget)
+        ? effectiveTarget
+        : (() => {
+          let current = effectiveTarget;
+          const seen = new Set();
+          while (current?.system?.containerId && !seen.has(current.id)) {
+            seen.add(current.id);
+            current = destination.items.get(current.system.containerId);
+            if (isBackpack(current)) return current;
+          }
+          return null;
+        })());
+      const tentOffer = isCompleteTent(itemData) && !this._gearMoveMode && (!effectiveTarget || targetBackpack) && !options.probe;
+      if (tentOffer) {
+        const packs = targetBackpack ? [targetBackpack] : inventoryItems(destination)
+          .filter(candidate => isBackpack(candidate))
+          .sort((a, b) => Number(!!b.system?.equipped) - Number(!!a.system?.equipped));
+        const candidates = [];
+        let separationReason = attempt.staged._dropRejectedReason;
+        for (const pack of packs) {
+          tentSeparationTarget = pack.id;
+          const trial = await prepareAttempt(pack.id, placementQuantity);
+          if (!trial.staged._dropRejected && !trial.staged._dropRejectedReason && trial.result !== false && trial.result !== null) {
+            const plannedPack = trial.destinationState.items.get(pack.id);
+            const plannedItems = inventoryItems(trial.destinationState.actor);
+            candidates.push({ id: pack.id, label: `${pack.name} — ${Math.round(usedBulk(plannedPack, plannedItems) * 100) / 100}/${capacityValue(plannedPack.system.capacity)} inside; ${lashSlotUsage(plannedItems, pack.id, null, plannedPack)}/${plannedPack.system.lashSlots} lash slots` });
+          } else if (trial.staged._dropRejectedReason) separationReason = trial.staged._dropRejectedReason;
+        }
+        tentSeparationTarget = null;
+        const choice = await this._showTentSeparationDialog(itemData, separationReason, candidates, quantity);
+        if (!choice) return false;
+        if (choice.action === 'separate') {
+          if (!candidates.some(candidate => candidate.id === choice.id)) return false;
+          tentSeparationTarget = choice.id;
+          attempt = await prepareAttempt(choice.id, placementQuantity);
+        } else {
+          // Keep whole: fall through to the existing placement chooser below.
+          attempt = await prepareAttempt(placementTarget || null, placementQuantity);
+        }
+      }
+      const directDropTarget = !placementTarget
+        ? event.target.closest?.('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id], .lashed-sub-stored-item[data-item-id]')
+        : null;
+      const directVehicle = directDropTarget ? destination.items.get(directDropTarget.dataset.itemId) : null;
+      const directVehicleHost = directVehicle && getVehicleKind(directVehicle) !== 'none' ? directVehicle : null;
+      const attachmentData = normalizeQuantity(itemData.system?.quantity) > 1 ? { ...itemData, system: { ...itemData.system, quantity: 1 } } : itemData;
+      const directVehicleOptions = directVehicleHost ? getVehicleAttachmentOptions(attachmentData, directVehicleHost, inventoryItems(destination), { excludeId: liveItem.id }) : [];
+      // Deliberate arrow/bolt drops onto a quiver (including its nested arrow row) are
+      // authoritative: an invalid requested quiver reports its capacity/type reason and
+      // cancels instead of offering a generic Backpack/Sack/Clothes chooser. Preserve the
+      // established chooser behavior for other explicit rows and for untargeted drops.
+      const directTargetItem = directDropTarget ? destination.items.get(directDropTarget.dataset.itemId) : null;
+      const directAmmoContainer = directTargetItem?.type === 'container'
+        ? directTargetItem
+        : directTargetItem?.system?.containerId ? destination.items.get(directTargetItem.system.containerId) : null;
+      const explicitAmmoContainerTarget = itemData.type === 'ammunition' &&
+        directAmmoContainer && /quiver|bolt case/i.test(directAmmoContainer.name || '');
+      if (!autoOpenGearArmor && ((directVehicleHost && directVehicleOptions.length) || attempt.staged._dropRejectedReason || attempt.staged._dropRejected || attempt.result === false || attempt.result === null) && !attempt.staged._dropPlacementTarget && !explicitAmmoContainerTarget) {
+        const candidateSeeds = directVehicleHost
+          ? [{ id: directVehicleHost.id, label: `${directVehicleHost.name} — Store in vehicle` },
+            ...directVehicleOptions
+              .map(option => ({ id: vehicleDestination(directVehicleHost.id, option), label: `${directVehicleHost.name} — ${option.label}${normalizeQuantity(itemData.system?.quantity) > 1 ? ' (1 item)' : ''}` }))]
+          : this._dropPlacementCandidates(itemData, liveItem.id);
         const candidates = [];
         for (const candidate of candidateSeeds) {
-          const trial = await prepareAttempt(candidate.id);
+          const virtual = parseVehicleDestination(candidate.id);
+          const trial = await prepareAttempt(candidate.id, virtual ? 1 : placementQuantity);
           if (!trial.staged._dropRejected && !trial.staged._dropRejectedReason && trial.result !== false && trial.result !== null) candidates.push(candidate);
         }
         const choice = await this._showDropPlacementDialog(itemData, attempt.staged._dropRejectedReason, candidates);
         if (!choice || !candidates.some(candidate => candidate.id === choice)) return false;
-        attempt = await prepareAttempt(choice);
+        attempt = await prepareAttempt(choice, parseVehicleDestination(choice) ? 1 : placementQuantity);
       }
-      const { destinationState, sourceState, descendants, item, staged, result } = attempt;
-      if (staged._dropRejected || staged._dropRejectedReason || result === false || result === null) return false;
+      const { destinationState, sourceState, descendants, item, staged, result, splitTent, tentComponents } = attempt;
+      if (staged._dropRejected || staged._dropRejectedReason || result === false || result === null) {
+        if (explicitAmmoContainerTarget && staged._dropRejectedReason) ui.notifications.error(staged._dropRejectedReason);
+        return false;
+      }
+      const transferQuantity = catalogSale ? catalogSaleBundles * saleBundleQuantity : (staged._dropSelectedQuantity ?? quantity);
       const count = entries => entries.filter(entry => entry.name === itemData.name && entry.type === itemData.type).reduce((sum, entry) => sum + normalizeQuantity(entry.system?.quantity), 0);
-      const delivered = count(destinationState.items.filter(() => true)) - count(destinationState.before);
-      if (!internal && delivered !== quantity) throw new Error('Placement did not accept the selected quantity; no inventory was changed.');
-      if (internal && count(destinationState.items.filter(() => true)) !== count(destinationState.before)) throw new Error('The move would change the total quantity; no inventory was changed.');
+      if (splitTent) {
+        const componentCount = (entries, name) => entries.filter(entry => entry.name === name && entry.type === 'item')
+          .reduce((sum, entry) => sum + normalizeQuantity(entry.system?.quantity), 0);
+        for (const component of [tentComponents.fabric, tentComponents.poles]) {
+          const delivered = componentCount(destinationState.items.filter(() => true), component.name) - componentCount(destinationState.before, component.name);
+          if (delivered !== transferQuantity) throw new Error('Tent separation did not preserve both fabric and pole bundles; no inventory was changed.');
+        }
+        if (internal && count(destinationState.before) - count(destinationState.items.filter(() => true)) !== transferQuantity) {
+          throw new Error('Tent separation did not preserve the source remainder; no inventory was changed.');
+        }
+      } else {
+        const delivered = count(destinationState.items.filter(() => true)) - count(destinationState.before);
+        if (!internal && delivered !== transferQuantity) throw new Error('Placement did not accept the selected quantity; no inventory was changed.');
+        if (internal && count(destinationState.items.filter(() => true)) !== count(destinationState.before)) throw new Error('The move would change the total quantity; no inventory was changed.');
+      }
       if (!internal && source) {
-        const remaining = available - quantity;
+        const remaining = available - transferQuantity;
         if (remaining) { item._deleted = false; item._data = { ...structuredClone(itemData), system: { ...structuredClone(itemData.system), quantity: remaining } }; }
         else item._deleted = true;
         if (descendants.length) {
@@ -2658,7 +3543,12 @@ _clothingSlot(itemLike) {
           const visited = new Set();
           while (parent && !visited.has(parent.id)) {
             visited.add(parent.id);
-            if (parent.system.capacity && !staged._skipCapacityCheck(parent) && staged._getUsedCapacity(parent) > capacityValue(parent.system.capacity)) throw new Error(`Not enough space in ${parent.name} for the container and its contents.`);
+            if (parent.system.capacity && !staged._skipCapacityCheck(parent)) {
+              const used = staged._getUsedCapacity(parent);
+              const beforeParent = destinationState.before?.find(candidate => candidate._id === parent.id || candidate.id === parent.id);
+              const beforeUsed = beforeParent ? usedBulk(beforeParent, destinationState.before) : 0;
+              if (used > capacityValue(parent.system.capacity) && used > beforeUsed) throw new Error(`Not enough space in ${parent.name} for the container and its contents.`);
+            }
             parent = destinationState.items.get(parent.system.containerId);
           }
         }
@@ -2666,21 +3556,41 @@ _clothingSlot(itemLike) {
       const finalPlacement = staged._validateGearPlacementDraft(destinationState);
       if (!finalPlacement.allowed) throw new Error(finalPlacement.reason);
       if (operation === 'purchase') {
-        const charge = await stageItemCost({ ...itemData, system: { ...itemData.system, cost: Number(itemData.system?.cost ?? 0) * quantity } }, destinationState.actor);
+        const charge = await stageItemCost({ ...itemData, system: { ...itemData.system, cost: Number(itemData.system?.cost ?? 0) * transferQuantity } }, destinationState.actor);
         if (!charge.success) { ui.notifications.warn(charge.reason ?? `Not enough treasure — need ${charge.shortfallSp} more sp.`); return false; }
       }
       const states = sourceState && sourceState !== destinationState ? [destinationState, sourceState] : [destinationState];
       const changes = states.flatMap(state => diffDropDraft(state.live, state));
       if (!changes.length) return false;
       if (changes.some(change => [change.before, change.after].some(snapshot => snapshot?.system?.quantity != null && (!Number.isSafeInteger(normalizeQuantity(snapshot.system.quantity)) || normalizeQuantity(snapshot.system.quantity) < 0)))) throw new Error('A participating stack has an invalid quantity.');
+      if (this._gearMoveMode) {
+        const expectedTarget = this._dropPlacementTarget;
+        // A stack move may merge into an existing destination item and delete the source
+        // document. Validate the changed destination snapshot instead of relying on the
+        // source item's staged identity surviving.
+        const validMode = changes.some(change => {
+          const after = change.after;
+          if (!after || after.name !== itemData.name || after.type !== itemData.type) return false;
+          const system = after.system || {};
+          if (this._gearMoveMode === 'sling') {
+            const category = this._backSlotCategory(itemData);
+            return system.containerId == null && system.lashed !== true &&
+              (category === 'bow' || category === 'crossbow' || system.equipped === true || itemData.type === 'weapon');
+          }
+          return system.containerId === expectedTarget &&
+            (this._gearMoveMode === 'lash' ? system.lashed === true : system.lashed !== true);
+        });
+        if (!validMode) return false;
+      }
+      if (options.probe) return true;
       const outcome = await runTransaction(destination, {
-        label: `${operation}: ${quantity} × ${itemData.name}`, changes,
+        label: `${operation}: ${transferQuantity} × ${itemData.name}`, changes,
         validate: () => states.every(unchangedDropInventory) && (operation !== 'purchase' || !this._isStoreLocked(false))
       });
       if (!outcome.success) { ui.notifications.error(outcome.reason); return false; }
       staged._dropMessages.forEach(message => ui.notifications.info(message));
       return true;
-    } catch (error) { ui.notifications.error(error.message); return false; }
+    } catch (error) { if (!options.probe) ui.notifications.error(error.message); return false; }
   }
 
   async _planDropItem(event, data, resolvedItem) {
@@ -2690,6 +3600,7 @@ _clothingSlot(itemLike) {
 
     const item = resolvedItem;
     const itemData = item.toObject();
+    const isReordering = item.actor && item.actor.id === this.actor.id;
 
     // Check if dropping onto a container or a contained item.
     // Also match .slung-item rows (containers in the Slung Items virtual section) and
@@ -2701,17 +3612,75 @@ _clothingSlot(itemLike) {
     // A single comma-separated selector is required here — closest(A) || closest(B) picks
     // whichever of A/B has ANY match, even an outer ancestor, ignoring which is actually nearer;
     // closest('A, B') correctly finds the nearest ancestor matching either.
+    const slungPlacement = this._dropPlacementTarget === '__slung__';
+    const bodyHeaderTarget = !this._dropPlacementTarget
+      ? event.target.closest?.('.body-section-header')
+      : null;
+    const bodyPlacement = this._dropPlacementTarget === '__body__' ||
+      Boolean(bodyHeaderTarget?.classList?.contains?.('body-section-header'));
     let dropTarget = this._dropPlacementTarget ? null : event.target.closest('.item-entry[data-item-id], .slung-item[data-item-id], .lashed-stored-item[data-item-id], .lashed-sub-stored-item[data-item-id]');
     let targetContainer = this._dropPlacementTarget === '__open_gear__' ? null : this._dropPlacementTarget
       ? this.actor.items.get(this._dropPlacementTarget)
       : (dropTarget ? this.actor.items.get(dropTarget.dataset.itemId) : null);
+    const vehicleState = parseVehicleDestination(this._dropPlacementTarget);
+    if (vehicleState) {
+      targetContainer = this.actor.items.get(vehicleState.hostId);
+      if (!targetContainer) return this._rejectDropPlacement('That vehicle is no longer available. Choose another place for this item.');
+      const vehicleCheck = checkVehicleAttachment(item, targetContainer, inventoryItems(this.actor), vehicleState, { excludeId: isReordering ? item.id : null });
+      if (!vehicleCheck.allowed) return this._rejectDropPlacement(vehicleCheck.reason);
+    }
     if (dropTarget && !targetContainer) {
       return this._rejectDropPlacement('That destination is no longer available. Choose another place for this item.');
+    }
+
+    // An explicit virtual vehicle destination is authoritative. It uses the same
+    // containment link as ordinary cargo while keeping an attachment state distinct
+    // from legacy belt lashing.
+    if (vehicleState) {
+      itemData.system.containerId = targetContainer.id;
+      itemData.system.vehicleAttachment = { mode: vehicleState.mode, position: vehicleState.position };
+      itemData.system.lashed = false;
+      itemData.system.equipped = false;
+      const update = { 'system.containerId': targetContainer.id, 'system.vehicleAttachment': itemData.system.vehicleAttachment, 'system.lashed': false, 'system.equipped': false };
+      if (isReordering) return item.update(update);
+      if (item.actor && item.actor.id !== this.actor.id) return item.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => this.actor.createEmbeddedDocuments('Item', [itemData]));
+      return this.actor.createEmbeddedDocuments('Item', [itemData]);
+    }
+    if (bodyPlacement && itemData.type !== 'clothing' && !isBodyWearAccessory(itemData)) {
+      return this._rejectDropPlacement('Only clothing or a Holy Symbol can be worn in the Body section.');
+    }
+    // Any ordinary destination detaches a vehicle attachment and clears the legacy
+    // bit. This also applies when an attached item is moved across actors.
+    if (itemData.system.vehicleAttachment) {
+      delete itemData.system.vehicleAttachment;
+      itemData.system.lashed = false;
+      if (item.system?.vehicleAttachment && isReordering) {
+        await item.update({ 'system.vehicleAttachment': null, 'system.lashed': false });
+      }
+    }
+
+    // Body is a virtual destination: clothing is worn through the same slot check and
+    // ownership/store-lock transaction pipeline as open Gear, but never receives a
+    // containerId or any body capacity/weight semantics.
+    if (bodyPlacement) {
+      if (!isBodyWearAccessory(itemData) && !this._canWearOpenSpace(itemData, isReordering ? item.id : null)) {
+        const reason = clothingWearRejection(itemData, this.actor.items, { excludeId: isReordering ? item.id : null });
+        return this._rejectDropPlacement(reason || `${itemData.name} cannot be worn because that clothing slot is already occupied.`);
+      }
+      Object.assign(itemData.system, { equipped: true, containerId: null, lashed: false });
     }
     
     // If we dropped on a contained item (not a container or clothing with capacity), find its parent container
     if (targetContainer && targetContainer.type !== "container" && !(targetContainer.type === "clothing" && targetContainer.system.capacity) && targetContainer.system.containerId) {
       targetContainer = this.actor.items.get(targetContainer.system.containerId);
+    }
+
+    // Protected sale bundles are unpacked only when their destination is an arrow quiver.
+    // Keep the source remainder untouched; the staged item is the destination copy.
+    if (isArrowAmmo(itemData) && isArrowQuiver(targetContainer)) {
+      const normalized = prepareArrowQuiverPlacement(itemData, targetContainer);
+      itemData.flags = normalized.flags;
+      item._data.flags = structuredClone(normalized.flags ?? {});
     }
 
     // Some items (e.g. wagons, carts) are too large to ever be stored inside a container;
@@ -2725,9 +3694,6 @@ _clothingSlot(itemLike) {
 
     // Check if this item already exists on this actor
     const existingItemCheck = this.actor.items.get(itemData._id);
-
-    // Check if this is a reordering operation or a new item
-    const isReordering = item.actor && item.actor.id === this.actor.id;
 
     // Prevent circular containment: a container cannot be moved into itself or its own descendants
     if (isReordering && targetContainer && canBeParent(itemData)) {
@@ -2804,7 +3770,8 @@ _clothingSlot(itemLike) {
     // Drop onto the Slung Items section → equip the item (= sling it)
     // But skip if dropping onto a specific slung container (e.g. Baldric) — let normal container logic handle it
     const droppedOnSlungItem = event.target.closest('.slung-item');
-    if (!this._dropPlacementTarget && event.target.closest('.slung-section-entry') && !droppedOnSlungItem) {
+    if ((slungPlacement || !this._dropPlacementTarget) &&
+        (slungPlacement || (event.target.closest('.slung-section-entry') && !droppedOnSlungItem))) {
       const tags = itemData.system?.tags || [];
       if (!isSlungable(tags)) {
         // Zweihander/Greatsword aren't slungable themselves — they ride inside an equipped
@@ -2881,11 +3848,13 @@ _clothingSlot(itemLike) {
       // Saddle) — on a hybrid container like Backpack they keep the existing behavior below
       // (Scabbard, Dagger stored via capacity, not lashed, since there's capacity to spare).
       const isSword = this._itemIsSword(itemData);
+      const isDagger = this._itemIsDagger(itemData);
       const isPureLashMount = targetContainer && this._isLashMountTarget(targetContainer);
       const explicitLashHost = targetContainer && targetContainer.type === 'container' &&
         (targetContainer.system?.lashSlots || 0) > 0 && (isSword || isPureLashMount)
         ? targetContainer : null;
-      if (!targetContainer || targetContainer.type !== "container" || explicitLashHost) {
+      const daggerClothingTarget = isDagger && isCapacityClothing(targetContainer);
+      if (!targetContainer || (targetContainer.type !== "container" && !daggerClothingTarget) || explicitLashHost) {
         let provisioned;
         try {
           provisioned = await this._autoProvisionSwordCarrier(item, itemData, explicitLashHost);
@@ -2918,6 +3887,10 @@ _clothingSlot(itemLike) {
         const existingInTarget = this.actor.items.find(
           i => i.name === 'Scabbard, Dagger' && i.system.containerId === targetContainer.id
         );
+        if (daggerClothingTarget) {
+          const preflight = this._preflightDaggerClothingPlacement(item, itemData, targetContainer);
+          if (!preflight.valid) return this._rejectDropPlacement(preflight.reason);
+        }
         let chosenScabbard;
         if (existingInTarget) {
           // Reuse the existing scabbard already in the target container.
@@ -3008,9 +3981,9 @@ _clothingSlot(itemLike) {
         }
         const usedSlots = this.actor.items
           .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== itemData._id)
-          .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-        const itemSlotCost = item.system?.slotCost || itemData.system?.slotCost || 1;
-        if (usedSlots + itemSlotCost > lashSlots) {
+          .reduce((sum, i) => sum + getLashSlotCost(i, targetContainer), 0);
+        const itemSlotCost = getLashSlotCost(item?.system?.slotCost !== undefined ? item : itemData, targetContainer);
+        if (itemSlotCost > 0 && usedSlots + itemSlotCost > lashSlots) {
           return this._rejectDropPlacement(`${targetContainer.name} has no available lash slots (${usedSlots}/${lashSlots} used).`);
         }
         itemData.system.containerId = targetContainer.id;
@@ -3090,14 +4063,43 @@ _clothingSlot(itemLike) {
     // lashable true/false (e.g. Holy Water/Dart/Spear/Sling are false — small/awkward things
     // that belong in a container, not strapped loose to a belt or saddle) — honor an explicit
     // opt-out instead of overriding it unconditionally for every weapon type.
-    const isWeaponLashCandidate = itemData.type === 'weapon' && itemData.system?.lashable !== false;
+    const backpackLash = backpackLashDecision(itemData, targetContainer, this.actor?.items);
+    const beltToolLash = beltToolLashDecision(itemData, targetContainer);
+    const arrowBundleLash = getArrowBundleLashDecision(itemData, targetContainer);
+    const torchBundleLash = getTorchBundleLashDecision(itemData, targetContainer);
+    const boltBundleLash = getBoltBundleLashDecision(itemData, targetContainer);
+    if (beltToolLash.allowed === false && !this._forceStorageDestination && targetContainer?.system?.lashSlots > 0) {
+      return this._rejectDropPlacement(beltToolLash.reason);
+    }
+    const isBackpackLashCandidate = backpackLash.allowed === true;
+    const isArrowBundleLashCandidate = arrowBundleLash.allowed === true;
+    const isTorchBundleLashCandidate = torchBundleLash.allowed === true;
+    const isBoltBundleLashCandidate = boltBundleLash.allowed === true;
+    if (arrowBundleLash.allowed === false && !this._forceStorageDestination && targetContainer?.system?.lashSlots > 0) {
+      return this._rejectDropPlacement(arrowBundleLash.reason);
+    }
+    if (torchBundleLash.allowed === false && !this._forceStorageDestination && targetContainer?.system?.lashSlots > 0) return this._rejectDropPlacement(torchBundleLash.reason);
+    if (boltBundleLash.allowed === false && !this._forceStorageDestination && targetContainer?.system?.lashSlots > 0) return this._rejectDropPlacement(boltBundleLash.reason);
+    if (backpackLash.allowed === false && isBackpack(targetContainer) && !this._forceStorageDestination &&
+        (!isRollableGarment(itemData) || this._gearMoveMode === 'lash')) {
+      return this._rejectDropPlacement(backpackLash.reason);
+    }
+    if (backpackLash.allowed !== true && isBackpackInternalForbidden(itemData, targetContainer, this.actor?.items)) {
+      return this._rejectDropPlacement(`${itemData.name} cannot be stored inside a Backpack; lash it externally.`);
+    }
+    const isWeaponLashCandidate = itemData.type === 'weapon' && (itemData.system?.lashable !== false || isBackpackLashCandidate);
     const isSackOntoSaddle = HAND_CARRY_CONTAINERS.has(itemData.name) &&
       targetContainer && SADDLE_LASH_HOSTS.has(targetContainer.name);
+    const isHelmet = itemData.type === 'armor' && itemData.system?.type === 'helmet';
+    const isShield = isShieldItem(itemData);
     const isFlaggedLashable = itemData.type !== 'weapon' &&
-      (item.system?.lashable || itemData.system?.lashable || (item.system?.slotCost || 0) > 0 || (itemData.system?.slotCost || 0) > 0 || LASHABLE_CONTAINER_NAMES.has(itemData.name) || isSackOntoSaddle) &&
+      (isHelmet || isShield || isArrowBundleLashCandidate || isTorchBundleLashCandidate || isBoltBundleLashCandidate || isBackpackLashCandidate || item.name === 'Coin Purse' || itemData.name === 'Coin Purse' || item.system?.lashable || itemData.system?.lashable || (item.system?.slotCost || 0) > 0 || (itemData.system?.slotCost || 0) > 0 || LASHABLE_CONTAINER_NAMES.has(itemData.name) || isSackOntoSaddle) &&
+      !(isBackpack(targetContainer) && backpackLash.allowed === false) &&
       (!HAND_CARRY_CONTAINERS.has(itemData.name) || isSackOntoSaddle);
 
-    if (targetContainer && targetLashSlots > 0 && (isWeaponLashCandidate || isFlaggedLashable)) {
+    if (!this._forceStorageDestination && targetContainer && targetLashSlots > 0 && (isWeaponLashCandidate || isFlaggedLashable) &&
+        (!isHelmet || targetContainer.type === 'container') &&
+        (!isShield || isShieldLashingHost(targetContainer))) {
       let lashReason = null;
 
       // Clothing lash mounts (e.g. Belt) must be worn; container lash mounts (Saddle, Pack,
@@ -3105,10 +4107,11 @@ _clothingSlot(itemLike) {
       if (targetContainer.type === 'clothing' && !targetContainer.system.equipped) {
         lashReason = `${targetContainer.name} must be worn to attach items to it.`;
       } else if (itemData.type === 'weapon') {
+        if (backpackLash.allowed === false) lashReason = backpackLash.reason;
         const _tags = itemData.system?.tags || [];
         const _isSlungOnly = (itemData.name || '').toLowerCase().includes('crossbow') ||
           (_tags.includes('missile') && _tags.includes('two-handed'));
-        if (_isSlungOnly) {
+        if (!lashReason && _isSlungOnly && !isBackpackLashCandidate) {
           lashReason = `${itemData.name} cannot be lashed — sling it instead.`;
         } else {
           const allowedSizes = targetContainer.system.lashAllowedSizes || [];
@@ -3119,11 +4122,9 @@ _clothingSlot(itemLike) {
       }
 
       if (!lashReason) {
-        const usedSlots = this.actor.items
-          .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== itemData._id)
-          .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-        const itemSlotCost = item.system?.slotCost || itemData.system?.slotCost || 1;
-        if (usedSlots + itemSlotCost > targetLashSlots) {
+        const usedSlots = lashSlotUsage(inventoryItems(this.actor), targetContainer.id, itemData._id, targetContainer);
+        const itemSlotCost = getLashSlotCost(item?.system?.slotCost !== undefined ? item : itemData, targetContainer);
+        if (itemSlotCost > 0 && usedSlots + itemSlotCost > targetLashSlots) {
           lashReason = `${targetContainer.name} has no available lash slots (${usedSlots}/${targetLashSlots} used).`;
         }
       }
@@ -3145,7 +4146,7 @@ _clothingSlot(itemLike) {
         return this.actor.createEmbeddedDocuments('Item', [itemData]);
       }
 
-      if (!targetHasCapacity) {
+      if (!targetHasCapacity || isArrowBundleLashCandidate || isTorchBundleLashCandidate) {
         return this._rejectDropPlacement(lashReason);
       }
       // else: target also has capacity — fall through to ordinary storage below.
@@ -3165,17 +4166,24 @@ _clothingSlot(itemLike) {
     if (itemData.type === 'weapon' || itemData.type === 'armor') {
       const isStorage = targetContainer && canBeParent(targetContainer);
       if (!isStorage) {
-        const check = await this._checkOpenGearEquipment(itemData, isReordering ? item.id : null);
-        if (!check.allowed) return this._rejectDropPlacement(check.reason);
-        Object.assign(itemData.system, { equipped: true, containerId: null, lashed: false });
-        if (isReordering) return item.update({ 'system.equipped': true, 'system.containerId': null, 'system.lashed': false });
+        if (this._autoOpenGearArmor && itemData.type === 'armor' &&
+          (isShieldItem(itemData) || itemData.system?.type === 'helmet')) {
+          await this._autoPlaceOpenGearArmor(itemData, item, isReordering);
+        } else {
+          const check = await this._checkOpenGearEquipment(itemData, isReordering ? item.id : null);
+          if (!check.allowed) return this._rejectDropPlacement(check.reason);
+          Object.assign(itemData.system, { equipped: true, containerId: null, lashed: false });
+        }
+        if (isReordering) return item.update({ 'system.equipped': itemData.system.equipped, 'system.containerId': itemData.system.containerId, 'system.lashed': itemData.system.lashed });
         if (item.actor) await item.actor.deleteEmbeddedDocuments('Item', [item.id]);
         return this.actor.createEmbeddedDocuments('Item', [itemData]);
       }
     }
 
     // If the item is of type "item", "coin", or "ammunition" (not weapon/armor/container/clothing), it MUST go into a container
-    if ((itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition") && !(handCost(itemData) > 0 && !targetContainer)) {
+    if ((itemData.type === "item" || itemData.type === "coin" || itemData.type === "ammunition") &&
+        !(bodyPlacement && isBodyWearAccessory(itemData)) &&
+        !(handCost(itemData) > 0 && !targetContainer)) {
       // Check if target is a valid container (container type OR clothing with capacity)
       const isValidContainer = targetContainer &&
         (targetContainer.type === "container" ||
@@ -3272,7 +4280,9 @@ _clothingSlot(itemLike) {
       }
 
       // Check container restrictions
-      const check3 = this._isItemAllowedInContainer(itemData, targetContainer);
+      const check3 = this._isItemAllowedInContainer(itemData, targetContainer, {
+        excludeItemId: isReordering ? item.id : null,
+      });
       if (!check3.allowed) return this._rejectDropPlacement(check3.reason);
 
       // Stackable thrown weapons (consumable splash weapons, darts) use the quantity dialog
@@ -3301,7 +4311,7 @@ _clothingSlot(itemLike) {
     // conflicting slot is a placement failure; _onDropItem will offer compatible containers
     // through the themed chooser instead of silently replacing the worn item or creating loose
     // top-level gear.
-    else if (itemData.type === "clothing" && !targetContainer) {
+    else if (!bodyPlacement && itemData.type === "clothing" && !targetContainer) {
       if (this._canWearOpenSpace(itemData, isReordering ? item.id : null)) {
         itemData.system.equipped = true;
         itemData.system.containerId = null;
@@ -3323,7 +4333,7 @@ _clothingSlot(itemLike) {
     // Lashable containers (and weapon-storage carriers like scabbards) dropped on open space:
     // auto-attach to equipped belt if room available; weapon-storage containers CANNOT be at root.
     else if (itemData.type === 'container' && !targetContainer &&
-      (itemData.system?.lashable || (itemData.system?.slotCost || 0) > 0 || LASHABLE_CONTAINER_NAMES.has(itemData.name) ||
+      (itemData.system?.lashable || itemData.name === 'Coin Purse' || (itemData.system?.slotCost || 0) > 0 || LASHABLE_CONTAINER_NAMES.has(itemData.name) ||
        (itemData.system?.tags || []).includes('weapon-storage'))) {
       const tags = itemData.system?.tags || [];
       // Scabbard, Sword / Scabbard, Dagger with no slotCost go INSIDE a Sword Frog, not lashed to the belt directly.
@@ -3340,9 +4350,9 @@ _clothingSlot(itemLike) {
         const belt = this.actor.items.find(i => i.type === 'clothing' && (i.system.lashSlots || 0) > 0 && i.system.equipped);
         if (belt) {
           const lashedAttachments = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed && (!isReordering || i.id !== item.id));
-          const usedSlots = lashedAttachments.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-          const itemSlotCost = itemData.system.slotCost || 1;
-          if (usedSlots + itemSlotCost <= (belt.system.lashSlots || 0)) {
+          const usedSlots = lashedAttachments.reduce((sum, i) => sum + getLashSlotCost(i), 0);
+          const itemSlotCost = getLashSlotCost(itemData);
+          if (itemSlotCost === 0 || usedSlots + itemSlotCost <= (belt.system.lashSlots || 0)) {
             itemData.system.lashed = true;
             itemData.system.containerId = belt.id;
             itemData.system.equipped = false;
@@ -3478,12 +4488,22 @@ _clothingSlot(itemLike) {
     'Sack, Large':    ['slungable'],
   };
 
-  _isItemAllowedInContainer(itemData, container) {
+  _isItemAllowedInContainer(itemData, container, { excludeItemId = null } = {}) {
     if (['ability', 'spell'].includes(itemData.type)) return { allowed: false, reason: 'Abilities and spells are not physical container contents.' };
+    const backpackRejection = getBackpackStorageRejection(itemData, container, this.actor?.items);
+    if (backpackRejection) return { allowed: false, reason: backpackRejection };
+    const sackRejection = getSackStorageRejection(itemData, container, this.actor?.items);
+    if (sackRejection) return { allowed: false, reason: sackRejection };
+    const saddleRejection = getSaddleStorageRejection(itemData, container, this.actor?.items);
+    if (saddleRejection) return { allowed: false, reason: saddleRejection };
     // Sling containers (Baldric, Axe Sling, etc.) cannot be stored in any container
     if (itemData.type === 'container' && (itemData.system?.tags || []).includes('sling')) {
       return { allowed: false, reason: `${itemData.name} cannot be stored in a container.` };
     }
+    const pouchRejection = pouchStorageRejection(itemData, container);
+    if (pouchRejection) return { allowed: false, reason: pouchRejection };
+    const clothingRejection = clothingStorageRejection(itemData, container);
+    if (clothingRejection) return { allowed: false, reason: clothingRejection };
 
     // Item-side allowlist — oversized gear (Barding, Greatswords, a sword's own Scabbard) that
     // only fits in specific named containers (e.g. Cart/Wagon) rather than any container with
@@ -3510,7 +4530,9 @@ _clothingSlot(itemLike) {
     // Check blockedTypes — blacklist by tag, weaponType, or Foundry item type.
     // Uses instance data (container.system.blockedTypes) when present; falls back to the
     // BUILT_IN_BLOCKED_TYPES table so rules apply to actors that pre-date the refresh macro.
-    const blockedTypes = container.system?.blockedTypes ?? OspActorSheetCharacter.BUILT_IN_BLOCKED_TYPES[container.name];
+    const blockedTypes = container.system?.blockedTypes ?? (isBackpack(container)
+      ? OspActorSheetCharacter.BUILT_IN_BLOCKED_TYPES.Backpack
+      : OspActorSheetCharacter.BUILT_IN_BLOCKED_TYPES[container.name]);
     if (blockedTypes?.length > 0) {
       const matchedBlock = blockedTypes.find(t => matchesContainerType(itemData, t));
       if (matchedBlock) {
@@ -3537,10 +4559,39 @@ _clothingSlot(itemLike) {
     // Check maxItems
     const maxItems = container.system?.maxItems || 0;
     if (maxItems > 0) {
+      const isWarhammerSling = container.name === 'Warhammer Sling';
+      const candidateId = itemData._id ?? itemData.id;
+      const isWarhammerSlingSelfDrop = isWarhammerSling && this.actor.items.some(i =>
+        i.id === candidateId && i.system.containerId === container.id && !i.system.lashed
+      );
       const currentCount = this.actor.items.filter(i =>
-        i.system.containerId === container.id && !i.system.lashed
+        i.id !== excludeItemId && i.system.containerId === container.id && !i.system.lashed
       ).length;
-      if (currentCount >= maxItems) {
+      // A Warhammer Sling is a physical single-weapon harness, not a stackable holder.
+      // Keep the ordinary stack-merge behavior for legacy carriers, but never let a second
+      // Warhammer or a multi-quantity drop bypass this sling's one-item limit. A self-drop of
+      // the same existing item remains valid when it is still a single Warhammer.
+      if (isWarhammerSling) {
+        const requestedQuantity = Number(itemData.system?.quantity) || 1;
+        if (requestedQuantity > 1) {
+          return { allowed: false, reason: `${container.name} can hold only one Warhammer.` };
+        }
+        const occupiedByOtherItem = this.actor.items.some(i =>
+          i.id !== candidateId && i.id !== excludeItemId && i.system.containerId === container.id &&
+          !i.system.lashed && !i.system.equipped
+        );
+        if (occupiedByOtherItem) {
+          return { allowed: false, reason: `${container.name} already holds a Warhammer.` };
+        }
+      }
+      // An identical stack can merge into a full container without consuming a new
+      // slot. Check this before rejecting on maxItems, while capacity and allowlists
+      // remain authoritative below/in the quantity move path.
+      const hasStackMatch = this.actor.items.some(i =>
+        i.id !== itemData._id && i.id !== excludeItemId && i.system.containerId === container.id &&
+        !i.system.equipped && !i.system.lashed && canStackItems(i, itemData)
+      );
+      if (currentCount >= maxItems && !hasStackMatch && !isWarhammerSlingSelfDrop) {
         return { allowed: false, reason: `${container.name} is full (holds ${maxItems} item${maxItems > 1 ? 's' : ''} max).` };
       }
     }
@@ -3690,6 +4741,22 @@ _clothingSlot(itemLike) {
     return check.allowed ? { valid: true } : { valid: false, reason: check.reason };
   }
 
+  _getBodyDropValidity() {
+    const draggedItem = this._getDraggedItem();
+    if (!draggedItem) return null;
+    const isReordering = draggedItem.actor?.id === this.actor.id;
+    if (this._isStoreLocked(isReordering)) {
+      return { valid: false, reason: 'The store is locked — you cannot add items to your inventory right now.' };
+    }
+    if (draggedItem.type !== 'clothing' && !isBodyWearAccessory(draggedItem)) {
+      return { valid: false, reason: 'Only clothing or a Holy Symbol can be worn in the Body section.' };
+    }
+    if (isBodyWearAccessory(draggedItem)) return { valid: true };
+    return this._canWearOpenSpace(draggedItem, isReordering ? draggedItem.id : null)
+      ? { valid: true }
+      : { valid: false, reason: clothingWearRejection(draggedItem, this.actor.items, { excludeId: isReordering ? draggedItem.id : null }) || `${draggedItem.name} cannot be worn because that clothing slot is already occupied.` };
+  }
+
   /**
    * Wire a gear-tab element as a drop target with validity-based highlighting.
    * Uses relatedTarget for accurate entry/exit detection — no counter needed, no stopPropagation.
@@ -3772,7 +4839,6 @@ _clothingSlot(itemLike) {
 
     const noStoreReason = this._getNoStoreRejection(itemDataEarly, targetContainer);
     if (noStoreReason) return { valid: false, reason: noStoreReason };
-
     if (this._isStoreLocked(isReordering)) {
       return { valid: false, reason: 'The store is locked — you cannot add items to your inventory right now.' };
     }
@@ -3813,9 +4879,9 @@ _clothingSlot(itemLike) {
       }
       const usedSlots = this.actor.items
         .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== draggedItem.id)
-        .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-      const itemSlotCost = draggedItem.system?.slotCost || 1;
-      if (usedSlots + itemSlotCost > targetLashSlots) {
+        .reduce((sum, i) => sum + getLashSlotCost(i, targetContainer), 0);
+      const itemSlotCost = getLashSlotCost(draggedItem, targetContainer);
+      if (itemSlotCost > 0 && usedSlots + itemSlotCost > targetLashSlots) {
         return { valid: false, reason: `${targetContainer.name} has no free lash slots.` };
       }
       return { valid: true };
@@ -3823,22 +4889,47 @@ _clothingSlot(itemLike) {
 
     // Matches _onDropItem: honor an explicit lashable:false opt-out instead of treating every
     // weapon as lash-eligible.
-    const isWeaponLashCandidate = draggedItem.type === 'weapon' && draggedItem.system?.lashable !== false;
+    const backpackLash = backpackLashDecision(draggedItem, targetContainer, this.actor?.items);
+    const beltToolLash = beltToolLashDecision(draggedItem, targetContainer);
+    const arrowBundleLash = getArrowBundleLashDecision(draggedItem, targetContainer);
+    const torchBundleLash = getTorchBundleLashDecision(draggedItem, targetContainer);
+    const boltBundleLash = getBoltBundleLashDecision(draggedItem, targetContainer);
+    if (beltToolLash.allowed === false && targetLashSlots > 0) return { valid: false, reason: beltToolLash.reason };
+    const isArrowBundleLashCandidate = arrowBundleLash.allowed === true;
+    const isTorchBundleLashCandidate = torchBundleLash.allowed === true;
+    const isBoltBundleLashCandidate = boltBundleLash.allowed === true;
+    if (arrowBundleLash.allowed === false && targetLashSlots > 0) return { valid: false, reason: arrowBundleLash.reason };
+    if (torchBundleLash.allowed === false && targetLashSlots > 0) return { valid: false, reason: torchBundleLash.reason };
+    if (boltBundleLash.allowed === false && targetLashSlots > 0) return { valid: false, reason: boltBundleLash.reason };
+    if (backpackLash.allowed !== true && isBackpackInternalForbidden(itemDataEarly, targetContainer, this.actor?.items)) {
+      return { valid: false, reason: `${itemDataEarly.name} cannot be stored inside a Backpack; lash it externally.` };
+    }
+    if (backpackLash.allowed === false && isBackpack(targetContainer) &&
+        (!isRollableGarment(draggedItem) || this._gearMoveMode === 'lash')) return { valid: false, reason: backpackLash.reason };
+    const isBackpackLashCandidate = backpackLash.allowed === true;
+    const isWeaponLashCandidate = draggedItem.type === 'weapon' && (draggedItem.system?.lashable !== false || isBackpackLashCandidate);
     // Sacks are normally carried in hand or stored, never lashed — except directly onto a
     // Saddle/Saddle, Pack (matches _onDropItem's isSackOntoSaddle exception).
     const isSackOntoSaddle = HAND_CARRY_CONTAINERS.has(draggedItem.name) && SADDLE_LASH_HOSTS.has(targetContainer.name);
+    const isHelmet = draggedItem.type === 'armor' && draggedItem.system?.type === 'helmet';
+    const isShield = isShieldItem(draggedItem);
     const isFlaggedLashable = draggedItem.type !== 'weapon' &&
-      (draggedItem.system?.lashable === true || (draggedItem.system?.slotCost || 0) > 0 || isSackOntoSaddle);
+      (isHelmet || isShield || isArrowBundleLashCandidate || isTorchBundleLashCandidate || isBoltBundleLashCandidate || isBackpackLashCandidate || draggedItem.system?.lashable === true || (draggedItem.system?.slotCost || 0) > 0 || isSackOntoSaddle);
 
-    if (targetLashSlots > 0 && (isWeaponLashCandidate || isFlaggedLashable)) {
+    if (targetLashSlots > 0 && (isWeaponLashCandidate || isFlaggedLashable) &&
+        (!isHelmet || targetContainer.type === 'container') &&
+        (!isShield || isShieldLashingHost(targetContainer))) {
       let lashReason = null;
-      if (targetContainer.type === 'clothing' && !targetContainer.system.equipped) {
+      if (backpackLash.allowed === false) {
+        lashReason = backpackLash.reason;
+      } else if (targetContainer.type === 'clothing' && !targetContainer.system.equipped) {
         lashReason = `${targetContainer.name} must be worn to attach items.`;
       } else if (draggedItem.type === 'weapon') {
+        if (backpackLash.allowed === false) lashReason = backpackLash.reason;
         const isSlungOnly = (draggedItem.name || '').toLowerCase().includes('crossbow') ||
           (draggedTags.includes('missile') && draggedTags.includes('two-handed')) ||
           draggedTags.includes('sling');
-        if (isSlungOnly) {
+        if (!lashReason && isSlungOnly && !isBackpackLashCandidate) {
           lashReason = `${draggedItem.name} cannot be lashed — sling it instead.`;
         } else {
           const allowedSizes = targetContainer.system.lashAllowedSizes || [];
@@ -3851,17 +4942,15 @@ _clothingSlot(itemLike) {
       if (!lashReason) {
         // Exclude draggedItem itself — when reordering an already-lashed item its slot is
         // already counted.
-        const usedSlots = this.actor.items
-          .filter(i => i.system.containerId === targetContainer.id && i.system.lashed && i.id !== draggedItem.id)
-          .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-        const itemSlotCost = draggedItem.system?.slotCost || 1;
-        if (usedSlots + itemSlotCost > targetLashSlots) {
+        const usedSlots = lashSlotUsage(inventoryItems(this.actor), targetContainer.id, draggedItem.id, targetContainer);
+        const itemSlotCost = getLashSlotCost(draggedItem, targetContainer);
+        if (itemSlotCost > 0 && usedSlots + itemSlotCost > targetLashSlots) {
           lashReason = `${targetContainer.name} has no free lash slots.`;
         }
       }
 
       if (!lashReason) return { valid: true };
-      if (!targetHasCapacity) return { valid: false, reason: lashReason };
+      if (!targetHasCapacity || isArrowBundleLashCandidate || isTorchBundleLashCandidate) return { valid: false, reason: lashReason };
       // else: target also has capacity — fall through to the ordinary storage check below.
     }
 
@@ -3883,9 +4972,19 @@ _clothingSlot(itemLike) {
     if (!isStorage) return { valid: false, reason: `${targetContainer.name} cannot store items.` };
 
     const itemData = draggedItem.toObject();
+    // A stack may move one Warhammer into the sling through the quantity dialog.
+    // Hover previews that one-item option; the actual drop validates the chosen quantity.
+    if (targetContainer.name === 'Warhammer Sling') itemData.system.quantity = 1;
 
     const typeCheck = this._isItemAllowedInContainer(itemData, targetContainer);
     if (!typeCheck.allowed) return { valid: false, reason: typeCheck.reason };
+
+    if (isProtectedArrowBundle(draggedItem) && isArrowQuiver(targetContainer) && isReordering) {
+      const availableArrows = this._arrowQuiverAvailableQuantity(draggedItem, targetContainer, draggedItem.id);
+      return availableArrows > 0
+        ? { valid: true }
+        : { valid: false, reason: `Not enough space in ${targetContainer.name}.` };
+    }
 
     // Use quantity 1 for hover check so a partial-stack move shows valid when any space exists
     const alreadyInContainer = isReordering && draggedItem.system.containerId === targetContainer.id;
@@ -3924,7 +5023,70 @@ _clothingSlot(itemLike) {
   }
 
   _itemIsDagger(itemData) {
-    return (itemData.system?.tags || []).includes('dagger');
+    return !this._itemIsBeltLoopWeapon(itemData) && (itemData.system?.tags || []).includes('dagger');
+  }
+
+  _preflightDaggerClothingPlacement(draggedItem, itemData, targetContainer) {
+    if (!isCapacityClothing(targetContainer)) return { valid: true };
+    const current = [...this.actor.items].map(item => item.toObject ? item.toObject() : item);
+    const sourceScabbard = draggedItem?.actor?.id === this.actor.id
+      ? this.actor.items.get(draggedItem.system?.containerId)
+      : null;
+    const reusableSourceScabbard = sourceScabbard?.name === 'Scabbard, Dagger' ? sourceScabbard : null;
+    const existingScabbard = this.actor.items.find(item =>
+      item.name === 'Scabbard, Dagger' && item.system.containerId === targetContainer.id
+    );
+    const sourceData = reusableSourceScabbard?.toObject?.() ?? null;
+    const scabbardData = existingScabbard?.toObject?.()
+      ?? sourceData
+      ?? { _id: '__prospective-dagger-scabbard__', name: 'Scabbard, Dagger', type: 'container',
+        system: { ...this._getSwordCarrierTemplate('Scabbard, Dagger').system, quantity: 1 } };
+    const scabbardId = scabbardData._id ?? scabbardData.id;
+    const daggerId = draggedItem?.id ?? itemData._id;
+    const prospective = current.map(item => ({ ...item, system: { ...(item.system || {}) } }));
+    const prospectiveDagger = prospective.find(item => (item._id ?? item.id) === daggerId);
+    if (prospectiveDagger) {
+      prospectiveDagger.system.containerId = scabbardId;
+      prospectiveDagger.system.lashed = false;
+      prospectiveDagger.system.equipped = false;
+    } else prospective.push({ ...itemData, _id: daggerId, system: { ...(itemData.system || {}), containerId: scabbardId, lashed: false, equipped: false } });
+    if (existingScabbard) {
+      // The dagger moves into the already-present sheath; the source sheath, if any, is
+      // removed by the commit path and therefore must not count toward the prospective load.
+      if (reusableSourceScabbard && reusableSourceScabbard.id !== existingScabbard.id) {
+        const index = prospective.findIndex(item => (item._id ?? item.id) === reusableSourceScabbard.id);
+        if (index >= 0) prospective.splice(index, 1);
+      }
+    } else if (reusableSourceScabbard) {
+      const prospectiveScabbard = prospective.find(item => (item._id ?? item.id) === reusableSourceScabbard.id);
+      if (prospectiveScabbard) {
+        prospectiveScabbard.system.containerId = targetContainer.id;
+        prospectiveScabbard.system.lashed = false;
+        prospectiveScabbard.system.equipped = false;
+      }
+    } else {
+      scabbardData.system = { ...(scabbardData.system || {}), containerId: targetContainer.id, lashed: false, equipped: false };
+      prospective.push(scabbardData);
+    }
+    const chosen = existingScabbard || reusableSourceScabbard || scabbardData;
+    const scabbardCheck = this._isItemAllowedInContainer(chosen.toObject ? chosen.toObject() : chosen, targetContainer);
+    if (!scabbardCheck.allowed) return scabbardCheck;
+    const daggerCheck = this._isItemAllowedInContainer(itemData, chosen, { excludeItemId: daggerId });
+    if (!daggerCheck.allowed) return daggerCheck;
+    let cursor = targetContainer;
+    const visited = new Set();
+    while (cursor) {
+      if (visited.has(cursor.id)) break;
+      visited.add(cursor.id);
+      if (cursor.system?.lashed || cursor.system?.hideCapacity === true) break;
+      const limit = capacityValue(cursor.system?.capacity);
+      if (limit > 0 && storageFootprint(cursor, prospective, { includeRoot: false }) > limit) {
+        return { valid: false, reason: `Not enough space in ${cursor.name} for a dagger and scabbard.` };
+      }
+      const parentId = cursor.system?.containerId;
+      cursor = parentId ? this.actor.items.get(parentId) : null;
+    }
+    return { valid: true };
   }
 
   /**
@@ -3945,7 +5107,8 @@ _clothingSlot(itemLike) {
       (targetContainer.system?.lashSlots || 0) > 0 && (isSword || isPureLashMount)
       ? targetContainer : null;
 
-    if (!targetContainer || targetContainer.type !== "container" || explicitLashHost) {
+    const daggerClothingTarget = isDagger && isCapacityClothing(targetContainer);
+    if (!targetContainer || (targetContainer.type !== "container" && !daggerClothingTarget) || explicitLashHost) {
       const wouldProvision = await this._autoProvisionSwordCarrier(draggedItem, itemData, explicitLashHost, true);
       return wouldProvision ? { valid: true } : { valid: false, reason: `No available carrier for ${itemData.name}.` };
     }
@@ -3962,6 +5125,10 @@ _clothingSlot(itemLike) {
     if (isDagger && !(targetContainer.system?.tags || []).some(t => ['weapon-storage', 'scabbard', 'sling'].includes(t))) {
       // Dagger on a general container: predict find-or-create of a Scabbard, Dagger stored
       // (not lashed) via ordinary capacity, mirroring _findOrCreateScabbardInContainer.
+      if (daggerClothingTarget) {
+        const preflight = this._preflightDaggerClothingPlacement(draggedItem, itemData, targetContainer);
+        if (!preflight.valid) return preflight;
+      }
       const existing = this.actor.items.find(
         i => i.name === 'Scabbard, Dagger' && i.system.containerId === targetContainer.id
       );
@@ -4023,7 +5190,7 @@ _clothingSlot(itemLike) {
     const templates = {
       'Scabbard, Dagger': {
         img: 'systems/osp-houserules/assets/thumbs/images/gear/scabbard-small_thumb.webp',
-        system: { description: '', cost: 3, unitWeight: 0.5, storedSize: 2, quantity: 1,
+        system: { description: '', cost: 3, unitWeight: 0.5, storedSize: 0.5, quantity: 1,
           slotCost: 1, lashable: true, lashed: false, equipped: false, containerId: null,
           tags: ['weapon-storage','scabbard'], capacity: 4, containerSize: 'small',
           hideCapacity: true, maxItems: 1, lashSlots: 0,
@@ -4039,11 +5206,11 @@ _clothingSlot(itemLike) {
           tags: ['weapon-storage','scabbard'], capacity: 4, containerSize: 'small',
           hideCapacity: true, maxItems: 1, lashSlots: 0,
           allowedTypes: [], allowedSizes: [],
-          allowedNames: ['Longsword','Broadsword','Bastard Sword','Khopesh','Shortsword','Rapier'] }
+          allowedNames: ['Longsword','Broadsword','Bastard Sword','Khopesh','Shortsword','Rapier','Falchion'] }
       },
       'Sword Frog': {
         img: 'systems/osp-houserules/assets/thumbs/images/gear/sword-frog_thumb.webp',
-        system: { description: '', cost: 4, unitWeight: 0.5, storedSize: 2, quantity: 1,
+        system: { description: '', cost: 4, unitWeight: 0.5, storedSize: 1, quantity: 1,
           slotCost: 2, lashable: true, lashed: false, equipped: false, containerId: null,
           tags: ['weapon-storage','scabbard','bulky'], capacity: 4, containerSize: 'small',
           hideCapacity: true, maxItems: 1, lashSlots: 0,
@@ -4051,7 +5218,7 @@ _clothingSlot(itemLike) {
       },
       'Baldric': {
         img: 'systems/osp-houserules/assets/thumbs/images/gear/baldric_thumb.webp',
-        system: { description: '', cost: 10, unitWeight: 2, storedSize: 6, quantity: 1,
+        system: { description: '', cost: 10, unitWeight: 2, storedSize: 3, quantity: 1,
           slotCost: 1, lashable: false, lashed: false, equipped: false, containerId: null,
           tags: ['weapon-storage','sling','slungable'], capacity: 8, containerSize: 'small',
           hideCapacity: true, maxItems: 1, lashSlots: 0,
@@ -4059,12 +5226,12 @@ _clothingSlot(itemLike) {
       },
       'Belt Loop': {
         img: 'systems/osp-houserules/assets/thumbs/images/gear/belt-loop_thumb.webp',
-        system: { description: '', cost: 2, unitWeight: 0.25, storedSize: 2, quantity: 1,
+        system: { description: '', cost: 2, unitWeight: 0.25, storedSize: 1, quantity: 1,
           slotCost: 2, lashable: true, lashed: false, equipped: false, containerId: null,
           tags: ['bulky'], capacity: 4, containerSize: 'small',
           hideCapacity: true, maxItems: 1, lashSlots: 0,
           allowedTypes: [], allowedSizes: [],
-          allowedNames: ['Hand Axe','Light Hammer','Warhammer','Waterskin','Mace','Morning Star','Flail'] }
+          allowedNames: ['Hand Axe','Light Hammer','Warhammer','Waterskin','Mace','Morning Star','Flail', "Butcher's Cleaver"] }
       },
     };
     return templates[name];
@@ -4087,19 +5254,18 @@ _clothingSlot(itemLike) {
       if (!dryRun) this._rejectDropPlacement('Cannot equip belt loop: this character does not have a belt.');
       return null;
     }
-    const baseName = (itemData.name || '').replace(/\s*[+-]\d+$/, '');
     // Reuse an existing loop on the belt that's empty (excluding the item being moved, so an
     // item dragged out of its own loop and back can return to it) and actually accepts this item.
     const existing = this.actor.items.find(i =>
       i.name === 'Belt Loop' && i.system.containerId === belt.id && i.system.lashed &&
-      (i.system.allowedNames || []).includes(baseName) &&
+      matchesContainerAllowedNames(itemData, i) &&
       !this.actor.items.some(j => j.system.containerId === i.id && j.id !== item?.id)
     );
     if (existing) return dryRun ? true : existing;
 
     const tmpl = this._getSwordCarrierTemplate('Belt Loop');
     const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
-    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+    const usedSlots = lashedItems.reduce((sum, i) => sum + getLashSlotCost(i), 0);
     const neededSlots = tmpl.system.slotCost ?? 1;
     if (usedSlots + neededSlots > (belt.system.lashSlots || 0)) {
       if (!dryRun) this._rejectDropPlacement(`Cannot add Belt Loop: ${belt.name} is full (${usedSlots}/${belt.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
@@ -4149,7 +5315,7 @@ _clothingSlot(itemLike) {
       if (sourceScabbard && sourceScabbard.name === scabbardName &&
           !(sourceScabbard.system.containerId === host.id && sourceScabbard.system.lashed)) {
         const lashedItems = this.actor.items.filter(i => i.system.containerId === host.id && i.system.lashed);
-        const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+        const usedSlots = lashedItems.reduce((sum, i) => sum + getLashSlotCost(i), 0);
         const neededSlots = tmpl?.system?.slotCost ?? 1;
         if (usedSlots + neededSlots <= (host.system.lashSlots || 0)) {
           if (dryRun) return true;
@@ -4165,7 +5331,7 @@ _clothingSlot(itemLike) {
     // an item that explicitly sets slotCost: 0 (e.g. Scabbard, Sword — free once the Sword
     // Frog is out of the picture) is still honored via ?? rather than ||.
     const lashedItems = this.actor.items.filter(i => i.system.containerId === host.id && i.system.lashed);
-    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+    const usedSlots = lashedItems.reduce((sum, i) => sum + getLashSlotCost(i), 0);
     const neededSlots = tmpl.system.slotCost ?? 1;
     if (usedSlots + neededSlots > (host.system.lashSlots || 0)) {
       if (!dryRun) this._rejectDropPlacement(`Cannot create ${scabbardName}: ${host.name} is full (${usedSlots}/${host.system.lashSlots} slots used, need ${neededSlots} more). Remove an attachment to make room.`);
@@ -4240,7 +5406,7 @@ _clothingSlot(itemLike) {
     // No usable frog — check host capacity for a new Sword Frog (slotCost 2, bulky)
     const lashedItems = this.actor.items.filter(i => i.system.containerId === host.id && i.system.lashed);
     const frogTmpl = this._getSwordCarrierTemplate('Sword Frog');
-    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+    const usedSlots = lashedItems.reduce((sum, i) => sum + getLashSlotCost(i), 0);
     if (usedSlots + 2 > (host.system.lashSlots || 0)) {
       if (!dryRun) this._rejectDropPlacement(`Cannot equip scabbard: ${host.name} is full.`);
       return null;
@@ -4279,7 +5445,7 @@ _clothingSlot(itemLike) {
     // All frogs occupied — try to create a new one
     const frogTmpl = this._getSwordCarrierTemplate('Sword Frog');
     const lashedItems = this.actor.items.filter(i => i.system.containerId === belt.id && i.system.lashed);
-    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
+    const usedSlots = lashedItems.reduce((sum, i) => sum + getLashSlotCost(i), 0);
     if (usedSlots + 2 > (belt.system.lashSlots || 0)) {
       this._rejectDropPlacement('Cannot add Sword Frog: belt is full. Remove an attachment to make room.');
       return null;
@@ -4327,9 +5493,7 @@ _clothingSlot(itemLike) {
       return false;
     }
 
-    const usedCapacity = this._getUsedCapacity(container);
-    const itemSize = this._getEffectiveDropSize(itemData);
-    return (usedCapacity + itemSize) <= capacity;
+    return hasContainerSpace(container, itemData, this.actor.items);
   }
 
   /**
@@ -4339,6 +5503,15 @@ _clothingSlot(itemLike) {
     const maxCapacity = capacityValue(container.system?.capacity);
     const usedCapacity = this._getUsedCapacity(container);
     return maxCapacity - usedCapacity;
+  }
+
+  _arrowQuiverAvailableQuantity(item, quiver, excludeId = null) {
+    const capacity = capacityValue(quiver?.system?.capacity);
+    const all = inventoryItems(this.actor).filter(candidate => candidate.id !== excludeId);
+    const available = Math.max(0, capacity - usedBulk(quiver, all));
+    const unit = Number(item?.system?.storedSize);
+    if (!(unit > 0)) return Number.POSITIVE_INFINITY;
+    return Math.max(0, Math.floor((available + 1e-9) / unit));
   }
 
   /**
@@ -4369,7 +5542,7 @@ _clothingSlot(itemLike) {
     if (isStorageTarget && (itemData.system?.tags || []).includes('no-store')) {
       return `${itemData.name} is too large to be stored in a container.`;
     }
-    const isVehicleTarget = targetContainer && (targetContainer.system?.tags || []).includes('vehicle');
+    const isVehicleTarget = targetContainer && ((targetContainer.system?.tags || []).includes('vehicle') || getVehicleKind(targetContainer) !== 'none');
     if (isVehicleTarget && (itemData.system?.tags || []).includes('no-vehicle-store')) {
       return `${itemData.name} cannot be stowed inside ${targetContainer.name}.`;
     }
@@ -4433,8 +5606,8 @@ _clothingSlot(itemLike) {
         const weaponSize = itemData.system?.size;
         if (!weaponSize || !c.system.lashAllowedSizes.includes(weaponSize)) return false;
       }
-      const used = this.actor.items.filter(i => i.system.containerId === c.id && i.system.lashed && i.id !== (itemData?.id ?? itemData?._id)).reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-      return used + (itemData?.system?.slotCost || 1) <= lashSlots;
+      const used = this.actor.items.filter(i => i.system.containerId === c.id && i.system.lashed && i.id !== (itemData?.id ?? itemData?._id)).reduce((sum, i) => sum + getLashSlotCost(i, c), 0);
+      return getLashSlotCost(itemData, c) === 0 || used + getLashSlotCost(itemData, c) <= lashSlots;
     }) ?? null;
   }
 
@@ -4446,7 +5619,7 @@ _clothingSlot(itemLike) {
 
   _getEffectiveStoredSize(item) { return storedBulk(item); }
 
-  _getEffectiveDropSize(itemData) { return storedBulk(itemData, { invalidPenalty: true }); }
+  _getEffectiveDropSize(itemData) { return getEffectiveDropSize(itemData, this.actor.items); }
 
   // Recursively sums storedSize of all items inside a container (by id), including deep descendants.
   _getTotalNestedSize(containerId) {
@@ -4528,7 +5701,7 @@ _clothingSlot(itemLike) {
                   await item.delete();
                   this._dropInfo(`Merged ${totalQuantity}× ${itemData.name} with existing stack.`);
                 } else {
-                  await item.update({ 'system.containerId': itemData.system.containerId });
+                  await item.update({ 'system.containerId': targetContainerId });
                 }
               } else {
                 if (matchingItem) {
@@ -4687,7 +5860,7 @@ _clothingSlot(itemLike) {
 
     const availableSpace = this._getAvailableSpace(targetContainer);
     const storedSize = parseFloat(itemData.system.storedSize) || 0.04;
-    const maxCoins = Math.floor(availableSpace / storedSize);
+    const maxCoins = Math.floor((availableSpace + 1e-9) / storedSize);
 
     // Show dialog to ask how many coins to add
     return new Promise((resolve) => {
@@ -4740,7 +5913,7 @@ _clothingSlot(itemLike) {
    */
   async _resolveCoinMove(item, itemData, targetContainer, quantity) {
     const storedSize = parseFloat(itemData.system.storedSize) || 0.04;
-    const maxCoins = Math.floor(this._getAvailableSpace(targetContainer) / storedSize);
+    const maxCoins = Math.floor((this._getAvailableSpace(targetContainer) + 1e-9) / storedSize);
 
     if (!validDropQuantity(quantity, item.actor ? item.system.quantity : Infinity)) {
       this._rejectDropPlacement("Quantity must be greater than 0");
@@ -4765,7 +5938,7 @@ _clothingSlot(itemLike) {
       const additionalSpace = storedSize * quantity;
       const availableSpace = this._getAvailableSpace(targetContainer);
 
-      if (additionalSpace > availableSpace) {
+      if (additionalSpace > availableSpace + 1e-9) {
         this._rejectDropPlacement(`Not enough space in ${targetContainer.name}. Need ${additionalSpace} slots, have ${availableSpace} available.`);
         return false;
       }
@@ -4894,6 +6067,28 @@ _clothingSlot(itemLike) {
         ? `Quantity must be between 1 and ${totalQuantity}`
         : "Quantity must be greater than 0");
       return false;
+    }
+    if ((isProtectedBoltBundle(item) || isProtectedBoltBundle(itemData)) && isBoltCase(targetContainer)) {
+      const available = this._getAvailableSpace(targetContainer);
+      const unit = Number(itemData.system?.storedSize) || 0;
+      const fit = unit > 0 ? Math.min(totalQuantity, Math.floor((available + 1e-9) / unit)) : totalQuantity;
+      const moved = Math.min(quantity, fit);
+      if (moved < 1) { this._rejectDropPlacement(`Not enough space in ${targetContainer.name}.`); return false; }
+      const loose = prepareBoltCasePlacement(itemData, targetContainer);
+      if (loose.flags?.['osp-houserules']) {
+        delete loose.flags['osp-houserules'].protectedBoltBundle;
+        if (!Object.keys(loose.flags['osp-houserules']).length) delete loose.flags['osp-houserules'];
+      }
+      loose.system.quantity = moved; loose.system.containerId = targetContainer.id; loose.system.lashed = false; loose.system.equipped = false; delete loose._id;
+      const partial = moved < totalQuantity;
+      if (item.actor && item.actor.id === this.actor.id) {
+        if (partial) { await item.update({ 'system.quantity': totalQuantity - moved }); await this.actor.createEmbeddedDocuments('Item', [loose]); }
+        else { await item.update({ 'system.containerId': targetContainer.id, 'system.lashed': false, 'system.equipped': false, [`flags.osp-houserules.-=${'protectedBoltBundle'}`]: null }); }
+      } else if (item.actor) {
+        if (partial) await item.update({ 'system.quantity': totalQuantity - moved }); else await item.actor.deleteEmbeddedDocuments('Item', [item.id]);
+        await this.actor.createEmbeddedDocuments('Item', [loose]);
+      } else await this.actor.createEmbeddedDocuments('Item', [loose]);
+      this._dropInfo(`Unpacked ${moved} ${itemData.name} into ${targetContainer.name}.`); return true;
     }
 
     // Check if there's already a matching stack of this item in the target container

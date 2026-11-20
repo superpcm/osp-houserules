@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   JOURNAL_FLAG, createdItemChange, flagChange, getPendingTransaction, itemChange,
   recoverTransaction, runTransaction, settingChange, transactionBlock,
+  journalStableChange, snapshotJournal,
 } from "./transaction-journal.js";
 
 function makeItem(data) {
@@ -29,6 +30,26 @@ beforeEach(() => {
 });
 
 describe("transaction journal", () => {
+  it("commits and restores the stable flag without touching other journal metadata", async () => {
+    const original = { version: 1, name: 'Westford Stables', accessible: false, revision: 0 };
+    const document = {
+      id: 'stable1', uuid: 'JournalEntry.stable1', name: original.name,
+      ownership: { default: 0 }, flags: { 'osp-houserules': { stable: structuredClone(original), unrelated: 'keep' } },
+      toObject() { return { _id: this.id, name: this.name, ownership: this.ownership, flags: this.flags }; },
+      async update(changes) { this.name = changes.name; this.ownership = structuredClone(changes.ownership); this.flags['osp-houserules'].stable = structuredClone(changes['flags.osp-houserules.stable']); },
+    };
+    game.journal = new Map([[document.id, document]]);
+    const before = snapshotJournal(document);
+    expect(before).toMatchObject({ flag: 'stable', flags: original });
+    const after = { ...before, flags: { ...original, revision: 1 } };
+    const descriptor = journalStableChange(document, after);
+    expect((await runTransaction(actor, { label: 'stable edit', changes: [descriptor] })).success).toBe(true);
+    expect(document.flags['osp-houserules'].stable.revision).toBe(1);
+    expect(document.flags['osp-houserules'].unrelated).toBe('keep');
+    await actor.setFlag('osp-houserules', JOURNAL_FLAG, { version: 1, id: 'stable-recovery', label: 'stable edit', createdAt: 1, changes: [descriptor, flagChange(actor, 'stablePayment', 2)] });
+    expect((await recoverTransaction(actor)).success).toBe(true);
+    expect(snapshotJournal(document)).toEqual(before);
+  });
   it("journals, applies, verifies, and clears a successful flag transaction", async () => {
     const change = flagChange(actor, "coins", 10);
     const result = await runTransaction(actor, { label: "credit", changes: [change] });

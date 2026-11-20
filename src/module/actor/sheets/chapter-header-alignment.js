@@ -1,4 +1,9 @@
+import { measureSkillLabelInk } from './skill-label-ink.js';
+
 const OSP_CHAPTER_HEADER_TARGET = 90;
+const OSP_WRITING_TITLE_SUBTITLE_GAP = 4;
+const OSP_WRITING_SUBTITLE_BORDER_GAP = 6.65;
+const OSP_WRITING_PANEL_BOTTOM_TARGET = 674;
 
 const OSP_CHAPTER_HEADERS = {
   skills: ['.skill-tab-title', '.skill-tab-subtitle'],
@@ -22,7 +27,7 @@ function ospChapterVisible(element) {
   return rect.width !== 0 || rect.height !== 0;
 }
 
-function ospChapterInkTop(element, win) {
+function ospChapterInkMetrics(element, win) {
   const document = element.ownerDocument;
   const context = document?.createElement('canvas')?.getContext?.('2d');
   if (!context) return null;
@@ -45,7 +50,29 @@ function ospChapterInkTop(element, win) {
   context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
   const metrics = context.measureText(element.textContent.trim());
   const scale = ospChapterScale(element, win);
-  return baseline.getBoundingClientRect().top - metrics.actualBoundingBoxAscent * scale;
+  const baselineTop = baseline.getBoundingClientRect().top;
+  const ascent = Number(metrics.actualBoundingBoxAscent) || 0;
+  const descent = Number(metrics.actualBoundingBoxDescent) || 0;
+  // Use a descender-free title as the shared body-line reference. This keeps
+  // Background's lowercase "g" from pulling its header line down while still
+  // leaving the descender visible below the aligned body letters.
+  const canonicalBody = context.measureText('Character Notes');
+  const canonicalBodyDescent = Number(canonicalBody.actualBoundingBoxDescent) || 0;
+  const bodyBottom = baselineTop + canonicalBodyDescent * scale;
+  element.dataset.inkTop = String(baselineTop - ascent * scale);
+  element.dataset.inkBottom = String(baselineTop + descent * scale);
+  element.dataset.bodyBottom = String(bodyBottom);
+  element.dataset.titleBodyBottom = String(bodyBottom);
+  element.dataset.inkFont = context.font;
+  return {
+    top: baselineTop - ascent * scale,
+    bottom: baselineTop + descent * scale,
+    bodyBottom,
+  };
+}
+
+function ospChapterInkTop(element, win) {
+  return ospChapterInkMetrics(element, win)?.top ?? null;
 }
 
 function ospChapterScale(element, win) {
@@ -116,8 +143,8 @@ export function activateChapterHeaderAlignment(form, appRoot) {
   const win = ospChapterWindow(appRoot);
   const originals = new Map();
   const panelOriginals = new Map();
-  const panelTitleOffsets = new Set();
   const editorHeights = new Map();
+  const skillOriginals = new Map();
   const handwrittenOriginals = new Map();
   const listeners = [];
   let disposed = false;
@@ -139,29 +166,42 @@ export function activateChapterHeaderAlignment(form, appRoot) {
     tick(3);
   };
 
-  const apply = () => {
-    if (disposed) return;
-    const active = form.querySelector('.sheet-body > .tab.active');
+  const applyHandwrittenInk = active => {
     if (!active) return;
     const handwrittenColor = '#78694D';
+    const handwrittenEntries = [];
     for (const element of active.querySelectorAll?.('*') ?? []) {
       const computed = win?.getComputedStyle?.(element);
       const family = String(computed?.fontFamily ?? '').toLowerCase();
       if (!family.includes('handwritten')) continue;
-      const tagName = String(element.tagName ?? '').toLowerCase();
+      handwrittenEntries.push({
+        element,
+        tagName: String(element.tagName ?? '').toLowerCase(),
+        color: computed?.color,
+        fill: computed?.fill,
+      });
+    }
+    for (const { element, tagName, color, fill } of handwrittenEntries) {
       const state = handwrittenOriginals.get(element) ?? {};
       if (!Object.hasOwn(state, 'color')) {
         state.color = { value: element.style?.getPropertyValue?.('color') ?? '', priority: element.style?.getPropertyPriority?.('color') ?? '' };
       }
-      if (computed.color !== 'rgb(120, 105, 77)') element.style?.setProperty?.('color', handwrittenColor, 'important');
+      if (color !== 'rgb(120, 105, 77)') element.style?.setProperty?.('color', handwrittenColor, 'important');
       if (tagName === 'text') {
         if (!Object.hasOwn(state, 'fill')) {
           state.fill = { value: element.style?.getPropertyValue?.('fill') ?? '', priority: element.style?.getPropertyPriority?.('fill') ?? '' };
         }
-        if (computed.fill !== 'rgb(120, 105, 77)') element.style?.setProperty?.('fill', handwrittenColor, 'important');
+        if (fill !== 'rgb(120, 105, 77)') element.style?.setProperty?.('fill', handwrittenColor, 'important');
       }
       handwrittenOriginals.set(element, state);
     }
+  };
+
+  const apply = () => {
+    if (disposed) return;
+    const active = form.querySelector('.sheet-body > .tab.active');
+    if (!active) return;
+    applyHandwrittenInk(active);
     const tabName = active.dataset?.tab;
     const selectors = OSP_CHAPTER_HEADERS[tabName];
     if (!selectors) return;
@@ -170,7 +210,111 @@ export function activateChapterHeaderAlignment(form, appRoot) {
     // Wrapping either line can affect baseline layout; prepare both before measuring.
     for (const heading of headings) ospChapterInkTop(heading, win);
     const rootRect = appRoot.getBoundingClientRect();
-    if (tabName === 'background' || tabName === 'character') {
+
+    // Align the primary title first. Writing tabs use a shared title ink
+    // bottom so different glyphs still land on one visual baseline.
+    const primary = headings[0];
+    const primaryInkTop = ospChapterInkTop(primary, win);
+    if (!Number.isFinite(primaryInkTop) || !Number.isFinite(rootRect.top)) return;
+    const writingTab = ['character', 'details', 'background', 'notes'].includes(tabName);
+    const primaryMetrics = writingTab ? ospChapterInkMetrics(primary, win) : null;
+    let primaryDelta = rootRect.top + OSP_CHAPTER_HEADER_TARGET - primaryInkTop;
+    if (writingTab && primaryMetrics) {
+      const document = primary.ownerDocument;
+      const context = document?.createElement?.('canvas')?.getContext?.('2d');
+      const style = win.getComputedStyle(primary);
+      if (context) {
+        context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+        const canonical = context.measureText('Character Background');
+        const scale = ospChapterScale(primary, win);
+        const canonicalHeight = ((Number(canonical.actualBoundingBoxAscent) || 0)
+          + (Number(canonical.actualBoundingBoxDescent) || 0)) * scale;
+        primaryDelta = rootRect.top + OSP_CHAPTER_HEADER_TARGET + canonicalHeight - primaryMetrics.bodyBottom;
+      }
+    }
+    if (Math.abs(primaryDelta) >= 0.05) {
+      for (const heading of headings) {
+        if (!originals.has(heading)) originals.set(heading, ospChapterInlineState(heading));
+        const computed = win?.getComputedStyle?.(heading);
+        const currentTop = Number.parseFloat(computed?.top ?? heading.style?.top) || 0;
+        const scale = ospChapterScale(heading, win);
+        if (!(scale > 0 && Number.isFinite(scale))) continue;
+        if (computed.position === 'static') heading.style.setProperty('position', 'relative', 'important');
+        heading.style.setProperty('top', `${currentTop + primaryDelta / scale}px`, 'important');
+      }
+    }
+
+    let writingBorderTarget = null;
+    if (writingTab && headings.length > 1) {
+      const titleMetrics = ospChapterInkMetrics(headings[0], win);
+      const subtitle = headings[1];
+      const subtitleMetrics = ospChapterInkMetrics(subtitle, win);
+      const subtitleScale = ospChapterScale(subtitle, win);
+      if (titleMetrics && subtitleMetrics && subtitleScale > 0 && Number.isFinite(subtitleScale)) {
+        const subtitleDelta = titleMetrics.bodyBottom + OSP_WRITING_TITLE_SUBTITLE_GAP - subtitleMetrics.top;
+        if (Math.abs(subtitleDelta) >= 0.05) {
+          if (!originals.has(subtitle)) originals.set(subtitle, ospChapterInlineState(subtitle));
+          const computed = win?.getComputedStyle?.(subtitle);
+          const currentTop = Number.parseFloat(computed?.top ?? subtitle.style?.top) || 0;
+          if (computed.position === 'static') subtitle.style.setProperty('position', 'relative', 'important');
+          subtitle.style.setProperty('top', `${currentTop + subtitleDelta / subtitleScale}px`, 'important');
+        }
+        const alignedSubtitle = ospChapterInkMetrics(subtitle, win);
+        if (alignedSubtitle) writingBorderTarget = alignedSubtitle.bottom + OSP_WRITING_SUBTITLE_BORDER_GAP;
+      }
+    }
+
+    if (tabName === 'skills' && headings.length > 1) {
+      const subtitleMetrics = ospChapterInkMetrics(headings[1], win);
+      const svgContainer = active.querySelector('.cs-skill-svg-container');
+      const abilities = active.querySelector('.skill-abilities-section');
+      const labels = [...(svgContainer?.querySelectorAll?.('.cs-generated-skill-label') ?? [])];
+      const labelTops = labels.map(label => measureSkillLabelInk(label)?.top).filter(Number.isFinite);
+      if (subtitleMetrics && labelTops.length && svgContainer && abilities) {
+        const labelGap = svgContainer.dataset.skillStrip === "horizontal" ? 13 : 8;
+        const desiredTop = subtitleMetrics.bottom + labelGap;
+        const sectionDelta = desiredTop - Math.min(...labelTops);
+        const sectionScale = ospChapterScale(active, win);
+        if (sectionScale > 0 && Number.isFinite(sectionScale)) {
+          const residualLocalDelta = sectionDelta / sectionScale;
+          const previousLocalDelta = Number.parseFloat(svgContainer.style.getPropertyValue('--osp-skills-section-shift')) || 0;
+          const localDelta = previousLocalDelta + residualLocalDelta;
+          const shiftedSections = svgContainer.dataset.skillStrip === 'horizontal' ? [svgContainer] : [svgContainer, abilities];
+          for (const element of shiftedSections) {
+            if (!skillOriginals.has(element)) skillOriginals.set(element, {
+              kind: 'section',
+              top: element.style?.getPropertyValue?.('top') ?? '',
+              topPriority: element.style?.getPropertyPriority?.('top') ?? '',
+              marginTop: element.style?.getPropertyValue?.('margin-top') ?? '',
+              marginTopPriority: element.style?.getPropertyPriority?.('margin-top') ?? '',
+              shift: element.style?.getPropertyValue?.('--osp-skills-section-shift') ?? '',
+              shiftPriority: element.style?.getPropertyPriority?.('--osp-skills-section-shift') ?? '',
+            });
+          }
+          svgContainer.style.setProperty('--osp-skills-section-shift', `${localDelta}px`, 'important');
+          if (shiftedSections.includes(abilities)) abilities.style.setProperty('--osp-skills-section-shift', `${localDelta}px`, 'important');
+          for (const element of shiftedSections) {
+            const style = win.getComputedStyle(element);
+            const currentTop = Number.parseFloat(style.top) || 0;
+            element.style.setProperty('top', `${currentTop + residualLocalDelta}px`, 'important');
+          }
+          for (const target of active.querySelectorAll?.('.listening-group') ?? []) {
+            if (svgContainer.contains(target)) continue;
+            if (!skillOriginals.has(target)) skillOriginals.set(target, {
+              kind: 'target',
+              value: target.style?.getPropertyValue?.('--top') ?? '',
+              priority: target.style?.getPropertyPriority?.('--top') ?? '',
+            });
+            const currentTop = Number.parseFloat(win.getComputedStyle(target).getPropertyValue('--top')) || 0;
+            if (Math.abs(residualLocalDelta) > 0.01) target.style.setProperty('--top', `${currentTop + residualLocalDelta}px`, 'important');
+          }
+          svgContainer.dataset.sectionInkShift = String(sectionDelta);
+          svgContainer.dataset.sectionInkTarget = String(desiredTop);
+        }
+      }
+    }
+
+    if (['character', 'details', 'background'].includes(tabName)) {
       const panels = [...(active.querySelectorAll?.('.bg-panel') ?? [])];
       if (!panels.length) {
         const single = active.querySelector('.bg-panel');
@@ -183,7 +327,6 @@ export function activateChapterHeaderAlignment(form, appRoot) {
         const ancestorStyle = ancestor && win?.getComputedStyle?.(ancestor);
         if (!panel || !pseudo || !panelRect || !ancestorStyle) continue;
         const scale = ospChapterScale(ancestor, win);
-        const top = ospChapterNumber(pseudo.top);
         const borderTop = ospChapterNumber(ancestorStyle.borderTopWidth);
         const translateY = ospChapterPseudoTranslateY(pseudo);
         if (scale > 0 && Number.isFinite(scale)) {
@@ -193,16 +336,19 @@ export function activateChapterHeaderAlignment(form, appRoot) {
             topValue: panel.style?.getPropertyValue?.('--osp-writing-panel-top') ?? '',
             topPriority: panel.style?.getPropertyPriority?.('--osp-writing-panel-top') ?? '',
           });
-          const desiredTop = (rootRect.top + 132 - panelRect.top) / scale - borderTop - translateY;
-          const desiredHeight = (rootRect.top + 674 - panelRect.top) / scale - borderTop - desiredTop - translateY;
+          const borderTarget = writingBorderTarget ?? rootRect.top + 132;
+          const desiredTop = (borderTarget - panelRect.top) / scale - borderTop - translateY;
+          const desiredHeight = (rootRect.top + OSP_WRITING_PANEL_BOTTOM_TARGET - panelRect.top) / scale - borderTop - desiredTop - translateY;
           panel.style?.setProperty?.('--osp-writing-panel-top', `${desiredTop}px`, 'important');
           panel.style?.setProperty?.('--osp-writing-panel-height', `${desiredHeight}px`, 'important');
-          if (tabName === 'background' || tabName === 'character') {
+          if (['character', 'details', 'background'].includes(tabName)) {
             const title = panel.querySelector?.('.bg-panel-title');
             const inkTop = title && ospChapterInkTop(title, win);
             const borderY = panelRect.top + (borderTop + desiredTop + translateY) * scale;
-            const titleOffset = title && panelTitleOffsets.has(title) ? 2 : 0;
-            const shift = borderY + 5 - inkTop + titleOffset;
+            // Keep the title's visible ink seven pixels below the panel rule.
+            // Calculating the target from the current ink position makes this
+            // correction idempotent across ResizeObserver/mutation re-applies.
+            const shift = borderY + 7 - inkTop;
             if (title && Number.isFinite(inkTop) && Math.abs(shift) > 0.05) {
               for (const part of panel.querySelectorAll('.bg-panel-title, .bg-panel-hint, .bg-panel-editor')) {
                 if (!originals.has(part)) originals.set(part, ospChapterInlineState(part));
@@ -214,12 +360,11 @@ export function activateChapterHeaderAlignment(form, appRoot) {
           }
           const editor = panel.querySelector?.('.bg-panel-editor');
           if (editor) {
-            if (tabName === 'character' || tabName === 'background') {
+            if (['character', 'details', 'background'].includes(tabName)) {
               const title = panel.querySelector('.bg-panel-title');
               if (title) {
                 const editorScale = ospChapterScale(editor, win);
-                const titleOffset = panelTitleOffsets.has(title) ? 2 : 0;
-                const shift = title.getBoundingClientRect().bottom - editor.getBoundingClientRect().top - titleOffset;
+                const shift = title.getBoundingClientRect().bottom - editor.getBoundingClientRect().top - 2;
                 if (editorScale > 0 && Math.abs(shift) > 0.05) {
                   if (!originals.has(editor)) originals.set(editor, ospChapterInlineState(editor));
                   const top = Number.parseFloat(win.getComputedStyle(editor).top) || 0;
@@ -237,22 +382,7 @@ export function activateChapterHeaderAlignment(form, appRoot) {
               const extra = editorStyle.boxSizing === 'border-box' ? 0 :
                 ospChapterNumber(editorStyle.paddingTop) + ospChapterNumber(editorStyle.paddingBottom) +
                 ospChapterNumber(editorStyle.borderTopWidth) + ospChapterNumber(editorStyle.borderBottomWidth);
-              editor.style.setProperty('height', `${(rootRect.top + 674 - editorRect.top) / editorScale - extra}px`, 'important');
-            }
-          }
-          // Keep the requested two-pixel visual nudge scoped to the panel title.
-          // Apply it after editor geometry is settled so the editable area and
-          // panel frame retain their aligned positions.
-          const title = panel.querySelector?.('.bg-panel-title');
-          if (title && !panelTitleOffsets.has(title)) {
-            const titleScale = ospChapterScale(title, win);
-            if (titleScale > 0 && Number.isFinite(titleScale)) {
-              if (!originals.has(title)) originals.set(title, ospChapterInlineState(title));
-              const titleStyle = win.getComputedStyle(title);
-              const titleTop = Number.parseFloat(titleStyle.top) || 0;
-              if (titleStyle.position === 'static') title.style.setProperty('position', 'relative', 'important');
-              title.style.setProperty('top', `${titleTop + 2 / titleScale}px`, 'important');
-              panelTitleOffsets.add(title);
+              editor.style.setProperty('height', `${(rootRect.top + OSP_WRITING_PANEL_BOTTOM_TARGET - editorRect.top) / editorScale - extra}px`, 'important');
             }
           }
         }
@@ -286,18 +416,21 @@ export function activateChapterHeaderAlignment(form, appRoot) {
             topValue: ancestor.style?.getPropertyValue?.('--osp-writing-panel-top') ?? '',
             topPriority: ancestor.style?.getPropertyPriority?.('--osp-writing-panel-top') ?? '',
           });
-          const desiredTop = (rootRect.top + 132 - panelRect.top) / scale - borderTop - translateY;
-          const desiredHeight = (rootRect.top + 674 - panelRect.top) / scale - borderTop - desiredTop - translateY;
+      const borderTarget = writingBorderTarget ?? rootRect.top + 132;
+          const desiredTop = (borderTarget - panelRect.top) / scale - borderTop - translateY;
+          const desiredHeight = (rootRect.top + OSP_WRITING_PANEL_BOTTOM_TARGET - panelRect.top) / scale - borderTop - desiredTop - translateY;
           ancestor.style?.setProperty?.('--osp-writing-panel-top', `${desiredTop}px`, 'important');
           ancestor.style?.setProperty?.('--osp-writing-panel-height', `${desiredHeight}px`, 'important');
           if (editor) {
             const currentRect = editor.getBoundingClientRect();
             const currentScale = ospChapterScale(editor, win);
-            const shift = rootRect.top + 132 + 5 - currentRect.top;
-            if (currentScale > 0 && Math.abs(shift) > 0.05) {
+            const targetTop = borderTarget + 5;
+            const currentTop = Number.parseFloat(win.getComputedStyle(editor).top) || 0;
+            const baseTop = currentRect.top - currentTop * currentScale;
+            const desiredTop = currentScale > 0 ? (targetTop - baseTop) / currentScale : currentTop;
+            if (currentScale > 0 && Math.abs(desiredTop - currentTop) > 0.05) {
               if (!originals.has(editor)) originals.set(editor, ospChapterInlineState(editor));
-              const currentTop = Number.parseFloat(win.getComputedStyle(editor).top) || 0;
-              editor.style.setProperty('top', `${currentTop + shift / currentScale}px`, 'important');
+              editor.style.setProperty('top', `${desiredTop}px`, 'important');
             }
             const editorRect = editor.getBoundingClientRect?.();
             const editorStyle = win.getComputedStyle(editor);
@@ -309,27 +442,17 @@ export function activateChapterHeaderAlignment(form, appRoot) {
               const extra = editorStyle.boxSizing === 'border-box' ? 0 :
                 ospChapterNumber(editorStyle.paddingTop) + ospChapterNumber(editorStyle.paddingBottom) +
                 ospChapterNumber(editorStyle.borderTopWidth) + ospChapterNumber(editorStyle.borderBottomWidth);
-              editor.style.setProperty('height', `${(rootRect.top + 674 - editorRect.top) / editorScale - extra}px`, 'important');
+              editor.style.setProperty('height', `${(rootRect.top + OSP_WRITING_PANEL_BOTTOM_TARGET - editorRect.top) / editorScale - extra}px`, 'important');
             }
           }
         }
       }
     }
-    const primary = headings[0];
-    const inkTop = ospChapterInkTop(primary, win);
-    if (!Number.isFinite(inkTop) || !Number.isFinite(rootRect.top)) return;
-    const delta = rootRect.top + OSP_CHAPTER_HEADER_TARGET - inkTop;
-    if (Math.abs(delta) < 0.05) return;
-    for (const heading of headings) {
-      if (!originals.has(heading)) originals.set(heading, ospChapterInlineState(heading));
-      const computed = win?.getComputedStyle?.(heading);
-      const currentTop = Number.parseFloat(computed?.top ?? heading.style?.top) || 0;
-      const scale = ospChapterScale(heading, win);
-      if (!(scale > 0 && Number.isFinite(scale))) continue;
-      if (computed.position === 'static') heading.style.setProperty('position', 'relative', 'important');
-      heading.style.setProperty('top', `${currentTop + delta / scale}px`, 'important');
-    }
   };
+
+  const initialActive = form.querySelector('.sheet-body > .tab.active');
+  if (initialActive?.dataset?.tab === 'gear') apply();
+  else applyHandwrittenInk(initialActive);
 
   const on = (target, type, listener, options) => {
     if (!target?.addEventListener) return;
@@ -338,14 +461,21 @@ export function activateChapterHeaderAlignment(form, appRoot) {
   };
 
   const observer = typeof win?.MutationObserver === 'function' ? new win.MutationObserver(records => {
-    if (records.some(record => record.type === 'childList' || record.target?.matches?.('.tab[data-tab], .sheet-tabs [data-tab]'))) schedule();
+    if (records.some(record => {
+      if (record.type === 'childList') {
+        const tab = record.target?.closest?.('.tab');
+        if (tab && !tab.classList?.contains?.('active')) return false;
+        return true;
+      }
+      return record.target?.matches?.('.tab[data-tab], .sheet-tabs [data-tab]');
+    })) schedule();
   }) : null;
   observer?.observe(form, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
   const resizeObserver = typeof win?.ResizeObserver === 'function' ? new win.ResizeObserver(schedule) : null;
   resizeObserver?.observe(appRoot);
   resizeObserver?.observe(form);
   on(win, 'resize', schedule);
-  on(win, 'pointerup', schedule);
+  on(form, 'pointerup', schedule);
   on(win?.document?.fonts, 'loadingdone', schedule);
   Promise.resolve(win?.document?.fonts?.ready).then(() => schedule(), () => {});
   schedule();
@@ -372,6 +502,22 @@ export function activateChapterHeaderAlignment(form, appRoot) {
       if (state.value) editor.style.setProperty('height', state.value, state.priority);
       else editor.style.removeProperty('height');
     }
+    for (const [element, state] of skillOriginals) {
+      if (!element?.style) continue;
+      if (state.kind === 'target') {
+        if (state.value) element.style.setProperty('--top', state.value, state.priority);
+        else element.style.removeProperty('--top');
+      } else {
+        for (const [property, value, priority] of [
+          ['top', state.top, state.topPriority],
+          ['margin-top', state.marginTop, state.marginTopPriority],
+          ['--osp-skills-section-shift', state.shift, state.shiftPriority],
+        ]) {
+          if (value) element.style.setProperty(property, value, priority);
+          else element.style.removeProperty(property);
+        }
+      }
+    }
     for (const [element, state] of handwrittenOriginals) {
       for (const property of ['color', 'fill']) {
         const original = state[property];
@@ -383,8 +529,8 @@ export function activateChapterHeaderAlignment(form, appRoot) {
     editorHeights.clear();
     originals.clear();
     panelOriginals.clear();
-    panelTitleOffsets.clear();
     handwrittenOriginals.clear();
+    skillOriginals.clear();
   };
 }
 

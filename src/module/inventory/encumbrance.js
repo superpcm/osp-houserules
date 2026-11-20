@@ -20,7 +20,10 @@ export function raceMovement(race) {
 }
 
 export function isMountOrVehicle(item) {
-  return item?.type === 'livestock' || (Array.isArray(item?.system?.tags) && item.system.tags.includes('vehicle'));
+  const explicitVehicleKinds = new Set(['wagon', 'cart', 'handcart', 'wheelbarrow']);
+  return item?.type === 'livestock' ||
+    (Array.isArray(item?.system?.tags) && item.system.tags.includes('vehicle')) ||
+    explicitVehicleKinds.has(item?.system?.vehicleKind);
 }
 
 export function isCarriedByMountOrVehicle(item, getParent, visited = new Set()) {

@@ -28,6 +28,8 @@ function actorId(actor) { return actor?.id ?? actor?.document?.id ?? null; }
 function sceneUuid(scene) { return scene?.uuid ?? scene?.document?.uuid ?? null; }
 function sceneId(scene) { return scene?.id ?? scene?.document?.id ?? null; }
 function tokenId(token) { return token?.id ?? token?.document?.id ?? null; }
+function journalId(journal) { return journal?.id ?? journal?.document?.id ?? null; }
+function journalUuid(journal) { return journal?.uuid ?? journal?.document?.uuid ?? null; }
 
 async function resolveScene(change) {
   if (!change || change.kind !== "token") return null;
@@ -73,6 +75,21 @@ async function resolveActor(change, fallback = null) {
   return null;
 }
 
+async function resolveJournal(change) {
+  if (!change || change.kind !== "journal") return null;
+  if (change.journalUuid) {
+    const fromUuid = globalThis.fromUuid ?? globalThis.foundry?.utils?.fromUuid;
+    if (fromUuid) {
+      try {
+        const resolved = await fromUuid(change.journalUuid);
+        if (resolved && journalUuid(resolved) === change.journalUuid) return resolved;
+      } catch (_) { /* remain recoverable */ }
+    }
+  }
+  const journals = globalThis.game?.journal;
+  return journals?.get?.(change.journalId) ?? values(journals).find((journal) => journalId(journal) === change.journalId) ?? null;
+}
+
 function changeActorKeys(change, fallback = null) {
   if (!change) {
     const keys = [];
@@ -88,6 +105,13 @@ function changeActorKeys(change, fallback = null) {
     if (actorUuid(fallback)) keys.push("uuid:" + actorUuid(fallback));
     if (actorId(fallback)) keys.push("id:" + actorId(fallback));
   }
+  return keys;
+}
+function changeJournalKeys(change) {
+  if (!change || change.kind !== "journal") return [];
+  const keys = [];
+  if (change.journalUuid) keys.push("uuid:" + change.journalUuid);
+  if (change.journalId) keys.push("id:" + change.journalId);
   return keys;
 }
 
@@ -129,6 +153,28 @@ export function flagChange(actor, key, after) {
 }
 export function settingChange(key, after) {
   return { kind: "setting", key, before: clone(game.settings.get(game.system.id, key) ?? null), after: clone(after) };
+}
+export function snapshotJournal(journal) {
+  if (!journal) return null;
+  const data = journal?.toObject ? clone(journal.toObject()) : { name: journal.name, ownership: journal.ownership, flags: journal.flags };
+  const id = data._id ?? data.id ?? journalId(journal);
+  delete data.id;
+  data._id = id;
+  const scoped = data.flags?.[SCOPE] ?? {};
+  const flag = scoped.store != null ? "store" : scoped.inn != null ? "inn" : scoped.stable != null ? "stable" : "store";
+  const result = { name: data.name ?? "", ownership: clone(data.ownership ?? { default: 0 }), flags: clone(scoped[flag] ?? null) };
+  if (flag !== "store") result.flag = flag;
+  return result;
+}
+export function journalStoreChange(journal, after) {
+  return { kind: "journal", journalId: journalId(journal), journalUuid: journalUuid(journal), before: snapshotJournal(journal), after: clone(after), flag: "store" };
+}
+export function journalInnChange(journal, after) {
+  const before = snapshotJournal(journal);
+  return { kind: "journal", journalId: journalId(journal), journalUuid: journalUuid(journal), before, after: clone(after), flag: "inn" };
+}
+export function journalStableChange(journal, after) {
+  return { kind: "journal", journalId: journalId(journal), journalUuid: journalUuid(journal), before: snapshotJournal(journal), after: clone(after), flag: "stable" };
 }
 
 export function getPendingTransaction(actor) { return actor?.getFlag(SCOPE, JOURNAL_FLAG) ?? null; }
@@ -172,29 +218,38 @@ export function transactionBlock(actor, resources = []) {
   const wanted = new Set(resources.filter((resource) => resource?.kind === "setting").map((resource) => resource.key));
   const wantedActors = new Set(resources.flatMap((resource) => changeActorKeys(resource)));
   const wantedScenes = new Set(resources.flatMap(changeSceneKeys));
+  const wantedJournals = new Set(resources.flatMap(changeJournalKeys));
   for (const pending of listPendingTransactions()) {
     if (recordTouchesActor(pending.record, actor)) return sharedBlocked(pending.record, actor);
     if (pending.record.changes?.some((change) => changeActorKeys(change).some((key) => wantedActors.has(key)))) return sharedBlocked(pending.record, actor);
     if (pending.record.changes?.some((change) => change.kind === "setting" && wanted.has(change.key))) return { success: false, recoveryRequired: true, operationId: pending.record.id, reason: `Pending shared inventory transaction ${pending.record.id}; Open DM Toolkit → Bank Ledgers to recover.` };
     if (pending.record.changes?.some((change) => changeSceneKeys(change).some((key) => wantedScenes.has(key)))) return sharedBlocked(pending.record, actor);
+    if (pending.record.changes?.some((change) => changeJournalKeys(change).some((key) => wantedJournals.has(key)))) return sharedBlocked(pending.record, actor);
   }
   return null;
 }
 
 async function read(change, actor) {
-  const endpoint = change.kind === "token" ? await resolveScene(change) : await resolveActor(change, actor);
+  const endpoint = change.kind === "token" ? await resolveScene(change) : change.kind === "journal" ? await resolveJournal(change) : await resolveActor(change, actor);
   if (change.kind !== "setting" && !endpoint) throw new Error("Transaction endpoint " + (change.sceneUuid ?? change.actorUuid ?? change.sceneId ?? change.actorId ?? "unknown") + " is unavailable");
   if (change.kind === "item") return endpoint ? snapshotItem(findItem(endpoint, change.id)) : null;
   if (change.kind === "token") return snapshotToken(endpoint.tokens?.get?.(change.id) ?? values(endpoint.tokens).find((token) => tokenId(token) === change.id));
   if (change.kind === "flag") return endpoint ? clone(endpoint.getFlag(SCOPE, change.key) ?? null) : null;
+  if (change.kind === "journal") return snapshotJournal(endpoint);
   return clone(game.settings.get(game.system.id, change.key) ?? null);
 }
 async function apply(change, actor, target) {
   assertAuthorityFence();
-  const endpoint = change.kind === "token" ? await resolveScene(change) : await resolveActor(change, actor);
+  const endpoint = change.kind === "token" ? await resolveScene(change) : change.kind === "journal" ? await resolveJournal(change) : await resolveActor(change, actor);
   if (change.kind !== "setting" && !endpoint) throw new Error("Transaction endpoint " + (change.sceneUuid ?? change.actorUuid ?? change.sceneId ?? change.actorId ?? "unknown") + " is unavailable");
   if (change.kind === "flag") return endpoint.setFlag(SCOPE, change.key, clone(target));
   if (change.kind === "setting") return game.settings.set(game.system.id, change.key, clone(target));
+  if (change.kind === "journal") {
+    const update = { name: target?.name ?? "", ownership: clone(target?.ownership ?? { default: 0 }) };
+    const flag = change.flag ?? target?.flag ?? "store";
+    update[`flags.${SCOPE}.${flag}`] = clone(target?.flags ?? target?.[flag] ?? null);
+    return endpoint.update(update, { recursive: false });
+  }
   if (change.kind === "token") {
     const token = endpoint.tokens?.get?.(change.id) ?? values(endpoint.tokens).find((candidate) => tokenId(candidate) === change.id);
     if (target === null) return token?.delete();
@@ -322,6 +377,7 @@ function lockKeys(actor, changes = [], actorRefs = []) {
     changeActorKeys(change, actor).forEach((key) => keys.add(key));
     if (change.kind === "setting") keys.add("setting:" + change.key);
     changeSceneKeys(change).forEach((key) => keys.add("scene:" + key));
+    changeJournalKeys(change).forEach((key) => keys.add("journal:" + key));
   }
   return [...keys].sort();
 }

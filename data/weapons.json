@@ -39,7 +39,9 @@
         "sword"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -73,7 +75,9 @@
         "two-handed"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -107,7 +111,9 @@
         "two-handed"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -141,7 +147,9 @@
         "sword"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -168,7 +176,9 @@
         "melee"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -203,7 +213,9 @@
         "medium": 160,
         "long": 240
       },
-      "slungSlots": 2
+      "slungSlots": 2,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
     }
   },
   {
@@ -237,7 +249,9 @@
         "short": 60,
         "medium": 120,
         "long": 180
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -248,7 +262,7 @@
       "description": "A compact, double-edged steel dagger with a leather grip and simple guard, suited to quick thrusts and precise strikes.",
       "cost": 2,
       "unitWeight": 1,
-      "storedSize": 3,
+      "storedSize": 2,
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -270,7 +284,9 @@
         "short": 10,
         "medium": 20,
         "long": 30
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -303,7 +319,9 @@
         "short": 10,
         "medium": 20,
         "long": 40
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -329,7 +347,9 @@
         "melee"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -361,7 +381,9 @@
         "two-handed"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -394,7 +416,9 @@
         "sword"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -426,7 +450,9 @@
         "short": 10,
         "medium": 20,
         "long": 30
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -437,7 +463,7 @@
       "description": "A light throwing spear with an ash shaft and narrow leaf-shaped steel head, balanced to fly true over distance before melee begins.",
       "cost": 5,
       "unitWeight": 3,
-      "storedSize": 15,
+      "storedSize": 10,
       "allowedContainers": [
         "Cart",
         "Wagon",
@@ -462,7 +488,9 @@
         "short": 20,
         "medium": 40,
         "long": 60
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -496,7 +524,9 @@
         "sword"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "rare",
+      "blacksmithEligible": true
     }
   },
   {
@@ -527,7 +557,9 @@
         "charge"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -560,7 +592,9 @@
         "short": 10,
         "medium": 20,
         "long": 30
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -571,7 +605,7 @@
       "description": "A tall, recurved wooden bow with leather grip and taut string, built for strong draws, accurate shots, and long-range volleys.",
       "cost": 75,
       "unitWeight": 2,
-      "storedSize": 20,
+      "storedSize": 18,
       "allowedContainers": [
         "Cart",
         "Wagon",
@@ -598,7 +632,9 @@
         "short": 70,
         "medium": 140,
         "long": 210
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -632,7 +668,9 @@
         "sword"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -643,7 +681,7 @@
       "description": "A flanged steel mace head on a sturdy, leather-gripped wooden haft, designed to crush armor and bone with blunt blows.",
       "cost": 8,
       "unitWeight": 4,
-      "storedSize": 20,
+      "storedSize": 8,
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -659,7 +697,9 @@
         "melee"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -686,7 +726,9 @@
         "dagger"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "rare",
+      "blacksmithEligible": true
     }
   },
   {
@@ -712,7 +754,9 @@
         "melee"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -744,7 +788,9 @@
         "two-handed"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -774,7 +820,9 @@
       "bonus": 0,
       "melee": true,
       "missile": false,
-      "slungSlots": 0
+      "slungSlots": 0,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -810,7 +858,9 @@
       "melee": true,
       "missile": false,
       "attacksPerRound": 1,
-      "slungSlots": 0
+      "slungSlots": 0,
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -821,7 +871,7 @@
       "description": "A compact, lightly recurved wooden bow with leather grip and taut string, suited to mobile scouts and hunters making close-to-mid-range shots.",
       "cost": 30,
       "unitWeight": 2,
-      "storedSize": 16,
+      "storedSize": 12,
       "allowedContainers": [
         "Cart",
         "Wagon",
@@ -848,7 +898,9 @@
         "short": 50,
         "medium": 100,
         "long": 150
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -875,7 +927,9 @@
         "sword"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -901,7 +955,9 @@
         "melee"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -933,7 +989,9 @@
         "short": 30,
         "medium": 60,
         "long": 90
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -944,7 +1002,7 @@
       "description": "A wooden pole fitted with a sling, hurling stones or similar projectiles farther and harder than a hand sling for long-range attacks or hunting.",
       "cost": 2,
       "unitWeight": 2,
-      "storedSize": 20,
+      "storedSize": 15,
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -966,7 +1024,9 @@
         "short": 30,
         "medium": 60,
         "long": 120
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -1003,7 +1063,9 @@
         "short": 10,
         "medium": 20,
         "long": 30
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -1037,7 +1099,9 @@
         "mage"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -1064,7 +1128,9 @@
         "melee"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -1097,7 +1163,73 @@
         "sword"
       ],
       "melee": true,
-      "missile": false
+      "missile": false,
+      "storeAvailability": "rare",
+      "blacksmithEligible": true
+    }
+  },
+  {
+    "name": "Butcher's Cleaver",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/bianca-butchers-cleaver-transparent.png",
+    "system": {
+      "description": "A sturdy butcher’s cleaver with a broad, rectangular steel blade and a walnut handle secured by iron rivets. Its heavy edge is made for chopping meat and bone, and a hole near the corner of the blade allows it to hang from a hook.",
+      "cost": 2,
+      "unitWeight": 2,
+      "storedSize": 4,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "damage": "1d6",
+      "damageL": "1d4",
+      "damageType": "S",
+      "size": "S",
+      "speedFactor": 4,
+      "rof": 1,
+      "attacksPerRound": 1,
+      "bonus": 0,
+      "tags": [
+        "melee",
+        "missile",
+        "dagger"
+      ],
+      "melee": true,
+      "missile": true,
+      "slow": false,
+      "range": {
+        "short": 5,
+        "medium": 10,
+        "long": 20
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": true
+    }
+  },
+  {
+    "name": "Falchion",
+    "type": "weapon",
+    "img": "systems/osp-houserules/assets/images/weapons/falchion.webp",
+    "system": {
+      "description": "A single-edged sword with a broad, slightly curved blade designed for powerful slashing cuts.",
+      "cost": 15,
+      "unitWeight": 4,
+      "storedSize": 10,
+      "allowedContainers": ["Cart", "Wagon", "Sack, Large", "Panniers", "Scabbard, Sword"],
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "damage": "1d8",
+      "damageL": "1d8",
+      "damageType": "S",
+      "size": "M",
+      "speedFactor": 5,
+      "rof": 1,
+      "bonus": 0,
+      "tags": ["melee", "sword"],
+      "melee": true,
+      "missile": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   }
 ]

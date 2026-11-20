@@ -48,6 +48,28 @@ it('serializes rapid editor saves and preserves the latest content without rende
   expect(s.actor.update).toHaveBeenCalledTimes(2); expect(s.persisted['system.tabNotes']).toBe('second');
   expect(s.render).not.toHaveBeenCalled(); expect(s.actor.update.mock.calls.every(([, options]) => options.render === false)).toBe(true);
 });
+it('links overlapping skill labels to unique paths in their own rendered sheet', () => {
+  const render = skills => {
+    const s = sheet();
+    const tab = { querySelector: () => null };
+    const strip = {
+      dataset: {}, closest: () => tab, querySelectorAll: () => [], querySelector: () => null,
+      setAttribute: vi.fn(), removeAttribute: vi.fn(), addEventListener: vi.fn(),
+    };
+    s.getElement = () => strip;
+    Object.defineProperty(s, 'sheetWindow', { value: { requestAnimationFrame: vi.fn() } });
+    Object.defineProperty(s, 'sheetDocument', { value: {} });
+    s.renderSkillTargetDiagram(null, skills);
+    const paths = [...strip.innerHTML.matchAll(/<path id="([^"]+)"/g)].map(match => match[1]);
+    const links = [...strip.innerHTML.matchAll(/<textPath href="#([^"]+)"/g)].map(match => match[1]);
+    expect(paths).toHaveLength(skills.length);
+    expect(links).toEqual(paths);
+    return paths;
+  };
+  const first = render(['listening', 'find-secret-door']);
+  const second = render(['listening', 'find-secret-door', 'foraging']);
+  expect(first.some(path => second.includes(path))).toBe(false);
+});
 it('keeps two sheets independent while one save is waiting', async () => {
   const a = sheet(), b = sheet(), gate = deferred();
   a.actor.update.mockImplementation(async () => gate.promise);
@@ -89,10 +111,69 @@ it('does not submit or persist collapse flags from a read-only sheet', async () 
   await s.close(); expect(s.actor.update).not.toHaveBeenCalled(); expect(s.actor.setFlag).not.toHaveBeenCalled();
   expect(s.baseClose).toHaveBeenCalledTimes(1);
 });
+it('lets one document flag update own the collapse redraw without an extra render', async () => {
+  const s = sheet();
+  s.actor.getFlag = vi.fn(() => true);
+  s.actor.setFlag = vi.fn(async () => undefined);
+  const previous$ = globalThis.$;
+  globalThis.$ = () => ({
+    closest: () => ({ data: () => 'item-1' }),
+  });
+  try {
+    await s._onContainerToggle({ preventDefault() {}, stopPropagation() {}, currentTarget: {} });
+    expect(s.actor.setFlag).toHaveBeenCalledTimes(1);
+    expect(s.render).not.toHaveBeenCalled();
+  } finally {
+    globalThis.$ = previous$;
+  }
+});
+it('primes the selected detached tab before insertion and tolerates absent parts', async () => {
+  const s = sheet();
+  const activeTab = 'gear';
+  s._activeTab = activeTab;
+  const active = vi.fn();
+  const part = { querySelector: vi.fn(() => ({})) };
+  const previous$ = globalThis.$;
+  globalThis.$ = value => value;
+  const originalActivate = s.activateTab;
+  s.activateTab = active;
+  const basePrototype = Object.getPrototypeOf(CharacterSheet.prototype);
+  const originalRender = basePrototype._renderHTML;
+  basePrototype._renderHTML = vi.fn()
+    .mockResolvedValueOnce({ sheet: part })
+    .mockResolvedValueOnce({});
+  try {
+    await s._renderHTML({}, {});
+    expect(active).toHaveBeenCalledWith(part, activeTab);
+    await expect(s._renderHTML({}, {})).resolves.toEqual({});
+  } finally {
+    s.activateTab = originalActivate;
+    basePrototype._renderHTML = originalRender;
+    globalThis.$ = previous$;
+  }
+});
 it('preserves ordinary submit rendering and portrait synchronization', async () => {
   const s = sheet(); s.current['system.portrait'] = 'new.webp';
   await s._onSubmit(event()); expect(s.render).toHaveBeenCalledTimes(1);
   expect(s.actor.prepareDerivedData).toHaveBeenCalledTimes(1); expect(s.persisted.img).toBe('new.webp');
+});
+it('keeps matching Bio controls in place and renders for a save that also changes the name', async () => {
+  const s = sheet();
+  s.actor.name = 'Original';
+  s.actor.system.age = '33';
+  const age = { value: '34' };
+  s.form.elements = { namedItem: name => name === 'system.age' ? age : null };
+  s.actor.update.mockImplementation(async data => {
+    s.actor.system.age = data['system.age'];
+    s.actor.name = data.name;
+  });
+  await s._updateObject(event(), { name: 'Original', 'system.age': '34' });
+  expect(s.render).not.toHaveBeenCalled();
+  expect(s.actor.system.age).toBe('34');
+
+  age.value = '35';
+  await s._updateObject(event(), { name: 'Changed', 'system.age': '35' });
+  expect(s.render).toHaveBeenCalledTimes(1);
 });
 it('cleans only its own delayed work and disposers on close and rerender', async () => {
   vi.useFakeTimers(); const a = sheet(), b = sheet(), aCallback = vi.fn(), bCallback = vi.fn(), disposed = vi.fn();

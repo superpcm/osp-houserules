@@ -4,6 +4,7 @@ import { checkWithdrawTarget } from "./container-capacity.js";
 import { validateDepositSource } from "./deposit-source.js";
 import { runTransaction, itemChange, createdItemChange, flagChange, settingChange, transactionBlock } from "./transaction-journal.js";
 import { requestInventoryMutation, registerInventoryAuthority, resolveInventoryActor, inventoryActorReference, inventoryWithdrawalAllowed } from "./inventory-authority.js";
+import { isArrowQuiver, prepareArrowQuiverPlacement } from './arrow-bundle.js';
 
 const SCOPE = "osp-houserules";
 const PERSONAL_FLAG = "storehouse";
@@ -92,7 +93,8 @@ async function withdraw(actor, entryId, quantity, containerId, shared, user) {
   const entry = store.items.find((candidate) => candidate.entryId === entryId);
   const container = actor.items.get(containerId);
   if (!entry || !container) return { success: false, reason: "The stored item or destination is no longer available." };
-  const itemData = { ...entry.itemData, system: { ...entry.itemData.system, quantity, containerId } };
+  let itemData = { ...entry.itemData, system: { ...entry.itemData.system, quantity, containerId } };
+  if (isArrowQuiver(container)) itemData = prepareArrowQuiverPlacement(itemData, container);
   const check = checkWithdrawTarget(itemData, container, actor.items);
   if (!check.allowed) return { success: false, reason: check.reason };
   const plan = removeFromStore(store, entryId, quantity, user, actor);

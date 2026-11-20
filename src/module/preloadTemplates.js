@@ -11,6 +11,7 @@ export const preloadHandlebarsTemplates = async () => {
     `${path}/templates/actors/character-sheet.html`,
     `${path}/templates/actors/gear-tab.html`,
     `${path}/templates/actors/monster-sheet.html`,
+    `${path}/templates/actors/marker-sheet.html`,
 
     // Item sheets
     `${path}/templates/items/weapon-sheet.html`,
@@ -56,6 +57,10 @@ export const preloadHandlebarsTemplates = async () => {
     `${path}/templates/apps/bank-dm-edit-dialog.html`,
     `${path}/templates/apps/storehouse-view.html`,
     `${path}/templates/apps/storehouse-withdraw.html`,
+    `${path}/templates/apps/store-app.html`,
+    `${path}/templates/apps/inn-app.html`,
+    `${path}/templates/apps/stable-app.html`,
+    `${path}/templates/apps/calendar.html`,
   ];
 
   return foundry.applications.handlebars.loadTemplates(templatePaths);

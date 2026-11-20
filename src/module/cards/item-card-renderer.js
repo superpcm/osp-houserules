@@ -195,7 +195,7 @@ export class ItemCardRenderer {
     const availableSpace = Math.max(0, descriptionTopY - imageTopY);
     
     // Load and draw item image centered in available space
-    await this._drawItemImage(ctx, item, imageTopY, availableSpace);
+    cardCanvas.itemArtwork = await this._drawItemImage(ctx, item, imageTopY, availableSpace);
     
     this._drawDescription(ctx, description, descriptionTopY, descriptionLines);
     
@@ -308,13 +308,13 @@ export class ItemCardRenderer {
         const y = topBoundary + (availableHeight - height) / 2;
         
         ctx.drawImage(img, x, y, width, height);
-        resolve();
+        resolve(item.img ? { x, y, width, height, src: imgSrc } : null);
       };
       
-      img.onerror = (error) => {
+      img.onerror = () => {
         // Draw placeholder if image fails
         this._drawPlaceholder(ctx, topBoundary, availableHeight);
-        resolve();
+        resolve(null);
       };
       
       // Use item image with aggressive cache busting, or placeholder
@@ -358,7 +358,8 @@ export class ItemCardRenderer {
    */
   _drawItemName(ctx, name) {
     const [centerX] = this.COORDS.item_name;
-    const maxWidth = 380;
+    // Keep visible letter shapes inside the brass corner ornaments.
+    const maxWidth = 320;
     
     ctx.fillStyle = '#f6eac2';
     ctx.textAlign = 'center';
@@ -565,9 +566,9 @@ export class ItemCardRenderer {
   async _drawEquipmentMetadata(ctx, item, footerY = this.COORDS.equipment_metadata[1]) {
     const [centerX] = this.COORDS.equipment_metadata;
     const y = footerY;
-    const iconSize = 30;
-    const iconPadding = 5;
-    const itemSpacing = 20;
+    let iconSize = 30;
+    let iconPadding = 5;
+    let itemSpacing = 20;
     
     const items = [];
     
@@ -594,6 +595,12 @@ export class ItemCardRenderer {
     if (item.type === 'container' && item.system.capacity !== undefined && item.system.capacity !== '') {
       items.push({ icon: 'capacity-icon.webp', text: `${item.system.capacity}C` });
     }
+
+    // Slung-capable items show the sling icon in the card footer.
+    const tags = Array.isArray(item.system.tags) ? item.system.tags : [];
+    if (tags.includes('slungable') || tags.includes('sling')) {
+      items.push({ icon: '../misc/slung.webp', text: '' });
+    }
     
     if (items.length === 0 && item.system.lashable !== true) return;
     
@@ -611,6 +618,19 @@ export class ItemCardRenderer {
     }
     
     totalWidth -= itemSpacing; // Remove last spacing
+
+    // Dense vehicle metadata must fit the clear center of the footer. Scaling the
+    // entire group keeps every value and icon visible beneath the corner overlay.
+    const maxWidth = 320;
+    if (totalWidth > maxWidth) {
+      const scale = maxWidth / totalWidth;
+      iconSize *= scale;
+      iconPadding *= scale;
+      itemSpacing *= scale;
+      ctx.font = `${this.FONTS.METADATA_SIZE * scale}px ${this.BODY_FONT_FAMILY}`;
+      totalWidth = items.reduce((sum, metaItem) => sum + iconSize + iconPadding + ctx.measureText(metaItem.text).width + itemSpacing, 0)
+        + (item.system.lashable === true ? iconSize + itemSpacing : 0) - itemSpacing;
+    }
     
     // Start position (centered)
     let x = centerX - (totalWidth / 2);
@@ -626,7 +646,8 @@ export class ItemCardRenderer {
       const icon = await this._loadIcon(`systems/osp-houserules/assets/images/icons/${metaItem.icon}`);
       if (icon) {
         // Center icon vertically: y is middle, so top = y - (iconSize / 2)
-        ctx.drawImage(icon, x, y - (iconSize / 2), iconSize, iconSize);
+        const drawSize = metaItem.icon === "../misc/slung.webp" ? iconSize * 1.8 : iconSize;
+        ctx.drawImage(icon, x + (iconSize - drawSize) / 2, y - drawSize / 2, drawSize, drawSize);
       }
       x += iconSize + iconPadding;
       

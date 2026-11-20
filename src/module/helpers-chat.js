@@ -11,6 +11,12 @@ export function getChatDamageTotal(message) {
   return typeof total === 'number' && Number.isFinite(total) ? Math.max(0, total) : null;
 }
 
+/** Whether a chat card is explicitly authorized to apply health changes. */
+export function canApplyChatHealth(message) {
+  const flags = message?.flags?.['osp-houserules'];
+  return flags?.combatDamage === true && getChatDamageTotal(message) != null && !flags.healthApplied;
+}
+
 export function getChatDamageAmount(message, multiplier = 1) {
   const total = getChatDamageTotal(message);
   if (total == null) return null;
@@ -26,7 +32,7 @@ export function getChatDamageAmount(message, multiplier = 1) {
 export const addChatMessageContextOptions = (html, options) => {
   const canApply = (li) => {
     const message = game.messages.get(li.data("messageId"));
-    return getChatDamageTotal(message) != null && !message?.flags?.['osp-houserules']?.healthApplied;
+    return canApplyChatHealth(message);
   };
 
   options.push(
@@ -65,7 +71,7 @@ export const addChatMessageContextOptions = (html, options) => {
  */
 export const applyDamage = async (messageId, multiplier) => {
   const message = game.messages.get(messageId);
-  if (message?.flags?.['osp-houserules']?.healthApplied) return;
+  if (!canApplyChatHealth(message)) return;
   const amount = getChatDamageAmount(message, multiplier);
   if (amount == null) return;
   const applyOption = game.settings.get(game.system.id, "applyDamageOption");
@@ -100,7 +106,7 @@ export const applyDamage = async (messageId, multiplier) => {
  * Adds a damage application button to chat roll cards
  */
 export const addChatMessageButtons = (message, html, data) => {
-  if (getChatDamageTotal(message) == null) return;
+  if (!canApplyChatHealth(message)) return;
 
   const damageButton = document.createElement("button");
   damageButton.className = "apply-damage";

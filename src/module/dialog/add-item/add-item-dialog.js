@@ -77,6 +77,18 @@ export class AddItemDialog {
               <label>Tags</label>
               <input type="text" data-sys-field="tags" data-sys-kind="tags" placeholder="comma, separated, tags">
             </div>
+            <div class="add-item-field">
+              <label>Store availability</label>
+              <select data-sys-field="storeAvailability" data-sys-kind="select">
+                <option value="">Unclassified</option><option value="common">Common</option><option value="uncommon">Uncommon</option><option value="rare">Rare</option><option value="exceptional">Exceptional</option>
+              </select>
+            </div>
+            <div class="add-item-field">
+              <label>Blacksmith eligibility</label>
+              <select data-sys-field="blacksmithEligible" data-sys-kind="select">
+                <option value="">Unset</option><option value="true">Eligible</option><option value="false">Excluded</option>
+              </select>
+            </div>
           </div>
           <details class="add-item-advanced">
             <summary>Advanced fields</summary>
@@ -339,6 +351,10 @@ export class AddItemDialog {
           }
 
           const system = collectSystemData(el);
+          if (system.storeAvailability === '') system.storeAvailability = null;
+          if (system.blacksmithEligible === '') system.blacksmithEligible = null;
+          if (system.blacksmithEligible === 'true') system.blacksmithEligible = true;
+          if (system.blacksmithEligible === 'false') system.blacksmithEligible = false;
           const itemData = { name, type, img: images.imgThumb, system };
           if (folderSelect.value) itemData.folder = folderSelect.value;
 

@@ -1,0 +1,127 @@
+// Portrait controls: a compact parchment-and-brass toolbar layered over the frozen sheet theme.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab=bio].active)
+.ej-bio-header .portrait-controls {
+  display: none;
+  align-items: center;
+  gap: 0.22rem;
+  padding: 0.35rem 0.42rem;
+  border: 1px solid #765827;
+  border-radius: 0.45rem;
+  background: linear-gradient(180deg, rgba(255, 249, 220, .98), rgba(205, 180, 124, .98));
+  box-shadow: 0 0.3rem 0.65rem rgba(31, 20, 8, .42), inset 0 0 0 1px rgba(255, 245, 202, .72);
+  color: #291d0e;
+  font-family: Georgia, serif;
+
+  &[style*="display: block"] { display: flex !important; }
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab=bio].active)
+.ej-bio-header .portrait-controls .btn-group {
+  display: inline-flex;
+  gap: 0.18rem;
+  margin: 0;
+  padding: 0 0.26rem 0 0;
+  border-right: 1px solid rgba(87, 61, 25, .42);
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab=bio].active)
+.ej-bio-header .portrait-controls .btn-group:last-child { border-right: 0; padding-right: 0; }
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab=bio].active)
+.ej-bio-header .portrait-controls button {
+  display: inline-grid;
+  place-items: center;
+  width: 2.7cqw;
+  height: 2.7cqw;
+  min-width: 20px;
+  min-height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #59401d;
+  border-radius: 0.35rem;
+  background: linear-gradient(145deg, #d8b968, #8f6a2f 68%, #60451f);
+  box-shadow: inset 0 1px 1px rgba(255, 239, 175, .72), 0 1px 2px rgba(38, 24, 7, .42);
+  color: #21170b !important;
+  cursor: pointer;
+  font-size: 0.82rem;
+  line-height: 1;
+  text-shadow: 0 1px rgba(255, 230, 157, .55);
+  transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+
+  i { color: inherit !important; }
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab=bio].active)
+.ej-bio-header .portrait-controls button:hover {
+  background: linear-gradient(145deg, #f0d887, #ad8238 68%, #735325);
+  transform: translateY(-1px);
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab=bio].active)
+.ej-bio-header .portrait-controls button:active { transform: translateY(1px); box-shadow: inset 0 2px 4px rgba(40, 25, 7, .45); }
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab=bio].active)
+.ej-bio-header .portrait-controls button:focus-visible {
+  outline: 2px solid #671f1c;
+  outline-offset: 2px;
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet.ej-sheet--continuous-bio:has(.tab[data-tab=bio].active)
+.ej-bio-header .portrait-controls button[data-action=done] {
+  background: linear-gradient(145deg, #55714d, #29452f 72%);
+  color: #f6e8bd !important;
+}
+
+// Apply adjustment steps immediately, including a rotation that crosses zero.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet .portrait-container.adjusting .portrait-img {
+  transition: none !important;
+}
+
+// Preserve the full source image before zooming and panning; only the frame clips it.
+// Keep the horizontal and vertical movement controls effective at the default zoom.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet .ej-bio-header .cs-portrait-display img {
+  // Fit within the existing frame opening, whose outer display includes the border.
+  position: absolute;
+  left: 16%;
+  top: 11%;
+  width: 71%;
+  height: 81%;
+  object-fit: contain;
+  transform: scale(var(--user-portrait-scale, 1))
+    translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px))
+    rotate(var(--user-portrait-rotation, 0deg));
+}
+
+
+// Gestures move only the image; the manuscript frame keeps its existing geometry.
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet .portrait-container.adjusting .portrait-display {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  &.portrait-dragging { cursor: grabbing; }
+}
+
+.window-app.osp.sheet.actor.character:has(form.ej-sheet)
+form.osp.sheet.actor.character.ej-sheet .portrait-controls .portrait-zoom-level {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5em;
+  padding: 0 0.15rem;
+  font: bold 0.85rem Georgia, serif;
+  font-variant-numeric: tabular-nums;
+  color: #291d0e;
+}

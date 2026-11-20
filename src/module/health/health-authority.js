@@ -12,6 +12,9 @@ const flag = (actor, name) => actor.getFlag(SCOPE, name);
 const hpPath = actor => actor.system.hp && typeof actor.system.hp === 'object' ? 'system.hp.value' : 'system.hitpoints';
 const refused = reason => ({ success: false, reason });
 const pendingResult = () => ({ success: false, recoveryRequired: true, reason: 'Health change needs GM recovery from XP History.' });
+const actorItems = actor => Array.from(actor?.items?.values?.() ?? actor?.items ?? []);
+const healingPotion = (actor, id) => actorItems(actor).find(item => item.id === id && item.type === 'item' && item.name === 'Healing Potion');
+const potionQuantity = item => normalizeQuantity(item?.system?.quantity);
 async function pendingWrite(actor, pending) {
   assertProgressionAuthorityFence();
   try { await actor.update({ [`flags.${SCOPE}.healthPending`]: pending }); }
@@ -53,7 +56,8 @@ async function publish(actor, pending) {
   assertProgressionAuthorityFence();
   const after = pending.after;
   const effects = conditionEffects(after);
-  const content = `<p>${esc(actor.name)} — ${esc(pending.command.action)}: ${pending.before.hp} → ${after.hp} HP.</p>${after.dead ? '<p>Dead. Ordinary healing cannot revive this character.</p>' : ''}${after.bleed ? `<p>Bleed-out: ${after.bleed.remaining} rounds remaining. Exclude the falling round; decrement at the end of each subsequent round. Stabilize with a Healer’s Kit (one action, within reach) or heal magically.</p>` : ''}${after.zeroIncapacitated ? '<p>Incapacitated at 0 HP; recovery requires at least 1 HP. Stabilization leaves HP unchanged.</p>' : ''}${effects.cannotAct ? '<p>Cannot attack or cast. Apply the listed condition movement and saving-throw restrictions.</p>' : ''}${pending.rolls.save !== undefined ? `<p>Zero-HP death save: ${pending.rolls.save} vs ${pending.saveTarget}; ${pending.rolls.saveSuccess ? 'survived' : 'failed'}.</p>` : ''}<p>GM: manage health and conditions through the DM’s Toolkit. Separate injuries keep their own recovery requirements.</p>`;
+  const potionRoll = pending.command.action === 'useHealingPotion' ? `<p>Healing Potion: 1d8 + 1 = ${pending.rolls.healing + 1} healing; ${pending.potion.quantityBefore} → ${pending.potion.quantityAfter} potion${pending.potion.quantityAfter === 1 ? '' : 's'}.</p>` : '';
+  const content = `<p>${esc(actor.name)} — ${esc(pending.command.action)}: ${pending.before.hp} → ${after.hp} HP.</p>${potionRoll}${after.dead ? '<p>Dead. Ordinary healing cannot revive this character.</p>' : ''}${after.bleed ? `<p>Bleed-out: ${after.bleed.remaining} rounds remaining. Exclude the falling round; decrement at the end of each subsequent round. Stabilize with a Healer’s Kit (one action, within reach) or heal magically.</p>` : ''}${after.zeroIncapacitated ? '<p>Incapacitated at 0 HP; recovery requires at least 1 HP. Stabilization leaves HP unchanged.</p>' : ''}${effects.cannotAct ? '<p>Cannot attack or cast. Apply the listed condition movement and saving-throw restrictions.</p>' : ''}${pending.rolls.save !== undefined ? `<p>Zero-HP death save: ${pending.rolls.save} vs ${pending.saveTarget}; ${pending.rolls.saveSuccess ? 'survived' : 'failed'}.</p>` : ''}<p>GM: manage health and conditions through the DM’s Toolkit. Separate injuries keep their own recovery requirements.</p>`;
   const card = { speaker: ChatMessage.getSpeaker?.({ actor }), content, flags: { [SCOPE]: { healthOperation: pending.operationId } } };
   ChatMessage.applyRollMode(card, pending.rollMode ?? 'publicroll');
   if (pending.rollMode === 'selfroll') card.whisper = [getProgressionRequester().id];
@@ -62,6 +66,24 @@ async function publish(actor, pending) {
 }
 async function commit(actor, pending) {
   const already = flag(actor, 'healthLastOperation') === pending.operationId;
+  if (!already && pending.command.action === 'useHealingPotion' && !pending.potion.consumed) {
+    const item = healingPotion(actor, pending.potion.itemId);
+    const quantity = potionQuantity(item);
+    if (!item || quantity < pending.potion.quantityAfter || quantity > pending.potion.quantityBefore) throw new Error('Healing Potion quantity changed during operation; GM review required');
+    if (quantity === pending.potion.quantityBefore) {
+      const update = { _id: item.id, 'system.quantity': pending.potion.quantityAfter };
+      assertProgressionAuthorityFence();
+      try {
+        if (actor.updateEmbeddedDocuments) await actor.updateEmbeddedDocuments('Item', [update]);
+        else await item.update({ 'system.quantity': pending.potion.quantityAfter });
+      } catch (error) {
+        if (potionQuantity(healingPotion(actor, pending.potion.itemId)) !== pending.potion.quantityAfter) throw error;
+      }
+    }
+    if (potionQuantity(healingPotion(actor, pending.potion.itemId)) !== pending.potion.quantityAfter) throw new Error('Healing Potion consumption not acknowledged');
+    pending.potion.consumed = true;
+    await pendingWrite(actor, pending);
+  }
   if (!already) {
     if (!same(healthSnapshot(actor), pending.before)) throw new Error('Health changed during operation; GM review required');
     assertProgressionAuthorityFence();
@@ -78,7 +100,7 @@ async function mutate(details) {
   const actor = await fromUuid(details.actorUuid), user = getProgressionRequester();
   if (!actor || !user || !(user.isGM || actor.testUserPermission(user, 'OWNER'))) return refused('An owned actor or GM is required.');
   const command = details.command;
-  if (!command || !['damage', 'heal', 'setHP', 'naturalHealing', 'stabilize', 'condition', 'advanceRound', 'zeroResult', 'undo'].includes(command.action)) return refused('Unknown health operation.');
+  if (!command || !['damage', 'heal', 'setHP', 'naturalHealing', 'stabilize', 'condition', 'advanceRound', 'zeroResult', 'undo', 'useHealingPotion'].includes(command.action)) return refused('Unknown health operation.');
   if (['condition', 'advanceRound', 'zeroResult', 'undo', 'naturalHealing'].includes(command.action) && !user.isGM) return refused('Only the GM may perform this health operation.');
   const operationId = currentProgressionOperation();
   let pending = flag(actor, 'healthPending');
@@ -87,6 +109,12 @@ async function mutate(details) {
   if (!pending && flag(actor, 'healthLastOperation') === operationId) return { success: true };
   if (!pending) {
     const before = healthSnapshot(actor);
+    if (command.action === 'useHealingPotion') {
+      const item = healingPotion(actor, command.itemId);
+      if (!item || !Number.isInteger(potionQuantity(item)) || potionQuantity(item) <= 0) return refused('A Healing Potion with a positive whole-number quantity is required.');
+      const effects = conditionEffects(before);
+      if (before.dead || effects.cannotAct) return refused('A dead, unconscious, or incapacitated character cannot use a Healing Potion.');
+    }
     if (command.action === 'setHP') {
       if (!['number', 'string'].includes(typeof command.value) || (typeof command.value === 'string' && command.value.trim() === '')) return refused('HP must be a whole number.');
       const value = Number(command.value);
@@ -111,14 +139,25 @@ async function mutate(details) {
     }
     const round = Number(game.combat?.round) || 0;
     pending = { operationId, rollMode: details.rollMode, command: clone(command), before, rolls: {}, stage: 'ready', combatId: game.combat?.id ?? 'manual', round, conModifier: getAbilityModifier(actor.system.attributes?.con?.value ?? 10), saveTarget: zeroSaveContext(actor, before) };
+    if (command.action === 'useHealingPotion') {
+      const item = healingPotion(actor, command.itemId);
+      pending.potion = { itemId: item.id, quantityBefore: potionQuantity(item), quantityAfter: potionQuantity(item) - 1, consumed: false };
+    }
     // Reject invalid requests before prompting for any die.
     if (command.action === 'naturalHealing') planHealthChange(before, { ...command, conModifier: pending.conModifier }, { healing: 1 });
-    else if (command.action !== 'zeroResult') planHealthChange(before, command);
+    else if (!['zeroResult', 'useHealingPotion'].includes(command.action)) planHealthChange(before, command);
     await pendingWrite(actor, pending);
   } else pending = clone(pending);
   if (!same(healthSnapshot(actor), pending.before)) throw new Error('Health changed during operation');
   let after;
-  if (pending.command.action === 'naturalHealing') {
+  if (pending.command.action === 'useHealingPotion') {
+    const rolled = await die(actor, pending, 'healing', 8, 'Healing Potion: 1d8 + 1');
+    if (rolled === null) {
+      await pendingWrite(actor, null);
+      return { success: false, cancelled: true, reason: 'Healing Potion use cancelled.' };
+    }
+    after = planHealthChange(pending.before, { action: 'heal', amount: rolled + 1, magical: true });
+  } else if (pending.command.action === 'naturalHealing') {
     const rolled = await die(actor, pending, 'healing', 4, 'Natural healing: 1d4 plus CON, minimum 1');
     if (rolled === null) return pendingResult();
     after = planHealthChange(pending.before, { ...pending.command, conModifier: pending.conModifier }, pending.rolls);
@@ -131,7 +170,7 @@ async function mutate(details) {
     if (pending.rolls.saveSuccess && await die(actor, pending, 'bleed', 4, 'Bleed-out duration: d4 plus 1 rounds') === null) return pendingResult();
     after = planHealthChange(after, { action: 'zeroResult', round: pending.round, combatId: pending.combatId }, pending.rolls);
   } else if (actor.type !== 'character') after.needsDeathSave = false;
-  if (same(after, pending.before)) { await pendingWrite(actor, null); return { success: true, unchanged: true }; }
+  if (same(after, pending.before) && pending.command.action !== 'useHealingPotion') { await pendingWrite(actor, null); return { success: true, unchanged: true }; }
   pending.after = after; pending.stage = 'planned';
   await pendingWrite(actor, pending);
   return commit(actor, pending);

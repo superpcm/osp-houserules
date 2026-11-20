@@ -1,0 +1,14 @@
+// Override the frozen theme's width transition without changing its baseline.
+.encumbrance-bar,
+.encumbrance-section .encumbrance-bar {
+  transform-origin: left center;
+  transform: scaleX(var(--encumbrance-fill, 1));
+  transition: transform 0.3s ease;
+}
+.encumbrance-bar-light, .encumbrance-bar-normal { width: 33%; }
+.encumbrance-bar-heavy { width: 34%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .encumbrance-bar,
+  .encumbrance-section .encumbrance-bar { transition: none; }
+}

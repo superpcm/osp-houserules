@@ -2,6 +2,7 @@ import { healthSnapshot, conditionEffects } from '../../health/health-rules.js';
 import { rollCritical } from '../../health/critical-authority.js';
 import { ospRoll, buildManualChatContent } from "../../dice.js";
 import { changeHealth } from "../../health/health-authority.js";
+import { rollAbility } from '../ability-roll.js';
 
 const critDamageFormula = (formula) =>
   formula.replace(/(\d+)d(\d+)/gi, (_, n, d) => `${parseInt(n) * 2}d${d}`);
@@ -189,6 +190,16 @@ export class OspActorSheetMonster extends foundry.appv1.sheets.ActorSheet {
           console.error("[OSP] Damage roll error:", err);
         }
       }, 3000);
+    });
+
+    html.find('.ability-roll').on('click', async (ev) => {
+      const button = ev.currentTarget;
+      const item = this.actor.items.get(button.closest('[data-item-id]')?.dataset.itemId);
+      if (!item) return;
+      button.disabled = true;
+      try { await rollAbility(item); }
+      catch (error) { ui.notifications.error(error.message); }
+      finally { button.disabled = false; }
     });
 
     if (!this.isEditable) return;

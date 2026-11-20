@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { checkAllowedContainers, matchesContainerAllowedNames, matchesContainerType } from './container-allowlist.js';
+import { auditPouchContents, auditClothingContents, checkAllowedContainers, clothingStorageRejection, matchesContainerAllowedNames, matchesContainerType, pouchStorageRejection } from './container-allowlist.js';
 import { checkWithdrawTarget } from './container-capacity.js';
 import gear from '../../../data/gear.json';
 import weapons from '../../../data/weapons.json';
@@ -16,6 +16,8 @@ const catalogScabbard = gear.find((entry) => entry.name === 'Scabbard, Sword');
 const catalogSwordFrog = gear.find((entry) => entry.name === 'Sword Frog');
 const catalogInkVial = gear.find((entry) => entry.name === 'Ink Vial');
 const catalogHolyWater = gear.find((entry) => entry.name === 'Holy Water');
+const catalogWarhammerSling = gear.find((entry) => entry.name === 'Warhammer Sling');
+const catalogWinterCoat = clothing.find((entry) => entry.name === 'Coat, Winter');
 const capacityClothing = clothing.filter((entry) => Number(entry.system?.capacity) > 0);
 const standardPortableContainers = [
   'Backpack', 'Belt Pouch (L)', 'Belt Pouch (S)', 'Cart', 'Chest, Large', 'Chest, Small',
@@ -29,12 +31,119 @@ const dedicatedHolderPairs = {
   'Sword Frog': ['Scabbard, Sword'],
   Baldric: ['Zweihander', 'Greatsword'],
   'Axe Sling': ['Battle Axe', 'Battle Axe, 2-Handed'],
+  'Warhammer Sling': ['Warhammer'],
   'Belt Loop': ['Hand Axe', 'Light Hammer', 'Warhammer', 'Waterskin', 'Mace', 'Morning Star', 'Flail'],
   'Flask/Potion Holder': ['Vial or Bottle', 'Oil Flask', 'Holy Water'],
   'Skin Sling': ['Waterskin', 'Wineskin'],
 };
 
+it('defines Coat, Winter as two-slot outerwear with internal capacity', () => {
+  expect(catalogWinterCoat).toMatchObject({
+    name: 'Coat, Winter',
+    type: 'clothing',
+    img: 'systems/osp-houserules/assets/thumbs/images/clothing/coat-winter_thumb.webp',
+  });
+  expect(catalogWinterCoat.system).toMatchObject({
+    cost: 5,
+    unitWeight: 4,
+    storedSize: 5,
+    quantity: 1,
+    equipped: false,
+    lashable: false,
+    lashSlots: 0,
+    capacity: 2,
+    slot: 'outerwear',
+    maxItemSize: 0.5,
+    storeAvailability: 'common',
+    blacksmithEligible: false,
+  });
+});
+
 describe('checkAllowedContainers', () => {
+  it('defines Warhammer Sling with the Axe Sling storage profile and Warhammer-only allowlist', () => {
+    expect(catalogWarhammerSling).toMatchObject({
+      name: 'Warhammer Sling',
+      type: 'container',
+      img: 'systems/osp-houserules/assets/thumbs/images/gear/warhammer-sling_thumb.webp',
+    });
+    expect(catalogWarhammerSling.system).toMatchObject({
+      cost: 5,
+      unitWeight: 1,
+      storedSize: 3,
+      capacity: 8,
+      maxItems: 1,
+      lashSlots: 0,
+      allowedNames: ['Warhammer'],
+      tags: ['weapon-storage', 'sling', 'slungable'],
+    });
+    expect(checkAllowedContainers(item('Warhammer +1', ['Cart']), { name: 'Warhammer Sling' })).toEqual({ allowed: true, reason: null });
+    expect(checkAllowedContainers(item('Battle Axe', ['Cart']), { name: 'Warhammer Sling' }).allowed).toBe(false);
+    expect(checkAllowedContainers(item('Light Hammer', ['Cart']), { name: 'Warhammer Sling' }).allowed).toBe(false);
+  });
+
+  it('blocks only the approved bulky or ammunition contents in positive-capacity clothing', () => {
+    for (const holderData of capacityClothing) {
+      const holder = { id: holderData.name, ...holderData };
+      for (const name of ['Torch', 'Grappling Hook', 'Hammer, Small', 'Boots']) {
+        expect(clothingStorageRejection({ name, type: 'item' }, holder), `${name} -> ${holder.name}`).toMatch(/bulky|awkward/);
+      }
+      for (const itemData of ammunition.filter((entry) => entry.system.tags?.includes('arrows') || entry.system.tags?.includes('bolts'))) {
+        expect(clothingStorageRejection(itemData, holder), `${itemData.name} -> ${holder.name}`).toMatch(/quiver|bolt case/);
+      }
+    }
+  });
+
+  it('preserves the Adventurer clothes dagger and scabbard exception and leaves conditional items unchanged', () => {
+    const holder = { id: 'adv', name: "Clothes, Adventurer's", type: 'clothing', system: { capacity: 3 } };
+    expect(clothingStorageRejection({ name: 'Dagger', type: 'weapon', system: { storedSize: 2 } }, holder)).toBeNull();
+    expect(clothingStorageRejection({ name: 'Scabbard, Dagger', type: 'container', system: { storedSize: 0.5 } }, holder)).toBeNull();
+    for (const name of ['Dart', 'Wand', 'Wooden Stake', 'Manacles', 'Vial or Bottle', 'Thieves Tools', 'Sack, Small']) {
+      expect(clothingStorageRejection({ name, type: 'item', system: { storedSize: 1 } }, holder), name).toBeNull();
+    }
+  });
+
+  it('audits existing clothing violations without mutation and skips lashed items', () => {
+    const cloak = { id: 'cloak', name: 'Cloak', type: 'clothing', system: { capacity: 2 } };
+    const torch = { id: 'torch', name: 'Torch', type: 'item', system: { containerId: 'cloak', storedSize: 1 } };
+    const lashed = { id: 'lashed', name: 'Torch', type: 'item', system: { containerId: 'cloak', storedSize: 1, lashed: true } };
+    const all = [cloak, torch, lashed];
+    const before = JSON.stringify(all);
+    expect(auditClothingContents(all)).toEqual([{ item: torch, container: cloak, reason: expect.stringContaining('bulky') }]);
+    expect(JSON.stringify(all)).toBe(before);
+    expect(checkWithdrawTarget(torch, { id: 'pack', name: 'Backpack', type: 'container', system: { capacity: 10 } }, []).allowed).toBe(true);
+  });
+
+  it('keeps belt pouch capacities and rejects physically unsuitable contents', () => {
+    const small = { id: 'small', name: 'Belt Pouch (S)', type: 'container', system: { capacity: 2 } };
+    const large = { id: 'large', name: 'Belt Pouch (L)', type: 'container', system: { capacity: 4 } };
+    const blocked = ['Pole, Ten Foot', 'Crowbar', 'Torch', 'Hand Axe', 'Light Hammer', 'Grappling Hook',
+      'Lantern, Bullseye', 'Lantern, Hooded', 'Mallet, Wooden', 'Rations, Iron'];
+    expect(small.system.capacity).toBe(2);
+    expect(large.system.capacity).toBe(4);
+    for (const name of blocked) {
+      expect(pouchStorageRejection({ name }, small)).toMatch(/too long or bulky/);
+      expect(pouchStorageRejection({ name: `${name} +1` }, large)).toMatch(/too long or bulky/);
+    }
+    expect(pouchStorageRejection({ name: 'Hammer, Small' }, small)).toMatch(/small belt pouch/);
+    expect(pouchStorageRejection({ name: 'Hammer, Small' }, large)).toBeNull();
+  });
+
+  it('leaves ordinary pouch contents and other hosts unrestricted, and audits without mutation', () => {
+    const pouch = { id: 'p', name: 'Belt Pouch (L)', type: 'container', system: { capacity: 4 } };
+    const healing = { id: 'h', name: 'Healing Potion', type: 'item', system: { containerId: 'p', storedSize: 1 } };
+    const tinder = { id: 't', name: 'Tinder Box', type: 'item', system: { containerId: 'p', storedSize: 1 } };
+    const chalk = { id: 'c', name: 'Chalk', type: 'item', system: { containerId: 'p', storedSize: 1 } };
+    const torch = { id: 'x', name: 'Torch', type: 'item', system: { containerId: 'p', storedSize: 1 } };
+    const all = [pouch, healing, tinder, chalk, torch];
+    const before = JSON.stringify(all);
+    expect(pouchStorageRejection(healing, pouch)).toBeNull();
+    expect(pouchStorageRejection(tinder, pouch)).toBeNull();
+    expect(pouchStorageRejection(chalk, pouch)).toBeNull();
+    expect(checkWithdrawTarget(torch, { name: 'Backpack', id: 'b', type: 'container', system: { capacity: 10 } }, []).allowed).toBe(true);
+    expect(auditPouchContents(all)).toEqual([{ item: torch, container: pouch, reason: expect.stringContaining('too long or bulky') }]);
+    expect(JSON.stringify(all)).toBe(before);
+  });
+
   it('normalizes restriction tags and only aliases gems to gem', () => {
     expect(matchesContainerType({ type: 'treasure', system: { tags: ['gem'] } }, 'GEMS')).toBe(true);
     expect(matchesContainerType({ type: 'treasure', system: { tags: ['jewelry'] } }, 'gem')).toBe(false);
@@ -224,7 +333,8 @@ describe('checkAllowedContainers', () => {
         const tags = entry.system?.tags || [];
         return entry.type === 'item' && !entry.system?.allowedContainers
           && Number.isFinite(size) && size > 0 && size * quantity <= capacity
-          && !tags.includes('no-store') && !tags.includes('slungable') && !tags.includes('sling');
+          && !tags.includes('no-store') && !tags.includes('slungable') && !tags.includes('sling')
+          && !clothingStorageRejection(entry, holder);
       })) {
         expect(checkWithdrawTarget(candidate, holder, []).allowed, `${candidate.name} -> ${holder.name}`).toBe(true);
       }
@@ -365,4 +475,10 @@ describe('checkAllowedContainers', () => {
       expect(weapons.find((entry) => entry.name === name).system.allowedContainers).not.toContain('Sack, Large');
     }
   });
+});
+
+it('applies clothing shape restrictions to existing custom and magical garments', () => {
+  for (const name of ['Cloak +1', 'Clothes, Winter']) {
+    expect(clothingStorageRejection({ name: 'Torch', type: 'item' }, { name, type: 'clothing', system: { capacity: 2 } })).toBeTruthy();
+  }
 });

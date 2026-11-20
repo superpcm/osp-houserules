@@ -13,7 +13,9 @@
       "lashable": false,
       "tags": [
         "coins"
-      ]
+      ],
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -30,7 +32,9 @@
       "lashable": false,
       "tags": [
         "coins"
-      ]
+      ],
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -47,7 +51,9 @@
       "lashable": false,
       "tags": [
         "coins"
-      ]
+      ],
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -66,7 +72,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -86,7 +94,9 @@
         "gem",
         "jewelry",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -105,7 +115,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -125,7 +137,9 @@
         "gem",
         "mineral",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -144,7 +158,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -164,7 +180,9 @@
         "gem",
         "crystal",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -183,7 +201,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -202,7 +222,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -222,7 +244,9 @@
         "gem",
         "spell-component",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -242,7 +266,9 @@
         "gem",
         "organic",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -261,7 +287,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -280,7 +308,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -299,7 +329,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -318,7 +350,9 @@
       "tags": [
         "gem",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -338,7 +372,9 @@
         "gem",
         "organic",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -358,7 +394,9 @@
         "gem",
         "precious",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -379,7 +417,9 @@
         "precious",
         "spell-component",
         "treasure"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   }
 ]

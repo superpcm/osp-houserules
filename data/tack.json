@@ -1,5 +1,26 @@
 [
   {
+    "name": "Harness, Draft",
+    "type": "item",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "A leather collar, traces, reins, and straps fitted to a draft animal for pulling a cart or wagon. Each animal in a team needs its own harness. The harness does not increase the animal's carrying capacity.",
+      "cost": 20,
+      "unitWeight": 12,
+      "storedSize": 12,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tack",
+        "draft animal"
+      ],
+      "tackSlot": "harness",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
+    }
+  },
+  {
     "name": "Barding, Chain mail",
     "type": "item",
     "img": "systems/osp-houserules/assets/images/tack/barding-chain.webp",
@@ -7,7 +28,7 @@
       "description": "A flexible suit of interlocking metal rings protecting a horse from cuts and punctures while preserving mobility. Light and medium cavalry use it as a balance of protection and movement.",
       "cost": 500,
       "unitWeight": 60,
-      "storedSize": 20,
+      "storedSize": 40,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -19,7 +40,9 @@
       "armorBonus": 4,
       "movementPenalty": -60,
       "animalType": "horse",
-      "tackSlot": "barding"
+      "tackSlot": "barding",
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -48,7 +71,9 @@
       "armorBonus": 2,
       "movementPenalty": -30,
       "animalType": "horse",
-      "tackSlot": "barding"
+      "tackSlot": "barding",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -77,7 +102,9 @@
       "armorBonus": 6,
       "movementPenalty": -90,
       "animalType": "horse",
-      "tackSlot": "barding"
+      "tackSlot": "barding",
+      "storeAvailability": "rare",
+      "blacksmithEligible": true
     }
   },
   {
@@ -106,7 +133,9 @@
       "armorBonus": 6,
       "movementPenalty": -90,
       "animalType": "horse",
-      "tackSlot": "barding"
+      "tackSlot": "barding",
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     }
   },
   {
@@ -125,7 +154,9 @@
         "tack",
         "rideable"
       ],
-      "tackSlot": "control"
+      "tackSlot": "control",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -148,7 +179,9 @@
       "hideCapacity": true,
       "lashSlots": 3,
       "tackSlot": "saddle",
-      "saddleType": "riding"
+      "saddleType": "riding",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -171,7 +204,9 @@
       "capacity": 40,
       "requiresMounted": true,
       "tackSlot": "bags",
-      "requiresSaddleType": "pack"
+      "requiresSaddleType": "pack",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -196,7 +231,9 @@
       "lashSlots": 4,
       "tackSlot": "saddle",
       "saddleType": "pack",
-      "animalType": "pack-only"
+      "animalType": "pack-only",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -219,7 +256,9 @@
       "capacity": 24,
       "requiresMounted": true,
       "tackSlot": "bags",
-      "minAnimalSize": "large"
+      "minAnimalSize": "large",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -241,7 +280,93 @@
       ],
       "capacity": 12,
       "requiresMounted": true,
-      "tackSlot": "bags"
+      "tackSlot": "bags",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Yoke, Ox",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/tack/yoke-ox_thumb.webp",
+    "system": {
+      "description": "A curved wooden crossbeam with two neck bows and a central draft ring. It joins a pair of oxen for pulling a cart or wagon.",
+      "cost": 12,
+      "unitWeight": 20,
+      "storedSize": 20,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "ox-yoke"
+    }
+  },
+  {
+    "name": "Harness, Team",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/tack/harness-team_thumb.webp",
+    "system": {
+      "description": "A matched pair of padded leather collars, traces, reins, and buckled straps for two draft horses. The complete set connects a working team to a cart or wagon.",
+      "cost": 45,
+      "unitWeight": 24,
+      "storedSize": 24,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Wagon Cover",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/tack/cover-wagon_thumb.webp",
+    "system": {
+      "description": "A heavy canvas tarpaulin with a reinforced hem, eyelets, and rope ties. It covers a wagon bed or cargo to keep off rain, dust, and sun.",
+      "cost": 35,
+      "unitWeight": 25,
+      "storedSize": 30,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "allowedContainers": [
+        "Wagon",
+        "Wagon, Open",
+        "Wagon, Heavy Freight"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "cover"
+    }
+  },
+  {
+    "name": "Cargo Net",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/tack/net-cargo_thumb.webp",
+    "system": {
+      "description": "A knotted cargo net with strong edge ropes and tie points. It keeps irregular loads secured in an open cart or wagon over rough roads.",
+      "cost": 8,
+      "unitWeight": 5,
+      "storedSize": 10,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "vehicle-parts"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "net"
     }
   }
 ]

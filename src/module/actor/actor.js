@@ -39,7 +39,7 @@ export class OspActor extends Actor {
       const finish = (value) => { if (!settled) { settled = true; resolve(value); } };
       const dialog = new foundry.applications.api.DialogV2(ospDialogOptions({
         window: { title: game.i18n?.localize?.('OSE.dialog.CharacterCreation') || 'Create Actor' },
-        content: `<div class="form-group"><label for="osp-create-name">Name</label><input id="osp-create-name" name="name" type="text" value="${foundry.utils.escapeHTML(data.name || '')}" autofocus></div><div class="form-group"><label for="osp-create-type">Type</label><select id="osp-create-type" name="type"><option value="character">Character</option><option value="monster">Monster</option></select></div><div class="form-group"><label for="osp-create-folder">Folder</label><select id="osp-create-folder" name="folder"><option value="">— None —</option>${game.folders.filter((folder) => folder.type === 'Actor').map((folder) => `<option value="${folder.id}"${folder.id === data.folder ? ' selected' : ''}>${foundry.utils.escapeHTML(folder.name)}</option>`).join('')}</select></div>`,
+        content: `<div class="form-group"><label for="osp-create-name">Name</label><input id="osp-create-name" name="name" type="text" value="${foundry.utils.escapeHTML(data.name || '')}" autofocus></div><div class="form-group"><label for="osp-create-type">Type</label><select id="osp-create-type" name="type"><option value="character">Character</option><option value="monster">Monster</option><option value="marker">Marker</option></select></div><div class="form-group"><label for="osp-create-folder">Folder</label><select id="osp-create-folder" name="folder"><option value="">— None —</option>${game.folders.filter((folder) => folder.type === 'Actor').map((folder) => `<option value="${folder.id}"${folder.id === data.folder ? ' selected' : ''}>${foundry.utils.escapeHTML(folder.name)}</option>`).join('')}</select></div>`,
         buttons: [{ action: 'create', label: 'Create', default: true, callback: async (_event, _button, app) => {
           submitting = true;
           const root = app?.element || dialog.element;
@@ -241,8 +241,16 @@ export class OspActor extends Actor {
    * @private
    */
   _calculateArmorClass() {
+    this.system.ac = this.getArmorClassBreakdown().total;
+  }
+
+  /**
+   * Return the AC calculation and a human-readable breakdown for the character sheet.
+   * @returns {{total: number, tooltip: string}}
+   */
+  getArmorClassBreakdown() {
     // Start with base AC (unarmored)
-    let calculatedAC = 10;
+    const baseAC = 10;
 
     // Add DEX modifier (AC modifier from dexterity attribute), capped by equipped armor's maxDex
     const dexScore = parseInt(this.system.attributes?.dex?.value) || 10;
@@ -269,23 +277,30 @@ export class OspActor extends Actor {
 
     // Determine effective DEX mod: lowest maxDex among equipped armor caps the bonus
     let dexMod = rawDexMod;
+    let dexCap = null;
     if (equippedArmor.length > 0) {
       const lowestMaxDex = Math.min(...equippedArmor.map(armor => {
         const max = armor.system.maxDex;
         return (max !== null && max !== undefined && max !== "") ? parseInt(max) : Infinity;
       }));
-      if (isFinite(lowestMaxDex)) dexMod = Math.min(rawDexMod, lowestMaxDex);
+      if (isFinite(lowestMaxDex)) {
+        dexCap = lowestMaxDex;
+        dexMod = Math.min(rawDexMod, lowestMaxDex);
+      }
     }
-    calculatedAC += dexMod;
 
     // Use the highest armor AAC value as base (armor AAC replaces base 10, doesn't add to it)
+    let armorBase = 0;
+    let armorName = null;
     if (equippedArmor.length > 0) {
-      const highestArmorAC = Math.max(...equippedArmor.map(armor =>
+      const armorValues = equippedArmor.map(armor =>
         (parseInt(armor.system.aac?.value) || 0) + (parseInt(armor.system.bonus) || 0)
-      ));
+      );
+      const highestArmorAC = Math.max(...armorValues);
       // Only apply if the armor actually provides AC; 0 means unset, not "AC 0"
       if (highestArmorAC > 0) {
-        calculatedAC = calculatedAC - 10 + highestArmorAC;
+        armorBase = highestArmorAC;
+        armorName = equippedArmor[armorValues.indexOf(highestArmorAC)]?.name || 'Armor';
       }
     }
 
@@ -293,18 +308,32 @@ export class OspActor extends Actor {
     const equippedShields = this.system.armor.filter(item =>
       item.system.equipped && item.system.type === "shield"
     );
-    equippedShields.forEach(shield => {
-      const shieldBonus = (parseInt(shield.system.aac?.value) || 0) + (parseInt(shield.system.bonus) || 0);
-      calculatedAC += shieldBonus;
-    });
+    const shieldBonuses = equippedShields.map(shield => ({
+      name: shield.name || 'Shield',
+      bonus: (parseInt(shield.system.aac?.value) || 0) + (parseInt(shield.system.bonus) || 0)
+    }));
 
     // Add paired underarmor bonuses (e.g. Gambeson worn beneath compatible armor)
-    pairedUnderArmor.forEach(item => {
-      calculatedAC += parseInt(item.system.pairedBonus) || 0;
-    });
+    const pairedBonuses = pairedUnderArmor.map(item => ({
+      name: item.name || 'Underarmor',
+      bonus: parseInt(item.system.pairedBonus) || 0
+    }));
 
-    // Store the calculated AC
-    this.system.ac = calculatedAC;
+    const total = (armorBase || baseAC) + dexMod
+      + shieldBonuses.reduce((sum, entry) => sum + entry.bonus, 0)
+      + pairedBonuses.reduce((sum, entry) => sum + entry.bonus, 0);
+    const signed = value => value >= 0 ? `+${value}` : `${value}`;
+    const dexText = dexCap !== null && dexCap < rawDexMod
+      ? `DEX ${signed(dexMod)} (capped at ${dexCap})`
+      : `DEX ${signed(dexMod)}`;
+    const parts = [
+      armorBase > 0 ? `${armorName} ${armorBase} (replaces base 10)` : `Base ${baseAC}`,
+      dexText,
+      ...shieldBonuses.filter(entry => entry.bonus !== 0).map(entry => `${entry.name} ${signed(entry.bonus)}`),
+      ...pairedBonuses.filter(entry => entry.bonus !== 0).map(entry => `${entry.name} ${signed(entry.bonus)}`)
+    ];
+
+    return { total, tooltip: `${parts.join(' ')} = ${total}` };
   }
 
   /**

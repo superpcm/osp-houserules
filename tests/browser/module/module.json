@@ -1,0 +1,10 @@
+{
+  "id": "osp-browser-combat-tests",
+  "title": "OSP Browser Combat TEST ONLY",
+  "description": "Guarded fixture and read-only assertions for a disposable local Foundry world.",
+  "version": "1.0.0",
+  "compatibility": { "minimum": "14.0.0", "verified": "14.367" },
+  "esmodules": ["main.js"],
+  "styles": ["panel.css"],
+  "socket": true
+}

@@ -6,6 +6,9 @@
 import { BankLedgerView } from "../apps/bank-ledger-view.js";
 import { StorehouseView } from "../apps/storehouse-view.js";
 import { ospDialogOptions } from '../dialog/dialog-theme.js';
+import { openStoreManager } from '../apps/store-app.js';
+import { openInnManager } from '../apps/inn-app.js';
+import { openStableManager } from '../apps/stable-app.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { AbstractSidebarTab } = foundry.applications.sidebar;
@@ -16,6 +19,9 @@ export default class PlayerToolkitTab extends HandlebarsApplicationMixin(Abstrac
   static DEFAULT_OPTIONS = {
     window: { title: "Player's Toolkit" },
     actions: {
+      openStores: () => openStoreManager(),
+      openInns: () => openInnManager(),
+      openStables: () => openStableManager(),
       openBank: PlayerToolkitTab._onOpenBank,
       openStorehouse: PlayerToolkitTab._onOpenStorehouse,
     }

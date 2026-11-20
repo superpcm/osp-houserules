@@ -1,0 +1,205 @@
+<div class="osp-calendar {{#unless isGM}}is-player{{/unless}}">  <header class="calendar-banner">
+<button type="button" class="calendar-nav-arrow" data-action="calendarAction" data-calendar-action="previousMonth" aria-label="Previous month">
+<i class="fas fa-chevron-left" aria-hidden="true">
+</i>
+</button>
+<div class="calendar-banner-copy">
+<h1>{{monthName}}</h1>
+<p class="calendar-date-line">{{dateLabel}}</p><p class="calendar-lunar-line" title="30-day lunar cycle · New moon on the 1st · Full moon on the 16th"><span class="calendar-season-label"><i class="fas {{season.icon}}" aria-hidden="true"></i> {{season.name}}</span><span class="calendar-lunar-separator" aria-hidden="true"> · </span><span class="calendar-moon-icon" role="img" aria-label="{{moon.label}}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" class="moon-shadow"/><path d="{{moon.path}}" transform="{{moon.transform}}" class="moon-light"/></svg></span>{{moon.name}}{{#if currentWeather}}<span class="calendar-current-weather" title="{{currentWeather.condition}} · {{currentWeather.severity}}"><span aria-hidden="true"> · </span><i class="fas {{currentWeather.icon}}" aria-hidden="true"></i><span class="weather-inline-condition">{{currentWeather.condition}}</span><span>{{currentWeather.temperatureF}}°F · {{currentWeather.severity}}</span></span>{{/if}}</p>
+</div>
+          <button type="button" class="calendar-nav-arrow" data-action="calendarAction" data-calendar-action="nextMonth" aria-label="Next month">
+<i class="fas fa-chevron-right" aria-hidden="true">
+</i>
+</button>
+</header>      {{#if errorMessage}}<p class="calendar-error" role="alert">{{errorMessage}}</p>{{/if}}  {{#if pending}}<section class="calendar-pending" aria-label="Pending time advance">
+<div>
+<h2>{{#if pending.retry}}Time advance needs attention{{else}}{{#if pending.rest}}Rest paused{{else}}Time advancement paused{{/if}}{{/if}}</h2>
+<p>
+      {{#if pending.rest}}{{pending.remaining}} hours of rest remain. Recovery is granted when the rest finishes.{{else}}Review the reminder before continuing.{{/if}}</p>    {{#if pending.error}}<p role="alert">{{pending.error}}</p>{{/if}}<ul>{{#each pending.waiting}}<li>{{title}}</li>{{/each}}</ul>
+</div>
+<div class="calendar-pending-actions">
+<button type="button" data-action="calendarAction" data-calendar-action="resume" {{#if busy}}disabled{{/if}}>
+      {{#if pending.retry}}Retry completion{{else}}Acknowledge &amp; continue{{/if}}</button>    {{#if pending.canCancel}}<button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="cancelPending" {{#if busy}}disabled{{/if}}>{{#if pending.rest}}Cancel rest{{else}}Cancel remaining advance{{/if}}</button>{{/if}}</div>
+</section>{{/if}}        <nav class="calendar-tabs" aria-label="Calendar views">
+<button type="button" class="{{#if isMonthTab}}is-active{{/if}}" data-action="calendarAction" data-calendar-action="selectTab" data-tab="month" aria-pressed="{{isMonthTab}}">
+<i class="fas fa-calendar-days" aria-hidden="true">
+</i>
+<span>Month</span>
+</button>
+      <button type="button" class="{{#if isAgendaTab}}is-active{{/if}}" data-action="calendarAction" data-calendar-action="selectTab" data-tab="agenda" aria-pressed="{{isAgendaTab}}">    <i class="fas fa-scroll" aria-hidden="true">
+</i>
+<span>Agenda</span>
+</button>
+<button type="button" class="{{#if isUpcomingTab}}is-active{{/if}}" data-action="calendarAction" data-calendar-action="selectTab" data-tab="upcoming" aria-pressed="{{isUpcomingTab}}">
+<i class="fas fa-list" aria-hidden="true">
+</i>
+<span>
+      Upcoming</span>
+</button>    <button type="button" class="{{#if isNotesTab}}is-active{{/if}}" data-action="calendarAction" data-calendar-action="selectTab" data-tab="notes" aria-pressed="{{isNotesTab}}"><i class="fas fa-feather" aria-hidden="true"></i><span>Notes</span></button><button type="button" class="{{#if isWeatherTab}}is-active{{/if}}" data-action="calendarAction" data-calendar-action="selectTab" data-tab="weather" aria-pressed="{{isWeatherTab}}"><i class="fas fa-cloud-sun" aria-hidden="true"></i><span>Weather</span></button>{{#if isGM}}<button type="button" class="{{#if isHistoryTab}}is-active{{/if}}" data-action="calendarAction" data-calendar-action="selectTab" data-tab="history" aria-pressed="{{isHistoryTab}}">
+<i class="fas fa-book" aria-hidden="true">
+</i>
+<span>History</span>
+</button>{{/if}}</nav>  {{#if isHistoryTab}}<section class="calendar-history calendar-history-page" aria-label="Time history">
+<h3>Time history</h3>{{#if history}}<ol>{{#each history}}<li>
+<strong>
+      {{kindLabel}} · {{status}}</strong>
+<span>    {{oldLabel}} → {{newLabel}}</span>{{#if reason}}<span>{{reason}}</span>{{/if}}</li>{{/each}}</ol>{{else}}<p>No time changes recorded yet.</p>{{/if}}</section>{{else}}{{#if isNotesTab}}<section class="calendar-notes-page" aria-label="Session notes">
+<div class="calendar-section-title"><h2>Session notes</h2>{{#if isGM}}<button type="button" data-action="calendarAction" data-calendar-action="newNote" {{#if busy}}disabled{{/if}}>New session note</button>{{/if}}</div>
+{{#if noteEditing}}<section class="calendar-editor calendar-notes-editor" data-session-note-editor aria-label="Session note editor"><div class="calendar-section-title"><h3>{{#if noteEditing.id}}Edit session note{{else}}New session note{{/if}}</h3><button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="cancelNote" aria-label="Close session note editor"><i class="fas fa-times" aria-hidden="true"></i></button></div>
+<label>Title<input name="noteTitle" value="{{noteEditing.noteTitle}}" maxlength="160" required {{#if busy}}disabled{{/if}}></label><label>Note<textarea name="noteBody" maxlength="10000" rows="8" required {{#if busy}}disabled{{/if}}>{{noteEditing.noteBody}}</textarea></label><div class="calendar-editor-pair"><label>Visibility<select name="noteVisibility" {{#if busy}}disabled{{/if}}>{{#each noteEditing.visibilityOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label></div><fieldset><legend>Session date</legend><div class="calendar-note-date-fields"><label>Year<input name="noteYear" type="number" min="1" step="1" value="{{noteEditing.noteYear}}" {{#if busy}}disabled{{/if}}></label><label>Month<select name="noteMonth" {{#if busy}}disabled{{/if}}>{{#each noteEditing.noteMonths}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label><label>Day<input name="noteDay" type="number" min="1" max="30" step="1" value="{{noteEditing.noteDay}}" {{#if busy}}disabled{{/if}}></label></div></fieldset><div class="calendar-editor-actions"><button type="button" data-action="calendarAction" data-calendar-action="saveNote" {{#if busy}}disabled{{/if}}>Save note</button><button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="cancelNote" {{#if busy}}disabled{{/if}}>Cancel</button>{{#if noteEditing.id}}<button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="deleteNote" {{#if busy}}disabled{{/if}}>Delete note</button>{{/if}}</div></section>{{/if}}
+{{#if notes}}<ol class="calendar-notes-list">{{#each notes}}<li class="calendar-session-note"><div class="calendar-note-meta"><strong>{{title}}</strong>{{#if private}}<i class="fas fa-lock" aria-label="DM-only"></i>{{/if}}<span>{{label}}</span></div><div class="calendar-note-body">{{body}}</div>{{#if ../isGM}}<div class="calendar-note-actions"><button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="editNote" data-note-id="{{id}}">Edit</button><button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="deleteNote" data-note-id="{{id}}">Delete</button></div>{{/if}}</li>{{/each}}</ol>{{else}}<p class="calendar-hint">No session notes recorded yet.</p>{{/if}}</section>{{else}}{{#if isWeatherTab}}<section class="calendar-weather-page" aria-label="Weather"><h2>Current weather</h2>{{#if currentWeather}}<div class="calendar-weather-current is-{{currentWeather.severityClass}}"><h3><i class="fas {{currentWeather.icon}}" aria-hidden="true"></i> {{currentWeather.condition}}</h3><p><strong>{{currentWeather.severity}}</strong> · {{currentWeather.temperatureF}}°F · Wind {{currentWeather.windMph}} mph {{currentWeather.windDirection}} · Precipitation: {{currentWeather.precipitation}} · Visibility approximately {{currentWeather.visibility}} miles</p><p>{{currentWeather.periodLabel}}</p><dl><dt>Movement</dt><dd>{{currentWeather.guidance.movement}}</dd><dt>Travel</dt><dd>{{currentWeather.guidance.travel}}</dd><dt>Visibility</dt><dd>{{currentWeather.guidance.visibility}}</dd><dt>Combat</dt><dd>{{currentWeather.guidance.combat}}</dd></dl><p class="calendar-hint">DM guidance recommendations only; no automatic penalties are applied.</p></div>{{else}}<p class="calendar-hint">Weather is awaiting the active DM.</p>{{/if}}{{#if isGM}}<section class="calendar-weather-forecast" aria-label="Seven-day forecast"><h2>Seven-day forecast <small>DM-only</small></h2>{{#if weatherForecast}}{{#each weatherForecast}}<details><summary>{{label}} · High {{highF}}°F / Low {{lowF}}°F · {{dominantCondition}}</summary>{{#each periods}}<p><strong>{{timeLabel}}</strong> · {{condition}} · {{severity}} · {{temperatureF}}°F · Wind {{windMph}} mph {{windDirection}}</p>{{/each}}</details>{{/each}}{{else}}<p class="calendar-hint">No forecast is available yet.</p>{{/if}}</section>{{/if}}</section>{{else}}<div class="calendar-columns {{#if isUpcomingTab}}is-upcoming-tab{{else}}{{#if isAgendaTab}}is-agenda-tab{{else}}is-month-tab{{/if}}{{/if}}">{{#unless isUpcomingTab}}<section class="calendar-month" aria-label="Month calendar">
+<div class="calendar-weekdays">{{#each weekdays}}<span>
+      {{this}}</span>{{/each}}</div><div class="calendar-grid-shell"><div class="calendar-grid-bars" aria-label="Calendar event bars">{{#each @root.calendarBarSegments}}<button type="button" role="button" class="calendar-event-bar {{#unless multiDay}}is-single-day{{/unless}} {{#if startsHere}}starts-here{{/if}} {{#if endsHere}}ends-here{{/if}}" data-action="calendarAction" data-calendar-action="editEvent" data-event-id="{{id}}" data-occurrence-start="{{occurrenceStart}}" style="grid-row: {{row}}; grid-column: {{startColumn}} / span {{span}}; margin-bottom: {{laneOffset}}px;" title="{{ariaLabel}}" aria-label="{{ariaLabel}}">{{#unless startsHere}}<i class="fas fa-chevron-left" aria-hidden="true"></i>{{/unless}}<i class="fas {{categoryIcon}} calendar-category-icon" aria-label="{{categoryLabel}}"></i>{{#if private}}<i class="fas fa-lock" aria-hidden="true"></i>{{/if}}<span class="calendar-bar-title">{{title}}</span>{{#unless endsHere}}<i class="fas fa-chevron-right" aria-hidden="true"></i>{{/unless}}</button>{{/each}}</div><div class="calendar-grid">{{#each days}}<div class="calendar-day {{#if today}}is-today{{/if}} {{#if selected}}is-selected{{/if}}"><span class="calendar-day-moon calendar-moon-icon" role="img" aria-label="{{moon.label}}" title="{{moon.label}}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" class="moon-shadow"/><path d="{{moon.path}}" transform="{{moon.transform}}" class="moon-light"/></svg></span>
+<button type="button" class="calendar-day-number" data-action="calendarAction" data-calendar-action="selectDay" data-day="{{day}}" aria-label="{{label}}" {{#if today}}aria-current="date"{{/if}}>
+<strong>{{day}}</strong>{{#if today}}<small>Today</small>{{/if}}</button>{{#if eventOverflow}}<button type="button" class="calendar-day-overflow" data-action="calendarAction" data-calendar-action="selectDay" data-day="{{day}}" aria-label="{{eventOverflow}} more events on {{label}}">+{{eventOverflow}} more</button>{{/if}}
+</div>{{/each}}</div>
+</div></section>{{/unless}}  <aside class="calendar-agenda">
+         {{#if isUpcomingTab}}<section class="calendar-upcoming" aria-label="Upcoming events">
+<h2>Upcoming events</h2>{{#if upcoming}}<ol>{{#each upcoming}}<li>
+<span>{{label}}</span>
+<button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="editEvent" data-event-id="{{id}}" data-occurrence-start="{{occurrenceStart}}"><i class="fas {{categoryIcon}} calendar-category-icon" aria-label="{{categoryLabel}}"></i> {{title}}{{#if private}} <i class="fas fa-lock" aria-label="DM-only">
+</i>{{/if}}</button>{{#if endLabel}}<small>Until {{endLabel}}</small>
+         {{/if}}{{#if recurrence}}<small>{{repeatLabel}}</small>{{/if}}</li>{{/each}}</ol>{{else}}<p class="calendar-hint">No upcoming events.</p>{{/if}}</section>{{else}}{{#if editing}}<section class="calendar-editor" data-calendar-editor aria-label="Event details">
+<div class="calendar-section-title">
+<h2>{{#if editing.readOnly}}Event details{{else}}{{#if editing.id}}Edit event{{else}}New event{{/if}}{{/if}}</h2>
+         <button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="cancelEdit" aria-label="Close event details">
+<i class="fas fa-times" aria-hidden="true">
+</i>
+</button>
+</div>{{#if editing.readOnly}}<h3><i class="fas {{editing.categoryIcon}}" aria-label="{{editing.categoryLabel}}"></i> {{editing.title}}</h3>
+<p>{{editing.label}}{{#if editing.endLabel}} – {{editing.endLabel}}{{/if}}</p>
+<p class="calendar-description">
+          {{editing.description}}</p>{{#if editing.recurrence}}<p>Repeats every {{editing.recurrence.interval}} {{editing.recurrence.unit}}.</p>{{/if}}  {{else}}<label>Title<input name="title" value="{{editing.title}}" maxlength="160" required {{#if busy}}disabled{{/if}}>
+</label>
+<label>Description<textarea name="description" maxlength="10000" rows="3" {{#if busy}}disabled{{/if}}>{{editing.description}}</textarea>
+</label>
+<div class="calendar-editor-pair">
+<label>
+          Visibility<select name="visibility" {{#if busy}}disabled{{/if}}>{{#each editing.visibilityOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+</label>
+<label>Event type<select name="kind" {{#if busy}}disabled{{/if}}>{{#each editing.kindOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+</label>
+</div>
+<label>Category<select name="category" {{#if busy}}disabled{{/if}}>{{#each editing.categoryOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+<fieldset>
+<legend>Start</legend>
+<div class="calendar-date-fields">
+<label>
+          Year<input name="startYear" type="number" min="1" step="1" value="{{editing.startYear}}" {{#if busy}}disabled{{/if}}>
+</label>
+<label>Month<select name="startMonth" {{#if busy}}disabled{{/if}}>{{#each editing.startMonths}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+</label>
+<label>Day<input name="startDay" type="number" min="1" max="30" step="1" value="{{editing.startDay}}" {{#if busy}}disabled{{/if}}>
+</label>
+<label>
+          Time<input name="startTime" type="time" value="{{editing.startTime}}" {{#if busy}}disabled{{/if}}>
+</label>
+</div>
+</fieldset>
+<label class="calendar-checkbox">
+<input type="checkbox" name="endEnabled" {{#if editing.endEnabled}}checked{{/if}} {{#if busy}}disabled{{/if}}>Set an end date</label>
+<fieldset>
+<legend>End (optional)</legend>
+<div class="calendar-date-fields">
+<label>Year<input name="endYear" type="number" min="1" step="1" value="{{editing.endYear}}" {{#if busy}}disabled{{/if}}>
+</label>       <label>   Month<select name="endMonth" {{#if busy}}disabled{{/if}}>{{#each editing.endMonths}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+</label>
+<label>Day<input name="endDay" type="number" min="1" max="30" step="1" value="{{editing.endDay}}" {{#if busy}}disabled{{/if}}>
+</label>
+<label>Time<input name="endTime" type="time" value="{{editing.endTime}}" {{#if busy}}disabled{{/if}}>
+</label>
+</div>
+</fieldset>
+<p class="calendar-hint">
+          All-day events include the selected end day; time fields are ignored. Their reminders fire at 8:00 AM on the first day.</p>
+<div class="calendar-editor-pair">
+<label>Repeat every<input name="repeatInterval" type="number" min="1" max="10000" step="1" value="{{editing.repeatInterval}}" {{#if busy}}disabled{{/if}}>
+</label>
+<label>Repeat unit<select name="repeatUnit" {{#if busy}}disabled{{/if}}>{{#each editing.repeatOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>
+      {{label}}</option>    {{/each}}</select>
+</label>
+</div>
+<label>Earlier reminders (minutes)<input name="earlierMinutes" value="{{editing.earlierMinutes}}" placeholder="60, 1440" {{#if busy}}disabled{{/if}}>
+</label>
+<p class="calendar-hint">An event-time reminder is always included. Separate earlier reminders with commas. Editing a recurring event changes the whole series.</p>
+<div class="calendar-editor-actions">
+         <button type="button" data-action="calendarAction" data-calendar-action="saveEvent" {{#if busy}}disabled{{/if}}> Save event</button>
+<button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="cancelEdit" {{#if busy}}disabled{{/if}}>Cancel</button>{{#if editing.id}}<button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="deleteEvent" {{#if busy}}disabled{{/if}}>Delete event</button>
+         <button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="resetReminders" {{#if busy}}disabled{{/if}}> Reset reminders</button>{{/if}}</div>{{/if}}</section>  {{else}}{{#unless isUpcomingTab}}<section class="calendar-selected">
+<div class="calendar-section-title">
+<h2>{{selectedLabel}}</h2><span class="calendar-selected-moon">{{selectedMoon.name}}</span>{{#if isGM}}<button type="button" data-action="calendarAction" data-calendar-action="newEvent" {{#if busy}}disabled{{/if}}>New event</button>{{/if}}</div>
+         {{#if selectedEvents}}<ul>{{#each selectedEvents}}<li> <button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="editEvent" data-event-id="{{id}}" data-occurrence-start="{{occurrenceStart}}"><i class="fas {{categoryIcon}} calendar-category-icon" aria-label="{{categoryLabel}}"></i> {{title}}{{#if private}} <i class="fas fa-lock" aria-label="DM-only">
+</i>{{/if}}</button>
+</li>{{/each}}</ul>{{else}}<p class="calendar-hint">No events on this day.</p>{{/if}}<section class="calendar-day-notes" aria-label="Session notes for selected day"><h3 class="calendar-selected-notes-heading">Session notes</h3>{{#if selectedNotes}}<ul class="calendar-selected-notes">{{#each selectedNotes}}<li><strong>{{title}}</strong>{{#if private}} <i class="fas fa-lock" aria-label="DM-only"></i>{{/if}}<p class="calendar-note-body">{{body}}</p></li>{{/each}}</ul>{{else}}<p class="calendar-hint">No session notes on this day.</p>{{/if}}{{#if isGM}}<button type="button" class="calendar-text-button" data-action="calendarAction" data-calendar-action="newNote" {{#if busy}}disabled{{/if}}>Add session note</button>{{/if}}</section></section>          {{/unless}}{{/if}}{{/if}}  </aside>
+</div>
+{{/if}}{{/if}}{{/if}}<footer class="calendar-footer" aria-label="Calendar quick controls">
+<button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="openClock"><i class="fas fa-clock" aria-hidden="true"></i> Clock</button>
+<button type="button" class="calendar-today is-secondary" data-action="calendarAction" data-calendar-action="today">Today</button>
+{{#if isGM}}
+<button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="advance" data-amount="600" {{#if controlsDisabled}}disabled{{/if}}>
+<i class="fas fa-forward" aria-hidden="true">
+</i> +10 Min</button>     <button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="advance" data-amount="3600" {{#if controlsDisabled}}disabled{{/if}}>
+     <i class="fas fa-forward" aria-hidden="true">
+</i> +1 Hour</button>
+<button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="advance" data-amount="86400" {{#if controlsDisabled}}disabled{{/if}}>
+<i class="fas fa-forward" aria-hidden="true">
+</i> +1 Day</button>     <button type="button" data-action="calendarAction" data-calendar-action="awardRest" {{#if controlsDisabled}}disabled{{/if}}>
+<i class="fas fa-bed" aria-hidden="true">
+</i> Award Rest</button>
+     <button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="newEvent" {{#if busy}}disabled{{/if}}>
+<i class="fas fa-plus" aria-hidden="true">
+</i> New Event</button>     <button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="toggleTimeControls" aria-expanded="{{isTimeControlsOpen}}" aria-controls="osp-calendar-time-controls">Time Controls</button>
+{{/if}}
+</footer>
+{{#if isTimeControlsOpen}}<section id="osp-calendar-time-controls" class="calendar-time-controls is-open" aria-label="DM time controls">
+<div class="calendar-quick">
+<strong>Custom duration</strong>
+<label class="calendar-duration">Duration<input name="duration" aria-label="Custom duration" type="number" min="0.01" step="0.01" value="1" {{#if controlsDisabled}}disabled{{/if}}>
+</label>
+<select name="durationUnit" aria-label="Duration unit" {{#if controlsDisabled}}disabled{{/if}}> <option value="minutes">minutes</option>
+<option value="hours">hours</option>
+<option value="days">days</option>
+</select>
+         <button type="button" data-action="calendarAction" data-calendar-action="advance" {{#if controlsDisabled}}disabled{{/if}}>Advance</button>
+</div>
+<div class="calendar-date-tools">
+<section>
+<h3>Advance to</h3>
+<div class="calendar-date-fields">
+<label>Year<input name="advanceYear" type="number" min="1" step="1" value="{{currentYear}}" {{#if controlsDisabled}}disabled{{/if}}>
+</label> <label>Month<select name="advanceMonth" {{#if controlsDisabled}}disabled{{/if}}>
+         {{#each currentMonths}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+</label>
+<label>Day<input name="advanceDay" type="number" min="1" max="30" step="1" value="{{currentDay}}" {{#if controlsDisabled}}disabled{{/if}}>
+</label>
+<label>Time<input name="advanceTime" type="time" value="{{currentTime}}" {{#if controlsDisabled}}disabled{{/if}}>
+</label>
+</div>
+          <button type="button" data-action="calendarAction" data-calendar-action="advanceTo" {{#if controlsDisabled}}disabled{{/if}}>Advance to date</button>
+</section>
+<section>
+<h3>Correct Date &amp; Time</h3>
+<div class="calendar-date-fields">
+<label>Year<input name="correctionYear" type="number" min="1" step="1" value="{{currentYear}}" {{#if controlsDisabled}}disabled{{/if}}>
+</label>
+<label>Month<select name="correctionMonth" {{#if controlsDisabled}}disabled{{/if}}>
+          {{#each currentMonths}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+</label>
+<label>Day<input name="correctionDay" type="number" min="1" max="30" step="1" value="{{currentDay}}" {{#if controlsDisabled}}disabled{{/if}}>
+</label>
+<label>Time<input name="correctionTime" type="time" value="{{currentTime}}" {{#if controlsDisabled}}disabled{{/if}}>
+</label>
+</div>
+<label>
+          Reason (optional)<input name="correctionReason" maxlength="500" {{#if controlsDisabled}}disabled{{/if}}>
+</label>
+<p class="calendar-hint">Clock corrections do not undo healing, purchases, bookings, or restocking. Acknowledged reminders stay acknowledged. Forward corrections stop at reminders.</p>
+<button type="button" class="is-secondary" data-action="calendarAction" data-calendar-action="correctDate" {{#if controlsDisabled}}disabled{{/if}}>Correct date &amp; time</button>
+</section>
+</div>
+          <section class="calendar-history">
+<h3>Time history</h3>{{#if history}}<ol>{{#each history}}<li>
+<strong>{{kindLabel}} · {{status}}</strong>
+<span>{{oldLabel}} → {{newLabel}}</span>{{#if reason}}<span>{{reason}}</span>{{/if}}</li>{{/each}}</ol>{{else}}<p>No time changes recorded yet.</p>{{/if}}</section>
+</section>{{/if}}  
+</div>

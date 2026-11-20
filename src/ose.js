@@ -1,5 +1,17 @@
+import { repairWinterClothesProfile } from './module/inventory/winter-clothes-profile.js';
+import { repairQuiverArrowBundles } from './module/inventory/arrow-bundle.js';
+import { initializeTooltips } from './module/ui/tooltips.js';
+import { repairShovelLashing } from './module/inventory/shovel-lashing-repair.js';
 import { migrateCauseFearScroll } from './module/spells/item-spell-migration.js';
+import { repairEquipmentCatalog } from './module/inventory/equipment-catalog-repair.js';
+import { repairBeltLashing } from './module/inventory/belt-lashing-repair.js';
+import { repairDaggerSizes } from './module/inventory/dagger-size-repair.js';
+import { repairSwordSizes } from './module/inventory/sword-size-repair.js';
+import { repairMaceSizes } from './module/inventory/mace-size-repair.js';
+import { repairLongWeaponSizes } from './module/inventory/long-weapon-size-repair.js';
+import { repairEquipmentSizes } from './module/inventory/equipment-size-repair.js';
 import { internalChatDocumentClass } from './module/internal-chat.js';
+import { isShieldItem } from './module/inventory/shield-lashing.js';
 import { registerItemRemovalAuthority } from './module/inventory/item-removal.js';
 import { registerHealthAuthority, registerHealthRoundHook } from './module/health/health-authority.js';
 import { registerCriticalAuthority } from './module/health/critical-authority.js';
@@ -25,8 +37,8 @@ import { OSP } from "./module/config.js";
 // Core document classes
 import { OspActorSheetCharacter } from "./module/actor/sheets/character-sheet.js";
 import { OspActorSheetMonster } from "./module/actor/sheets/monster-sheet.js";
-import { PositionToolHandler } from "./module/actor/sheets/handlers/position-tool-handler.js";
-import { registerPositionSettings, applyStoredPositionOverrides } from "./module/actor/sheets/handlers/position-file-writer.js";
+import { OspActorSheetMarker } from "./module/actor/sheets/marker-sheet.js";
+import { registerMarkerGlow } from "./module/marker-glow.js";
 import { OspActor } from "./module/actor/actor.js";
 import { processLevelUp, registerLevelUpAuthority, migrateLevelUpState } from './module/actor/level-up.js';
 import { registerCatalogReconciliationAuthority } from './module/inventory/catalog-reconciliation.js';
@@ -80,8 +92,21 @@ import { initPartyTreasury } from "./module/inventory/party-treasury.js";
 import { initStorehouse } from "./module/inventory/storehouse.js";
 import { initInventoryAuthority } from "./module/inventory/inventory-authority.js";
 import { initBankLedgerAuthority } from "./module/inventory/bank-ledger-orchestrator.js";
+import { initStores } from './module/inventory/store.js';
+import { initStoreRestocking } from './module/inventory/store-restocking.js';
+import { initStoreSales } from './module/inventory/store-sale.js';
+import { initInns } from './module/inventory/inn.js';
+import { initInnReplenishment } from './module/inventory/inn-replenishment.js';
+import { initStables } from './module/inventory/stable.js';
+import { registerCalendar, initializeCalendar } from './module/calendar/calendar-authority.js';
+import { initializeCalendarDisplay } from './module/calendar/calendar-display.js';
+import { registerWeather, initializeWeather } from './module/calendar/weather-authority.js';
+import { initStableRestocking } from './module/inventory/stable-replenishment.js';
+import { planStablePlacement } from './module/inventory/stable-placement.js';
+import { planStorePlacement, validateStorePlacement } from './module/inventory/store-placement.js';
 
 Hooks.once("init", () => {
+  registerMarkerGlow();
   initExternalDragTracker();
 
   // ── Config ────────────────────────────────────────────────────────────────
@@ -97,14 +122,15 @@ Hooks.once("init", () => {
   };
 
   // Expose classes for debugging
-  window.OSPDebug = { OspActorSheetCharacter, PositionToolHandler };
+  window.OSPDebug = { OspActorSheetCharacter };
 
   // Make classic helpers available globally (for templates / macros)
   window.OSPLegacy = { getNextLevelXP, calculateXPModifier, NumberFormatter };
 
   // ── Settings ──────────────────────────────────────────────────────────────
   registerSettings();
-  registerPositionSettings();
+  registerCalendar();
+  registerWeather();
 
   // ── Handlebars helpers ────────────────────────────────────────────────────
   registerHelpers();
@@ -159,6 +185,7 @@ Hooks.once("init", () => {
     makeDefault: true,
     label: game.i18n.localize("ose.Actor.Type.monster")
   });
+  foundry.documents.collections.Actors.registerSheet("ose", OspActorSheetMarker, { types: ["marker"], makeDefault: true, label: game.i18n.localize("ose.Actor.Type.marker") });
 
   foundry.documents.collections.Items.registerSheet("ose", OspItemSheet, {
     types: ["weapon", "armor", "item", "container", "coin", "clothing", "ammunition", "livestock", "ability", "spell"],
@@ -169,7 +196,8 @@ Hooks.once("init", () => {
   // ── Type labels ───────────────────────────────────────────────────────────
   CONFIG.Actor.typeLabels = {
     character: game.i18n.localize("ose.Actor.Type.character"),
-    monster: game.i18n.localize("ose.Actor.Type.monster")
+    monster: game.i18n.localize("ose.Actor.Type.monster"),
+    marker: game.i18n.localize("ose.Actor.Type.marker")
   };
 
   // ── Preload templates ────────────────────────────────────────────────────
@@ -191,6 +219,7 @@ Hooks.once("init", () => {
     // Localize type options
     $select.find('option[value="character"]').text(game.i18n.localize("ose.Actor.Type.character"));
     $select.find('option[value="monster"]').text(game.i18n.localize("ose.Actor.Type.monster"));
+    $select.find('option[value="marker"]').text(game.i18n.localize("ose.Actor.Type.marker"));
 
     // Disable submit if no type is selected
     $submit.prop("disabled", $select.val() === "");
@@ -202,7 +231,26 @@ Hooks.once("init", () => {
   });
 
   // ── Character creation: roll 4d6-drop-lowest for ability scores ──────────
+  Hooks.on("preCreateToken", (document, data) => {
+    const actor = document.actor || game.actors?.get(data.actorId);
+    if (actor?.type === "marker") document.updateSource({ lockRotation: true, rotation: 0 });
+  });
+  Hooks.on("preUpdateToken", (document, changes) => {
+    if (document.actor?.type === "marker" || game.actors?.get(document.actorId)?.type === "marker") { changes.lockRotation = true; changes.rotation = 0; }
+  });
+
   Hooks.on("preCreateActor", (document, data, options, userId) => {
+    if (document.type === "marker") {
+      document.updateSource({ "prototypeToken.lockRotation": true, "prototypeToken.rotation": 0 });
+      if (data.prototypeToken?.actorLink === undefined) document.updateSource({ "prototypeToken.actorLink": true });
+      if (data.prototypeToken?.texture?.scaleX === undefined) document.updateSource({ "prototypeToken.texture.scaleX": 2 });
+      if (data.prototypeToken?.texture?.scaleY === undefined) document.updateSource({ "prototypeToken.texture.scaleY": 2 });
+    }
+    if (document.type === "marker" && !data.prototypeToken?.texture?.src) {
+      const src = "systems/osp-houserules/assets/tokens/painted-party-pins/frostwind.webp";
+      document.updateSource({ "prototypeToken.texture.src": src });
+      if (!data.img) document.updateSource({ img: src });
+    }
     if (options.osprSkipDialog) return;
     if (document.type !== "character") return;
     if (game.userId !== userId) return;
@@ -227,10 +275,24 @@ Hooks.once("init", () => {
 
 // ── Position overrides ────────────────────────────────────────────────────
 Hooks.once("ready", async () => {
+  void repairWinterClothesProfile().catch(error => console.error('[osp-houserules] Winter clothing profile repair failed', error));
+  void repairQuiverArrowBundles().catch(error => console.error('[osp-houserules] Quiver arrow repair failed', error));
   applyBankFontSetting();
   initPartyTreasury();
   initStorehouse();
   initInventoryAuthority();
+  initStores({ planPlacement: planStorePlacement, validatePlacement: validateStorePlacement });
+  initStoreSales();
+  initStoreRestocking();
+  initInns({ planPlacement: planStorePlacement, validatePlacement: validateStorePlacement });
+  initInnReplenishment();
+  initStables({ planPlacement: planStablePlacement, validatePlacement: validateStorePlacement });
+  initStableRestocking();
+  try { await initializeCalendar(); }
+  catch (error) { console.error('OSP | Calendar initialization failed', error); }
+  try { await initializeWeather(); }
+  catch (error) { console.error('OSP | Weather initialization failed', error); }
+  initializeCalendarDisplay();
   registerItemRemovalAuthority();
   initBankLedgerAuthority();
   registerXPAwardAuthority();
@@ -241,6 +303,14 @@ Hooks.once("ready", async () => {
   registerCombatSupportAuthority();
   registerSpellcastingAuthority();
   void migrateCauseFearScroll().catch(error => console.error('[osp-houserules] Cause Fear scroll repair failed', error));
+  void repairShovelLashing().catch(error => console.error('[osp-houserules] Shovel lashing repair failed', error));
+  void repairEquipmentCatalog().catch(error => console.error('[osp-houserules] Equipment catalog repair failed', error));
+  void repairBeltLashing().catch(error => console.error('[osp-houserules] Belt lashing repair failed', error));
+  void repairDaggerSizes().catch(error => console.error('[osp-houserules] Dagger size repair failed', error));
+  void repairSwordSizes().catch(error => console.error('[osp-houserules] Sword size repair failed', error));
+  void repairMaceSizes().catch(error => console.error('[osp-houserules] Mace size repair failed', error));
+  void repairLongWeaponSizes().catch(error => console.error('[osp-houserules] Long weapon size repair failed', error));
+  void repairEquipmentSizes().catch(error => console.error('[osp-houserules] Equipment size repair failed', error));
   registerNoncombatAuthority();
   registerHealthAuthority();
   registerCriticalAuthority();
@@ -254,7 +324,6 @@ Hooks.once("ready", async () => {
       catch (error) { console.warn('OSP | Progression baseline migration requires recovery:', error); }
     }
   }
-  applyStoredPositionOverrides().catch(err => console.warn('OSP | applyStoredPositionOverrides failed:', err));
 
 });
 
@@ -458,6 +527,7 @@ Handlebars.registerHelper('multiply', function(a, b) {
 Handlebars.registerHelper('includes', function(str, substring) {
   return String(str || '').includes(substring);
 });
+Handlebars.registerHelper('isShieldItem', isShieldItem);
 
 Handlebars.registerHelper('abbrevTime', function(value) {
   return value ? String(value).replace(/\s+minutes?/i, ' min') : '';
@@ -790,24 +860,38 @@ Hooks.once("ready", () => {
 Hooks.on("hotbarDrop", (bar, data, slot) => {
   // Check for our custom weapon attack macro type
   if (data.type === "WeaponAttackMacro" || data.macroType === "weaponAttack") {
-    const actor = game.actors.get(data.actorId);
-    const item = actor?.items.get(data.itemId);
-
-    if (!actor || !item) {
-      ui.notifications.warn("Could not find actor or weapon for macro");
-      return false;
-    }
-
-    // Include actorId so the macro works without needing a token selected
-    const macroCommand = `game.osp.rollItemMacro(${JSON.stringify(item.name)}, ${JSON.stringify(actor.id)});`;
-
     (async () => {
+      let actor;
+      let item;
+      try {
+        actor = data.actorUuid
+          ? await fromUuid(data.actorUuid)
+          : game.actors.get(data.actorId);
+        item = data.itemUuid
+          ? await fromUuid(data.itemUuid)
+          : actor?.items.get(data.itemId);
+      } catch {
+        ui.notifications.warn("Could not find actor or weapon for macro");
+        return;
+      }
+
+      if (!actor || !item || (data.actorUuid && item.parent?.uuid !== actor.uuid) || (data.itemId && item.id !== data.itemId)) {
+        ui.notifications.warn("Could not find actor or weapon for macro");
+        return;
+      }
+      const reference = {
+        itemUuid: item.uuid,
+        actorUuid: actor.uuid,
+        itemId: item.id,
+        itemName: item.name,
+      };
+      const macroCommand = `game.osp.rollItemMacro(${JSON.stringify(reference)});`;
       const macro = await Macro.create({
         name: `${item.name} Attack`,
         type: "script",
         img: item.img,
         command: macroCommand,
-        flags: { "osp-houserules": { actorId: data.actorId, itemId: data.itemId } }
+        flags: { "osp-houserules": { actorId: data.actorId, itemId: data.itemId, ...reference } }
       });
       game.user.assignHotbarMacro(macro, slot);
     })();
@@ -1112,3 +1196,5 @@ Hooks.on('renderDocumentSheetConfig', (app, element) => {
     fdoc.setFlag(game.system.id, 'sheetTheme', e.currentTarget.value);
   });
 });
+
+Hooks.once('ready', initializeTooltips);

@@ -1,0 +1,37 @@
+// Disclosure glyph alignment only: keep the controls and all inventory geometry intact.
+.gear-tab :is(.body-section-toggle, .slung-section-toggle, .container-toggle,
+  .belt-row-toggle, .nested-container-toggle, .attachment-toggle,
+  .sling-storage-toggle, .lashed-toggle) > i:is(.fa-caret-down, .fa-caret-right) {
+  position: relative;
+  left: -3px;
+  top: var(--gear-caret-y, 0px);
+}
+
+// The standard branch crosses at 30.5px (the center of its 1px stroke).
+// Top-level clothing headers center their glyph at 29px; nested headers at 28px.
+.gear-tab .body-items-list > .item-entry > .item-header > .container-toggle {
+  --gear-caret-y: 1.5px;
+}
+.gear-tab .item-header > :is(.nested-container-toggle, .attachment-toggle, .sling-storage-toggle) {
+  --gear-caret-y: 2.5px;
+}
+
+// Virtual section headers have no incoming branch: retain their header center.
+.gear-tab .body-section-toggle { --gear-caret-y: 0.5px; }
+.gear-tab .slung-section-toggle { --gear-caret-y: 0.75px; }
+
+// Disclosure carets never acquire the rectangular native/Foundry button focus box.
+.gear-tab :is(.body-section-toggle, .slung-section-toggle, .container-toggle,
+  .belt-row-toggle, .nested-container-toggle, .attachment-toggle,
+  .sling-storage-toggle, .lashed-toggle):is(:focus, :focus-visible, :active) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+// Retain a keyboard-only cue on the glyph itself without drawing a control box.
+.gear-tab :is(.body-section-toggle, .slung-section-toggle, .container-toggle,
+  .belt-row-toggle, .nested-container-toggle, .attachment-toggle,
+  .sling-storage-toggle, .lashed-toggle):focus-visible > i {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -21,7 +21,7 @@ beforeEach(() => {
 const actor = (name = 'Mage', race = 'Human', extra = {}) => {
   const doc = Object.create(OspActor.prototype);
   Object.assign(doc, { name: 'Test character', type: 'character', isOwner: true, items: [], system: {
-    class: name, race, xp: 1e9, level: 1, maxhitpoints: 37, hitpoints: 19, attributes: { con: { value: 18 }, str: { value: 16 }, wis: { value: 13 }, int: { value: 16 } }, ...extra
+    class: name, race, xp: 1e9, level: 1, maxhitpoints: 37, hitpoints: 19, armor: [], attributes: { con: { value: 18 }, str: { value: 16 }, wis: { value: 13 }, int: { value: 16 } }, ...extra
   }, getFlag: () => undefined });
   doc.update = vi.fn(async changes => {
     for (const [key, value] of Object.entries(changes)) if (key.startsWith('system.')) doc.system[key.slice(7)] = value;
@@ -55,6 +55,7 @@ describe('BR-11 actor, sheet and level-up behavior', () => {
     Object.assign(sheet, { actor: doc, loadProfileData: async () => ({ classes: [] }), _calculateOpenStuckDoorsTarget: () => 1 });
     const context = await sheet._prepareContext();
     expect(context.calculatedMaxHP).toBe(82);
+    expect(context.acBreakdown).toBe('Base 10 DEX +0 = 10');
     expect(doc.system.maxhitpoints).toBe(hp);
     expect(doc.system.hitpoints).toBe(19);
     expect(doc.update).not.toHaveBeenCalled();

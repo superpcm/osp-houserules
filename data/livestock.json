@@ -26,7 +26,9 @@
       "dmgPerAttack": "—",
       "morale": 5,
       "xpValue": 0,
-      "animalSize": "small"
+      "animalSize": "small",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -58,7 +60,9 @@
       "dmgPerAttack": "1d4",
       "morale": 7,
       "xpValue": 13,
-      "animalSize": "small"
+      "animalSize": "small",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -91,7 +95,9 @@
       "dmgPerAttack": "1d3",
       "morale": 6,
       "xpValue": 10,
-      "animalSize": "small"
+      "animalSize": "small",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -124,7 +130,9 @@
       "dmgPerAttack": "1d4",
       "morale": 8,
       "xpValue": 20,
-      "animalSize": "medium"
+      "animalSize": "medium",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -154,7 +162,9 @@
       "dmgPerAttack": "1d4",
       "morale": 5,
       "xpValue": 10,
-      "animalSize": "small"
+      "animalSize": "small",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -187,7 +197,9 @@
       "dmgPerAttack": "1d2",
       "morale": 7,
       "xpValue": 13,
-      "animalSize": "small"
+      "animalSize": "small",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -221,7 +233,9 @@
       "dmgPerAttack": "—",
       "morale": 6,
       "xpValue": 35,
-      "animalSize": "large"
+      "animalSize": "large",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -256,7 +270,9 @@
       "dmgPerAttack": "1d4/1d4",
       "morale": 7,
       "xpValue": 20,
-      "animalSize": "large"
+      "animalSize": "large",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -293,7 +309,9 @@
       "dmgPerAttack": "1d6/1d6",
       "morale": 9,
       "xpValue": 35,
-      "animalSize": "large"
+      "animalSize": "large",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -326,7 +344,9 @@
       "dmgPerAttack": "1d4 kick or 1d3 bite",
       "morale": 8,
       "xpValue": 20,
-      "animalSize": "medium"
+      "animalSize": "medium",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -358,7 +378,9 @@
       "dmgPerAttack": "1d6",
       "morale": 5,
       "xpValue": 35,
-      "animalSize": "large"
+      "animalSize": "large",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -388,7 +410,9 @@
       "dmgPerAttack": "—",
       "morale": 5,
       "xpValue": 10,
-      "animalSize": "small"
+      "animalSize": "small",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -423,7 +447,9 @@
       "dmgPerAttack": "1d4",
       "morale": 8,
       "xpValue": 20,
-      "animalSize": "medium"
+      "animalSize": "medium",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   },
   {
@@ -453,7 +479,9 @@
       "dmgPerAttack": "1d4",
       "morale": 5,
       "xpValue": 10,
-      "animalSize": "small"
+      "animalSize": "small",
+      "storeAvailability": null,
+      "blacksmithEligible": false
     }
   }
 ]

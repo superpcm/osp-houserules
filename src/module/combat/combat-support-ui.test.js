@@ -10,7 +10,7 @@ describe('BR15 support UI rules and effect durations',()=>{
   it('offers only earned class talent slots',()=>{
     expect(talentSlots(actor).map(s=>s.level)).toEqual([1,3,7]);
     actor.system.class='Knight';expect(talentSlots(actor)[0].choices).toEqual(['Weapon Specialization']);
-    actor.system.class='Ranger';expect(talentSlots(actor)[0].choices).toEqual(['Weapon Specialization','Two-Weapon Fighting']);
+    for (const cls of ['Ranger','Warden','Cleric']) { actor.system.class=cls;expect(talentSlots(actor)).toEqual([]);expect(()=>validateTalentSelections(actor,[{level:1,name:'Weapon Specialization',weapon:'Dagger'}],[{name:'Dagger'}])).toThrow(); }
     actor.system.class='Cleric';expect(talentSlots(actor)).toEqual([]);
   });
   it('expires charge and activates aim only on its designated round',()=>{
@@ -35,6 +35,14 @@ describe('BR15 support UI rules and effect durations',()=>{
     actor.system.class='Paladin';expect(()=>validateTalentSelections(actor,[],[])).toThrow('requires');
     actor.system.class='Fighter';expect(()=>validateTalentSelections(actor,[{level:3,name:'Weapon Specialization',weapon:'Dagger'}],[{name:'Dagger'}])).toThrow('not available');
     expect(()=>validateTalentSelections(actor,[{level:3,name:'Slayer',foeType:''}],[])).toThrow('specific foe');
+  });
+  it('rejects changing or removing a saved talent, including for a GM',()=>{
+    actor.getFlag=()=>[{level:1,name:'Weapon Specialization',weapon:'Dagger'}];
+    globalThis.game.user.isGM=true;
+    expect(()=>validateTalentSelections(actor,[],[{name:'Dagger'}])).toThrow('cannot be changed');
+    expect(()=>validateTalentSelections(actor,[{level:1,name:'Weapon Specialization',weapon:'Sword'}],[{name:'Sword'}])).toThrow('cannot be changed');
+    expect(()=>validateTalentSelections(actor,[{level:1,name:'Two-Weapon Fighting'}],[{name:'Dagger'}])).toThrow('cannot be changed');
+    expect(()=>validateTalentSelections(actor,[{level:1,name:'Weapon Specialization',weapon:'Dagger'}],[{name:'Dagger'}])).not.toThrow();
   });
 
 });

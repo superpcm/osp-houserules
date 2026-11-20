@@ -7,14 +7,16 @@ export function combatTalentMarkup(actor, weapons, editable, slots = talentSlots
   if (!slots.length) return '';
   const stored = actor.getFlag(game.system.id, 'combatTalents') ?? [];
   const selections = Array.isArray(stored) ? stored : Object.values(stored);
-  const disabled = editable ? '' : ' disabled';
+  const savedLevels = new Set(selections.filter(t => slots.some(slot => slot.level === t.level && slot.choices.includes(t.name))).map(t => t.level));
   return `<section class="combat-talents-section" aria-label="Combat talent choices">${slots.map(slot => {
     const current = selections.find(t => t.level === slot.level);
     const name = current?.name ?? (slot.mandatory ? 'Weapon Specialization' : '');
+    const disabled = editable && !savedLevels.has(slot.level) ? '' : ' disabled';
     const radioName = `combat-talent-${actor.id}-${slot.level}`;
+    const selectedImage = weapons.find(w => w.name === current?.weapon)?.img || ''; 
     const option = (value, description) => `<label class="combat-talent-option"><input type="radio" data-talent-name name="${talentEscape(radioName)}" form="${talentEscape(radioName)}-draft" value="${talentEscape(value)}" aria-label="Level ${slot.level}: ${talentEscape(value || 'Not selected')}"${name === value ? ' checked' : ''}${disabled}><span><strong>${talentEscape(value || 'Not selected')}</strong>${description ? `<span class="combat-talent-description">${talentEscape(description.replace(/^Combat Talent\.\s*/, ''))}</span>` : ''}</span></label>`;
-    return `<fieldset class="combat-talent-slot" data-talent-level="${slot.level}">${slots.length > 1 ? `<legend>Level ${slot.level}</legend>` : ''}${slot.choices.map(n => option(n, choiceDescriptions[n] || '')).join('')}<label class="combat-talent-detail" data-talent-weapon-field${name === 'Weapon Specialization' ? '' : ' hidden'}>Specialized weapon<select data-talent-weapon aria-label="Level ${slot.level} specialized weapon"${disabled}><option value="">Choose weapon</option>${weapons.map(w => `<option value="${talentEscape(w.name)}"${current?.weapon === w.name ? ' selected' : ''}>${talentEscape(w.name)}</option>`).join('')}</select></label><label class="combat-talent-detail" data-talent-foe-field${name === 'Slayer' ? '' : ' hidden'}>Slayer foe type<input data-talent-foe aria-label="Level ${slot.level} Slayer foe type" maxlength="100" value="${talentEscape(current?.foeType)}"${disabled}></label></fieldset>`;
-  }).join('')}${editable ? '<button type="button" data-save-talents><span class="combat-save-label">Save</span></button>' : ''}<p data-talent-status role="status" aria-live="polite"></p></section>`;
+    return `<fieldset class="combat-talent-slot" data-talent-level="${slot.level}">${slots.length > 1 ? `<legend>Level ${slot.level}</legend>` : ''}${slot.choices.map(n => option(n, choiceDescriptions[n] || '')).join('')}<label class="combat-talent-detail" data-talent-weapon-field${name === 'Weapon Specialization' ? '' : ' hidden'}>Specialized weapon<span class="combat-weapon-picker"><img class="combat-weapon-preview" src="${talentEscape(selectedImage)}" alt=""${selectedImage ? '' : ' hidden'}><span class="combat-weapon-name"${disabled ? '' : ' hidden'}>${talentEscape(current?.weapon || 'Choose weapon')}</span><select data-talent-weapon aria-label="Level ${slot.level} specialized weapon"${disabled}><option value="">Choose weapon</option>${weapons.map(w => `<option value="${talentEscape(w.name)}"${current?.weapon === w.name ? ' selected' : ''} data-weapon-image="${talentEscape(w.img || '')}">${w.img ? `<img src="${talentEscape(w.img)}" alt="">` : ''}<span>${talentEscape(w.name)}</span></option>`).join('')}</select></span></label><label class="combat-talent-detail" data-talent-foe-field${name === 'Slayer' ? '' : ' hidden'}>Slayer foe type<input data-talent-foe aria-label="Level ${slot.level} Slayer foe type" maxlength="100" value="${talentEscape(current?.foeType)}"${disabled}></label></fieldset>`;
+  }).join('')}${editable && slots.some(slot => !savedLevels.has(slot.level)) ? '<button type="button" data-save-talents><span class="combat-save-label">Save</span></button>' : ''}<p data-talent-status role="status" aria-live="polite"></p></section>`;
 }
 
 export function collectCombatTalents(section) {
@@ -49,12 +51,10 @@ export async function activateCombatTalents(root, actor, editable, catalogDescri
   const canEdit = Boolean(editable && (game.user.isGM || actor.isOwner));
   const entries = Array.from(host.querySelectorAll('.skill-ability-entry'));
   const names = new Set(['Weapon Specialization','Two-Weapon Fighting','Cleave','Defender','Leader','Slayer']);
-  const descriptions = new Map();
   const choiceDescriptions = {...catalogDescriptions};
   for (const entry of entries) {
     const name = entry.dataset.abilityName;
     if (names.has(name)) {
-      descriptions.set(name, entry.outerHTML);
       choiceDescriptions[name] = entry.querySelector('.skill-ability-effect')?.textContent || choiceDescriptions[name];
       entry.remove();
     }
@@ -82,21 +82,18 @@ export async function activateCombatTalents(root, actor, editable, catalogDescri
     }
   }
   for (const entry of [...choiceEntries].reverse()) host.prepend(entry);
-  const selected = selectedCombatTalentRecords(actor);
-  if (selected.length) {
-    const skills = selected.map(t => {
-      const detail = t.weapon || t.foeType;
-      const context = detail ? `<p class="combat-skill-choice">${talentEscape(detail)} · Level ${t.level}</p>` : `<p class="combat-skill-choice">Level ${t.level}</p>`;
-      const original = descriptions.get(t.name);
-      return original ? original.replace('<div class="skill-ability-effect">', `<div class="skill-ability-effect">${context}`) : `<div class="skill-ability-entry"><div class="skill-ability-name">${talentEscape(t.name)}</div>${context}</div>`;
-    }).join('');
-    choiceEntries.at(-1).insertAdjacentHTML('afterend', `<section class="combat-skills-section" aria-label="Combat Skills"><h3>Combat Skills</h3>${skills}</section>`);
-  }
   // Capture draft changes before Foundry's automatic sheet form handlers.
   host.addEventListener('change', event => {
     const section = event.target.closest('.combat-talents-section');
     if (!section) return;
     event.stopPropagation();
+    if (event.target.matches('[data-talent-weapon]')) {
+      const preview = event.target.closest('.combat-weapon-picker').querySelector('.combat-weapon-preview');
+      const image = weapons.find(w => w.name === event.target.value)?.img || '';
+      preview.hidden = !image;
+      if (image) preview.src = image;
+      else preview.removeAttribute('src');
+    }
     if (event.target.matches('[data-talent-name]')) {
       const row = event.target.closest('[data-talent-level]');
       row.querySelector('[data-talent-weapon-field]').hidden = event.target.value !== 'Weapon Specialization';

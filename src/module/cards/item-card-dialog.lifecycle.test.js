@@ -1,10 +1,13 @@
 import { beforeAll, beforeEach, expect, it, vi } from 'vitest';
+const healthMock = vi.hoisted(() => ({ changeHealth: vi.fn() }));
+vi.mock('../health/health-authority.js', () => healthMock);
 let ItemCardDialog, listeners;
 beforeAll(async () => {
   globalThis.Application = class { async close() { return true; } };
   ({ ItemCardDialog } = await import('./item-card-dialog.js'));
 });
 beforeEach(() => {
+  healthMock.changeHealth.mockReset();
   listeners = new Map();
   globalThis.document = {
     querySelectorAll: () => [],
@@ -50,4 +53,24 @@ it('shows Cast only on owned linked cards and disables exhausted or pending uses
   expect(button.disabled).toBe(true);
   c.item.actor.isOwner = false; c._setupSpellControls(html);
   expect(button.hidden).toBe(true);
+});
+
+it('shows Healing Potion Use for owned stock and disables an exhausted stack', () => {
+  const c = card();
+  c.item = { id: 'potion', type: 'item', name: 'Healing Potion', actor: { isOwner: true, getFlag: () => null }, system: { quantity: 2 } };
+  const button = { hidden: true };
+  const selection = { 0: button, off() { return this; }, on() { return this; } };
+  const html = { find: () => selection };
+  c._setupHealingPotionControls(html);
+  expect(button.hidden).toBe(false); expect(button.disabled).toBe(false);
+  c.item.system.quantity = 0; c._setupHealingPotionControls(html);
+  expect(button.disabled).toBe(true);
+  c.item.system.quantity = 2; c.item.actor.getFlag = () => ({ stage: 'planned' }); c._setupHealingPotionControls(html);
+  expect(button.disabled).toBe(true);
+});
+
+it('handles one potion click and refreshes a remaining stack', async () => {
+  const c = card(); c.render = vi.fn(); c.item = { id: 'potion', type: 'item', name: 'Healing Potion', actor: { isOwner: true, sheet: { render: vi.fn() }, getFlag: () => null }, system: { quantity: 2 } };
+  let click; const button = { hidden: true, disabled: false }; const selection = { 0: button, off() { return this; }, on(_event, handler) { click = handler; return this; } }; const html = { find: () => selection };
+  healthMock.changeHealth.mockResolvedValue({ success: true }); c._setupHealingPotionControls(html); await click({ preventDefault() {} }); expect(healthMock.changeHealth).toHaveBeenCalledTimes(1); expect(c.render).toHaveBeenCalledWith(true); expect(button.disabled).toBe(false);
 });

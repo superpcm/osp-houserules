@@ -268,7 +268,7 @@ function _validateStrictIntegerResult(result, formula) {
 }
 
 async function _virtualPath(formula, options = {}) {
-  const roll = await new Roll(formula).evaluate();
+  const roll = await new Roll(formula).evaluate({ allowInteractive: false });
   const d20Die = roll.dice.find(d => d.faces === 20);
   const result = {
     total: roll.total,

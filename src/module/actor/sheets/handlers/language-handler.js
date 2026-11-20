@@ -30,6 +30,7 @@ export class LanguageHandler {
     this._expanded = false;
     this._resizeObserver = null;
     this._measureFrame = null;
+    this._measureFrameWindow = null;
     this._resizeWindow = null;
     this._toggleId = `languages-${this.actor?.id || 'actor'}-${++languageInstanceId}`;
     this._onWindowResize = () => this.scheduleOverflowMeasurement();
@@ -128,25 +129,43 @@ export class LanguageHandler {
     const requestFrame = win?.requestAnimationFrame ?? globalThis.requestAnimationFrame;
     const cancelFrame = win?.cancelAnimationFrame ?? globalThis.cancelAnimationFrame;
     if (typeof requestFrame !== 'function') return this.measureOverflow();
-    if (this._measureFrame) cancelFrame?.(this._measureFrame);
-    this._measureFrame = requestFrame.call(win, () => { this._measureFrame = null; this.measureOverflow(); });
+    if (this._measureFrame) {
+      if (this._measureFrameWindow === win) return;
+      const oldCancel = this._measureFrameWindow?.cancelAnimationFrame ?? cancelFrame;
+      oldCancel?.call(this._measureFrameWindow, this._measureFrame);
+      this._measureFrame = null;
+      this._measureFrameWindow = null;
+    }
+    this._measureFrameWindow = win;
+    this._measureFrame = requestFrame.call(win, () => {
+      this._measureFrame = null;
+      this._measureFrameWindow = null;
+      this.measureOverflow();
+    });
   }
 
   measureOverflow() {
     const el = this.tags?.[0];
     if (!el || !this.toggleElement) return;
+    const bioTab = el.closest?.('.tab[data-tab="bio"]');
+    if (bioTab && !bioTab.classList?.contains?.('active')) return;
     const doc = ownerDocumentFor(this);
     const win = ownerWindowFor(this);
-    const style = win.getComputedStyle(el);
+    const field = this.tags.closest('.cs-languages-field')[0];
+    const tagRect = el.getBoundingClientRect?.();
+    const fieldRect = field?.getBoundingClientRect?.();
+    if ((tagRect && (tagRect.width === 0 || tagRect.height === 0))
+      || (fieldRect && (fieldRect.width === 0 || fieldRect.height === 0))) return;
+    const computed = win.getComputedStyle(el);
+    if (computed?.display === 'none' || computed?.visibility === 'hidden') return;
     const measure = doc.createElement('span');
     measure.textContent = this.languages.join(', ');
-    Object.assign(measure.style, { position: 'absolute', visibility: 'hidden', whiteSpace: 'nowrap', font: style.font, fontFamily: style.fontFamily, fontSize: style.fontSize, fontWeight: style.fontWeight, letterSpacing: style.letterSpacing });
+    Object.assign(measure.style, { position: 'absolute', visibility: 'hidden', whiteSpace: 'nowrap', font: computed.font, fontFamily: computed.fontFamily, fontSize: computed.fontSize, fontWeight: computed.fontWeight, letterSpacing: computed.letterSpacing });
     doc.body.appendChild(measure);
     const naturalWidth = measure.getBoundingClientRect().width || measure.scrollWidth;
-    const field = this.tags.closest('.cs-languages-field')[0];
-    const tagWidth = el.getBoundingClientRect().width || el.clientWidth;
+    const tagWidth = tagRect?.width || el.clientWidth;
     const hasOverflowClass = field?.classList?.contains?.('has-language-overflow');
-    const padding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0);
+    const padding = (Number.parseFloat(computed.paddingLeft) || 0) + (Number.parseFloat(computed.paddingRight) || 0);
     const availableWidth = tagWidth + (hasOverflowClass ? 24 : 0) - padding;
     measure.remove();
     const overflowing = languageOverflowState(naturalWidth, availableWidth);
@@ -209,9 +228,10 @@ export class LanguageHandler {
     resizeWindow?.removeEventListener?.('resize', this._onWindowResize);
     this._resizeWindow = null;
     this._resizeObserver?.disconnect();
-    const ownerWindow = ownerWindowFor(this);
+    const ownerWindow = this._measureFrameWindow ?? ownerWindowFor(this);
     const cancelFrame = ownerWindow?.cancelAnimationFrame ?? globalThis.cancelAnimationFrame;
     if (this._measureFrame && typeof cancelFrame === 'function') cancelFrame.call(ownerWindow, this._measureFrame);
     this._measureFrame = null;
+    this._measureFrameWindow = null;
   }
 }

@@ -3,6 +3,8 @@
  * No Foundry globals — operates on plain item-shaped objects so it can be unit tested
  * and reused by any roll pipeline (character sheet, macros, etc).
  */
+import { isProtectedArrowBundle } from '../inventory/arrow-bundle.js';
+import { isProtectedBoltBundle } from '../inventory/bolt-bundle.js';
 
 /**
  * A weapon with an ammoTag is a reusable launcher (Bow/Crossbow/Sling) whose ammo is a
@@ -64,6 +66,8 @@ export function findAmmoStacks(actorItems, tag) {
   return Array.from(actorItems).filter(i =>
     i.type === 'ammunition' &&
     (i.system?.tags || []).includes(tag) &&
+    !isProtectedArrowBundle(i) &&
+    !isProtectedBoltBundle(i) &&
     (i.system?.quantity ?? 0) > 0
   );
 }
@@ -102,7 +106,10 @@ export function checkAmmoAvailability(item, actorItems, { isThrown = false } = {
 
   const stacks = findAmmoStacks(actorItems, requirement.tag);
   if (stacks.length === 0) {
-    return { ok: false, requirement, ammoItem: null, message: `Out of ammunition for ${item.name} — no matching ammo found.` };
+    const protectedBolt = Array.from(actorItems).find(i => isProtectedBoltBundle(i) && (i.system?.tags || []).includes(requirement.tag) && (i.system?.quantity ?? 0) > 0);
+    return { ok: false, requirement, ammoItem: null, message: protectedBolt
+      ? `Unpack the bolt bundle before use with ${item.name}.`
+      : `Out of ammunition for ${item.name} — no matching ammo found.` };
   }
   return { ok: true, requirement, ammoItem: pickAmmoStack(stacks) };
 }

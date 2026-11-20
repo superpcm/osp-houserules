@@ -26,6 +26,10 @@ function ammo(name, tag, quantity) {
   return { type: 'ammunition', name, system: { tags: [tag], quantity } };
 }
 
+function protectedBolt(quantity = 20) {
+  return { ...ammo('Crossbow Bolt, Light', 'bolts', quantity), flags: { 'osp-houserules': { protectedBoltBundle: true } } };
+}
+
 describe('ammo-based attack (launcher weapon)', () => {
   it('is available when a matching ammo stack exists, and selects it', () => {
     const longbow = weapon({ name: 'Longbow', missile: true, ammoTag: 'arrows' });
@@ -176,5 +180,13 @@ describe('findAmmoStacks / pickAmmoStack', () => {
 
   it('returns null for no stacks', () => {
     expect(pickAmmoStack([])).toBeNull();
+  });
+
+  it('excludes protected bolt bundles and explains the use gate', () => {
+    const crossbow = weapon({ name: 'Crossbow, Light', missile: true, ammoTag: 'bolts' });
+    expect(findAmmoStacks([protectedBolt()], 'bolts')).toEqual([]);
+    const result = checkAmmoAvailability(crossbow, [protectedBolt()]);
+    expect(result.ok).toBe(false);
+    expect(result.message).toMatch(/Unpack the bolt bundle/i);
   });
 });

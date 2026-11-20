@@ -1,3 +1,5 @@
+import { VEHICLE_KINDS, VEHICLE_ATTACHMENT_KINDS } from '../../inventory/vehicle-lashing.js';
+
 /**
  * @file Catalog category/field metadata for the DM Toolkit "Add Item" dialog.
  * Pure data + HTML-string builders — no DOM side effects.
@@ -23,11 +25,11 @@ export const CATALOG_CATEGORIES = [
  * sync with the container-type entries in data/*.json.
  */
 export const CONTAINER_NAMES = [
-  'Axe Sling', 'Backpack', 'Baldric', 'Belt Loop', 'Belt Pouch (L)', 'Belt Pouch (S)',
+  'Axe Sling', 'Backpack', "Traveler's Backpack", 'Baldric', 'Belt Loop', 'Belt Pouch (L)', 'Belt Pouch (S)',
   'Bolt Case', 'Cart', 'Chest, Large', 'Chest, Small', 'Coin Purse', 'Flask/Potion Holder',
   'Panniers', 'Quiver', 'Quiver, Hip', 'Sack, Large', 'Sack, Small', 'Saddle', 'Saddle, Pack',
   'Saddlebags, Large', 'Saddlebags, Small', 'Scabbard, Dagger', 'Scabbard, Sword', 'Sidesack',
-  'Skin Sling', 'Sword Frog', 'Wagon',
+  'Skin Sling', 'Sword Frog', 'Handcart', 'Wagon', 'Wagon, Heavy Freight', 'Wagon, Open', 'Warhammer Sling', 'Wheelbarrow',
 ];
 
 export const TYPE_LABELS = {
@@ -92,6 +94,12 @@ const TYPE_FIELDS = {
     { key: 'blockedTypes',  label: 'Blocked Types',   kind: 'tags',   default: [], advanced: true },
   ],
   clothing: [
+    { key: 'slot',             label: 'Wear category',      kind: 'select', default: '', options: [
+      { value: '', label: 'Unclassified' },
+      { value: 'clothes', label: 'Base clothing' }, { value: 'boots', label: 'Feet' },
+      { value: 'gloves', label: 'Hands' }, { value: 'bracers', label: 'Forearms' },
+      { value: 'outerwear', label: 'Coat' }, { value: 'cloak', label: 'Cloak' }, { value: 'belt', label: 'Belt' },
+    ] },
     { key: 'capacity',         label: 'Capacity',           kind: 'number', default: 0 },
     { key: 'lashSlots',        label: 'Lash Slots',         kind: 'number', default: 0 },
     { key: 'maxItemSize',      label: 'Max Item Size',      kind: 'number', default: 0 },
@@ -151,7 +159,7 @@ function fieldHtml(def) {
     const opts = options.map(o => `<option value="${o.value}"${o.value === def0 ? ' selected' : ''}>${o.label}</option>`).join('');
     return `<div class="${cls}">
       <label>${label}</label>
-      <select data-sys-field="${key}" data-sys-kind="select"><option value="">--</option>${opts}</select>
+      <select data-sys-field="${key}" data-sys-kind="select">${options.some(option => option.value === '') ? '' : '<option value="">--</option>'}${opts}</select>
     </div>`;
   }
   if (kind === 'textarea') {
@@ -198,7 +206,15 @@ export function fieldsHtml(defs, advancedLabel) {
 }
 
 export function renderTypeFields(type) {
-  const defs = TYPE_FIELDS[type] || [];
+  const stocking = ['item', 'weapon', 'armor', 'ammunition', 'clothing', 'container'].includes(type) ? [
+    { key: 'storeAvailability', label: 'Availability', kind: 'select', default: '', options: [{ value: '', label: 'Unclassified' }, ...['common', 'uncommon', 'rare', 'exceptional'].map(value => ({ value, label: value[0].toUpperCase() + value.slice(1) }))] },
+    { key: 'blacksmithEligible', label: 'Blacksmith eligibility', kind: 'select', default: '', options: [{ value: '', label: 'Unset' }, { value: 'true', label: 'Eligible' }, { value: 'false', label: 'Excluded' }] },
+  ] : [];
+  const fittings = ['item', 'container', 'weapon', 'armor', 'clothing', 'ammunition'].includes(type) ? [
+    ...(type === 'container' ? [{ key: 'vehicleKind', label: 'Vehicle type', kind: 'select', advanced: true, default: '', options: [{ value: '', label: 'Use catalog default' }, ...VEHICLE_KINDS.map(choice => ({ value: choice.id, label: choice.label }))] }] : []),
+    { key: 'vehicleAttachmentKind', label: 'Vehicle fitting', kind: 'select', advanced: true, default: '', options: [{ value: '', label: 'Use catalog default' }, ...VEHICLE_ATTACHMENT_KINDS.map(choice => ({ value: choice.id, label: choice.label }))] },
+  ] : [];
+  const defs = [...(TYPE_FIELDS[type] || []), ...stocking, ...fittings];
   if (!defs.length) return '';
   return fieldsHtml(defs, 'Advanced fields');
 }
@@ -247,6 +263,8 @@ export function collectSystemData(root) {
     else if (kind === 'number') value = el.value === '' ? 0 : (parseFloat(el.value) || 0);
     else if (kind === 'tags') value = el.value.split(',').map(s => s.trim()).filter(Boolean);
     else value = el.value;
+    if (['storeAvailability', 'vehicleKind', 'vehicleAttachmentKind'].includes(key)) value = value || null;
+    if (key === 'blacksmithEligible') value = value === '' ? null : value === 'true';
     flat[key] = value;
   });
   Object.assign(flat, checkboxGroups);

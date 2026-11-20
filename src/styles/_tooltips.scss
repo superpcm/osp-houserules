@@ -1,0 +1,66 @@
+// Level-range tooltips are the visual authority for all tooltip surfaces.
+#tooltip, .cs-tooltip, .age-tooltip, .level-prog-tooltip,
+.osp .spell-filter-tooltip, .osp-houserules .spell-filter-tooltip,
+.spell-filter-tooltip {
+  background: #1a1209 !important;
+  border: 1px solid #8b6914 !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  color: #e8d5a0 !important;
+  font-family: handwritten !important;
+  font-size: 14.3px !important;
+  font-weight: normal !important;
+  line-height: 1.4 !important;
+  text-align: left;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  transition: opacity 0.15s ease;
+}
+#tooltip:not(.active) { visibility: hidden !important; }
+
+// Custom tooltip surfaces are controlled by their owning JS/CSS state. The
+// legacy auto-hide animation otherwise leaves them lingering after pointerout.
+.cs-tooltip, .age-tooltip, .level-prog-tooltip,
+.spell-filter-tooltip, .spell-assignment-names {
+  animation: none !important;
+  transition-duration: 0s !important;
+}
+#tooltip *, .cs-tooltip *, .age-tooltip *, .level-prog-tooltip *,
+.spell-filter-tooltip * {
+  font-family: handwritten !important;
+}
+#tooltip { max-width: min(480px, calc(100vw - 24px)); }
+#tooltip strong, #tooltip h1, #tooltip h2, #tooltip h3 {
+  color: #f0c060;
+  font-size: 15.4px;
+}
+
+// CSS-only spell hints use the same runtime setting as JS and Foundry hints.
+.spell-filter-tooltip, .spell-assignment-names {
+  transition-property: opacity, visibility;
+  transition-delay: 0s !important;
+}
+.spell-level-filter:hover .spell-filter-tooltip,
+.spell-level-filter:focus-visible .spell-filter-tooltip,
+.spell-level-filter:has(:focus-visible) .spell-filter-tooltip,
+.spell-assignment:hover .spell-assignment-names,
+.spell-assignment:focus-visible .spell-assignment-names,
+.spell-assignment:has(:focus-visible) .spell-assignment-names {
+  transition-delay: var(--osp-tooltip-delay) !important;
+}
+
+// A pointer click can leave :focus/:focus-within set after the pointer exits.
+// Keep those hints keyboard-visible without allowing a clicked control to linger.
+.spell-level-filter:focus-within:not(:hover):not(:focus-visible):not(:has(:focus-visible)) .spell-filter-tooltip,
+.spell-assignment:focus:not(:hover):not(:focus-visible) .spell-assignment-names {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition-delay: 0s !important;
+}
+
+// Preserve the tooltip type hierarchy while enlarging every size by 10%.
+.level-prog-tooltip .level-prog-title { font-size: 15.4px !important; }
+.age-tooltip .age-tooltip-note,
+.level-prog-tooltip .level-prog-limit,
+.level-prog-tooltip .level-prog-table thead th { font-size: 12.1px !important; }
+.spell-assignment .spell-assignment-names { font-size: 15.4px !important; }

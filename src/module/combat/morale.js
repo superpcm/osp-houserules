@@ -18,6 +18,10 @@ const REACTIONS = [
 // Per-combat state: combatId → { initialCount, firstCasualtyDone, halfLossesDone, deadIds }
 const _state = new Map();
 
+function moraleEnabled() {
+  return game.settings.get(game.system.id, "morale") !== false;
+}
+
 // ── State helpers ─────────────────────────────────────────────────────────────
 
 function initState(combat) {
@@ -54,6 +58,7 @@ function livingHostiles(combat, state) {
 // ── Casualty handler ──────────────────────────────────────────────────────────
 
 async function handleCasualty(combat, combatant) {
+  if (!moraleEnabled()) return;
   const state = getState(combat);
   if (state.deadIds.has(combatant.id)) return;
   state.deadIds.add(combatant.id);
@@ -157,6 +162,7 @@ export function registerMoraleHooks() {
   // ── Unlinked token actors (most monsters) ──
   // HP for unlinked tokens is stored in the token delta; updateToken fires.
   Hooks.on("updateToken", async (tokenDoc, changes, _options, userId) => {
+    if (!moraleEnabled()) return;
     if (!game.user.isGM) return;
 
     // HP lives at changes.delta.system.hp.value (nested) or as flat key
@@ -176,6 +182,7 @@ export function registerMoraleHooks() {
 
   // ── Linked actors ──
   Hooks.on("updateActor", async (actor, changes, _options, userId) => {
+    if (!moraleEnabled()) return;
     if (!game.user.isGM) return;
     const newHP = changes.system?.hp?.value;
     if (newHP === undefined || newHP > 0) return;

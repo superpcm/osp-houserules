@@ -1,0 +1,31 @@
+{
+  "tool": "Built-in image_gen",
+  "reference": "assets/images/clothing/clothes-adventurers.webp",
+  "status": "Option 1 selected; item images use WebP.",
+  "options": [
+    {
+      "number": 1,
+      "name": "Hooded wool",
+      "source": "/Users/paul/.codex/generated_images/01a1e7e8-bc6e-72e2-82dd-aa80518a6185/exec-0a8d22d2-96f8-40ce-bc39-af384347c30c.png",
+      "file": "option-1-hooded-wool.webp",
+      "prompt": "Create one standalone square fantasy RPG equipment item illustration of WINTER CLOTHES. Use the supplied Adventurer's Clothes artwork as the visual reference: same hand-painted medieval equipment illustration style, fine dark sketch outlines, textured wool and worn leather, muted earthy brown/olive materials, softly modeled depth. Floating unworn clothing, frontal view with a slight three-quarter feel, no body, no mannequin, no head or hands, no background. Garment fills approximately 85 percent of canvas with all edges fully visible and clean silhouette. Actual transparent background and clean alpha edges; do not reproduce the reference's stray pixel artifacts. No text, labels, border, snow, scenery, weapons, backpack, or separate props. This is clothing rather than armor. Option 1, HOODED WOOL: a practical heavy hooded wool travel coat over a warm tunic, leather waist belt and simple buckle, overlapping winter layers, modest pale sheepskin lining visible inside the hood and at cuffs, long warm sleeves and below-hip hem. Retain the reference's clear belted adventurer silhouette, but visibly thicker and suitable for winter."
+    },
+    {
+      "number": 2,
+      "name": "Shearling coat",
+      "source": "/Users/paul/.codex/generated_images/01a1e7e8-bc6e-72e2-82dd-aa80518a6185/exec-007da2c1-625f-4716-9332-4b7b3b5f24e6.png",
+      "file": "option-2-shearling.webp",
+      "prompt": "Create one standalone square fantasy RPG equipment item illustration of WINTER CLOTHES. Use the supplied Adventurer's Clothes artwork as the visual reference: same hand-painted medieval equipment illustration style, fine dark sketch outlines, textured wool and worn leather, muted earthy brown/olive materials, softly modeled depth. Floating unworn clothing, frontal view with a slight three-quarter feel, no body, no mannequin, no head or hands, no background. Garment fills approximately 85 percent of canvas with all edges fully visible and clean silhouette. Actual transparent background and clean alpha edges; do not reproduce the reference's stray pixel artifacts. No text, labels, border, snow, scenery, weapons, backpack, or separate props. This is clothing rather than armor. Option 2, SHEARLING COAT: a sturdy thigh-length brown sheepskin winter coat with a generous soft fleece collar, folded fleece cuffs and fleece edging along the overlapping front, simple leather toggle fasteners and a broad worn leather waist belt. No separate cloak. Warm, practical medieval traveler clothing, distinctly bulkier and more insulating than the reference."
+    },
+    {
+      "number": 3,
+      "name": "Quilted layers",
+      "source": "/Users/paul/.codex/generated_images/01a1e7e8-bc6e-72e2-82dd-aa80518a6185/exec-90a28055-7f15-4ec7-bb56-da027c1fad73.png",
+      "file": "option-3-quilted.webp",
+      "prompt": "Create one standalone square fantasy RPG equipment item illustration of WINTER CLOTHES. Use the supplied Adventurer's Clothes artwork as the visual reference: same hand-painted medieval equipment illustration style, fine dark sketch outlines, textured wool and worn leather, muted earthy brown/olive materials, softly modeled depth. Floating unworn clothing, frontal view with a slight three-quarter feel, no body, no mannequin, no head or hands, no background. Garment fills approximately 85 percent of canvas with all edges fully visible and clean silhouette. Actual transparent background and clean alpha edges; do not reproduce the reference's stray pixel artifacts. No text, labels, border, snow, scenery, weapons, backpack, or separate props. This is clothing rather than armor. Option 3, QUILTED LAYERS: a heavy stitched wool winter jacket with broad understated quilted panels, a short thick hooded shoulder mantle, wrapped wool neck protection integrated beneath the hood, layered tunic hem, warm long sleeves with leather-reinforced cuffs and a simple worn leather waist belt. Earthy brown and muted olive matching the reference. Distinct silhouette from a shearling coat while remaining ordinary clothing, no metal or armor."
+    }
+  ],
+  "selectedOption": 1,
+  "fullImage": "assets/images/clothing/winter-clothes.webp",
+  "thumbnail": "assets/thumbs/images/clothing/winter-clothes_thumb.webp"
+}

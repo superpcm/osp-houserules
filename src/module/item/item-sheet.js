@@ -1,5 +1,8 @@
-import { ItemPositionToolHandler } from './handlers/item-position-tool-handler.js';
+import { TOOLTIP_DELAY_MS } from '../ui/tooltips.js';
 import { ItemCardDialog } from '../cards/item-card-dialog.js';
+import { VEHICLE_KINDS, VEHICLE_ATTACHMENT_KINDS } from '../inventory/vehicle-lashing.js';
+import { vehicleMetadataUpdate } from '../inventory/vehicle-metadata-editor.js';
+import { rollAbility } from '../actor/ability-roll.js';
 
 let tooltipInstanceSequence = 0;
 
@@ -56,6 +59,14 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     // Add the item's system data for easy access
     context.system = this.item.system;
     context.flags = this.item.flags;
+    context.stockingAvailability = context.system.storeAvailability ?? '';
+    context.blacksmithEligibleValue = context.system.blacksmithEligible == null ? '' : String(Boolean(context.system.blacksmithEligible));
+
+    context.vehicleKindOptions = VEHICLE_KINDS.map(choice => ({ ...choice, selected: choice.id === context.system.vehicleKind }));
+    context.vehicleAttachmentKindOptions = VEHICLE_ATTACHMENT_KINDS.map(choice => ({ ...choice, selected: choice.id === context.system.vehicleAttachmentKind }));
+    context.canBeVehicle = this.item.type === 'container';
+    context.isTenFootPole = this.item.name === 'Pole, Ten Foot';
+    context.disassembledForTransport = this.item.flags?.['osp-houserules']?.disassembled === true;
 
     // Ensure img is available
     context.img = this.item.img;
@@ -81,41 +92,30 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     this._cleanupTooltips(true);
     this._destroyHandlers();
 
-    // Initialize position tool handler only if GM or in development
-    if (game.user.isGM) {
-      this.ensurePositionToolHandler(html);
-    }
-
     // Setup Size field tooltip to show storedSize
     this._setupSizeTooltip(html);
 
     // Setup Equipped checkbox tooltip
     this._setupEquippedTooltip(html);
 
+    html.find('[data-roll-ability]').on('click', async (event) => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      try {
+        if (this.options.editable) await this._onSubmit(event);
+        await rollAbility(this.item);
+      } catch (error) {
+        ui.notifications.error(error.message);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
     // Add or remove tags
     html.find(".tag-control").click(this._onTagControl.bind(this));
-  }
-
-  /**
-   * Ensure position tool handler is initialized
-   */
-  ensurePositionToolHandler(html) {
-    try {
-      // Check if there are any positionable elements first
-      const positionableElements = html.find('[class*="is-pos-"]');
-      if (positionableElements.length === 0) return;
-
-      this._destroyHandlers();
-
-      const handler = new ItemPositionToolHandler(html, this.item);
-      handler.initialize();
-      this.handlers.set('positionTool', handler);
-    } catch (error) {
-      console.error('ItemSheet: Failed to initialize position tool handler:', error);
-    }
   }
 
   /**
@@ -145,7 +145,7 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
         tooltip.style.top = (rect.top - 30) + 'px';
         tooltip.style.transform = 'translateX(-50%)';
         tooltip.style.opacity = '1';
-      }, 500);
+      }, TOOLTIP_DELAY_MS);
     });
 
     sizeElement.on(`mouseleave${this._tooltipNamespace}`, () => {
@@ -177,7 +177,7 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
         tooltip.style.top = (rect.top - 30) + 'px';
         tooltip.style.transform = 'translateX(-50%)';
         tooltip.style.opacity = '1';
-      }, 500);
+      }, TOOLTIP_DELAY_MS);
     });
 
     equippedWrapper.on(`mouseleave${this._tooltipNamespace}`, () => {
@@ -254,7 +254,20 @@ export class OspItemSheet extends foundry.appv1.sheets.ItemSheet {
     if (!formData.name || formData.name.trim() === "") {
       formData.name = this.item.name || "Unnamed Item";
     }
+    if (Object.hasOwn(formData, 'system.storeAvailability') && formData['system.storeAvailability'] === '') formData['system.storeAvailability'] = null;
+    if (Object.hasOwn(formData, 'system.blacksmithEligible')) {
+      const value = formData['system.blacksmithEligible'];
+      formData['system.blacksmithEligible'] = value === '' ? null : value === true || value === 'true';
+    }
 
+    const fittingValues = {};
+    for (const field of ['vehicleKind', 'vehicleAttachmentKind']) {
+      const key = `system.${field}`;
+      if (!Object.hasOwn(formData, key)) continue;
+      if (game.user?.isGM) fittingValues[field] = formData[key];
+      delete formData[key];
+    }
+    Object.assign(formData, vehicleMetadataUpdate(this.item, fittingValues));
     return super._updateObject(event, formData);
   }
 

@@ -80,3 +80,6 @@ debug-coordinates.js
 
 # Unreferenced duplicate image backup
 assets/images-backup/
+
+# Local combat fixture captured from live campaign data
+/tests/fixtures/westford-combat-party.json

@@ -47,7 +47,7 @@
       description: "A compact leather sheath worn on the belt designed to carry a single dagger or narrow-bladed weapon. Keeps the weapon protected and ready to draw in combat.",
       cost: 3,
       unitWeight: 0.5,
-      storedSize: 2,
+      storedSize: 0.5,
       quantity: 1,
       equipped: false,
       lashable: true,

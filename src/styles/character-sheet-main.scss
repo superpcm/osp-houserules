@@ -452,6 +452,16 @@ $cs-pos-foraging-hunting-top: 0px !default;
 $cs-pos-foraging-hunting-width: 72px !default;
 $cs-pos-foraging-hunting-height: 72px !default;
 .cs-pos-foraging-hunting { @include position-field($cs-pos-foraging-hunting-left, $cs-pos-foraging-hunting-top, $cs-pos-foraging-hunting-width, $cs-pos-foraging-hunting-height); }
+$cs-pos-foraging-left: 0px !default;
+$cs-pos-foraging-top: 0px !default;
+$cs-pos-foraging-width: 72px !default;
+$cs-pos-foraging-height: 72px !default;
+.cs-pos-foraging { @include position-field($cs-pos-foraging-left, $cs-pos-foraging-top, $cs-pos-foraging-width, $cs-pos-foraging-height); }
+$cs-pos-hunting-left: 0px !default;
+$cs-pos-hunting-top: 0px !default;
+$cs-pos-hunting-width: 72px !default;
+$cs-pos-hunting-height: 72px !default;
+.cs-pos-hunting { @include position-field($cs-pos-hunting-left, $cs-pos-hunting-top, $cs-pos-hunting-width, $cs-pos-hunting-height); }
 
 $cs-pos-stealth-left: 0px !default;
 $cs-pos-stealth-top: 0px !default;
@@ -2455,7 +2465,7 @@ $racial-skill-top: 65px !default;  /* Master Y position for all racial skills */
 .encumbrance-section .encumbrance-bar { 
   height: 12px; 
   background: #22c55e; 
-  transition: width 0.3s ease; 
+  transition: transform 0.3s ease;
   width: var(--encumbrance-width, 0%); 
 }
 
@@ -2501,7 +2511,7 @@ $racial-skill-top: 65px !default;  /* Master Y position for all racial skills */
   height: auto;
   display: block; 
   /* Player can resize and reposition from this starting size */
-  transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px));
+  transform: scale(var(--user-portrait-scale, 1)) translate(var(--user-portrait-x, 0px), var(--user-portrait-y, 0px)) rotate(var(--user-portrait-rotation, 0deg));
   transform-origin: center center;
   transition: transform 0.2s ease;
 }
@@ -2693,12 +2703,18 @@ input[type="number"] {
     top: 0px;
     left: 0px;
     height: 100%;  /* Use parent height */
-    width: var(--xp-progress-width, 0%);  /* Dynamically updated by JavaScript */
+    width: 100%;
+    transform-origin: left center;
+    transform: scaleX(var(--xp-progress-fill, 0));
     background: $color-xp-progress;  /* Solid color - change variable to adjust progress bar color */
-    transition: width 0.3s ease;
+    transition: transform 0.3s ease;
     z-index: 1;
     border-radius: 3px;
     overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .level-xp-progress { transition: none; }
   }
   
   /* XP display sits on top of progress bar */
@@ -4305,3 +4321,4 @@ input[type="number"] {
 .window-app.osp.sheet.actor.character:has(form.ej-sheet) form.osp.sheet.actor.character.ej-sheet.ej-sheet input#char-name {
   text-align: center !important;
 }
+

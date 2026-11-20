@@ -39,7 +39,7 @@ describe('BR-15 combat support', () => {
     expect(settleAttack(state, 'b', true)).toBe(true);
   });
   it('requires specific specialization and Slayer selections', () => {
-    const actor = {system:{level:4},getFlag:() => [{name:'Weapon Specialization'},{name:'Slayer'}]};
+    const actor = {system:{class:'Fighter',level:4},getFlag:() => [{name:'Weapon Specialization'},{name:'Slayer'}]};
     expect(talentBonuses(actor,{name:'Sword'},'orc').attack).toBe(0);
     actor.getFlag = () => [{name:'Weapon Specialization',weapon:'Sword'},{name:'Slayer',foeType:'orc'}];
     expect(talentBonuses(actor,{name:'Sword'},'orc')).toMatchObject({attack:2,damage:3});
@@ -55,8 +55,17 @@ describe('BR-15 combat support', () => {
   });
 
   it('reads legacy object-shaped talent records safely',()=>{
-    expect(hasTalent({getFlag:()=>({first:{name:'Cleave'}})},'Cleave')).toBe(true);
+    expect(hasTalent({system:{class:'Fighter'},getFlag:()=>({first:{name:'Cleave'}})},'Cleave')).toBe(true);
     expect(hasTalent({getFlag:()=>null},'Cleave')).toBe(false);
   });
 
+});
+
+it('ignores stale Fighter talents on Ranger and Warden records', () => {
+  for (const cls of ['Ranger','Warden','Cleric']) {
+    const actor={system:{class:cls,level:7},getFlag:()=>[{name:'Weapon Specialization',weapon:'Sword'},{name:'Defender'},{name:'Two-Weapon Fighting'},{name:'Slayer',foeType:'orc'}]};
+    expect(hasTalent(actor,'Defender')).toBe(false);
+    expect(hasTalent(actor,'Two-Weapon Fighting')).toBe(false);
+    expect(talentBonuses(actor,{name:'Sword'},'orc')).toMatchObject({attack:0,damage:0});
+  }
 });

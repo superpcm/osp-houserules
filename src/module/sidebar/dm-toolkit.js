@@ -14,7 +14,13 @@ import { BankDmLedgersView } from "../apps/bank-dm-ledgers-view.js";
 import { changeHealth } from "../health/health-authority.js";
 import { healthSnapshot } from "../health/health-rules.js";
 import { ospDialogOptions } from '../dialog/dialog-theme.js';
-
+import { openStoreManager } from '../apps/store-app.js';
+import { openInnManager } from '../apps/inn-app.js';
+import { openStableManager } from '../apps/stable-app.js';
+import { openCalendar } from '../apps/calendar-app.js';
+import { startAwardRest, registerAwardRestServices, isCalendarAuthority } from '../calendar/calendar-authority.js';
+import { recoverProgressionOperation } from '../progression/progression-authority.js';
+import { openCatalogStockingReview } from '../inventory/catalog-stocking-review.js';
 import { openInventoryImport } from '../inventory/inventory-import-ui.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -26,6 +32,9 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
   static DEFAULT_OPTIONS = {
     window: { title: "DM's Toolkit" },
     actions: {
+      manageStores: () => openStoreManager(),
+      manageInns: () => openInnManager(),
+      manageStables: () => openStableManager(),
       rest: DmToolkitTab._onRest,
       awardRest: DmToolkitTab._onAwardRest,
       exportCharacters: DmToolkitTab._onExportCharacters,
@@ -33,6 +42,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       setXP: DmToolkitTab._onSetXP,
       xpHistory: DmToolkitTab._onXPHistory,
       catalogReview: DmToolkitTab._onCatalogReview,
+      catalogStockingReview: DmToolkitTab._onCatalogStockingReview,
       importInventory: DmToolkitTab._onImportInventory,
       repairInventoryLinks: DmToolkitTab._onRepairInventoryLinks,
       setMaxHP: DmToolkitTab._onSetMaxHP,
@@ -44,7 +54,8 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       addMagicItem:           DmToolkitTab._onAddMagicItem,
       togglePlayerLock:      DmToolkitTab._onTogglePlayerLock,
       toggleStoreLock:       DmToolkitTab._onToggleStoreLock,
-      openBankLedgers:       DmToolkitTab._onOpenBankLedgers
+      openBankLedgers:       DmToolkitTab._onOpenBankLedgers,
+      openCalendar:          () => openCalendar()
     }
   };
 
@@ -68,6 +79,11 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
 
   static async _onCatalogReview() {
     try { return await openCatalogReconciliation(); }
+    catch (error) { ui.notifications.warn(error.message); }
+  }
+
+  static async _onCatalogStockingReview() {
+    try { return await openCatalogStockingReview(); }
     catch (error) { ui.notifications.warn(error.message); }
   }
 
@@ -130,31 +146,21 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
   }
 
   static async _onAwardRest(_event, _target) {
-    const confirmed = await foundry.applications.api.DialogV2.confirm({
+    if (!isCalendarAuthority()) { ui.notifications.warn('The active DM must award rest.'); return; }
+    const hours = await foundry.applications.api.DialogV2.prompt({
       window: { title: "Award Rest" },
-      content: "<p>Heal every player character (1d4 + CON modifier, minimum 1 HP, up to max HP) and restore used spell slots after uninterrupted sleep and one hour for preparation? Uncast prepared spells are preserved.</p>",
-      yes: { label: "Yes" },
-      no: { label: "Cancel" }
+      content: '<p>Advance time for uninterrupted rest. Natural healing and spell recovery are applied only when the rest finishes. Calendar reminders can pause it.</p><label for="osp-rest-hours">Hours of rest</label><input id="osp-rest-hours" name="hours" type="number" min="0.01" step="0.01" value="8" required>',
+      ok: { label: "Start Rest", callback: (_event, button) => Number(button.form.elements.hours.value) },
+      rejectClose: false
     });
-    if (!confirmed) return;
-
-    const pcs = game.actors.filter(a => a.type === "character");
-
-    let totalHealed = 0;
-    let healedActors = 0;
-    for (const actor of pcs) {
-      const snapshot = healthSnapshot(actor);
-      if (snapshot.dead || snapshot.bleed || snapshot.hp >= snapshot.maxHp) continue;
-      const result = await changeHealth(actor, { action: 'naturalHealing', confirmed: true });
-      if (!result?.success) { ui.notifications.warn(`${actor.name}: ${result?.reason || 'Healing pending GM recovery.'}`); continue; }
-      if (result.afterHP <= result.beforeHP) continue;
-      healedActors += 1;
-      totalHealed += result.afterHP - result.beforeHP;
+    if (hours == null) return;
+    try {
+      const result = await startAwardRest(hours);
+      if (result.stopped) { ui.notifications.info('Award Rest paused at a calendar reminder. Resume or cancel it from Calendar.'); openCalendar(); }
+    } catch (error) {
+      ui.notifications.error(error.message);
+      openCalendar();
     }
-
-    await DmToolkitTab._resetSpellSlots(pcs);
-
-    ui.notifications.info(`Award Rest complete — healed ${totalHealed} HP across ${healedActors} character${healedActors === 1 ? "" : "s"}; eligible living characters had used spell slots restored.`);
   }
 
   static async _onExportCharacters(_event, _target) {
@@ -500,11 +506,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     }
 
     const SKILLS = [
-      { key: 'assassination',          label: 'Assassination' },
       { key: 'climbSheer',             label: 'Climb Sheer Surfaces' },
-      { key: 'detectConstruction',     label: 'Detect Construction' },
-      { key: 'detectRoomTraps',        label: 'Detect Room Traps' },
-      { key: 'findSecretDoor',         label: 'Find Secret Doors' },
       { key: 'findTraps',              label: 'Find Traps' },
       { key: 'foragingHunting',        label: 'Foraging / Hunting' },
       { key: 'hideDungeons',           label: 'Hide in Dungeons' },
@@ -514,14 +516,12 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
       { key: 'listeningAtDoors',       label: 'Listening at Doors' },
       { key: 'moveSilently',           label: 'Move Silently' },
       { key: 'openLocks',              label: 'Open Locks' },
-      { key: 'openStuckDoors',         label: 'Open Stuck Doors' },
       { key: 'pickPockets',            label: 'Pick Pockets' },
       { key: 'stealth',                label: 'Stealth' },
       { key: 'wildernessSurpriseAttack', label: 'Wilderness Surprise Attack' },
     ];
 
     const charOptions  = pcs.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-    const skillOptions = SKILLS.map(sk => `<option value="${sk.key}">${sk.label}</option>`).join('');
     const valueOptions = ['', '1', '2', '3', '4', '5']
       .map(v => `<option value="${v}">${v === '' ? '— none —' : v + '-in-6'}</option>`).join('');
 
@@ -533,7 +533,7 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         </div>
         <div class="osp-xp-amount-row">
           <label for="osp-skill-key">Skill</label>
-          <select id="osp-skill-key" style="width:100%;margin-top:4px;">${skillOptions}</select>
+          <select id="osp-skill-key" style="width:100%;margin-top:4px;"></select>
         </div>
         <div class="osp-xp-amount-row">
           <label for="osp-skill-value">New Value</label>
@@ -554,8 +554,11 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
             const value    = html.find('#osp-skill-value').val();
             const actor    = game.actors.get(actorId);
             if (!actor) return;
+            const normalizedClass = String(actor.system?.class ?? '').toLowerCase().trim();
+            const allowedSkills = SKILLS.filter(skill => skill.key !== 'listeningAtDoors' || ['thief', 'assassin'].includes(normalizedClass));
+            if (!allowedSkills.some(skill => skill.key === skillKey)) return;
             await actor.update({ [`system.${skillKey}`]: value });
-            const label = SKILLS.find(sk => sk.key === skillKey)?.label ?? skillKey;
+            const label = allowedSkills.find(sk => sk.key === skillKey)?.label ?? skillKey;
             const display = value ? `${value}-in-6` : 'none';
             ui.notifications.info(`Set ${actor.name}'s ${label} to ${display}.`);
           }
@@ -571,6 +574,15 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
         const skillSelect = html.find('#osp-skill-key');
         const valueSelect = html.find('#osp-skill-value');
 
+        const refreshSkills = () => {
+          const actor = game.actors.get(charSelect.val());
+          const normalizedClass = String(actor?.system?.class ?? '').toLowerCase().trim();
+          const current = skillSelect.val();
+          const allowedSkills = SKILLS.filter(skill => skill.key !== 'listeningAtDoors' || ['thief', 'assassin'].includes(normalizedClass));
+          skillSelect.html(allowedSkills.map(skill => `<option value="${skill.key}">${skill.label}</option>`).join(''));
+          skillSelect.val(allowedSkills.some(skill => skill.key === current) ? current : allowedSkills[0]?.key ?? '');
+        };
+
         const prefill = () => {
           const actor    = game.actors.get(charSelect.val());
           const skillKey = skillSelect.val();
@@ -580,8 +592,9 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
           }
         };
 
-        charSelect.on('change', prefill);
+        charSelect.on('change', () => { refreshSkills(); prefill(); });
         skillSelect.on('change', prefill);
+        refreshSkills();
         prefill();
       }
     })).render(true);
@@ -917,3 +930,5 @@ export default class DmToolkitTab extends HandlebarsApplicationMixin(AbstractSid
     return base;
   }
 }
+
+registerAwardRestServices({ snapshot: healthSnapshot, heal: changeHealth, spells: changeSpellState, recover: recoverProgressionOperation });

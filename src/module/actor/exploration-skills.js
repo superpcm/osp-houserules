@@ -8,6 +8,7 @@ export function deriveExplorationSkills(system = {}) {
   const characterClass = String(system.class || '').toLowerCase().trim();
   const racialListening = ['dwarf', 'elf', 'gnome', 'hobbit'].includes(race) ? '2' : '1';
   const racialSecretDoor = ['elf', 'half-elf'].includes(race) ? '2' : '1';
+  const wildernessClass = ['ranger', 'warden'].includes(characterClass);
 
   const listeningAtDoors = ['thief', 'assassin'].includes(characterClass)
     ? String(system.listeningAtDoors || '1')
@@ -17,6 +18,9 @@ export function deriveExplorationSkills(system = {}) {
     : racialSecretDoor;
 
   return {
+    forageTarget: wildernessClass ? '2' : '',
+    huntTarget: wildernessClass ? '5' : '',
+    stealthTarget: characterClass === 'ranger' ? '3' : '',
     listeningAtDoors,
     effectiveListeningAtDoors: String(Math.max(Number(racialListening), Math.min(5, Number(listeningAtDoors) || 1))),
     findSecretDoor,

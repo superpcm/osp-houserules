@@ -77,6 +77,7 @@ export function transitionSpellState(original, command, context) {
     state.restReady = true;
   } else if (action === 'copy' || action === 'grant' || action === 'link') {
     const spell = spellFor(context, command.spellId);
+    if (spell.atWill) throw new Error('At-will spells do not use spellbook pages.');
     if (context.mode !== 'arcane') throw new Error('Only arcane spells use a spellbook.');
     if (!Number(context.slots[spell.level])) throw new Error('That spell level is not unlocked.');
     if (!context.bookIds.includes(command.bookId)) throw new Error('The spellbook is unavailable.');
@@ -99,6 +100,7 @@ export function transitionSpellState(original, command, context) {
     book.spellIds.push(spell.id);
   } else if (action === 'prepare') {
     const spell = spellFor(context, command.spellId);
+    if (spell.atWill) throw new Error('This spell is at will and does not require preparation.');
     if (context.mode === 'divine' && command.reverse) throw new Error('Choose the divine reversed form when casting.');
     const key = formFor(spell, command.reverse);
     if (!state.restReady) throw new Error('Confirm a qualifying rest before preparing spells.');
@@ -110,6 +112,7 @@ export function transitionSpellState(original, command, context) {
     if (n && !limit || totalPrepared(state, context, spell.level) + count(state.used[spell.level]) > limit) throw new Error('Daily spell slots are full or unavailable.');
   } else if (action === 'cast') {
     const spell = spellFor(context, command.spellId);
+    if (spell.atWill) throw new Error('Use the at-will cast action on the Spells page.');
     // Divine casters choose a reversed form at casting; arcane casters prepare that form.
     const key = formFor(spell, context.mode === 'divine' ? false : command.reverse);
     formFor(spell, command.reverse);

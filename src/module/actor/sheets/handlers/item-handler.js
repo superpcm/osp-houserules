@@ -1,9 +1,11 @@
+import { beltToolLashDecision, getLashSlotCost } from '../../../inventory/lash-slot-cost.js';
 import { normalizeQuantity } from '../../../inventory/encumbrance.js';
 import { deleteInventoryItem, dropInventoryItem } from '../../../inventory/item-removal-ui.js';
 import { checkWithdrawTarget } from '../../../inventory/container-capacity.js';
+import { backpackLashDecision, isBackpack, isBackpackInternalForbidden, isRollableGarment } from '../../../inventory/long-item-transport.js';
 import { inventoryItems, containedSubtree } from '../../../inventory/containment.js';
 import { rollCritical } from '../../../health/critical-authority.js';
-import { storedBulk, usedBulk, capacityValue } from '../../../inventory/bulk.js';
+import { storedBulk, storageFootprint, usedBulk, capacityValue } from '../../../inventory/bulk.js';
 import { canStackItems } from '../../../inventory/stack-identity.js';
 /**
  * Handles item management operations (CRUD, equipment, etc.)
@@ -16,6 +18,14 @@ import { evaluateWeaponPolicy, weaponDamageFormula, applyWeaponDamageCap, findCl
 import { confirmAttackContext } from "../../../combat/combat-support-ui.js";
 import { createSheetDialog } from '../sheet-dialog.js';
 import { handCost, heldItems, handsUsed, canHold } from '../../../inventory/hand-capacity.js';
+import { isShieldItem, isShieldLashingHost, hasFreeLashSlots } from '../../../inventory/shield-lashing.js';
+import { getArrowBundleLashDecision, isProtectedArrowBundle } from '../../../inventory/arrow-bundle.js';
+import { getTorchBundleLashDecision, isProtectedTorchBundle } from '../../../inventory/torch-bundle.js';
+import { unpackTorchBundle } from '../../../inventory/torch-bundle-actions.js';
+import { unpackArrowBundle } from '../../../inventory/arrow-bundle-actions.js';
+import { getBoltBundleLashDecision, isProtectedBoltBundle } from '../../../inventory/bolt-bundle.js';
+import { unpackBoltBundle } from '../../../inventory/bolt-bundle-actions.js';
+import { clothingWearRejection } from '../../../inventory/clothing-wear.js';
 
 const critDamageFormula = (formula) =>
   formula.replace(/(\d+)d(\d+)/gi, (_, n, d) => `${parseInt(n) * 2}d${d}`);
@@ -221,15 +231,46 @@ export class ItemHandler {
     event.stopPropagation(); // Prevent triggering item roll
     const item = this.getItemFromEvent(event);
     if (!item) return;
+    if (isProtectedTorchBundle(item)) { ui.notifications.warn('Unpack the torch bundle before use.'); return; }
+    if (isProtectedBoltBundle(item)) { ui.notifications.warn('Unpack the bolt bundle before use.'); return; }
+
+    if (item.system?.vehicleAttachment) {
+      await this._showUnlashItemDialog(item);
+      return;
+    }
     
     const newEquippedState = !item.system.equipped;
     
     // Special handling for containers and clothing: equipped = top-level, unequipped = nested
     if (item.type === "container" || item.type === "clothing") {
       if (newEquippedState) {
+        if (item.type === 'clothing') {
+          const wearReason = clothingWearRejection(item, this.actor.items, { excludeId: item.id });
+          if (wearReason) {
+            ui.notifications.error(wearReason);
+            return;
+          }
+        }
+        // Back-slot carriers share the same physical shoulder/back space whether they
+        // are equipped by the toggle, dragged onto Gear, or moved through the gear menu.
+        // Keep the toggle path on the same matrix as the sheet drop paths; an existing
+        // conflicting actor inventory is intentionally preserved and is not auto-migrated.
+        const backCategory = this.sheet?._backSlotCategory?.(item);
+        if (backCategory) {
+          const backCheck = this.sheet._checkBackSlotCompatibility(backCategory, item.id);
+          if (!backCheck.allowed) {
+            ui.notifications.error(backCheck.reason);
+            return;
+          }
+        }
+
         // Lashable containers (belt pouches, sword frogs, etc.): shirt icon attaches to belt or detaches
-        if (item.type === 'container' && item.system.lashable) {
-          if (item.system.lashed) {
+        if (item.type === 'container' && (item.system.lashable || item.name === 'Coin Purse')) {
+          const beltParent = item.system.containerId ? this.actor.items.get(item.system.containerId) : null;
+          const inferredBeltAttachment = beltParent?.type === 'clothing'
+            && Number(beltParent.system?.lashSlots) > 0
+            && Number(beltParent.system?.capacity || 0) <= 0;
+          if (item.system.lashed || inferredBeltAttachment) {
             // Already on belt — shirt icon detaches it (same as unlash)
             await this.onItemLashToggle(event);
             return;
@@ -243,11 +284,13 @@ export class ItemHandler {
             return;
           }
           const lashedAttachments = this.actor.items.filter(i =>
-            i.type === 'container' && i.system.containerId === belt.id && i.system.lashed && i.id !== item.id
+            i.type === 'container' && i.system.containerId === belt.id
+            && (i.system.lashed || (belt.type === 'clothing' && Number(belt.system?.lashSlots) > 0 && Number(belt.system?.capacity || 0) <= 0))
+            && i.id !== item.id
           );
-          const usedSlots = lashedAttachments.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-          const itemSlotCost = item.system.slotCost || 1;
-          if (usedSlots + itemSlotCost > (belt.system.lashSlots || 0)) {
+          const usedSlots = lashedAttachments.reduce((sum, i) => sum + getLashSlotCost(i), 0);
+          const itemSlotCost = getLashSlotCost(item);
+          if (itemSlotCost > 0 && usedSlots + itemSlotCost > (belt.system.lashSlots || 0)) {
             ui.notifications.error(`${belt.name} is full (${usedSlots}/${belt.system.lashSlots} slots used, need ${itemSlotCost} for ${item.name}).`);
             return;
           }
@@ -257,52 +300,6 @@ export class ItemHandler {
         }
 
         // Equipping = moving to top-level
-
-        // For clothing: Only one set of "Clothes" can be equipped at a time
-        if (item.type === "clothing" && item.name.startsWith("Clothes,")) {
-          const equippedClothes = this.actor.items.filter(i => 
-            i.type === "clothing" &&
-            i.name.startsWith("Clothes,") &&
-            i.system.equipped &&
-            i.id !== item.id
-          );
-          
-          if (equippedClothes.length > 0) {
-            const currentClothes = equippedClothes[0];
-            
-            // Check if current clothes has items stored in it
-            if (currentClothes.system.capacity) {
-              const storedItems = this.actor.items.filter(i => i.system.containerId === currentClothes.id);
-              if (storedItems.length > 0) {
-                ui.notifications.error(`Cannot equip ${item.name} - remove items from ${currentClothes.name} pockets first.`);
-                return;
-              }
-            }
-            
-            // Current clothes is empty (or has no capacity), safe to unequip
-            await currentClothes.update({"system.equipped": false});
-            ui.notifications.info(`Unequipped ${currentClothes.name} to equip ${item.name}.`);
-          }
-        }
-        
-        // Only one Belt can be equipped at a time
-        if (item.type === "clothing" && item.name === "Belt") {
-          const equippedBelt = this.actor.items.find(i =>
-            i.type === "clothing" &&
-            i.name === "Belt" &&
-            i.system.equipped &&
-            i.id !== item.id
-          );
-          if (equippedBelt) {
-            const attachedCount = this.actor.items.filter(i => i.system.containerId === equippedBelt.id && i.system.lashed).length;
-            if (attachedCount > 0) {
-              ui.notifications.error(`Cannot equip a second Belt — the equipped belt has ${attachedCount} item(s) attached. Remove them first.`);
-            } else {
-              ui.notifications.error(`Cannot equip a second Belt — unequip the current Belt first.`);
-            }
-            return;
-          }
-        }
 
         // Sack hand-requirement validation
         if (item.name === 'Sack, Large' || item.name === 'Sack, Small') {
@@ -361,10 +358,11 @@ export class ItemHandler {
         }
         } // End of container-specific checks
         
-        // Move to top-level by clearing containerId and setting equipped
+        // Wearing a rolled garment also detaches and unrolls it in this update.
         await item.update({
           "system.containerId": null,
-          "system.equipped": true
+          "system.equipped": true,
+          ...(isRollableGarment(item) ? { "system.lashed": false } : {}),
         });
       } else {
         // Slings (Baldric etc.) cannot be stored — show Drop/Delete/Cancel
@@ -374,6 +372,21 @@ export class ItemHandler {
         }
 
         // Unequipping = moving to a container
+        if (item.type === "clothing") {
+          const storage = this._findContainerWithSpace(item);
+          if (!storage) {
+            ui.notifications.error(`Cannot unequip ${item.name} - no containers have enough space.`);
+            return;
+          }
+          await item.update({
+            "system.containerId": storage.id,
+            "system.equipped": false,
+            "system.lashed": false,
+          });
+          ui.notifications.info(`${item.name} stored in ${storage.name}.`);
+          return;
+        }
+
         // Find container with most available capacity
         const availableContainers = this.actor.items.filter(i =>
           i.type === "container" &&
@@ -641,6 +654,18 @@ export class ItemHandler {
     }
   }
 
+  _clothingSlot(itemLike) {
+    if (this.sheet?._clothingSlot) return this.sheet._clothingSlot(itemLike);
+    const explicit = String(itemLike?.system?.slot ?? '').trim().toLowerCase();
+    if (explicit) return explicit;
+    const name = String(itemLike?.name ?? '').trim().toLowerCase();
+    if (name === 'belt') return 'belt';
+    if (name === 'boots') return 'boots';
+    if (name === 'cloak') return 'cloak';
+    if (name.startsWith('clothes')) return 'clothes';
+    return name;
+  }
+
   /**
    * Handle toggling item lashed status.
    *
@@ -654,15 +679,46 @@ export class ItemHandler {
     const item = this.getItemFromEvent(event);
     if (!item) return;
 
-    const isCurrentlyLashed = item.system.lashed;
+    if (item.system?.vehicleAttachment) {
+      await (item.type === 'container' ? this._showUnlashContainerDialog(item) : this._showUnlashItemDialog(item));
+      return;
+    }
+
+    const lashParent = item.system.containerId ? this.actor.items.get(item.system.containerId) : null;
+    const isInferredBeltAttachment = lashParent?.type === 'clothing'
+      && Number(lashParent.system?.lashSlots) > 0
+      && Number(lashParent.system?.capacity || 0) <= 0;
+    const isCurrentlyLashed = Boolean(item.system.lashed || isInferredBeltAttachment);
 
     // ── UNLASH PATH ──────────────────────────────────────────────────────────
     if (isCurrentlyLashed) {
+      if (isProtectedArrowBundle(item)) {
+        const result = await unpackArrowBundle(this.actor, item);
+        if (!result.success) ui.notifications.warn(result.reason);
+        else ui.notifications.info(`${item.name} unpacked.`);
+        return;
+      }
+      if (isProtectedTorchBundle(item)) {
+        const result = await unpackTorchBundle(this.actor, item);
+        if (!result.success) ui.notifications.warn(result.reason);
+        else ui.notifications.info(`${item.name} unpacked.`);
+        return;
+      }
+      if (isProtectedBoltBundle(item)) {
+        const result = await unpackBoltBundle(this.actor, item);
+        if (!result.success) ui.notifications.warn(result.reason);
+        else ui.notifications.info(`${item.name} unpacked.`);
+        return;
+      }
       if (item.type === 'container') {
         // If lashed to another container (backpack etc.), just store it there — don't show belt dialog
         const parent = item.system.containerId
           ? this.actor.items.get(item.system.containerId)
           : null;
+        if (isBackpack(parent) && this._baseName(item.name) === 'Quiver') {
+          await this._showUnlashContainerDialog(item);
+          return;
+        }
         if (parent && parent.type === 'container') {
           await item.update({ 'system.lashed': false });
           ui.notifications.info(`${item.name} stored in ${parent.name}.`);
@@ -714,6 +770,12 @@ export class ItemHandler {
 
     // ── LASH PATH ────────────────────────────────────────────────────────────
 
+    const beltToolDecision = beltToolLashDecision(item, this.actor.items.find(candidate => candidate.id === item.system?.containerId));
+    if (beltToolDecision.allowed === false) {
+      ui.notifications.warn(beltToolDecision.reason);
+      return;
+    }
+
     // Sling containers (Baldric etc.) cannot be lashed to anything
     if (item.type === 'container' && (item.system?.tags || []).includes('sling')) {
       ui.notifications.warn(`${item.name} cannot be lashed. It must be worn or dropped.`);
@@ -725,17 +787,35 @@ export class ItemHandler {
       const _tags = item.system?.tags || [];
       const _isSlungOnly = (item.name || '').toLowerCase().includes('crossbow') ||
         (_tags.includes('missile') && _tags.includes('two-handed'));
-      if (_isSlungOnly) {
+      const host = this.actor.items.find(i => i.type === 'container' && isBackpack(i) && i.id === item.system.containerId);
+      if (_isSlungOnly && backpackLashDecision(item, host, this.actor.items).allowed !== true) {
         ui.notifications.warn(`${item.name} cannot be lashed — sling it instead.`);
         return;
       }
     }
 
-    // Armor (helmet or shield) → lash to backpack only
+    // Armor: helmets may use any container lash slots; shields use realistic shield hosts.
     if (item.type === 'armor') {
-      const backpack = this._findBackpackWithLashSlot(item);
+      const isShield = this._isShield(item);
+      const destination = item.system.type === 'helmet'
+        ? this._findContainerWithLashSlot(item)
+        : isShield ? this._findShieldLashSlot(item) : this._findBackpackWithLashSlot(item);
+      if (!destination) {
+        ui.notifications.warn(item.system.type === 'helmet' || isShield
+          ? `No suitable container with available lash slots found.`
+          : `No backpack with available lash slots found. Equip a backpack first.`);
+        return;
+      }
+      await item.update({ 'system.lashed': true, 'system.containerId': destination.id, 'system.equipped': false });
+      ui.notifications.info(`${item.name} lashed to ${destination.name}.`);
+      return;
+    }
+
+    // Standard back quivers have an explicit Backpack-only lash allowance, including legacy data.
+    if (item.type === 'container' && this._baseName(item.name) === 'Quiver') {
+      const backpack = this._findContainerWithLashSlot(item, host => isBackpack(host));
       if (!backpack) {
-        ui.notifications.warn(`No backpack with available lash slots found. Equip a backpack first.`);
+        ui.notifications.warn('No Backpack has a free lash slot for this Quiver.');
         return;
       }
       await item.update({ 'system.lashed': true, 'system.containerId': backpack.id, 'system.equipped': false });
@@ -744,12 +824,17 @@ export class ItemHandler {
     }
 
     // Belt attachment path: lashable containers (or containers with slotCost > 0) auto-find the equipped belt
-    if (item.type === 'container' && (item.system.lashable || (item.system.slotCost || 0) > 0)) {
+    if (item.type === 'container' && (item.system.lashable || item.name === 'Coin Purse' || (item.system.slotCost || 0) > 0)) {
       const belt = this.actor.items.find(i =>
         i.type === 'clothing' && (i.system.lashSlots || 0) > 0 && i.system.equipped
       );
       if (!belt) {
         ui.notifications.warn(`No equipped belt found. Equip a belt first.`);
+        return;
+      }
+      const beltToolAutoDecision = beltToolLashDecision(item, belt);
+      if (beltToolAutoDecision.allowed === false) {
+        ui.notifications.warn(beltToolAutoDecision.reason);
         return;
       }
 
@@ -758,9 +843,9 @@ export class ItemHandler {
       );
 
       // Slot cost check
-      const usedSlots = lashedAttachments.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-      const itemSlotCost = item.system.slotCost || 1;
-      if (usedSlots + itemSlotCost > (belt.system.lashSlots || 0)) {
+      const usedSlots = lashedAttachments.reduce((sum, i) => sum + getLashSlotCost(i), 0);
+      const itemSlotCost = getLashSlotCost(item);
+      if (itemSlotCost > 0 && usedSlots + itemSlotCost > (belt.system.lashSlots || 0)) {
         ui.notifications.error(
           `${belt.name} has no room for ${item.name} (${usedSlots}/${belt.system.lashSlots} slots used, need ${itemSlotCost}).`
         );
@@ -785,8 +870,28 @@ export class ItemHandler {
       return;
     }
 
-    if (!item.system.lashable) {
+    const legacyBeltToolDecision = beltToolLashDecision(item, container);
+    if (legacyBeltToolDecision.allowed === false) {
+      ui.notifications.warn(legacyBeltToolDecision.reason);
+      return;
+    }
+    const backpackDecision = backpackLashDecision(item, container, this.actor.items);
+    const arrowBundleDecision = getArrowBundleLashDecision(item, container);
+    const torchBundleDecision = getTorchBundleLashDecision(item, container);
+    const boltBundleDecision = getBoltBundleLashDecision(item, container);
+    if (arrowBundleDecision.allowed === false) { ui.notifications.warn(arrowBundleDecision.reason); return; }
+    if (torchBundleDecision.allowed === false) { ui.notifications.warn(torchBundleDecision.reason); return; }
+    if (boltBundleDecision.allowed === false) { ui.notifications.warn(boltBundleDecision.reason); return; }
+    if (backpackDecision.allowed === false) { ui.notifications.warn(backpackDecision.reason); return; }
+    if (backpackDecision.allowed !== true && isBackpackInternalForbidden(item, container, this.actor.items)) { ui.notifications.warn(`${item.name} cannot be stored inside a Backpack; lash it externally.`); return; }
+
+    if (!item.system.lashable && arrowBundleDecision.allowed !== true && torchBundleDecision.allowed !== true && boltBundleDecision.allowed !== true && backpackDecision.allowed !== true && !(item.type === 'armor' && (item.system.type === 'helmet' || this._isShield(item)))) {
       ui.notifications.warn(`${item.name} cannot be lashed.`);
+      return;
+    }
+
+    if (this._isShield(item) && !isShieldLashingHost(container)) {
+      ui.notifications.warn(`${container.name} is not a suitable shield lash host.`);
       return;
     }
 
@@ -799,9 +904,9 @@ export class ItemHandler {
     const lashedItems = this.actor.items.filter(i =>
       i.system.containerId === containerId && i.system.lashed && i.id !== item.id
     );
-    const usedSlots = lashedItems.reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-    const itemSlotCost = item.system.slotCost || 1;
-    if (usedSlots + itemSlotCost > lashSlots) {
+    const usedSlots = lashedItems.reduce((sum, i) => sum + getLashSlotCost(i, container), 0);
+    const itemSlotCost = getLashSlotCost(item, container);
+    if (itemSlotCost > 0 && usedSlots + itemSlotCost > lashSlots) {
       ui.notifications.error(`${container.name} has no available lash slots (${usedSlots}/${lashSlots} used).`);
       return;
     }
@@ -821,9 +926,11 @@ export class ItemHandler {
   /**
    * Get used capacity in a container
    */
-  _getUsedCapacity(container) { return usedBulk(container, this.actor.items); }
+  _getUsedCapacity(container, items = this.actor.items) { return usedBulk(container, items); }
 
-  _getEffectiveStoredSize(item) { return storedBulk(item); }
+  _getEffectiveStoredSize(item) {
+    return (item?.id ?? item?._id) ? storageFootprint(item, this.actor.items) : storedBulk(item);
+  }
 
   _getItemSlotSize(item) {
     return this._getEffectiveStoredSize(item);
@@ -831,13 +938,12 @@ export class ItemHandler {
 
   /** Returns true if a shield is currently equipped, optionally excluding one item by id. */
   _isShield(item) {
-    return item.type === 'armor' && item.name.toLowerCase().includes('shield');
+    return isShieldItem(item);
   }
 
   _isShieldEquipped(excludeId = null) {
     return this.actor.items.some(i =>
-      i.type === 'armor' && i.system.equipped &&
-      i.name.toLowerCase().includes('shield') && i.id !== excludeId
+      this._isShield(i) && i.system.equipped && i.id !== excludeId
     );
   }
 
@@ -905,14 +1011,21 @@ export class ItemHandler {
         && checkWithdrawTarget(item, destination, items.filter(other => other.id !== item.id)).allowed) {
         options.push({ value: `stow:${destination.id}`, containerId: destination.id, lashed: false, label: `Stow in ${destination.name}` });
       }
-      const canLash = !slungOnly && (this._isShield(item) || item.system?.lashable === true);
-      const validMount = destination.type === 'container' && !destination.system?.lashable || destination.type === 'clothing' && destination.system?.equipped;
-      if (!canLash || !validMount || this._isShield(item) && !String(destination.name).toLowerCase().includes('backpack')) continue;
+      const isHelmet = item.type === 'armor' && item.system?.type === 'helmet';
+      const backpackDecision = backpackLashDecision(item, destination, items);
+      const beltToolDecision = beltToolLashDecision(item, destination);
+      const canLash = !slungOnly && beltToolDecision.allowed !== false && backpackDecision.allowed !== false && (this._isShield(item) || isHelmet || item.system?.lashable === true || backpackDecision.allowed === true);
+      const validMount = isHelmet
+        ? destination.type === 'container' && (destination.system?.lashSlots || 0) > 0
+        : this._isShield(item)
+          ? isShieldLashingHost(destination) && (destination.system?.lashSlots || 0) > 0
+        : destination.type === 'container' && !destination.system?.lashable || destination.type === 'clothing' && destination.system?.equipped;
+      if (!canLash || !validMount) continue;
       const sizes = destination.system?.lashAllowedSizes || [];
-      if (sizes.length && !sizes.includes(item.system?.size)) continue;
+      if (!isHelmet && !this._isShield(item) && sizes.length && !sizes.includes(item.system?.size)) continue;
       const used = items.filter(other => other.id !== item.id && other.system?.containerId === destination.id && other.system?.lashed)
-        .reduce((sum, other) => sum + (Number(other.system?.slotCost) || 1), 0);
-      if (used + (Number(item.system?.slotCost) || 1) <= (Number(destination.system?.lashSlots) || 0)) {
+        .reduce((sum, other) => sum + getLashSlotCost(other, destination), 0);
+      if (getLashSlotCost(item, destination) === 0 || used + getLashSlotCost(item, destination) <= (Number(destination.system?.lashSlots) || 0)) {
         options.push({ value: `lash:${destination.id}`, containerId: destination.id, lashed: true, label: `Lash to ${destination.name}` });
       }
     }
@@ -988,7 +1101,7 @@ export class ItemHandler {
           if (!check.allowed) return refuse(check.reason);
         } else {
           const used = projected.filter(other => other.system.containerId === destination.id && other.system.lashed)
-            .reduce((sum, other) => sum + (Number(other.system.slotCost) || 1), 0);
+            .reduce((sum, other) => sum + getLashSlotCost(other, destination), 0);
           if (used > (Number(destination.system.lashSlots) || 0)) return refuse(`${destination.name} does not have enough lash slots for those items.`);
         }
       }
@@ -1058,13 +1171,20 @@ export class ItemHandler {
     });
     if (beltLoop) return { container: beltLoop, lashed: false };
 
+    // Then try ordinary internal storage, including equipped clothing with usable
+    // pocket capacity.  Use the canonical withdrawal rules so weapon restrictions,
+    // allowlists, and recursive capacity checks remain consistent with the Gear tab.
+    const internalStorage = this._findContainerWithSpace(weapon, null, { includeClothing: true });
+    if (internalStorage) return { container: internalStorage, lashed: false };
+
     // Fall back to any container with lash slots using slotCost-aware check
     const lashContainer = this.actor.items.find(i => {
       if ((i.system.lashSlots || 0) === 0 || (i.type === 'clothing' && !i.system.equipped)) return false;
       if (i.system.lashAllowedSizes?.length && !i.system.lashAllowedSizes.includes(weapon.system.size)) return false;
       const attached = this.actor.items.filter(a => a.system.containerId === i.id && a.system.lashed);
-      const used = attached.reduce((sum, a) => sum + (a.system.slotCost || 1), 0);
-      return used + (weapon.system.slotCost || 1) <= i.system.lashSlots;
+      const used = attached.reduce((sum, a) => sum + getLashSlotCost(a, i), 0);
+      if (beltToolLashDecision(weapon, i).allowed === false) return false;
+      return getLashSlotCost(weapon, i) === 0 || used + getLashSlotCost(weapon, i) <= i.system.lashSlots;
     });
     if (lashContainer) return { container: lashContainer, lashed: true };
 
@@ -1111,7 +1231,8 @@ export class ItemHandler {
       'Scabbard, Sword':  ['Longsword', 'Broadsword', 'Bastard Sword', 'Khopesh', 'Shortsword', 'Rapier'],
       'Sword Frog':       ['Scabbard, Sword'],
       'Baldric':          ['Zweihander', 'Greatsword'],
-      'Axe Sling':        ['Battle Axe', 'Battle Axe, 2-Handed']
+      'Axe Sling':        ['Battle Axe', 'Battle Axe, 2-Handed'],
+      'Warhammer Sling':  ['Warhammer']
     };
     return (defaults[scabbard.name] || []).includes(baseName);
   }
@@ -1122,7 +1243,7 @@ export class ItemHandler {
    * @returns {Item|null}
    */
   _findEmptyScabbardForWeapon(weapon) {
-    const carrierNames = ['Scabbard, Dagger', 'Scabbard, Sword', 'Sword Frog', 'Baldric', 'Axe Sling'];
+    const carrierNames = ['Scabbard, Dagger', 'Scabbard, Sword', 'Sword Frog', 'Baldric', 'Axe Sling', 'Warhammer Sling'];
     return this.actor.items.find(i => {
       if (i.type !== 'container') return false;
       if (!carrierNames.includes(i.name)) return false;
@@ -1197,13 +1318,15 @@ export class ItemHandler {
   }
 
   /**
-   * Unequip a helmet or shield: lash to backpack → dialog.
+   * Unequip a helmet or shield: lash to an eligible container → dialog.
    */
   async _unequipToBackpack(item) {
-    const backpack = this._findBackpackWithLashSlot(item);
-    if (backpack) {
-      await item.update({ 'system.equipped': false, 'system.lashed': true, 'system.containerId': backpack.id });
-      ui.notifications.info(`${item.name} lashed to ${backpack.name}.`);
+    const destination = item.system.type === 'helmet'
+      ? this._findContainerWithLashSlot(item)
+      : this._isShield(item) ? this._findShieldLashSlot(item) : this._findBackpackWithLashSlot(item);
+    if (destination) {
+      await item.update({ 'system.equipped': false, 'system.lashed': true, 'system.containerId': destination.id });
+      ui.notifications.info(`${item.name} lashed to ${destination.name}.`);
       return;
     }
     const container = this._findContainerWithSpace(item);
@@ -1232,7 +1355,6 @@ export class ItemHandler {
    * Returns the first equipped/top-level backpack that has a free lash slot for the given item.
    */
   _findBackpackWithLashSlot(item) {
-    const itemSlotCost = item.system.slotCost || 1;
     return this.actor.items.find(c => {
       if (c.type !== 'container') return false;
       if (!c.name.toLowerCase().includes('backpack')) return false;
@@ -1241,28 +1363,46 @@ export class ItemHandler {
       if (lashSlots === 0) return false;
       const used = this.actor.items
         .filter(i => i.system.containerId === c.id && i.system.lashed)
-        .reduce((sum, i) => sum + (i.system.slotCost || 1), 0);
-      return used + itemSlotCost <= lashSlots;
+        .reduce((sum, i) => sum + getLashSlotCost(i, c), 0);
+      return used + getLashSlotCost(item, c) <= lashSlots;
     }) || null;
+  }
+
+  _findContainerWithLashSlot(item, hostPredicate = () => true) {
+    const items = inventoryItems(this.actor);
+    const excluded = new Set([item.id, ...containedSubtree(items, item.id).map(child => child.id)]);
+    return this.actor.items.find(c => {
+      if (c.type !== 'container' || excluded.has(c.id)) return false;
+      if (beltToolLashDecision(item, c).allowed === false) return false;
+      if (!hostPredicate(c)) return false;
+      return hasFreeLashSlots(c, items, item, item.id);
+    }) || null;
+  }
+
+  _findShieldLashSlot(item) {
+    return this._findContainerWithLashSlot(item, isShieldLashingHost);
   }
 
   /**
    * Returns the top-level container with the most available space that fits the given item,
    * or null if none can hold it.
    */
-  _findContainerWithSpace(item) {
-    const items = inventoryItems(this.actor);
+  _findContainerWithSpace(item, ignoredItemId = null, { includeClothing = false } = {}) {
+    const items = inventoryItems(this.actor).filter(entry => entry.id !== ignoredItemId);
     const _itemTags = item.system?.tags || [];
     const _itemName = (item.name || '').toLowerCase();
     const _isBowOrCrossbow = item.type === 'weapon' &&
       (_itemName.includes('crossbow') || (_itemTags.includes('missile') && _itemTags.includes('two-handed')));
     const candidates = this.actor.items
       .filter(c => {
-        if (c.type !== 'container' || c.system.containerId || c.system.lashed || c.id === item.id) return false;
+        const isStorageHost = c.type === 'container' ||
+          (includeClothing && c.type === 'clothing' && c.system.equipped);
+        if (!isStorageHost || c.system.containerId || c.system.lashed || c.id === item.id) return false;
+        if (this._parseCapacity(c.system.capacity) <= 0) return false;
         if (_isBowOrCrossbow && (c.name === 'Sack, Large' || c.name === 'Sack, Small')) return false;
         return checkWithdrawTarget(item, c, items.filter(entry => entry.id !== item.id)).allowed;
       })
-      .map(c => ({ container: c, available: this._parseCapacity(c.system.capacity) - this._getUsedCapacity(c) }))
+      .map(c => ({ container: c, available: this._parseCapacity(c.system.capacity) - this._getUsedCapacity(c, items) }))
       .sort((a, b) => b.available - a.available);
     return candidates.length > 0 ? candidates[0].container : null;
   }
@@ -1279,7 +1419,7 @@ export class ItemHandler {
         buttons.store = {
           label: `Store in ${storageContainer.name}`,
           callback: async () => {
-            await item.update({ 'system.lashed': false, 'system.containerId': storageContainer.id });
+            await item.update({ 'system.lashed': false, 'system.vehicleAttachment': null, 'system.containerId': storageContainer.id });
             ui.notifications.info(`${item.name} stored in ${storageContainer.name}.`);
             resolve(true);
           }
@@ -1321,7 +1461,7 @@ export class ItemHandler {
         buttons[`store_${container.id}`] = {
           label: `Store in ${container.name}`,
           callback: async () => {
-            await item.update({ 'system.lashed': false, 'system.containerId': container.id });
+            await item.update({ 'system.lashed': false, 'system.vehicleAttachment': null, 'system.containerId': container.id });
             ui.notifications.info(`${item.name} stored in ${container.name}.`);
             resolve(true);
           }
@@ -1472,6 +1612,7 @@ export class ItemHandler {
   async onItemRoll(event) {
     event.preventDefault();
     const item = this.getItemFromEvent(event);
+    if (item && (isProtectedTorchBundle(item) || isProtectedBoltBundle(item))) { ui.notifications.warn(`Unpack the ${isProtectedBoltBundle(item) ? 'bolt' : 'torch'} bundle before use.`); return; }
     if (item && item.type === "weapon") return this.rollWeapon(item);
   }
 
@@ -1574,6 +1715,14 @@ export class ItemHandler {
       const { isHit, isCrit, isFumble, cancelled } = await this._performCombatAttack(item, context, formula, flavor, targetOpts);
       if (cancelled) return;
 
+      // The ammo resolver normally filters protected bundles. Recheck the selected
+      // document at the consumption boundary so a concurrent flag change cannot
+      // consume a protected bundle.
+      if (availability.requirement?.kind === 'external' && availability.ammoItem && (isProtectedArrowBundle(availability.ammoItem) || isProtectedBoltBundle(availability.ammoItem))) {
+        ui.notifications.warn(`${availability.ammoItem.name} is a protected bundle — unpack it before use.`);
+        return;
+      }
+
       // Consumable thrown weapons are expended on throw (hit or miss)
       if (!isThrown && availability.requirement?.kind === 'self') {
         const qty = item.system.quantity || 1;
@@ -1607,6 +1756,10 @@ export class ItemHandler {
       // Launcher weapons (Bow/Crossbow/Sling): expend one unit of the matched ammo stack
       if (availability.requirement?.kind === 'external' && availability.ammoItem) {
         const ammoItem = availability.ammoItem;
+        if (isProtectedArrowBundle(ammoItem) || isProtectedBoltBundle(ammoItem)) {
+          ui.notifications.warn(`${ammoItem.name} is a protected bundle — unpack it before use.`);
+          return;
+        }
         const ammoQty = ammoItem.system.quantity || 1;
         if (ammoQty <= 1) {
           await ammoItem.delete();
@@ -1683,6 +1836,26 @@ export class ItemHandler {
         : `Unarmed Damage<br><small>STR: ${abilityModifier >= 0 ? '+' : ''}${abilityModifier}</small>`;
       await this._rollDamage(dmgFormula, dmgFlavor);
     }
+  }
+
+  async performSpellAttack(spell, target, attackContext) {
+    const { actor } = this;
+    const level = Number(actor.system.level) || 1;
+    const dex = Number(actor.system.attributes?.dex?.value) || 10;
+    const classBonus = getAttackBonus(actor.system.class, level, actor.system.race || '');
+    const totalBonus = classBonus + getAbilityModifier(dex) + attackContext.attack;
+    const rawAAC = target.actor.system.aac;
+    const targetAAC = typeof rawAAC === 'object' && rawAAC !== null
+      ? rawAAC.value ?? target.actor.system.ac ?? 10
+      : rawAAC ?? target.actor.system.ac ?? 10;
+    const targetOpts = { targetAAC, targetName: target.name, needRoll: targetAAC - totalBonus };
+    const formula = totalBonus >= 0 ? `1d20 + ${totalBonus}` : `1d20 - ${Math.abs(totalBonus)}`;
+    const result = await this._performCombatAttack(null, attackContext, formula, `${esc(spell.name)} Attack Roll`, targetOpts);
+    if (!result.cancelled && result.isHit) {
+      const effect = spell.effect ? `<br><small>${esc(spell.effect)}</small>` : '';
+      await this._rollDamage(spell.damageFormula, `${esc(spell.name)} Damage${effect}`, { halve: Boolean(spell.effect) });
+    }
+    return result;
   }
 
   async _performCombatAttack(item, context, formula, flavor, targetOpts) {
@@ -1767,17 +1940,19 @@ export class ItemHandler {
     return { isHit, isCrit, isFumble: result.naturalD20 === 1, cancelled: false };
   }
 
-  async _rollDamage(formula, flavor, { damageCapHD = null } = {}) {
+  async _rollDamage(formula, flavor, { damageCapHD = null, halve = false } = {}) {
     const result = await ospRoll(formula, { label: flavor });
     if (result.cancelled) return;
-    const effective = applyWeaponDamageCap(result.total, damageCapHD);
+    const damage = halve ? Math.ceil(result.total / 2) : result.total;
+    const effective = applyWeaponDamageCap(damage, damageCapHD);
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
     const rollMode = game.settings.get('core', 'rollMode');
     const flags = { 'osp-houserules': { combatDamage: true, combatDamageTotal: effective.total,
       rawDamageTotal: result.total, nonProficiencyCap: damageCapHD, damageCapped: effective.capped,
       manualRoll: result.manual, manualDamageTotal: result.manual ? effective.total : undefined } };
     const capNote = damageCapHD == null ? '' : `<br><small>Non-proficient: final damage maximum ${damageCapHD}, including bonuses and criticals. Raw ${result.total}; effective damage <strong>${effective.total}</strong>.</small>`;
-    const safeFlavor = DOMPurify.sanitize(`${flavor}${capNote}`);
+    const halfNote = halve ? `<br><small>Half damage rounded up: <strong>${damage}</strong>.</small>` : '';
+    const safeFlavor = DOMPurify.sanitize(`${flavor}${capNote}${halfNote}`);
     if (result.foundryRoll) {
       await result.foundryRoll.toMessage({ speaker, flavor: safeFlavor, rollMode, flags });
     } else {
@@ -1799,7 +1974,9 @@ export class ItemHandler {
     const dragData = {
       type: "WeaponAttackMacro",
       actorId: this.actor.id,
+      actorUuid: this.actor.uuid,
       itemId: item.id,
+      itemUuid: item.uuid,
       itemName: item.name,
       macroType: "weaponAttack"
     };
@@ -1822,6 +1999,11 @@ export class ItemHandler {
     
     const item = this.actor.items.get(itemId);
     if (item) {
+      if (item.system?.vehicleAttachment && value !== 1) {
+        ui.notifications.warn('Vehicle attachments must have quantity 1.');
+        input.value = '1';
+        return;
+      }
       item.update({[field]: value});
     }
   }

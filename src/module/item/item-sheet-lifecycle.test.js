@@ -70,7 +70,7 @@ describe('item sheet lifecycle-owned tooltips', () => {
   it('destroys owned handlers when the sheet closes', async () => {
     const instance = sheet();
     const destroy = vi.fn();
-    instance.handlers.set('positionTool', { destroy });
+    instance.handlers.set('tooltip', { destroy });
     await instance.close();
     expect(destroy).toHaveBeenCalledOnce();
     expect(instance.handlers.size).toBe(0);

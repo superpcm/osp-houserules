@@ -187,3 +187,45 @@ describe('hand disposition preflight and explicit actions', () => {
     expect(handler._handDispositionOptions(actor.items.get('sword')).filter(option=>option.lashed)).toEqual([]);
     expect(handler._handDispositionOptions(actor.items.get('axe')).filter(option=>option.lashed).map(option=>option.containerId)).toEqual(['belt']);
  });
+
+  it('offers a shield only to realistic or explicitly opted-in container hosts', () => {
+    const actor = makeActor([
+      entry('shield', 'Legacy Shield', 'armor', { type: 'medium', lashable: false }),
+      entry('saddle', 'Saddle', 'container', { lashSlots: 1 }),
+      entry('custom', 'Shield Rack', 'container', { lashSlots: 1, supportsShieldLashing: true }),
+      entry('sidesack', 'Sidesack', 'container', { lashSlots: 1 }),
+      entry('belt', 'Belt', 'clothing', { equipped: true, lashSlots: 2 }),
+      entry('optout', 'Backpack', 'container', { lashSlots: 1, supportsShieldLashing: false }),
+    ]);
+    const options = new ItemHandler(null, actor, {})._handDispositionOptions(actor.items.get('shield'));
+    expect(options.filter(option => option.lashed).map(option => option.containerId)).toEqual(['saddle', 'custom']);
+  });
+
+  it('rejects shield lash options when the realistic host is full at custom slot cost', () => {
+    const actor = makeActor([
+      entry('shield', 'Shield', 'armor', { type: 'shield', slotCost: 2 }),
+      entry('saddle', 'Saddle', 'container', { lashSlots: 2 }),
+      entry('rope', 'Rope', 'item', { containerId: 'saddle', lashed: true, slotCost: 1 }),
+    ]);
+    const options = new ItemHandler(null, actor, {})._handDispositionOptions(actor.items.get('shield'));
+    expect(options.filter(option => option.lashed)).toEqual([]);
+  });
+
+  it('offers legacy helmets to container lash slots but not clothing mounts', () => {
+    const actor = makeActor([
+      entry('helmet', 'Helmet', 'armor', { type: 'helmet', lashable: false, slotCost: 1 }),
+      entry('belt', 'Belt', 'clothing', { equipped: true, lashSlots: 2 }),
+      entry('pack', 'Pack', 'container', { lashSlots: 2 }),
+    ]);
+    const options = new ItemHandler(null, actor, {})._handDispositionOptions(actor.items.get('helmet'));
+    expect(options.filter(option => option.lashed).map(option => option.containerId)).toEqual(['pack']);
+  });
+
+  it('rejects a helmet when the only container lash slots are full', () => {
+    const actor = makeActor([
+      entry('helmet', 'Helmet', 'armor', { type: 'helmet', lashable: false, slotCost: 2 }),
+      entry('pack', 'Pack', 'container', { lashSlots: 2 }),
+      entry('rope', 'Rope', 'item', { containerId: 'pack', lashed: true, slotCost: 2 }),
+    ]);
+    expect(new ItemHandler(null, actor, {})._handDispositionOptions(actor.items.get('helmet')).filter(option => option.lashed)).toEqual([]);
+  });

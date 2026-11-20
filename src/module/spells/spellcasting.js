@@ -42,7 +42,7 @@ export async function spellView(actor) {
   const context = await spellContext(actor);
   const state = readSpellState(actor);
   for (const [key, book] of Object.entries(state.books)) book.available = context.bookIds.includes(key);
-  for (const spell of Object.values(context.spells)) if (spell.alwaysKnown && ['magicuser', 'illusionist'].includes(spellClassKey(context.profile))) state.known[spell.id] = true;
+  for (const spell of Object.values(context.spells)) if ((spell.alwaysKnown || spell.atWill) && ['magicuser', 'illusionist'].includes(spellClassKey(context.profile))) state.known[spell.id] = true;
   return { context, state, pending: actor.getFlag('osp-houserules', 'spellcastingPending') };
 }
 function denied(reason) { return { success: false, reason }; }
@@ -82,7 +82,7 @@ function sourceSpell(context, actor, command) {
   return spell;
 }
 function currentIdentity(actor) { return JSON.stringify({ class: actor.system.class, race: actor.system.race ?? actor.system.attributes?.race ?? actor.race ?? null, level: actor.system.level }); }
-function validateCastingFocus(context, state, actor, command) {
+export function validateCastingFocus(context, state, actor, command) {
   if (command.gmOverride !== undefined) throw new Error('GM focus overrides are not part of the spellcasting rules.');
   const external = ['external', 'itemCast'].includes(command.action);
   const policy = external ? externalFocusPolicy(command) : context.focusPolicy;
@@ -114,7 +114,7 @@ async function publish(actor, plan) {
   const description = command.reverse ? spell.reversed?.description ?? spell.description : spell.description;
   const outcome = wildMagicOutcome(roll);
   const sourceLabel = plan.cast.source ? `<p>Source: ${esc(plan.cast.source.kind)} — ${esc(plan.cast.source.name)}.</p>` : '';
-  const manual = command.action === 'itemCast' ? `<p>${plan.itemResource.path.startsWith('system.quantity') ? 'One scroll consumed.' : 'One charge consumed.'} Resolve spell attacks, saves and target effects separately.</p>` : command.action === 'external' ? '<p>External source: confirm and deduct charges/uses manually. Resolve target effects and eligibility with the GM.</p>' : '<p>One prepared copy and daily slot consumed. Resolve spell attacks, saves and target effects separately.</p>';
+  const manual = command.action === 'itemCast' ? `<p>${plan.itemResource.path.startsWith('system.quantity') ? 'One scroll consumed.' : 'One charge consumed.'} Resolve spell attacks, saves and target effects separately.</p>` : command.action === 'external' ? '<p>External source: confirm and deduct charges/uses manually. Resolve target effects and eligibility with the GM.</p>' : spell.atWill ? `<p>At-will casting. No preparation or spell slot is consumed.${spell.requiresAttackRoll ? ' Make a normal ranged attack roll against the target AC.' : ''} Resolve target effects separately.</p>` : '<p>One prepared copy and daily slot consumed. Resolve spell attacks, saves and target effects separately.</p>';
   const wild = outcome === 'Normal' ? 'No Boon or Bane.' : `${outcome}: GM adjudication required.${outcome === 'Bane' ? ' The spell does not automatically fail.' : ''}`;
   const content = `<h3>${esc(name)}</h3><p>Wild magic: unmodified d20 = <b>${roll}</b>. ${esc(wild)}</p>${sourceLabel}${manual}<p>${esc(description)}</p>`;
   assertProgressionAuthorityFence();
@@ -213,6 +213,7 @@ async function mutate(details) {
     if (casts) {
       if (conditionEffects(healthSnapshot(actor)).cannotAct) throw new Error('Dead, unconscious or Incapacitated characters cannot cast spells.');
       spell = sourceSpell(context, actor, command);
+      if (spell.atWill) throw new Error('Use the at-will cast action on the Spells page.');
       if (command.action === 'itemCast') itemResource ??= itemSpellResource(actor.items.get(command.sourceId));
       if (command.reverse && !spell.reversed) throw new Error('This spell has no reversed form.');
       if (command.confirmed !== true) throw new Error('Confirm freedom to speak and move hands, target visibility and casting conditions.');
@@ -251,7 +252,7 @@ async function mutate(details) {
   return applyPlan(actor, plan);
 }
 export function registerSpellcastingAuthority() { registerProgressionAuthority('spells.mutate', mutate); }
-export function changeSpellState(actor, command) { return requestProgressionMutation('spells.mutate', { actorUuid: actor.uuid, command }); }
+export function changeSpellState(actor, command, operationId = null) { return requestProgressionMutation('spells.mutate', { actorUuid: actor.uuid, command }, operationId); }
 export async function resolveInterruptedSpell(actor, roll) {
   const result = await changeSpellState(actor, { action: 'resolveRoll', roll });
   return result.success && result.targetId ? recoverProgressionOperation(result.targetId) : result;

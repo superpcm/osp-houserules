@@ -23,6 +23,45 @@
     </div>
   </header>
 
+  {{#if @root.isGM}}
+    <section class="osp-item-stocking-fields">
+      <h3>Merchant Stocking</h3>
+      <label>Availability
+        <select name="system.storeAvailability">
+          <option value="" {{#unless stockingAvailability}}selected{{/unless}}>Unclassified</option>
+          <option value="common" {{#if (eq stockingAvailability "common")}}selected{{/if}}>Common</option>
+          <option value="uncommon" {{#if (eq stockingAvailability "uncommon")}}selected{{/if}}>Uncommon</option>
+          <option value="rare" {{#if (eq stockingAvailability "rare")}}selected{{/if}}>Rare</option>
+          <option value="exceptional" {{#if (eq stockingAvailability "exceptional")}}selected{{/if}}>Exceptional</option>
+        </select>
+      </label>
+      <label>Blacksmith eligibility
+        <select name="system.blacksmithEligible">
+          <option value="" {{#if (eq blacksmithEligibleValue "")}}selected{{/if}}>Unset</option>
+          <option value="true" {{#if (eq blacksmithEligibleValue "true")}}selected{{/if}}>Eligible</option>
+          <option value="false" {{#if (eq blacksmithEligibleValue "false")}}selected{{/if}}>Excluded</option>
+        </select>
+      </label>
+    </section>
+  {{/if}}
+
+  {{#if @root.isGM}}
+  <section class="osp-item-stocking-fields">
+    <h3>Vehicle Fittings</h3>
+    {{#if canBeVehicle}}<label>Vehicle type <select name="system.vehicleKind"><option value="" {{#unless system.vehicleKind}}selected{{/unless}}>Use catalog default</option>{{#each vehicleKindOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>{{/if}}
+    <label>Vehicle fitting <select name="system.vehicleAttachmentKind"><option value="" {{#unless system.vehicleAttachmentKind}}selected{{/unless}}>Use catalog default</option>{{#each vehicleAttachmentKindOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+  </section>
+  {{/if}}
+
+  {{#if isTenFootPole}}
+    <section class="osp-item-stocking-fields">
+      <label>Transport
+        <input type="checkbox" name="flags.osp-houserules.disassembled" {{#if disassembledForTransport}}checked{{/if}} />
+        Disassembled for transport
+      </label>
+    </section>
+  {{/if}}
+
   <section class="sheet-body">
     <div class="flexrow">
       <div class="stats">

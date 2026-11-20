@@ -7,6 +7,8 @@ const sid = () => game.system.id;
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const owns = (user, actor) => Boolean(user?.isGM || actor?.testUserPermission?.(user, 'OWNER'));
 const equal = (a,b) => JSON.stringify(a) === JSON.stringify(b);
+const normalizeTalent = t => ({level:Number(t.level),name:String(t.name ?? '').trim(),...(t.weapon ? {weapon:String(t.weapon).trim()} : {}),...(t.foeType ? {foeType:String(t.foeType).trim()} : {})});
+const normalizeTalents = selections => (Array.isArray(selections) ? selections : Object.values(selections ?? [])).map(normalizeTalent).sort((a,b) => a.level - b.level);
 async function writeFlag(actor, key, value) {
   assertProgressionAuthorityFence();
   try { await actor.setFlag(sid(), key, value); } catch (e) { if (!equal(actor.getFlag(sid(), key), value)) throw e; }
@@ -16,7 +18,6 @@ export function talentSlots(actor) {
   const cls = combatKey(actor.system.class), level = Number(actor.system.level) || 1;
   if (cls === 'fighter') return [1,3,7].filter(n => level >= n).map(n => ({ level:n, choices:talentChoices(n) }));
   if (['knight','paladin'].includes(cls)) return [{level:1,choices:['Weapon Specialization'],mandatory:true}];
-  if (['ranger','warden'].includes(cls)) return [{level:1,choices:talentChoices(1)}];
   return [];
 }
 export function validateTalentSelections(actor, selections, catalog) {
@@ -30,6 +31,13 @@ export function validateTalentSelections(actor, selections, catalog) {
     if (t.name === 'Weapon Specialization' && !catalog.some(w => w.name === t.weapon)) throw new Error('Choose a catalog weapon for specialization.');
     if (t.name === 'Slayer' && (typeof t.foeType !== 'string' || !t.foeType.trim() || t.foeType.length > 100)) throw new Error('Slayer requires a specific foe type.');
   }
+  const saved = actor.getFlag(sid(),'combatTalents');
+  for (const savedRecord of normalizeTalents(saved)) {
+    const slot = slots.find(s => s.level === savedRecord.level);
+    if (!slot || !slot.choices.includes(savedRecord.name)) continue;
+    const replacement = normalizeTalents(selections).find(t => t.level === savedRecord.level);
+    if (!replacement || !equal(replacement, savedRecord)) throw new Error('Saved talent choices cannot be changed.');
+  }
 }
 export function registerCombatSupportAuthority() {
   registerProgressionAuthority('combat.support', async details => {
@@ -40,7 +48,8 @@ export function registerCombatSupportAuthority() {
         const selections = details.selections;
         const catalog = await fetch(`systems/${sid()}/data/weapons.json`).then(r => { if (!r.ok) throw new Error('Weapon catalog unavailable.'); return r.json(); });
         validateTalentSelections(actor,selections,catalog);
-        await writeFlag(actor,'combatTalents',selections.map(t => ({level:t.level,name:t.name,...(t.weapon ? {weapon:t.weapon} : {}),...(t.foeType ? {foeType:t.foeType.trim()} : {})})));
+        const normalized = normalizeTalents(selections);
+        if (!equal(normalized, normalizeTalents(actor.getFlag(sid(),'combatTalents')))) await writeFlag(actor,'combatTalents',normalized);
       } else if (details.kind === 'effect') {
         const combat = game.combats.get(details.combatId);
         if (!combat || combat.round !== details.round || !combat.round || !combat.combatants.some(c => c.actor === actor || c.actor?.uuid === actor.uuid)) throw new Error('A current combatant and round are required.');

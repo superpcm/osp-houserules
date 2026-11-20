@@ -18,7 +18,12 @@
     "watch:all": "bash ./scripts/watch-all.sh",
     "foundry:dev": "bash ./scripts/start-foundry-dev.sh",
     "test-upgrades": "node ./scripts/test-upgrade.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:combat": "vitest run tests/combat-encounter.test.js",
+    "combat:report": "node scripts/run-combat-encounter.js",
+    "browser:prepare": "node scripts/prepare-browser-combat.js",
+    "browser:start": "node scripts/start-browser-combat.js",
+    "test:browser-guards": "vitest run scripts/browser-combat-environment.test.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.6",

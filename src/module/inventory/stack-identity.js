@@ -1,5 +1,8 @@
 const DOCUMENT_FIELDS = new Set(['_id', 'id', 'uuid', '_stats', 'sort', 'folder', 'ownership', 'pack', 'parent']);
-const DERIVED_SYSTEM_FIELDS = new Set(['quantity', 'containerId', 'equipped', 'lashed']);
+const DERIVED_SYSTEM_FIELDS = new Set(['quantity', 'containerId', 'equipped', 'lashed', 'storeAvailability', 'blacksmithEligible']);
+import { isProtectedArrowBundle } from './arrow-bundle.js';
+import { isProtectedTorchBundle } from './torch-bundle.js';
+import { isProtectedBoltBundle } from './bolt-bundle.js';
 
 function ordered(value, path = '') {
   if (typeof value === 'number' && !Number.isFinite(value)) throw new Error('Invalid numeric identity field');
@@ -35,6 +38,7 @@ export function isUniqueStackItem(item) {
 }
 
 export function canStackItems(first, second) {
+  if (isProtectedArrowBundle(first) || isProtectedArrowBundle(second) || isProtectedTorchBundle(first) || isProtectedTorchBundle(second) || isProtectedBoltBundle(first) || isProtectedBoltBundle(second)) return false;
   const left = stackIdentity(first);
   const right = stackIdentity(second);
   if (!left || !right || isUniqueStackItem(first) || isUniqueStackItem(second)) return false;

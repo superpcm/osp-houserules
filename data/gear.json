@@ -1,5 +1,26 @@
 [
   {
+    "name": "Traveler's Backpack",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/travelers-backpack_thumb.webp",
+    "system": {
+      "description": "A larger framed canvas-and-leather expedition pack built for extended travel. It holds roomy supplies and provides exterior lash points for gear that will not fit inside.",
+      "cost": 10,
+      "unitWeight": 4,
+      "storedSize": 8,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": ["container"],
+      "capacity": 40,
+      "containerSize": "medium",
+      "lashSlots": 4,
+      "blockedTypes": ["slungable", "sword"],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
+    }
+  },
+  {
     "name": "Backpack",
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/backpack_thumb.webp",
@@ -20,7 +41,9 @@
       "blockedTypes": [
         "slungable",
         "sword"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -37,7 +60,10 @@
       "lashable": true,
       "tags": [
         "sleep"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "bedroll"
     }
   },
   {
@@ -45,7 +71,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-large_thumb.webp",
     "system": {
-      "description": "A roomy leather pouch with broad flap and brass-buckled strap, made to hang securely from a waistbelt. It holds bulkier essentials such as rations, tools, or extra coin; 1 pouch attaches to one belt.",
+      "description": "A roomy leather pouch with broad flap and brass-buckled strap, made to hang securely from a waistbelt. It holds bulkier essentials such as rations, tools, or extra coin and uses 2 of a belt's 6 attachment slots.",
       "cost": 4,
       "unitWeight": 1,
       "storedSize": 2,
@@ -66,7 +92,9 @@
         "dagger",
         "arrows",
         "bolts"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -74,7 +102,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/pouch-small_thumb.webp",
     "system": {
-      "description": "A small leather pouch that attaches to a belt. 2 pouches can be attached to a single belt.",
+      "description": "A small leather pouch that attaches to a belt and uses 1 of a belt's 6 attachment slots. Mix pouches and other belt attachments within the belt's six-slot capacity.",
       "cost": 2,
       "unitWeight": 0.5,
       "storedSize": 1,
@@ -93,7 +121,9 @@
         "dagger",
         "arrows",
         "bolts"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -105,7 +135,7 @@
       "cost": 5,
       "unitWeight": 1,
       "storedSize": 4,
-      "slotCost": 1,
+      "slotCost": 2,
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -116,7 +146,9 @@
       "allowedTypes": [
         "bolts"
       ],
-      "containerSize": "small"
+      "containerSize": "small",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -128,7 +160,7 @@
       "cost": 1,
       "unitWeight": 0.25,
       "storedSize": 1,
-      "slotCost": 1,
+      "slotCost": 0,
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -141,7 +173,9 @@
         "gem",
         "jewelry"
       ],
-      "containerSize": "small"
+      "containerSize": "small",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -158,7 +192,10 @@
       "lashable": true,
       "tags": [
         "tool"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": true,
+      "vehicleAttachmentKind": "tool"
     }
   },
   {
@@ -175,7 +212,9 @@
       "lashable": false,
       "tags": [
         "herb"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -193,7 +232,9 @@
       "tags": [
         "tool",
         "climbing"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -210,7 +251,9 @@
       "lashable": true,
       "tags": [
         "tool"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -218,7 +261,7 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/holy-symbol_thumb.webp",
     "system": {
-      "description": "A religious emblem, amulet, or pendant of metal, wood, or stone, worn on a chain or leather thong. Adventuring versions rarely exceed ½ lb; a large ceremonial altar piece may weigh several pounds.",
+      "description": "A religious emblem worn around the neck on a chain or leather thong. It may be worn under Clothing without occupying one of Clothing's six positions.",
       "cost": 25,
       "unitWeight": 0.3,
       "storedSize": 1,
@@ -228,7 +271,29 @@
       "tags": [
         "religious",
         "focus"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Ink, Ink Pen & Journal",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/writing-kit_thumb.webp",
+    "system": {
+      "description": "A compact writing kit containing a small stoppered ink bottle, an ink pen, and a bound journal of 25 sheets. It keeps maps, travel notes, and accounts together while on the road.",
+      "cost": 2,
+      "unitWeight": 1,
+      "storedSize": 2,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "tool",
+        "writing"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -262,7 +327,9 @@
         "short": 10,
         "medium": 30,
         "long": 50
-      }
+      },
+      "storeAvailability": "rare",
+      "blacksmithEligible": false
     }
   },
   {
@@ -280,7 +347,9 @@
       "tags": [
         "tool",
         "dungeon"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -297,7 +366,9 @@
       "lashable": true,
       "tags": [
         "light-source"
-      ]
+      ],
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
     }
   },
   {
@@ -314,7 +385,9 @@
       "lashable": true,
       "tags": [
         "light-source"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -331,7 +404,9 @@
       "lashable": false,
       "tags": [
         "tool"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -348,7 +423,9 @@
       "lashable": false,
       "tags": [
         "tool"
-      ]
+      ],
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
     }
   },
   {
@@ -382,7 +459,9 @@
         "short": 10,
         "medium": 20,
         "long": 30
-      }
+      },
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -400,7 +479,9 @@
       "tags": [
         "tool",
         "dungeon"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     }
   },
   {
@@ -418,7 +499,9 @@
       "tags": [
         "tool",
         "dungeon"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -426,7 +509,7 @@
     "type": "container",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/quiver_thumb.webp",
     "system": {
-      "description": "Worn on the back, an arrow quiver is a cylindrical leather container designed to carry and protect up to 20 arrows while keeping them easily accessible during travel or combat.",
+      "description": "Worn on the back, an arrow quiver is a cylindrical leather container designed to carry and protect up to 20 arrows while keeping them easily accessible during travel or combat. It may also be lashed externally to a Backpack, using one lash slot; a lashed quiver remains a separate container and may still hold arrows.",
       "cost": 5,
       "unitWeight": 1,
       "storedSize": 6,
@@ -442,7 +525,9 @@
       "allowedTypes": [
         "arrows"
       ],
-      "containerSize": "small"
+      "containerSize": "small",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -454,7 +539,7 @@
       "cost": 5,
       "unitWeight": 0.5,
       "storedSize": 4,
-      "slotCost": 1,
+      "slotCost": 2,
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -463,7 +548,9 @@
       "allowedTypes": [
         "arrows"
       ],
-      "containerSize": "small"
+      "containerSize": "small",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -471,17 +558,19 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/rations-iron_thumb.webp",
     "system": {
-      "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact but heavy and bland. Often divided into daily pouches for easy rationing.",
+      "description": "Food for long journeys or expeditions. Non-perishable, waterproof, and compact but heavy and bland. Often divided into daily pouches for easy rationing. One inventory unit is a seven-day bundle: quantity 1, storage size 4 for the complete bundle. Weight and price are per bundle.",
       "cost": 15,
-      "unitWeight": 1,
+      "unitWeight": 7,
       "storedSize": 4,
-      "quantity": 7,
+      "quantity": 1,
       "equipped": false,
       "lashable": false,
       "tags": [
         "consumable",
         "food"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -489,17 +578,19 @@
     "type": "item",
     "img": "systems/osp-houserules/assets/thumbs/images/gear/rations-standard_thumb.webp",
     "system": {
-      "description": "Fresh, unpreserved food suitable for shorter trips. Tastier but bulkier than iron rations. Cannot be carried indefinitely without spoilage unless kept cool or magically preserved. Common among caravan travelers or short expeditions.",
+      "description": "Fresh, unpreserved food suitable for shorter trips. Tastier but bulkier than iron rations. Cannot be carried indefinitely without spoilage unless kept cool or magically preserved. Common among caravan travelers or short expeditions. One inventory unit is a seven-day bundle: quantity 1, storage size 6 for the complete bundle. Weight and price are per bundle.",
       "cost": 5,
-      "unitWeight": 2,
-      "storedSize": 4,
-      "quantity": 7,
+      "unitWeight": 14,
+      "storedSize": 6,
+      "quantity": 1,
       "equipped": false,
       "lashable": false,
       "tags": [
         "consumable",
         "food"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -517,7 +608,10 @@
       "tags": [
         "tool",
         "climbing"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "rope"
     }
   },
   {
@@ -535,7 +629,10 @@
       "tags": [
         "tool",
         "climbing"
-      ]
+      ],
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false,
+      "vehicleAttachmentKind": "rope"
     }
   },
   {
@@ -555,7 +652,9 @@
       "containerSize": "medium",
       "blockedTypes": [
         "slungable"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -575,7 +674,9 @@
       "containerSize": "medium",
       "blockedTypes": [
         "slungable"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -586,7 +687,7 @@
       "description": "A compact leather sheath worn on the belt designed to carry a single dagger or narrow-bladed weapon. Keeps the weapon protected and ready to draw in combat.",
       "cost": 3,
       "unitWeight": 0.5,
-      "storedSize": 2,
+      "storedSize": 0.5,
       "quantity": 1,
       "equipped": false,
       "lashable": true,
@@ -605,7 +706,9 @@
       "allowedNames": [
         "Dagger",
         "Misericorde"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -616,7 +719,7 @@
       "description": "A rigid leather sheath for a standard sword, designed to sit within a sword frog attached to the belt.",
       "cost": 3,
       "unitWeight": 0.5,
-      "storedSize": 30,
+      "storedSize": 2,
       "allowedContainers": [
         "Cart",
         "Wagon",
@@ -645,8 +748,11 @@
         "Bastard Sword",
         "Khopesh",
         "Shortsword",
-        "Rapier"
-      ]
+        "Rapier",
+        "Falchion"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -657,7 +763,7 @@
       "description": "A broad leather strap carries a two-handed sword across the back, hilt over the shoulder, leaving hands free. The only practical way to carry a Zweihander or Greatsword.",
       "cost": 10,
       "unitWeight": 2,
-      "storedSize": 6,
+      "storedSize": 3,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -676,7 +782,9 @@
       "allowedNames": [
         "Zweihander",
         "Greatsword"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -697,7 +805,9 @@
         "scroll"
       ],
       "maxItems": 3,
-      "containerSize": "small"
+      "containerSize": "small",
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -715,13 +825,15 @@
       "tags": [
         "tool",
         "thief"
-      ]
+      ],
+      "storeAvailability": "rare",
+      "blacksmithEligible": false
     }
   },
   {
     "name": "Tinder Box",
     "type": "item",
-    "img": "systems/osp-houserules/assets/thumbs/images/gear/flint-steel_thumb.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/flint-steel-v2_thumb.webp",
     "system": {
       "description": "This flint and tinder kit includes a sharp-edged flint stone, a curved steel striker, and a bundled nest of dry fibers for catching sparks. Adventurers use it to start campfires, ignite torches, and light oil in situations where magical fire is unavailable.",
       "cost": 3,
@@ -733,7 +845,9 @@
       "tags": [
         "tool",
         "fire"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -761,7 +875,9 @@
       "bonus": 0,
       "melee": true,
       "missile": false,
-      "range": {}
+      "range": {},
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -775,15 +891,17 @@
       "storedSize": 2,
       "quantity": 1,
       "equipped": false,
-      "lashable": false
+      "lashable": false,
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
     "name": "Waterskin",
     "type": "item",
-    "img": "systems/osp-houserules/assets/thumbs/images/gear/waterskin_thumb.webp",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/waterskin-v2_thumb.webp",
     "system": {
-      "description": "A waterskin is a durable leather container used to carry drinking water while traveling or adventuring. It is lightweight, easy to strap to a belt or pack, and essential for surviving long journeys where fresh water is scarce.",
+      "description": "A durable leather waterskin holding approximately 2 liters (about 2 quarts) of drinking water—roughly half a day’s supply for one person under normal adventuring conditions. Hot weather or heavy exertion uses water faster. The listed 5 lb weight includes the full waterskin and its water.",
       "cost": 1,
       "unitWeight": 5,
       "storedSize": 4,
@@ -792,7 +910,9 @@
       "lashable": false,
       "tags": [
         "container"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -810,7 +930,9 @@
       "tags": [
         "consumable",
         "drink"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -828,7 +950,9 @@
       "tags": [
         "herb",
         "religious"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -845,7 +969,9 @@
       "lashable": false,
       "tags": [
         "religious"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -856,7 +982,7 @@
       "description": "A broad leather sling worn across the back and chest, designed to carry a large axe with the head resting behind the shoulder and the haft accessible for a quick draw. Frees the hands while keeping a battle axe or two-handed axe secure during travel.",
       "cost": 5,
       "unitWeight": 1,
-      "storedSize": 6,
+      "storedSize": 3,
       "quantity": 1,
       "equipped": false,
       "lashable": false,
@@ -875,7 +1001,40 @@
       "allowedNames": [
         "Battle Axe",
         "Battle Axe, 2-Handed"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Warhammer Sling",
+    "type": "container",
+    "img": "systems/osp-houserules/assets/thumbs/images/gear/warhammer-sling_thumb.webp",
+    "system": {
+      "description": "A leather crossbody harness with a reinforced loop that seats the warhammer head and keeps its haft secure. It carries one Warhammer hands-free while leaving the weapon ready to draw.",
+      "cost": 5,
+      "unitWeight": 1,
+      "storedSize": 3,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "weapon-storage",
+        "sling",
+        "slungable"
+      ],
+      "capacity": 8,
+      "containerSize": "small",
+      "hideCapacity": true,
+      "maxItems": 1,
+      "lashSlots": 0,
+      "allowedTypes": [],
+      "allowedSizes": [],
+      "allowedNames": [
+        "Warhammer"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -886,7 +1045,7 @@
       "description": "A sturdy leather loop and strap assembly designed to hang a tool, weapon, or waterskin from a belt. Accommodates a hand axe, light hammer, warhammer, or waterskin. Keeps bulky items accessible without requiring a bag or pack.",
       "cost": 2,
       "unitWeight": 0.25,
-      "storedSize": 2,
+      "storedSize": 1,
       "slotCost": 2,
       "quantity": 1,
       "equipped": false,
@@ -908,8 +1067,11 @@
         "Waterskin",
         "Mace",
         "Morning Star",
-        "Flail"
-      ]
+        "Flail",
+        "Butcher's Cleaver"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -937,7 +1099,9 @@
         "Vial or Bottle",
         "Oil Flask",
         "Holy Water"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -948,7 +1112,7 @@
       "description": "A leather suspension mount that attaches to a belt and holds a scabbarded sword in place using rings and loops rather than a fixed sheath. Accommodates a wider variety of blade shapes than a rigid scabbard, including curved blades such as the khopesh.",
       "cost": 4,
       "unitWeight": 0.5,
-      "storedSize": 2,
+      "storedSize": 1,
       "slotCost": 2,
       "quantity": 1,
       "equipped": false,
@@ -967,7 +1131,9 @@
       "allowedSizes": [],
       "allowedNames": [
         "Scabbard, Sword"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -998,7 +1164,9 @@
       "blockedTypes": [
         "slungable",
         "sword"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -1028,6 +1196,8 @@
         "Clothes, Commoner's",
         "Clothes, Merchant's",
         "Clothes, Nobleman's",
+        "Clothes, Winter",
+        "Coat, Winter",
         "Panniers",
         "Robes",
         "Sack, Large",
@@ -1036,7 +1206,9 @@
         "Saddlebags, Small",
         "Sidesack",
         "Wagon"
-      ]
+      ],
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
     },
     "folder": "s6Thb2TUd0YuN0tG"
   },
@@ -1072,7 +1244,9 @@
         "Saddlebags, Small",
         "Sidesack",
         "Wagon"
-      ]
+      ],
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
     },
     "folder": "s6Thb2TUd0YuN0tG"
   },
@@ -1106,6 +1280,8 @@
         "Clothes, Commoner's",
         "Clothes, Merchant's",
         "Clothes, Nobleman's",
+        "Clothes, Winter",
+        "Coat, Winter",
         "Panniers",
         "Robes",
         "Sack, Large",
@@ -1114,7 +1290,9 @@
         "Saddlebags, Small",
         "Sidesack",
         "Wagon"
-      ]
+      ],
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": true
     },
     "folder": "s6Thb2TUd0YuN0tG"
   },
@@ -1145,7 +1323,9 @@
         "Saddlebags, Large",
         "Saddlebags, Small",
         "Wagon"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     },
     "folder": "s6Thb2TUd0YuN0tG"
   },
@@ -1177,7 +1357,9 @@
         "Saddlebags, Small",
         "Sidesack",
         "Wagon"
-      ]
+      ],
+      "storeAvailability": "rare",
+      "blacksmithEligible": false
     },
     "folder": "s6Thb2TUd0YuN0tG"
   },
@@ -1209,7 +1391,9 @@
         "Saddlebags, Small",
         "Sidesack",
         "Wagon"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": true
     },
     "folder": "s6Thb2TUd0YuN0tG"
   },
@@ -1239,7 +1423,9 @@
       "allowedNames": [
         "Waterskin",
         "Wineskin"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -1258,7 +1444,9 @@
         "focus",
         "ranger",
         "wooden"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -1277,7 +1465,9 @@
         "focus",
         "druid",
         "herb"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -1297,7 +1487,9 @@
         "focus",
         "bard",
         "wooden"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
     }
   },
   {
@@ -1316,7 +1508,74 @@
         "focus",
         "wand",
         "wooden"
-      ]
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Healing Potion",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/gear/healing-potion-a-transparent-v1.png",
+    "system": {
+      "description": "A stoppered glass vial containing a ruby-red restorative magical draught. Drinking the entire contents restores 1d8 + 1 hit points, without exceeding the drinker’s maximum HP. Each vial contains one dose; drinking it consumes the potion. The listed weight includes the liquid and vial. List price: 500 sp per potion; actual prices may vary by vendor and demand.",
+      "cost": 500,
+      "unitWeight": 0.5,
+      "storedSize": 1,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "treasure": false,
+      "tags": [
+        "consumable",
+        "potion",
+        "magical",
+        "healing"
+      ],
+      "storeAvailability": "rare",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Acid",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/gear/acid.webp",
+    "system": {
+      "description": "A stoppered glass vial of corrosive acid.",
+      "cost": 25,
+      "unitWeight": 1,
+      "storedSize": 0.5,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": false,
+      "tags": [
+        "consumable",
+        "alchemical"
+      ],
+      "storeAvailability": "uncommon",
+      "blacksmithEligible": false
+    }
+  },
+  {
+    "name": "Shovel",
+    "type": "item",
+    "img": "systems/osp-houserules/assets/images/gear/shovel.webp",
+    "system": {
+      "description": "A long wooden-handled digging tool with an iron blade.",
+      "cost": 1,
+      "unitWeight": 5,
+      "storedSize": 6,
+      "quantity": 1,
+      "equipped": false,
+      "lashable": true,
+      "slotCost": 1,
+      "tags": [
+        "tool",
+        "bulky"
+      ],
+      "storeAvailability": "common",
+      "blacksmithEligible": true,
+      "vehicleAttachmentKind": "tool"
     }
   }
 ]

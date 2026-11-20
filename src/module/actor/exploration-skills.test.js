@@ -2,6 +2,17 @@ import { describe, expect, it } from 'vitest';
 import { deriveExplorationSkills } from './exploration-skills.js';
 
 describe('deriveExplorationSkills', () => {
+  it('derives fixed Ranger wilderness targets independently of persisted fields', () => {
+    expect(deriveExplorationSkills({ race: 'Half-Elf', class: 'Ranger', forageTarget: '1', huntTarget: '1', stealthTarget: '1' })).toMatchObject({
+      forageTarget: '2', huntTarget: '5', stealthTarget: '3',
+      effectiveListeningAtDoors: '1', effectiveFindSecretDoor: '2',
+    });
+  });
+
+  it('derives fixed Warden foraging and hunting targets', () => {
+    expect(deriveExplorationSkills({ race: 'Human', class: 'Warden' })).toMatchObject({ forageTarget: '2', huntTarget: '5', stealthTarget: '' });
+  });
+
   it('derives dwarf racial exploration abilities', () => {
     expect(deriveExplorationSkills({ race: 'Dwarf', class: 'Fighter' })).toMatchObject({
       listeningAtDoors: '2',

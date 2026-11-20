@@ -24,6 +24,34 @@ it('restores selections and conditionally shows their extra fields', () => {
   expect(html).toContain('data-talent-weapon-field hidden');
   expect(combatTalentMarkup(actor,weapons,false)).not.toContain('data-save-talents');
 });
+it('locks saved slots and omits Save when every earned slot is saved', () => {
+  actor.system.level = 1;
+  actor.getFlag = () => [{level:1,name:'Weapon Specialization',weapon:'Dagger'}];
+  const html = combatTalentMarkup(actor,weapons,true);
+  expect((html.match(/data-talent-name/g) || []).length).toBeGreaterThan(1);
+  expect((html.match(/data-talent-name[^>]* disabled/g) || []).length).toBeGreaterThan(1);
+  expect(html).toContain('data-talent-weapon-field>');
+  expect(html).toContain('disabled><option value="">Choose weapon</option>');
+  expect(html).not.toContain('data-save-talents');
+});
+it('keeps a newly earned slot editable while preserving the saved slot', () => {
+  actor.getFlag = () => [{level:1,name:'Weapon Specialization',weapon:'Dagger'}];
+  const html = combatTalentMarkup(actor,weapons,true);
+  expect(html).toContain('data-talent-level="1"');
+  expect(html).toContain('data-talent-level="3"');
+  expect(html).toContain('data-save-talents');
+  expect((html.match(/data-talent-name[^>]* disabled/g) || []).length).toBeGreaterThan(1);
+  expect(html).toContain('value="Slayer" aria-label="Level 3: Slayer"');
+});
+it('keeps an unsaved mandatory specialization default editable', () => {
+  actor.system.class = 'Knight';
+  actor.system.level = 1;
+  const html = combatTalentMarkup(actor,weapons,true);
+  expect(html).toContain('value="Weapon Specialization" aria-label="Level 1: Weapon Specialization" checked');
+  expect(html).toContain('data-talent-weapon-field>');
+  expect(html).not.toContain('data-talent-name" name="combat-talent-a-1" form="combat-talent-a-1-draft" value="Weapon Specialization" aria-label="Level 1: Weapon Specialization" checked disabled');
+  expect(html).toContain('data-save-talents');
+});
 it('saves through authority and rejects incomplete Slayer without a mutation', async () => {
   const choices=[{level:3,name:'Slayer',foeType:'Undead'}];
   await saveCombatTalents(actor,choices,weapons);
@@ -37,7 +65,7 @@ it('directs missing mandatory specialization to Skills without opening a dialog'
   expect(Dialog).not.toHaveBeenCalled();
 });
 
-it('keeps draft choices inside descriptions and out of sheet autosubmit', async () => {
+it('keeps draft choices inside descriptions without duplicating saved talents', async () => {
   const listeners = {};
   const status={textContent:''};
   const section={querySelector:()=>status};
@@ -46,9 +74,10 @@ it('keeps draft choices inside descriptions and out of sheet autosubmit', async 
   const host={dataset:{},isConnected:true,querySelectorAll:()=>[],insertAdjacentHTML:vi.fn(),prepend:vi.fn(),firstElementChild:entry,addEventListener:(type,fn,capture)=>{listeners[type]={fn,capture};}};
   globalThis.fetch=vi.fn().mockResolvedValue({ok:true,json:async()=>weapons});
   actor.isOwner=true;
+  actor.getFlag=()=>[{level:1,name:'Two-Weapon Fighting'}];
   await activateCombatTalents({querySelector:()=>host},actor,true);
   expect(effect.insertAdjacentHTML).toHaveBeenCalledWith('beforeend',expect.stringContaining('data-talent-level'));
-  expect(host.insertAdjacentHTML.mock.calls.every(call=>!call[1].startsWith('<section class="combat-talents-section"'))).toBe(true);
+  expect(host.insertAdjacentHTML.mock.calls.every(call=>!call[1].includes('combat-skills-section'))).toBe(true);
   const stopPropagation=vi.fn();
   listeners.change.fn({stopPropagation,target:{closest:()=>section,matches:()=>false}});
   expect(listeners.change.capture).toBe(true);
